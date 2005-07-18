@@ -19,11 +19,8 @@ buildenv()
 	docommand "$1" "make -C sources/$1 BUILDENV=$2 clean install"
 }
 
-if [ ! -e "/tools" ]; then
-	echo "/tools symlink not present.  Please create before starting the build porcess."
-	echo "Script aborted."
-	exit
-fi
+rm -f /tools
+(cd ../; ln -s $PWD/tools /)
 
 if [ "$DNS_SERVER1" = "" ]; then
 	echo "DNS servers not configured.  Script aborted."
