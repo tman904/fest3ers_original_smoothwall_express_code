@@ -19,8 +19,8 @@ buildenv()
 	docommand "$1" "make -C sources/$1 BUILDENV=$2 clean install"
 }
 
-if [ ! -e "/expresstools" ]; then
-	echo "/expresstools symlink not present.  Please create before starting the build porcess."
+if [ ! -e "/tools" ]; then
+	echo "/tools symlink not present.  Please create before starting the build porcess."
 	echo "Script aborted."
 	exit
 fi
