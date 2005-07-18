@@ -1,0 +1,7 @@
+<P><FONT SIZE='3'><B><U>Status</U></B></FONT></P>
+
+<P>This is a list of all the services that may or may not
+be running on the SmoothWall. On machines with low amounts of memory (8
+megabytes or less) or heavy web proxy caching, some services may get
+'swapped out' to disk to save memory. This will be indicated here.  <B>Note</B>,
+this is <U>not</U> an error condition.</P>

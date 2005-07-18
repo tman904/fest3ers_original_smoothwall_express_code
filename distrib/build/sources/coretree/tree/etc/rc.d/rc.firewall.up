@@ -1,0 +1,183 @@
+#!/bin/sh
+
+# Disable ICMP Redirect Acceptance
+for FILE in /proc/sys/net/ipv4/conf/*/accept_redirects; do
+	echo 0 > $FILE
+done
+
+# Disable Source Routed Packets
+for FILE in /proc/sys/net/ipv4/conf/*/accept_source_route; do
+	echo 0 > $FILE
+done
+
+# Log Spoofed Packets, Source Routed Packets, Redirect Packets
+for FILE in /proc/sys/net/ipv4/conf/*/log_martians; do
+	echo 1 > $FILE
+done
+
+# Set timeouts.  2.5 hours for TCP.
+#/sbin/ipchains -M -S 9000 0 0
+
+/sbin/iptables -F
+/sbin/iptables -X
+
+/sbin/iptables -P INPUT DROP
+/sbin/iptables -P FORWARD DROP
+/sbin/iptables -P OUTPUT ACCEPT
+
+# IP blocker
+/sbin/iptables -N ipblock
+/sbin/iptables -A INPUT -i ppp0 -j ipblock
+/sbin/iptables -A INPUT -i ippp0 -j ipblock
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A INPUT -i $RED_DEV -j ipblock
+fi
+/sbin/iptables -A FORWARD -i ppp0 -j ipblock
+/sbin/iptables -A FORWARD -i ippp0 -j ipblock
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A FORWARD -i $RED_DEV -j ipblock
+fi
+
+
+# For IGMP and multicast
+/sbin/iptables -N advnet
+/sbin/iptables -A INPUT -i ppp0 -j advnet
+/sbin/iptables -A INPUT -i ippp0 -j advnet
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A INPUT -i $RED_DEV -j advnet
+fi
+
+# Spoof protection for RED (rp_filter does not work with FreeS/WAN)
+/sbin/iptables -N spoof
+/sbin/iptables -A spoof -s $GREEN_NETADDRESS/$GREEN_NETMASK -j DROP
+if [ "$ORANGE_DEV" != "" ]; then
+	/sbin/iptables -A spoof -s $ORANGE_NETADDRESS/$ORANGE_NETMASK -j DROP
+fi
+
+/sbin/iptables -A INPUT -i ppp0 -j spoof
+/sbin/iptables -A INPUT -i ippp0 -j spoof
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A INPUT -i $RED_DEV -j spoof
+fi
+
+
+# localhost and ethernet.
+/sbin/iptables -A INPUT -i lo -j ACCEPT
+/sbin/iptables -A INPUT -i $GREEN_DEV -j ACCEPT
+
+# IPSEC
+/sbin/iptables -N secin
+/sbin/iptables -A secin -i ipsec0 -j ACCEPT
+/sbin/iptables -A INPUT -j secin
+
+/sbin/iptables -N secout
+/sbin/iptables -A secout -i ipsec0 -j ACCEPT
+/sbin/iptables -A FORWARD -j secout
+
+/sbin/iptables -N block
+
+# Let em through.
+/sbin/iptables -A block -m state --state ESTABLISHED,RELATED -j ACCEPT
+/sbin/iptables -A block -i $GREEN_DEV -j ACCEPT
+
+# External access.  Rule set with setxtaccess setuid
+/sbin/iptables -N xtaccess
+/sbin/iptables -A block -j xtaccess
+
+# IPSEC
+/sbin/iptables -N ipsec
+/sbin/iptables -A ipsec -p udp --destination-port 500 -j ACCEPT
+/sbin/iptables -A ipsec -p 47 -j ACCEPT
+/sbin/iptables -A ipsec -p 50 -j ACCEPT
+/sbin/iptables -A block -i ppp0 -j ipsec
+/sbin/iptables -A block -i ippp0 -j ipsec
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A block -i $RED_DEV -j ipsec
+fi
+
+# DHCP
+if [ "$RED_DEV" != "" -a "$RED_TYPE" = "DHCP" ]; then
+	/sbin/iptables -A block -p tcp --source-port 67 --destination-port 68 \
+		-i $RED_DEV -j ACCEPT
+	/sbin/iptables -A block -p tcp --source-port 68 --destination-port 67 \
+		-i $RED_DEV -j ACCEPT
+	/sbin/iptables -A block -p udp --source-port 67 --destination-port 68 \
+		-i $RED_DEV -j ACCEPT
+	/sbin/iptables -A block -p udp --source-port 68 --destination-port 67 \
+		-i $RED_DEV -j ACCEPT
+fi
+
+# All ICMP on ppp too.
+/sbin/iptables -A block -p icmp -i ppp0 -j ACCEPT
+/sbin/iptables -A block -p icmp -i ippp0 -j ACCEPT
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A block -p icmp -i $RED_DEV -d $RED_NETADDRESS/$RED_NETMASK -j ACCEPT
+fi
+
+/sbin/iptables -A INPUT -j block
+
+# last rule in INPUT chain is for logging.
+/sbin/iptables -A INPUT -j LOG
+/sbin/iptables -A INPUT -j REJECT
+
+# Allow packets that we know about through.
+/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -o ppp0 -j ACCEPT
+/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -i ppp0 -j ACCEPT
+/sbin/iptables -A FORWARD -m state --state NEW -o ppp0 -j ACCEPT
+/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -o ippp0 -j ACCEPT
+/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -i ippp0 -j ACCEPT
+/sbin/iptables -A FORWARD -m state --state NEW -o ippp0 -j ACCEPT
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -o $RED_DEV -j ACCEPT
+	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -i $RED_DEV -j ACCEPT
+	/sbin/iptables -A FORWARD -m state --state NEW -o $RED_DEV -j ACCEPT
+fi
+ 
+# Port forwarding
+/sbin/iptables -N portfwf
+/sbin/iptables -A FORWARD -j portfwf
+ 
+/sbin/iptables -N dmzholes
+
+# Allow GREEN to talk to ORANGE.
+if [ "$ORANGE_DEV" != "" ]; then
+	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $GREEN_DEV -m state \
+		--state ESTABLISHED,RELATED -j ACCEPT
+	/sbin/iptables -A FORWARD -i $GREEN_DEV -o $ORANGE_DEV -m state \
+		--state NEW,ESTABLISHED,RELATED -j ACCEPT
+	# dmz pinhole chain.  setdmzholes setuid prog adds rules here to allow
+	# ORANGE to talk to GREEN.
+	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $GREEN_DEV -j dmzholes
+fi
+
+# VPN
+/sbin/iptables -A FORWARD -i $GREEN_DEV -o ipsec0 -j ACCEPT
+/sbin/iptables -A FORWARD -i ipsec0 -o $GREEN_DEV -j ACCEPT
+
+/sbin/iptables -A FORWARD -j LOG
+/sbin/iptables -A FORWARD -j REJECT
+
+# NAT table
+/sbin/iptables -t nat -F
+/sbin/iptables -t nat -X
+
+# squid
+/sbin/iptables -t nat -N squid
+/sbin/iptables -t nat -N jmpsquid
+/sbin/iptables -t nat -A jmpsquid -d 10.0.0.0/8 -j RETURN
+/sbin/iptables -t nat -A jmpsquid -d 172.16.0.0/12 -j RETURN
+/sbin/iptables -t nat -A jmpsquid -d 192.168.0.0/16 -j RETURN
+/sbin/iptables -t nat -A jmpsquid -d 169.254.0.0/16 -j RETURN
+/sbin/iptables -t nat -A jmpsquid -j squid
+/sbin/iptables -t nat -A PREROUTING -i $GREEN_DEV -j jmpsquid
+
+# Masqurade
+/sbin/iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
+/sbin/iptables -t nat -A POSTROUTING -o ippp0 -j MASQUERADE
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -t nat -A POSTROUTING -o $RED_DEV -j MASQUERADE
+fi
+
+# Port forwarding
+/sbin/iptables -t nat -N portfw
+/sbin/iptables -t nat -A PREROUTING -j portfw

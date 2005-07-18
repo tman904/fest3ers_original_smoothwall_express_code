@@ -1,0 +1,18 @@
+include ../Makefile.conf
+
+PACKAGE = dnsmasq
+VERSION =  2.22
+
+BASE_URL = http://www.thekelleys.org.uk/dnsmasq/
+
+CONFIGURE = yes
+INSTALL = yes
+
+configure: $(DIR)/
+	@true
+
+install: compile
+	@(cd $(DIR); \
+        install -s -D src/dnsmasq $(PKG_ROOT)/$(PKG_DIR)/bin/dnsmasq);
+
+include ../Makefile.rules

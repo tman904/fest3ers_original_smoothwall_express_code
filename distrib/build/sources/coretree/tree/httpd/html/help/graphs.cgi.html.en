@@ -1,0 +1,18 @@
+<P><FONT SIZE='3'><B><U>Traffic Graphs</U></B></FONT></P>
+
+<P>This page contains a collection of graphs detailing traffic conditions
+as recorded by the server.  Initially these graphs indicate traffic on the
+<b>GREEN</b>, <b>ORANGE</b> (If configured) and <b>RED</b> interfaces 
+over the last day.
+</p>
+
+<p>Clicking on one of the graphs itself will then further detail traffic
+and this interface, covering the last day, week, month and year.
+</p>
+
+<p>For all graphs, graphs show traffic on the given interface, in
+both the incoming and outgoing directions.  The maximum, minimum,
+current and average speed per second is also displayed on a graph by
+graph basis.  The data for these graphs is correlated every 30 
+minutes.</p>
+

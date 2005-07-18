@@ -1,0 +1,22 @@
+include ../Makefile.conf
+
+PACKAGE = vim
+VERSION = 6.2
+
+EXTENSION = .tar.bz2
+
+BASE_URL = ftp://ftp.vim.org/pub/vim/unix/
+
+DIR = vim62
+
+INSTALL = yes
+
+install: compile
+	@(cd $(DIR); \
+	install -s -D src/vim $(PKG_ROOT)/$(PKG_DIR)/bin/vim; \
+	install -d runtime/ $(PKG_ROOT)/$(PKG_DIR)/share/vim; \
+	cp -R runtime/* $(PKG_ROOT)/$(PKG_DIR)/share/vim; \
+	install runtime/vimrc_example.vim $(PKG_ROOT)/$(PKG_DIR)/share/vim/vimrc; )
+	@(cd $(PKG_ROOT)/$(PKG_DIR)/bin; ln -s vim vi);
+
+include ../Makefile.rules

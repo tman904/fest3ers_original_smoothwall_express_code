@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "Mounting root read/write"
+mount -n -o remount,rw /
+echo "Clearing mtab"
+>/etc/mtab
+echo "Marking root as mounted"
+mount -f /
+
+echo "Mounting proc" 
+mount /proc
+
+echo >/proc/sys/kernel/printk "1 4 1 7"

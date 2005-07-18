@@ -1,0 +1,63 @@
+#!/bin/sh
+
+. /var/smoothwall/ethernet/settings
+
+. /etc/rc.d/rc.firewall.down
+
+echo "Restarting DNS proxy"
+/usr/bin/setuids/restartdnsproxy
+
+if [ "$1" != "NOTGREEN" ]; then
+	if [ "$GREEN_DEV" != "" ]; then
+		ifconfig $GREEN_DEV $GREEN_ADDRESS netmask $GREEN_NETMASK broadcast $GREEN_BROADCAST up
+	else
+		echo "WARNING: No driver set for GREEN"
+	fi
+fi
+
+if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" ]; then
+	if [ "$ORANGE_DEV" != "" ]; then
+		ifconfig $ORANGE_DEV $ORANGE_ADDRESS netmask $ORANGE_NETMASK broadcast $ORANGE_BROADCAST up
+	else
+		echo "WARNING: No driver set for ORANGE"
+	fi
+fi
+
+if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" ]; then
+	if [ "$RED_DEV" != "" ]; then
+		if [ "$RED_TYPE" = "DHCP" ]; then
+			rm /etc/dhcpc/*.info -f
+			/usr/sbin/dhcpcd -h $RED_DHCP_HOSTNAME -R $RED_DEV -c /etc/rc.d/rc.updatered
+		elif [ "$RED_TYPE" = "STATIC" ]; then
+			ifconfig $RED_DEV $RED_ADDRESS netmask $RED_NETMASK broadcast $RED_BROADCAST up
+			if [ "$DEFAULT_GATEWAY" != "" ]; then
+				route add default gw $DEFAULT_GATEWAY
+			fi
+		else
+			ifconfig $RED_DEV 1.1.1.1 netmask 255.255.255.0 broadcast 1.1.1.255 up
+		fi
+	else
+		echo "WARNING: No driver set for RED"
+	fi
+fi
+
+echo "Setting up firewall"
+. /etc/rc.d/rc.firewall.up
+echo "Setting DMZ pinholes"
+/usr/bin/setuids/setdmzholes
+echo "Setting up advanced networking features"
+/usr/bin/setuids/setadvnet
+echo "Setting up IP block"
+/usr/bin/setuids/setipblock
+
+if [ "$RED_DEV" != "" -a "$RED_TYPE" == "STATIC" ]; then
+	/etc/rc.d/rc.updatered
+fi
+
+echo "Setting external access rules"
+/usr/bin/setuids/setxtaccess
+
+#echo "Setting up IP accounting"
+#/usr/bin/smoothwall/writeipac.pl
+#/usr/sbin/fetchipac -S -c yes
+#/usr/sbin/fetchipac

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+. /var/smoothwall/ethernet/settings
+
+if [ "$1" != "NOTGREEN" ]; then
+	ifconfig $GREEN_DEV down 2> /dev/null
+fi
+ifconfig $ORANGE_DEV down 2> /dev/null
+ifconfig $RED_DEV down 2> /dev/null
+if [ -e "/etc/dhcpc/dhcpcd-eth0.pid" ]; then
+	kill `cat /etc/dhcpc/dhcpcd-eth0.pid`
+fi
+if [ -e "/etc/dhcpc/dhcpcd-eth1.pid" ]; then
+	kill `cat /etc/dhcpc/dhcpcd-eth1.pid`
+fi
+if [ -e "/etc/dhcpc/dhcpcd-eth2.pid" ]; then
+	kill `cat /etc/dhcpc/dhcpcd-eth2.pid`
+fi
+/usr/bin/setuids/restartdnsproxy
+rm -f /var/smoothwall/red/*
+/etc/rc.d/rc.vpn.down

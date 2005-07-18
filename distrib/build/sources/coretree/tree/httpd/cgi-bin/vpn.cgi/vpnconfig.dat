@@ -1,0 +1,351 @@
+#!/usr/bin/perl
+#
+# SmoothWall CGIs
+#
+# This code is distributed under the terms of the GPL
+#
+# (c) The SmoothWall Team
+
+require '/var/smoothwall/header.pl';
+
+my %cgiparams;
+my $filename = "${swroot}/vpn/config";
+
+$cgiparams{'ENABLED'} = 'off';
+$cgiparams{'COMPRESSION'} = 'off';
+&getcgihash(\%cgiparams);
+
+my $errormessage = '';
+
+if ($cgiparams{'ACTION'} eq $tr{'add'})
+{
+	unless ($cgiparams{'NAME'} =~ /^[a-zA-Z]+$/) {
+		$errormessage = $tr{'name must only contain characters'}; }
+	unless (&validip($cgiparams{'LEFT'})) { 
+		$errormessage = $tr{'left ip is invalid'}; }
+	unless (&validipandmask($cgiparams{'LEFT_SUBNET'})) {
+		$errormessage = $tr{'left subnet is invalid'}; }
+	unless (&validip($cgiparams{'RIGHT'})) { 
+		$errormessage = $tr{'right ip is invalid'}; }
+	unless (&validipandmask($cgiparams{'RIGHT_SUBNET'})) {
+		$errormessage = $tr{'right subnet is invalid'}; }
+	if ($cgiparams{'SECRET1'} ne $cgiparams{'SECRET2'}) {
+		$errormessage = $tr{'passwords do not match'}; }
+	unless ($cgiparams{'SECRET1'}) {
+		$errormessage = $tr{'password not set'}; } 
+	open(FILE, $filename) or die 'Unable to open config file.';
+	my @current = <FILE>;
+	close(FILE);
+	unless ($errormessage)
+	{
+		open(FILE,">>$filename") or die 'Unable to open config file.';
+		flock FILE, 2;
+		print FILE "$cgiparams{'NAME'},$cgiparams{'LEFT'},$cgiparams{'LEFT_SUBNET'},$cgiparams{'RIGHT'},$cgiparams{'RIGHT_SUBNET'},$cgiparams{'SECRET1'},$cgiparams{'ENABLED'},$cgiparams{'COMPRESSION'}\n";
+		close(FILE);
+		undef %cgiparams;
+		&writeipsecfiles();
+	}
+}
+if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
+{
+	open(FILE, "$filename") or die 'Unable to open config file.';
+	my @current = <FILE>;
+	close(FILE);
+
+	my $count = 0;
+	my $id = 0;
+	my $line;
+	foreach $line (@current)
+	{
+		$id++;
+		if ($cgiparams{$id} eq "on") {
+			$count++; }
+	}
+	if ($count == 0) {
+		$errormessage = $tr{'nothing selected'}; }
+	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
+		$errormessage = $tr{'you can only select one item to edit'}; }
+	unless ($errormessage)
+	{
+		open(FILE, ">$filename") or die 'Unable to open config file.';
+		flock FILE, 2;
+		my $id = 0;
+		foreach $line (@current)
+		{
+			$id++;
+			unless ($cgiparams{$id} eq "on") {
+				print FILE "$line"; }
+			elsif ($cgiparams{'ACTION'} eq $tr{'edit'})
+			{
+				chomp($line);
+				my @temp = split(/\,/,$line);
+				$cgiparams{'NAME'} = $temp[0];
+				$cgiparams{'LEFT'} = $temp[1];
+				$cgiparams{'LEFT_SUBNET'} = $temp[2];
+				$cgiparams{'RIGHT'} = $temp[3];
+				$cgiparams{'RIGHT_SUBNET'} = $temp[4];
+				$cgiparams{'SECRET1'} = $temp[5];
+				$cgiparams{'SECRET2'} = $temp[5];
+				$cgiparams{'ENABLED'} = $temp[6];
+				$cgiparams{'COMPRESSION'} = $temp[7];
+			}
+		}
+		close(FILE);
+		&writeipsecfiles();
+	}
+}
+if ($cgiparams{'ACTION'} eq $tr{'export'})
+{
+	print "Content-type: unknown/unknown\n\n";
+	open (FILE, "$filename");
+	my @current = <FILE>;
+	close (FILE);
+	print @current;
+	exit;
+}
+if ($cgiparams{'ACTION'} eq $tr{'import'})
+{
+        if (length($cgiparams{'FH'}) > 1)
+	{
+                open(FILE, ">$filename") or $errormessage = 
+			'Could not open config file for writing';
+		flock FILE, 2;
+		binmode(FILE);
+                print FILE $cgiparams{'FH'};
+		close (FILE);
+		&writeipsecfiles();
+	}
+}
+if ($cgiparams{'ACTION'} eq '')
+{
+        $cgiparams{'ENABLED'} = 'on';
+	$cgiparams{'COMPRESSION'} = 'off';
+}
+
+my %checked;
+$checked{'ENABLED'}{'off'} = '';
+$checked{'ENABLED'}{'on'} = '';
+$checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
+
+$checked{'COMPRESSION'}{'off'} = '';
+$checked{'COMPRESSION'}{'on'} = '';
+$checked{'COMPRESSION'}{$cgiparams{'COMPRESSION'}} = 'CHECKED';
+
+&showhttpheaders();
+
+&openpage('VPN configuration - Connections', 1, '', 'vpn');
+
+&showvpnsection();
+
+&openbigbox('100%', 'LEFT');
+
+&alertbox($errormessage);
+
+print <<END
+<!--
+<CENTER>
+<TABLE BORDER='0' CELLPADDING='0' CELLSPACING='0'>
+<TR><TD VALIGN='top' ALIGN='CENTER'>
+<A HREF='http://www.smoothwall.co.uk/'><IMG
+ SRC='/ui/assets/3.5/img/inlinepromo.smoothtunnel.png' BORDER='0'
+ ALT='Visit smoothwall.co.uk for enhanced commercial SmoothWall products'></A>
+</TD></TR>
+</TABLE>
+</CENTER>
+ -->
+END
+;
+
+
+print "<FORM METHOD='POST'>\n";
+
+&openbox('100%', 'LEFT', $tr{'add a new connection'});
+print <<END
+<TABLE WIDTH='100%'>
+<TR>
+<TD WIDTH='25%' CLASS='base'>$tr{'namec'}</TD>
+<TD WIDTH='25%'><INPUT TYPE='TEXT' NAME='NAME' VALUE='$cgiparams{'NAME'}'></TD>
+<TD WIDTH='25%'>&nbsp;</TD>
+<TD WIDTH='25%'>&nbsp;</TD>
+<TR>
+<TD CLASS='base'>$tr{'leftc'}</TD>
+<TD><INPUT TYPE=TEXT NAME='LEFT' VALUE='$cgiparams{'LEFT'}'></TD>
+<TD CLASS='base'>$tr{'left subnetc'}</TD>
+<TD><INPUT TYPE=TEXT NAME='LEFT_SUBNET' VALUE='$cgiparams{'LEFT_SUBNET'}'></TD>
+</TR>
+<TR>
+<TD CLASS='base'>$tr{'rightc'}</TD>
+<TD><INPUT TYPE=TEXT NAME='RIGHT' VALUE='$cgiparams{'RIGHT'}'></TD>
+<TD CLASS='base'>$tr{'right subnetc'}</TD>
+<TD><INPUT TYPE=TEXT NAME='RIGHT_SUBNET' VALUE='$cgiparams{'RIGHT_SUBNET'}'></TD>
+</TR>
+<TR>
+<TD CLASS='base'>$tr{'secretc'}</TD>
+<TD COLSPAN='4'>
+<INPUT TYPE='PASSWORD' NAME='SECRET1' VALUE='$cgiparams{'SECRET1'}' SIZE='40'></TD>
+</TR>
+<TR>
+<TD CLASS='base'>$tr{'again'}</TD>
+<TD COLSPAN='4'>
+<INPUT TYPE='PASSWORD' NAME='SECRET2' VALUE='$cgiparams{'SECRET2'}' SIZE='40'></TD>
+</TR>
+</TABLE>
+<TABLE WIDTH='100%'>
+<TR>
+<TD WIDTH='33%' ALIGN='CENTER'>Compression:<INPUT TYPE='CHECKBOX' NAME='COMPRESSION' $checked{'COMPRESSION'}{'on'}></TD>
+<TD WIDTH='33%' ALIGN='CENTER'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
+<TD WIDTH='33%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
+</TR>
+</TABLE>
+END
+;
+&closebox();
+
+&openbox('100%', 'LEFT', $tr{'current connections'});
+
+print "<TABLE WIDTH='100%'>\n";
+
+my $id = 0;
+open(RULES, "$filename") or die 'Unable to open config file.';
+while (<RULES>)
+{
+	my $egif; my $cgif;
+	$id++;
+	chomp($_);
+	my @temp = split(/\,/,$_);
+	my $stars = $temp[5];
+	$stars =~ s/./\*/g;
+	if ($id % 2) {
+		print "<TR BGCOLOR='$table1colour'>\n"; }
+	else {
+		print "<TR BGCOLOR='$table2colour'>\n"; }
+ 	if ($temp[6] eq 'on') { $egif = 'on.gif'; }
+                else { $egif = 'off.gif'; }
+ 	if ($temp[7] eq 'on') { $cgif = 'on.gif'; }
+                else { $cgif = 'off.gif'; }
+print <<END
+<TD>
+<TABLE WIDTH='100%'>
+<TR>
+<TD WIDTH='25%'><B>$tr{'namec'}</B> $temp[0]</TD>
+<TD WIDTH='25%'><B>$tr{'enabled'} </B><IMG VALIGN='middle' SRC='/ui/assets/3.5/img/$egif'></TD>
+<TD WIDTH='25%'><B>Compression: </B><IMG VALIGN='middle' SRC='/ui/assets/3.5/img/$cgif'></TD>
+<TD WIDTH='25%'>&nbsp;</TD>
+</TR>
+<TR>
+<TD><B>$tr{'leftc'}</B> $temp[1]</TD>
+<TD><B>$tr{'left subnetc'}</B> $temp[2]</TD>
+<TD><B>$tr{'rightc'} </B>$temp[3]</TD>
+<TD><B>$tr{'right subnetc'} </B>$temp[4]</TD>
+</TR>
+<TR>
+<TD COLSPAN='3'><B>$tr{'secretc'}</B> $stars</TD>
+<TD><B>$tr{'markc'} </B><INPUT TYPE='CHECKBOX' NAME='$id'></TD>
+</TR>
+</TABLE>
+</TD></TR>
+END
+	;
+}
+close(RULES);
+
+print <<END
+</TABLE>
+<TABLE WIDTH='100%'>
+<TR>
+<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'remove'}'></TD>
+<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'edit'}'></TD>
+</TR>
+</TABLE>
+END
+;
+&closebox();
+
+&openbox('100%', 'LEFT', $tr{'import and export'});
+print <<END
+<DIV ALIGN='CENTER'>
+<TABLE WIDTH='80%'>
+<TR>
+<TD ALIGN='LEFT'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'export'}'></TD>
+</FORM>
+<FORM METHOD='POST' ENCTYPE='multipart/form-data'>
+<TD ALIGN='RIGHT'><INPUT TYPE='FILE' NAME='FH' SIZE='30'>
+<INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'import'}'></TD>
+</FORM>
+</TR>
+</TABLE>
+</DIV>
+END
+;
+&closebox();
+
+&alertbox('add','add');
+
+&closebigbox();
+
+&closepage();
+
+sub writeipsecfiles()
+{
+	my %conn;
+
+	open(FILE, "$filename") or die 'Unable to open config file.';
+	my @current = <FILE>;
+	close(FILE);
+
+	open(CONF, ">${swroot}/vpn/ipsec.conf") or die 'unable to open conf file';
+	open(SECRETS, ">${swroot}/vpn/ipsec.secrets") or die 'unabe to open secrets file.';
+	flock CONF, 2;
+	flock SECRETS, 2;
+	print CONF "config setup\n";
+	print CONF "\tinterfaces=%defaultroute\n";
+	print CONF "\tklipsdebug=none\n";
+	print CONF "\tplutodebug=none\n";
+	print CONF "\tplutoload=%search\n";
+	print CONF "\tplutostart=%search\n";
+	print CONF "\tplutowait=no\n";
+	print CONF "\tuniqueids=yes\n";
+	print CONF "\n";
+	print CONF "conn %default\n";
+	print CONF "\tkeyingtries=0\n";
+	print CONF "\n";
+
+	my $id = 0;
+	my $line;
+	foreach $line (@current)   
+ 	{
+		chomp($line);
+		my @temp = split(/\,/,$line);
+		$conn{'NAME'} = $temp[0];
+		$conn{'LEFT'} = $temp[1];
+		$conn{'LEFT_SUBNET'} = $temp[2];   
+		$conn{'RIGHT'} = $temp[3];      
+		$conn{'RIGHT_SUBNET'} = $temp[4];   
+		$conn{'SECRET'} = $temp[5];
+		$conn{'ENABLED'} = $temp[6];
+		$conn{'COMPRESSION'} = $temp[7];		
+
+		if ($conn{'ENABLED'} eq 'on')
+		{
+			print SECRETS "$conn{'LEFT'} $conn{'RIGHT'} : PSK \"$conn{'SECRET'}\"\n";
+
+			print CONF "conn $conn{'NAME'}\n";
+			print CONF "\tleft=$conn{'LEFT'}\n";
+			print CONF "\tleftsubnet=$conn{'LEFT_SUBNET'}\n";
+			print CONF "\tleftnexthop=%defaultroute\n";
+			print CONF "\tright=$conn{'RIGHT'}\n";
+			print CONF "\trightsubnet=$conn{'RIGHT_SUBNET'}\n";
+			print CONF "\trightnexthop=%defaultroute\n";
+			if ($conn{'COMPRESSION'} eq 'on') {
+				print CONF "\tcompress=yes\n"; }
+			else {
+				print CONF "\tcompress=no\n"; }
+			print CONF "\tauto=start\n";
+			print CONF "\n";
+		}
+		$id++;
+	}
+
+	close(CONF);
+	close(SECRETS);
+}

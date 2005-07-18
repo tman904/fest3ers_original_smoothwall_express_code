@@ -1,0 +1,86 @@
+AuthName "Restricted"
+AuthType Basic
+AuthUserFile /var/smoothwall/auth/users
+
+<Files pppsetup.cgi>
+require user admin
+</Files>
+<Files modem.cgi>
+require user admin
+</Files>
+<Files changepw.cgi>
+require user admin
+</Files>
+<Files remote.cgi>
+require user admin
+</Files>
+<Files dhcp.cgi>
+require user admin
+</Files>
+<Files proxy.cgi>
+require user admin
+</Files>
+<Files portfw.cgi>
+require user admin
+</Files>
+<Files shutdown.cgi>
+require user admin
+</Files>
+<Files logs.cgi>
+require user admin
+</Files>
+<Files vpnmain.cgi>
+require user admin
+</Files>
+<Files dmzholes.cgi>
+require user admin
+</Files>
+<Files xtaccess.cgi>
+require user admin
+</Files>
+<Files alcateladslfw.cgi>
+require user admin
+</Files>
+<Files updates.cgi>
+require user admin
+</Files>
+<Files shell.cgi>
+require user admin
+</Files>
+<Files ids.cgi>
+require user admin
+</Files>
+<Files ddns.cgi>
+require user admin
+</Files>
+<Files status.cgi>
+require user admin
+</Files>
+<Files graphs.cgi>
+require user admin
+</Files>
+<Files ipinfo.cgi>
+require user admin
+</Files>
+<Files time.cgi>
+require user admin
+</Files>
+<Files advstatus.cgi>
+require user admin
+</Files>
+<Files iptools.cgi>
+require user admin
+</Files>
+<Files advnet.cgi>
+require user admin
+</Files>
+<Files ipblock.cgi>
+require user admin
+</Files>
+<Files backup.img>
+require user admin
+</Files>
+
+<Files dial.cgi>
+require user admin dial
+</Files>

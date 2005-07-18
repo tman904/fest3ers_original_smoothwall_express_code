@@ -1,0 +1,31 @@
+#!/tools/bin/sh
+
+# Creates some files as needed to start the building of the tree, eg:
+# /dev/null etc.
+
+# Basic parts of the working tree
+mkdir -pv /bin /sbin /tmp /root /usr /var /proc /etc /dev
+
+# Permissions
+chmod -v 700 /root
+chmod -v 1777 /tmp
+
+# Fill dirs with ready made files
+cp -avR /build/tree /
+
+# Temporary stuff - just needed to compile up the working tree
+ln -sv /tools/bin/sh /bin/sh
+ln -sv /tools/bin/pwd /bin/pwd
+ln -sv /tools/bin/cat /bin/cat
+mknod /dev/null c 1 3
+
+# Fill out some vital files using the final coretree
+cp -avR sources/coretree/tree/etc/passwd /etc/passwd
+cp -avR sources/coretree/tree/etc/group /etc/group
+cp -avR sources/coretree/tree/etc/ld.so.conf /etc/ld.so.conf
+echo "Using nameserver 1: $DNS_SERVER1 2: $DNS_SERVER2 for build"
+echo >/etc/resolv.conf "nameserver $DNS_SERVER1"
+if [ "$DNS_SERVER2" != "" ]; then
+	echo >>/etc/resolv.conf "nameserver $DNS_SERVER2"
+fi
+ln -sv /usr/share/zoneinfo/Europe/London /etc/localtime

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+DIR=$1
+
+if [ "$DIR" = "" ]; then
+	echo "Usage: $0 <root dir>"
+	exit 1;
+fi
+
+cd $DIR
+
+chmod ug-s . -R
+
+exit 0

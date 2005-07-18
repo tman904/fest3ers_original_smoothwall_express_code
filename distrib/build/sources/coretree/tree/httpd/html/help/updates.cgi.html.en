@@ -1,0 +1,25 @@
+<P><FONT SIZE='3'><B><U>Updates</U></B></FONT></P>
+
+<P>This page is used to inform you of updates and also enables you to apply
+them to your SmoothWall system.</P>
+
+<P><B>Installed Updates:</B> This is simply a list of updates you have
+already installed on your system for informational purposes.</P>
+
+<P><B>Available Updates:</B> Your available updates list is updated every
+time you dial up (PPP users). You may also refresh the list manually by
+using the <B>Refresh Updates List</B> button at the bottom of the updates
+page. This list is also updates each time SmoothWall connects. Once the list
+is populated you will see a brief description of the patch and on the end an
+<B>info</B> link. Please click this link to be taken to the patch's
+information page, where a download link will be provided.</P>
+
+<P><B>Installing an Update:</B> Once you have downloaded the official update from the
+SmoothWall website, you may use the form on the <B>Updates</B> page to upload and
+apply it to your system. (PLEASE NOTE: Opera does not handle uploads
+properly, please use another browser for uploading updates to your SmoothWall.)
+Simply use the <B>Browse</B> button to select the saved file on your hard disk and
+then click the <B>Upload</B> button to apply the patch. Once done, you will see
+the patch in the "installed" list. PLEASE NOTE: Only official patches will work
+with this system. Some patches may automatically reboot your SmoothWall machine,
+read the instructions carefully before installing ANY patch!</P>

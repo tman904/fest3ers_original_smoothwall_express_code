@@ -1,0 +1,18 @@
+#!/usr/bin/perl
+
+my $rev = $ARGV[0];
+my $dir = $ARGV[1];
+
+if ($rev eq '') {
+	print "Usage: makedifflist REV [DIR]\n"; exit; }
+
+my @output = `cvs rdiff -s -r $rev expresscore/distrib/build/sources/$dir`;
+
+foreach (@output)
+{
+	if (/^File (.*) (changed|is)/)
+	{
+		$_ = $1; s|^expresscore/distrib/build/sources/$dir||g;
+		print ".$_\n";
+	}
+}

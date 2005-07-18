@@ -1,0 +1,28 @@
+include ../Makefile.conf
+
+PACKAGE = whois
+VERSION = 3.4
+
+EXTENSION = .tgz
+
+BASE_URL = http://whois.bw.org/dist/
+
+TARBALL = $(PACKAGE)-current
+
+DIR = $(PACKAGE)-$(VERSION)
+
+CONFIGURE = yes
+COMPILE = yes
+INSTALL = yes
+
+configure: $(DIR)/
+	@true
+	
+compile: configure
+	@true
+	
+install: compile
+	@install -D $(DIR)/whois $(PKG_ROOT)/usr/bin/whois
+	@install -D $(DIR)/tld.conf $(PKG_ROOT)/etc/whois/tld.conf
+	
+include ../Makefile.rules

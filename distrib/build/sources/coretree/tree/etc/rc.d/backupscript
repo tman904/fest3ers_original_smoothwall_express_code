@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+require '/var/smoothwall/header.pl';
+
+chdir '/var/smoothwall';
+
+system('/bin/tar', '-zcf', 'backup/backup.dat', 'adsl', 'advnet', 'auth',
+	'ddns', 'dhcp', 'dmzholes', 'ethernet', 'ipblock', 'isdn',
+	'main/hostname.conf', 'main/settings', 'main/proxy',
+	'modem', 'portfw', 'ppp', 'proxy', 'remote', 'snort',
+	'time', 'vpn', 'xtaccess');
+
+open (FILE, '>backup/version');
+print FILE "$version\n";
+close (FILE);
+

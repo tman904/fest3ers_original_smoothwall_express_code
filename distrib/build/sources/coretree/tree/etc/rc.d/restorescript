@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+
+require '/var/smoothwall/header.pl';
+
+chdir "/var/smoothwall";
+
+if (open (FILE, 'restore/version'))
+{
+	$backupversion = <FILE>;
+	chomp $backupversion;
+	close (FILE);
+}
+else
+{
+	print "This is not a backup disk!\n";
+	exit 0;
+}
+
+if ($backupversion =~ /^2.0/)
+{
+	&cleanup('adsl', 'advnet', 'auth', 'ddns', 'dhcp', 'dmzholes',
+		'ethernet', 'ipblock', 'isdn', 'modem', 'portfw',
+		'ppp', 'proxy', 'remote', 'snort', 'time' ,'vpn', 'xtaccess');
+	system('/bin/tar', '-zxf', 'restore/backup.dat');
+}
+else
+{
+	print "Unknown backup version $backupversion.\n";
+}
+
+unlink 'restore/backup.dat';
+unlink 'restore/version';
+
+exit;
+
+sub cleanup
+{
+	my $dir;
+
+	while ($dir = pop) 
+	{
+		system('/bin/rm', '-rf', "${dir}.old");
+		system('/bin/mv', $dir, "${dir}.old");
+	}
+}

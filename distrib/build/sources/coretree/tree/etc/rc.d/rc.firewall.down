@@ -1,0 +1,12 @@
+#!/bin/sh
+
+iptables -F
+iptables -X
+
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
+
+iptables -A INPUT -j LOG
+iptables -A FORWARD -j LOG
+iptables -A OUTPUT -j LOG

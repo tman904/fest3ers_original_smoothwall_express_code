@@ -1,0 +1,32 @@
+#!/bin/sh
+
+DIR=$1
+
+if [ "$DIR" = "" ]; then
+	echo "Usage: $0 <root dir>"
+	exit 1;
+fi
+
+cd $DIR
+
+for I in \
+	include \
+	man \
+	info \
+	share/man \
+	share/info \
+	share/doc \
+	examples \
+; do \
+	rm -rf usr/$I usr/ssl/$I \ 
+done
+find \( -name "*.a" -or -name "*.la" \) -exec rm -f '{}' \;
+
+echo "Stripping binaries ..."
+strip bin/* sbin/* 2>/dev/null
+strip usr/bin/* usr/sbin/* 2>/dev/null
+strip usr/ssl/bin/* usr/ssl/sbin/* 2> /dev/null
+strip lib/* usr/lib/* usr/ssl/lib/* 2>/dev/null
+strip usr/lib/smoothwall/* usr/lib/smoothwall/alerts/* 2>/dev/null
+
+exit 0;

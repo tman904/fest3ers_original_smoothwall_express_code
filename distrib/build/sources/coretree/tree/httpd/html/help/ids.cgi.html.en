@@ -1,0 +1,6 @@
+<P><FONT SIZE='3'><B><U>Intrusion Detection System</U></B></FONT></P>
+
+<P>This page is used to activate/deactivate the IDS (Intrustion Detection
+System) mechanism. To <B>Enable</B>, tick the box and click save, to
+disable untick the box and click <B>Save</B>. Logs are available from the
+IDS logviewer in real time, which is accessed from the <B>Logs</B> page.</P>

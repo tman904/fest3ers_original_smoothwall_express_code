@@ -1,0 +1,40 @@
+#!/bin/sh
+
+. /var/smoothwall/adsl/settings
+
+if [ "$ENABLED" = "on" ]; then
+	/sbin/modprobe n_hdlc
+	sleep 5
+	echo "Device type is $DEVICE"
+	if [ "$DEVICE" = "ALCATEL" ]; then
+		/usr/bin/setuids/alcateladslfw
+	fi
+	if [ "$DEVICE" = "ECI" ]; then
+		/usr/bin/smoothwall/ecifw.sh
+	fi
+	if [ "$DEVICE" = "USR" ]; then
+		/etc/bin/smoothwall/writeadiconfig
+		/sbin/modprobe adiusbadsl
+		sleep 5
+		/usr/bin/adictrl
+		COUNT=0; SYNC=1;
+		while [ $COUNT -lt 12 -a $SYNC -eq 1 ]; do
+			/bin/grep -q "Modem is operational" /proc/adimodem
+			SYNC=$?
+			echo "Waiting for line sync..."
+			sleep 5
+			let COUNT=$COUNT+1
+		done
+		if [ $SYNC -eq 1 ]; then
+			echo "WARNING: Line did not sync"
+		fi
+		/sbin/ifconfig ADIModem 1.1.1.1 up
+	fi
+	if [ "$DEVICE" = "UNICORN" ]; then
+		/sbin/modprobe unicorn_pci_atm
+		/sbin/modprobe pppoatm
+		sleep 5
+	fi
+else
+	echo "No USB ADSL enabled"
+fi

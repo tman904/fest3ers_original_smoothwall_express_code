@@ -1,0 +1,23 @@
+<P><FONT SIZE='3'><B><U>Advanced Status</U></B></FONT></P>
+
+<P>This page shows, from top to bottom:</P>
+
+<P><B>Memory:</B> This is the output of the 'free' command. It shows the
+amount of memory used for programs, disk buffers or cache.</P>
+
+<P><B>Disk usage:</B> This shows how the filesystems of the SmoothWall box are set up.
+This is the output of the Linux command df -m.</P>
+
+<P><B>Uptime and users:</B> This is the output of the 'w' command. Shown is
+the number of users logged in (via ssh or the console).</P>
+
+<P><B>Interfaces:</B> This is the output of the 'ifconfig' command. This
+shows network interface information.</P>
+
+<P><B>Routing:</B> This shows the routing table and is the output of the
+Linux command route -n.</P>
+
+<P><B>Loaded modules:</B> These are the modules being used by your Network
+Cards and the IP masquerading modules, etc.</P>
+
+<P><B>Kernel version:</B> This shows the Linux kernel version in use.</P>

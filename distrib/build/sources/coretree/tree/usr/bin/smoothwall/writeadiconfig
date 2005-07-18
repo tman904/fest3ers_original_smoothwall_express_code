@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+
+require '/var/smoothwall/header.pl';
+
+my @current;
+my %adslsettings;
+my $vpi; my $vci;
+
+&readhash("${swroot}/adsl/settings", \%adslsettings);
+
+open(FILE, '/etc/analog/usradslpots.conf.template');
+@current = <FILE>;
+close(FILE);
+open(FILE, '>/etc/analog/usradslpots.conf');
+foreach $line (@current) { print FILE $line; }
+$vpi = sprintf("%08X", $adslsettings{'VPI'});
+$vci = sprintf("%08X", $adslsettings{'VCI'});
+print FILE "VPI=$vpi\n";
+print FILE "VCI=$vci\n";
+close(FILE);

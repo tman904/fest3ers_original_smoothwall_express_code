@@ -1,0 +1,13 @@
+include ../Makefile.conf
+
+PACKAGE = HTML-Tagset
+VERSION = 3.03
+
+BASE_URL = http://search.cpan.org/CPAN/authors/id/S/SB/SBURKE/
+
+CONFIGURE = yes
+
+configure: $(DIR)/
+	@(cd $(DIR); perl Makefile.PL -n ) 
+
+include ../Makefile.rules

@@ -1,0 +1,117 @@
+include ../Makefile.conf
+include ../Makefile.versions
+
+KERNEL_DIR = $(SOURCES_DIR)/kernel/linux
+IPTABLES_DIR = $(SOURCES_DIR)/iptables/iptables-$(IPTABLES_VER)
+
+PACKAGE = linux
+VERSION = $(KERNEL_VERSION)
+
+PATCH_O_MATIC_VER = 20040621
+UNICORN_VER = 0.7.6
+USR_VER = 1.08
+
+COMPILER = /opt/gcc-3.2.3/bin/gcc
+
+download:
+	@$(DL_CMD) http://www.uk.kernel.org/pub/linux/kernel/v2.4/linux-$(KERNEL_VER).tar.bz2
+	@$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
+	@$(DL_CMD) http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
+	@$(DL_CMD) http://sotonfs/unicorn-$(UNICORN_VER).tar.gz
+	@$(DL_CMD) http://download.smoothwall.org/archive/source/2.0/b4/usr-sureconnect.tar.gz
+
+prepare: download
+	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
+	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
+	@tar -jxvf $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
+	@tar -zxvf $(DOWNLOADS_DIR)/unicorn-$(UNICORN_VER).tar.gz
+	@mkdir usr-sureconnect
+	@tar -zxvf $(DOWNLOADS_DIR)/usr-sureconnect.tar.gz -C usr-sureconnect
+
+	@rm -f linux
+	@ln -s linux-$(KERNEL_VER) linux
+
+	@make -C linux mrproper
+
+	@cp ../kernel.config linux/.config
+
+	@make -C linux CC=$(COMPILER) clean dep
+
+	@make -C $(FREESWAN_TYPE)-$(FREESWAN_VER) CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) precheck verset insert
+
+apply-pom: prepare
+	@(export KERNEL_DIR=$(KERNEL_DIR); \
+	export IPTABLES_DIR=$(IPTABLES_DIR); \
+	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
+	patch -p1 <../../kernel-patches/patch-o-matic-pptp-fix.patch; \
+	./runme --batch h323-conntrack-nat; \
+	./runme --batch pptp-conntrack-nat;)
+
+compile-kernel: apply-pom
+	@make -C linux CC=$(COMPILER) clean oldconfig menuconfig dep bzImage modules
+
+compile-unicorn: compile-kernel
+	@make -C unicorn/unicorn_pci CC=$(COMPILER) HPATH=$(KERNEL_DIR)/include
+
+compile-usr-sureconnect: compile-kernel
+	@make -C usr-sureconnect/ADI_LINUX CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR)
+
+package-kernel: compile-kernel
+	@mkdir $(PKG_ROOT)
+	@(cd $(PKG_ROOT); \
+	make -C $(KERNEL_DIR) CC=$(COMPILER) INSTALL_MOD_PATH=$(PKG_ROOT) modules_install; \
+	mkdir -p boot; \
+	cp $(KERNEL_DIR)/arch/i386/boot/bzImage boot/vmlinuz-$(KERNEL_VER); \
+	cp $(KERNEL_DIR)/System.map boot/System.map-$(KERNEL_VER); \
+	rm -f lib/modules/$(KERNEL_VER)/build; \
+	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config.new)
+
+package-unicorn: compile-unicorn
+	@mkdir $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_atm.o \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_eth.o \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+
+package-usr-sureconnect: compile-usr-sureconnect
+	@cp $(SOURCES_DIR)/kernel/usr-sureconnect/ADI_LINUX/adiusbadsl.o \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/usb
+
+build-tarball: package-kernel package-unicorn package-usr-sureconnect
+	@(cd $(PKG_ROOT); \
+	tar -zcvf $(TARGET_DIR)/smoothwall-kernel-$(KERNEL_VER).tar.gz .; \
+	tar -zxvf $(TARGET_DIR)/smoothwall-kernel-$(KERNEL_VER).tar.gz -C /);
+
+clean:
+	@rm -f linux
+	@rm -rf linux-$(KERNEL_VER)
+	@rm -rf $(FREESWAN_TYPE)-$(FREESWAN_VER)
+	@rm -rf patch-o-matic-ng-$(PATCH_O_MATIC_VER)
+	@rm -rf unicorn
+	@rm -rf usr-sureconnect
+	@rm -rf $(PKG_ROOT)
+
+all: clean build-tarball
+
+packageinfo.html:
+	@echo "<li><span style='font-size:large;'>$(PACKAGE) $(VERSION)</span><br>" >>/tmp/packageinfo.html
+	@cp -avR $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2 /tmp/downloads
+	@cp -avR $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz /tmp/downloads
+	@cp -avR $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2 /tmp/downloads
+	@cp -avR $(DOWNLOADS_DIR)/unicorn-$(UNICORN_VER).tar.gz /tmp/downloads
+	@cp -avR $(DOWNLOADS_DIR)/usr-sureconnect.tar.gz /tmp/downloads
+	@echo "Kernel Download: <a href='http://www.uk.kernel.org/pub/linux/kernel/v2.4/linux-$(KERNEL_VER).tar.bz2'>http://www.uk.kernel.org/pub/linux/kernel/v2.4/linux-$(KERNEL_VER).tar.bz2</a>" >>/tmp/packageinfo.html
+	@echo "(<a href='downloads/linux-$(KERNEL_VER)'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
+	@echo "Openswan: <a href='http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz'>http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz</a>" >>/tmp/packageinfo.html
+	@echo "(<a href='downloads/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
+	@echo "Netfilter Download: <a href='http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2'>http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2</a>" >>/tmp/packageinfo.html
+	@echo "(<a href='downloads/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
+	@echo "Unicoron Local mirror: <a href='downloads/unicorn-$(UNICORN_VER).tar.gz'>unicorn-$(UNICORN_VER).tar.gz</a>" >>/tmp/packageinfo.html
+	@echo "(<a href='downloads/usr-sureconnect.tar.gz'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
+	@echo "Patches:<br>" >>/tmp/packageinfo.html
+	@echo "<ul>" >>/tmp/packageinfo.html
+	@(for PATCH in patch-o-matic-pptp-fix.patch; do \
+		echo "<li><a href='downloads/$$PATCH'>$$PATCH</a>" >>/tmp/packageinfo.html; \
+		cp -avR ../kernel-patches/$$PATCH /tmp/downloads; \
+	done) 
+	@echo "</ul>" >>/tmp/packageinfo.html

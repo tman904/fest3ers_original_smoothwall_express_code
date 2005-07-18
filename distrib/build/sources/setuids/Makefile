@@ -1,0 +1,28 @@
+include ../Makefile.conf
+
+PACKAGE = setuids
+VERSION = 0.0
+
+PROGS = setdmzholes setportfw setxtaccess restartdhcp restartsnort \
+	restartsquid smoothiedeath smoothierebirth alcateladslfw \
+	installpackage ipsecctrl restartdnsproxy restartssh \
+	setadvnet setipblock restartupnp
+
+compile:
+	@make -C $(COMPILE_DIR)
+
+install: compile
+	@(for PROG in $(PROGS); do \
+		install -D $(COMPILE_DIR)/$$PROG $(PKG_ROOT)/usr/bin/setuids/$$PROG; \
+	done;)
+
+all: install
+	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C $(PKG_ROOT) .
+
+clean:
+	@make -C $(COMPILE_DIR) clean
+	@rm -rf $(PKG_ROOT)
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz
+
+download:
+	@true

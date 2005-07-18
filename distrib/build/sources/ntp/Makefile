@@ -1,0 +1,15 @@
+include ../Makefile.conf
+
+PACKAGE = ntp
+VERSION = 4.2.0
+
+CONFIG_OPTS = --enable-linuxcaps
+
+BASE_URL = http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/
+
+INSTALL = yes
+
+install: compile
+	@install -D $(COMPILE_DIR)/ntpdate/ntpdate $(PKG_ROOT)/usr/sbin/ntpdate 
+
+include ../Makefile.rules

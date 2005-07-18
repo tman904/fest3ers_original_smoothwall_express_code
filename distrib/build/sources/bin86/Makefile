@@ -1,0 +1,18 @@
+include ../Makefile.conf
+
+PACKAGE = bin86
+VERSION = 0.16.16
+
+BASE_URL = http://www.cix.co.uk/~mayday/dev86/
+
+CONFIGURE = yes
+INSTALL = yes
+
+configure: $(DIR)/
+	@true
+
+install: compile
+	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)/bin $(PKG_ROOT)/$(PKG_DIR)/man/man1
+	@make -C $(COMPILE_DIR) PREFIX=$(PKG_ROOT)/$(PKG_DIR) install
+
+include ../Makefile.rules

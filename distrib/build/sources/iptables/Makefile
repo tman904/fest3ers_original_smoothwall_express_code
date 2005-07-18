@@ -1,0 +1,26 @@
+include ../Makefile.conf
+include ../Makefile.versions
+
+PACKAGE = iptables
+VERSION =  $(IPTABLES_VER)
+
+EXTENSION = .tar.bz2
+
+BASE_URL = http://www.netfilter.org/files
+
+CONFIGURE = yes
+COMPILE = yes
+INSTALL = yes
+
+configure: $(DIR)/
+	@true
+
+compile: configure
+	@make -C $(COMPILE_DIR) KERNEL_DIR=$(SOURCES_DIR)/kernel-up/linux PREFIX=/$(PKG_DIR)
+
+install: compile
+	@make -C $(DIR) KERNEL_DIR=$(SOURCES_DIR)/kernel-up/linux PREFIX=$(PKG_ROOT)/$(PKG_DIR) install
+	@mkdir $(PKG_ROOT)/sbin
+	@(cd $(PKG_ROOT)/sbin; ln -s /usr/sbin/iptables)
+
+include ../Makefile.rules

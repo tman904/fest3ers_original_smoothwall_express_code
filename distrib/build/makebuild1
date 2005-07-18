@@ -1,0 +1,70 @@
+#!/bin/sh
+
+# makebuild1
+#
+# (c) SmoothWall Ltd 2004
+
+source functions
+
+set +h
+umask 022
+LC_ALL=POSIX
+PATH=/tools/bin:/bin:/usr/bin/:/sbin:/usr/sbin
+export PATH LC_ALL
+
+export DNS_SERVER1 DNS_SERVER2
+
+buildenv()
+{
+	docommand "$1" "make -C sources/$1 BUILDENV=$2 clean install"
+}
+
+if [ ! -e "/tools" ]; then
+	echo "/tools symlink not present.  Please create before starting the build porcess."
+	echo "Script aborted."
+	exit
+fi
+
+if [ "$DNS_SERVER1" = "" ]; then
+	echo "DNS servers not configured.  Script aborted."
+	exit
+fi
+
+if [ ! -e "build1done" ]; then
+
+buildenv binutils 1
+buildenv gcc 1
+buildenv kernel-headers 1
+buildenv glibc 1
+docommand "adjusting 1" "make -C sources/binutils BUILDENV=1 adjust"
+buildenv tcl 1
+buildenv expect 1
+buildenv dejagnu 1
+buildenv gcc 2
+buildenv binutils 2
+docommand "adjusting 2" "make -C sources/binutils BUILDENV=2 adjust"
+buildenv gawk 1
+buildenv coreutils 1
+buildenv bzip2 1
+buildenv gzip 1
+buildenv diffutils 1
+buildenv findutils 1
+buildenv make 1
+buildenv grep 1
+buildenv sed 1
+buildenv gettext 1
+buildenv ncurses 1
+buildenv patch 1
+buildenv tar 1
+buildenv texinfo 1
+buildenv bash 1
+buildenv wget 1
+buildenv util-linux 1
+buildenv joe 1
+buildenv flex 1
+
+touch build1done
+
+fi
+
+chroot .. /build/makebuild2
