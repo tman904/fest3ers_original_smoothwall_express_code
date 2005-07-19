@@ -12,6 +12,16 @@ modprobe ppp_async
 echo "Setting up loopback"
 ifconfig lo localhost up
 
+echo "Loading SPI modules"
+modprobe ip_tables
+modprobe iptable_filter
+modprobe iptable_nat
+modprobe ipt_LOG
+modprobe ipt_REJECT
+modprobe ipt_REDIRECT
+modprobe ipt_MASQUERADE
+modprobe ipt_state
+
 echo "Loading MASQ helper modules"
 modprobe ip_conntrack_irc
 modprobe ip_nat_irc
