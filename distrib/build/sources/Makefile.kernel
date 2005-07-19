@@ -48,7 +48,7 @@ apply-pom: prepare
 	./runme --batch pptp-conntrack-nat;)
 
 compile-kernel: apply-pom
-	@make -C linux CC=$(COMPILER) clean oldconfig menuconfig dep bzImage modules
+	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
 
 compile-unicorn: compile-kernel
 	@make -C unicorn/unicorn_pci CC=$(COMPILER) HPATH=$(KERNEL_DIR)/include
