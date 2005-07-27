@@ -2,7 +2,7 @@
 
 # Please set to working nameservers.  DNS_SERVER2 is optional
 #DNS_SERVER1 = 192.168.0.254
-DNS_SERVER1 = 192.168.72.1
+DNS_SERVER1 = 192.168.72.253
 
 default:
 	@echo "Please use one of:"
