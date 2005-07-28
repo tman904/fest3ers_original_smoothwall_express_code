@@ -6,37 +6,34 @@
 
 $|=1; # line buffering
 
-$version = '2.0';
-$revision = 'p0';
+# Work out some various details from the various system files.
+# such as fixes number etc.
+
+$version = '3.0';
+$revision = "fixes" . `cut -d\\\| -f 1 /var/smoothwall/patches/installed | sort | awk 'END { gsub("^0*", ""); printf("%s", \$0); }'`; 
 $webuirevision = 'ui-3.6.1';
+
+# some system wide (yuck) global variables.  not pretty, but make things easier.
+
+my @menu;
+my $span = 0;
+
+# some constant defaults.
+
 $swroot = '/var/smoothwall';
-$pagecolour = '#ffffff';
-#$tablecolour = '#a0a0a0';
-$tablecolour = '#ffffff';
-$bigboxcolour = '#ffffff';
-$boxcolour = '#ffcc66';
-$bordercolour = '#000000';
-$table1colour = '#ff9900';
-$table2colour = '#ffee88';
-$colourred = '#a01010';
-$colourorange = '#ff9900';
-$colourgreen = '#10a010';
-$colourlightred = '#ff6060';
-$colourlightgreen = '#60ff60';
-$primarynavsel = '#ff9900';
-$primarynavdesel = '#ffee99';
-$secondarynav = '#ff9900';
-$graphblankcolour = '#ffee99';
-$graphnominalcolour = '#ffaa00';
-$graphwarningcolour = "#ff6600";
-$graphcriticalcolour = "#ff0000";
-$graphalertwarning = 70;
-$graphalertcritical = 90;
-$bevel = 1;
-$bevellight = '#c0c0c0';
-$bevelshadow = '#404040';
-$bevelmiddle = '#808080';
 $thisscript = basename($ENV{'SCRIPT_NAME'});
+
+# customised settings (such as languages)
+
+&readhash("${swroot}/main/settings", \%settings);
+$language = $settings{'LANGUAGE'};
+
+if ($language =~ /^(\w+)$/) {$language = $1;}
+require "${swroot}/langs/base.pl";
+require "${swroot}/langs/${language}.pl";
+# text for alertboxen is only available in en, so hardcode it for now
+require "${swroot}/main/ui/alertboxes.en.pl";
+
 %alertbox = (
 	bgerror => $pagecolour,
 	fonterror => '#FF0000',
@@ -48,19 +45,8 @@ $thisscript = basename($ENV{'SCRIPT_NAME'});
 	fontadd => '#FFFFFF',
 	textadd => 'add'
 );
-$pagewidth = 760;
-$helpwidth = 125;
-$pagewidthlesshelp = $pagewidth - $helpwidth;
-$viewsize = 150;
 
-&readhash("${swroot}/main/settings", \%settings);
-$language = $settings{'LANGUAGE'};
-
-if ($language =~ /^(\w+)$/) {$language = $1;}
-require "${swroot}/langs/base.pl";
-require "${swroot}/langs/${language}.pl";
-# text for alertboxen is only available in en, so hardcode it for now
-require "${swroot}/main/ui/alertboxes.en.pl";
+# Display the page HTTP header
 
 sub showhttpheaders
 {
@@ -70,200 +56,122 @@ sub showhttpheaders
 	print "Content-type: text/html\n\n";
 }
 
+# Show the top section menu, this has the side effect of populating
+# the @menu variable (which is ordered accordingly) with the pages
+# or subsections for the section we are looking for.
+
 sub showmenu
 {
 	$scriptname = $_[0];
 
-	# scriptlist and sectionlist are tied together and are in order
-	# with each other
-	@scriptlist = ("/cgi-bin/index.cgi", "/cgi-bin/status.cgi", "/cgi-bin/proxy.cgi", "/cgi-bin/portfw.cgi", "/cgi-bin/vpnmain.cgi", "/cgi-bin/logs.cgi/log.dat", "/cgi-bin/ipinfo.cgi", "/cgi-bin/updates.cgi");
-	@sectionlist = ( "control", "about your smoothie", "services", "networking", "vpn", "logs", "tools", "maintenance" );
-
-	$read = 0;
+	# load the list of sections from the relevant location.
+        opendir(DIR, "/var/smoothwall/menu/");
+        my @files = grep {!/\./} readdir(DIR);
 
 	print <<END
-<table border=0 cellpadding=0 cellspacing=0 cellmargin=0>
+<tr>
+	<td class='mainmenu'>
+<table style='float: right;'>
 <tr>
 END
 	;
+	my $first = "";
 
-	while ( $read lt scalar($#sectionlist) + 1 ) { 
-		if ( $scriptname eq $sectionlist[$read] ) {
-			$tabcolour = $primarynavsel;
-		} else { 
-			$tabcolour = $primarynavdesel;
+	foreach my $file ( sort @files ){
+		if ( -d "/var/smoothwall/menu/$file" ){
+			# this is a section ....
+		        opendir(DIR2, "/var/smoothwall/menu/$file/");
+		        my @pages = grep {/\.list/} readdir(DIR2);
+
+			my $section = "no";
+			my @tempmenu;
+
+			foreach my $page ( sort @pages ){
+				my $detail;
+				open $detail, "</var/smoothwall/menu/$file/$page" or next;
+				my ( $title, $link ) = split /:/, <$detail>;
+				chomp $link;
+				my ( $menu, $pos ) = ( $file =~ /(\d{2})(\d{2}).*/ );
+				my $active;
+				my ( $link2 ) = ( $link =~/([^\/]*)$/ );
+				if ( $link2 eq $thisscript ){
+					$section = "yes";
+					$active = "true" 
+				}
+				push @tempmenu, { 'title' => $title, 'href' => $link, 'active' => $active };
+			}
+
+			if ( scalar @pages > 0 ){
+				my ( $section_title ) = ( $file =~/\d{4}_(.*)/ );
+
+				if ( $section eq "yes" ){
+					@menu = @tempmenu;
+					print "<td>$first<a class='activemenu' href='/cgi-bin/$menu[ 0 ]->{'href'}'>$section_title</a></td>";
+				} else {
+					print "<td>$first<a class='menu' href='/cgi-bin/$tempmenu[ 0 ]->{'href'}'>$section_title</a></td>";
+				}
+			}
+
+			$first = " | ";
 		}
-		$sectionname = $sectionlist[$read];
-		$scriptlink = $scriptlist[$read];
-		print <<END
-	<td width=7><img src="/ui/assets/3.5/img/null.gif" width="7" height="1" alt="&nbsp;"></td>
-
-	<td bgcolor="$tabcolour" align="center"><img
- src="/ui/assets/3.5/img/null.gif" width="50" height="3" alt=""><br>&nbsp; <a href="$scriptlink">$sectionname</a> &nbsp;<br><img src="/ui/assets/3.5/img/null.gif" width="50" height="3" alt=""></td>
-END
-		;
-		$read = $read + 1;
 	}
 
 	print <<END
-</tr></table>
+</tr></table></td>
+</tr>
+<tr>
+	<td colspan='2' class='quicklink'>
+		<!-- Quicklink Section -->
+		<a href='/cgi-bin/shutdown.cgi'>$tr{'ssshutdown'}</a> | <a href="javascript:displayHelp('$thisscript');" title="This will popup a new window with the requested help file">help</a> <img src="/ui/img/help.gif" alt="">
+	</td>
+</tr>
+
+
+<!-- Create the top menu -->
+
+<tr>
+	<td colspan='2'>
+	<br/>
 END
 	;
 
+	showsection( @menu );
+
+	return;
 }
 
-sub subsectionstart
+sub showsection
 {
+	my @menu = @_;
 	print <<END
-<tr><td colspan="2">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td align="left" bgcolor="$secondarynav" colspan="2">
-<table border="0" cellpadding="0" cellspacing="0">
+<table class='mainmenu'>
 <tr>
 END
-	;
-}
+;
+	my $remaining = 795;
+	
+	foreach my $item ( @menu ){
+		my $width = 8 + (8 * length( $tr{ $item->{'title'} } ));
+		if ( defined $item->{'active'} and $item->{'active'} eq "true" ){
+			print "<td class='activetab' style='width: ".( $width + 16 )."px;'><a href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a> </td>";
+		} else {
+			print "<td  class='inactivetab' style='width: ${width}px;'><a href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a> </td>";
+		}
+		$span++;
+		$remaining -= $width;
+	}
 
-sub subsectionend
-{
-	print <<END
-</table>
-<img src="/ui/assets/3.5/img/null.gif" width="50" height="5" alt=""></td>
-<tr><td valign="top" align="left"><img
- src="/ui/assets/3.5/img/nav.fadedown.gif" width="$pagewidthlesshelp"
- height="20" alt=""></td>
-<td width="$helpwidth" bgcolor="#FF9900" align="center" valign="middle">&nbsp;
-<a href="/cgi-bin/shutdown.cgi">$tr{'ssshutdown'}</a>
-<FONT COLOR='$secondarynavdesel'>|</FONT>
-<a href="javascript:displayHelp('$thisscript');"
- title="This will popup a new window with the requested help file">help</a> <img 
- src="/ui/assets/3.5/img/help.gif" alt="">&nbsp;
-</td>
-</table>
-END
-	;
-}
-
-sub subsectiontab
-{
-	$href = $_[0];
-	$linktext = $_[1];
-	$end = $_[2];
-	$scriptname = $ENV{'SCRIPT_NAME'};
-
-	$basehref = $href;
-	$basehref =~ s/\?.*$//g;
-
-	if ($scriptname eq $basehref) {
-		$startlink="<STRONG><FONT COLOR='#EEEEEE'>";
-		$endlink="</FONT></STRONG>"; }
-	else {
-		$startlink="<A HREF='$href'>";
-		$endlink="</A>"; }
-
-	$thislink = $startlink . $linktext . $endlink;
+	$span++;
 
 	print <<END
-<td align="left" bgcolor="$secondarynav"><img 
- src="/ui/assets/3.5/img/null.gif" width="50" height="5" alt=""><br>&nbsp;&nbsp;
-$thislink&nbsp;&nbsp;
+	<td width='${remaining}px;' class='endtab'>&nbsp;</td>
+	<td class='topend'></td>
+</tr>
+<tr>
+	<td class='mainbody' colspan='$span'>
 END
-	;
+;
 
-	if ($end eq '0') {
-		print " <FONT COLOR='$secondarynavdesel'>|</FONT> "; }
-
-	print <<END
-</td>
-END
-	;
-}	
-
-sub showcontrolsection
-{
-        &subsectionstart();
-	&subsectiontab('/cgi-bin/index.cgi', $tr{'sshome'}, 0);
-        &subsectiontab('/cgi-bin/credits.cgi', $tr{'sscredits'}, 1);
-        &subsectionend();
-}
-
-sub showaboutsection
-{
-	&subsectionstart();
-	&subsectiontab('/cgi-bin/status.cgi', $tr{'ssstatus'}, 0);
-	&subsectiontab('/cgi-bin/advstatus.cgi', $tr{'ssadvstatus'}, 0);
-        &subsectiontab('/cgi-bin/graphs.cgi', $tr{'sstraffic graphs'}, 1);
-	&subsectionend();
-}
-
-sub showservicessection
-{
-	&subsectionstart();
-	&subsectiontab('/cgi-bin/proxy.cgi', $tr{'ssweb proxy'}, 0);
-	&subsectiontab('/cgi-bin/dhcp.cgi', $tr{'ssdhcp'}, 0);
-	&subsectiontab('/cgi-bin/ddns.cgi', $tr{'ssdynamic dns'}, 0);
-	&subsectiontab('/cgi-bin/ids.cgi', $tr{'ssids'}, 0);
-	&subsectiontab('/cgi-bin/remote.cgi', $tr{'ssremote access'}, 0);
-	&subsectiontab('/cgi-bin/time.cgi', $tr{'sstime'}, 1);
-	&subsectionend();
-}
-
-sub shownetworkingsection
-{
-	&subsectionstart();
-	&subsectiontab('/cgi-bin/portfw.cgi', $tr{'ssport forwarding'}, 0);
-	&subsectiontab('/cgi-bin/xtaccess.cgi', $tr{'ssexternal service access'}, 0);
-	&subsectiontab('/cgi-bin/dmzholes.cgi', $tr{'ssdmz pinholes'}, 0);
-	&subsectiontab('/cgi-bin/pppsetup.cgi', $tr{'ssppp settings'}, 0);
-	&subsectiontab('/cgi-bin/ipblock.cgi', $tr{'ssip block'}, 0);
-	&subsectiontab('/cgi-bin/advnet.cgi', $tr{'ssadvanced'}, 1);
-	&subsectionend();
-}
-
-sub showvpnsection
-{
-	&subsectionstart();
-	&subsectiontab('/cgi-bin/vpnmain.cgi', $tr{'sscontrol'}, 0);
-	&subsectiontab('/cgi-bin/vpn.cgi/vpnconfig.dat', $tr{'ssconnections'}, 1);
-	&subsectionend();
-}
-
-sub showlogssection
-{
-	&subsectionstart();
-	&subsectiontab('/cgi-bin/logs.cgi/log.dat', $tr{'ssother'}, 0);
-	&subsectiontab('/cgi-bin/logs.cgi/proxylog.dat', $tr{'ssweb proxy'}, 0);
-	&subsectiontab('/cgi-bin/logs.cgi/firewalllog.dat', $tr{'ssfirewall'}, 0);
-	&subsectiontab('/cgi-bin/logs.cgi/ids.dat', $tr{'ssids'}, 1);
-	&subsectionend();
-}
-
-sub showshutdownsection
-{
-	&subsectionstart();
-	&subsectiontab('','&nbsp;',1);
-	&subsectionend();
-}
-
-sub showtoolssection
-{
-	&subsectionstart();
-	&subsectiontab('/cgi-bin/ipinfo.cgi', $tr{'ssip info'}, 0);
-	&subsectiontab('/cgi-bin/iptools.cgi', $tr{'ssip tools'}, 0);
-	&subsectiontab('/cgi-bin/shell.cgi', $tr{'ssshell'}, 1);
-	&subsectionend();
-}
-
-sub showmaintenancesection
-{
-	&subsectionstart();
-	&subsectiontab('/cgi-bin/updates.cgi', $tr{'ssupdates'}, 0);
-	&subsectiontab('/cgi-bin/modem.cgi', $tr{'ssmodem'}, 0);
-	&subsectiontab('/cgi-bin/alcateladslfw.cgi', $tr{'ssusb adsl firmware upload'}, 0);
-	&subsectiontab('/cgi-bin/changepw.cgi', $tr{'sspasswords'}, 0);
-	&subsectiontab('/cgi-bin/backup.img', $tr{'ssbackup'}, 0);
-	&subsectiontab('/cgi-bin/shutdown.cgi', $tr{'ssshutdown'}, 1);
-	&subsectionend();
 }
 
 sub openpage
@@ -276,13 +184,14 @@ sub openpage
 	if ($menu == 1) { $colspan = 2; } else { $colspan = 1; }
 
 	print <<END
-<HTML>
-<HEAD>
-$extrahead
-<TITLE>$title - SmoothWall Express</TITLE>
-<SCRIPT LANGUAGE='javascript' SRC='/ui/assets/3.5/js/script.js'></SCRIPT>
-<LINK HREF='/ui/assets/3.5/css/style.css' REL='STYLESHEET' TYPE='text/css'>
-</HEAD>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	$extrahead
+	<title>$title - SmoothWall Express</title>
+	<script language='javascript' SRC='/ui/js/script.js'></script>
+	<link href='/ui/css/style.css' rel='stylesheet' type='text/css'>
+</head>
 END
 	;
 
@@ -290,42 +199,33 @@ END
 		$currentconnection = &connectedstate();
 		$cellwidth = $pagewidth / 2;
 		print <<END
-<BODY BGCOLOR='$pagecolour' TEXT='#000000' LINK='#000000' VLINK='#000000'>
-<DIV ALIGN='CENTER'>
-<table width="$pagewidth" border="0" cellpadding="0" cellspacing="0">
-<TR HEIGHT='$bevel'>
-<TD COLSPAN='2' BGCOLOR='$bevellight'></TD>
-</TR>
-<tr><td width="$cellwidth" height="30" bgcolor="$boxcolour"><a href="/cgi-bin/credits.cgi"><img 
- src="/ui/assets/3.5/img/topleft.logo.${version}.gif"
- border="0" alt="SmoothWall Express 2.0" title="SmoothWall Express 2.0"></td>
-<td width="$cellwidth" height="30" align="right" bgcolor="$boxcolour">
-
-<table border='0' cellpadding='0' cellspacing='0'>
-<tr><td><img src="/ui/assets/3.5/img/netstatus.label.gif"
- alt="current connection status" title="current connection status"></td>
-<td><a href="/cgi-bin/index.cgi"><img 
- src="/ui/assets/3.5/img/netstatus-wee.${currentconnection}.gif"
- border="0" alt="$currentconnection" title="$currentconnection"></td></tr>
-</table>
-
-</td></tr>
-<tr><td bgcolor="#FFCC66" colspan="2">
-<img src="/ui/assets/3.5/img/null.gif" width="$pagewidth" height="5" alt=""><br>
+<body>
+<table class='main'>
+<tr>
+	<td class='logo' rowspan='2'>
+		<a href="/cgi-bin/credits.cgi"><img src="/ui/img/logo.gif" alt="SmoothWall Express $version" title="SmoothWall Express $version"></a>
+	</td><td class='header'>
+		<table>
+		<tr>
+			<td>
+				<img src="/ui/img/netstatus.label.gif" alt="current connection status" title="current connection status">
+			</td>
+			<td>
+				<a href="/cgi-bin/index.cgi"><img src="/ui/img/netstatus-wee.${currentconnection}.gif" alt="$currentconnection" title="$currentconnection">
+			</td>
+		</tr>
+		</table>
+	</td>
+</tr>
 END
 		;
 		&showmenu($thissection);
 		print <<END
-</td>
 END
 		;
 	} else { 
 		print <<END
-<BODY BGCOLOR='$pagecolour' TEXT='#000000' LINK='#000000' VLINK='#000000'
- onLoad="window.focus()">
-<DIV ALIGN='CENTER'>
-
-
+<body onLoad="window.focus()">
 END
 		;
 	}
@@ -336,144 +236,80 @@ sub closepage
 {
 	$thissection = $_[0];
 
-	# if (-e "${swroot}/red/active") {
-	#	if ( $ENV{'HTTPS'} eq "on" ) {
-	#		$sflogoproto = "https";
-	#	} else {
-	#		$sflogoproto = "http";
-	#	}
-	#	 $sflogoimg = $sflogoproto . "://sourceforge.net/sflogo.php?group_id=10366&type=1";
-	#} else {
-		$sflogoimg = "/ui/assets/3.5/img/sflogo.png";
-	#}
+	$sflogoimg = "/ui/assets/3.5/img/sflogo.png";
 
 	if ( $thissection ne "blank" ) {
 		print <<END
-</TD>
-</TR>
-</TABLE>
-</TD>
-</TR>
-</TABLE>
-</DIV>
-<DIV ALIGN='center'>
-<table width='$pagewidth' border=0 cellpadding=0 cellspacing=0 BGCOLOR='$boxcolour'>
-<tr><td valign="top" align="left" colspan="5"><img
- src="/ui/assets/3.5/img/nav.fadeup.gif" width="$pagewidth"
- height="20" alt=""></td>
-<tr><td class='headerfooterStandard' width='10' valign='top'><img src='/ui/assets/3.5/img/null.gif' height='1' width='10' alt=''></td>
-    <td align='left' colspan='3' valign='middle' nowrap>
-
-<table border=0 cellpadding=0 cellspacing=0>
-<tr><td>Produced in association with</td>
-<td>&nbsp;<a href="http://sf.net/projects/smoothwall/"><img 
-    src="$sflogoimg" width="44" height="16" border="0" valign="center"
-    alt="SourceForge.net"></a></td>
-<td>&nbsp;<a href='http://www.usr.com/'><img src='/ui/assets/3.5/img/corp/usr.png' alt='U.S. Robotics' valign='center' width="63" height="15" border='0'></a></td>
-<td>&nbsp;<a href='http://www.ftel.co.uk/'><img src='/ui/assets/3.5/img/corp/fuji.gif' alt='Fujitsu' valign='center' width="32" height="15" border='0'></td>
+	</td>
+	<td class='end'></td>
+	</tr>
+	<tr>
+		<td colspan='$span' class='bottom'></td>
+		<td class='bottomright'></td>
+	</tr>
+		<!-- End of the Main Body -->
 </table>
-
-    </td>
-    <td class='headerfooterStandard' width='10' valign='top'><img src='/ui/assets/3.5/img/null.gif' height='1' width='10' alt=''></td>
-<tr><td class='headerfooterStandard' width='10' valign='top'><img src='/ui/assets/3.5/img/null.gif' height='1' width='10' alt=''></td>
-    <td class='headerfooterStandard' align='left' valign='bottom' nowrap>
-    <font class='smallnote'>
-    express $version $revision $webuirevision<br>
-    SmoothWall&trade; is a trademark of 
-    <A HREF='http://www.smoothwall.net/'>SmoothWall Limited</A>.
-    </font>
-    </td>
-    <td class='headerfooterStandard'>&nbsp;</td>
-    <td valign=bottom class='headerfooterStandard' align=right nowrap>
-    <font class='smallnote'>
-
-    &copy; 2000 - 2003 <a href='http://smoothwall.org/team/'>The SmoothWall Team</a><br>
-<A HREF='/cgi-bin/credits.cgi'>$tr{'credits'}</A> - 
-    Portions &copy; <a href='http://smoothwall.org/sources.html'>original authors</a>
-    </font>
-    </td>
-    <td class='headerfooterStandard' width='10' valign='top'><img src='/ui/assets/3.5/img/null.gif' height='1' width='10' alt=''></td>
-<tr><td class='headerfooterStandard' width='10' valign='top'><img src='/ui/assets/3.5/img/null.gif' height='5' width='10' alt=''></td>
-<TR HEIGHT='$bevel'><TD COLSPAN='5' BGCOLOR='$bevelshadow'></TD>
-</TR>
+	<br/>
+	</td>
+</tr>
+<tr>
+	<td class='footer' colspan='2'>
+	<table class='blank'>
+	<tr>
+		<td>
+		    	<strong>SmoothWall Express $version</strong><br/>
+			SmoothWall&trade; is a trademark of <a href='http://www.smoothwall.net/'>SmoothWall Limited</a>.
+		</td>
+		<td style='text-align: right;'>
+		    	&copy; 2000 - 2005 <a href='http://smoothwall.org/team/'>The SmoothWall Team</a><br/>
+			<a href='/cgi-bin/credits.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://smoothwall.org/sources.html'>original authors</a>
+		</td>
+	</tr>
+	</table>
+	</td>
+</tr> 
 </table>
-
-</DIV>
 END
 		;
 	}
 
 	print <<END
-</BODY>
-</HTML>
+</body>
+</html>
 END
 	;
 }
 
 sub openbigbox
 {
-	$width = $_[0];
-	$align = $_[1];
-
-	print <<END
-<TABLE WIDTH='$width' CELLSPACING='0' CELLPADDING='0' BORDER='0'>
-<TR>
-<TD BGCOLOR='$bigboxcolour' COLSPAN="3" ALIGN='LEFT' VALIGN='TOP'>&nbsp;</TD>
-</TD>
-</TR>
-<TR>
-<TD WIDTH='10' BGCOLOR='$bigboxcolour'>&nbsp;</TD>
-<TD BGCOLOR='$bigboxcolour' ALIGN='$align'>
-END
-	;
 }
 
 sub closebigbox
 {
-	print <<END
-</TD><TD WIDTH='10' BGCOLOR='$bigboxcolour'>&nbsp;</TD></TR>
-<TR>
-<TD BGCOLOR='$bigboxcolour' COLSPAN="3" ALIGN='LEFT' VALIGN='TOP'>&nbsp;</TD>
-</TR>
-</TABLE>
-END
-	;
 }
 
 sub openbox
 {
-	$width = $_[0];
-	$align = $_[1];
-	$caption = $_[2];
-	$cellcolour = $_[3];
-	if ( $cellcolour eq "" ) { $cellcolour = $boxcolour; }
+	my ( $caption ) = @_;
 
 	print <<END
-<TABLE WIDTH='$width' CELLSPACING='0' CELLPADDING='0'>
-<TR HEIGHT='$bevel'>
-<TD WIDTH='100%' BGCOLOR='$bevellight'></TD>
-</TR>
-<TR>
-<TD BGCOLOR='$cellcolour'>
-<TABLE WIDTH='100%' CELLPADDING='2'>
-<TR><TD ALIGN='$align'>
+<table class='box'>
+<tr>
+	<td>
 END
 	;
-	if ($caption) { print "<B><DIV CLASS='boldbase'>$caption</DIV></B>\n"; }
+	if ($caption) { 
+		print "<span class='caption'>$caption</span>\n"; 
+	}
 }
 
 sub closebox
 {
 	print <<END
-</TD></TR>
-</TABLE>
-</TD>
-</TR>
-<TR HEIGHT='$bevel'>
-<TD BGCOLOR='$bevelshadow'></TD>
-</TR>
-</TABLE>
-<BR>
+	</td>
+</tr>
+</table>
+<br/>
 END
 	;
 }
@@ -483,7 +319,7 @@ sub alertbox
 	my $thiserror = $_[0];
 	my $additional = $_[1];
 	if ( $thiserror ne '' && $additional eq '' ) {
-		&pageinfo($alertbox{"texterror"}, "<font class='pagetitle'>" . $tr{'error messages'} . "</font><br>" . $thiserror);
+		&pageinfo($alertbox{"texterror"}, "<span>" . $tr{'error messages'} . "</span><br/>" . $thiserror);
 	} elsif ( $thiserror eq 'add' && $additional eq 'add' && $abouttext{$thisscript . "-additional"} ne '' ) {
 		&pageinfo($alertbox{"textadd"}, $abouttext{$thisscript . "-additional"});
 	} elsif ( $thiserror eq 'add' && $additional eq 'add' && $abouttext{$thisscript . "-additional"} eq '' ) {
@@ -497,34 +333,24 @@ sub pageinfo
 {
 	my $thisalerttype = $_[0];
 	my $thisboxmessage = $_[1];
-	my $localgraphic;
+
 	if ( $thisalerttype ne "error" ) {
 		$localgraphic = $thisscript;
 	}  else { 
 		$localgraphic = "error";
 	}
-	$localgraphic =~ s/\.cgi//g;
-	my $thisbgcolour = $alertbox{"bg" . $thisalerttype};
-	my $thisfontcolour = $alertbox{"font" . $thisalerttype};
 
-	print qq|
-<table border='0' cellpadding='3' cellspacing='0' width="100%">
-<tr><td valign='top' bgcolor='$thisbgcolour' width='100'><img src='/ui/assets/3.6/img/pagetitles/page-$localgraphic.png' width='100'></td>
-<td valign='top' align='left' bgcolor='$thisbgcolour'>
-<font color='$thisfontcolour'>$thisboxmessage</font>
-|;
-	print qq|</font></td></tr></table>|;
+	print <<END
+<table class='blank'>
+	<tr>
+		<td>
+			<span style='color: $thisfontcolour;'>$thisboxmessage</span>
+		</td>
+	</tr>
+</table>
+END
+;
 
-# 	&openbox('100%','LEFT','',$thisbgcolour);
-# 	print <<END
-# <table border='0' cellpadding='3' cellspacing='0'>
-# <tr><td valign='top'><img src='/ui/assets/3.5/img/alert-$thisalerttype.gif'></td>
-# <td valign='top' align='left'><font color='$thisfontcolour'>
-# END
-# 	;
-# 	print $thisboxmessage;
-# 	print "</font></td></tr></table>";
-#	&closebox;
 }
 
 sub writehash
