@@ -258,15 +258,13 @@ $checked{'ENABLE'}{$dhcpsettings{'ENABLE'}} = 'CHECKED';
 
 &openpage($tr{'dhcp configuration'}, 1, '', 'services');
 
-&showservicessection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', 'DHCP:');
+&openbox('DHCP:');
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -307,7 +305,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'add a new static assignment'});
+&openbox($tr{'add a new static assignment'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -326,7 +324,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'current static assignments'});
+&openbox($tr{'current static assignments'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -372,7 +370,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'note'});
+&openbox($tr{'note'});
 if (-e "${swroot}/dhcp/uptodate") {
 	print "<FONT CLASS='base'>$tr{'there are unsaved changes'}<FONT>\n"; }
 print "&nbsp;\n";

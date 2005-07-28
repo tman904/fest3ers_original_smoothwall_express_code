@@ -55,11 +55,10 @@ else
 }
 
 &openpage($tr{'network traffic graphs'}."$title", 1, ' <META HTTP-EQUIV="Refresh" CONTENT="300"> <META HTTP-EQUIV="Cache-Control" content="no-cache"> <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> ', 'about your smoothie');
-&showaboutsection();
 &openbigbox('100%', 'LEFT');
 &alertbox($errormessage);
 
-&openbox('100%', 'left', $tr{'network traffic graphsc'});
+&openbox($tr{'network traffic graphsc'});
 
 my $lastdata = scalar localtime(`rrdtool last /var/lib/rrd/green.rrd`);
 my $lastupdate = scalar localtime((stat("/var/lib/rrd/green.rrd"))[9]);
@@ -67,7 +66,7 @@ print "last updated $lastupdate<br>with data to $lastdata";
 
 &closebox();
 
-&openbox('100%', 'left', '');
+&openbox('');
 if ($name eq "") { print "<b>Summary network traffic graphs:</b><br><br>\n"; }
 else { print "<b>Network traffic graphs for $name interface:</b><br><br>\n"; }
 

@@ -14,38 +14,41 @@ my $needhelpwith = $ENV{'QUERY_STRING'};
 
 &openpage($tr{'help'}, 1, '', 'help');
 
-print qq|
-<a href="javascript:window.close();"><img 
- src="/ui/assets/3.5/img/help.header.png" border="0"
- alt="SmoothWall Express Online Help - click to close window"></a>
-|;
+&openbigbox();
 
-&openbigbox('100%', 'LEFT');
+&openbox('');
 
-&openbox('100%', 'LEFT', '');
+open (FILE, "/httpd/html/help/$needhelpwith.html.$language");
+my @content = <FILE>;
+close (FILE);
+print <<END
+<table>
+<tr>
+	<td class='helpheader'>
+		<a href="javascript:window.close();"><img src="/ui/img/help.footer.png" alt="SmoothWall Express Online Help - click to close window"></a>
+	</td>
+</tr>
+<tr>
+	<td>
+END
+;
 
-# my $htmlfilename = $helpfiles{$needhelpwith};
-# if ($htmlfilename eq '') {
-# 	print "Invalid section name."; }
-# else
-# {
-	open (FILE, "/home/httpd/html/help/$needhelpwith.html.$language");
-	my @content = <FILE>;
-	close (FILE);
-	print "<TABLE WIDTH='100%' CELLPADDING='8' CELLSPACING='0'><TR><TD>\n";
-	print "@content";
-	print "</TD></TR></TABLE>\n";
-# }
+print "@content";
+print <<END
+	</td>
+</tr>
+<tr>
+	<td class='helpfooter'>
+		<a href="javascript:window.close();"><img alt="Close this window" src="/ui/img/help.footer.png" border="0"></a>
+	</td>
+</tr>
+</table>
+END
+;
+
 &closebox();
 
-&alertbox('add','add');
-
 &closebigbox();
-
-print qq|
-<a href="javascript:window.close();"><img alt="Close this window"
- src="/ui/assets/3.5/img/help.footer.png" border="0"></a>
-|;
 
 &closepage('blank');
 

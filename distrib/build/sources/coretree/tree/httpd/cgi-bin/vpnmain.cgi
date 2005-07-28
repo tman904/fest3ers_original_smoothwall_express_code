@@ -54,8 +54,6 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openpage($tr{'vpn configuration main'}, 1, '', 'vpn');
 
-&showvpnsection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
@@ -78,7 +76,7 @@ END
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'global settingsc'});
+&openbox($tr{'global settingsc'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -95,7 +93,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'manual control and status'});
+&openbox($tr{'manual control and status'});
 print <<END
 <DIV ALIGN='CENTER'>
 <TABLE WIDTH='80%'>

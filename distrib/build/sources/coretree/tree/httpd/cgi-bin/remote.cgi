@@ -48,15 +48,13 @@ $checked{'ENABLE_SECURE_ADMIN'}{$remotesettings{'ENABLE_SECURE_ADMIN'}} = 'CHECK
 
 &openpage($tr{'remote access'}, 1, '', 'services');
 
-&showservicessection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'remote access2'});
+&openbox($tr{'remote access2'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>

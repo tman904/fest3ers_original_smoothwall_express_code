@@ -149,13 +149,11 @@ $checked{'ENABLE_FILTER'}{$cgiparams{'ENABLE_FILTER'}} = 'CHECKED';
 
 &openpage($tr{'proxy log viewer'}, 1, '', 'logs');
 
-&showlogssection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-&openbox('100%', 'LEFT', $tr{'settingsc'});
+&openbox($tr{'settingsc'});
 
 print <<END
 <FORM ACTION='/cgi-bin/logs.cgi/proxylog.dat' METHOD='POST'>
@@ -226,7 +224,7 @@ END
 
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'log'});
+&openbox($tr{'log'});
  
 if ($start == -1) {
         $start = $lines - $viewsize; }

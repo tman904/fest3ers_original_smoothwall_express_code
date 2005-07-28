@@ -32,15 +32,13 @@ elsif ($cgiparams{'ACTION'} eq $tr{'reboot'})
 if ($death == 0 && $rebirth == 0) {
 	&openpage($tr{'shutdown control'}, 1, '', 'maintenance');
 
-	&showmaintenancesection();
-
 	&openbigbox('100%', 'LEFT');
 
 	&alertbox($errormessage);
 
 	print "<FORM METHOD='POST'>\n";
 
-	&openbox('100%', 'LEFT', $tr{'shutdown2'});
+	&openbox($tr{'shutdown2'});
 	print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -72,8 +70,6 @@ else
 		$message = $tr{'smoothwall is rebooting'};
 	}
 	&openpage($title, 1, '', 'shutdown');
-
-	&showshutdownsection();
 
 	&openbigbox('100%', 'CENTER');
 	print <<END

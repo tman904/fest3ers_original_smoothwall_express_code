@@ -12,8 +12,6 @@ require '/var/smoothwall/header.pl';
 
 &openpage($tr{'credits'}, 1, '', 'control');
 
-&showcontrolsection();
-
 &openbigbox('100%', 'CENTER');
 
 # &alertbox($errormessage);
@@ -26,7 +24,7 @@ print <<END
 END
 ;
 
-&openbox('100%', 'CENTER', '');
+&openbox('');
 
 print <<END
 

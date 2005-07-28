@@ -122,13 +122,11 @@ if ($cgiparams{'ACTION'} eq $tr{'export'})
 
 &openpage($tr{'firewall log'}, 1, '', 'logs');
 
-&showlogssection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-&openbox('100%', 'LEFT', $tr{'settingsc'});
+&openbox($tr{'settingsc'});
 
 print <<END
 <FORM METHOD='POST'>
@@ -175,7 +173,7 @@ END
 
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'firewall log2'});
+&openbox($tr{'firewall log2'});
 print <<END
 <FORM METHOD='GET'>
 <TABLE WIDTH='100%'>

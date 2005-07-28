@@ -63,15 +63,13 @@ if ($cgiparams{'ACTION_DIAL'} eq $tr{'save'})
 
 &openpage($tr{'change passwords'}, 1, '', 'maintenance');
 
-&showmaintenancesection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'administrator user password'});
+&openbox($tr{'administrator user password'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -86,7 +84,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'dial user password'});
+&openbox($tr{'dial user password'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>

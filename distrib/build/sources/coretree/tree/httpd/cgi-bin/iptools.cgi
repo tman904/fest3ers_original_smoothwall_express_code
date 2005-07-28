@@ -26,15 +26,13 @@ $selected{'TOOL'}{$cgiparams{'TOOL'}} = 'SELECTED';
 
 &openpage($tr{'network utilities'}, 1, '', 'tools');
 
-&showtoolssection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'select tool'});
+&openbox($tr{'select tool'});
 
 print <<END
 <TABLE WIDTH='100%'>
@@ -81,7 +79,7 @@ if ($cgiparams{'ACTION'} eq $tr{'run'})
 			$hostname = gethostbyaddr($iaddr, AF_INET);
 			if (!$hostname) { $hostname = $tr{'lookup failed'}; }
 
-			&openbox('100%', 'LEFT', "${addr} (${hostname})");
+			&openbox("${addr} (${hostname})");
 			print "<PRE>\n";
 			if ($cgiparams{'TOOL'} eq 'PING') {
 				system('/usr/bin/setuids/ping', '-n', '-c', '5', $addr); }

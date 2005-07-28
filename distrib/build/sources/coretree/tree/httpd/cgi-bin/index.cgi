@@ -124,8 +124,6 @@ else
 
 &openpage($tr{'main page'}, 1, $refresh, 'control');
 
-&showcontrolsection();
-
 print <<END
 <CENTER>
 <DIV ALIGN='CENTER'>
@@ -168,7 +166,7 @@ print <<END
 END
 ;
 
-&openbox('100%', 'CENTER', '');
+&openbox('');
 
 $currentconnection = &connectedstate();
 print <<END

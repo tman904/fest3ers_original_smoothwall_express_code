@@ -156,15 +156,13 @@ my @now = localtime(time);
 
 &openpage($tr{'time settings'}, 1, '', 'services');
 
-&showservicessection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'timezonec'});
+&openbox($tr{'timezonec'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -191,7 +189,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'time and datec'});
+&openbox($tr{'time and datec'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -283,7 +281,7 @@ END
 
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'network time retrieval'});
+&openbox($tr{'network time retrieval'});
 
 my $timecount;
 my $nextupdate;
@@ -328,7 +326,7 @@ END
 
 &closebox();
 ~
-&openbox('100%', 'LEFT', $tr{'network time servers'});
+&openbox($tr{'network time servers'});
 
 print <<END
 <TABLE WIDTH='100%'>

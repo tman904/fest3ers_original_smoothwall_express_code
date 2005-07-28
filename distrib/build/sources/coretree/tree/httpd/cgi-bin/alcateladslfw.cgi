@@ -33,13 +33,11 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'})
 
 &openpage($tr{'usb adsl setup'}, 1, '', 'maintenance');
 
-&showmaintenancesection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-&openbox('100%','LEFT', $tr{'mgmt upload'});
+&openbox($tr{'mgmt upload'});
 print <<END
 $tr{'usb adsl help'}
 <P>

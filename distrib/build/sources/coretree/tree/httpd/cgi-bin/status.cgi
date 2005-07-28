@@ -38,13 +38,11 @@ $servicenames{$tr{'intrusion detection system'}} = "snort_${iface}";
 
 &openpage($tr{'status information'}, 1, '', 'about your smoothie');
 
-&showaboutsection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-&openbox('100%', 'LEFT', $tr{'services'});
+&openbox($tr{'services'});
 
 print <<END
 <DIV ALIGN='CENTER'>

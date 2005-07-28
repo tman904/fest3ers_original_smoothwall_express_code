@@ -42,15 +42,13 @@ $checked{'ENABLE_SNORT'}{$snortsettings{'ENABLE_SNORT'}} = 'CHECKED';
 
 &openpage($tr{'intrusion detection system'}, 1, '', 'services');
 
-&showservicessection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'intrusion detection system2'});
+&openbox($tr{'intrusion detection system2'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>

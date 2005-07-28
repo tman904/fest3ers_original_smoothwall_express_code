@@ -103,8 +103,6 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openpage($tr{'external access configuration'}, 1, '', 'networking');
 
-&shownetworkingsection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
@@ -126,7 +124,7 @@ END
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'add a new rule'});
+&openbox($tr{'add a new rule'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -152,7 +150,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'current rules'});
+&openbox($tr{'current rules'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>

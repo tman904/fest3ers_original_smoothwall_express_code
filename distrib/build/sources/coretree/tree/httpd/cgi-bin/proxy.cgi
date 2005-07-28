@@ -163,15 +163,13 @@ $checked{'TRANSPARENT'}{$proxysettings{'TRANSPARENT'}} = 'CHECKED';
 
 &openpage($tr{'web proxy configuration'}, 1, '', 'services');
 
-&showservicessection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'web proxyc'});
+&openbox($tr{'web proxyc'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>

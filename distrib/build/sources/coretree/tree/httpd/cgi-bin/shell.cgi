@@ -12,13 +12,11 @@ require '/var/smoothwall/header.pl';
 
 &openpage($tr{'msecure shell'}, 1, '', 'tools');
 
-&showtoolssection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-&openbox('100%', 'LEFT', $tr{'secure shellc'}, '');
+&openbox($tr{'secure shellc'}, '');
 print <<END
 <DIV ALIGN='CENTER'>
 <!-- 

@@ -12,13 +12,11 @@ require '/var/smoothwall/header.pl';
 
 &openpage($tr{'advanced status information'}, 1, '', 'about your smoothie');
 
-&showaboutsection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-&openbox('100%', 'LEFT', $tr{'memory'});
+&openbox($tr{'memory'});
 
 @echo = `/usr/bin/free -ot`;
 shift(@echo);
@@ -89,7 +87,7 @@ print qq|
 </table>|;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'disk usage'});
+&openbox($tr{'disk usage'});
 
 @echo = `df -h`;
 shift(@echo);
@@ -145,7 +143,7 @@ print qq|
 </table>|;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'inode usage'});
+&openbox($tr{'inode usage'});
 @echo = `df -i`;
 shift(@echo);
 print qq|
@@ -199,31 +197,31 @@ print qq|
 &closebox();
 
 
-&openbox('100%', 'LEFT', $tr{'uptime and users'});
+&openbox($tr{'uptime and users'});
 print "<PRE>";
 system '/usr/bin/w';
 print "</PRE>\n";
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'interfaces'});
+&openbox($tr{'interfaces'});
 print "<PRE>";
 system ('/sbin/ifconfig', '-a');
 print "</PRE>\n";
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'routing'});
+&openbox($tr{'routing'});
 print "<PRE>";
 system ('/sbin/route', '-n');
 print "</PRE>\n";
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'loaded modules'});
+&openbox($tr{'loaded modules'});
 print "<PRE>";
 system '/sbin/lsmod';
 print "</PRE>\n";
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'kernel version'});
+&openbox($tr{'kernel version'});
 print "<PRE>";
 system ('/bin/uname', '-a');
 print "</PRE>\n";

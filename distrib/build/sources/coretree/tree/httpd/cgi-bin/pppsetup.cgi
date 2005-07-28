@@ -334,15 +334,13 @@ $checked{'STAYUP'}{$pppsettings{'STAYUP'}} = 'CHECKED';
 
 &openpage($tr{'ppp setup'}, 1, '', 'networking');
 
-&shownetworkingsection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'profiles'});
+&openbox($tr{'profiles'});
 
 print <<END
 <TABLE WIDTH='100%'>
@@ -369,7 +367,7 @@ END
 
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'telephony'});
+&openbox($tr{'telephony'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -469,7 +467,7 @@ END
 
 if ($netsettings{'RED_TYPE'} eq 'PPPOE')
 {
-	&openbox('100%', 'LEFT', $tr{'pppoe settings'});
+	&openbox($tr{'pppoe settings'});
 
 print <<END
 <TABLE WIDTH='100%'>
@@ -489,7 +487,7 @@ if ($adslsettings{'ENABLED'} eq 'on')
 {
 	if ($adslsettings{'DEVICE'} eq 'ALCATEL')
 	{
-		&openbox('100%', 'LEFT', 'Alcatel USB ADSL settings:');
+		&openbox('Alcatel USB ADSL settings:');
 
 		print <<END
 <TABLE WIDTH='100%'>
@@ -513,7 +511,7 @@ END
 
 if ($isdnsettings{'ENABLED'} eq 'on')
 {
-	openbox('100%', 'LEFT', 'ISDN settings:');
+	openbox('ISDN settings:');
 	print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -528,7 +526,7 @@ END
 	&closebox();
 }
 
-&openbox('100%', 'LEFT', $tr{'authentication'});
+&openbox($tr{'authentication'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -555,7 +553,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', 'DNS:');
+&openbox('DNS:');
 print <<END
 <TABLE WIDTH='100%'>
 <TR>

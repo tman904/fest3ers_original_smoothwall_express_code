@@ -40,15 +40,13 @@ else {
 
 &openpage($tr{'ip info'}, 1, '', 'tools');
 
-&showtoolssection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'whois lookupc'});
+&openbox($tr{'whois lookupc'});
 
 print <<END
 <TABLE WIDTH='100%'>
@@ -71,7 +69,7 @@ if ($cgiparams{'ACTION'} eq $tr{'run'})
 		{
         		$hostname = gethostbyaddr(inet_aton($addr), AF_INET);
         		if (!$hostname) { $hostname = $tr{'lookup failed'}; }
-			&openbox('100%', 'LEFT', "$addr ($hostname)");
+			&openbox("$addr ($hostname)");
 			print "<PRE>\n";
 			system('/usr/bin/whois', $addr);
 			print "</PRE>\n";

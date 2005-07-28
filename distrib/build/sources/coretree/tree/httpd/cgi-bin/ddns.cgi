@@ -138,15 +138,13 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openpage($tr{'dynamic dns'}, 1, '', 'services');
 
-&showservicessection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'add a host'});
+&openbox($tr{'add a host'});
 
 print <<END
 <TABLE WIDTH='100%'>
@@ -191,7 +189,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'current hosts'});
+&openbox($tr{'current hosts'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>

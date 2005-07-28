@@ -74,15 +74,13 @@ $checked{'ENABLE_UPNP'}{$advnetsettings{'ENABLE_UPNP'}} = 'CHECKED';
 
 &openpage($tr{'advanced networking features'}, 1, '', 'networking');
 
-&shownetworkingsection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'advanced networking featuresc'});
+&openbox($tr{'advanced networking featuresc'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>

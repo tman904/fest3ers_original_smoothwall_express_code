@@ -17,8 +17,6 @@ my (%uploadsettings,$errormessage);
 
 &openpage($tr{'updates'}, 1, '', 'maintenance');
 
-&showmaintenancesection();
-
 &openbigbox('100%', 'LEFT');
 
 if ($uploadsettings{'ACTION'} eq "upload")
@@ -150,7 +148,7 @@ close(AV);
 
 &alertbox($errormessage);
 
-&openbox('100%', 'LEFT', $tr{'installed updates'});
+&openbox($tr{'installed updates'});
 
 print qq|<TABLE WIDTH='100%' BORDER='0' CELLPADDING='2 CELLSPACING='0'>
 <TR>
@@ -176,7 +174,7 @@ print qq|</TABLE>|;
 
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'available updates'});
+&openbox($tr{'available updates'});
 
 if ($av[0] ne "")
 {
@@ -202,7 +200,7 @@ else {
 
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'install new update'});
+&openbox($tr{'install new update'});
 
 print qq|
 $tr{'to install an update'}

@@ -43,15 +43,13 @@ if ($modemsettings{'ACTION'} eq $tr{'restore defaults'})
 
 &openpage($tr{'modem configuration'}, 1, '', 'maintenance');
 
-&showmaintenancesection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'modem configurationc'});
+&openbox($tr{'modem configurationc'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
