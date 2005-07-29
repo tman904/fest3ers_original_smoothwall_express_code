@@ -14,21 +14,10 @@ require '/var/smoothwall/header.pl';
 
 &openbigbox('100%', 'CENTER');
 
-# &alertbox($errormessage);
-
-print <<END
-<img src="/ui/assets/3.5/img/credits.$version.gif" 
- alt="SmoothWall Express $version"> &nbsp; <img 
- src="/ui/assets/3.5/img/netstatus.connecting.gif" alt=""
- width="100" height="87">
-END
-;
-
 &openbox('');
 
 print <<END
-
-<div align="center"><h2>SmoothWall Express 2.0</h2>
+<div align="center"><h2>SmoothWall Express $version</h2>
 <p>express $version $revision $webuirevision
 
 <table border="0" cellpadding="3" cellspacing="0" width="90%">

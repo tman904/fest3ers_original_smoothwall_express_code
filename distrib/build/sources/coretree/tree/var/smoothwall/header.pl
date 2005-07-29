@@ -31,20 +31,7 @@ $language = $settings{'LANGUAGE'};
 if ($language =~ /^(\w+)$/) {$language = $1;}
 require "${swroot}/langs/base.pl";
 require "${swroot}/langs/${language}.pl";
-# text for alertboxen is only available in en, so hardcode it for now
 require "${swroot}/main/ui/alertboxes.en.pl";
-
-%alertbox = (
-	bgerror => $pagecolour,
-	fonterror => '#FF0000',
-	texterror => 'error',
-	bgok => $pagecolour,
-	fontok => '#000000',
-	textok => 'ok',
-	bgadd => '#009933',
-	fontadd => '#FFFFFF',
-	textadd => 'add'
-);
 
 # Display the page HTTP header
 
@@ -293,6 +280,7 @@ sub openbox
 	my ( $caption ) = @_;
 
 	print <<END
+<br/>
 <table class='box'>
 <tr>
 	<td>
@@ -319,13 +307,13 @@ sub alertbox
 	my $thiserror = $_[0];
 	my $additional = $_[1];
 	if ( $thiserror ne '' && $additional eq '' ) {
-		&pageinfo($alertbox{"texterror"}, "<span>" . $tr{'error messages'} . "</span><br/>" . $thiserror);
+		&pageinfo( "error", $thiserror);
 	} elsif ( $thiserror eq 'add' && $additional eq 'add' && $abouttext{$thisscript . "-additional"} ne '' ) {
-		&pageinfo($alertbox{"textadd"}, $abouttext{$thisscript . "-additional"});
+		&pageinfo( $alertbox{"textadd"}, $abouttext{$thisscript . "-additional"});
 	} elsif ( $thiserror eq 'add' && $additional eq 'add' && $abouttext{$thisscript . "-additional"} eq '' ) {
 		# deliberately do nothing
 	} else {
-		&pageinfo($alertbox{"textok"}, $abouttext{$thisscript});
+		&pageinfo( $alertbox{"textok"}, $abouttext{$thisscript});
 	}
 }
 
@@ -334,18 +322,20 @@ sub pageinfo
 	my $thisalerttype = $_[0];
 	my $thisboxmessage = $_[1];
 
-	if ( $thisalerttype ne "error" ) {
-		$localgraphic = $thisscript;
-	}  else { 
-		$localgraphic = "error";
-	}
-
 	print <<END
 <table class='blank'>
 	<tr>
-		<td>
-			<span style='color: $thisfontcolour;'>$thisboxmessage</span>
-		</td>
+END
+;
+
+	if ( $thisalerttype ne "error" ) {
+		print "<td class='note'>$thisboxmessage</td>";
+	}  else { 
+		print "<td>[Errr]</td><td class='error'>$thisboxmessage</td>";
+	}
+
+
+print <<END
 	</tr>
 </table>
 END
