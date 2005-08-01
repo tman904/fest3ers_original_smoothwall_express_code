@@ -5,7 +5,7 @@ COMPILE = $(CC) $(CFLAGS)
 PROGS = setdmzholes setportfw setxtaccess restartdhcp restartsnort \
 	restartsquid smoothiedeath smoothierebirth alcateladslfw \
 	installpackage ipsecctrl  restartdnsproxy restartssh \
-	setadvnet setipblock restartupnp
+	setadvnet setipblock restartupnp updown
 
 all : $(PROGS)
 
@@ -31,3 +31,4 @@ alcateladslfw : alcateladslfw.c
 setadvnet : setadvnet.c
 setipblock : setipblock.c
 restartupnp : restartupnp.c
+updown : updown.c
