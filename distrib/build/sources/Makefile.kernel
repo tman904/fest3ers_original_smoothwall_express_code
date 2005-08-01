@@ -8,25 +8,25 @@ PACKAGE = linux
 VERSION = $(KERNEL_VERSION)
 
 PATCH_O_MATIC_VER = 20040621
-UNICORN_VER = 0.7.6
+UNICORN_VER = 0.9.0
 USR_VER = 1.08
 
 COMPILER = /opt/gcc-3.2.3/bin/gcc
 
 download:
-	@$(DL_CMD) http://www.uk.kernel.org/pub/linux/kernel/v2.4/linux-$(KERNEL_VER).tar.bz2
+	@$(DL_CMD) http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2
 	@$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	@$(DL_CMD) http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
-	@$(DL_CMD) http://sotonfs/unicorn-$(UNICORN_VER).tar.gz
+	@$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
 	@$(DL_CMD) http://download.smoothwall.org/archive/source/2.0/b4/usr-sureconnect.tar.gz
 
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	@tar -jxvf $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
-	@tar -zxvf $(DOWNLOADS_DIR)/unicorn-$(UNICORN_VER).tar.gz
-	@mkdir usr-sureconnect
-	@tar -zxvf $(DOWNLOADS_DIR)/usr-sureconnect.tar.gz -C usr-sureconnect
+	@tar -zxvf $(DOWNLOADS_DIR)/bast-$(UNICORN_VER).tgz
+#	@mkdir usr-sureconnect
+#	@tar -zxvf $(DOWNLOADS_DIR)/usr-sureconnect.tar.gz -C usr-sureconnect
 
 	@rm -f linux
 	@ln -s linux-$(KERNEL_VER) linux
@@ -35,9 +35,9 @@ prepare: download
 
 	@cp ../kernel.config linux/.config
 
-	@make -C linux CC=$(COMPILER) clean dep
+	@make -C linux CC=$(COMPILER) clean prepare
 
-	@make -C $(FREESWAN_TYPE)-$(FREESWAN_VER) CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) precheck verset insert
+	@make -C $(FREESWAN_TYPE)-$(FREESWAN_VER) CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) precheck verset kpatch
 
 apply-pom: prepare
 	@(export KERNEL_DIR=$(KERNEL_DIR); \
@@ -48,13 +48,14 @@ apply-pom: prepare
 	./runme --batch pptp-conntrack-nat;)
 
 compile-kernel: apply-pom
-	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
+	@make -C linux CC=$(COMPILER) clean oldconfig menuconfig dep bzImage modules
 
 compile-unicorn: compile-kernel
-	@make -C unicorn/unicorn_pci CC=$(COMPILER) HPATH=$(KERNEL_DIR)/include
+	@make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)
+	@(cd unicorn/unicorn_pci; make CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR))
 
-compile-usr-sureconnect: compile-kernel
-	@make -C usr-sureconnect/ADI_LINUX CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR)
+#compile-usr-sureconnect: compile-kernel
+#	@make -C usr-sureconnect/ADI_LINUX CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR)
 
 package-kernel: compile-kernel
 	@mkdir $(PKG_ROOT)
@@ -68,16 +69,17 @@ package-kernel: compile-kernel
 
 package-unicorn: compile-unicorn
 	@mkdir $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
-	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_atm.o \
+	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_atm.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
-	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_eth.o \
+	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_eth.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
-package-usr-sureconnect: compile-usr-sureconnect
-	@cp $(SOURCES_DIR)/kernel/usr-sureconnect/ADI_LINUX/adiusbadsl.o \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/usb
+#package-usr-sureconnect: compile-usr-sureconnect
+#	@cp $(SOURCES_DIR)/kernel/usr-sureconnect/ADI_LINUX/adiusbadsl.o \
+#		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/usb
 
-build-tarball: package-kernel package-unicorn package-usr-sureconnect
+build-tarball: package-kernel package-unicorn
+#package-usr-sureconnect
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-kernel-$(KERNEL_VER).tar.gz .; \
 	tar -zxvf $(TARGET_DIR)/smoothwall-kernel-$(KERNEL_VER).tar.gz -C /);

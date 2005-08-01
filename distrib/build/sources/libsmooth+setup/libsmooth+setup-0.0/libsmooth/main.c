@@ -230,4 +230,3 @@ int touchfile(char *filename)
 	else
 		return 1;
 }
-                                                          		

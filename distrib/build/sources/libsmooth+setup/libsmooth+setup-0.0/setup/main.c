@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
 	int loadohciresult = 0;
 	int loaduhciresult = 0;
 	int doreboot = 0;
+	struct stat statbuf;
+	
+	memset(&statbuf, 0, sizeof(struct stat));
 			
 	/* Log file/terminal stuff. */
 	if (argc >= 2)
@@ -84,9 +87,7 @@ int main(int argc, char *argv[])
 	if (automode == 0)
 	{
 		usbfail = 1;
-		if (checkformodule("usb-uhci"))
-			usbfail = 0;
-		if (checkformodule("usb-ohci"))
+		if (!stat("/proc/bus/usb/devices", &statbuf))
 			usbfail = 0;
 			
 		if (usbfail)
@@ -161,20 +162,14 @@ int main(int argc, char *argv[])
 	{
 		mysystem("/sbin/modprobe usbcore");
 		
-		loadohciresult = mysystem("/sbin/modprobe usb-ohci");
-		loaduhciresult = mysystem("/sbin/modprobe usb-uhci");
+		mysystem("/sbin/modprobe ohci_hcd");
+		mysystem("/sbin/modprobe uhci_hcd");
 		
-		if (loadohciresult && loaduhciresult)
-		{
-			fprintf(flog, "USB HCI not detected.\n");
-			usbfail = 1;
-		}
-		else
-		{
-			fprintf(flog, "USB HCI detected\n");
+		mysystem("/bin/mount -t usbdevfs none /proc/bus/usb");
+		
+		usbfail = 1;
+		if (!stat("/proc/bus/usb/devices", &statbuf))
 			usbfail = 0;
-			mysystem("/bin/mount -t usbdevfs none /proc/bus/usb");
-		}
 		
 		if (newtWinChoice(TITLE, ctr[TR_NO], ctr[TR_YES],
 			ctr[TR_RESTORE_LONG]) != 1)

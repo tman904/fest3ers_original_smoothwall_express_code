@@ -29,9 +29,9 @@ newtComponent dhcphostnameentry;
 int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	char *defaultdhcphostname)
 {
-	char *addressresult;
-	char *netmaskresult;
-	char *dhcphostnameresult;
+	const char *addressresult = NULL;
+	const char *netmaskresult = NULL;
+	const char *dhcphostnameresult = NULL;
 	struct newtExitStruct es;
 	newtComponent header;
 	newtComponent addresslabel;
@@ -166,7 +166,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 				/* No errors!  Set new values, depending on dhcp flag etc. */
 				if (typeflag)
 				{
-					replacekeyvalue(kv, dhcphostnamefield, dhcphostnameresult);
+					replacekeyvalue(kv, dhcphostnamefield, (char *) dhcphostnameresult);
 					if (strcmp(type, "STATIC") != 0)
 					{
 						replacekeyvalue(kv, addressfield, "0.0.0.0");
@@ -174,15 +174,15 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 					}
 					else
 					{
-						replacekeyvalue(kv, addressfield, addressresult);		
-						replacekeyvalue(kv, netmaskfield, netmaskresult);					
+						replacekeyvalue(kv, addressfield, (char *) addressresult);		
+						replacekeyvalue(kv, netmaskfield, (char *) netmaskresult);					
 					}
 					replacekeyvalue(kv, typefield, type);					
 				}
 				else
 				{
-					replacekeyvalue(kv, addressfield, addressresult);		
-					replacekeyvalue(kv, netmaskfield, netmaskresult);
+					replacekeyvalue(kv, addressfield, (char *) addressresult);		
+					replacekeyvalue(kv, netmaskfield, (char *) netmaskresult);
 				}
 				
 				setnetaddress(kv, colour);
@@ -335,7 +335,6 @@ struct nic nics[] = {
 	{ "DIGITAL DEPCA & EtherWORKS,DEPCA, DE100, etc", "depca" },
 	{ "Digi Intl. RightSwitch SE-X EISA and PCI", "dgrs" },
 	{ "EtherWORKS 3 (DE203, DE204 and DE205)", "ewrk3" },
-	/* { "Fujitsu FMV-181/182/183/184", "fmv18x" }, */
 	{ "HP PCLAN/plus", "hp-plus" },
 	{ "HP LAN ethernet", "hp" },
 	{ "ICL EtherTeam 16i/32" ,"eth16i" },
@@ -366,6 +365,7 @@ int probecards(char *driver, char *driveroptions)
 	int c;
 	char message[1000];
 	char commandstring[STRING_SIZE];
+	int oldniccount = countcards();
 	
 	c = 0;
 	while (nics[c].modulename)
@@ -376,17 +376,26 @@ int probecards(char *driver, char *driveroptions)
 			sprintf(message, ctr[TR_LOOKING_FOR_NIC], nics[c].description);
 			if (runcommandwithstatus(commandstring, message) == 0)
 			{
-				if (newtWinChoice(TITLE, ctr[TR_OK], ctr[TR_SKIP], 
-                                        ctr[TR_SKIP_LONG], nics[c].description) != 1)
-  				{
-  					sprintf(commandstring, "/sbin/rmmod %s", nics[c].modulename);
-  					mysystem(commandstring);
-  				}
-  				else
+				if (countcards() > oldniccount)
 				{
-					strcpy(driver, nics[c].modulename);
-					strcpy(driveroptions, "");
-					return 1;
+					if (newtWinChoice(TITLE, ctr[TR_OK], ctr[TR_SKIP], 
+						ctr[TR_SKIP_LONG], nics[c].description) != 1)
+					{
+						sprintf(commandstring, "/sbin/rmmod %s", nics[c].modulename);
+	  					mysystem(commandstring);
+  					}
+  					else
+					{
+						strcpy(driver, nics[c].modulename);
+						strcpy(driveroptions, "");
+						return 1;
+					}
+				}
+				else
+				{
+					/* A "false positive". Remove it. */
+					snprintf(commandstring, STRING_SIZE - 1, "/sbin/rmmod %s", nics[c].modulename);
+  					mysystem(commandstring);
 				}
 			}
 		}
@@ -410,6 +419,7 @@ int choosecards(char *driver, char *driveroptions)
 	char commandstring[STRING_SIZE];
 	char message[STRING_SIZE];
 	int done = 0;
+	int oldniccount = countcards();
 	
 	/* Count 'em */
 	c = 0; drivercount = 0;
@@ -453,9 +463,19 @@ int choosecards(char *driver, char *driveroptions)
 					sprintf(message, ctr[TR_LOOKING_FOR_NIC], nics[c].description);
 					if (runcommandwithstatus(commandstring, message) == 0)
 					{
-						strcpy(driver, nics[c].modulename);
-						strcpy(driveroptions, "");
-						done = 1;
+						if (countcards() > oldniccount)
+						{
+							strcpy(driver, nics[c].modulename);
+							strcpy(driveroptions, "");
+							done = 1;
+						}
+						else
+						{
+							errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
+							/* A "false positive". Remove it. */
+							snprintf(commandstring, STRING_SIZE - 1, "/sbin/rmmod %s", nics[c].modulename);
+  							mysystem(commandstring);
+  						}
 					}
 					else
 						errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
@@ -482,10 +502,11 @@ int manualdriver(char *driver, char *driveroptions)
 {
 	char *values[] = { NULL, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
-		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
+		{ { "", &values[0], 0 }, { NULL, NULL, 0 } };
 	int rc;
 	char commandstring[STRING_SIZE];
 	char *driverend;
+	int oldniccount = countcards();
 
 	strcpy(driver, "");
 	strcpy(driveroptions, "");
@@ -500,16 +521,24 @@ int manualdriver(char *driver, char *driveroptions)
 			sprintf(commandstring, "/sbin/modprobe %s", values[0]);
 			if (runcommandwithstatus(commandstring, ctr[TR_LOADING_MODULE]) == 0)
 			{
-				if ((driverend = strchr(values[0], ' ')))
+				if (countcards() > oldniccount)
 				{
-					*driverend = '\0';
-					strcpy(driver, values[0]);
-					strcpy(driveroptions, driverend + 1);
-				}				
+					if ((driverend = strchr(values[0], ' ')))
+					{
+						*driverend = '\0';
+						strcpy(driver, values[0]);
+						strcpy(driveroptions, driverend + 1);
+					}				
+					else
+					{
+						strcpy(driver, values[0]);
+						strcpy(driveroptions, "");
+					}
+				}
 				else
 				{
-					strcpy(driver, values[0]);
-					strcpy(driveroptions, "");
+					errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
+					/* Should probably remove the module here. */
 				}
 			}
 			else
@@ -533,7 +562,7 @@ int countcards(void)
 	
 	if (!(file = fopen("/proc/net/dev", "r")))
 	{
-		fprintf(flog, "Unable to open /proc/net/dev in countnics()\n");
+		fprintf(flog, "Unable to open /proc/net/dev in countcards()\n");
 		return 0;
 	}
 	

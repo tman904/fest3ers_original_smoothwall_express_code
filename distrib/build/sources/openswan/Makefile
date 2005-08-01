@@ -6,7 +6,7 @@ VERSION = $(FREESWAN_VER)
 
 BASE_URL = http://www.openswan.org/code/
 
-PATCH_FILE1 = openswan-paths.patch
+#PATCH_FILE1 = openswan-paths.patch
 #PATCH_FILE2 = openswan-script-paths.patch
 #PATCH_FILE4 = openswan-logipsecevents.patch
 

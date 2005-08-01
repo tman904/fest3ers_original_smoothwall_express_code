@@ -11,7 +11,7 @@ cdrom:
 
 images: cdrom
 	@make -C bootdisktwo
-	@make -C bootdiskone MEDIA=diskone
+#	@make -C bootdiskone MEDIA=diskone
 	@make -C bootdiskone MEDIA=cdrom
 
 cdrom/smoothwall.tgz:
@@ -49,7 +49,7 @@ cdrom/smoothwall.tgz:
 		e2fsprogs \
 		grep \
 		gzip \
-		modutils \
+		module-init-tools \
 		procinfo \
 		procps \
 		psmisc \

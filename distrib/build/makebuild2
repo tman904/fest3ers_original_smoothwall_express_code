@@ -71,7 +71,7 @@ build e2fsprogs
 build grep
 build gzip
 build make
-build modutils
+build module-init-tools
 build patch
 build procinfo
 build procps

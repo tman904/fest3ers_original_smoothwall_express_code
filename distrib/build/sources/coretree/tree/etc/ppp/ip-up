@@ -37,7 +37,7 @@ if ($dns eq 'Automatic')
 	}
 }
 
-system ('/usr/local/bin/restartdnsproxy', $primarydns, $secondarydns);
+system ('/usr/bin/setuids/restartdnsproxy', $primarydns, $secondarydns);
 
 if (open(FILE, ">${swroot}/red/iface")) { print FILE $ARGV[0]; close (FILE); }
 if (open(FILE, ">${swroot}/red/local-ipaddress"))  { print FILE $ARGV[3]; close (FILE); }
@@ -48,16 +48,16 @@ if (open(FILE, ">${swroot}/red/dns2")) { print FILE $secondarydns; close
 FILE; }
 system('/bin/touch', "${swroot}/red/active");
 
-system('/usr/local/bin/setaliases');
-system('/usr/local/bin/setportfw');
-system('/usr/local/bin/setsubnets');
+system('/usr/bin/setuids/setaliases');
+system('/usr/bin/setuids/setportfw');
+system('/usr/bin/setuids/setsubnets');
 
-system('/usr/local/bin/onlinesound');
+system('/usr/bin/sounds/onlinesound');
 
 system('/etc/rc.d/rc.machineregister');
 system('/etc/rc.d/rc.vpn.up');
 system('/etc/rc.d/rc.gettime');
-system('/usr/local/bin/updatelists.pl');
-system('/usr/local/bin/setddns.pl');
-system('/usr/local/bin/restartsnort');
-system('/usr/local/bin/restartupnp');
+system('/usr/bin/setuids/updatelists.pl');
+system('/usr/bin/setuids/setddns.pl');
+system('/usr/bin/setuids/restartsnort');
+system('/usr/bin/setuids/restartupnp');

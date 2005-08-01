@@ -18,7 +18,7 @@ default: clean
 	for FILE in \
 		ash cat chroot echo ifconfig init \
 		kill killall linuxrc mkswap mount reboot \
-		rmmod sh sleep swapoff swapon tar test umount wget; \
+		sh sleep swapoff swapon tar test umount wget; \
 	do \
 		ln -s busybox $$FILE; \
 	done; \

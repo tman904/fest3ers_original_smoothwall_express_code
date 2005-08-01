@@ -19,6 +19,8 @@ mount -n -o remount,ro /
 
 echo -ne \\a >/dev/console 
 
+/usr/bin/sounds/haltsound
+
 if [ "$1" = "halt" ]; then
 	/sbin/halt -i -d -p
 else

@@ -14,10 +14,10 @@ $cgiparams{'ACTION'} = '';
 &getcgihash(\%cgiparams);
 
 if ($cgiparams{'ACTION'} eq $tr{'dial'}) {
-	system('/etc/ppp/ppp-on') == 0
+	system('/usr/bin/setuids/updown', 'UP') == 0
 	or &log("Dial failed: $?"); }
 elsif ($cgiparams{'ACTION'} eq $tr{'hangup'}) {
-	system('/etc/ppp/ppp-off') == 0
+	system('/usr/bin/setuids/updown', 'DOWN') == 0
 	or &log("Hangup failed: $?"); }
 sleep 1;
 

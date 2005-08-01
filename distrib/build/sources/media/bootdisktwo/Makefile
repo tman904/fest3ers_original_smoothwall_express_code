@@ -31,7 +31,7 @@ bootdisktwo.img: bin lib
 	@echo "$(BASENAME)-bootdisktwo.img complete"
 bin:
 	@mkdir bin
-	@cp -aR /sbin/mke2fs /sbin/sfdisk /sbin/insmod /sbin/modprobe bin
+	@cp -aR /sbin/mke2fs /sbin/sfdisk /sbin/insmod /sbin/modprobe /sbin/rmmod bin
 	@cp -aR /build/target/install bin/install
 	@strip bin/*
 

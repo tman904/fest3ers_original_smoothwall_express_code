@@ -37,7 +37,7 @@ if ((-e "${swroot}/red/dial-on-demand") &&
 # Leave dnrd running if dial on demand for DNS
 if ((! -e "${swroot}/red/dial-on-demand") ||
     ($pppsettings{'DIALONDEMANDDNS'} ne 'on')) {
-        system('/usr/local/bin/restartdnsproxy');
+        system('/usr/bin/setuids/restartdnsproxy');
 }
 
 # If not on DoD, make sure ISDN is dead
@@ -56,4 +56,4 @@ if ((! -e "${swroot}/red/dial-on-demand") &&
 
 system('/etc/rc.d/rc.vpn.down');
 
-system('/usr/local/bin/offlinesound');
+system('/usr/bin/sounds/offlinesound');
