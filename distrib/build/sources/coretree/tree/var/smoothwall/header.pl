@@ -260,11 +260,16 @@ END
 		;
 	}
 
-	print <<END
-</body>
-</html>
+
+	if ( $thissection ne "update" ) {
+		print <<END
+	</body>
+	</html>
 END
-	;
+;
+	}
+
+
 }
 
 sub openbigbox
@@ -323,15 +328,18 @@ sub pageinfo
 	my $thisboxmessage = $_[1];
 
 	print <<END
-<table class='blank'>
-	<tr>
+<br/>
 END
 ;
 
 	if ( $thisalerttype ne "error" ) {
+		print "<table class='note'>";
+		print "<tr>";
 		print "<td class='note'>$thisboxmessage</td>";
 	}  else { 
-		print "<td>[Errr]</td><td class='error'>$thisboxmessage</td>";
+		print "<table class='warning'>";
+		print "<tr>";
+		print "<td class='warningimg'><img src='/ui/img/warning.jpg' alt='$tr{'error'}'></td><td class='warning'><strong>$tr{'error'}</strong>$thisboxmessage</td>";
 	}
 
 

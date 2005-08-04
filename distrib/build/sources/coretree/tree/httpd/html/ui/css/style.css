@@ -122,6 +122,63 @@ table.box {
 	border: solid 1px #d7d7d7;
 }
 
+table.warning {
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+	border-collapse: collapse;
+	border: red 1px solid;
+}
+
+td.warning {
+	vertical-align: middle;
+	font-size: 11pt;
+	color: red;
+	background-color: #ffe0e0;
+}
+
+td.warningimg {
+	vertical-align: middle;
+	color: red;
+	width: 70px;
+	text-align: center;
+	background-color: #ffe0e0;
+}
+
+table.note {
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+	border-collapse: collapse;
+}
+
+table.expand {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	border-collapse: collapse;
+	display: inline;
+}
+
+td.note {
+	text-align: center;
+	vertical-align: middle;
+	color: #000090;
+	font-size: 9pt;
+	font-style: italic;
+}
+
+td.expand {
+	text-align: left;
+	vertical-align: middle;
+	color: #000090;
+	font-size: 9pt;
+	font-style: italic;
+	height: 20px;
+	overflow: hidden;
+	cursor: pointer; 
+}
+
 td.helpheader {
 	background-color: #ff9900;
 	background-image: url( '/ui/img/help_header.jpg' );
@@ -217,6 +274,21 @@ td.quicklink {
 	height: 18px;
 }
 
+table.progressbar {
+	border: solid 1px #d7d7d7;
+	border-collapse: collapse;
+	width: 420px;
+}
+
+td.progressend {
+	height: 10px;
+	font-size: 8pt;	
+}
+
+td.progressbar {
+	height: 18px;
+	font-size: 8pt;	
+}
 
 a {
         font-size : 10;
