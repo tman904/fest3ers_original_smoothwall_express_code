@@ -29,7 +29,7 @@ if ($adslsettings{'DEVICE'} eq 'ECI')
 }
 
 # No output should be sent to the webclient
-#close (STDIN); close (STDOUT);
+close (STDIN); close (STDOUT);
 
 if ((! -e "${swroot}/red/active") && ($pppsettings{'DIALONDEMAND'} eq 'on'))
 {
