@@ -29,7 +29,7 @@ if ($adslsettings{'DEVICE'} eq 'ECI')
 }
 
 # No output should be sent to the webclient
-close (STDIN); close (STDOUT);
+#close (STDIN); close (STDOUT);
 
 if ((! -e "${swroot}/red/active") && ($pppsettings{'DIALONDEMAND'} eq 'on'))
 {
@@ -117,7 +117,7 @@ sub domodemdial
 	if ($pppsettings{'DIALONDEMAND'} eq 'on' &&
 		$pppsettings{'DIALONDEMANDDNS'} eq 'on') 
 	{
-		system('/usr/local/bin/restartdnsproxy', '1.2.3.4');
+		system('/usr/bin/setuids/restartdnsproxy', '1.2.3.4');
 	}
 }
 
@@ -130,41 +130,41 @@ sub doisdndial
 
 	if ($pppsettings{'COMPORT'} eq 'isdn2')
 	{
-		system('/usr/sbin/isdnctrl','addif','ippp0');
-		system('/usr/sbin/isdnctrl','addslave','ippp0','ippp1');
-		system('/usr/sbin/isdnctrl','l2_prot','ippp0','hdlc');
-		system('/usr/sbin/isdnctrl','l3_prot','ippp0','trans');
-		system('/usr/sbin/isdnctrl','encap','ippp0','syncppp');
-		system('/usr/sbin/isdnctrl','dialmax','ippp0',$pppsettings{'MAXRETRIES'});
-		system('/usr/sbin/isdnctrl','eaz','ippp0',$isdnsettings{'MSN'});
-		system('/usr/sbin/isdnctrl','addphone','ippp0','out',$pppsettings{'TELEPHONE'});
-		system('/usr/sbin/isdnctrl','huptimeout','ippp0',$seconds);
-		system('/usr/sbin/isdnctrl','l2_prot','ippp1','hdlc');
-		system('/usr/sbin/isdnctrl','l3_prot','ippp1','trans');
-		system('/usr/sbin/isdnctrl','encap','ippp1','syncppp');
-		system('/usr/sbin/isdnctrl','dialmax','ippp1',$pppsettings{'MAXRETRIES'});
-		system('/usr/sbin/isdnctrl','eaz','ippp1',$isdnsettings{'MSN'});
-		system('/usr/sbin/isdnctrl','addphone','ippp1','out',$pppsettings{'TELEPHONE'});
-		system('/usr/sbin/isdnctrl','huptimeout','ippp1',$seconds);
-		system('/usr/sbin/isdnctrl','dialmode','ippp1','auto');
+		system('/sbin/isdnctrl','addif','ippp0');
+		system('/sbin/isdnctrl','addslave','ippp0','ippp1');
+		system('/sbin/isdnctrl','l2_prot','ippp0','hdlc');
+		system('/sbin/isdnctrl','l3_prot','ippp0','trans');
+		system('/sbin/isdnctrl','encap','ippp0','syncppp');
+		system('/sbin/isdnctrl','dialmax','ippp0',$pppsettings{'MAXRETRIES'});
+		system('/sbin/isdnctrl','eaz','ippp0',$isdnsettings{'MSN'});
+		system('/sbin/isdnctrl','addphone','ippp0','out',$pppsettings{'TELEPHONE'});
+		system('/sbin/isdnctrl','huptimeout','ippp0',$seconds);
+		system('/sbin/isdnctrl','l2_prot','ippp1','hdlc');
+		system('/sbin/isdnctrl','l3_prot','ippp1','trans');
+		system('/sbin/isdnctrl','encap','ippp1','syncppp');
+		system('/sbin/isdnctrl','dialmax','ippp1',$pppsettings{'MAXRETRIES'});
+		system('/sbin/isdnctrl','eaz','ippp1',$isdnsettings{'MSN'});
+		system('/sbin/isdnctrl','addphone','ippp1','out',$pppsettings{'TELEPHONE'});
+		system('/sbin/isdnctrl','huptimeout','ippp1',$seconds);
+		system('/sbin/isdnctrl','dialmode','ippp1','auto');
 
-		system('/usr/sbin/ipppd','ms-get-dns','noipdefault','+mp',
+		system('/sbin/ipppd','ms-get-dns','noipdefault','+mp',
 			'file','/etc/ppp/ioptions',
 		 	'defaultroute','user',$pppsettings{'USERNAME'},
 			'pidfile','/var/run/ppp-smooth.pid','/dev/ippp0','/dev/ippp1');
 	}
 	else
 	{
-		system('/usr/sbin/isdnctrl','addif','ippp0');
-		system('/usr/sbin/isdnctrl','l2_prot','ippp0','hdlc');
-		system('/usr/sbin/isdnctrl','l3_prot','ippp0','trans');
-		system('/usr/sbin/isdnctrl','encap','ippp0','syncppp');
-		system('/usr/sbin/isdnctrl','dialmax','ippp0',$pppsettings{'MAXRETRIES'});
-		system('/usr/sbin/isdnctrl','eaz','ippp0',$isdnsettings{'MSN'});
-		system('/usr/sbin/isdnctrl','addphone','ippp0','out',$pppsettings{'TELEPHONE'});
-		system('/usr/sbin/isdnctrl','huptimeout','ippp0',$seconds);
+		system('/sbin/isdnctrl','addif','ippp0');
+		system('/sbin/isdnctrl','l2_prot','ippp0','hdlc');
+		system('/sbin/isdnctrl','l3_prot','ippp0','trans');
+		system('/sbin/isdnctrl','encap','ippp0','syncppp');
+		system('/sbin/isdnctrl','dialmax','ippp0',$pppsettings{'MAXRETRIES'});
+		system('/sbin/isdnctrl','eaz','ippp0',$isdnsettings{'MSN'});
+		system('/sbin/isdnctrl','addphone','ippp0','out',$pppsettings{'TELEPHONE'});
+		system('/sbin/isdnctrl','huptimeout','ippp0',$seconds);
 
-		system('/usr/sbin/ipppd','ms-get-dns','noipdefault',
+		system('/sbin/ipppd','ms-get-dns','noipdefault',
 			'file','/etc/ppp/ioptions',
 			'defaultroute','user',$pppsettings{'USERNAME'},
 			'name',$pppsettings{'USERNAME'},
@@ -174,16 +174,16 @@ sub doisdndial
 	sleep 1;
 
 	if ($pppsettings{'DIALONDEMAND'} eq 'on') {
-		system('/usr/sbin/isdnctrl','dialmode','ippp0','auto');
+		system('/sbin/isdnctrl','dialmode','ippp0','auto');
 		system('/sbin/ifconfig','ippp0','10.112.112.112','pointopoint','10.112.112.113');
 		system('/sbin/ifconfig','ippp0','-arp','-broadcast');
 		system('/sbin/route','add','default','dev','ippp0');
 		if ($pppsettings{'DIALONDEMANDDNS'} eq 'on')
 		{
-			system('/usr/local/bin/restartdnsproxy', '1.2.3.4');
+			system('/usr/bin/setuids//restartdnsproxy', '1.2.3.4');
 		}
 	} else {
-		system('/usr/sbin/isdnctrl', 'dial', 'ippp0');
+		system('/sbin/isdnctrl', 'dial', 'ippp0');
 	}
 
 	system('/usr/bin/killall', 'ibod');
@@ -231,7 +231,7 @@ sub dopppoedial
 sub doadsldialalcatel
 {
 	my @pppcommand = ('/usr/sbin/pppd', 'pty');
-	my @pppoacommand = ('/usr/local/bin/pppoa3','-vpi',$adslsettings{'VPI'},'-vci',$adslsettings{'VCI'});
+	my @pppoacommand = ('/usr/bin/pppoa3','-vpi',$adslsettings{'VPI'},'-vci',$adslsettings{'VCI'});
 
 	push(@pppcommand, "@pppoacommand");
 
@@ -260,7 +260,7 @@ sub doadsldialalcatel
 sub doadsldialeci
 {
 	my @pppcommand = ('/usr/sbin/pppd', 'pty');
-	my @pppoacommand = ('/usr/local/bin/pppoeci','-vpi',$adslsettings{'VPI'},'-vci',$adslsettings{'VCI'},
+	my @pppoacommand = ('/usr/sbin/pppoeci','-vpi',$adslsettings{'VPI'},'-vci',$adslsettings{'VCI'},
 		'-vendor', $ecisettings{'VID2'}, '-product', $ecisettings{'PID2'});
 
 	push(@pppcommand, "@pppoacommand");
@@ -290,7 +290,7 @@ sub doadsldialeci
 sub doadsldialusr
 {
 	my @pppcommand = ('/usr/sbin/pppd', 'pty');
-	my @pppoacommand = ('/usr/local/bin/pppoa');
+	my @pppoacommand = ('/usr/bin/setuids/pppoa');
 
 	push(@pppcommand, "@pppoacommand");
 
