@@ -71,7 +71,7 @@ if ($cgiparams{'ACTION'} eq $tr{'run'})
         		if (!$hostname) { $hostname = $tr{'lookup failed'}; }
 			&openbox("$addr ($hostname)");
 			print "<PRE>\n";
-			system('/usr/bin/whois', $addr);
+			system('/usr/bin/whois', '--nocgi', $addr);
 			print "</PRE>\n";
 			&closebox();
 		}
