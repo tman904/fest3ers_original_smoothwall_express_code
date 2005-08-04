@@ -15,6 +15,7 @@ install: compile
 	@(for PROG in $(PROGS); do \
 		install -D $(COMPILE_DIR)/$$PROG $(PKG_ROOT)/usr/bin/setuids/$$PROG; \
 	done;)
+	install -D /bin/date $(PKG_ROOT)/usr/bin/setuids/date
 
 all: install
 	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C $(PKG_ROOT) .

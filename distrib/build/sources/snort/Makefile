@@ -16,5 +16,6 @@ install: compile
 	@install -D $(COMPILE_DIR)/etc/unicode.map $(PKG_ROOT)/var/smoothwall/snort/unicode.map
 	@install -D $(COMPILE_DIR)/etc/classification.config $(PKG_ROOT)/var/smoothwall/snort/classification.config
 	@install -D $(COMPILE_DIR)/etc/reference.config $(PKG_ROOT)/var/smoothwall/snort/reference.config
-	
+	@chown nobody:nobody -R $(PKG_ROOT)/var/smoothwall/
+
 include ../Makefile.rules
