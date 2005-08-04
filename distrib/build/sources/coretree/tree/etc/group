@@ -12,5 +12,6 @@ floppy:x:19:
 console:x:31:
 utmp:x:22:
 squid:x:100:
+snort:x:101:
 sshd:x:102:
 ntpd:x:103:
