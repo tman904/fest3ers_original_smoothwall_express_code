@@ -82,9 +82,9 @@ if ($cgiparams{'ACTION'} eq $tr{'run'})
 			&openbox("${addr} (${hostname})");
 			print "<PRE>\n";
 			if ($cgiparams{'TOOL'} eq 'PING') {
-				system('/usr/bin/setuids/ping', '-n', '-c', '5', $addr); }
+				system('/usr/bin/ping', '-n', '-c', '5', $addr); }
 			elsif ($cgiparams{'TOOL'} eq 'TRACEROUTE') {
-				system('/usr/bin/setuids/traceroute', '-n', $addr); }
+				system('/usr/sbin/traceroute', '-n', $addr); }
 			print "</PRE>\n";
 			&closebox();
 		}
