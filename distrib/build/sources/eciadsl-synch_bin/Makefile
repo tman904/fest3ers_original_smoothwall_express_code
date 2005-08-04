@@ -10,6 +10,8 @@ TARBALL = $(PACKAGE)
 
 EXTENSION = .tar.bz2
 
+PKG_DIR = /
+
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
