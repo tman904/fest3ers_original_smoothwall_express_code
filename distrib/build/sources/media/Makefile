@@ -103,6 +103,8 @@ cdrom/smoothwall.tgz:
 		rp-pppoe \
 		ibod \
 		dhcpcd \
+		eciadsl-synch_bin \
+		eciadsl-usermode \
 		dhcp \
 		snort \
 		openswan \
