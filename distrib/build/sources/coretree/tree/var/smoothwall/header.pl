@@ -10,8 +10,10 @@ $|=1; # line buffering
 # such as fixes number etc.
 
 $version = '3.0';
+# This line sucks!
 $revision = "fixes" . `cut -d\\\| -f 1 /var/smoothwall/patches/installed | sort | awk 'END { gsub("^0*", ""); printf("%s", \$0); }'`; 
 $webuirevision = 'ui-3.6.1';
+$viewsize = 200;
 
 # some system wide (yuck) global variables.  not pretty, but make things easier.
 
