@@ -16,6 +16,7 @@ distrib:
 	@chown -R nobody:nobody distrib/var/patches
 	@chown -R 100:100 distrib/var/spool/squid
 	@chown -R 100:100 distrib/var/log/squid
+	@chown -R 101:101 distrib/var/log/snort
 	
 	@chown root:nobody distrib/usr/bin/setuids/*
 	@chmod 4750 distrib/usr/bin/setuids/*
