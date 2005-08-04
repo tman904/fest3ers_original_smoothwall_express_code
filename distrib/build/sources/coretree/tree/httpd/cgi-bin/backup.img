@@ -67,15 +67,13 @@ my %checked;
 
 &openpage($tr{'backup configuration'}, 1, '', 'maintenance');
 
-&showmaintenancesection();
-
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'backup floppy instructions'});
+&openbox($tr{'backup floppy instructions'});
 print <<END
 $tr{'backup floppy instructions long'}
 END
