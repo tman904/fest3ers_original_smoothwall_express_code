@@ -129,7 +129,7 @@ echo "Loading USB subsystem"
 /sbin/modprobe usbcore 2> /dev/null
 /sbin/modprobe ohci_hcd 2> /dev/null
 /sbin/modprobe uhci_hcd 2> /dev/null
-mount -t usbdevfs none /proc/bus/usb
+mount -t usbfs none /proc/bus/usb
 
 echo "Running /etc/rc.d/rc.network"
 . /etc/rc.d/rc.network
