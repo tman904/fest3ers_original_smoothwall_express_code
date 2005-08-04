@@ -63,7 +63,7 @@ sub ntpgettime
 	else {
 		push(@servers, $timesettings{'NTP_SERVER_USERDEFINED'}); }
 
-	@command = ('/usr/bin/ntpdate', '-su', @servers);
+	@command = ('/usr/sbin/ntpdate', '-su', @servers);
 
 	if (system(@command) == 0)
 	{
