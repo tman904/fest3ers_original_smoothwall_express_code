@@ -160,6 +160,11 @@ table.expand {
 	display: inline;
 }
 
+table.centered {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 td.note {
 	text-align: center;
 	vertical-align: middle;

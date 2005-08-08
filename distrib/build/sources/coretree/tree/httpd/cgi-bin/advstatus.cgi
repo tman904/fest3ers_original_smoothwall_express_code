@@ -8,6 +8,14 @@
 
 require '/var/smoothwall/header.pl';
 
+$graphcriticalcolour = "#ff0000";
+$graphwarningcolour  = "#ff5d00";
+$graphnominalcolour  = "#ffa200";
+$graphblankcolour    = "#ffffff";
+
+$graphalertcritical = 90;
+$graphalertwarning  = 70;
+
 &showhttpheaders();
 
 &openpage($tr{'advanced status information'}, 1, '', 'about your smoothie');
@@ -216,9 +224,36 @@ print "</PRE>\n";
 &closebox();
 
 &openbox($tr{'loaded modules'});
-print "<PRE>";
-system '/sbin/lsmod';
-print "</PRE>\n";
+my $modules;
+open(PIPE, '-|') || exec('/sbin/lsmod');
+<PIPE>;
+while (<PIPE>) { 
+	$modules .= $_; 
+}
+close (PIPE);
+
+my @modules = split /\n/, $modules;
+
+print <<END
+<table>
+	<tr>
+	<td>Module</td>
+	<td>Size</td>
+	<td>Used by</td>
+	</tr>
+END
+;
+
+foreach my $module ( @modules ){
+	my ( $mod, $size, $used ) = ( $module =~ /([^\s]*)\s+(\d+)\s+(.*)/ );
+	print "<tr>\n";
+	print "<td style='vertical-align: top;'>$mod</td>\n";
+	print "<td style='vertical-align: top;'>$size</td>\n";
+	print "<td style='vertical-align: top;'>$used</td>\n";
+	print "</tr>\n";
+}
+
+print "</table>\n";
 &closebox();
 
 &openbox($tr{'kernel version'});

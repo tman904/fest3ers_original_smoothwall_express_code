@@ -528,7 +528,8 @@
 'this update is already installed' => 'This update is already installed.',
 'package failed to install' => 'Package failed to install.',
 'update installed but' => 'update installed but the installed package database could not be updated',
-'refresh update list' => 'Refresh update list', # button
+'refresh update list' => 'Check for Updates', # button
+'update'	    => 'Update',
 'installed updates' => 'Installed updates:',
 'id' => 'ID',
 'title' => 'Title',

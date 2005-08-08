@@ -124,55 +124,17 @@ else
 
 &openpage($tr{'main page'}, 1, $refresh, 'control');
 
-print <<END
-<CENTER>
-<DIV ALIGN='CENTER'>
-END
-;
-
 &openbigbox('70%', 'CENTER');
 
 &alertbox($errormessage);
-
-print <<END
-<DIV ALIGN='CENTER'>
-<TABLE BORDER='0' CELLPADDING='0' CELLSPACING='0'>
-<TR><TD>
-</TD></TR>
-</TABLE>
-</DIV>
-END
-;
-
-print <<END
-<DIV ALIGN='CENTER'>
-<!-- <A HREF='$adurl'><IMG SRC='$adimg' BORDER='0' HEIGHT='40' WIDTH='600'
- ALT='$adalt'></A><BR><BR> -->
-<TABLE WIDTH='100%' BORDER='0' CELLPADDING='0' CELLSPACING='0'>
-<TR><!-- <TD VALIGN='top' ALIGN='CENTER' WIDTH='200'>
-<A HREF='http://www.smoothwall.co.uk/'><IMG 
- SRC='/ui/assets/3.5/img/gpl.index.left.corpresell.gif' BORDER='0'
- ALT='Visit smoothwall.co.uk for enhanced commercial SmoothWall products'></A><br>
-<IMG SRC='/ui/assets/3.5/img/null.gif' ALT='' width='200' height='5'><BR>
-<A HREF='http://www.smoothwall.co.uk/store/'><IMG 
- SRC='/ui/assets/3.5/img/gpl.index.left.store.png' BORDER='0' ALT=''></A><BR>
-<IMG SRC='/ui/assets/3.5/img/null.gif' ALT='' width='200' height='5'><BR>
-<A HREF='http://www.smoothwall.org/'><IMG 
- SRC='/ui/assets/3.5/img/gpl.index.left.community.png' BORDER='0' ALT=''></A><BR>
-</TD>
-<td>&nbsp;</td> -->
-<TD VALIGN='TOP'>
-<CENTER>
-END
-;
 
 &openbox('');
 
 $currentconnection = &connectedstate();
 print <<END
-<table border='0' cellpadding='5' cellspacing='0'>
-<tr><td valign='top'><img src='/ui/assets/3.5/img/netstatus.$currentconnection.gif'
- alt='$connpick'></td><td align='center' valign='middle'>
+<table class='centered'>
+	<tr>
+		<td valign='top'><img src='/ui/img/netstatus.$currentconnection.gif' alt='$connpick'></td><td align='center' valign='middle'></td>
 END
 ;
 
@@ -181,34 +143,37 @@ if ($pppsettings{'COMPORT'} ne '')
 	if ($pppsettings{'VALID'} eq 'yes')
 	{
 		print <<END
-<TABLE BORDER='0'>
-<FORM METHOD='POST' ACTION='/cgi-bin/dial.cgi'>
-<TR>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'dial'}'></TD>
-	<td>&nbsp;&nbsp;</td>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'hangup'}'></TD>
-	<td>&nbsp;&nbsp;</td>
-</FORM>
-<FORM METHOD='POST'>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'refresh'}'></TD>
-</FORM>
-</TR>
-</TABLE>
+<td style='vertical-align: top;'>
+<table>
+	<tr>
+		<form method='post' action='/cgi-bin/dial.cgi'>
+		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'dial'}'></td>
+		<td>&nbsp;&nbsp;</td>
+		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'hangup'}'></td>
+		<td>&nbsp;&nbsp;</td>
+		</form>
+		<form method='post'>
+		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'refresh'}'></td>
+		</form>
+	</tr>
+</table>
+</td>
 END
 		;
 	}
 	elsif (-e "${swroot}/red/active" )
 	{
 		print <<END
-<FORM METHOD='POST' ACTION='/cgi-bin/dial.cgi'>
-<INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'hangup'}'>
-</FORM>
+<td style='vertical-align: top;'>
+<form method='post' action='/cgi-bin/dial.cgi'>
+	<input type='submit' name='ACTION' value='$tr{'hangup'}'>
+</form>
+</td>
 END
 		;
 	}
 
-	print "<FONT FACE='Helvetica' SIZE='4'><B>";
-	print "<U>$tr{'current profile'} $pppsettings{'PROFILENAME'}</U><BR>\n";
+	print "<td><strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>\n";
 	
 	if ($pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes')
 	{
@@ -219,20 +184,22 @@ END
 	else {
 		print "$tr{'profile has errors'}\n"; }
 
-	print "</B></FONT>\n";
-	print "</CENTER>\n";
+	print "</td>";
+
 }
 else
 {
 	print <<END
-<FORM METHOD='POST'>
-<INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'refresh'}'>
-</FORM>
+<td style='vertical-align: top;'>
+<form method='post'>
+	<input type='submit' name='ACTION' value='$tr{'refresh'}'>
+</form>
+</td>
 END
 	;
 }
 	print <<END
-</td></tr>
+	</tr>
 </table>
 END
 ;
@@ -263,26 +230,14 @@ if ($age =~ m/(\d{1,3})d/)
 		&pageinfo($alertbox{"texterror"}, "$tr{'updates is old1'} $age $tr{'updates is old2'}");
 	}
 }
+
+print "<br/><table class='blank'><tr><td class='note'>";
+
 system('/usr/bin/uptime');
 
-print <<END
-</CENTER>
-</TD>
-</TR>
-</TABLE>
-</DIV>
-END
-;
-
-&alertbox('add','add');
+print "</td></tr></table>\n";
 
 &closebigbox();
-
-print <<END
-</CENTER>
-</DIV>
-END
-;
 
 &closepage();
 

@@ -196,8 +196,8 @@ print <<END
 	</td>
 	<td>&nbsp;</td>
 	<td style='width: 350px;'>
-		<input type='submit' name='ACTION' value='check for updates'>
-		<input type='submit' name='ACTION' value='update'>
+		<input type='submit' name='ACTION' value='$tr{'refresh update list'}'>
+		<input type='submit' name='ACTION' value='$tr{'update'}'>
 	</td>
 	</form>
 </tr>
@@ -315,7 +315,7 @@ $tr{'to install an update'}
 
 &closepage( "update" );
 
-if ($uploadsettings{'ACTION'} eq 'update' ){
+if ($uploadsettings{'ACTION'} eq "$tr{'update'}" ){
 
 	use lib "/usr/lib/smoothwall/";
 
@@ -333,100 +333,108 @@ if ($uploadsettings{'ACTION'} eq 'update' ){
 		$required{ $update } = $updates{$update};
 	}
 
-	my $status = "System requires ".scalar( keys %required )." updates";
+	if ( scalar( keys %required ) == 0 ){
+		print <<END
+<script>
+	document.getElementById('status').innerHTML = "All updates installed";
+</script>
+END
+;		
+	} else {
+		my $status = "System requires ".scalar( keys %required )." updates";
 
-	print <<END
+		print <<END
 <script>
 	document.getElementById('status').innerHTML = "$status";
-	document.getElementById('progress').style.width = '10px';
+	document.getElementById('progress').style.width = '1px';
 	document.getElementById('progress').style.background = '#a0a0ff';
 </script>
 END
 ;		
 
-	# the progress bar is 600pixels wide
-	# hence we need the following bits of information.
+		# the progress bar is 600pixels wide
+		# hence we need the following bits of information.
 
-	my $width_per_update = ( 400 / (scalar( keys %required )) );
-	my $complete = 0;
+		my $width_per_update = ( 400 / (scalar( keys %required )) );
+		my $complete = 0;
 
-	sub update
-	{
-		my ( $percent ) = @_;
-		my $distance = ( $complete * $width_per_update ) + int( int( $width_per_update / 100 ) * $percent );
-		$distance = 1 if ( $distance <= 0 );
+		sub update
+		{
+			my ( $percent ) = @_;
+			my $distance = ( $complete * $width_per_update ) + int( int( $width_per_update / 100 ) * $percent );
+			$distance = 1 if ( $distance <= 0 );
 
-		print <<END
+			print <<END
 <script>
 	document.getElementById('progress').style.width = '${distance}px';
 </script>
 END
 ;
-	}
-	
-	my $error;
-
-	foreach my $req ( sort keys %required ){
-		$status = "Downloading update $required{$req}{'name'}";
-
-		print <<END
-<script>
-	document.getElementById('status').innerHTML = "$status";
-</script>
-END
-;
-
-		$required{$req}->{'file'} = download( $required{$req}{'name'}, "$required{$req}->{'size'}", "$required{$req}->{'md5'}", \&update );
-
-		if ( not defined $required{$req}->{'file'} ){
-			print STDERR "Bum Download failed ( $req - $required{$req}{'name'}";
-			$error = "Download failed ( $req - $required{$req}{'name'}";
-			last;
 		}
+	
+		my $error;
 
-		$complete++;
-		my $comp = $width_per_update * $complete; 
-
-		print <<END
-<script>
-	document.getElementById('progress').style.width = '${comp}px;';
-</script>
-END
-;
-
-		print STDERR "Completion progress is $complete for $req - $required{$req}->{'md5'} ($required{$req}->{'size'}) - $required{$req}->{'file'}\n";
-	}
-
-	print STDERR "Completed downloading\n";
-
-	if ( $error eq "" ){
 		foreach my $req ( sort keys %required ){
-			$status = "Installing update $req";
+			$status = "Downloading update $required{$req}{'name'}";
+
 			print <<END
 <script>
 	document.getElementById('status').innerHTML = "$status";
 </script>
 END
 ;
-			use Data::Dumper;
-			print STDERR Dumper $required{$req};
-		 	my $worked = apply( $required{$req}->{'file'} );
 
-			if ( not defined $worked ){
+			$required{$req}->{'file'} = download( $required{$req}{'name'}, "$required{$req}->{'size'}", "$required{$req}->{'md5'}", \&update );
+
+			if ( not defined $required{$req}->{'file'} ){
+				print STDERR "Bum Download failed ( $req - $required{$req}{'name'}";
+				$error = "Download failed ( $req - $required{$req}{'name'}";
+				last;
+			}
+
+			$complete++;
+			my $comp = $width_per_update * $complete; 
+
+			print <<END
+<script>
+	document.getElementById('progress').style.width = '${comp}px;';
+</script>
+END
+;
+
+			print STDERR "Completion progress is $complete for $req - $required{$req}->{'md5'} ($required{$req}->{'size'}) - $required{$req}->{'file'}\n";
+		}
+
+		print STDERR "Completed downloading\n";
+
+		if ( $error eq "" ){
+			foreach my $req ( sort keys %required ){
+				$status = "Installing update $req";
 				print <<END
+<script>
+	document.getElementById('status').innerHTML = "$status";
+</script>
+END
+;
+				use Data::Dumper;
+				print STDERR Dumper $required{$req};
+			 	my $worked = apply( $required{$req}->{'file'} );
+
+				if ( not defined $worked ){
+					print <<END
 <script>
 	document.getElementById('status').innerHTML = "$errormessage";
 </script>
 END
 ;
-				$error = $errormessage;
-				last;
-			} 
+					$error = $errormessage;
+					last;
+				} 
+			}
 		}
-	}
 
-	if ( $error ne "" ){
-		print <<END
+		if ( $error ne "" ){
+			print <<END
 <script>
 	document.getElementById('status').innerHTML = "One or more updates failed to install - upgrade aborted";
 	document.getElementById('progress').style.width = '1px';
@@ -434,8 +442,8 @@ END
 </script>
 END
 ;	
-	} else {
-		print <<END
+		} else {
+			print <<END
 <script>
 	document.getElementById('status').innerHTML = "Updates Installed";
 	document.getElementById('progress').style.background = 'none';
@@ -443,7 +451,8 @@ END
 </script>
 END
 ;	
-	}		
+		}		
+	}
 
 }
 
