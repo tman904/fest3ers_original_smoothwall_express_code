@@ -29,7 +29,6 @@ opendir(DIR, "/var/smoothwall/services/");
 my @files = grep {!/\./} readdir(DIR);
 
 foreach my $file ( sort @files ){
-	print STDERR "checking $file\n";;
 	open ( my $line, "</var/smoothwall/services/$file" ) or next;
 	my $name = <$line>;
 	close $line;
