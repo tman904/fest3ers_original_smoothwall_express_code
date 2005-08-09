@@ -135,9 +135,7 @@ $checked{'COMPRESSION'}{$cgiparams{'COMPRESSION'}} = 'CHECKED';
 
 &openpage('VPN configuration - Connections', 1, '', 'vpn');
 
-&showvpnsection();
-
-&openbigbox('100%', 'LEFT');
+&openbigbox();
 
 &alertbox($errormessage);
 
@@ -159,7 +157,7 @@ END
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox('100%', 'LEFT', $tr{'add a new connection'});
+&openbox($tr{'add a new connection'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
@@ -201,7 +199,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'current connections'});
+&openbox($tr{'current connections'});
 
 print "<TABLE WIDTH='100%'>\n";
 
@@ -261,7 +259,7 @@ END
 ;
 &closebox();
 
-&openbox('100%', 'LEFT', $tr{'import and export'});
+&openbox($tr{'import and export'});
 print <<END
 <DIV ALIGN='CENTER'>
 <TABLE WIDTH='80%'>
