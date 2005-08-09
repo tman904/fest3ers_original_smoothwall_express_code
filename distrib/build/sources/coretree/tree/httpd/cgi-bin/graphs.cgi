@@ -10,7 +10,8 @@
 # (c) The SmoothWall Team
 # rrdtool.cgi
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my %cgiparams;
 my @graphs;

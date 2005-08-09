@@ -10,7 +10,8 @@
 #DST=213.208.115.234 LEN=110 TOS=0x00 PREC=0x00 TTL=60 ID=30699 DF PROTO=TCP
 #SPT=6667 DPT=62593 WINDOW=2505 RES=0x00 ACK PSH URGP=0  
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 if ($ENV{'QUERY_STRING'})
 {

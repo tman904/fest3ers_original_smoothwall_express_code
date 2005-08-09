@@ -6,7 +6,8 @@
 #
 # (c) SmoothWall Ltd, 2002-2003
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my (%advnetsettings,%checked);
 

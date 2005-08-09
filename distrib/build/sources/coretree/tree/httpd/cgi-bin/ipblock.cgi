@@ -7,7 +7,8 @@
 #
 # (c) SmoothWall Ltd 2003
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my (%cgiparams,%checked,%selected);
 my $filename = "${swroot}/ipblock/config";

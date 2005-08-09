@@ -1,8 +1,21 @@
-# SmoothWall CGIs
+# SmoothWall Express "Header" Module
 #
 # This code is distributed under the terms of the GPL
 #
-# (c) The SmoothWall Team
+# (c) 2004-2005 SmoothWall Ltd
+
+package header;
+require Exporter;
+@ISA = qw(Exporter);
+
+# define the Exportlists.
+
+@EXPORT       = qw();
+@EXPORT_OK    = qw( $version $revision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac basename connectedstate %tr );
+%EXPORT_TAGS  = (
+		standard   => [@EXPORT_OK],
+		);
+
 
 $|=1; # line buffering
 
@@ -10,8 +23,11 @@ $|=1; # line buffering
 # such as fixes number etc.
 
 $version = '3.0';
-# This line sucks!
+
+# dynamically generate the version number
+
 $revision = "fixes" . `cut -d\\\| -f 1 /var/smoothwall/patches/installed | sort | awk 'END { gsub("^0*", ""); printf("%s", \$0); }'`; 
+
 $webuirevision = 'ui-3.6.1';
 $viewsize = 200;
 

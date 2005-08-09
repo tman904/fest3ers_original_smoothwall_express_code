@@ -6,7 +6,8 @@
 #
 # (c) The SmoothWall Team
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my %cgiparams;
 # Maps a nice printable name to the changing part of the pid file, which
