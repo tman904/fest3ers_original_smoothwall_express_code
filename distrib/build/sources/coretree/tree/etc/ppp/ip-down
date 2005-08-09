@@ -5,7 +5,8 @@
 # This code is distributed under the terms of the GPL
 #
 # (c) The SmoothWall Team
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 &log("PPP has gone down on $ARGV[0]");
 

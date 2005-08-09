@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-require "/var/smoothwall/header.pl";
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my (%eth,%isdn,%pppsettings);
 

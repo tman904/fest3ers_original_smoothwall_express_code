@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 
 use IO::Socket;
-require '/var/smoothwall/header.pl';
+
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 require '/var/smoothwall/updatelists.pl';
 
 my @this;

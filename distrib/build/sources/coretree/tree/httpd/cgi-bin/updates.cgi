@@ -7,7 +7,9 @@
 # (c) The SmoothWall Team
 
 use IO::Socket;
-require '/var/smoothwall/header.pl';
+
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 require '/var/smoothwall/updatelists.pl';
 
 &showhttpheaders();

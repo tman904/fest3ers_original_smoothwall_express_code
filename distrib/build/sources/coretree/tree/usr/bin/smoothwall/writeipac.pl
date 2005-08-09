@@ -4,7 +4,8 @@
 #
 # (c) Lawrence Manning, 2001
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my %settings;
 

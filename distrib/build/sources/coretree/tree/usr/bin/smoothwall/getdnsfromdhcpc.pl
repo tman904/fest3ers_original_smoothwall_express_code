@@ -4,7 +4,8 @@
 #
 # (c) Lawrence Manning, 2001
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my $count = $ARGV[0];
 my (%settings, $dhcp, $dns, @alldns, %dhcp);

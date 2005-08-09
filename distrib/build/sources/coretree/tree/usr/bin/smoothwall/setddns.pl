@@ -10,7 +10,8 @@ close(STDIN);
 close(STDOUT);
 close(STDERR);
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my %settings;
 my %noipsettings;

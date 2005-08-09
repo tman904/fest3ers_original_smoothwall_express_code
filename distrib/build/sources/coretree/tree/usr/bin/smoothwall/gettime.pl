@@ -2,7 +2,8 @@
 
 # (c) SmoothWall Ltd, 2002
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my %timesettings;
 my $count;

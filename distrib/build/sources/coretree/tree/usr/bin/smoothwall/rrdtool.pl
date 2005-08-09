@@ -10,7 +10,8 @@
 # (c) The SmoothWall Team
 # rrdtool.pl
 
-require '/var/smoothwall/header.pl';
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my %netsettings;
 my %pppsettings;

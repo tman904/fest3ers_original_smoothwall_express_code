@@ -8,7 +8,9 @@
 
 # Clean up our environment (we're running SUID!)
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV PATH)};
-require '/var/smoothwall/header.pl';
+
+use lib "/usr/lib/smoothwall";
+use header qw( :standard );
 
 my %pppsettings;
 my %isdnsettings;
