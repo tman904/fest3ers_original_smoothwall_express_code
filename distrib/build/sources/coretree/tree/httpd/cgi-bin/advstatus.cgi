@@ -225,7 +225,7 @@ print "</PRE>\n";
 
 &openbox($tr{'loaded modules'});
 my $modules;
-open(PIPE, '-|') || exec('/sbin/lsmod');
+open(PIPE, '-|') || exec('/bin/lsmod');
 <PIPE>;
 while (<PIPE>) { 
 	$modules .= $_; 
