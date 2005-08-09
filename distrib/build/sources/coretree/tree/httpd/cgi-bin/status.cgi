@@ -11,18 +11,6 @@ require '/var/smoothwall/header.pl';
 my %cgiparams;
 # Maps a nice printable name to the changing part of the pid file, which
 # is also the name of the program
-my %servicenames =
-(
-	$tr{'dhcp server'} => 'dhcpd',
-	$tr{'web server'} => 'httpd',
-	$tr{'cron server'} => 'crond',
-	$tr{'dns proxy server'} => 'dnsmasq',
-	$tr{'logging server'} => 'syslogd',
-	$tr{'kernel logging server'} => 'klogd',
-	$tr{'secure shell server'} => 'sshd',
-	$tr{'vpn'} => 'pluto',
-	$tr{'web proxy'} => 'squid'
-);
 
 my $iface = '';
 if (open(FILE, "${swroot}/red/iface"))
@@ -30,7 +18,41 @@ if (open(FILE, "${swroot}/red/iface"))
 	$iface = <FILE>;
 	close FILE;
 }
-$servicenames{$tr{'intrusion detection system'}} = "snort_${iface}";
+
+
+# build the list of services.
+
+my %servicenames;
+
+opendir(DIR, "/var/smoothwall/services/");
+my @files = grep {!/\./} readdir(DIR);
+
+foreach my $file ( sort @files ){
+	print STDERR "checking $file\n";;
+	open ( my $line, "</var/smoothwall/services/$file" ) or next;
+	my $name = <$line>;
+	close $line;
+	chomp $name;
+	my $servicename = $file;
+	$servicename =~s/\[RED\]/$iface/ig;
+	
+	$servicenames{ $tr{ $name } } = $servicename;
+}
+
+#my %servicenames =
+#(
+#	$tr{'dhcp server'} => 'dhcpd',
+#	$tr{'web server'} => 'httpd',
+#	$tr{'cron server'} => 'crond',
+#	$tr{'dns proxy server'} => 'dnsmasq',
+#	$tr{'logging server'} => 'syslogd',
+#	$tr{'kernel logging server'} => 'klogd',
+#	$tr{'secure shell server'} => 'sshd',
+#	$tr{'vpn'} => 'pluto',
+#	$tr{'web proxy'} => 'squid'
+#);
+#
+#$servicenames{$tr{'intrusion detection system'}} = "snort_${iface}";
 
 &showhttpheaders();
 
