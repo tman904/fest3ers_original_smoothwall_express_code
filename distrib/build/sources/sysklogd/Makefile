@@ -5,7 +5,8 @@ VERSION = 1.4.1
 
 BASE_URL = http://www.infodrom.org/projects/sysklogd/download/
 
-PATCH_FILE1 = sysklogd-1.4.1-security.patch
+#PATCH_FILE1 = sysklogd-1.4.1-security.patch
+PATCH_FILE1 = sysklogd-1.4.1-fc3.patch
 
 CONFIGURE = yes
 COMPILE = yes
@@ -15,7 +16,7 @@ configure: patch
 	@true
 
 compile: configure
-	@make -C $(DIR) CFLAGS="$(CFLAGS) -DSYSV"
+	@make -C $(DIR) CFLAGS="$(CFLAGS) -DSYSV -D_GNU_SOURCE"
 
 install: compile
 	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)/man/man{5,8} $(PKG_ROOT)/$(PKG_DIR)/sbin

@@ -1,11 +1,11 @@
 include ../Makefile.conf
 
 PACKAGE = dosfstools
-VERSION = 2.8
+VERSION = 2.11
 
-BASE_URL = http://systemimager.sourceforge.net/pub/dosfstools/
+BASE_URL = ftp://ftp.uni-erlangen.de/pub/Linux/LOCAL/dosfstools/
 
-PATCH_FILE1 = dosfstools-2.8-errno.patch
+#PATCH_FILE1 = dosfstools-2.8-errno.patch
 
 TARBALL = $(PACKAGE)-$(VERSION).src
 

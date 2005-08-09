@@ -134,8 +134,8 @@ cdrom/smoothwall.tgz:
 
 	@echo "Securing tree ..."
 	@/build/securetree distrib
-        @chmod u+s distrib/bin/traceroute
-        @chmod u+s distrib/usr/bin/ping
+	@chmod u+s distrib/bin/traceroute
+	@chmod u+s distrib/usr/bin/ping
 	@chmod u+s distrib/usr/sbin/listtables
 	@chown root:nobody distrib/usr/bin/setuids/*
 	@chmod 4750 distrib/usr/bin/setuids/*

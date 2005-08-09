@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 PACKAGE = util-linux
-VERSION = 2.12a
+VERSION = 2.12p
 
 BASE_URL = ftp://ftp.win.tue.nl/pub/linux-local/utils/util-linux/
 

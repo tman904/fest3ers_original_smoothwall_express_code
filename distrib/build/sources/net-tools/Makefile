@@ -9,6 +9,7 @@ BASE_URL = http://www.tazenda.demon.co.uk/phil/net-tools/
 
 PATCH_FILE1 = net-tools-1.60-miitool-gcc33-1.patch
 PATCH_FILE2 = net-tools-2.4.28-fddi-fix.patch
+PATCH_FILE3 = net-tools-1.60-kernel-26-fix.patch
 
 PKG_DIR = 
 
