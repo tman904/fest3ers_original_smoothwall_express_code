@@ -112,7 +112,7 @@ build dosfstools
 build syslinux
 
 build openssl
-build openssh
+#build openssh
 build apache
 build cron
 build rrdtool
@@ -152,6 +152,8 @@ build speedtouch
 bould rp-pppoe
 build ibod
 build dhcpcd
+build eciadsl-synch_bin
+build eciadsl-usermode 
 
 build dhcp
 build snort
