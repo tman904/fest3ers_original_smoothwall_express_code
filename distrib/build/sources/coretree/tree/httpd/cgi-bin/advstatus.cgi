@@ -32,16 +32,17 @@ shift(@echo);
 # these really should be tr strings
 
 print qq|
-<table border='0' cellspacing='0' cellpadding='2'>
-<tr><td>&nbsp;</td>
-<td align="right" width="50" ><tt>   $tr{ 'adv total' }</tt></td>
-<td align="right" width="50" ><tt>    $tr{ 'adv used' }</tt></td>
-<td align="right" width="50" ><tt>    $tr{ 'adv free' }</tt></td>
-<td align="right" ><tt>&nbsp;</tt></td>
-<td align="center" width="150"><tt>$tr{ 'adv used%' }</tt></td>
-<td align="right" width="50" ><tt>  $tr{ 'adv shared' }</tt></td>
-<td align="right" width="50" ><tt> $tr{ 'adv buffers' }</tt></td>
-<td align="right" width="50" ><tt>  $tr{ 'adv cached' }</tt></td>
+<table>
+<tr>
+	<td>&nbsp;</td>
+	<td style='text-align: right; width: 50px'><tt>   $tr{ 'adv total' }</tt></td>
+	<td style='text-align: right; width: 50px'><tt>    $tr{ 'adv used' }</tt></td>
+	<td style='text-align: right; width: 50px'><tt>    $tr{ 'adv free' }</tt></td>
+	<td style='text-align: right;'><tt>&nbsp;</tt></td>
+	<td style='text-align: center; width: 150px;'><tt>$tr{ 'adv used%' }</tt></td>
+	<td style='text-align: right; width: 50px;' ><tt>  $tr{ 'adv shared' }</tt></td>
+	<td style='text-align: right; width: 50px;' ><tt> $tr{ 'adv buffers' }</tt></td>
+	<td style='text-align: right; width: 50px;' ><tt>  $tr{ 'adv cached' }</tt></td>
 </tr>
 |;
 
@@ -65,25 +66,26 @@ foreach $mline (@echo) {
 	}
 	print qq|
 <tr>
-<td align="right"><tt>$mdev</tt></td>
-<td align="right"><tt>${mtotal}</tt></td>
-<td align="right"><tt>${mused}K</tt></td>
-<td align="right"><tt>${mfree}K</tt></td>
-<td align="right"><tt>&nbsp;</tt></td>
-<td align="right" width='150' nowrap><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr>|;
+<td style='text-align: right;'><tt>$mdev</tt></td>
+<td style='text-align: right;'><tt>${mtotal}</tt></td>
+<td style='text-align: right;'><tt>${mused}K</tt></td>
+<td style='text-align: right;'><tt>${mfree}K</tt></td>
+<td style='text-align: right;'><tt>&nbsp;</tt></td>
+<td style='text-align: right;' width='160px;' nowrap>
+	<table class='blank' style='width: 150px; border: 1px #505050 solid;'><tr>|;
 	if ($mperc < 1) {
-		print "<td bgcolor='$graphbgcolour' width='1%' align='center'><tt>$mperc%</tt></td>";}
+		print "<td style='background-color: $graphbgcolour; width: 1%; text-align: center;'><tt>$mperc%</tt></td>";}
 	else {
-		print "<td bgcolor='$graphbgcolour' width='$mperc%' align='center'><tt>$mperc%</tt></td>";
+		print "<td style='background-color: $graphbgcolour; width: $mperc%; text-align: center;'><tt>$mperc%</tt></td>";
 	}
 	print qq|
-<td bgcolor='$graphblankcolour'>&nbsp;</td></tr></table></td>
+<td style='background-color: $graphblankcolour;'>&nbsp;</td></tr></table></td>
 |;
 	if ( $mshared ne "" ) {
 		print qq|
-<td align="right"><tt>${mshared}K</tt></td>
-<td align="right"><tt>${mbuffers}K</tt></td>
-<td align="right"><tt>${mcached}K</tt></td>
+<td style='text-align: right;'><tt>${mshared}K</tt></td>
+<td style='text-align: right;'><tt>${mbuffers}K</tt></td>
+<td style='text-align: right;'><tt>${mcached}K</tt></td>
 |;
 	}
 	print qq|
@@ -101,15 +103,15 @@ print qq|
 shift(@echo);
 
 print qq|
-<table border='0' cellspacing='0' cellpadding='2'>
+<table>
 <tr>
-<td width="100"><tt>$tr{ 'adv filesystem' }</tt></td>
-<td width="75" ><tt>$tr{ 'adv mount point' }</tt></td>
-<td width="40" align="right"><tt>$tr{ 'adv size'}</tt></td>
-<td width="40" align="right"><tt>$tr{ 'adv used'}</tt></td>
-<td width="65" align="right"><tt>$tr{ 'adv available'}</tt></td>
-<td width="5" ><tt>&nbsp;</tt></td>
-<td width="150" align="center"><tt>$tr{ 'adv used%' }</tt></td>
+<td style='width: 100px;'><tt>$tr{ 'adv filesystem' }</tt></td>
+<td style='width: 75px;'><tt>$tr{ 'adv mount point' }</tt></td>
+<td style='width: 40px; text-align: right;'><tt>$tr{ 'adv size'}</tt></td>
+<td style='width: 40px; text-align: right;'><tt>$tr{ 'adv used'}</tt></td>
+<td style='width: 65px; text-align: right;'><tt>$tr{ 'adv available'}</tt></td>
+<td style='width: 5px;' ><tt>&nbsp;</tt></td>
+<td style='width: 150px; text-align: center;'><tt>$tr{ 'adv used%' }</tt></td>
 </tr>
 |;
 foreach $mount (@echo) {
@@ -126,23 +128,22 @@ foreach $mount (@echo) {
    }
    print qq|
 <tr>
-<td><tt>$dev</tt></td>
-<td><tt>$mount_point</tt></td>
-<td align='right'><tt>$size</tt></td>
-<td align='right'><tt>$size_used</tt></td>
-<td align='right'><tt>$size_avail</tt></td>
-<td><tt>&nbsp;</tt></td>
-<td><table width='100%' border='0' cellspacing='0' cellpadding='0'>
+	<td><tt>$dev</tt></td>
+	<td><tt>$mount_point</tt></td>
+	<td style='text-align: right;'><tt>$size</tt></td>
+	<td style='text-align: right;'><tt>$size_used</tt></td>
+	<td style='text-align: right;'><tt>$size_avail</tt></td>
+	<td><tt>&nbsp;</tt></td>
+	<td><table class='blank' style='width: 150px; border: 1px #505050 solid;'>
 <tr>
 |;
    if (int($size_percentage) < 1) {
-      print "<td bgcolor='$graphbgcolour' width='1%' align='center'><tt>$size_percentage</tt></td>";}
+	print "<td style='background-color: $graphbgcolour; width: 1%; text-align: center;'><tt>$size_percentage</tt></td>";}
    else {
-      print "<td bgcolor='$graphbgcolour' width='$size_percentage' align='center'><tt>$size_percentage</tt></td>";
+	print "<td style='background-color: $graphbgcolour; width: $size_percentage; text-align: center;'><tt>$size_percentage</tt></td>";
    }
    print qq|
-<td bgcolor='$graphblankcolour'>&nbsp;</td>
-</tr></table></td>
+<td style='background-color: $graphblankcolour;'>&nbsp;</td></tr></table></td>
 </tr>
 |;
 }
@@ -155,15 +156,15 @@ print qq|
 @echo = `df -i`;
 shift(@echo);
 print qq|
-<table border='0' cellspacing='0' cellpadding='2'>
+<table>
 <tr>
-<td width="100"><tt>$tr{ 'adv filesystem' }</tt></td>
-<td width="75" ><tt>$tr{ 'adv mount point' }</tt></td>
-<td width="40" align="right" ><tt>$tr{ 'adv inodes' }</tt></td>
-<td width="40" align="right" ><tt>$tr{ 'adv used' }</tt></td>
-<td width="65" align="right" ><tt>$tr{ 'adv free' }</tt></td>
-<td width="5" ><tt>&nbsp;</tt></td>
-<td width="150" align="center"><tt>$tr{ 'adv used%' }</tt></td>
+<td style='width: 100px;'><tt>$tr{ 'adv filesystem' }</tt></td>
+<td style='width: 75px;'><tt>$tr{ 'adv mount point' }</tt></td>
+<td style='width: 40; text-align: right;'><tt>$tr{ 'adv inodes' }</tt></td>
+<td style='width: 40; text-align: right;'><tt>$tr{ 'adv used' }</tt></td>
+<td style='width: 65; text-align: right;'><tt>$tr{ 'adv free' }</tt></td>
+<td style='width: 5px;'><tt>&nbsp;</tt></td>
+<td style='width: 150px; text-align: center;'><tt>$tr{ 'adv used%' }</tt></td>
 </tr>
 |;
 foreach $mount (@echo) {
@@ -180,23 +181,22 @@ foreach $mount (@echo) {
    }
    print qq|
 <tr>
-<td ><tt>$dev</tt></td>
-<td ><tt>$mount_point</tt></td>
-<td align='right' ><tt>$size</tt></td>
-<td align='right' ><tt>$size_used</tt></td>
-<td align='right' ><tt>$size_avail</tt></td>
-<td><tt>&nbsp;</tt></td>
-<td><table width='100%' border='0' cellspacing='0' cellpadding='0'>
+	<td ><tt>$dev</tt></td>
+	<td ><tt>$mount_point</tt></td>
+	<td style='text-align: right;'><tt>$size</tt></td>
+	<td style='text-align: right;'><tt>$size_used</tt></td>
+	<td style='text-align: right;'><tt>$size_avail</tt></td>
+	<td><tt>&nbsp;</tt></td>
+	<td><table class='blank' style='width: 150px; border: 1px #505050 solid;'>
 <tr>
 |;
    if (int($size_percentage) < 1) {
-      print "<td bgcolor='$graphbgcolour' width='1%' align='center'><tt>$size_percentage</tt></td>";}
+	print "<td style='background-color: $graphbgcolour; width: 1%; text-align: center;'><tt>$size_percentage</tt></td>";}
    else {
-      print "<td bgcolor='$graphbgcolour' width='$size_percentage' align='center'><tt>$size_percentage</tt></td>";
+	print "<td style='background-color: $graphbgcolour; width: $size_percentage; text-align: center;'><tt>$size_percentage</tt></td>";
    }
    print qq|
-<td bgcolor='$graphblankcolour'>&nbsp;</td>
-</tr></table></td>
+<td style='background-color: $graphblankcolour;'>&nbsp;</td></tr></table></td>
 </tr>
 |;
 }
