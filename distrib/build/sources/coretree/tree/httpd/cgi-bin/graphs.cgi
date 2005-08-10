@@ -37,7 +37,7 @@ if ($name ne "") { $title = " for $name interface"; }
 
 &showhttpheaders();
 
-my $rrddir = "/home/httpd/html/rrdtool";
+my $rrddir = "/httpd/html/rrdtool";
 
 # check if viewing summary graphs
 if ($name eq "")
