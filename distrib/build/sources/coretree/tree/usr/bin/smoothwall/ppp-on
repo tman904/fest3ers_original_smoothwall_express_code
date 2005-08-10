@@ -30,9 +30,6 @@ if ($adslsettings{'DEVICE'} eq 'ECI')
 		\%ecisettings);
 }
 
-# No output should be sent to the webclient
-close (STDIN); close (STDOUT);
-
 if ((! -e "${swroot}/red/active") && ($pppsettings{'DIALONDEMAND'} eq 'on'))
 {
 	system ('/bin/touch', "${swroot}/red/dial-on-demand");
@@ -262,7 +259,7 @@ sub doadsldialalcatel
 sub doadsldialeci
 {
 	my @pppcommand = ('/usr/sbin/pppd', 'pty');
-	my @pppoacommand = ('/usr/sbin/pppoeci','-vpi',$adslsettings{'VPI'},'-vci',$adslsettings{'VCI'},
+	my @pppoacommand = ('/usr/bin/pppoeci', '-v', '2', '-alt', '2', '-vpi',$adslsettings{'VPI'},'-vci',$adslsettings{'VCI'},
 		'-vendor', $ecisettings{'VID2'}, '-product', $ecisettings{'PID2'});
 
 	push(@pppcommand, "@pppoacommand");
@@ -286,7 +283,7 @@ sub doadsldialeci
 		'nodeflate', 'lcp-echo-interval', '20', 'lcp-echo-failure', '3', 
 		'lcp-max-configure', '50', 'maxfail', $pppsettings{'MAXRETRIES'}));
 
- 	system (@pppcommand);
+	system (@pppcommand);
 }
 
 sub doadsldialusr
@@ -321,7 +318,7 @@ sub doadsldialusr
 
 sub doadsldialunicorn
 {
-	my @pppcommand = ('/usr/sbin/pppd', 'plugin', '/usr/lib/pppd/plugins/pppoatm.so');
+	my @pppcommand = ('/usr/sbin/pppd', 'plugin', '/usr/lib/pppd/2.4.2/pppoatm.so');
 
 	if ($pppsettings{'DNS'} eq 'Automatic') {
 		push(@pppcommand, ('usepeerdns')); }
