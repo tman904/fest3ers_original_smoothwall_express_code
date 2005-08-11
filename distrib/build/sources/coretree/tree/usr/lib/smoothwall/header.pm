@@ -11,7 +11,7 @@ require Exporter;
 # define the Exportlists.
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $version $revision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac basename connectedstate %tr );
+@EXPORT_OK    = qw( $version $revision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -632,6 +632,30 @@ sub validmac
 	if (/^[0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}$/) {
 		return 1; }
 	return 0;
+}
+
+sub validhostname
+{
+        my $hostname = $_[0];
+        my $part;
+
+        if ($hostname eq '') {
+                return 0; }
+        if (length($hostname) > 255) {
+                return 0; }
+        @parts = split(/\./, $hostname);
+        foreach $part (@parts)
+        {
+                if (length($part) > 64) {
+                        return 0; }
+                unless ($part =~ /^[a-zA-Z\d\-]+$/) {
+                        return 0; }
+                if ($part =~ /^\-/) {
+                        return 0; }
+                if ($part =~ /\-$/) {
+                return 0; }
+        }
+        return 1;
 }
 
 sub basename {
