@@ -13,6 +13,8 @@ my %pppsettings;
 my %modemsettings;
 my %netsettings;
 
+my $locks = glob("/var/lock/LCK*");
+
 &showhttpheaders();
 
 $pppsettings{'VALID'} = '';
@@ -23,7 +25,7 @@ $pppsettings{'PROFILENAME'} = 'None';
 
 if ($pppsettings{'COMPORT'} =~ /^tty/)
 {
-	if (-e "/var/run/ppp-smooth.pid")
+	if ($locks)
 	{
 		if (-e "${swroot}/red/active")
 		{
@@ -91,7 +93,7 @@ elsif ($pppsettings{'COMPORT'} eq 'pppoe')
 	}
 	else
 	{
-		if (-e "/var/run/ppp-smooth.pid")
+		if ($locks)
 		{
 			$connstate = $tr{'dialing'};
 			$refresh = "<META HTTP-EQUIV='refresh' CONTENT='5;'>"
@@ -111,7 +113,7 @@ else
 	}
 	else
 	{
-		if (-e "/var/run/ppp-smooth.pid")
+		if ($locks)
 		{
 			$connstate = $tr{'dialing'};
 			$refresh = "<META HTTP-EQUIV='refresh' CONTENT='5;'>"
