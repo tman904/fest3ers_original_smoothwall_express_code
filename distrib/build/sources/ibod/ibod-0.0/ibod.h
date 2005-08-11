@@ -10,7 +10,7 @@
 #define STAYUP			0
 #define STAYUP_TIME		30
 
-#define IBOD_DEFAULT_DIR	"/modules/firewall/etc"
+#define IBOD_DEFAULT_DIR	"/etc"
 #define MAX_STR_LEN		512
 #define ISDN_INFO_DEV		"/dev/isdninfo"
 #define ISDN_CTLR_DEV		"/dev/isdnctrl"

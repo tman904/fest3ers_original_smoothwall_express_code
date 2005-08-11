@@ -179,7 +179,7 @@ sub doisdndial
 		system('/sbin/route','add','default','dev','ippp0');
 		if ($pppsettings{'DIALONDEMANDDNS'} eq 'on')
 		{
-			system('/usr/bin/setuids//restartdnsproxy', '1.2.3.4');
+			system('/usr/bin/setuids/restartdnsproxy', '1.2.3.4');
 		}
 	} else {
 		system('/sbin/isdnctrl', 'dial', 'ippp0');

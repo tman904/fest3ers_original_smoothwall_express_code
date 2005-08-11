@@ -19,6 +19,7 @@ devnodes:
 	@(cd /dev; mkdir pts; \
 	./MAKEDEV random urandom mem kmem null port zero core full \
 		ram raid tty console tty pty fd hd sd loop scd sg apm usb initctl ppp net isdn);
+	@chmod 664 /dev/isdninfo
 	@tar -zcvf /$(TARGET_DIR)/smoothwall-devnodes-0.0.tar.gz -C / --exclude ./dev/MAKEDEV ./dev;
 
 packageinfo.html: 
