@@ -192,16 +192,16 @@ END
 
 &openbox($tr{'current hosts'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='15%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'service'}</B></TD>
-	<TD WIDTH='20%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'hostname'}</B></TD>
-	<TD WIDTH='25%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'domain'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'proxy'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'wildcards'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'enabledtitle'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'mark'}</B></TD>
-</TR>
+<table class='centered'>
+<tr>
+	<th style='width: 15%;'>$tr{'service'}</th>
+	<th style='width: 20%;'>$tr{'hostname'}</th>
+	<th style='width: 25%;'>$tr{'domain'}</th>
+	<th style='width: 10%;'>$tr{'proxy'}</th>
+	<th style='width: 10%;'>$tr{'wildcards'}</th>
+	<th style='width: 10%;'>$tr{'enabledtitle'}</th>
+	<th style='width: 10%;'>$tr{'mark'}</th>
+</tr>
 END
 ;
 
@@ -213,8 +213,12 @@ while (<SETTINGS>)
 	$id++;
 	chomp($_);
 	my @temp = split(/\,/,$_);
-	if ($id % 2) { print "<TR BGCOLOR='$table1colour'>\n"; }
-	else { print "<TR BGCOLOR='$table2colour'>\n"; }
+	if ($id % 2) { 
+		print "<tr class='light'>\n"; 
+	}
+	else { 
+		print "<tr class='dark'>\n"; 
+	}
 	if ($temp[3] eq 'on') { $gifproxy = 'on.gif'; }
 		else { $gifproxy = 'off.gif'; }
 	if ($temp[4] eq 'on') { $gifwildcards = 'on.gif'; }
@@ -223,31 +227,31 @@ while (<SETTINGS>)
 		else { $gifenabled = 'off.gif'; }
 
 print <<END
-<TD ALIGN='CENTER'>$temp[0]</TD>
-<TD ALIGN='CENTER'>$temp[1]</TD>
-<TD ALIGN='CENTER'>$temp[2]</TD>
-<TD ALIGN='CENTER'><IMG SRC='/ui/assets/3.5/img/$gifproxy'></TD>
-<TD ALIGN='CENTER'><IMG SRC='/ui/assets/3.5/img/$gifwildcards'></TD>
-<TD ALIGN='CENTER'><IMG SRC='/ui/assets/3.5/img/$gifenabled'></TD>
-<TD ALIGN='CENTER'><INPUT TYPE='CHECKBOX' NAME='$id'></TD>
-</TR>
+<td style='text-align: center;'>$temp[0]</td>
+<td style='text-align: center;'>$temp[1]</td>
+<td style='text-align: center;'>$temp[2]</td>
+<td style='text-align: center;'><img src='/ui/img/$gifproxy'></td>
+<td style='text-align: center;'><img src='/ui/img/$gifwildcards'></td>
+<td style='text-align: center;'><img src='/ui/img/$gifenabled'></td>
+<td style='text-align: center;'><input type='checkbox' name='$id'></td>
+</tr>
 END
 	;
 }
 close(SETTINGS);
 print <<END
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'remove'}'></TD>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'edit'}'></TD>
-</TR>
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='100%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'force update'}'></TD>
-</TR>
-</TABLE>
+</table>
+<table class='blank'>
+<tr>
+<td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+<td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
+</tr>
+</table>
+<table class='blank'>
+<tr>
+<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'force update'}'></td>
+</tr>
+</table>
 END
 ;
 &closebox();

@@ -77,7 +77,7 @@ else
 <DIV ALIGN='CENTER'>
 <TABLE BGCOLOR='#ffffff'>
 <TR><TD ALIGN='CENTER'>
-<A HREF='/' BORDER='0'><IMG SRC='/ui/assets/3.5/img/smoothwall_big.gif'></A><BR><BR>
+<A HREF='/' BORDER='0'><IMG SRC='/ui/img/smoothwall_big.gif'></A><BR><BR>
 END
 	;
 

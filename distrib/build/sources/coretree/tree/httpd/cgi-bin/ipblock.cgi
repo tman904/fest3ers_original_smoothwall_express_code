@@ -163,13 +163,13 @@ END
 
 &openbox($tr{'current rules'});
 print <<END
-<TABLE WIDTH='100%' CELLSPACING='1'>
-<TR>
-<TD WIDTH='30%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'source ip'}</B></TD>
-<TD WIDTH='20%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'action'}</B></TD>
-<TD WIDTH='20%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'log'}</B></TD>
-<TD WIDTH='15%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'enabledtitle'}</B></TD>
-<TD WIDTH='15%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'mark'}</B></TD>
+<table class='centered'>
+<tr>
+<th style='width: 30%; text-align: center;'>$tr{'source ip'}</th>
+<th style='width: 20%; text-align: center;'>$tr{'action'}</th>
+<th style='width: 20%; text-align: center;'>$tr{'log'}</th>
+<th style='width: 15%; text-align: center;'>$tr{'enabledtitle'}</th>
+<th style='width: 15%; text-align: center;'>$tr{'mark'}</th>
 END
 ;
 
@@ -182,9 +182,9 @@ while (<RULES>)
 	chomp($_);
 	my @temp = split(/\,/,$_);
 	if ($id % 2) {
-		$colour = $table1colour; }
+		$colour = 'light'; }
 	else {
-		$colour = $table2colour; }
+		$colour = 'dark'; }
 
 	if ($temp[1] eq 'on') { $loggif = 'on.gif'; }
 		else { $loggif = 'off.gif'; }
@@ -192,26 +192,26 @@ while (<RULES>)
 		else { $enabledgif = 'off.gif'; }
 
 	print <<END
-<TR BGCOLOR='$colour'>
-<TD ALIGN='CENTER'>$temp[0]</TD>
-<TD ALIGN='CENTER'>$temp[2]</TD>
-<TD ALIGN='CENTER'><IMG SRC='/ui/assets/3.5/img/$loggif'></TD>
-<TD ALIGN='CENTER'><IMG SRC='/ui/assets/3.5/img/$enabledgif'></TD>
-<TD ALIGN='CENTER'><INPUT TYPE='CHECKBOX' NAME='$id'></TD>
-</TR>
+<tr class='$colour'>
+<td style='text-align: center;'>$temp[0]</td>
+<td style='text-align: center;'>$temp[2]</td>
+<td style='text-align: center;'><IMG SRC='/ui/img/$loggif'></td>
+<td style='text-align: center;'><IMG SRC='/ui/img/$enabledgif'></td>
+<td style='text-align: center;'><INPUT TYPE='CHECKBOX' NAME='$id'></td>
+</tr>
 END
 	;
 }
 close(RULES);
 
 print <<END
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'remove'}'></TD>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'edit'}'></TD>
-</TR>
-</TABLE>
+</table>
+<table class='blank'>
+<tr>
+<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
+</tr>
+</table>
 END
 ;
 

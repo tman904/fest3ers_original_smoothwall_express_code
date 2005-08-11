@@ -54,21 +54,21 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'init string'}&nbsp;<IMG SRC='/ui/assets/3.5/img/blob.gif'></TD>
+	<TD WIDTH='25%' CLASS='base'>$tr{'init string'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
 	<TD WIDTH='25%'><INPUT TYPE='text' NAME='INIT' VALUE='$modemsettings{'INIT'}'></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'hangup string'}&nbsp;<IMG SRC='/ui/assets/3.5/img/blob.gif'></TD>
+	<TD WIDTH='25%' CLASS='base'>$tr{'hangup string'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
 	<TD WIDTH='25%'><INPUT TYPE='text' NAME='HANGUP' VALUE='$modemsettings{'HANGUP'}'></TD>
 </TR>
 <TR>
-	<TD CLASS='base'>$tr{'speaker on'}&nbsp;<IMG SRC='/ui/assets/3.5/img/blob.gif'></TD>
+	<TD CLASS='base'>$tr{'speaker on'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
 	<TD><INPUT TYPE='text' NAME='SPEAKER_ON' VALUE='$modemsettings{'SPEAKER_ON'}'></TD>
-	<TD CLASS='base'>$tr{'speaker off'}&nbsp;<IMG SRC='/ui/assets/3.5/img/blob.gif'></TD>
+	<TD CLASS='base'>$tr{'speaker off'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
 	<TD><INPUT TYPE='text' NAME='SPEAKER_OFF' VALUE='$modemsettings{'SPEAKER_OFF'}'></TD>
 </TR>
 <TR>
-	<TD CLASS='base'>$tr{'tone dial'}&nbsp;<IMG SRC='/ui/assets/3.5/img/blob.gif'></TD>
+	<TD CLASS='base'>$tr{'tone dial'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
 	<TD><INPUT TYPE='text' NAME='TONE_DIAL' VALUE='$modemsettings{'TONE_DIAL'}'></TD>
-	<TD CLASS='base'>$tr{'pulse dial'}&nbsp;<IMG SRC='/ui/assets/3.5/img/blob.gif'></TD>
+	<TD CLASS='base'>$tr{'pulse dial'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
 	<TD><INPUT TYPE='text' NAME='PULSE_DIAL' VALUE='$modemsettings{'PULSE_DIAL'}'></TD>
 </TR>
 <TR>
@@ -80,7 +80,7 @@ print <<END
 
 </TABLE>
 <BR>
-<IMG SRC='/ui/assets/3.5/img/blob.gif' VALIGN='top'>&nbsp;
+<IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
 <FONT CLASS='base'>$tr{'these fields may be blank'}</FONT>
 END
 ;

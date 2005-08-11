@@ -136,15 +136,15 @@ END
 
 &openbox($tr{'current rules'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='15%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'protocol'}</B></TD>
-<TD WIDTH='20%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'source ip'}</B></TD>
-<TD WIDTH='20%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'destination ip'}</B></TD>
-<TD WIDTH='15%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'destination port'}</B></TD>
-<TD WIDTH='10%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'enabledtitle'}</B></TD>
-<TD WIDTH='10%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'mark'}</B></TD>
-</TR>
+<table class='centered'>
+<tr>
+<th style='width: 15%; text-align: center;'>$tr{'protocol'}</th>
+<th style='width: 20%; text-align: center;'>$tr{'source ip'}</th>
+<th style='width: 20%; text-align: center;'>$tr{'destination ip'}</th>
+<th style='width: 15%; text-align: center;'>$tr{'destination port'}</th>
+<th style='width: 10%; text-align: center;'>$tr{'enabledtitle'}</th>
+<th style='width: 10%; text-align: center;'>$tr{'mark'}</th>
+</tr>
 END
 ;
 
@@ -161,32 +161,32 @@ while (<RULES>)
 	else {
 		$protocol = 'TCP' }
 	if ($id % 2) {
-		print "<TR BGCOLOR='$table1colour'>\n"; }
+		print "<tr class='dark'>\n"; }
 	else {
-              	print "<TR BGCOLOR='$table2colour'>\n"; }
+              	print "<tr class='light'>\n"; }
 	if ($temp[4] eq 'on') { $gif = 'on.gif'; }
 		else { $gif = 'off.gif'; }
 print <<END
-<TD ALIGN='CENTER'>$protocol</TD>
-<TD ALIGN='CENTER'>$temp[1]</TD>
-<TD ALIGN='CENTER'>$temp[2]</TD>
-<TD ALIGN='CENTER'>$temp[3]</TD>
-<TD ALIGN='CENTER'><IMG SRC='/ui/assets/3.5/img/$gif'></TD>
-<TD ALIGN='CENTER'><INPUT TYPE='CHECKBOX' NAME='$id'></TD>
-</TR>
+<td style='text-align: center;'>$protocol</td>
+<td style='text-align: center;'>$temp[1]</td>
+<td style='text-align: center;'>$temp[2]</td>
+<td style='text-align: center;'>$temp[3]</td>
+<td style='text-align: center;'><IMG SRC='/ui/img/$gif'></td>
+<td style='text-align: center;'><input type='checkbox' name='$id'></td>
+</tr>
 END
 	;
 }
 close(RULES);
 
 print <<END
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'remove'}'></TD>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'edit'}'></TD>
-</TR>
-</TABLE>
+</table>
+<table class='blank'>
+<tr>
+<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
+</tr>
+</table>
 END
 ;
 &closebox();

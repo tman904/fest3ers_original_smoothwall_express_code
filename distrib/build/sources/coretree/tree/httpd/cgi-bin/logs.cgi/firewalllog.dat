@@ -6,9 +6,9 @@
 #
 # (c) The SmoothWall Team
 
-#Aug 28 14:54:30 shite kernel: IN=ppp0 OUT= MAC= SRC=213.48.150.1
-#DST=213.208.115.234 LEN=110 TOS=0x00 PREC=0x00 TTL=60 ID=30699 DF PROTO=TCP
-#SPT=6667 DPT=62593 WINDOW=2505 RES=0x00 ACK PSH URGP=0  
+# Aug 28 14:54:30 random kernel: IN=ppp0 OUT= MAC= SRC=213.48.150.1
+# DST=213.208.115.234 LEN=110 TOS=0x00 PREC=0x00 TTL=60 ID=30699 DF PROTO=TCP
+# SPT=6667 DPT=62593 WINDOW=2505 RES=0x00 ACK PSH URGP=0  
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
@@ -174,23 +174,9 @@ END
 
 &closebox();
 
-&openbox($tr{'firewall log2'});
-print <<END
-<FORM METHOD='GET'>
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'time'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'in'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'out'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'protocol'}</B></TD>
-	<TD WIDTH='20%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'source'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'src port'}</B></TD>
-	<TD WIDTH='20%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'destination'}</B></TD>
-	<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'dst port'}</B></TD>
-</TR>
-<TR>
-END
-;
+# now display the actual log...
+
+# calculate start and end positions.
 
 if ($start == -1) {
         $start = $lines - $viewsize; }
@@ -204,8 +190,72 @@ if ($prev < 0) { $prev = 0; }
 if ($next >= $lines) { $next = -1 }
 if ($start == 0) { $prev = -1; }
 
-$lines = 0;
 my @slice = splice(@log, $start, $viewsize);
+
+# display the header
+
+&openbox($tr{'firewall log2'});
+print <<END
+<form method='get'>
+<table class='centered'>
+<tr>
+	<td colspan='8' style='text-align: center;'>
+END
+;
+
+if ($next != -1) {
+	print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>&lt;</a> "; }
+else {
+	print "&lt; "; }
+
+
+for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
+	my $link;
+	if ( $i == ($lines-$viewsize) ){
+		# first
+		$link = "Sm";
+	} elsif ( $i-$viewsize <= 0 ){
+		# last
+		$link = "th";
+	} else {
+		# and always
+		$link = "o"
+	}
+
+	if ( $i == $start ){
+		print "<a class='activemenu' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}''>$link</a>"
+	} else {
+		print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}''>$link</a>"
+	}
+}
+
+if ($prev != -1) {
+	print " <a href='/cgi-bin/logs.cgi/firewalllog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>&gt;</a>"; }
+else {
+	print " &gt;"; }
+
+
+print <<END
+		<br/>
+		<br/>
+	</td>
+</tr>
+<tr>
+	<th style='width: 10%;'>$tr{'time'}</th>
+	<th style='width: 10%;'>$tr{'in'}</th>
+	<th style='width: 10%;'>$tr{'out'}</th>
+	<th style='width: 10%;'>$tr{'protocol'}</th>
+	<th style='width: 20%;'>$tr{'source'}</th>
+	<th style='width: 10%;'>$tr{'src port'}</th>
+	<th style='width: 20%;'>$tr{'destination'}</th>
+	<th style='width: 10%;'>$tr{'dst port'}</th>
+</tr>
+<tr>
+END
+;
+
+$lines = 0;
+
 foreach $_ (@slice)
 {
 	my $in = '-'; my $out = '-';
@@ -238,67 +288,47 @@ foreach $_ (@slice)
 	else {
 		$dstportstr = $dstport; }
 	if ($lines % 2) {
-		print "<TR BGCOLOR='$table1colour'>\n"; }
+		print "<tr class='light'>\n"; }
 	else {
-		print "<TR BGCOLOR='$table2colour'>\n"; }
+		print "<tr class='dark'>\n"; }
 	print <<END
-	<TD ALIGN='CENTER'>$time</TD>
-	<TD ALIGN='CENTER'>$in</TD>
-	<TD ALIGN='CENTER'>$out</TD>
-	<TD ALIGN='CENTER'>$protostr</TD>
-        <TD ALIGN='CENTER'>
-	<TABLE WIDTH='100%' CELLPADDING='0' CELLSPACING='0'><TR>
-	<TD><INPUT TYPE='checkbox' NAME='ip' VALUE='$srcaddr'></TD>
-	<TD ALIGN='CENTER'>$srcaddr</TD>
-	</TR></TABLE>
-	</TD>
-	<TD ALIGN='CENTER'>$srcportstr</TD>
-        <TD ALIGN='CENTER'>
-	<TABLE WIDTH='100%' CELLPADDING='0' CELLSPACING='0'><TR>
-	<TD><INPUT TYPE='checkbox' NAME='ip' VALUE='$dstaddr'></TD>
-	<TD ALIGN='CENTER'>$dstaddr</TD>
-	</TR></TABLE>
-	</TD>
-	<TD ALIGN='CENTER'>$dstportstr</TD>
-</TR>
+	<td style='text-align: center;'>$time</td>
+	<td style='text-align: center;'>$in</td>
+	<td style='text-align: center;'>$out</td>
+	<td style='text-align: center;'>$protostr</td>
+        <td style='text-align: center;'>
+		<table class='blank'>
+			<tr>
+				<td style='text-align: left;'><input type='checkbox' name='ip' value='$srcaddr'></td>
+				<td style='text-align: center;'>$srcaddr</td>
+			</tr>
+		</table>
+	</td>
+	<td style='text-align: center;'>$srcportstr</td>
+        <td style='text-align: center;'>
+		<table class='blank'>
+			<tr>
+				<td><input type='checkbox' name='ip' value='$dstaddr'></td>
+				<td style='text-align: right;'>$dstaddr</td>
+			</tr>
+		</table>
+	</td>
+	<td style='text-align: center;'>$dstportstr</td>
+</tr>
 END
 	;
 	$lines++;
 }
 
 print <<END
-</TABLE>
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='50%'>
-<TR>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'lookup'}'></TD>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'add to ip block'}'></TD>
-</TR>
-</TABLE>
-</DIV>
-</FORM>
-<TABLE WIDTH='100%'>
-<TR>
-END
-;
-
-print "<TD ALIGN='CENTER' WIDTH='50%'>";
-if ($prev != -1) {
-	print "<A HREF='/cgi-bin/logs.cgi/firewalllog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$tr{'older'}</A>"; }
-else {
-	print "$tr{'older'}"; }
-print "</TD>\n";
-
-print "<TD ALIGN='CENTER' WIDTH='50%'>";
-if ($next != -1) {
-	print "<A HREF='/cgi-bin/logs.cgi/firewalllog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$tr{'newer'}</A>"; }
-else {
-	print "$tr{'newer'}"; }
-print "</TD>\n";
-
-print <<END
-</TR>
-</TABLE>
+</table>
+<table class='blank'>
+<tr>
+<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'lookup'}'></td>
+<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'add to ip block'}'></td>
+</tr>
+</table>
+</form>
 END
 ;
 

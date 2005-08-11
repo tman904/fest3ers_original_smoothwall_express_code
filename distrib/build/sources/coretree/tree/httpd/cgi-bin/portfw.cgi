@@ -126,68 +126,53 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &alertbox($errormessage);
 
-print <<END
-<!--
-<CENTER>
-<TABLE BORDER='0' CELLPADDING='0' CELLSPACING='0'>
-<TR><TD VALIGN='top' ALIGN='CENTER'>
-<A HREF='http://www.smoothwall.co.uk/'><IMG
- SRC='/ui/assets/3.5/img/inlinepromo.smoothhost.png' BORDER='0'
- ALT='Visit smoothwall.co.uk for enhanced commercial SmoothWall products'></A>
-</TD></TR>
-</TABLE>
-</CENTER>
- -->
-END
-;
-
 print "<FORM METHOD='POST'>\n";
 
 &openbox($tr{'add a new rule'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='35%' CLASS='base'><FONT COLOR='$colourred'>$tr{'sourcec'}</FONT></TD>
-<TD WIDTH='20%'><INPUT TYPE='TEXT' NAME='EXT' VALUE='$cgiparams{'EXT'}' SIZE=18'></TD>
-<TD WIDTH='15%'CLASS='base'><FONT COLOR='$colourred'>$tr{'source port or rangec'}</FONT></TD>
-<TD WIDTH='15%'><INPUT TYPE='TEXT' NAME='SRC_PORT' VALUE='$cgiparams{'SRC_PORT'}' SIZE='10'></TD>
-<TD CLASS='base'>$tr{'destination ipc'}</TD>
-<TD><INPUT TYPE='TEXT' NAME='DEST_IP' VALUE='$cgiparams{'DEST_IP'}' SIZE='18'></TD>
-<TD CLASS='base'>$tr{'destination portc'}<IMG SRC='/ui/assets/3.5/img/blob.gif' VALIGN='top'>&nbsp;</TD>
-<TD><INPUT TYPE='TEXT' NAME='DEST_PORT' VALUE='$cgiparams{'DEST_PORT'}' SIZE='8'></TD>
-</TR>
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='20%' ALIGN='CENTER'>
-<SELECT NAME='PROTOCOL'>
-<OPTION VALUE='udp' $selected{'PROTOCOL'}{'udp'}>UDP
-<OPTION VALUE='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP
-</SELECT>
-</TD>
-<TD CLASS='base' WIDTH='40%' ALIGN='CENTER'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
-<TD WIDTH='40%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
-</TR>
-</TABLE>
-<BR>
-<IMG SRC='/ui/assets/3.5/img/blob.gif' VALIGN='top'>&nbsp;
-<FONT CLASS='base'>$tr{'portfw destination port'}</FONT>
+<table>
+<tr>
+	<td style='width: 35%;'>$tr{'sourcec'}</td>
+	<td style='width: 20%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18'></td>
+	<td style='width: 15%;'>$tr{'source port or rangec'}</td>
+	<td style='width: 15%;'><input type='text' name='SRC_PORT' value='$cgiparams{'SRC_PORT'}' size='10'></td>
+</tr>
+<tr>
+	<td>$tr{'destination ipc'}</td>
+	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18'></td>
+	<td>$tr{'destination portc'}<img src='/ui/img/blob.gif'>&nbsp;</td>
+	<td><input type='text' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='8'></td>
+</tr>
+<tr>
+	<td>$tr{'protocol'}</td>
+	<td>
+		<select name='PROTOCOL'>
+			<option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP
+			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP
+		</select>
+	</td>
+	<td>$tr{'enabled'}<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
+	<td><input type='submit' name='ACTION' value='$tr{'add'}'></td>
+</tr>
+</table>
+<br/>
+<img src='/ui/img/blob.gif'>&nbsp;$tr{'portfw destination port'}
 END
 ;
 &closebox();
 
 &openbox($tr{'current rules'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='10%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'protocol'}</B></TD>
-<TD WIDTH='15%' CLASS='boldbase' ALIGN='CENTER'><B>External source IP</B></TD>
-<TD WIDTH='20%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'source port'}</B></TD>
-<TD WIDTH='20%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'destination ip'}</B></TD>
-<TD WIDTH='15%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'destination port'}</B></TD>
-<TD WIDTH='10%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'enabledtitle'}</B></TD>
-<TD WIDTH='10%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'mark'}</B></TD>
-</TR>
+<table class='centered'>
+<tr>
+	<th style='width: 10%;'>$tr{'protocol'}</th>
+	<th style='width: 15%;'>External source IP</th>
+	<th style='width: 20%;'>$tr{'source port'}</th>
+	<th style='width: 20%;'>$tr{'destination ip'}</th>
+	<th style='width: 15%;'>$tr{'destination port'}</th>
+	<th style='width: 10%;'>$tr{'enabledtitle'}</th>
+	<th style='width: 10%;'>$tr{'mark'}</th>
+</tr>
 END
 ;
 
@@ -214,33 +199,33 @@ while (<RULES>)
 		$destport = $temp[4]; }
 
 	if ($id % 2) {
-		print "<TR BGCOLOR='$table1colour'>\n"; }
+		print "<tr class='dark'>\n"; }
 	else {
-              	print "<TR BGCOLOR='$table2colour'>\n"; }
+              	print "<tr class='light'>\n"; }
 	if ($temp[5] eq 'on') { $gif = 'on.gif'; }
 		else { $gif = 'off.gif'; }
 print <<END
-<TD ALIGN='CENTER'>$protocol</TD>
-<TD ALIGN='CENTER'>$external</TD>
-<TD ALIGN='CENTER'>$temp[2]</TD>
-<TD ALIGN='CENTER'>$temp[3]</TD>
-<TD ALIGN='CENTER'>$destport</TD>
-<TD ALIGN='CENTER'><IMG SRC='/ui/assets/3.5/img/$gif'></TD>
-<TD ALIGN='CENTER'><INPUT TYPE='CHECKBOX' NAME='$id'></TD>
-</TR>
+<td>$protocol</td>
+<td>$external</td>
+<td>$temp[2]</td>
+<td>$temp[3]</td>
+<td>$destport</td>
+<td><img src='/ui/img/$gif'></td>
+<td><input type='checkbox' name='$id'></td>
+</tr>
 END
 	;
 }
 close(RULES);
 
 print <<END
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'remove'}'></TD>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'edit'}'></TD>
-</TR>
-</TABLE>
+</table>
+<table class='blank'>
+<tr>
+	<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+	<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
+</tr>
+</table>
 END
 ;
 &closebox();

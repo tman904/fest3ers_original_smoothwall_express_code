@@ -293,14 +293,14 @@ print <<END
 	<TD><INPUT TYPE='text' NAME='MAX_LEASE_TIME' VALUE='$dhcpsettings{'MAX_LEASE_TIME'}'></TD>
 </TR>
 <TR>
-	<TD CLASS='base'>$tr{'domain name suffix'}&nbsp;<IMG SRC='/ui/assets/3.5/img/blob.gif' ALT='*'></TD></TD>
+	<TD CLASS='base'>$tr{'domain name suffix'}&nbsp;<IMG SRC='/ui/img/blob.gif' ALT='*'></TD></TD>
 	<TD><INPUT TYPE='text' NAME='DOMAIN_NAME' VALUE='$dhcpsettings{'DOMAIN_NAME'}'></TD>
 	<TD CLASS='base'>$tr{'enabled'}</TD>
 	<TD><INPUT TYPE='checkbox' NAME='ENABLE' $checked{'ENABLE'}{'on'}></TD>
 </TR>
 </TABLE>
 <BR>
-<IMG SRC='/ui/assets/3.5/img/blob.gif' ALT='*' VALIGN='top'>&nbsp;
+<IMG SRC='/ui/img/blob.gif' ALT='*' VALIGN='top'>&nbsp;
 <FONT CLASS='base'>$tr{'this field may be blank'}</FONT>
 END
 ;
@@ -327,13 +327,13 @@ END
 
 &openbox($tr{'current static assignments'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='30%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'description'}</B></TD>
-<TD WIDTH='30%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'mac address'}</B></TD>
-<TD WIDTH='30%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'ip address'}</B></TD>
-<TD WIDTH='10%' CLASS='boldbase' ALIGN='CENTER'><B>$tr{'mark'}</B></TD>
-</TR>
+<table class='centered'>
+<tr>
+<th style='width: 30%;'>$tr{'description'}</th>
+<th style='width: 30%;'>$tr{'mac address'}</th>
+<th style='width: 30%;'>$tr{'ip address'}</th>
+<th style='width: 10%;'>$tr{'mark'}</th>
+</tr>
 END
 ;
 
@@ -345,28 +345,28 @@ while (<RULES>)
 	chomp($_);
 	my @temp = split(/\,/,$_);
 	if ($id % 2) {
-		print "<TR BGCOLOR='$table1colour'>\n"; }
+		print "<tr class='dark'>\n"; }
 	else {
-		print "<TR BGCOLOR='$table2colour'>\n"; }
+		print "<tr class='light'>\n"; }
 	print <<END
-<TD ALIGN='CENTER'>$temp[0]</TD>
-<TD ALIGN='CENTER'>$temp[1]</TD>
-<TD ALIGN='CENTER'>$temp[2]</TD>
-<TD ALIGN='CENTER'><INPUT TYPE='CHECKBOX' NAME='$id'></TD>
-</TR>
+<td style='text-align: center;'>$temp[0]</td>
+<td style='text-align: center;'>$temp[1]</td>
+<td style='text-align: center;'>$temp[2]</td>
+<td style='text-align: center;'><input type='checkbox' name='$id'></td>
+</tr>
 END
 ;
 }
 close(RULES);
 
 print <<END
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'remove'}'></TD>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'edit'}'></TD>
-</TR>
-</TABLE>
+</table>
+<table class='blank'>
+<tr>
+<td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+<td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
+</tr>
+</table>
 END
 ;
 &closebox();

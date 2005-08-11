@@ -146,7 +146,7 @@ print <<END
 <TABLE BORDER='0' CELLPADDING='0' CELLSPACING='0'>
 <TR><TD VALIGN='top' ALIGN='CENTER'>
 <A HREF='http://www.smoothwall.co.uk/'><IMG
- SRC='/ui/assets/3.5/img/inlinepromo.smoothtunnel.png' BORDER='0'
+ SRC='/ui/img/inlinepromo.smoothtunnel.png' BORDER='0'
  ALT='Visit smoothwall.co.uk for enhanced commercial SmoothWall products'></A>
 </TD></TR>
 </TABLE>
@@ -202,7 +202,7 @@ END
 
 &openbox($tr{'current connections'});
 
-print "<TABLE WIDTH='100%'>\n";
+print "<table class='centered'>\n";
 
 my $id = 0;
 open(RULES, "$filename") or die 'Unable to open config file.';
@@ -214,48 +214,45 @@ while (<RULES>)
 	my @temp = split(/\,/,$_);
 	my $stars = $temp[5];
 	$stars =~ s/./\*/g;
+	my $class;
 	if ($id % 2) {
-		print "<TR BGCOLOR='$table1colour'>\n"; }
+		$class = 'light'; }
 	else {
-		print "<TR BGCOLOR='$table2colour'>\n"; }
+		$class = 'dark'; }
  	if ($temp[6] eq 'on') { $egif = 'on.gif'; }
                 else { $egif = 'off.gif'; }
  	if ($temp[7] eq 'on') { $cgif = 'on.gif'; }
                 else { $cgif = 'off.gif'; }
 print <<END
-<TD>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='25%'><B>$tr{'namec'}</B> $temp[0]</TD>
-<TD WIDTH='25%'><B>$tr{'enabled'} </B><IMG VALIGN='middle' SRC='/ui/assets/3.5/img/$egif'></TD>
-<TD WIDTH='25%'><B>Compression: </B><IMG VALIGN='middle' SRC='/ui/assets/3.5/img/$cgif'></TD>
-<TD WIDTH='25%'>&nbsp;</TD>
-</TR>
-<TR>
-<TD><B>$tr{'leftc'}</B> $temp[1]</TD>
-<TD><B>$tr{'left subnetc'}</B> $temp[2]</TD>
-<TD><B>$tr{'rightc'} </B>$temp[3]</TD>
-<TD><B>$tr{'right subnetc'} </B>$temp[4]</TD>
-</TR>
-<TR>
-<TD COLSPAN='3'><B>$tr{'secretc'}</B> $stars</TD>
-<TD><B>$tr{'markc'} </B><INPUT TYPE='CHECKBOX' NAME='$id'></TD>
-</TR>
-</TABLE>
-</TD></TR>
+<tr class='$class'>
+<td style='width: 25%;'><strong>$tr{'namec'}</strong> $temp[0]</td>
+<td style='width: 25%;'><strong>$tr{'enabled'} </strong><img src='/ui/img/$egif'></td>
+<td style='width: 25%;'><strong>Compression: </strong><img src='/ui/img/$cgif'></td>
+<td style='width: 25%;'>&nbsp;</td>
+</tr>
+<tr class='$class'>
+<td><strong>$tr{'leftc'}</strong> $temp[1]</td>
+<td><strong>$tr{'left subnetc'}</strong> $temp[2]</td>
+<td><strong>$tr{'rightc'} </strong>$temp[3]</td>
+<td><strong>$tr{'right subnetc'} </strong>$temp[4]</td>
+</tr>
+<tr class='$class'>
+<td colspan='3'><strong>$tr{'secretc'}</strong> $stars</td>
+<td><strong>$tr{'markc'} </strong><input type='checkbox' name='$id'></td>
+</tr>
 END
 	;
 }
 close(RULES);
 
 print <<END
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'remove'}'></TD>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'edit'}'></TD>
-</TR>
-</TABLE>
+</table>
+<table class='blank'>
+<tr>
+<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
+</tr>
+</table>
 END
 ;
 &closebox();

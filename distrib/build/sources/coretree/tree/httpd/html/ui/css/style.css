@@ -163,6 +163,8 @@ table.expand {
 table.centered {
 	margin-left: auto;
 	margin-right: auto;
+	border-collapse: collapse;
+	width: 100%;
 }
 
 td.note {
@@ -294,6 +296,20 @@ td.progressbar {
 	height: 18px;
 	font-size: 8pt;	
 }
+
+th {
+	background-color: #d0d0d0;
+	font-weight: bold;
+}
+
+tr.light {
+	background-color: #e0e0e0;
+}
+
+tr.dark {
+	background-color: #efefef;
+}
+
 
 a {
         font-size : 10;

@@ -61,12 +61,12 @@ print <<END
 <TR>
 	<TD WIDTH='25%' CLASS='base'>SSH:</TD>
 	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_SSH' $checked{'ENABLE_SSH'}{'on'}></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'secure admin'}<IMG SRC='/ui/assets/3.5/img/blob.gif'></TD>
+	<TD WIDTH='25%' CLASS='base'>$tr{'secure admin'}<IMG SRC='/ui/img/blob.gif'></TD>
 	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_SECURE_ADMIN' $checked{'ENABLE_SECURE_ADMIN'}{'on'}></TD>
 </TR>
 </TABLE>
 <BR>
-<IMG SRC='/ui/assets/3.5/img/blob.gif' VALIGN='top'>&nbsp;
+<IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
 <FONT CLASS='base'>$tr{'secure admin long'}</FONT>
 END
 ;

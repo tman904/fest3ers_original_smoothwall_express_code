@@ -65,7 +65,7 @@ print <<END
 <TABLE BORDER='0' CELLPADDING='0' CELLSPACING='0'>
 <TR><TD VALIGN='top' ALIGN='CENTER'>
 <A HREF='http://www.smoothwall.co.uk/'><IMG
- SRC='/ui/assets/3.5/img/inlinepromo.smoothtunnel.png' BORDER='0'
+ SRC='/ui/img/inlinepromo.smoothtunnel.png' BORDER='0'
  ALT='Visit smoothwall.co.uk for enhanced commercial SmoothWall products'></A>
 </TD></TR>
 </TABLE>
@@ -81,14 +81,14 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-<TD WIDTH='25%' CLASS='base'>$tr{'local vpn ip'}&nbsp;<IMG SRC='/ui/assets/3.5/img/blob.gif'></TD>
+<TD WIDTH='25%' CLASS='base'>$tr{'local vpn ip'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
 <TD WIDTH='25%' ><INPUT TYPE='TEXT' NAME='VPN_IP' VALUE='$cgiparams{'VPN_IP'}' SIZE='15'></TD>
 <TD WIDTH='25%' CLASS='base'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
 <TD WIDTH='25%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'save'}'></TD>
 </TR>
 </TABLE>
 <BR>
-<IMG SRC='/ui/assets/3.5/img/blob.gif' VALIGN='top'>&nbsp;
+<IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
 <FONT CLASS='base'>$tr{'if blank the currently configured ethernet red address will be used'}</FONT>
 END
 ;
@@ -96,13 +96,12 @@ END
 
 &openbox($tr{'manual control and status'});
 print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='80%'>
-<TR>
-<TD ALIGN='LEFT'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'restart'}'></TD>
-<TD ALIGN='RIGHT'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'stop'}'></TD>
-</TR>
-</TABLE>
+<table class='blank'>
+<tr>
+<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'restart'}'></td>
+<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'stop'}'></td>
+</tr>
+</table>
 END
 ;
 open (FILE, "$filename");
@@ -114,11 +113,11 @@ my @active = <ACTIVE>;
 close (ACTIVE);
 
 print <<END
-<TABLE WIDTH='60%'>
-<TR>
-<TD ALIGN='CENTER'><B>$tr{'connection name'}</B></TD><TD
-ALIGN='CENTER'><B>$tr{'connection status'}</B></TD>
-</TR>
+<table class='centered'>
+<tr>
+<th>$tr{'connection name'}</th>
+<th>$tr{'connection status'}</th>
+</tr>
 END
 ;
 
@@ -135,9 +134,9 @@ foreach $line (@current)
 	$netmaskl =~ /\//; $netmaskl = $`;
 	my $netmaskr = $temp[4];
 	$netmaskr =~ /\//; $netmaskr = $`;
-	my $active = "<TABLE CELLPADDING='2' CELLSPACING='0' BGCOLOR='$colourlightred''><TR><TD><B>$tr{'capsclosed'}</B></TD></TR></TABLE>";
+	my $active = "<table class='blank'><tr><td><strong>$tr{'capsclosed'}</strong></td></tr></table>";
 	if ($temp[8] eq 'off') {
-		$active = "<TABLE CELLPADDING='2' CELLSPACING='0' BGCOLOR='#000000'><TR><TD><B>$tr{'capsdisabled'}</B></TD></TR></TABLE>"; }
+		$active = "<table class='blank'><tr><td><strong>$tr{'capsdisabled'}</strong></td></tr></table>"; }
 
 	foreach $line (@active)
 	{
@@ -150,19 +149,17 @@ foreach $line (@current)
 		if (($targetl eq $netmaskl && $targetr eq $netmaskr) ||
 			($targetl eq $netmaskr && $targetr eq $netmaskl))
 		 {
-			$active = "<TABLE CELLPADDING='2' CELLSPACING='0' BGCOLOR='$colourlightgreen'><TR><TD><B>$tr{'capsopen'}</B></TD></TR></TABLE>";
+			$active = "<table class='blank'><tr><td><strong>$tr{'capsopen'}</strong></td></tr></table>";
 		}
 	}
 	if ($id % 2) {
-		print "<TR BGCOLOR='$table1colour'>\n"; }
+		print "<tr class='dark'>\n"; }
 	else {
-		print "<TR BGCOLOR='$table2colour'>\n"; }
-	print "<TD ALIGN='CENTER'>$name</TD><TD ALIGN='CENTER'>$active</TD>\n";
-	print "</TR>\n";
+		print "<tr class='light'>\n"; }
+	print "<td style='text-align: center;'>$name</td><td style='text-align: center;'>$active</td>\n";
+	print "</tr>\n";
 }
-print "</TABLE>\n";
-
-print "</DIV>\n";
+print "</table>\n";
 
 &closebox();
 
