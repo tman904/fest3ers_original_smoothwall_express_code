@@ -4,16 +4,16 @@ MAILTO=root
 HOME=/
 
 # run-parts
-01 * * * * root run-parts /etc/cron.hourly
-02 4 * * * root run-parts /etc/cron.daily
-22 4 * * 0 root run-parts /etc/cron.weekly
-42 4 1 * * root run-parts /etc/cron.monthly
+01 * * * * root /usr/bin/smoothwall/run-parts /etc/cron.hourly
+02 4 * * * root /usr/bin/smoothwall/run-parts /etc/cron.daily
+22 4 * * 0 root /usr/bin/smoothwall/run-parts /etc/cron.weekly
+42 4 1 * * root /usr/bin/smoothwall/run-parts /etc/cron.monthly
 
 # Update time
-30 * * * * root /usr/local/bin/gettime.pl >/dev/null
+30 * * * * root /usr/bin/smoothwall/gettime.pl >/dev/null
 
 # watcher
-* * * * * nobody /usr/local/bin/stayup.pl >/dev/null
+* * * * * nobody /usr/bin/smoothwall/stayup.pl >/dev/null
 
 # Make some nice graphs
-*/5 * * * * root /usr/bin/rrdtool.pl >/dev/null
+*/5 * * * * root /usr/bin/smoothwall/rrdtool.pl >/dev/null
