@@ -32,6 +32,7 @@ distrib:
 	@(cd distrib/etc/ppp; ln -s /var/smoothwall/ppp/secrets pap-secrets)
 	@(cd distrib/etc/ppp; ln -s /var/smoothwall/ppp/ibod.cf)
 	@(cd distrib/usr/etc; ln -s /var/smoothwall/time/ntpd.conf)
+	@(cd distrib/usr/etc; ln -s /var/smoothwall/hosts/hosts)
 	
 	@(cd distrib/var/smoothwall/time; ln -s /usr/share/zoneinfo/posix/Europe/London localtime)
 
