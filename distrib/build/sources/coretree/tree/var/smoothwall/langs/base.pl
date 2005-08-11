@@ -59,6 +59,7 @@
 'ssadvanced' => 'advanced',
 'ssip block' => 'ip block',
 'ssbackup' => 'backup',
+'sshosts' => 'static dns',
 'powered by' => 'powered by',
 'alt home' => 'Home', # alt
 'alt information' => 'Information', # alt
