@@ -21,20 +21,8 @@ my %netsettings;
 &readhash("${swroot}/isdn/settings", \%isdnsettings);
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 
-# No output should be sent to the webclient
-close (STDIN); close (STDOUT);
-
 if ( -e "${swroot}/red/dial-on-demand") {
 	unlink("${swroot}/red/dial-on-demand");
-}
-
-my $lockfile = "/var/run/ppp-smooth.pid"; 
-if (open(FILE, $lockfile))
-{
-	my $pid = <FILE>;
-	close FILE;
-	chomp ($pid);
-	system ('/bin/kill', $pid);
 }
 
 if ($pppsettings{'COMPORT'} =~ /isdn/)
@@ -49,3 +37,4 @@ unlink "${swroot}/red/stayup";
 
 system('/usr/bin/killall', 'updatelists.pl');
 system('/usr/bin/killall', 'machine_reg.pl');
+system('/usr/bin/killall', 'pppd');
