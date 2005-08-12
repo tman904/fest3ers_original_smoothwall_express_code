@@ -132,16 +132,16 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <table>
 <tr>
-	<td style='width: 35%;'>$tr{'sourcec'}</td>
-	<td style='width: 20%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18'></td>
-	<td style='width: 15%;'>$tr{'source port or rangec'}</td>
-	<td style='width: 15%;'><input type='text' name='SRC_PORT' value='$cgiparams{'SRC_PORT'}' size='10'></td>
+	<td style='width: 30%;'>$tr{'sourcec'}</td>
+	<td style='width: 20%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}'></td>
+	<td style='width: 30%;'>$tr{'source port or rangec'}</td>
+	<td style='width: 20%;'><input type='text' name='SRC_PORT' value='$cgiparams{'SRC_PORT'}' size='10'></td>
 </tr>
 <tr>
 	<td>$tr{'destination ipc'}</td>
 	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18'></td>
 	<td>$tr{'destination portc'}<img src='/ui/img/blob.gif'>&nbsp;</td>
-	<td><input type='text' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='8'></td>
+	<td><input type='text' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='8' title='$tr{'portfw destination port'}'></td>
 </tr>
 <tr>
 	<td>$tr{'protocol'}</td>
