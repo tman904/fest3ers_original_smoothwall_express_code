@@ -346,6 +346,7 @@
 'vpn' => 'VPN',
 'web proxy' => 'Web proxy',
 'intrusion detection system' => 'Intrusion Detection System',
+'network time server' => 'Network time server',
 'status information' => 'Status information',
 'advanced status information' => 'Advanced status information',
 'services' => 'Services:',
