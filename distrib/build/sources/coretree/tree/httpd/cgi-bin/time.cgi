@@ -12,7 +12,7 @@ use header qw( :standard );
 my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
         'Sep', 'Oct', 'Nov', 'Dec' );
 
-my (%timesettings, $errormessage, my %timeservers);
+my (%timesettings, %netsettings, $errormessage, my %timeservers);
 my $found;
 my @temp;
 my $temp; my $tempsettings;
@@ -27,6 +27,7 @@ $timesettings{'VALID'} = '';
 $timesettings{'TIMEZONE'} = '';
 $timesettings{'ENABLE'} = 'off';
 $timesettings{'NTP_RTC'} = 'off';
+$timesettings{'NTPD'} = 'off';
 
 open(FILE, "${swroot}/time/timeservers") or die "Unable to open timeservers file.";
 while (<FILE>)
@@ -38,6 +39,8 @@ while (<FILE>)
 close FILE;
 
 &getcgihash(\%timesettings);
+
+&readhash("${swroot}/ethernet/settings", \%netsettings);
 
 open(FILE, "${swroot}/time/timezones");
 @timezones = <FILE>;
@@ -113,6 +116,22 @@ ERROR:
 		$timesettings{'VALID'} = 'yes'; }
 
 	&writehash("${swroot}/time/settings", \%tempsettings);
+	
+	open (FILE, ">${swroot}/time/ntpd.conf");
+	print FILE <<END
+listen on $netsettings{'GREEN_ADDRESS'}
+listen on 127.0.0.1
+server 127.0.0.1
+END
+	;
+	close (FILE);
+	
+	if ($timesettings{'NTPD'} eq 'on') {
+		system('/bin/touch', "${swroot}/time/enablentpd"); }
+	else {
+		unlink "${swroot}/time/enablentpd"; }
+		
+	system('/usr/bin/setuids/restartntpd');
 }
 
 if ($timesettings{'VALID'} eq '')
@@ -122,6 +141,7 @@ if ($timesettings{'VALID'} eq '')
 	$timesettings{'NTP_INTERVAL'} = 24;
 	$timesettings{'NTP_RTC'} = 'on';
 	$timesettings{'NTP_SERVER_TYPE'} = 'RANDOM';
+	$timesettings{'NTPD'} = 'off';
 }
 
 &readhash("${swroot}/time/settings", \%timesettings);
@@ -133,6 +153,10 @@ $checked{'ENABLED'}{$timesettings{'ENABLED'}} = 'CHECKED';
 $checked{'NTP_RTC'}{'on'} = '';
 $checked{'NTP_RTC'}{'off'} = '';
 $checked{'NTP_RTC'}{$timesettings{'NTP_RTC'}} = 'CHECKED';
+
+$checked{'NTPD'}{'on'} = '';
+$checked{'NTPD'}{'off'} = '';
+$checked{'NTPD'}{$timesettings{'NTPD'}} = 'CHECKED';
 
 $selected{'TIMEZONE'}{$timesettings{'TIMEZONE'}} = 'SELECTED';
 
@@ -326,7 +350,7 @@ END
 ;
 
 &closebox();
-~
+
 &openbox($tr{'network time servers'});
 
 print <<END
@@ -362,6 +386,20 @@ $tr{'user defined single public or local server'}
 END
 ;
 
+&closebox();
+
+&openbox('Time server:');
+print <<END
+<TABLE WIDTH='100%'>
+<TR>
+<TD WIDTH='25%' CLASS='base'>$tr{'enabled'}</TD>
+<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='NTPD' $checked{'NTPD'}{'on'}></TD>
+<TD WIDTH='25%'>&nbsp;</TD>
+<TD WIDTH='25%'>&nbsp;</TD>
+</TR>
+</TABLE>
+END
+;
 &closebox();
 
 print <<END
