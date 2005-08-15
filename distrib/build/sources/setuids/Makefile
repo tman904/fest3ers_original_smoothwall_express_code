@@ -6,7 +6,7 @@ VERSION = 0.0
 PROGS = setdmzholes setportfw setxtaccess restartdhcp restartsnort \
 	restartsquid smoothiedeath smoothierebirth alcateladslfw \
 	installpackage ipsecctrl restartdnsproxy restartssh \
-	setadvnet setipblock restartupnp updown
+	setadvnet setipblock restartupnp restartntpd updown
 
 compile:
 	@make -C $(COMPILE_DIR)
