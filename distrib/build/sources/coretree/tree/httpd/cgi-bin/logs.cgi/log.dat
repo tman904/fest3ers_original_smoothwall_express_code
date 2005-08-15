@@ -28,7 +28,7 @@ my %filters = (
 	'kernel' => '(kernel)',
 	'ipsec' => '(ipsec_.*)',
 	'installpackage' => '(installpackage)\[.*\]',
-	'ntp' => '(ntpdate)\[.*\]'
+	'ntp' => '(ntpdate|ntpd)\[.*\]'
 );
 	
 my @now = localtime(time);
