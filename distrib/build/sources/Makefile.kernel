@@ -7,7 +7,7 @@ IPTABLES_DIR = $(SOURCES_DIR)/iptables/iptables-$(IPTABLES_VER)
 PACKAGE = linux
 VERSION = $(KERNEL_VERSION)
 
-PATCH_O_MATIC_VER = 20040621
+PATCH_O_MATIC_VER = 20050814
 UNICORN_VER = 0.9.0
 USR_VER = 1.08
 
@@ -16,7 +16,7 @@ COMPILER = /opt/gcc-3.2.3/bin/gcc
 download:
 	@$(DL_CMD) http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2
 	@$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
-	@$(DL_CMD) http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
+	@$(DL_CMD) ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
 	@$(DL_CMD) http://download.smoothwall.org/archive/source/2.0/b4/usr-sureconnect.tar.gz
 
@@ -43,9 +43,9 @@ apply-pom: prepare
 	@(export KERNEL_DIR=$(KERNEL_DIR); \
 	export IPTABLES_DIR=$(IPTABLES_DIR); \
 	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
-	patch -p1 <../../kernel-patches/patch-o-matic-pptp-fix.patch; \
-	./runme --batch h323-conntrack-nat; \
-	./runme --batch pptp-conntrack-nat;)
+	./runme --batch mms-conntrack-nat; \
+	./runme --batch sip-conntrack-nat; \
+	./runme --batch h323-conntrack-nat;)
 
 compile-kernel: apply-pom
 	@make -C linux CC=$(COMPILER) clean oldconfig menuconfig dep bzImage modules
