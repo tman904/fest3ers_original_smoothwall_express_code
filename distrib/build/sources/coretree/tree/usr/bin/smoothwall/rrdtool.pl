@@ -24,7 +24,7 @@ my $rrdtool = '/usr/bin/rrdtool';
 # define location of rrdtool databases
 my $rrd = '/var/lib/rrd';
 # define location of images
-my $img = '/home/httpd/html/rrdtool';
+my $img = '/httpd/html/rrdtool';
 
 # process data for GREEN interface
 &ProcessInterface("green", $netsettings{'GREEN_DEV'});
