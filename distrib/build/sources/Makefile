@@ -1,4 +1,4 @@
-BASENAME = express
+BASENAME = express-3.0
 
 PRODUCT_NAME = Express
 PRODUCT_VERSION = 3.0
