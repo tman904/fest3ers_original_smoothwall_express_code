@@ -14,7 +14,7 @@ USR_VER = 1.08
 COMPILER = /opt/gcc-3.2.3/bin/gcc
 
 download:
-	@$(DL_CMD) http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2
+	@$(DL_CMD) http://www.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2
 	@$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	@$(DL_CMD) ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
