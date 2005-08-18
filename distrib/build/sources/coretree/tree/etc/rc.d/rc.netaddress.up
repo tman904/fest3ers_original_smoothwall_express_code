@@ -43,6 +43,8 @@ fi
 
 echo "Setting up firewall"
 . /etc/rc.d/rc.firewall.up
+echo "Starting traffic stats collector"
+/usr/bin/trafficlogger
 echo "Setting DMZ pinholes"
 /usr/bin/setuids/setdmzholes
 echo "Setting up advanced networking features"
@@ -56,8 +58,3 @@ fi
 
 echo "Setting external access rules"
 /usr/bin/setuids/setxtaccess
-
-#echo "Setting up IP accounting"
-#/usr/bin/smoothwall/writeipac.pl
-#/usr/sbin/fetchipac -S -c yes
-#/usr/sbin/fetchipac
