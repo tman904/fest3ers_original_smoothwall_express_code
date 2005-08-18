@@ -31,7 +31,9 @@ modprobe ip_conntrack_mms
 modprobe ip_nat_mms
 modprobe ip_conntrack_h323
 modprobe ip_nat_h323
-modprobe ip_conntrack_quake3 
+modprobe ip_conntrack_sip
+modprobe ip_nat_sip
+modprobe ip_conntrack_quake3
 modprobe ip_nat_quake3
 
 # Remove possible leftover files
