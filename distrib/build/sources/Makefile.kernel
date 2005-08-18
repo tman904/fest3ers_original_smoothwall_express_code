@@ -48,7 +48,9 @@ apply-pom: prepare
 	./runme --batch h323-conntrack-nat;)
 
 compile-kernel: apply-pom
-	@make -C linux CC=$(COMPILER) clean oldconfig menuconfig dep bzImage modules
+	@cp ../kernel.config linux/.config
+
+	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
 
 compile-unicorn: compile-kernel
 	@make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)
