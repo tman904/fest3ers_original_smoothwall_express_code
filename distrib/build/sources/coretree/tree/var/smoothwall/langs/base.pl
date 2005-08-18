@@ -509,6 +509,18 @@
 'network traffic graphsc' => 'Network traffic graphs:',
 'no graphs available' => 'No graphs available.',
 'no information available' => 'No information available.',
+'traffic stats interface' => 'Interface',
+'traffic stats current rate' => 'Current rate',
+'traffic stats direction' => 'Direction',
+'traffic stats hour' => 'Hour',
+'traffic stats day' => 'Day',
+'traffic stats week' => 'Week',
+'traffic stats month' => 'Month',
+'traffic stats previous' => 'Previous',
+'traffic stats current' => 'Current',
+'traffic stats period' => 'Period',
+'traffic stats in' => 'In',
+'traffic stats out' => 'Out',
 
 # usbadsl.cgi
 'usb adsl setup' => 'Alcatel SpeedTouch USB ADSL setup',
