@@ -16,6 +16,7 @@ echo "Loading SPI modules"
 modprobe ip_tables
 modprobe iptable_filter
 modprobe iptable_nat
+modprobe iptable_mangle
 modprobe ipt_LOG
 modprobe ipt_REJECT
 modprobe ipt_REDIRECT
@@ -33,7 +34,7 @@ modprobe ip_conntrack_h323
 modprobe ip_nat_h323
 modprobe ip_conntrack_sip
 modprobe ip_nat_sip
-modprobe ip_conntrack_quake3
+modprobe ip_conntrack_quake3 
 modprobe ip_nat_quake3
 
 # Remove possible leftover files
