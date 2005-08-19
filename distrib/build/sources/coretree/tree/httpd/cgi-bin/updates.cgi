@@ -11,6 +11,7 @@ use IO::Socket;
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 require '/var/smoothwall/updatelists.pl';
+use smoothnet qw( :standard );
 
 &showhttpheaders();
 
@@ -321,8 +322,6 @@ if ($uploadsettings{'ACTION'} eq "$tr{'update'}" ){
 
 	use lib "/usr/lib/smoothwall/";
 
-	use smoothnet qw( :standard );
-
 	print STDERR "Performing Update\n";
 
 	# determine the list of updates we currently require.
@@ -377,6 +376,7 @@ END
 		my $error;
 
 		foreach my $req ( sort keys %required ){
+			print STDERR "going for download of $req ($required{$req}{'name'})\n";
 			$status = "Downloading update $required{$req}{'name'}";
 
 			print <<END
@@ -386,13 +386,40 @@ END
 END
 ;
 
-			$required{$req}->{'file'} = download( $required{$req}{'name'}, "$required{$req}->{'size'}", "$required{$req}->{'md5'}", \&update );
+			my ( $down, $percent, $speed );
+		
+			my $uri = "http://downloads.smoothwall.org/updates/2.0/";
+			my $filename = "2.0-$required{$req}{'name'}.tar.gz";
+	
+			download( $uri, $filename );
 
-			if ( not defined $required{$req}->{'file'} ){
-				print STDERR "Bum Download failed ( $req - $required{$req}{'name'}";
-				$error = "Download failed ( $req - $required{$req}{'name'}";
-				last;
-			}
+			my $stop = 0;
+
+			do { 
+				( $down, $percent, $speed, $required{$req}{'file'} ) = &progress( $filename );
+
+				my $distance = ( $complete * $width_per_update ) + int( ( $width_per_update / 100 ) * $percent );
+				$distance = 1 if ( $distance <= 0 );
+
+				print <<END
+<script>
+	document.getElementById('progress').style.width = '${distance}px';
+</script>
+END
+;
+
+				if ( $percent eq "100%" ){
+					$stop = 1;
+				} elsif( not defined $percent or $percent eq "" ){
+					$stop = -1;
+				} else {
+					$stop = 0;
+				}
+				
+				sleep( 1 ); 
+			} while ( $stop == 0 );
+
+			( $down, $percent, $speed, $required{$req}{'file'} ) = &progress( $filename );
 
 			$complete++;
 			my $comp = $width_per_update * $complete; 
@@ -473,11 +500,15 @@ sub apply
 	unless (mkdir("/var/patches/$$",0700))
 	{
 		$errormessage = $tr{'could not create directory'};
+		print STDERR "returning $errormessage\n";
+		tidy();
 		return undef;
 	}
 	unless (open(FH, ">/var/patches/$$/patch.tar.gz"))
 	{
 		$errormessage = $tr{'could not open update for writing'};
+		print STDERR "returning $errormessage\n";
+		tidy();
 		return undef;
 	}
 
@@ -485,6 +516,8 @@ sub apply
 	
 	if ( defined $f ){
 		use File::Copy;
+print STDERR "dollar F is $f\n";
+print STDERR "to $$\n";
 		move( $f, "/var/patches/$$/patch.tar.gz" );
 	} else {
 		flock fH, 2;
@@ -501,6 +534,8 @@ sub apply
 	unless(open(LIST, "${swroot}/patches/available"))
 	{
 		$errormessage = $tr{'could not open available updates list'};
+		print STDERR "returning $errormessage\n";
+		tidy();
 		return undef;
 	}
 	@list = <LIST>;
@@ -509,8 +544,8 @@ sub apply
 	foreach (@list)
 	{
 		chomp();
-print STDERR "Checking $md5 against $md5sum\n";
 		($id,$md5,$title,$description,$date,$url) = split(/\|/,$_);
+print STDERR "Checking $md5 against $md5sum\n";
 		if ($md5sum =~ m/^$md5\s/)
 		{
 			$found = 1;
@@ -520,6 +555,7 @@ print STDERR "Checking $md5 against $md5sum\n";
 	unless ($found == 1)
 	{
 		$errormessage = $tr{'this is not an authorised update'};
+die;
 		print STDERR "$md5 $errormessage";
 		tidy();
 		return undef;
@@ -574,7 +610,7 @@ print STDERR "changing directory to /var/patches/$$\n";
 	if ($time[4] < 10) { $time[4] = "0$time[4]"; }
 	print IS "$info|$time[5]-$time[4]-$time[3]\n";
 	close(IS);
-tidy();
+	tidy();
 	&log("$tr{'the following update was successfully installedc'} $title"); 
 }
 
@@ -606,9 +642,5 @@ sub tidy
 #		unlink( "/var/patches/downloads/$file" );
 	}
 }
-
-
-
-
 
 
