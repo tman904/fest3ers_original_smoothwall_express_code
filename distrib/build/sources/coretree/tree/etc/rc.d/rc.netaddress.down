@@ -16,6 +16,7 @@ fi
 if [ -e "/etc/dhcpc/dhcpcd-eth2.pid" ]; then
 	kill `cat /etc/dhcpc/dhcpcd-eth2.pid`
 fi
+/usr/bin/killall trafficlogger
 /usr/bin/setuids/restartdnsproxy
 rm -f /var/smoothwall/red/*
 /etc/rc.d/rc.vpn.down
