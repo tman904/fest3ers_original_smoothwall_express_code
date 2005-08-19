@@ -34,12 +34,12 @@ modprobe ip_conntrack_h323
 modprobe ip_nat_h323
 modprobe ip_conntrack_sip
 modprobe ip_nat_sip
-modprobe ip_conntrack_quake3 
-modprobe ip_nat_quake3
-modprobe ip_conntrack_pptp
-modprobe ip_conntrack_proto_gre
-modprobe ip_nat_pptp
-modprobe ip_nat_proto_gre
+#modprobe ip_conntrack_quake3 
+#modprobe ip_nat_quake3
+#modprobe ip_conntrack_pptp
+#modprobe ip_conntrack_proto_gre
+#modprobe ip_nat_pptp
+#modprobe ip_nat_proto_gre
 
 # Remove possible leftover files
 rm -f /var/smoothwall/red/*
