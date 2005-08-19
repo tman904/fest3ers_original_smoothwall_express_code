@@ -211,6 +211,12 @@
 'referencesc' => 'References:',
 'none found' => 'none found',
 
+# extensions manager
+
+'ssextensions installed'  => 'Installed',
+'ssextensions available'  => 'Available',
+'refresh extensions list' => 'Check for more',
+
 # index.cgi
 'main page' => 'Main page',
 'dial' => 'Connect', # button
