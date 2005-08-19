@@ -44,7 +44,7 @@ fi
 echo "Setting up firewall"
 . /etc/rc.d/rc.firewall.up
 echo "Starting traffic stats collector"
-/usr/bin/trafficlogger
+/usr/sbin/trafficlogger
 echo "Setting DMZ pinholes"
 /usr/bin/setuids/setdmzholes
 echo "Setting up advanced networking features"
