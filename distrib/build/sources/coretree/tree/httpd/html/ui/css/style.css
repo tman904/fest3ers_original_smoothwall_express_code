@@ -302,6 +302,13 @@ th {
 	font-weight: bold;
 }
 
+th.extension {
+	background-color: #ffa000;
+	font-weight: bold;
+	text-align: left;
+}
+
+
 tr.light {
 	background-color: #e0e0e0;
 }
