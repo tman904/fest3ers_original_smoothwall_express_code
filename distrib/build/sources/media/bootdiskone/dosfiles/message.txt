@@ -3,6 +3,8 @@ The CDROM image is published by and is the Copyright of the SmoothWall
 Open Source Team, and of the original authors of its component parts.  
 It is distributed under the GNU GPL, which is in LICENSE.txt on the CD.
 
+  ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA 
+
                               W A R N I N G !
  * The installation process will delete all existing partitions and data *
  *    on the PC on which SmoothWall is installed.  Do not continue the   *
@@ -14,7 +16,5 @@ It is distributed under the GNU GPL, which is in LICENSE.txt on the CD.
      statistics aggregation, the results of which will be published at
    smoothwall.org/about/statistics.html Opt-out info is also on that page
 
-Keep updated with the latest software updates and news at smoothwall.org
-Contribute to the community site at community.smoothwall.org
 
       - Press RETURN to continue the install of SmoothWall Express - 
