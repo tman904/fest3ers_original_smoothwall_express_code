@@ -22,7 +22,7 @@ $|=1; # line buffering
 # Work out some various details from the various system files.
 # such as fixes number etc.
 
-$version = '3.0';
+$version = '3.0-alpha';
 
 # dynamically generate the version number
 
