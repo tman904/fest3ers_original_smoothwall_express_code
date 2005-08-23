@@ -197,21 +197,13 @@ sub progress_bar
 	# create a progress bar to display the download progress
 	# and management of the file $file ($_[0])
 
-	my ( $file ) = @_ ;
+	my ( $file, $url_override ) = @_ ;
 
 	print <<END
-<table class='centered'>
+<table style='float: right;' id='container-$file'>
 <tr>
 	<form method='post'>
 	<td>
-		<table class='progressbar'>
-			<tr>
-				<td id='progress-$file' style='background-color: blue; width: 1px;'>&nbsp;</td>
-				<td class='progressend'>&nbsp;</td>
-			</tr>
-		</table>
-	</td>
-	<td rowspan='2' style='vertical-align: top;'>
 END
 ;
 
@@ -225,12 +217,21 @@ END
 		# there was an error somewhere, or we don't have it
 		print <<END
 	<input type='hidden' name='file' value='$file'>
-	<input type='submit' name='download' value='download'>
+	<input type='submit' name='download' value='download' id='button-$file'>
 END
 ;
 	} else {
 		# we are currently downloading the thing, we can issue a cancel if we want
 		print <<END
+		<table class='progressbar'>
+			<tr>
+				<td id='progress-$file' style='background-color: blue; width: 1px;'>&nbsp;</td>
+				<td class='progressend'>&nbsp;</td>
+			</tr>
+		</table>
+	</td>
+	<td rowspan='2' style='vertical-align: top;'>
+
 	<input type='hidden' name='file' value='$file'>
 	<input type='submit' name='cancel' value='cancel'>
 END
@@ -244,6 +245,7 @@ print <<END
 	<td><span id='status-$file'></span></td>
 </tr>
 </form>
+</table>
 END
 ;
 	

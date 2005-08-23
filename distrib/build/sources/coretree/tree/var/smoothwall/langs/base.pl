@@ -213,9 +213,10 @@
 
 # extensions manager
 
-'ssextensions installed'  => 'Installed',
-'ssextensions available'  => 'Available',
+'ssextensions'  => 'Extensions',
 'refresh extensions list' => 'Check for more',
+'installed extensions'    => 'Installed:',
+'available extensions'    => 'Available:',
 
 # index.cgi
 'main page' => 'Main page',

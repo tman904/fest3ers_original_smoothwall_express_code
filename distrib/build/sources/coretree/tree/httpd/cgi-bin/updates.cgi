@@ -630,17 +630,6 @@ sub tidy
 
 	print STDERR "Removing directory $$\n";
 	rmdir "/var/patches/$$";
-
-	opendir( my $dir, "/var/patches/downloads" );
-
-	my @list = readdir( $dir );
-
-	closedir( $dir );
-
-	foreach my $file ( @list ){
-		next if ( $file =~ /^\..*/ );
-#		unlink( "/var/patches/downloads/$file" );
-	}
 }
 
 

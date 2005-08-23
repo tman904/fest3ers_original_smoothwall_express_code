@@ -284,7 +284,7 @@ td.quicklink {
 table.progressbar {
 	border: solid 1px #d7d7d7;
 	border-collapse: collapse;
-	width: 420px;
+	width: 100px;
 }
 
 td.progressend {
@@ -301,13 +301,6 @@ th {
 	background-color: #d0d0d0;
 	font-weight: bold;
 }
-
-th.extension {
-	background-color: #ffa000;
-	font-weight: bold;
-	text-align: left;
-}
-
 
 tr.light {
 	background-color: #e0e0e0;
@@ -366,3 +359,18 @@ a.activemenu:visited {
 img {
 	border: 0px;
 }
+
+
+/* Extensions System */
+
+th.extension {
+	background-image: url( '/ui/img/extensions_header.jpg' );
+	background-repeat: repeat-x;
+	background-position: top left;
+	vertical-align: top;
+	font-weight: bold;
+	text-align: left;
+	height: 25px;
+}
+
+
