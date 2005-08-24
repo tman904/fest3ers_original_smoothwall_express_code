@@ -27,7 +27,7 @@
 
 #include "langs.h"
 
-#define TITLE "SmoothWall Express 2.0"
+#define TITLE "SmoothWall Express 3.0"
 
 #define STRING_SIZE 256
 
