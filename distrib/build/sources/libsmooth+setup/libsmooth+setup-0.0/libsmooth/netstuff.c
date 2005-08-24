@@ -315,6 +315,7 @@ struct nic nics[] = {
 	{ "3Com 3c503 and 3c503/16", "3c503" },
 	{ "3Com EtherLink Plus (3c505)", "3c505" },
 	{ "3Com EtherLink 16", "3c507" },
+	{ "3Com 3c515", "3c515" },
 	{ "\"Corkscrew\" 3Com EtherLink PCI III/XL, etc.", "3c59x" },
 	{ "PCI NE2000 cards, RealTEk RTL-8029, etc", "ne2k-pci" },
 	{ "NE1000 / NE2000 (non-pci)", "ne" },
@@ -356,6 +357,18 @@ struct nic nics[] = {
 	{ "FA-311 (National Semiconductor DP83815)", "natsemi" },
         { "Adaptec Starfire (or DuraLAN)", "starfire" },
         { "Intel EtherExpress Pro10000", "e1000" },
+	{ "Alteon AceNIC Gigabit Ethernet and others", "acenic" },
+	{ "Advanced  Micro Devices Inc. AMD8111E", "amd8111e" },
+	{ "Broadcom 4400 Ethernet", "b44" },
+	{ "Broadcom NX2 Ethernet", "bnx" },
+	{ "Myson MTD-8xx 100/10M Ethernet PCI", "fealnx"},
+	{ "NVidia NForce", "forcedeth" },
+	{ "Intel Professional Workstation/panther Ethernet", "lp486e" },
+	{ "RealTek RTL-8169 Gigabit Ethernet", "r8169" },
+	{ "SEEQ 8005 chipset", "seeq8005" },
+	{ "Sundance ST201 Ethernet", "sundance" },
+	{ "Broadcom Tigon3 Ethernet", "tg3" },
+	{ "3Com 3CR990 family of NICs", "typhoon" },
 	{ NULL, NULL }
 };
 
