@@ -189,7 +189,7 @@ print <<END
 <tr>
 	<form action='/cgi-bin/updates.cgi' method='post'>
 	<td id='progressbar'>
-<table class='progressbar'>
+<table class='progressbar' style='width: 380px;'>
 	<tr>
 		<td id='progress' class='progressbar' style='width: 1px;'>&nbsp;</td>
 		<td class='progressend'>&nbsp;</td>

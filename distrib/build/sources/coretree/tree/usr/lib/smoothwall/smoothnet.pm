@@ -56,6 +56,7 @@ sub download
 	my $pid   = "$progress_store$file.pid";
 
 	my @commands = ( "/usr/bin/wget", "-o", "$log", "-b", "--progress=bar", "-O", "$final", "$base$file" );
+	print STDERR "/usr/bin/wget -o $log -b --progress=bar -O $final $base$file\n";
 
 	my ( $status, $pid_out );
 	open(PIPE, '-|') || exec( @commands );

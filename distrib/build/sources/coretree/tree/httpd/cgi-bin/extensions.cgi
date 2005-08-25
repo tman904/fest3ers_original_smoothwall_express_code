@@ -15,8 +15,6 @@ use smoothnet qw( :standard );
 my $download_store = "/var/patches/downloads/";
 my $progress_store = "/var/patches/pending/";
 
-my $urli = "http://www.mirror.ac.uk/mirror/ftp.fi.debian.org/debian-cd/3.1_r0a/i386/iso-cd/";
-
 &showhttpheaders();
 
 my (%uploadsettings,$errormessage);
@@ -27,37 +25,6 @@ print STDERR "---- Dumping\n";
 print STDERR Dumper %uploadsettings;
 
 my @active_updates;
-
-# perform actions based on what we were asked to do.
-if ($uploadsettings{'ACTION'} eq $tr{'refresh extensions list'}){
-	$errormessage = &downloadlist();
-}
-
-if (defined $uploadsettings{'download'} and $uploadsettings{'download'} eq "download"){
-	download( $urli, $uploadsettings{'file'} );
-}
-
-if (defined $uploadsettings{'cancel'} and $uploadsettings{'cancel'} eq "cancel"){
-	cancel( $uploadsettings{'file'} );
-}
-
-&openpage($tr{'extensions'}, 1, '', 'extensions');
-
-&openbigbox('100%', 'LEFT');
-
-&alertbox($errormessage);
-
-#&progress_bar( $fili );
-#&update_bar( $fili );
-
-print <<END
-<table class='centered'>
-<tr>
-	<td style='text-align: center;'><form method='post'><input type='submit' name='ACTION' value='$tr{'refresh extensions list'}'></form></td>
-</tr>
-</table> 
-END
-;
 
 # determine the list of installed extensions
 
@@ -74,7 +41,57 @@ if ( open ( my $line, "</var/smoothwall/extensions/installed" )){
 	close $line;
 }
 
+# perform actions based on what we were asked to do.
+if ($uploadsettings{'ACTION'} eq $tr{'refresh extensions list'}){
+	$errormessage = &downloadlist();
+}
+
+if (defined $uploadsettings{'download'} and $uploadsettings{'download'} eq "download"){
+	# find this patch to get some additional details for it.
+print STDERR "Going for a download\n";
+
+	if ( open ( my $line, "</var/smoothwall/extensions/available" )){
+		while ( my $details = <$line> ){
+			chomp $details;
+			my ( $name, $version, $md5, $icon, $sample, $link, $download, $file, $description ) = ( $details =~ /([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|(.*)/ );
+
+			if ( $file eq $uploadsettings{'file'} ){
+				download( $download, $file );
+			}
+		}
+	}
+}
+
+if (defined $uploadsettings{'cancel'} and $uploadsettings{'cancel'} eq "cancel"){
+	cancel( $uploadsettings{'file'} );
+}
+
+&openpage($tr{'extensions'}, 1, '', 'extensions');
+
+&openbigbox('100%', 'LEFT');
+
+&alertbox($errormessage);
+
+#&progress_bar( $fili );
+#&update_bar( $fili );
+
+&openbox();
+
+print <<END
+<table class='centered'>
+<tr>
+	<td>$tr{'extensions description'}</td>
+	<td style='text-align: center;'><form method='post'><input type='submit' name='ACTION' value='$tr{'refresh extensions list'}'></form></td>
+</tr>
+</table> 
+END
+;
+
+&closebox();
+
 # open the list of (available) extensions and detail them.
+
+&openbox();
 
 print "<strong>$tr{'available extensions'}</strong><br/>\n";
 
@@ -160,8 +177,7 @@ END
 ;
 }
 
-
-
+&closebox();
 
 &closebigbox();
 
@@ -171,6 +187,9 @@ do {
 	$awaiting = 0;
 	foreach my $file ( @active_updates ){
 		my $response = &update_bar( $file );
+
+		print STDERR "Activity response for $file was $response\n";
+
 		if ( $response == 1 ){
 			$awaiting++;
 		} elsif ( $response == 0 ) {
@@ -222,7 +241,7 @@ END
 	use File::Copy;
 print STDERR "dollar F is $file\n";
 print STDERR "to $$\n";
-	move( $file, "/var/patches/$$/patch.tar.gz" );
+	move( "$download_store/$file", "/var/patches/$$/patch.tar.gz" );
 
 	my $md5sum;
 	chomp($md5sum = `/usr/bin/md5sum /var/patches/$$/patch.tar.gz`);
@@ -351,11 +370,14 @@ sub downloadlist
 		$ret .= $_; }
 	close($sock);
 
+	print STDERR "Returned $ret\n";
+
 	if ($ret =~ m/^HTTP\/\d+\.\d+ 200/)
 	{
 		unless (open(LIST, ">${swroot}/extensions/available"))
 		{
 	                $errormessage = "$tr{'could not open available updates file'} $!";
+print STDERR "nope, that didn't work :(\n";
       	 	        return $errormessage;
         	}
 		flock LIST, 2;

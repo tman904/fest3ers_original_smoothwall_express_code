@@ -214,6 +214,7 @@
 # extensions manager
 
 'ssextensions'  => 'Extensions',
+'extensions description'  => "Extensions offer you the ability to customise and expand your SmoothWall firewall beyond it's original design.  This may mean simply adding a button, or a perhaps an entire new service.",
 'refresh extensions list' => 'Check for more',
 'installed extensions'    => 'Installed:',
 'available extensions'    => 'Available:',
