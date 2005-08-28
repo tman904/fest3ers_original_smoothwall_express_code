@@ -247,6 +247,7 @@ END
 
 foreach my $module ( @modules ){
 	my ( $mod, $size, $used ) = ( $module =~ /([^\s]*)\s+(\d+)\s+(.*)/ );
+	$used =~ s/\,/\ /g;
 	print "<tr>\n";
 	print "<td style='vertical-align: top;'>$mod</td>\n";
 	print "<td style='vertical-align: top;'>$size</td>\n";
