@@ -84,6 +84,7 @@ sub ProcessInterface
 	`$rrdtool update $rrd/$_[0].rrd -t in:out N:$in:$out`;
 
 	# create traffic graphs
+	&CreatePreviewGraph($_[0], "hour");
 	&CreateGraph($_[0], "day");
 	&CreateGraph($_[0], "week");
 	&CreateGraph($_[0], "month"); 
@@ -117,5 +118,28 @@ sub CreateGraph
 		." GPRINT:out:MAX:\"  Max\\: %5.1lf %S\""
 		." GPRINT:out:AVERAGE:\" Avg\\: %5.1lf %S\""
 		." GPRINT:out:LAST:\" Current\\: %5.1lf %Sbytes/sec\""
+		." HRULE:0#000000");
+}
+
+sub CreatePreviewGraph
+{
+# creates graph
+# inputs: $_[0]: interface name (ie, GREEN, RED, ORANGE)
+#	  $_[1]: interval (ie, day, week, month, year)
+
+	system("$rrdtool graph $img/$_[0]-$_[1]_preview.png"
+		." -s \"-1$_[1]\""
+		." --lazy"
+		." -h 40 -w 150"
+		." -l 0"
+		." -a PNG"
+		." -v \"bytes/sec\""
+		." DEF:in=$rrd/$_[0].rrd:in:AVERAGE"
+		." DEF:out=$rrd/$_[0].rrd:out:AVERAGE"
+		." CDEF:out_neg=out,-1,*"
+		." AREA:in#FF9900:\"Incoming\""
+		." LINE1:in#CC6600"
+		." AREA:out_neg#FFCC66:\"Outgoing\""
+		." LINE1:out_neg#CC9966"
 		." HRULE:0#000000");
 }

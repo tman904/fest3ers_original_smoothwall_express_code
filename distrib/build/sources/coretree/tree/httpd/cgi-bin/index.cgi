@@ -127,7 +127,7 @@ else
 
 &openpage($tr{'main page'}, 1, $refresh, 'control');
 
-&openbigbox('70%', 'CENTER');
+&openbigbox();
 
 &alertbox($errormessage);
 
@@ -137,7 +137,8 @@ $currentconnection = &connectedstate();
 print <<END
 <table class='centered'>
 	<tr>
-		<td valign='top'><img src='/ui/img/netstatus.$currentconnection.gif' alt='$connpick'></td><td align='center' valign='middle'></td>
+		<td style='text-align: right;'><img src='/ui/img/netstatus.$currentconnection.gif' alt='$connpick' style='float: right;'></td>
+		<td>&nbsp;</td>
 END
 ;
 
@@ -145,11 +146,10 @@ if ($pppsettings{'COMPORT'} ne '')
 {
 	if ($pppsettings{'VALID'} eq 'yes')
 	{
-		print <<END
-<td style='vertical-align: top;'>
-<table>
+		my $control = qq {
+	<table style='width: 100%;'>
+	<form method='post' action='/cgi-bin/dial.cgi'>
 	<tr>
-		<form method='post' action='/cgi-bin/dial.cgi'>
 		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'dial'}'></td>
 		<td>&nbsp;&nbsp;</td>
 		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'hangup'}'></td>
@@ -157,23 +157,28 @@ if ($pppsettings{'COMPORT'} ne '')
 		</form>
 		<form method='post'>
 		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'refresh'}'></td>
-		</form>
 	</tr>
+	</form>
 </table>
-</td>
-END
-		;
+};
+		&showstats( $control );
+
 	}
 	elsif (-e "${swroot}/red/active" )
 	{
-		print <<END
-<td style='vertical-align: top;'>
+		my $control = qq {
+	<table style='width: 100%;'>
+	<tr>
+		<td style='text-align: right;'>
 <form method='post' action='/cgi-bin/dial.cgi'>
 	<input type='submit' name='ACTION' value='$tr{'hangup'}'>
 </form>
-</td>
-END
-		;
+		</td>
+	</tr>
+	</table>
+};
+
+		&showstats( $control );
 	}
 
 	print "<td><strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>\n";
@@ -192,14 +197,18 @@ END
 }
 else
 {
-	print <<END
-<td style='vertical-align: top;'>
+	my $control = qq {
+	<table style='width: 100%;'>
+	<tr>
+		<td style='text-align: right;'>
 <form method='post'>
 	<input type='submit' name='ACTION' value='$tr{'refresh'}'>
 </form>
-</td>
-END
-	;
+		</td>
+	</tr>
+	</table>
+};
+	&showstats( $control );
 }
 	print <<END
 	</tr>
@@ -273,3 +282,86 @@ sub countisdnchannels
 	return $count;
 }
 
+# if we are connected, show some connection details...
+sub showstats
+{
+	my $control = $_[0];
+	# determine the name of our red interface.
+	my $iface_file;
+	if ( open ( $iface_file, "</var/smoothwall/red/iface" )){
+		my $iface = <$iface_file>;
+		chomp $iface;
+		close $iface_file;
+		
+		# interogate the traffic stats
+		my %stats;
+		&readhash( "/var/log/trafficstats", \%stats );
+
+		my( $daystatsin, $daystatsout, $monthstatsin, $monthstatsout );
+		$ratein  = $stats{"this_day_inc_total_$iface"};
+		$rateout = $stats{"this_day_out_total_$iface"};
+
+		$daystatsin  = $stats{"this_day_inc_total_$iface"};
+		$daystatsout = $stats{"this_day_out_total_$iface"};
+
+		$monthstatsin  = $stats{"this_month_inc_total_$iface"};
+		$monthstatsout = $stats{"this_month_out_total_$iface"};
+	
+		# convert the text into kbps / mbps etc
+		sub rerange {
+			my $number = $_[0];
+			my $ret;
+			$number = int( $number / 8 );
+			
+			if ( $number > (1024*1024*1024) ){
+				$ret = sprintf( "%0.2f GB", $number/(1024*1024*1024) );	
+			} elsif ( $number > (1024*1024) ){
+				$ret = sprintf( "%0.2f MB", $number/(1024*1024) );	
+			} elsif ( $number > (1024) ){
+				$ret = sprintf( "%0.2f KB", $number/(1024) );	
+			} else {
+				$ret = sprintf( "%d B", $number );	
+			}
+			return $ret;
+		}
+
+		sub rerangeb {
+			my $number = $_[0];
+			my $ret;
+			
+			if ( $number > (1024*1024*1024) ){
+				$ret = sprintf( "%0.2f Gbps", $number/(1024*1024*1024) );	
+			} elsif ( $number > (1024*1024) ){
+				$ret = sprintf( "%0.2f Mbps", $number/(1024*1024) );	
+			} elsif ( $number > (1024) ){
+				$ret = sprintf( "%0.2f Kbps", $number/(1024) );	
+			} else {
+				$ret = sprintf( "%d bps", $number );	
+			}
+			return $ret;
+		}
+
+		$ratein        = &rerangeb( $ratein );
+		$rateout       = &rerangeb( $rateout );
+		$daystatsin    = &rerange( $daystatsin    );
+		$daystatsout   = &rerange( $daystatsout   );
+		$monthstatsin  = &rerange( $monthstatsin  );
+		$monthstatsout = &rerange( $monthstatsout );
+
+		print <<END
+<td style='vertical-align: top;'>
+	Current: $ratein / $rateout (tx/rx)<br/> 
+	Today:  $daystatsout / $daystatsin (tx/rx)<br/>
+	Month: $monthstatsout / $monthstatsin (tx/rx)<br/>
+	$control
+</td>
+END
+;
+	}
+
+	# we even have a preview graph thingy
+
+	if ( -e "/httpd/html/rrdtool/red-hour_preview.png" ){
+		print "<td>&nbsp;</td><td style='vertical-align: top;'><img src='/rrdtool/red-hour_preview.png' alt='traffic'></td>\n";
+	}
+}
