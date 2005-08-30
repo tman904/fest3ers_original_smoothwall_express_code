@@ -31,14 +31,14 @@ if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'} ||
 
 		if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'})
 		{
-			if (system('/bin/tar', '-C', "${swroot}/backup", '-cWf', '/dev/fd0', '.')) {
+			if (system('/usr/bin/tar', '-C', "${swroot}/backup", '-cWf', '/dev/fd0', '.')) {
 				$errormessage = $tr{'unable to create backup floppy'}; }
 			else {
 				$extramessage = $tr{'backup disk created successfully'}; }
 		}
 		else
 		{
-			if (system('/bin/tar', '-C', "${swroot}/backup", '-cf', "${swroot}/tmp/backup.img", '.')) {
+			if (system('/usr/bin/tar', '-C', "${swroot}/backup", '-cf', "${swroot}/tmp/backup.img", '.')) {
 				$errormessage = $tr{'unable to create floppy image file'}; }
 			else
 			{

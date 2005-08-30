@@ -121,20 +121,20 @@ foreach my $iface ('eth0', 'eth1', 'eth2', 'ppp0', 'ippp0')
 
 close(PIPE);
 
-&openbox("Traffic statistics - $timestamp");
+&openbox("Traffic statistics - ${timestamp}:");
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='15%'>$tr{'traffic stats interface'}</TD>
-<TD WIDTH='15%'>$tr{'traffic stats period'}</TD>
-<TD WIDTH='15%'>$tr{'traffic stats direction'}</TD>
-<TD WIDTH='15%'>$tr{'traffic stats current rate'}</TD>
-<TD WIDTH='10%'>$tr{'traffic stats hour'}</TD>
-<TD WIDTH='10%'>$tr{'traffic stats day'}</TD>
-<TD WIDTH='10%'>$tr{'traffic stats week'}</TD>
-<TD WIDTH='10%'>$tr{'traffic stats month'}</TD>
-</TR>
+<table class='centered'>
+<tr>
+<th style='width: 10%;'>$tr{'traffic stats interface'}</th>
+<th style='width: 15%;'>$tr{'traffic stats period'}</th>
+<th style='width: 11%;'>$tr{'traffic stats direction'}</th>
+<th style='width: 15%;'>$tr{'traffic stats current rate'}</th>
+<th style='width: 12%;'>$tr{'traffic stats hour'}</th>
+<th style='width: 12%;'>$tr{'traffic stats day'}</th>
+<th style='width: 12%;'>$tr{'traffic stats week'}</th>
+<th style='width: 12%;'>$tr{'traffic stats month'}</th>
+</tr>
 END
 ;
 
@@ -212,7 +212,7 @@ else
 
 my $lastdata = scalar localtime(`rrdtool last /var/lib/rrd/green.rrd`);
 my $lastupdate = scalar localtime((stat("/var/lib/rrd/green.rrd"))[9]);
-print "last updated $lastupdate<br>with data to $lastdata";
+print "Last updated $lastupdate, with data to $lastdata";
 
 &closebox();
 
