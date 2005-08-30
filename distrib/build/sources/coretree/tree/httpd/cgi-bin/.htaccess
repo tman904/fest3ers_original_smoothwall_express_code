@@ -80,6 +80,9 @@ require user admin
 <Files backup.img>
 require user admin
 </Files>
+<Files extensions.cgi>
+require user admin
+</Files>
 
 <Files dial.cgi>
 require user admin dial
