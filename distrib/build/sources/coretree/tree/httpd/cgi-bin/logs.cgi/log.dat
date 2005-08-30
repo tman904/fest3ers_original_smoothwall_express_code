@@ -181,7 +181,7 @@ END
 
 &closebox();
 
-&openbox($tr{'log'});
+&openbox($tr{'logc'});
  
 if ($start == -1) {
         $start = $lines - $viewsize; }
@@ -197,6 +197,50 @@ if ($start == 0) { $prev = -1; }
 
 my @slice = splice(@log, $start, $viewsize);
 
+print <<END
+<table class='centered'>
+<tr>
+<td style='text-align: center;'>
+END
+;
+
+if ($next != -1) {
+	print "<a href='/cgi-bin/logs.cgi/log.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}'>&lt;</a> "; }
+else {
+	print "&lt; "; }
+
+for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
+	my $link;
+	if ( $i == ($lines-$viewsize) ){
+		# first
+		$link = "Sm";
+	} elsif ( $i-$viewsize <= 0 ){
+		# last
+		$link = "th";
+	} else {
+		# and always
+		$link = "o"
+	}
+
+	if ( $i == $start ){
+		print "<a class='activemenu' href='/cgi-bin/logs.cgi/log.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}''>$link</a>"
+	} else {
+		print "<a href='/cgi-bin/logs.cgi/log.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}''>$link</a>"
+	}
+}
+
+if ($prev != -1) {
+	print " <a href='/cgi-bin/logs.cgi/flog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}'>&gt;</a>"; }
+else {
+	print " &gt;"; }
+
+print <<END
+</td>
+</tr>
+</table>
+END
+;
+
 print "<TT>\n";
 foreach $_ (@slice)
 {
@@ -206,33 +250,6 @@ foreach $_ (@slice)
 print "</TT>\n";
 close (FILE);
 print "&nbsp;\n";
-
-print <<END
-<TABLE WIDTH='100%'>
-<TR>
-END
-;
-
-print "<TD ALIGN='CENTER' WIDTH='50%'>";
-
-if ($prev != -1) {
-        print "<A HREF='/cgi-bin/logs.cgi/log.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}'>$tr{'older'}</A>"; }
-else {
-        print "$tr{'older'}"; }
-print "</TD>\n";
-
-print "<TD ALIGN='CENTER' WIDTH='50%'>";
-if ($next != -1) {
-        print "<A HREF='/cgi-bin/logs.cgi/log.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}'>$tr{'newer'}</A>"; }
-else {
-        print "$tr{'newer'}"; }
-print "</TD>\n";
-
-print <<END
-</TR>
-</TABLE>
-END
-;
 
 &closebox();
 

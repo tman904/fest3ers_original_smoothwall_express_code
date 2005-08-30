@@ -225,7 +225,7 @@ END
 
 &closebox();
 
-&openbox($tr{'log'});
+&openbox($tr{'logc'});
  
 if ($start == -1) {
         $start = $lines - $viewsize; }
@@ -241,12 +241,56 @@ if ($start == 0) { $prev = -1; }
 my @slice = splice(@log, $start, $viewsize);
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='10%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'time'}</B></TD>
-<TD WIDTH='15%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'source ip'}</B></TD>
-<TD WIDTH='75%' ALIGN='CENTER' CLASS='boldbase'><B>$tr{'website'}</B></TD>
-</TR>
+<table class='centered'>
+<tr>
+<td style='text-align: center;'>
+END
+;
+
+if ($next != -1) {
+	print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>&lt;</a> "; }
+else {
+	print "&lt; "; }
+
+for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
+	my $link;
+	if ( $i == ($lines-$viewsize) ){
+		# first
+		$link = "Sm";
+	} elsif ( $i-$viewsize <= 0 ){
+		# last
+		$link = "th";
+	} else {
+		# and always
+		$link = "o"
+	}
+
+	if ( $i == $start ){
+		print "<a class='activemenu' href='/cgi-bin/log.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}''>$link</a>"
+	} else {
+		print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}''>$link</a>"
+	}
+}
+
+if ($prev != -1) {
+	print " <a href='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>&gt;</a>"; }
+else {
+	print " &gt;"; }
+
+print <<END
+</td>
+</tr>
+</table>
+END
+;
+
+print <<END
+<table class='centered'>
+<tr>
+	<th style='width: 10%;'>$tr{'time'}</th>
+	<th style='width: 15%;'>$tr{'source ip'}</th>
+	<th style='width: 75%;'>$tr{'website'}</th>
+</tr>
 END
 ;
 
@@ -271,33 +315,7 @@ END
 	$lines++;
 }
 
-print "</TABLE>";
-
-print <<END
-<TABLE WIDTH='100%'>
-<TR>
-END
-;
-
-print "<TD ALIGN='CENTER' WIDTH='50%'>";
-if ($prev != -1) {
-        print "<A HREF='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>$tr{'older'}</A>"; }
-else {
-        print "$tr{'older'}"; }
-print "</TD>\n";
-
-print "<TD ALIGN='CENTER' WIDTH='50%'>";
-if ($next != -1) {
-        print "<A HREF='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>$tr{'newer'}</A>"; }
-else {
-        print "$tr{'newer'}"; }
-print "</TD>\n";
-
-print <<END
-</TR>
-</TABLE>
-END
-;
+print "</table>";
 
 &closebox();
 
