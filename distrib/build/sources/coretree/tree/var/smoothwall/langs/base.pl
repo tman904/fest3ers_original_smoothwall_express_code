@@ -219,6 +219,10 @@
 'installed extensions'    => 'Installed:',
 'available extensions'    => 'Available:',
 
+# registration information
+
+'ssregister' => 'Register',
+
 # index.cgi
 'main page' => 'Main page',
 'dial' => 'Connect', # button
