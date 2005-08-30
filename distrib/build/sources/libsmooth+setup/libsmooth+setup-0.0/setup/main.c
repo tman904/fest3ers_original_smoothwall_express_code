@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 	newtInit();
 	newtCls();
 
-	newtDrawRootText(0, 0, "                SmoothWall Express 2.0 -- http://smoothwall.org/");
+	newtDrawRootText(0, 0, "ALPHA           SmoothWall Express 3.0 -- http://smoothwall.org/");
 	newtPushHelpLine(ctr[TR_HELPLINE]);		
 
 	if (automode == 0)
