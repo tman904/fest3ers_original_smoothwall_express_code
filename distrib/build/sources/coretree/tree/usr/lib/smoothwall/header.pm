@@ -310,7 +310,7 @@ sub openbox
 END
 	;
 	if ($caption) { 
-		print "<span class='caption'>$caption</span>\n"; 
+		print "<span class='caption'>$caption</span><br/>\n"; 
 	}
 }
 
