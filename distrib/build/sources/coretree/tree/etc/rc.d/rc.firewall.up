@@ -192,19 +192,19 @@ fi
 /sbin/iptables -t mangle -A POSTROUTING -j postrouting-2
 
 /sbin/iptables -t mangle -A prerouting-1 -i eth0 -j RETURN
-/sbin/iptables -t mangle -A postrouting-1 -i eth0 -j RETURN
+/sbin/iptables -t mangle -A postrouting-1 -o eth0 -j RETURN
 
 /sbin/iptables -t mangle -A prerouting-2 -i ppp0 -j RETURN
-/sbin/iptables -t mangle -A postrouting-2 -i ppp0 -j RETURN
+/sbin/iptables -t mangle -A postrouting-2 -o ppp0 -j RETURN
 /sbin/iptables -t mangle -A prerouting-2 -i ippp0 -j RETURN
-/sbin/iptables -t mangle -A postrouting-2 -i ippp0 -j RETURN
+/sbin/iptables -t mangle -A postrouting-2 -o ippp0 -j RETURN
 
 if [ "$ORANGE_DEV" ]; then
 	/sbin/iptables -t mangle -A prerouting-1 -i $ORANGE_DEV -j RETURN
-	/sbin/iptables -t mangle -A postrouting-1 -i $ORANGE_DEV -j RETURN
+	/sbin/iptables -t mangle -A postrouting-1 -o $ORANGE_DEV -j RETURN
 fi
 
 if [ "$RED_DEV" ]; then
 	/sbin/iptables -t mangle -A prerouting-2 -i $RED_DEV -j RETURN
-	/sbin/iptables -t mangle -A postrouting-2 -i $RED_DEV -j RETURN
+	/sbin/iptables -t mangle -A postrouting-2 -o $RED_DEV -j RETURN
 fi
