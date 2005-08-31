@@ -131,6 +131,22 @@ else
 
 &alertbox($errormessage);
 
+my ( $reg, $regval );
+if ( open ( $reg, "</var/smoothwall/registered" )){
+	$regval = <$reg>;
+}
+
+if ( $regval eq "" ){
+	&openbox();
+	print <<END
+	<div style='width: 100%; text-align: center;'>
+$tr{'reg please support'} <a href='/cgi-bin/register.cgi'>register</a>
+	</div>
+END
+;
+	&closebox();
+}
+
 &openbox('');
 
 $currentconnection = &connectedstate();

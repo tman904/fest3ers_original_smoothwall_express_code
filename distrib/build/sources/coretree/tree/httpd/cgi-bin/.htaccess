@@ -91,6 +91,10 @@ require user admin
 require user admin
 </Files>
 
+<Files register.cgi>
+require valid-user
+</Files>
+
 <Files dial.cgi>
 require user admin dial
 </Files>

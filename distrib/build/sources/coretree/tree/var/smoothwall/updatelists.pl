@@ -22,7 +22,6 @@ sub downloadlist
 		$errormessage = $tr{'could not connect to smoothwall org'};
 		return 0;
 	}
-	$version = "2.0";
 	print $sock "GET http://updates.smoothwall.org/express/$version HTTP/1.1\r\nHost: updates.smoothwall.org\r\nConnection: close\r\n\r\n";
 	my $ret = '';
 	while (<$sock>) {
