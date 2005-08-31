@@ -2,6 +2,13 @@ AuthName "Restricted"
 AuthType Basic
 AuthUserFile /var/smoothwall/auth/users
 
+<Files index.cgi>
+require valid-user
+</Files>
+<Files credits.cgi>
+require valid-user
+</Files>
+
 <Files pppsetup.cgi>
 require user admin
 </Files>
