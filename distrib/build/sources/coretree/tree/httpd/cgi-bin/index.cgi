@@ -298,8 +298,8 @@ sub showstats
 		&readhash( "/var/log/trafficstats", \%stats );
 
 		my( $daystatsin, $daystatsout, $monthstatsin, $monthstatsout );
-		$ratein  = $stats{"this_day_inc_total_$iface"};
-		$rateout = $stats{"this_day_out_total_$iface"};
+		$ratein  = $stats{"cur_inc_rate_$iface"};
+		$rateout = $stats{"cur_out_rate_$iface"};
 
 		$daystatsin  = $stats{"this_day_inc_total_$iface"};
 		$daystatsout = $stats{"this_day_out_total_$iface"};
@@ -311,16 +311,15 @@ sub showstats
 		sub rerange {
 			my $number = $_[0];
 			my $ret;
-			$number = int( $number / 8 );
 			
 			if ( $number > (1024*1024*1024) ){
-				$ret = sprintf( "%0.2f GB", $number/(1024*1024*1024) );	
+				$ret = sprintf( "%0.1f TB", $number/(1024*1024*1024) );	
 			} elsif ( $number > (1024*1024) ){
-				$ret = sprintf( "%0.2f MB", $number/(1024*1024) );	
+				$ret = sprintf( "%0.1f GB", $number/(1024*1024) );	
 			} elsif ( $number > (1024) ){
-				$ret = sprintf( "%0.2f KB", $number/(1024) );	
+				$ret = sprintf( "%0.1f MB", $number/(1024) );	
 			} else {
-				$ret = sprintf( "%d B", $number );	
+				$ret = sprintf( "%0.1f KB", $number );	
 			}
 			return $ret;
 		}
@@ -329,14 +328,14 @@ sub showstats
 			my $number = $_[0];
 			my $ret;
 			
-			if ( $number > (1024*1024*1024) ){
-				$ret = sprintf( "%0.2f Gbps", $number/(1024*1024*1024) );	
-			} elsif ( $number > (1024*1024) ){
-				$ret = sprintf( "%0.2f Mbps", $number/(1024*1024) );	
-			} elsif ( $number > (1024) ){
-				$ret = sprintf( "%0.2f Kbps", $number/(1024) );	
+			if ( $number > (1000*1000*1000) ){
+				$ret = sprintf( "%0.1f Gbit/s", $number/(1024*1024*1024) );	
+			} elsif ( $number > (1000*1000) ){
+				$ret = sprintf( "%0.1f Mbit/s", $number/(1024*1024) );	
+			} elsif ( $number > (1000) ){
+				$ret = sprintf( "%0.1f Kbit/s", $number/(1024) );	
 			} else {
-				$ret = sprintf( "%d bps", $number );	
+				$ret = sprintf( "%0.1f bit/s", $number );	
 			}
 			return $ret;
 		}
@@ -350,9 +349,9 @@ sub showstats
 
 		print <<END
 <td style='vertical-align: top;'>
-	Current: $ratein / $rateout (tx/rx)<br/> 
-	Today:  $daystatsout / $daystatsin (tx/rx)<br/>
-	Month: $monthstatsout / $monthstatsin (tx/rx)<br/>
+	Current: $rateout / $ratein (Out/In)<br/> 
+	Today:  $daystatsout / $daystatsin (Out/In)<br/>
+	Month: $monthstatsout / $monthstatsin (Out/In)<br/>
 	$control
 </td>
 END
