@@ -84,7 +84,7 @@ close(DISK);
 # support.
 my $lspci;
 
-open(PIPE, '-|') || exec( '/sbin/lspci' );
+open(PIPE, '-|') || exec( '/usr/sbin/lspci' );
 while ( my $line = <PIPE>) { 
 	chomp $line;
 	my ( $busid, $type, $name ) = ( $line =~ /([^\s]+)\s+([^:]+):\s+(.*)/ );
@@ -98,7 +98,7 @@ close(PIPE);
 
 my $lsmod;
 
-open(PIPE, '-|') || exec( '/sbin/lsmod' );
+open(PIPE, '-|') || exec( '/bin/lsmod' );
 while ( my $line = <PIPE>) { 
 	chomp $line;
 	my ( $driver, $size, $usedby ) = ( $line =~ /([^\s]+)\s+([^\s]+)\s+(.*)/ );
@@ -110,17 +110,18 @@ close(PIPE);
 # perpetual state of flux and a widish range of details can only serve
 # to make sense of some of it.
 
-open(USB, "/proc/bus/usb/devices") or die "Could not open /proc/bus/usb/devices";
-
 my $usbbus;
 
-while( my $line = <USB>)
+if (open(USB, "/proc/bus/usb/devices"))
 {
-	chomp $line;
-	$line =~s/#//g;
-	$usbbus .= "$line|";
+	while( my $line = <USB>)
+	{
+		chomp $line;
+		$line =~s/#//g;
+		$usbbus .= "$line|";
+	}
+	close(USB);
 }
-close(USB);
 
 # construct the additional information.
 
