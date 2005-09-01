@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
 	snprintf(commandstring, STRING_SIZE, 
 		"/bin/tar -C /harddisk -zxvf %s",
 		tarballfilename);
-	if (runcommandwithprogress(45, 4, TITLE, commandstring, 7771,
+	if (runcommandwithprogress(45, 4, TITLE, commandstring, 27238,
 		ctr[TR_INSTALLING_FILES]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
