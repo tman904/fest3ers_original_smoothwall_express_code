@@ -86,7 +86,7 @@ int handlekeymap(void)
 	{
 		replacekeyvalue(kv, "KEYMAP", keymap);
 		writekeyvalues(kv, CONFIG_ROOT "main/settings");
-		sprintf(commandstring, "/usr/bin/loadkeys %s", keymap);
+		sprintf(commandstring, "/bin/loadkeys %s", keymap);
 		mysystem(commandstring);
 		result = 1;
 	}
