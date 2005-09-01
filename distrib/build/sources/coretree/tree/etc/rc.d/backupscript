@@ -5,7 +5,7 @@ use header qw( :standard );
 
 chdir '/var/smoothwall';
 
-system('/bin/tar', '-zcf', 'backup/backup.dat', 'adsl', 'advnet', 'auth',
+system('/usr/bin/tar', '-zcf', 'backup/backup.dat', 'adsl', 'advnet', 'auth',
 	'ddns', 'dhcp', 'dmzholes', 'ethernet', 'ipblock', 'isdn',
 	'main/hostname.conf', 'main/settings', 'main/proxy',
 	'modem', 'portfw', 'ppp', 'proxy', 'remote', 'snort',
