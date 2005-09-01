@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 		mysystem("/sbin/modprobe ohci_hcd");
 		mysystem("/sbin/modprobe uhci_hcd");
 		
-		mysystem("/bin/mount -t usbdevfs none /proc/bus/usb");
+		mysystem("/bin/mount -t usbfs none /proc/bus/usb");
 		
 		usbfail = 1;
 		if (!stat("/proc/bus/usb/devices", &statbuf))
