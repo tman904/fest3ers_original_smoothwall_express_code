@@ -22,7 +22,14 @@ if ($backupversion =~ /^3.0/)
 	&cleanup('adsl', 'advnet', 'auth', 'ddns', 'dhcp', 'dmzholes',
 		'ethernet', 'ipblock', 'isdn', 'modem', 'portfw',
 		'ppp', 'proxy', 'remote', 'snort', 'time' ,'vpn', 'xtaccess');
-	system('/bin/tar', '-zxf', 'restore/backup.dat');
+	system('/usr/bin/tar', '-zxf', 'restore/backup.dat');
+}
+elsif ($backupversion =~ /^2.0/)
+{
+	&cleanup('adsl', 'advnet', 'auth', 'ddns', 'dhcp', 'dmzholes',
+		'ethernet', 'ipblock', 'isdn', 'modem', 'portfw',
+		'ppp', 'proxy', 'remote', 'snort', 'time' ,'vpn', 'xtaccess');
+	system('/usr/bin/tar', '-zxf', 'restore/backup.dat');
 }
 else
 {
