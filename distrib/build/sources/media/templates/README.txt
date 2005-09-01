@@ -2,7 +2,7 @@
 
 Welcome to your SmoothWall %PRODUCT_NAME% CD-ROM.
 
-For legal and licence information, please consult the LICENCE.html file in
+For legal and licence information, please consult the GPL.html file in
 the 'docs' subdirectory.
 
 
@@ -15,8 +15,6 @@ installation instructions for further configuration and administration.
 These documents are provided in Adobe Acrobat PDF format, and can be found
 in the 'docs' subdirectory.  The filenames are as follows:
 
-      Quickstart Guide - %BASENAME%-quickstart.pdf
-    Installation Guide - %BASENAME%-installation.pdf
   Administration Guide - %BASENAME%-admin.pdf
 
 Adobe Acrobat Reader software can be downloaded for Windows, MacOS, Solaris,
