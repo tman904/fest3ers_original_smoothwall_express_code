@@ -516,8 +516,6 @@ sub apply
 	
 	if ( defined $f ){
 		use File::Copy;
-print STDERR "dollar F is $f\n";
-print STDERR "to $$\n";
 		move( $f, "/var/patches/$$/patch.tar.gz" );
 	} else {
 		flock fH, 2;
@@ -545,7 +543,6 @@ print STDERR "to $$\n";
 	{
 		chomp();
 		($id,$md5,$title,$description,$date,$url) = split(/\|/,$_);
-print STDERR "Checking $md5 against $md5sum\n";
 		if ($md5sum =~ m/^$md5\s/)
 		{
 			$found = 1;
@@ -555,12 +552,10 @@ print STDERR "Checking $md5 against $md5sum\n";
 	unless ($found == 1)
 	{
 		$errormessage = $tr{'this is not an authorised update'};
-die;
 		print STDERR "$md5 $errormessage";
 		tidy();
 		return undef;
 	}
-print STDERR "processing archive...\n";
 	unless (system("/usr/bin/tar", "xvfz", "/var/patches/$$/patch.tar.gz", "-C", "/var/patches/$$") == 0)
 	{
 		$errormessage = $tr{'this is not a valid archive'};
@@ -568,7 +563,6 @@ print STDERR "processing archive...\n";
 		tidy();
 		return undef;
 	}
-print STDERR "looking for information...\n";
 	unless (open(INFO, "/var/patches/$$/information"))
 	{
 		$errormessage = $tr{'could not open update information file'};
@@ -590,15 +584,14 @@ print STDERR "looking for information...\n";
 			return undef;
 		}
 	}
-print STDERR "changing directory to /var/patches/$$\n";
 	chdir("/var/patches/$$");
-#	unless (system("/usr/local/bin/installpackage $$") == 0)
-#	{
-#		$errormessage = $tr{'package failed to install'};
-#		print STDERR $errormessage;
-#		tidy();
-#		return undef;
-#	}
+	unless (system("/usr/local/bin/installpackage $$") == 0)
+	{
+		$errormessage = $tr{'package failed to install'};
+		print STDERR $errormessage;
+		tidy();
+		return undef;
+	}
 	unless (open(IS, ">>${swroot}/patches/installed")) {
  		$errormessage = $tr{'update installed but'}; }
 	flock IS, 2;
