@@ -2,9 +2,6 @@
 
 Welcome to your SmoothWall %PRODUCT_NAME% CD-ROM.
 
-For legal and licence information, please consult the LICENCE.html file in
-the 'docs' subdirectory.
-
 
 Documentation
 -------------
