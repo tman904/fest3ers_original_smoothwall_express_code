@@ -5,6 +5,8 @@ It is distributed under the GNU GPL, which is in LICENSE.txt on the CD.
 
   ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA 
 
+                      SmoothWall Express 3.0 "Grizzly".
+
                               W A R N I N G !
  * The installation process will delete all existing partitions and data *
  *    on the PC on which SmoothWall is installed.  Do not continue the   *
