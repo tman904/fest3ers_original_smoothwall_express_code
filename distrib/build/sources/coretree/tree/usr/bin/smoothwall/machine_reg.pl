@@ -134,7 +134,7 @@ $extra .= "LSMOD=$lsmod&";
 $extra .= "LSPCI=$lspci&";
 $extra .= "USBBUS=$usbbus";
 
-my $info = "cpu_vid=$vid&cpu_model=$model&cpu_mhz=$mhz&mem=$mem&hdd=$disk&inst_type=$eth{'CONFIG_TYPE'}&isdn=$pppsettings{'COMPORT'}&version=$version-$revision$extra";
+my $info = "cpu_vid=$vid&cpu_model=$model&cpu_mhz=$mhz&mem=$mem&hdd=$disk&inst_type=$eth{'CONFIG_TYPE'}&isdn=$pppsettings{'COMPORT'}&version=$version-$revision&$extra";
 $info =~ s/\s/%20/g;
 
 my $length = length($info);
