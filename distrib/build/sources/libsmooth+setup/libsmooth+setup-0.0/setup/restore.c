@@ -26,7 +26,7 @@ int handlerestore(void)
 	if (newtWinChoice(TITLE, ctr[TR_OK], ctr[TR_CANCEL], ctr[TR_PLEASE_INSERT_THE_RESTORE_FLOPPY_DISK]) == 2)
                 return 0;
 
-	if (runcommandwithstatus("/bin/tar -xf /dev/fd0 -C " CONFIG_ROOT "/restore",
+	if (runcommandwithstatus("/usr/bin/tar -xf /dev/fd0 -C " CONFIG_ROOT "/restore",
 		ctr[TR_EXAMINING_BACKUP_DISK]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_EXAMINE_BACKUP_DISK]);
