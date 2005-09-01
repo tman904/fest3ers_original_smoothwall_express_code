@@ -11,7 +11,7 @@ require Exporter;
 # define the Exportlists.
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $revision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr );
+@EXPORT_OK    = qw( $language $version $webuiversion $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -22,13 +22,9 @@ $|=1; # line buffering
 # Work out some various details from the various system files.
 # such as fixes number etc.
 
-$version = '3.0-alpha';
+$version = '3.0-grizzly';
 
-# dynamically generate the version number
-
-$revision = "fixes" . `cut -d\\\| -f 1 /var/smoothwall/patches/installed | sort | awk 'END { gsub("^0*", ""); printf("%s", \$0); }'`; 
-
-$webuirevision = 'ui-3.6.1';
+$webuirevision = 'ui-3.5';
 $viewsize = 200;
 
 # some system wide (yuck) global variables.  not pretty, but make things easier.

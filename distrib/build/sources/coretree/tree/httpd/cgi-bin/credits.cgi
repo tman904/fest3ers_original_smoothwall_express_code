@@ -19,7 +19,7 @@ use header qw( :standard );
 
 print <<END
 <div align="center"><h2>SmoothWall Express $version</h2>
-<p>express $version $revision $webuirevision
+<p>Express $version $webuirevision
 
 <table border="0" cellpadding="3" cellspacing="0" width="90%">
 
