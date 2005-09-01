@@ -25,9 +25,9 @@ echo "$DNSMASQ_DNS2" >/var/smoothwall/red/dns2
 /usr/bin/setuids/setxtaccess
 /usr/bin/setuids/setportfw
 /usr/bin/setuids/restartsnort
-/usr/bin/setuids/restartupnp
-/usr/bin/setuids/setddns.pl
+#/usr/bin/setuids/restartupnp
 
+/usr/bin/smoothwall/setddns.pl
 /usr/bin/smoothwall/updatelists.pl
 
 /etc/rc.d/rc.vpn.up
