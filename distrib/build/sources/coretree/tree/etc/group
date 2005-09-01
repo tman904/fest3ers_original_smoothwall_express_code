@@ -8,7 +8,7 @@ kmem:x:9:
 uucp:x:14:
 man:x:15:
 nobody:x:99:
-floppy:x:19:
+floppy:x:19:nobody
 console:x:31:
 utmp:x:22:
 squid:x:100:
