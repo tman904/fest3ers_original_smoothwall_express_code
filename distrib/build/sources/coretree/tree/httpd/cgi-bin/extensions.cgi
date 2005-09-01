@@ -20,10 +20,6 @@ my $progress_store = "/var/patches/pending/";
 my (%uploadsettings,$errormessage);
 &getcgihash(\%uploadsettings);
 
-use Data::Dumper;
-print STDERR "---- Dumping\n";
-print STDERR Dumper %uploadsettings;
-
 my @active_updates;
 
 # determine the list of installed extensions
@@ -48,7 +44,6 @@ if ($uploadsettings{'ACTION'} eq $tr{'refresh extensions list'}){
 
 if (defined $uploadsettings{'download'} and $uploadsettings{'download'} eq "download"){
 	# find this patch to get some additional details for it.
-print STDERR "Going for a download\n";
 
 	if ( open ( my $line, "</var/smoothwall/extensions/available" )){
 		while ( my $details = <$line> ){
@@ -188,8 +183,6 @@ do {
 	foreach my $file ( @active_updates ){
 		my $response = &update_bar( $file );
 
-		print STDERR "Activity response for $file was $response\n";
-
 		if ( $response == 1 ){
 			$awaiting++;
 		} elsif ( $response == 0 ) {
@@ -218,9 +211,6 @@ sub apply
 END
 ;
 
-
-	print STDERR "Performing installation of Extension - $file\n";
-
 	unless (mkdir("/var/patches/$$",0700))
 	{
 		$errormessage = $tr{'could not create directory'};
@@ -236,11 +226,7 @@ END
 		return undef;
 	}
 
-	print STDERR "Writing /var/patches/$$/patch.tar.gz\n";
-	
 	use File::Copy;
-print STDERR "dollar F is $file\n";
-print STDERR "to $$\n";
 	move( "$download_store/$file", "/var/patches/$$/patch.tar.gz" );
 
 	my $md5sum;
@@ -248,7 +234,6 @@ print STDERR "to $$\n";
 	my $found = 0;
 	my ($id,$date,$url);
 	my ( $title, $version, $md5, $icon, $sample, $link, $download, $file, $description );
-	print STDERR "looking for md5\n";
 
 	unless(open(LIST, "${swroot}/extensions/available"))
 	{
@@ -264,7 +249,6 @@ print STDERR "to $$\n";
 	{
 		chomp();
 		( $title, $version, $md5, $icon, $sample, $link, $download, $file, $description ) = ( $_ =~ /([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|([^\|]*)\|(.*)/ );
-print STDERR "Checking $md5 against $md5sum\n";
 		if ($md5sum =~ m/^$md5\s/)
 		{
 			$found = 1;
@@ -278,8 +262,7 @@ print STDERR "Checking $md5 against $md5sum\n";
 		tidy();
 		return undef;
 	}
-print STDERR "processing archive...\n";
-	unless (system("/usr/bin/tar", "xvfz", "/var/patches/$$/patch.tar.gz", "-C", "/var/patches/$$") == 0)
+	unless (system("/usr/bin/tar", "xfz", "/var/patches/$$/patch.tar.gz", "-C", "/var/patches/$$") == 0)
 	{
 		$errormessage = $tr{'this is not a valid archive'};
 		print STDERR "$errormessage";
@@ -287,7 +270,6 @@ print STDERR "processing archive...\n";
 		return undef;
 	}
 
-print STDERR "looking for information...\n";
 	unless (open(INFO, "/var/patches/$$/information"))
 	{
 		$errormessage = $tr{'could not open update information file'};
@@ -310,8 +292,6 @@ print STDERR "looking for information...\n";
 		}
 	}
 
-print STDERR "Performing post installer...\n";
-print STDERR "changing directory to /var/patches/$$\n";
 	chdir("/var/patches/$$");
 #	unless (system("/usr/local/bin/installpackage $$") == 0)
 #	{
