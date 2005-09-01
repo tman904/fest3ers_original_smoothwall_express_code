@@ -11,7 +11,7 @@ require Exporter;
 # define the Exportlists.
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuiversion $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr );
+@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
