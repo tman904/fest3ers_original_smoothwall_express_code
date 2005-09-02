@@ -154,10 +154,10 @@ int main(int argc, char *argv[])
 	fclose(handle);
 	maximum_free = atoi(disksize) / 2048;
 	
-	boot_partition = 5; /* in MB */
+	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition;
 
-	swap_partition = 16; /* in MB */
+	swap_partition = 32; /* in MB */
 	current_free = maximum_free - swap_partition;
 	
 	log_partition = (current_free / 5) > 20 ? current_free / 5 : 20;
