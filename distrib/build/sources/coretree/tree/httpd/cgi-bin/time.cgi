@@ -102,7 +102,7 @@ if ($timesettings{'ACTION'} eq $tr{'save'})
 
 
 	foreach $temp ('TIMEZONE', 'ENABLED', 'NTP_INTERVAL', 'NTP_RTC',
-		'NTP_SERVER_TYPE', 'NTP_SERVER_SELECTED', 'NTP_SERVER_USERDEFINED')
+		'NTP_SERVER_TYPE', 'NTP_SERVER_SELECTED', 'NTP_SERVER_USERDEFINED', 'NTPD')
 	{
 		$tempsettings{$temp} = $timesettings{$temp};
 	}
