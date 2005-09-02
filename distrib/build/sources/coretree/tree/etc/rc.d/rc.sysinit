@@ -145,7 +145,7 @@ echo "Starting sshd (if enabled)"
 
 if [ -e "/var/smoothwall/proxy/squid.conf" ]; then
 	echo "Starting squid (if enabled)"
-	/usr/bin/restartsquid
+	/usr/bin/setuids/restartsquid
 fi
 
 echo "Silencing kernel, syslog output on tty12"
