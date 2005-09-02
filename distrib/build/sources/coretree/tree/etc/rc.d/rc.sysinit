@@ -142,6 +142,8 @@ echo "Starting dhcpd (if enabled)"
 /usr/bin/setuids/restartdhcp
 echo "Starting sshd (if enabled)"
 /usr/bin/setuids/restartssh
+echo "Starting time service (if enabled)"
+/usr/bin/setuids/restartntpd
 
 if [ -e "/var/smoothwall/proxy/squid.conf" ]; then
 	echo "Starting squid (if enabled)"
