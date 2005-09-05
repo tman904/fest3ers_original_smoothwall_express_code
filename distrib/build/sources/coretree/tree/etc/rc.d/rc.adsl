@@ -12,23 +12,12 @@ if [ "$ENABLED" = "on" ]; then
 	if [ "$DEVICE" = "ECI" ]; then
 		/usr/bin/smoothwall/ecifw.sh
 	fi
-	if [ "$DEVICE" = "USR" ]; then
-		/etc/bin/smoothwall/writeadiconfig
-		/sbin/modprobe adiusbadsl
+	if [ "$DEVICE" = "EAGLE" ]; then
+		/etc/bin/smoothwall/writeeagleconfig
+		/sbin/modprobe eagle-usb if_name=eagle
 		sleep 5
-		/usr/bin/adictrl
-		COUNT=0; SYNC=1;
-		while [ $COUNT -lt 12 -a $SYNC -eq 1 ]; do
-			/bin/grep -q "Modem is operational" /proc/adimodem
-			SYNC=$?
-			echo "Waiting for line sync..."
-			sleep 5
-			let COUNT=$COUNT+1
-		done
-		if [ $SYNC -eq 1 ]; then
-			echo "WARNING: Line did not sync"
-		fi
-		/sbin/ifconfig ADIModem 1.1.1.1 up
+		/usr/sbin/eaglectrl -w
+		/sbin/ifconfig eagle up
 	fi
 	if [ "$DEVICE" = "UNICORN" ]; then
 		/sbin/modprobe unicorn_pci_atm
