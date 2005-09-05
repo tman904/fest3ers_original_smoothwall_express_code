@@ -13,7 +13,7 @@ if [ "$ENABLED" = "on" ]; then
 		/usr/bin/smoothwall/ecifw.sh
 	fi
 	if [ "$DEVICE" = "EAGLE" ]; then
-		/etc/bin/smoothwall/writeeagleconfig
+		/etc/bin/smoothwall/writeeagleconfig.pl
 		/sbin/modprobe eagle-usb if_name=eagle
 		sleep 5
 		/usr/sbin/eaglectrl -w
