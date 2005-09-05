@@ -9,13 +9,19 @@ my $vpi; my $vci;
 
 &readhash("${swroot}/adsl/settings", \%adslsettings);
 
-open(FILE, '/etc/analog/usradslpots.conf.template');
-@current = <FILE>;
-close(FILE);
-open(FILE, '>/etc/analog/usradslpots.conf');
-foreach $line (@current) { print FILE $line; }
+open(FILE, '>/etc/eagle-usb/eagle-usb.conf');
 $vpi = sprintf("%08X", $adslsettings{'VPI'});
 $vci = sprintf("%08X", $adslsettings{'VCI'});
-print FILE "VPI=$vpi\n";
-print FILE "VCI=$vci\n";
+
+print <<END
+<eaglectrl>
+VPI=$vpi
+VCI=$vci
+Encapsulation=00000005
+Linetype=0000000A
+RatePollFreq=00000009
+</eaglectrl>
+END
+;
+
 close(FILE);
