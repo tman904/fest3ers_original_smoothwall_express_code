@@ -27,12 +27,12 @@ distrib:
 	@(cd distrib/etc; ln -s /var/smoothwall/vpn/ipsec.conf)
 	@(cd distrib/etc; ln -s /var/smoothwall/vpn/ipsec.secrets)
 	@(cd distrib/etc; ln -s /var/smoothwall/vpn/ibod.cf)
+	@(cd distrib/etc; ln -s /var/smoothwall/hosts/hosts)
 	@(cd distrib/usr/etc; ln -s /var/smoothwall/dhcp/dhcpd.conf)
 	@(cd distrib/etc/ppp; ln -s /var/smoothwall/ppp/secrets chap-secrets)
 	@(cd distrib/etc/ppp; ln -s /var/smoothwall/ppp/secrets pap-secrets)
 	@(cd distrib/etc/ppp; ln -s /var/smoothwall/ppp/ibod.cf)
 	@(cd distrib/usr/etc; ln -s /var/smoothwall/time/ntpd.conf)
-	@(cd distrib/usr/etc; ln -s /var/smoothwall/hosts/hosts)
 	
 	@(cd distrib/var/smoothwall/time; ln -s /usr/share/zoneinfo/posix/Europe/London localtime)
 
