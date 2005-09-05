@@ -247,35 +247,72 @@ print <<END
 END
 ;
 
-if ($next != -1) {
-	print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>&lt;</a> "; }
-else {
-	print "&lt; "; }
+my $number_of_pages = int( $lines / $viewsize );
+my $page = 0;
 
-for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
-	my $link;
-	if ( $i == ($lines-$viewsize) ){
-		# first
-		$link = "Sm";
-	} elsif ( $i-$viewsize <= 0 ){
-		# last
-		$link = "th";
-	} else {
-		# and always
-		$link = "o"
+my $max_number_of_pages = 20;
+
+my ( $first_link, $last_link );
+
+my $start_page = 0;
+my $end_page = $number_of_pages;
+my $tpage = $number_of_pages - int($start / $viewsize);
+
+if ( $number_of_pages > $max_number_of_pages ){
+	$start_page = $tpage - int( $max_number_of_pages / 2 );
+	$end_page   = $tpage + int( $max_number_of_pages / 2 );
+
+	if ( $end_page > int( $lines / $viewsize ) ){
+		$start_page = int( $lines / $viewsize );
+		$end_page = $start_page;
+		$start_page -= $max_number_of_pages;
 	}
 
-	if ( $i == $start ){
-		print "<a class='activemenu' href='/cgi-bin/log.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}''>$link</a>"
-	} else {
-		print "<a href='/cgi-bin/logs.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}''>$link</a>"
+	if ( $start_page < 0 ){
+		$start_page = 0;
+		$end_page = $max_number_of_pages;
 	}
 }
 
-if ($prev != -1) {
-	print " <a href='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>&gt;</a>"; }
-else {
-	print " &gt;"; }
+print <<END
+<table style='margin-left: auto; margin-right: auto;'>
+<tr>
+END
+;
+
+if ( $number_of_pages >= 2 ){
+	if ($next != -1) {
+		print "<td style='vertical-align: top; text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>&lt; Sm</a></td>"; }
+	else {
+		print "<td style='vertical-align: top;text-align: center'>&lt; Sm</td>"; 
+	}
+}
+
+for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
+	my $page = $number_of_pages - int( $i / $viewsize );
+	
+	if ( $page >= $start_page and $page <= $end_page ){
+		if ( $i == $start ){
+			print "<td style='vertical-align: top;text-align: center;'><a class='activemenu' href='/cgi-bin/logs.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}''>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+		} else {
+			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}''>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+		}
+	}
+}
+
+if ( $number_of_pages >= 2 ){
+	if ($tpage != $number_of_pages) {
+		print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>th &gt;</a></td>"; 
+	} else {
+		print "<td style='vertical-align: top;text-align: center;'>th &gt;</td>"; 
+	}
+}
+
+print <<END
+	</tr>
+</table>
+END
+;
 
 print <<END
 </td>
