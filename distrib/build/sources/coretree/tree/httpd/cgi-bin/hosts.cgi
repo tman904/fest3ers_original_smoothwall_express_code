@@ -30,7 +30,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		close(FILE);
 		undef %cgiparams;
 		&log($tr{'host added to hosts list.'});
-		system('/usr/bin/writehosts.pl');
+		system('/usr/bin/smoothwall/writehosts.pl');
                 system('/usr/bin/setuids/restartdnsproxy', 'HUP');
 	}
 }
@@ -74,7 +74,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			}
 		}
 		close(FILE);
- 		system('/usr/bin/writehosts.pl');
+ 		system('/usr/bin/smoothwall/writehosts.pl');
                 system('/usr/bin/setuids/restartdnsproxy', 'HUP');
 		&log($tr{'host removed from host list'});
 	}
