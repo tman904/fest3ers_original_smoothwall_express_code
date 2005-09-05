@@ -50,7 +50,10 @@ struct device devices[] = {
 	{ "Wisecom ws-ad80usg USB", "ECI", "wsad80usg", "usb" },
 	{ "Xentrix USB", "ECI", "xentrix", "usb" },
 	{ "Topcom Xplorer 850 USB", "ECI", "xplorer850", "usb" },
-	{ "USR SureConnect USB", "USR" , "", "usb" },
+	{ "Sagem F@st 800", "EAGLE", "sagem800", "usb" },
+	{ "Sagem F@st 908", "EAGLE", "sagem908", "usb" },
+	{ "Eagle (generic)", "EAGLE", "generic", "usb" },
+	{ "USR SureConnect USB", "EAGLE" , "usresureconnect", "usb" },
 	{ "BeWAN ADSL PCI", "UNICORN", "", "pci"},
 	{ NULL, NULL }
 };
