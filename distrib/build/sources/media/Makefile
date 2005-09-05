@@ -108,6 +108,7 @@ cdrom/smoothwall.tgz:
 		dhcp \
 		snort \
 		openswan \
+		eagle-usb \
 		coretree \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I-*.tar.gz ]; then \
