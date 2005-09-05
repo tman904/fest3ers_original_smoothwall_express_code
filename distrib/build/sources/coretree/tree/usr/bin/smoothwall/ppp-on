@@ -54,8 +54,8 @@ if (! -e "${swroot}/red/active")
 			&doadsldialalcatel(); }
 		elsif ($adslsettings{'DEVICE'} eq 'ECI') {
 			&doadsldialeci(); }
-		elsif ($adslsettings{'DEVICE'} eq 'USR') {
-			&doadsldialusr(); }
+		elsif ($adslsettings{'DEVICE'} eq 'EAGLE') {
+			&doadsldialeagle(); }
 		elsif ($adslsettings{'DEVICE'} eq 'UNICORN') {
 			&doadsldialunicorn(); }
 	}
@@ -286,10 +286,10 @@ sub doadsldialeci
 	system (@pppcommand);
 }
 
-sub doadsldialusr
+sub doadsldialeagle
 {
 	my @pppcommand = ('/usr/sbin/pppd', 'pty');
-	my @pppoacommand = ('/usr/bin/setuids/pppoa');
+	my @pppoacommand = ('/usr/sbin/pppoa', '-I' ,'eagle');
 
 	push(@pppcommand, "@pppoacommand");
 
@@ -310,10 +310,9 @@ sub doadsldialusr
 		$pppsettings{'USERNAME'}, 'ipcp-accept-local', 'ipcp-accept-remote', 'passive',
 		'noaccomp', 'nopcomp', 'noccp', 'novj', 'holdoff', '1', 'nobsdcomp',
 		'nodeflate', 'lcp-echo-interval', '20', 'lcp-echo-failure', '3', 
-		'lcp-max-configure', '50', 'maxfail', $pppsettings{'MAXRETRIES'},
-		'mru', '1492', 'mtu', '1492'));
+		'lcp-max-configure', '50', 'maxfail', $pppsettings{'MAXRETRIES'}));
 
- 	system (@pppcommand);
+	system (@pppcommand);
 }
 
 sub doadsldialunicorn
