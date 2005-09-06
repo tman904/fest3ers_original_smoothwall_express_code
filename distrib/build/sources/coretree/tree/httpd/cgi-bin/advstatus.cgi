@@ -236,7 +236,12 @@ close (PIPE);
 my @modules = split /\n/, $modules;
 
 print <<END
-<table>
+<style type="text/css">
+table.modules td {
+	font-family:monospace;
+}
+</style>
+<table class="modules">
 	<tr>
 	<td>Module</td>
 	<td>Size</td>
