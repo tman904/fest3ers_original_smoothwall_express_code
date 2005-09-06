@@ -242,7 +242,7 @@ sub closepage
 	if ( $thissection ne "blank" ) {
 		print <<END
 	</td>
-	<td class='end'></td>
+	<td class='end'><img src='/ui/img/rightshadow-top.png'></img></td>
 	</tr>
 	<tr>
 		<td colspan='$span' class='bottom'></td>
