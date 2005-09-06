@@ -13,7 +13,7 @@ my %pppsettings;
 my %modemsettings;
 my %netsettings;
 
-my $locks = glob("/var/lock/LCK*");
+my $locks = scalar(glob("/var/run/ppp-*.pid"));
 
 &showhttpheaders();
 

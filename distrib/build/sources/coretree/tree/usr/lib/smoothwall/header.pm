@@ -665,7 +665,7 @@ sub basename {
 }
 
 sub connectedstate {
-	my $locks = glob("/var/lock/LCK*");
+	my $locks = scalar(glob("/var/run/ppp-*.pid"));
 	my $theconnstate;
 	if ( -e "${swroot}/red/active" ) {
 		$theconnstate = "connected";
