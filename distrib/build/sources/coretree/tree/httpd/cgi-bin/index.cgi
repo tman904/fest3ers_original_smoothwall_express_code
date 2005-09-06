@@ -166,19 +166,21 @@ if ($pppsettings{'COMPORT'} ne '')
 	<table style='width: 100%;'>
 	<form method='post' action='/cgi-bin/dial.cgi'>
 	<tr>
-		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'dial'}'></td>
+		<td style='text-align: center;'><input type='submit' name='ACTION' value="$tr{'dial'}"></td>
 		<td>&nbsp;&nbsp;</td>
-		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'hangup'}'></td>
+		<td style='text-align: center;'><input type='submit' name='ACTION' value="$tr{'hangup'}"></td>
 		<td>&nbsp;&nbsp;</td>
 		</form>
 		<form method='post'>
-		<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'refresh'}'></td>
+		<td style='text-align: center;'><input type='submit' name='ACTION' value="$tr{'refresh'}"></td>
 	</tr>
 	</form>
 </table>
-};
+<br/>
+<strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>
+$connstate
+		};
 		&showstats( $control );
-
 	}
 	elsif (-e "${swroot}/red/active" )
 	{
@@ -187,29 +189,21 @@ if ($pppsettings{'COMPORT'} ne '')
 	<tr>
 		<td style='text-align: right;'>
 <form method='post' action='/cgi-bin/dial.cgi'>
-	<input type='submit' name='ACTION' value='$tr{'hangup'}'>
+	<input type='submit' name='ACTION' value="$tr{'hangup'}">
 </form>
 		</td>
 	</tr>
 	</table>
+<td><strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>
 };
-
 		&showstats( $control );
+	} elsif ($modemsettings{'VALID'} eq 'no') {
+		print "$tr{'modem settings have errors'}\n"; 
+	} else {
+		print "$tr{'profile has errors'}\n"; 
 	}
-
-	print "<td><strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>\n";
-	
-	if ($pppsettings{'VALID'} eq 'yes' && $modemsettings{'VALID'} eq 'yes')
-	{
-		print $connstate;
-	}
-	elsif ($modemsettings{'VALID'} eq 'no') {
-		print "$tr{'modem settings have errors'}\n"; }
-	else {
-		print "$tr{'profile has errors'}\n"; }
 
 	print "</td>";
-
 }
 else
 {
@@ -304,6 +298,11 @@ sub showstats
 	my $control = $_[0];
 	# determine the name of our red interface.
 	my $iface_file;
+	
+	my( $daystatsin, $daystatsout, $monthstatsin, $monthstatsout, $ratein, $rateout );
+
+	print "<td style='vertical-align: top;'>\n";
+
 	if ( open ( $iface_file, "</var/smoothwall/red/iface" )){
 		my $iface = <$iface_file>;
 		chomp $iface;
@@ -313,7 +312,6 @@ sub showstats
 		my %stats;
 		&readhash( "/var/log/trafficstats", \%stats );
 
-		my( $daystatsin, $daystatsout, $monthstatsin, $monthstatsout );
 		$ratein  = $stats{"cur_inc_rate_$iface"};
 		$rateout = $stats{"cur_out_rate_$iface"};
 
@@ -364,15 +362,14 @@ sub showstats
 		$monthstatsout = &rerange( $monthstatsout );
 
 		print <<END
-<td style='vertical-align: top;'>
 	Current: $rateout / $ratein (Out/In)<br/> 
 	Today:  $daystatsout / $daystatsin (Out/In)<br/>
 	Month: $monthstatsout / $monthstatsin (Out/In)<br/>
-	$control
-</td>
 END
 ;
 	}
+
+	print "$control</td>\n";
 
 	# we even have a preview graph thingy
 
