@@ -1,4 +1,4 @@
-BASENAME = express-3.0
+BASENAME = express-3.0-grizzly
 
 PRODUCT_NAME = Express
 PRODUCT_VERSION = 3.0
@@ -7,4 +7,4 @@ PRODUCT_EXTRA =
 
 UI_VERSION = 3.0
 FIXES_NUMBER = 0
-REVISION = final
+REVISION = grizzly
