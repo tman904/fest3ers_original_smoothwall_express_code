@@ -58,32 +58,11 @@ int writehostsfiles(void)
 	fprintf(file, "ServerName %s\n", hostname);
 	fclose(file);
 	
-	if (!(file = fopen("/etc/hosts", "w")))
+	if (mysystem("/usr/bin/smoothwall/writehosts.pl"))
 	{
 		errorbox(ctr[TR_UNABLE_TO_WRITE_ETC_HOSTS]);
 		return 0;
 	}
-	fprintf(file, "127.0.0.1\tlocalhost\n");
-	fprintf(file, "%s\t%s\n", address, hostname);
-	fclose(file);
-	
-	/* TCP wrappers stuff. */
-	if (!(file = fopen("/etc/hosts.deny", "w")))
-	{
-		errorbox(ctr[TR_UNABLE_TO_WRITE_ETC_HOSTS_DENY]);
-		return 0;
-	}
-	fprintf(file, "ALL : ALL\n");
-	fclose(file);
-	
-	if (!(file = fopen("/etc/hosts.allow", "w")))
-	{
-		errorbox(ctr[TR_UNABLE_TO_WRITE_ETC_HOSTS_ALLOW]);
-		return 0;
-	}
-	fprintf(file, "ALL : localhost\n");
-	fprintf(file, "ALL : %s/%s\n", netaddress, netmask);
-	fclose(file);
 	
 	sprintf(commandstring, "/bin/hostname %s", hostname);
 	if (mysystem(commandstring))
