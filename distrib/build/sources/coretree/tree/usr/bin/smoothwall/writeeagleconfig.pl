@@ -13,7 +13,7 @@ open(FILE, '>/etc/eagle-usb/eagle-usb.conf');
 $vpi = sprintf("%08X", $adslsettings{'VPI'});
 $vci = sprintf("%08X", $adslsettings{'VCI'});
 
-print <<END
+print FILE <<END
 <eaglectrl>
 VPI=$vpi
 VCI=$vci
