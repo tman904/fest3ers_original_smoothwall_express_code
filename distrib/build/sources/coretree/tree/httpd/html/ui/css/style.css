@@ -213,7 +213,7 @@ td.end {
 	width: 4px;
 	background-image: url( '/ui/img/rightshadow.png' );
 	background-repeat: repeat-y;
-	padding-top: 0px;
+	padding: 0px;
 	vertical-align: top;
 }
 
