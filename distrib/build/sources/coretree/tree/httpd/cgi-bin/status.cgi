@@ -73,7 +73,7 @@ foreach my $key (keys %coreservices)
 	print "<td style='width: 70%; text-align: center;'>$key</td>\n";
 	my $shortname = $coreservices{$key};
 	my $status = &isrunning($shortname);
-	print "<td style='width: 30%; text-align: center;'>$status</td>\n";
+	print "<td style='width: 30%; text-align: center; vertical-align: middle;'>$status</td>\n";
 	print "</tr>\n";
 	$lines++;
 }
