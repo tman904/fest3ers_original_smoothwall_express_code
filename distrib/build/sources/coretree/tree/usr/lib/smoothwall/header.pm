@@ -69,14 +69,11 @@ sub showmenu
         opendir(DIR, "/var/smoothwall/menu/");
         my @files = grep {!/\./} readdir(DIR);
 
-	print <<END
-<tr>
-	<td class='mainmenu'>
-<table style='float: right;'>
-<tr>
-END
-	;
+
 	my $first = "";
+
+	my $menu_html;
+	my @clear_sections;
 
 	foreach my $file ( sort @files ){
 		if ( -d "/var/smoothwall/menu/$file" ){
@@ -107,15 +104,56 @@ END
 
 				if ( $section eq "yes" ){
 					@menu = @tempmenu;
-					print "<td>$first<a class='activemenu' href='/cgi-bin/$menu[ 0 ]->{'href'}'>$section_title</a></td>";
+					$menu_html .= "<td>$first<a class='activemenu' href='/cgi-bin/$menu[ 0 ]->{'href'}'>$section_title</a></td>";
 				} else {
-					print "<td>$first<a class='menu' href='/cgi-bin/$tempmenu[ 0 ]->{'href'}'>$section_title</a></td>";
+					$menu_html .= qq { <td><div class='menu' id='$section_title' 
+onMouseOver="menu_show('$section_title')" 
+onMouseOut="menu_clear();"
+> };
+					$menu_html .= &showhovermenu( @tempmenu );
+					$menu_html .= qq { 
+</div></td>
+<td 
+onMouseOver="menu_show('$section_title')" 
+onMouseOut="menu_clear();"
+>
+$first<a class='menu' href='/cgi-bin/$tempmenu[ 0 ]->{'href'}'>$section_title</a>
+</td>
+};
+					push @clear_sections, $section_title;
 				}
 			}
 
 			$first = " | ";
 		}
 	}
+
+	print <<END
+<tr>
+	<td class='mainmenu'>
+	<script>
+		function menu_clear( me )
+		{
+END
+;
+
+	foreach my $option ( @clear_sections ){
+		print "\t\t\tif( me != '$option') document.getElementById('$option').style.display = 'none';\n";
+	}
+
+print <<END
+		}
+		function menu_show( what ){
+			menu_clear();
+			document.getElementById(what).style.display = 'block';
+		}
+	</script>
+<table style='float: right;'>
+<tr>
+END
+	;
+
+	print $menu_html;
 
 	print <<END
 </tr></table></td>
@@ -139,6 +177,23 @@ END
 	showsection( @menu );
 
 	return;
+}
+
+sub showhovermenu
+{
+	my @tempmenu = @_;
+	my $html;
+	foreach my $item ( @tempmenu ){
+		my $width = 8 + (8 * length( $tr{ $item->{'title'} } ));
+		if ( defined $item->{'active'} and $item->{'active'} eq "true" ){
+			$html .= "<a href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
+		} else {
+			$html .= "<a href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
+		}
+		$span++;
+		$remaining -= $width;
+	}
+	return $html;
 }
 
 sub showsection
