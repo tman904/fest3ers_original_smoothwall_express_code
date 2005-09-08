@@ -70,10 +70,11 @@ foreach my $key (keys %coreservices)
 		print "<tr class='light'>\n"; }
 	else {
 		print "<tr class='dark'>\n"; }
-	print "<td style='width: 70%; text-align: center;'>$key</td>\n";
+	print "<td style='width: 60%; text-align: center;'>$key</td>\n";
 	my $shortname = $coreservices{$key};
-	my $status = &isrunning($shortname);
-	print "<td style='width: 30%; text-align: center; vertical-align: middle;'>$status</td>\n";
+	my ( $status, $period ) = &isrunning($shortname);
+	print "<td style='width: 10%; text-align: center; vertical-align: middle;'>$status</td>\n";
+	print "<td style='width: 30%; text-align: center;'>$period</td>\n";
 	print "</tr>\n";
 	$lines++;
 }
@@ -93,10 +94,11 @@ foreach my $key (keys %servicenames)
 		print "<tr class='light'>\n"; }
 	else {
 		print "<tr class='dark'>\n"; }
-	print "<td style='width: 70%; text-align: center;'>$key</td>\n";
+	print "<td style='width: 60%; text-align: center;'>$key</td>\n";
 	my $shortname = $servicenames{$key};
-	my $status = &isrunning($shortname);
-	print "<td style='width: 30%; text-align: center;'>$status</td>\n";
+	my ( $status, $period ) = &isrunning($shortname);
+	print "<td style='width: 10%; text-align: center;'>$status</td>\n";
+	print "<td style='width: 30%; text-align: center;'>$period</td>\n";
 	print "</tr>\n";
 	$lines++;
 }
@@ -130,6 +132,8 @@ sub isrunning
 	$cmd =~ /(^[a-z]+)/;
 	$exename = $1;
 
+	my $howlong = "";
+
 	if (open(FILE, "/var/run/${cmd}.pid"))
 	{
  		$pid = <FILE>; chop $pid;
@@ -145,6 +149,18 @@ sub isrunning
 			if ($testcmd =~ /$exename/)
 			{
 				$status = status_line( "running" );
+
+				my $age = time - (stat( "/var/run/${cmd}.pid" ))[9];
+				my ( $days, $hours, $minutes, $seconds ) = (gmtime($age))[7,2,1,0];
+
+				if ( $days != 0 ){
+					$howlong = "$days days";
+				} elsif ( $hours != 0 ){
+					$howlong = "$hours hours $minutes mins";
+				} else {
+					$howlong = "$minutes:$seconds";
+				}
+
 				if (open(FILE, "/proc/${pid}/cmdline"))
 				{
 					my $cmdline = <FILE>;
@@ -156,5 +172,5 @@ sub isrunning
 		}
 	}
 
-	return $status;
+	return ( $status, $howlong );
 }

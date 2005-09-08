@@ -34,6 +34,12 @@ $dhcpsettings{'DOMAIN_NAME'} = '';
 $dhcpsettings{'DEFAULT_LEASE_TIME'} = '';
 $dhcpsettings{'MAX_LEASE_TIME'} = '';
 
+$dhcpsettings{'NIS_ENABLE'} = 'off';
+$dhcpsettings{'BOOT_SERVER'} = '';
+$dhcpsettings{'BOOT_FILE'} = '';
+$dhcpsettings{'BOOT_ROOT'} = '';
+$dhcpsettings{'BOOT_ENABLE'} = 'off';
+
 &getcgihash(\%dhcpsettings);
 
 my $errormessage = '';
@@ -49,18 +55,37 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'invalid end address'};
 		goto ERROR;
 	}
-	if ($dhcpsettings{'DNS1'})
-	{
-		if (!(&validip($dhcpsettings{'DNS1'})))
-		{
+	if (!(&ip2number($dhcpsettings{'END_ADDR'}) > &ip2number($dhcpsettings{'START_ADDR'}))) {
+		$errormessage = $tr{'end must be greater than start'};
+		goto ERROR;
+	}
+	open(FILE, "$filename") or die 'Unable to open config file.';
+	my @current = <FILE>;
+	close(FILE);
+	my $line;
+	foreach $line (@current) {
+		chomp($line);
+		my @temp = split(/\,/,$line);
+		if ($temp[5] eq 'on') {
+			unless(!((&ip2number($temp[2]) <= &ip2number($dhcpsettings{'END_ADDR'}) 
+				&& (&ip2number($temp[2]) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
+				$errormessage = $tr{'dynamic range cannot overlap static'};
+				goto ERROR;
+			}
+		}
+	}
+	if ($dhcpsettings{'DNS1'}) {
+		if (!(&validip($dhcpsettings{'DNS1'}))) {
 			$errormessage = $tr{'invalid primary dns'};
 			goto ERROR;
 		}
 	}
-	if ($dhcpsettings{'DNS2'})
-	{
-		if (!(&validip($dhcpsettings{'DNS2'})))
-		{
+	if (!($dhcpsettings{'DNS1'}) && $dhcpsettings{'DNS2'}) {
+		$errormessage = $tr{'cannot specify secondary dns without specifying primary'};
+		goto ERROR;
+	}
+	if ($dhcpsettings{'DNS2'}) {
+		if (!(&validip($dhcpsettings{'DNS2'}))) {
 			$errormessage = $tr{'invalid secondary dns'};
 			goto ERROR;
 		}
@@ -86,11 +111,36 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 			goto ERROR;
 		}
 	}
-	if (!($dhcpsettings{'DNS1'}) && $dhcpsettings{'DNS2'})
-	{
+	if (!($dhcpsettings{'DNS1'}) && $dhcpsettings{'DNS2'}) {
 		$errormessage = $tr{'cannot specify secondary dns without specifying primary'}; 
 		goto ERROR;
 	}
+	if (!($dhcpsettings{'NIS_DOMAIN'}) && $dhcpsettings{'NIS1'}) {
+		$errormessage = $tr{'cannot specify nis server without specifying nis domain'};
+		goto ERROR;
+	}
+	if (!($dhcpsettings{'NIS1'}) && $dhcpsettings{'NIS2'}) {
+		$errormessage = $tr{'cannot specify secondary nis without specifying primary'};
+		goto ERROR;
+	}
+	if ($dhcpsettings{'NIS1'}) {
+		if (!(&validip($dhcpsettings{'NIS1'}))) {
+			$errormessage = $tr{'invalid primary nis'};
+			goto ERROR;
+		}
+	}
+	if ($dhcpsettings{'NIS2'}) {
+		if (!(&validip($dhcpsettings{'NIS2'}))) {
+			$errormessage = $tr{'invalid secondary nis'};
+			goto ERROR;
+		}
+	}
+	unless (!$cgiparams{'DOMAIN_NAME'} || $cgiparams{'DOMAIN_NAME'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) {
+		$errormessage = $tr{'invalid domain name'};
+		goto ERROR;
+	}
+
+
 	if (!($dhcpsettings{'DEFAULT_LEASE_TIME'} =~ /^\d+$/))
 	{
 		$errormessage = $tr{'invalid default lease time'};
@@ -112,65 +162,7 @@ ERROR:
 	delete $dhcpsettings{'STATIC_IP'};
 	&writehash("${swroot}/dhcp/settings", \%dhcpsettings);
 
-	if ($dhcpsettings{'VALID'} eq 'yes')
-	{
-		open(FILE, ">/${swroot}/dhcp/dhcpd.conf") or die "Unable to write dhcpd.conf file";
-		flock(FILE, 2);
-		print FILE "ddns-update-style ad-hoc;\n\n";
-		print FILE "subnet $netsettings{'GREEN_NETADDRESS'} netmask $netsettings{'GREEN_NETMASK'}\n";
-		print FILE "{\n";
-		print FILE "\toption subnet-mask $netsettings{'GREEN_NETMASK'};\n";
-		print FILE "\toption domain-name \"$dhcpsettings{'DOMAIN_NAME'}\";\n";
-		print FILE "\toption routers $netsettings{'GREEN_ADDRESS'};\n";
-		if ($dhcpsettings{'DNS1'})
-		{
-			print FILE "\toption domain-name-servers ";
-			print FILE "$dhcpsettings{'DNS1'}";
-			if ($dhcpsettings{'DNS2'}) {
-				print FILE ", $dhcpsettings{'DNS2'}"; }
-			print FILE ";\n";
-		}
-		if ($dhcpsettings{'WINS1'})
-		{
-			print FILE "\toption netbios-name-servers ";
-			print FILE "$dhcpsettings{'WINS1'}";
-			if ($dhcpsettings{'WINS2'}) {
-				print FILE ", $dhcpsettings{'WINS2'}"; }
-			print FILE ";\n";
-	        }
-		my $defaultleasetime = $dhcpsettings{'DEFAULT_LEASE_TIME'} * 60;
-		my $maxleasetime = $dhcpsettings{'MAX_LEASE_TIME'} * 60;
-		print FILE "\trange dynamic-bootp $dhcpsettings{'START_ADDR'} $dhcpsettings{'END_ADDR'};\n";
-		print FILE "\tdefault-lease-time $defaultleasetime;\n";
-		print FILE "\tmax-lease-time $maxleasetime;\n";
-		my $id = 0;
-		open(RULES, "$filename") or die 'Unable to open config file.';
-		while (<RULES>)
-		{
-			$id++;
-			chomp($_);
-			my @temp = split(/\,/,$_);
-			print FILE "\thost $id { hardware ethernet $temp[1]; fixed-address $temp[2]; }\n";
-		}
-		close(RULES);
-		print FILE "}\n";
-		close FILE;
-	
-		if ($dhcpsettings{'ENABLE'} eq 'on' && $dhcpsettings{'VALID'} eq 'yes')
-		{
-			system ('/bin/touch', "${swroot}/dhcp/enable");
-			&log($tr{'dhcp server enabled'})
-		}
-		else
-		{
-			unlink "${swroot}/dhcp/enable";
-			&log($tr{'dhcp server disabled'})
-		}		
-		
-		system '/usr/bin/setuids/restartdhcp';
-
-		unlink "${swroot}/dhcp/uptodate";
-	}
+	&writesettings();
 }
 
 if ($dhcpsettings{'ACTION'} eq $tr{'add'})
@@ -184,22 +176,58 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 	if (&validmac($mac)) {
 		$dhcpsettings{'STATIC_MAC'} = $mac; }
 
-	unless ($dhcpsettings{'STATIC_DESC'}) { $errormessage = $tr{'please enter a description'}; }
-	if ($dhcpsettings{'STATIC_DESC'} =~ /[\,\n]/) { $errormessage = $tr{'description contains bad characters'}; }
+	unless($dhcpsettings{'STATIC_HOST'}) { $errormessage = $tr{'please enter a host name'}; }
+	unless($dhcpsettings{'STATIC_HOST'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) { $errormessage = $tr{'invalid host name'}; }
+	unless(&validmac($dhcpsettings{'STATIC_MAC'})) { $errormessage = $tr{'mac address not valid'}; }
+	unless(&validip($dhcpsettings{'STATIC_IP'})) { $errormessage = $tr{'ip address not valid'}; }
+	if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on') {
+		unless(!((&ip2number($dhcpsettings{'STATIC_IP'}) <= &ip2number($dhcpsettings{'END_ADDR'}) 
+			&& (&ip2number($dhcpsettings{'STATIC_IP'}) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
+			$errormessage = $tr{'static must be outside dynamic range'};
+		}
+	}
+	open(FILE, "$filename") or die 'Unable to open config file.';
+	my @current = <FILE>;
+	close(FILE);
+	my $line;
+	foreach $line (@current) {
+		chomp($line);
+		my @temp = split(/\,/,$line);
+		if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on') {
+			if (($dhcpsettings{'STATIC_HOST'} eq $temp[0]) && ($temp[4] eq 'on')) {
+				$errormessage = "$tr{'hostnamec'} $temp[0] $tr{'already exists and has assigned ip'} $tr{'ip address'} $temp[2].";
+			}
+			if (($dhcpsettings{'STATIC_MAC'} eq $temp[1]) && ($temp[4] eq 'on')) {
+				$errormessage = "$tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]) $tr{'already assigned to ip'} $tr{'ip address'} $temp[2].";
+			}
+			if (($dhcpsettings{'STATIC_IP'} eq $temp[2]) && ($temp[4] eq 'on')) {
+				$errormessage = "$tr{'ip address'} $temp[2] $tr{'ip already assigned to'} $tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]).";
+			}
+		}
+	}
+	unless($dhcpsettings{'STATIC_DESC'} =~ /^([a-zA-Z 0-9]*)$/) { $errormessage = $tr{'description contains bad characters'}; }
 	unless(&validmac($dhcpsettings{'STATIC_MAC'})) { $errormessage = $tr{'mac address not valid'}; }
 	unless(&validip($dhcpsettings{'STATIC_IP'})) { $errormessage = $tr{'ip address not valid'}; }
 	unless ($errormessage)
 	{
 		open(FILE, ">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$dhcpsettings{'STATIC_DESC'},$dhcpsettings{'STATIC_MAC'},$dhcpsettings{'STATIC_IP'}\n";
+		print FILE "$dhcpsettings{'STATIC_HOST'},$dhcpsettings{'STATIC_MAC'},$dhcpsettings{'STATIC_IP'},$dhcpsettings{'STATIC_DESC'},$dhcpsettings{'DEFAULT_ENABLE_STATIC'}\n";
 		close(FILE);
-		delete $dhcpsettings{'STATIC_DESC'};
+		delete $dhcpsettings{'STATIC_HOST'};		
 		delete $dhcpsettings{'STATIC_MAC'};
 		delete $dhcpsettings{'STATIC_IP'};
+		delete $dhcpsettings{'STATIC_DESC'};
+		delete $dhcpsettings{'DEFAULT_ENABLE_STATIC'};
 		system ('/bin/touch', "${swroot}/dhcp/uptodate");
 	}
+	$refreshdynamic = 'off';	
+
+	# we aren't modifying our settings, so load them.
+	&readhash("${swroot}/dhcp/settings", \%dhcpsettings);
+	&writesettings();
 }
+
 if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'edit'})
 {
 	open(FILE, "$filename") or die 'Unable to open config file.';
@@ -233,20 +261,29 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 			{
 				chomp($line);
 				my @temp = split(/\,/,$line);
-				$dhcpsettings{'STATIC_DESC'} = $temp[0];
+				$dhcpsettings{'STATIC_HOST'} = $temp[0];
 				$dhcpsettings{'STATIC_MAC'} = $temp[1];
 				$dhcpsettings{'STATIC_IP'} = $temp[2];
+				$dhcpsettings{'STATIC_DESC'} = $temp[3];
+				$dhcpsettings{'DEFAULT_ENABLE_STATIC'} = $temp[4];
+				$checked{'DEFAULT_ENABLE_STATIC'}{'on'} = "checked" if ( $temp[4] eq "on" );
 			}
 		}
 		close(FILE);
 		system ('/bin/touch', "${swroot}/dhcp/uptodate");
 	}
+	$refreshdynamic = 'off';	
+
+	# we aren't modifying our settings, so load them.
+	&readhash("${swroot}/dhcp/settings", \%dhcpsettings);
+	&writesettings();
 }
 
 &readhash("${swroot}/dhcp/settings", \%dhcpsettings);
 
 if ($dhcpsettings{'VALID'} eq '')
 {
+
  	$dhcpsettings{'ENABLE'} = 'off';
         $dhcpsettings{'DNS1'} = $netsettings{'GREEN_ADDRESS'};
         $dhcpsettings{'DEFAULT_LEASE_TIME'} = '60';
@@ -256,6 +293,14 @@ if ($dhcpsettings{'VALID'} eq '')
 $checked{'ENABLE'}{'off'} = '';
 $checked{'ENABLE'}{'on'} = '';
 $checked{'ENABLE'}{$dhcpsettings{'ENABLE'}} = 'CHECKED';
+$checked{'NIS_ENABLE'}{'on'} = '';
+$checked{'NIS_ENABLE'}{'off'} = '';
+$checked{'NIS_ENABLE'}{$dhcpsettings{'NIS_ENABLE'}} = 'CHECKED';
+$checked{'BOOT_ENABLE'}{'on'} = '';
+$checked{'BOOT_ENABLE'}{'off'} = '';
+$checked{'BOOT_ENABLE'}{$dhcpsettings{'BOOT_ENABLE'}} = 'CHECKED';
+
+
 
 &openpage($tr{'dhcp configuration'}, 1, '', 'services');
 
@@ -263,76 +308,136 @@ $checked{'ENABLE'}{$dhcpsettings{'ENABLE'}} = 'CHECKED';
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
-
 &openbox('DHCP:');
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'start address'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='START_ADDR' VALUE='$dhcpsettings{'START_ADDR'}'></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'end address'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='END_ADDR' VALUE='$dhcpsettings{'END_ADDR'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'primary dns'}</TD>
-	<TD><INPUT TYPE='text' NAME='DNS1' VALUE='$dhcpsettings{'DNS1'}'></TD>
-	<TD CLASS='base'>$tr{'secondary dns'}</TD>
-	<TD><INPUT TYPE='text' NAME='DNS2' VALUE='$dhcpsettings{'DNS2'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'primary wins'}</TD>
-	<TD><INPUT TYPE='text' NAME='WINS1' VALUE='$dhcpsettings{'WINS1'}'></TD>
-	<TD CLASS='base'>$tr{'secondary wins'}</TD>
-	<TD><INPUT TYPE='text' NAME='WINS2' VALUE='$dhcpsettings{'WINS2'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'default lease time'}</TD>
-	<TD><INPUT TYPE='text' NAME='DEFAULT_LEASE_TIME' VALUE='$dhcpsettings{'DEFAULT_LEASE_TIME'}'></TD>
-	<TD CLASS='base'>$tr{'max lease time'}</TD>
-	<TD><INPUT TYPE='text' NAME='MAX_LEASE_TIME' VALUE='$dhcpsettings{'MAX_LEASE_TIME'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'domain name suffix'}&nbsp;<IMG SRC='/ui/img/blob.gif' ALT='*'></TD></TD>
-	<TD><INPUT TYPE='text' NAME='DOMAIN_NAME' VALUE='$dhcpsettings{'DOMAIN_NAME'}'></TD>
-	<TD CLASS='base'>$tr{'enabled'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='ENABLE' $checked{'ENABLE'}{'on'}></TD>
-</TR>
-</TABLE>
+<form method='post'>
+<table class='centered'>
+<tr>
+	<td style='width: 25%;'>$tr{'start address'}</td>
+	<td style='width: 25%;'><input type='text' name='START_ADDR' value='$dhcpsettings{'START_ADDR'}'></td>
+	<td style='width: 25%;'>$tr{'end address'}</td>
+	<td style='width: 25%;'><input type='text' name='END_ADDR' value='$dhcpsettings{'END_ADDR'}'></td>
+</tr>
+<tr>
+	<td>$tr{'primary dns'}</td>
+	<td><input type='text' name='DNS1' value='$dhcpsettings{'DNS1'}'></td>
+	<td>$tr{'secondary dns'}</TD>
+	<td><input type='text' name='DNS2' value='$dhcpsettings{'DNS2'}'></td>
+</tr>
+<tr>
+	<td>$tr{'primary wins'}</td>
+	<td><input type='text' name='WINS1' value='$dhcpsettings{'WINS1'}'></td>
+	<td>$tr{'secondary wins'}</td>
+	<td><input type='text' name='WINS2' value='$dhcpsettings{'WINS2'}'></td>
+</tr>
+<tr>
+	<td>$tr{'default lease time'}</td>
+	<td><input type='text' name='DEFAULT_LEASE_TIME' value='$dhcpsettings{'DEFAULT_LEASE_TIME'}'></td>
+	<td>$tr{'max lease time'}</td>
+	<td><input type='text' name='MAX_LEASE_TIME' value='$dhcpsettings{'MAX_LEASE_TIME'}'></td>
+</tr>
+<tr>
+	<td>$tr{'domain name suffix'}&nbsp;<IMG SRC='/ui/img/blob.gif' alt='*'></td>
+	<td><input type='text' name='DOMAIN_NAME' value='$dhcpsettings{'DOMAIN_NAME'}'></td>
+	<td>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
+</tr>
+</table>
+<strong>$tr{'nis server supportc'}</strong>
+<table class='centered'>
+<tr>
+	<td style='width: 25%;'>$tr{'nis server enabledc'}</td>
+	<td style='width: 25%;'><input type='checkbox' name='NIS_ENABLE' $checked{'NIS_ENABLE'}{'on'}></td>
+	<td style='width: 25%;'></td>
+	<td style='width: 25%;'></td>
+</tr>
+<tr>
+	<td>$tr{'primary nisc'}</TD>
+	<td><input type='text' name='NIS1' value='$dhcpsettings{'NIS1'}'></td>
+	<td>$tr{'secondary nisc'}</TD>
+	<td><input type='text' name='NIS2' value='$dhcpsettings{'NIS2'}'></td>
+</tr>
+<tr>
+	<td>$tr{'nis_domainc'}</TD>
+	<td><input type='text' name='NIS_DOMAIN' value='$dhcpsettings{'NIS_DOMAIN'}'></td>
+	<td></td>
+	<td></td>
+</tr>
+</table>
+<strong>$tr{'network boot supportc'}</strong>
+<table class='centered'>
+<tr>
+	<td style='width: 25%;'>$tr{'network boot enabledc'}</td>
+	<td style='width: 25%;'><input type='checkbox' name='BOOT_ENABLE' $checked{'BOOT_ENABLE'}{'on'}></td>
+	<td style='width: 25%;'></td>
+	<td style='width: 25%;'></td>
+</tr>
+<tr>
+	<td>$tr{'boot serverc'}</TD>
+	<td><input type='text' name='BOOT_SERVER' value='$dhcpsettings{'BOOT_SERVER'}'></td>
+	<td>$tr{'boot filenamec'}</td>
+	<td><input type='text' name='BOOT_FILE' value='$dhcpsettings{'BOOT_FILE'}'></td>
+</tr>
+<tr>
+	<td>$tr{'root pathc'}</TD>
+	<td colspan='3'><input type='text' name='BOOT_ROOT' size='32' value='$dhcpsettings{'BOOT_ROOT'}'></td>
+</tr>
+</taBLE>
 <BR>
-<IMG SRC='/ui/img/blob.gif' ALT='*' VALIGN='top'>&nbsp;
-<FONT CLASS='base'>$tr{'this field may be blank'}</FONT>
+<img src='/ui/img/blob.gif' alt='*' valign='top'>&nbsp; $tr{'this field may be blank'}
+<br/>
+<table class='centered'>
+<tr>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
+</form>
 END
 ;
+
 &closebox();
 
 &openbox($tr{'add a new static assignment'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'descriptionc'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='STATIC_DESC' VALUE='$dhcpsettings{'STATIC_DESC'}'></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'mac addressc'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='STATIC_MAC' VALUE='$dhcpsettings{'STATIC_MAC'}'></TD>
-</TR>
-<TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'ip addressc'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='STATIC_IP' VALUE='$dhcpsettings{'STATIC_IP'}'></TD>
-	<TD WIDTH='50%' ALIGN='CENTER' COLSPAN='2'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'add'}'></TD>
-</TR>
-</TABLE>
+<form method='post'>
+<table class='centered'>
+<tr>
+	<td style='width: 25%;'>$tr{'hostnamec'}</td>
+	<td style='width: 25%;'><input type='text' name='STATIC_HOST' value='$dhcpsettings{'STATIC_HOST'}'></td>
+	<td style='width: 25%;'>$tr{'descriptionc'}</td>
+	<td style='width: 25%;'><input type='text' name='STATIC_DESC' value='$dhcpsettings{'STATIC_DESC'}'></td>
+</tr>
+<tr>
+	<td>$tr{'mac addressc'}</td>
+	<td><input type='text' name='STATIC_MAC' value='$dhcpsettings{'STATIC_MAC'}'></td>
+	<td>$tr{'ip addressc'}</td>
+	<td><input type='text' name='STATIC_IP' value='$dhcpsettings{'STATIC_IP'}'></td>
+</tr>
+<tr>
+	<td>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='DEFAULT_ENABLE_STATIC' $checked{'DEFAULT_ENABLE_STATIC'}{'on'}}></td>
+	<td style='text-align: right;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
+	<td></td>
+</tr>
+</table>
+</form>
 END
 ;
 &closebox();
 
 &openbox($tr{'current static assignments'});
 print <<END
+<form method='post'>
 <table class='centered'>
 <tr>
-<th style='width: 30%;'>$tr{'description'}</th>
-<th style='width: 30%;'>$tr{'mac address'}</th>
-<th style='width: 30%;'>$tr{'ip address'}</th>
+<th style='width: 25%;'>$tr{'hostname'}</th>
+<th style='width: 25%;'>$tr{'ip address'}</th>
+<th style='width: 20%;'>$tr{'mac address'}</th>
+<th style='width: 10%;'>$tr{'enabledtitle'}</th>
 <th style='width: 10%;'>$tr{'mark'}</th>
+</tr>
+<tr>
+<th colspan='5'>$tr{'description'}</th>
 </tr>
 END
 ;
@@ -344,18 +449,29 @@ while (<RULES>)
 	$id++;
 	chomp($_);
 	my @temp = split(/\,/,$_);
+	my $row;
 	if ($id % 2) {
-		print "<tr class='dark'>\n"; }
+		$row = "<tr class='dark'>\n"; }
 	else {
-		print "<tr class='light'>\n"; }
+		$row = "<tr class='light'>\n"; }
+
+	if ($temp[4] eq 'on') { $gif = 'on.gif'; }
+		else { $gif = 'off.gif'; 
+	}
+
 	print <<END
+$row
 <td style='text-align: center;'>$temp[0]</td>
-<td style='text-align: center;'>$temp[1]</td>
 <td style='text-align: center;'>$temp[2]</td>
-<td style='text-align: center;'><input type='checkbox' name='$id'></td>
+<td style='text-align: center;'>$temp[1]</td>
+<td style='text-align: center;'><img src='/ui/img/$gif'></td>
+<td style='text-align: center;'><input type='checkbox' name='$id'></td
 </tr>
 END
 ;
+	if ( defined $temp[3] and $temp[3] ne "" ){
+		print "$row<td colspan='5' style='text-align: center;'>$temp[3]</td></tr>\n";
+	}
 }
 close(RULES);
 
@@ -367,6 +483,7 @@ print <<END
 <td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
 </tr>
 </table>
+</form>
 END
 ;
 &closebox();
@@ -377,21 +494,117 @@ if (-e "${swroot}/dhcp/uptodate") {
 print "&nbsp;\n";
 &closebox();
 
-print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='60%'>
-<TR>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save'}'></TD>
-</TR>
-</TABLE>
-</DIV>
-END
-;
-
-print "</FORM>\n";
-
 &alertbox('add','add');
 
 &closebigbox();
 
 &closepage();
+
+
+
+sub ip2number {
+        my $ip = $_[0];
+        if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
+                return 0; }
+        else {
+                return ($1*(256*256*256))+($2*(256*256))+($3*256)+($4);
+        }
+}
+
+sub number2ip {
+        my $number = $_[0];
+        my $n1 = int($number/(256*256*256));
+        my $n2 = int(($number-($n1*256*256*256))/(256*256));
+        my $n3 = int(($number-($n1*256*256*256)-($n2*256*256))/256);
+        my $n4 = $number-($n1*256*256*256)-($n2*256*256)-($n3*256);
+        return "$n1.$n2.$n3.$n4";
+}
+
+
+sub writesettings {
+	if ($dhcpsettings{'VALID'} eq 'yes')
+	{
+		open(FILE, ">/${swroot}/dhcp/dhcpd.conf") or die "Unable to write dhcpd.conf file";
+		flock(FILE, 2);
+
+		if ($dhcpsettings{'BOOT_ENABLE'} eq 'on' && $dhcpsettings{'BOOT_SERVER'} && $dhcpsettings{'BOOT_FILE'} 
+			&& $dhcpsettings{'BOOT_ROOT'}) {
+			if ($dhcpsettings{'BOOT_SERVER'}) {
+				print FILE "allow booting;\n";}
+			if ($dhcpsettings{'BOOT_SERVER'}) {
+				print FILE "allow bootp;\n";}
+			if ($dhcpsettings{'BOOT_SERVER'}) {
+				print FILE "next-server $dhcpsettings{'BOOT_SERVER'};\n" if ($dhcpsettings{'BOOT_SERVER'} ne ''); }
+			if ($dhcpsettings{'BOOT_FILE'}) {
+				print FILE "filename \"$dhcpsettings{'BOOT_FILE'}\";\n" if ($dhcpsettings{'BOOT_FILE'} ne ''); }
+			if ($dhcpsettings{'BOOT_ROOT'}) {
+				print FILE "option root-path \"$dhcpsettings{'BOOT_ROOT'}\";\n" if ($dhcpsettings{'BOOT_ROOT'} ne ''); }
+		}
+		print FILE "ddns-update-style ad-hoc;\n\n";
+		print FILE "subnet $netsettings{'GREEN_NETADDRESS'} netmask $netsettings{'GREEN_NETMASK'}\n";
+		print FILE "{\n";
+		print FILE "\toption subnet-mask $netsettings{'GREEN_NETMASK'};\n";
+		print FILE "\toption domain-name \"$dhcpsettings{'DOMAIN_NAME'}\";\n";
+		print FILE "\toption routers $netsettings{'GREEN_ADDRESS'};\n";
+		if ($dhcpsettings{'DNS1'})
+		{
+			print FILE "\toption domain-name-servers ";
+			print FILE "$dhcpsettings{'DNS1'}";
+			if ($dhcpsettings{'DNS2'}) {
+				print FILE ", $dhcpsettings{'DNS2'}"; }
+			print FILE ";\n";
+		}
+		if ($dhcpsettings{'WINS1'})
+		{
+			print FILE "\toption netbios-name-servers ";
+			print FILE "$dhcpsettings{'WINS1'}";
+			if ($dhcpsettings{'WINS2'}) {
+				print FILE ", $dhcpsettings{'WINS2'}"; }
+			print FILE ";\n";
+	        }
+		if ($dhcpsettings{'NIS_ENABLE'} eq 'on' && $dhcpsettings{'NIS1'} && $dhcpsettings{'NIS_DOMAIN'}) {
+			if ($dhcpsettings{'NIS1'}) {
+				print FILE "\toption nis-servers ";
+				print FILE "$dhcpsettings{'NIS1'}";
+				if ($dhcpsettings{'NIS2'}) {
+					print FILE ", $dhcpsettings{'NIS2'}"; }
+				print FILE ";\n";}
+			if ($dhcpsettings{'NIS_DOMAIN'}) {
+				print FILE "\toption nis-domain \"$dhcpsettings{'NIS_DOMAIN'}\";\n";}
+		}
+		my $defaultleasetime = $dhcpsettings{'DEFAULT_LEASE_TIME'} * 60;
+		my $maxleasetime = $dhcpsettings{'MAX_LEASE_TIME'} * 60;
+		print FILE "\trange dynamic-bootp $dhcpsettings{'START_ADDR'} $dhcpsettings{'END_ADDR'};\n";
+		print FILE "\tdefault-lease-time $defaultleasetime;\n";
+		print FILE "\tmax-lease-time $maxleasetime;\n";
+		my $id = 0;
+		open(RULES, "$filename") or die 'Unable to open config file.';
+		while (<RULES>)
+		{
+			$id++;
+			chomp($_);
+			my @temp = split(/\,/,$_);
+			if ($temp[4] eq 'on') {			
+				print FILE "\thost $id { hardware ethernet $temp[1]; fixed-address $temp[2]; }\n";
+			}
+		}
+		close(RULES);
+		print FILE "}\n";
+		close FILE;
+	
+		if ($dhcpsettings{'ENABLE'} eq 'on' && $dhcpsettings{'VALID'} eq 'yes')
+		{
+			system ('/bin/touch', "${swroot}/dhcp/enable");
+			&log($tr{'dhcp server enabled'})
+		}
+		else
+		{
+			unlink "${swroot}/dhcp/enable";
+			&log($tr{'dhcp server disabled'})
+		}		
+		
+		system '/usr/bin/setuids/restartdhcp';
+
+		unlink "${swroot}/dhcp/uptodate";
+	}
+}
