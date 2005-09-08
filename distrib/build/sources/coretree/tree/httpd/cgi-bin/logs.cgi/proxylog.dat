@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use Time::Local qw( timelocal );
 
 my %cgiparams;
 my %ips;
@@ -17,8 +18,6 @@ my %checked;
 my $errormessage;
 my @log;
 
-my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
-	'Sep', 'Oct', 'Nov', 'Dec' );
 my @longmonths = ( $tr{'january'}, $tr{'february'}, $tr{'march'},
 	$tr{'april'}, $tr{'may'}, $tr{'june'}, $tr{'july'}, $tr{'august'},
 	$tr{'september'}, $tr{'october'}, $tr{'november'},
@@ -68,21 +67,11 @@ if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
         $cgiparams{'MONTH'} = $now[4];
 }
 
-my $monthstr = $shortmonths[$cgiparams{'MONTH'}];
 my $day = $cgiparams{'DAY'};
-my $daystr;
-if ($day <= 9) {
-	$daystr = " $day"; }
-else {
-	$daystr = $day; }
-
-if ($daystr < 10)
-{
-	$daystr++;
-	$daystr--;
-	$daystr="0$daystr";
-}
-my $search_date = "$daystr/$monthstr";
+$day = "0$day" unless ( $day >= 10 );
+my $month = $cgiparams{'MONTH'};
+$month = "0$month" unless ( $month >= 10);
+my $search_date = timelocal(0,0,0,$day,$month,$now[5]-105);
 	
 my $lines = 0;
 
@@ -111,12 +100,15 @@ else
 	open (FILE, '/var/log/squid/access.log');
 	while (<FILE>)
 	{
-		my ($ip,$fe,$fi,$datetime,$fo,$type,$url,$fod) = split;
+		my ($ts,$x,$ip,$cache,$y,$type,$url) = split;
 		$ips{$ip}++;
-		if ((m|$search_date|) && !($url =~ /$filter/) &&
+		if (($ts >= $search_date) && !($url =~ /$filter/) &&
 			((($ip eq $sourceip) || $sourceall)))
 		{	
-			my ($date,$hour,$minute,$second)=split(/:/,$datetime);
+			my ($second,$minute,$hour)=localtime($ts);
+			$second = "0$second" unless ( $second >= 10 );
+			$minute = "0$minute" unless ( $minute >= 10 );
+			$hour = "0$hour" unless ( $hour >= 10 );
 			my ($header,$urlsnip,$data)=split('/+',$url);
  			$log[$lines] = "$hour:$minute:$second $ip $url";
 			$lines++;
