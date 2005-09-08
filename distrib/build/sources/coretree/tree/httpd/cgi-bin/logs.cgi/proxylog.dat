@@ -71,7 +71,8 @@ my $day = $cgiparams{'DAY'};
 $day = "0$day" unless ( $day >= 10 );
 my $month = $cgiparams{'MONTH'};
 $month = "0$month" unless ( $month >= 10);
-my $search_date = timelocal(0,0,0,$day,$month,$now[5]-105);
+my $start_date = timelocal(0,0,0,$day,$month,$now[5]);
+my $end_date = $start_date + (60 * 60 * 24);
 	
 my $lines = 0;
 
@@ -102,7 +103,7 @@ else
 	{
 		my ($ts,$x,$ip,$cache,$y,$type,$url) = split;
 		$ips{$ip}++;
-		if (($ts >= $search_date) && !($url =~ /$filter/) &&
+		if (($ts >= $start_date) && ($ts < $end_date) && !($url =~ /$filter/) &&
 			((($ip eq $sourceip) || $sourceall)))
 		{	
 			my ($second,$minute,$hour)=localtime($ts);
