@@ -1,0 +1,170 @@
+SmoothWall Express Build System
+
+OVERVIEW
+
+The build processes consists of 3 main steps:
+
+1. Construct a temporary "tools" environment using the hosts toolchain.  A
+symlink in the host (/tools) ensures that all programs, when a "make
+install" is done on them, end up in the temporary tree and not in the host
+system.  This symlink is created automatically.
+
+2. Compile all packages that will end up in the final installation
+smoothwall.tgz, plus any programs and libraries that are required to compile
+those programs.  This stage is done using the temporary tools environment
+and is chrooted into the working build environment.  Before building the
+"core" packages, such as the kernel etc, the build toolchain that will be
+used in the final build is compiled up with the /tools toolchain, thus the
+/tools structure is no longer needed.  Packages that are compiled and
+installed are placed into the build environment (ie. under distrib/).  Also,
+each compiled package is tarred up into a tarball that is used in step 3.
+
+3. Create the last few tools needed to create the final bootable ISO (such
+as mkisofs, and syslinux).  Then build the smoothwall.tgz, by untarring the
+packages compiled in step 2 into a new directory.  SmoothWall specific files
+are added from the "coretree" package.  Finally build the bootdisk images
+and the ISO itself.
+
+LAYOUT
+
+The main working directory is expresscore/distrib.  Once an inital build
+has been completed, this dir can be chrooted into and it will be possible to
+work on the tree, add new packages, etc, etc.  expresscore itself can be
+used to hold documentation and other files that wont be used in the build
+environement itself.
+
+expresscore/distrib/tools is the location of the temporarly build
+environement.  Even after a completed build, you should leave this dir alone
+because some build scripts have to reference files in it because they are
+normally called before step 2 is complete.  It shouldn't ever be necessary
+to change how this tools dir works, so just ignore it unless you are REALLY
+interested.
+
+expresscore/distrib/build is where the "action" is.  This dir contains
+the build top level makefile, sripts to build stage 1 and stage 2, and a
+couple of helper scripts.
+
+build/sources is the real heart of the build process.  Each dir is a
+package, including some smoothwall-specific ones, like libsmooth+setup for
+the setup program, setuids for the little C setuids, etc.  Each dir contains
+a Makefile that must have specific targets, such "download".  The clever
+part is it is possible to use ready made targets, by including the
+Makefile.rules in the dir above.  This has targets for configuring,
+compiling, installing and creating the package archive.  For gnu-compliant,
+./configure compatible packages it is possible to make a makefile to build
+the package in only a few lines, including the download URL.  See the
+sources/sed/Makefile for a good example.
+
+Two packages are worth extra attention: coretree is a package that builds a
+tarfile tree of all the extra files needed by smoothie, such as CGIs etc. 
+It does this by copying them out of sources/coretree/tree into a temp dir,
+before taring up the temp dir.  So if you want to add static files to the
+distrib, add them to this tree.  Symlinks and permissions are not directly
+set in this tree - they are created and set by the Makefile, scripted
+fashion.
+
+Finally, sources/media is where the bootdisks and ISO are created.  The
+Makefile loops copying compiled packages from the target dir.  Add
+additional packages to the list as needed.  This makefile also removes
+unneeded stuff, such as /usr/include, from the final smoothwall.tgz, as well
+as running strip on directories expected to hold binaries.  The final ISO
+will end up in this build/target/iso dir.
+
+THE BUILD DIR
+
+Makefile - Top level makefile.  Really just a wrapper for makebuild1. 
+Modify this file to hold DNS server IP addresses.
+
+makebuild1 - Inital build script.  Makes the temporary build env (under
+/tools) and then fires off makebuild2 chrooted.
+
+makebuild2 - Main build script, which runs chrooted in the directory above
+this one.  Uses the makefiles in sources dir to compile up main distro
+components into compiled packages living under targets.  Also compiles up
+smoothwall-specific code.  Finally creates boot disks using sources/media
+makefiles, overlays static parts that are packaged up in sources/coretree,
+and builds the final ISO.
+
+prebuild2 - Little script that creates files needed to compile up the second
+level build, such as a working /dev/null.  Needed because build2 happens
+chrooted.
+
+build1done - This is a touch file created when stage 1 has been completed
+sucessfully.  The mailebuild1 script checks for the existance of this file
+before starting to build stage 1.  Therefore it is possible to restart "make
+build" without it going though stage 1 all over again.
+
+dlverify - "Download and verify".  This is a little helper script that wraps
+wget.  The purpose of the wrapper is two-fold: to stop wget being called on
+a completed download, thus causing unecessary network traffic, and also to
+verify a completed download by MD5.  The arguments are: <directory> <url>
+[md5].  Directory is usallly the standard d/l area.  The MD5 can be left
+off, in which case no download check is done.  To cope with partial
+downloads, once a d/l has completed, an additional touch file will be
+created with the same name as the download file, plus ".done".  Only if this
+file is present will the download be skipped over.  Note that the
+Makefile.conf (in sources) defines DL_CMD for you, and it includes the
+download destination dir.  So to do a download from within a makefile, you
+should usually just do: $(DL_CMD) http://...  This script also has tbe
+ability to use a local mirror.  The URL root for the mirror is set at the
+top of the script.  To create a local mirror for yourself, after doing a
+full build, copy the files in build/download (except the .done files) into
+your mirror.
+
+sources - "Packages" are assigned a directory in here, with a Makefile for
+building.
+
+USING THE BULD SCRIPTS
+
+Currnetly the environement is only tested under the root user, and when it
+is installed in /usr/src/expresscore.  More testing will be done, and
+perhaps eventually it will be possible to compile an ISO under a different
+user.  But not yet :)
+
+Note that before starting the build process, the symlink /tools will be
+first deleted and then created like this:
+
+ln -s /usr/src/expresscore/distrib/tools
+
+First, edit the Makefile in the distrib/build dir and check the settings for
+DNS_SERVERS.  You should set at least one valid DNS server, or the build
+will be aborted.
+
+To start the build, do "make build".  Do "make" with no target to get a list
+of available targets.  Interesting ones are:
+
+predownload - Downloads all needed sources.
+
+packageinfo.html - Spits out some crudely formatted HTML containg packages
+and versions, download URLs and patch URLs.  Call with make -s to hide the
+make output.
+
+RESTATING THE BUILD
+
+Currently it is not easily possible to restart the build and have it
+continue where it left off.  This is a hard thing ot implement, but we are
+interested in doing so.
+
+TESTED HOST ENVIRONMENTS
+
+Red Hat 8.0-9.0
+Fedora Core 1-3
+SuSE Linux (9.0)
+Debian Sarge (as of 07/06/2004)
+Gentoo
+
+Generally, the build should work on any Linux that is capable of building
+GCC 3.3.2.  This unfortunately excludes systems using GCC 4.
+
+THANKS TO
+
+Loosely based on Linux From Scratch ideas.
+
+CREDITS
+
+Lawrence Manning (smoothwall@aslak.net)
+
+COPYRIGHT AND LICENCE
+
+The SmoothWall build system and associated scripts are (c) SmoothWall Ltd,
+2005 and licenced under the GNU GPL v2.
