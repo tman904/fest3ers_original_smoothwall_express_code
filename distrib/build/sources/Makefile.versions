@@ -1,3 +1,9 @@
+# SmoothWall Build system.
+#
+# (c) SmoothWall Ltd 2005
+#
+# This code is distributed under the terms of the GPL v2.
+
 KERNEL_VER = 2.6.12.4
 
 FREESWAN_TYPE = openswan

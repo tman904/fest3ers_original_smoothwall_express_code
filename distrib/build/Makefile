@@ -1,3 +1,9 @@
+# SmoothWall Build system.
+#
+# (c) SmoothWall Ltd 2005
+#
+# This code is distributed under the terms of the GPL v2.
+#
 # Top level Makefile for SmoothWall Build system.
 
 # Please set to working nameservers.  DNS_SERVER2 is optional

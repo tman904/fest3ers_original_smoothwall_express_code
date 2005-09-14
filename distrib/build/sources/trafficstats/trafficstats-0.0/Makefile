@@ -1,3 +1,9 @@
+# SmoothWall Build system.
+#
+# (c) SmoothWall Ltd 2005
+#
+# This code is distributed under the terms of the GPL v2.
+
 #! /usr/bin/make
 # Makefile to make the trafficmon/trafficlogger iptables extensions against a ready compiled iptables source tree
 # Martin Houston, SmoothWall Ltd. 

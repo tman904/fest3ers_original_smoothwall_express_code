@@ -1,11 +1,10 @@
 #!/tools/bin/sh
-
-# makebuild2
 #
-# (c) SmoothWall Ltd 2004
+# SmoothWall Build system.
 #
-# Build script for building up the core distribution.  Must be called
-# chrooted into /usr/src/smoothwallcore/distrib.
+# (c) SmoothWall Ltd 2005
+#
+# This code is distributed under the terms of the GPL v2.
 
 cd /build
 
