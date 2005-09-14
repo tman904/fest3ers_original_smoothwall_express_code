@@ -112,7 +112,7 @@ build dosfstools
 build syslinux
 
 build openssl
-#build openssh
+build openssh
 build apache
 build cron
 build rrdtool
