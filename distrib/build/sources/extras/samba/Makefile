@@ -7,12 +7,9 @@
 include ../../Makefile.conf
 
 #Samba added by Daniel for development only.
-#As it is not included in any final
-#build process the paths are not
-#AF4 standard on purpose.
 
 PACKAGE = samba
-VERSION = 3.0.14a
+VERSION = 3.0.20
 
 BASE_URL = http://samba.org/samba/ftp/
 
