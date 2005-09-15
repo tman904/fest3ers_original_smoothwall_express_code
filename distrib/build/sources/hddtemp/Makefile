@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = hddtemp
-VERSION = 0.3-beta12
+VERSION = 0.3-beta13
 
 BASE_URL = http://ftp.debian.org/debian/pool/main/h/hddtemp/
 
