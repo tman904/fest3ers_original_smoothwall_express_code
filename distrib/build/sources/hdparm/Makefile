@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = hdparm
-VERSION = 5.6
+VERSION = 6.1
 
 BASE_URL = http://www.ibiblio.org/pub/Linux/system/hardware/
 
