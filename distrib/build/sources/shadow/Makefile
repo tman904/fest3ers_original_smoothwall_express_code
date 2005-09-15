@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = shadow
-VERSION = 4.0.7
+VERSION = 4.0.12
 
 BASE_URL = ftp://ftp.pld.org.pl/software/shadow
 
