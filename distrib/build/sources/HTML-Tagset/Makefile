@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = HTML-Tagset
-VERSION = 3.03
+VERSION = 3.04
 
 BASE_URL = http://search.cpan.org/CPAN/authors/id/S/SB/SBURKE/
 
