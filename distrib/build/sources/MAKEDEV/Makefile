@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = MAKEDEV
 VERSION = 3.3.8
 
-BASE_URL = http://sotonfs/
+BASE_URL = http://www.aslak.net
 
 TARBALL = $(PACKAGE)-$(VERSION)-2
 
