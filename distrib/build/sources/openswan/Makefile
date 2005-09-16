@@ -26,11 +26,11 @@ configure: patch
 	@true
 	
 compile: configure
-	@make -C $(COMPILE_DIR) INC_USRLOCAL=$(PKG_DIR) FINALCONFDIR=$(PKG_DIR)/etc FINALRCDIR=$(PKG_DIR)/bin programs
+	@make -C $(COMPILE_DIR) INC_USRLOCAL=/$(PKG_DIR) FINALCONFDIR=/$(PKG_DIR)/etc FINALRCDIR=/$(PKG_DIR)/bin programs
 
 install: compile
 	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)
-	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT)/ INC_USRLOCAL=$(PKG_DIR) FINALCONFDIR=$(PKG_DIR)/etc FINALRCDIR=$(PKG_DIR)/bin install
-#	@rm -rf $(PKG_ROOT)/usr $(PKG_ROOT)/$(PKG_DIR)/etc
+	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT)/ INC_USRLOCAL=/$(PKG_DIR) FINALCONFDIR=/$(PKG_DIR)/etc FINALRCDIR=/$(PKG_DIR)/bin install
+	@rm -rf $(PKG_ROOT)/$(PKG_DIR)/rc*
 
 include ../Makefile.rules
