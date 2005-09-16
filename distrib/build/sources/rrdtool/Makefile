@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = rrdtool
-VERSION = 1.0.48
+VERSION = 1.2.10
 
 BASE_URL = http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/pub/
 

@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = tcpdump
-VERSION = 2005.04.30
+VERSION = 2005.08.25
 
 BASE_URL = http://www.tcpdump.org/daily/
 
