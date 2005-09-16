@@ -24,9 +24,6 @@ distrib:
 	@chown -R 100:100 distrib/var/log/squid
 	@chown -R 101:101 distrib/var/log/snort
 	
-	@chown root:nobody distrib/usr/bin/setuids/*
-	@chmod 4750 distrib/usr/bin/setuids/*
-	
 	@(cd distrib/etc/httpd/conf; ln -s /var/smoothwall/main/hostname.conf)
 	@(cd distrib/usr/etc ln -s /var/smoothwall/dhcp/dhcpd.conf)
 	@(cd distrib/etc; ln -s /var/smoothwall/time/localtime)
