@@ -22,7 +22,11 @@ fi
 FILENAME=/`basename $URL`
 
 if [ ! -e "$DIRECTORY/$FILENAME.done" ]; then
-	wget -c --directory $DIRECTORY $MIRROR_ROOT/$FILENAME
+	if [ "$MIRROR_ROOT" != "" ]; then
+		wget -c --directory $DIRECTORY $MIRROR_ROOT/$FILENAME
+	else
+		false
+	fi
 	if [ $? -ne 0 ]; then
 		wget -c --directory $DIRECTORY $URL
 		if [ $? -ne 0 ]; then
