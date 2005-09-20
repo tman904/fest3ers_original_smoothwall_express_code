@@ -7,8 +7,7 @@
 # This code is distributed under the terms of the GPL v2.
 
 # Mirror root
-MIRROR_ROOT=http://sotonfs/buildmirror
-#MIRROR_ROOT=http://localhost
+MIRROR_ROOT=http://downloads.smoothwall.org/buildmirror/
 
 DIRECTORY=$1
 URL=$2
