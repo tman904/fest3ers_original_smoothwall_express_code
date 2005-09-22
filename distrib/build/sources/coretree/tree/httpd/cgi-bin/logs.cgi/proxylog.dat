@@ -28,7 +28,7 @@ my @now = localtime(time);
 $cgiparams{'DAY'} = $now[3]; 
 $cgiparams{'MONTH'} = $now[4];
 $cgiparams{'SOURCE_IP'} = 'ALL';
-$cgiparams{'FILTER'} = "[.](gif|jpeg|jpg|png|css|js)\$";
+$cgiparams{'FILTER'} = "[.](gif|jpeg|jpg|png|ico|css|js)\$";
 $cgiparams{'ENABLE_FILTER'} = 'off';
 
 &getcgihash(\%cgiparams);
@@ -40,7 +40,7 @@ if ($cgiparams{'ACTION'} eq '')
 
 if ($cgiparams{'ACTION'} eq $tr{'restore defaults'})
 {
-	$cgiparams{'FILTER'} = "[.](gif|jpeg|jpg|png|css|js)\$";
+	$cgiparams{'FILTER'} = "[.](gif|jpeg|jpg|png|ico|css|js)\$";
 	$cgiparams{'ENABLE_FILTER'} = 'off'; 
 }
 
