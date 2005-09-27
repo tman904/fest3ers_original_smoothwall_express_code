@@ -46,6 +46,7 @@ apply-pom: prepare
 	@(export KERNEL_DIR=$(KERNEL_DIR); \
 	export IPTABLES_DIR=$(IPTABLES_DIR); \
 	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
+	./runme --batch CONNMARK; \
 	./runme --batch quake3-conntrack-nat; \
 	./runme --batch pptp-conntrack-nat; \
 	./runme --batch mms-conntrack-nat; \
