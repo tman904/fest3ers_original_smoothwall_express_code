@@ -20,7 +20,7 @@ endif
 	@mkdir floppy
 
 	@/sbin/losetup /dev/loop0 ../cdrom/images/$(BASENAME)-boot$(MEDIA).img
-	@mount /dev/loop0 floppy/
+	@mount -t msdos /dev/loop0 floppy/
 
 	@cp -R syslinux.cfg floppy
 
