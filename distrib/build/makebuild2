@@ -148,7 +148,7 @@ build setuids
 build ppp
 build isdn4k-utils
 build speedtouch
-bould rp-pppoe
+build rp-pppoe
 build ibod
 build dhcpcd
 build eciadsl-synch_bin
