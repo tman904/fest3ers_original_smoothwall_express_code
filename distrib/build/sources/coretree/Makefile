@@ -40,6 +40,7 @@ distrib:
 	@(cd distrib/var/smoothwall/time; ln -s /usr/share/zoneinfo/posix/Europe/London localtime)
 
 	@(cd distrib; rm -rf `find -name CVS`)
+	@(cd distrib; rm -rf `find -name .svn`)
 
 all: distrib
 	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C distrib .
