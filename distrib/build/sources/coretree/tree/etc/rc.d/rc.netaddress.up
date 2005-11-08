@@ -15,7 +15,7 @@ if [ "$1" != "NOTGREEN" ]; then
 	fi
 fi
 
-if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" ]; then
+if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
 	if [ "$ORANGE_DEV" != "" ]; then
 		ifconfig $ORANGE_DEV $ORANGE_ADDRESS netmask $ORANGE_NETMASK broadcast $ORANGE_BROADCAST up
 	else
@@ -23,7 +23,15 @@ if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" ]; then
 	fi
 fi
 
-if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" ]; then
+if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
+	if [ "$PURPLE_DEV" != "" ]; then
+		ifconfig $PURPLE_DEV $PURPLE_ADDRESS netmask $PURPLE_NETMASK broadcast $PURPLE_BROADCAST up
+	else
+		echo "WARNING: No driver set for PURPLE"
+	fi
+fi
+	
+if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
 	if [ "$RED_DEV" != "" ]; then
 		if [ "$RED_TYPE" = "DHCP" ]; then
 			rm /etc/dhcpc/*.info -f

@@ -537,6 +537,10 @@ char *english_tr[] = {
 "No RED interface assigned.",
 /* TR_MISSING_RED_IP */
 "Missing IP information on the RED interface.",
+/* TR_NO_PURPLE_INTERFACE */
+"No PURPLE interface assigned.",
+/* TR_MISSING_PURPLE_IP */
+"Missing IP information on the PURPLE interface.",
 
 /* dhcp.c */
 /* TR_START_ADDRESS */

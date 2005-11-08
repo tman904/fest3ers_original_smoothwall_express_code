@@ -52,6 +52,9 @@ fi
 if [ "$ORANGE_DEV" != "" ]; then
 	/sbin/iptables -A spoof -s $ORANGE_NETADDRESS/$ORANGE_NETMASK -j DROP
 fi
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -A spoof -s $PURPLE_NETADDRESS/$PURPLE_NETMASK -j DROP
+fi
 
 /sbin/iptables -A INPUT -i ppp0 -j spoof
 /sbin/iptables -A INPUT -i ippp0 -j spoof
@@ -62,6 +65,9 @@ fi
 # localhost and ethernet.
 /sbin/iptables -A INPUT -i lo -j ACCEPT
 /sbin/iptables -A INPUT -i $GREEN_DEV -j ACCEPT
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -A INPUT -i $PURPLE_DEV -j ACCEPT
+fi
 
 # IPSEC
 /sbin/iptables -N secin
@@ -77,6 +83,9 @@ fi
 # Let em through.
 /sbin/iptables -A block -m state --state ESTABLISHED,RELATED -j ACCEPT
 /sbin/iptables -A block -i $GREEN_DEV -j ACCEPT
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -A block -i $PURPLE_DEV -j ACCEPT
+fi
 
 # External access.  Rule set with setxtaccess setuid
 /sbin/iptables -N xtaccess
@@ -148,6 +157,17 @@ if [ "$ORANGE_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $GREEN_DEV -j dmzholes
 fi
 
+# Allow GREEN to talk to PURPLE.
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -A FORWARD -i $PURPLE_DEV -o $GREEN_DEV -m state \
+		--state ESTABLISHED,RELATED -j ACCEPT
+	/sbin/iptables -A FORWARD -i $GREEN_DEV -o $PURPLE_DEV -m state \
+		--state NEW,ESTABLISHED,RELATED -j ACCEPT
+	# dmz pinhole chain.  setdmzholes setuid prog adds rules here to allow
+	# ORANGE to talk to GREEN.
+	/sbin/iptables -A FORWARD -i $PURPLE_DEV -o $GREEN_DEV -j dmzholes
+fi
+
 # VPN
 /sbin/iptables -A FORWARD -i $GREEN_DEV -o ipsec0 -j ACCEPT
 /sbin/iptables -A FORWARD -i ipsec0 -o $GREEN_DEV -j ACCEPT
@@ -168,6 +188,7 @@ fi
 /sbin/iptables -t nat -A jmpsquid -d 169.254.0.0/16 -j RETURN
 /sbin/iptables -t nat -A jmpsquid -j squid
 /sbin/iptables -t nat -A PREROUTING -i $GREEN_DEV -j jmpsquid
+/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpsquid
 
 # Masqurade
 /sbin/iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
@@ -199,12 +220,17 @@ fi
 /sbin/iptables -t mangle -A prerouting-2 -i ippp0 -j RETURN
 /sbin/iptables -t mangle -A postrouting-2 -o ippp0 -j RETURN
 
-if [ "$ORANGE_DEV" ]; then
+if [ "$ORANGE_DEV" != "" ]; then
 	/sbin/iptables -t mangle -A prerouting-1 -i $ORANGE_DEV -j RETURN
 	/sbin/iptables -t mangle -A postrouting-1 -o $ORANGE_DEV -j RETURN
 fi
 
-if [ "$RED_DEV" ]; then
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -t mangle -A prerouting-1 -i $PURPLE_DEV -j RETURN
+	/sbin/iptables -t mangle -A postrouting-1 -o $PURPLE_DEV -j RETURN
+fi
+
+if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -t mangle -A prerouting-2 -i $RED_DEV -j RETURN
 	/sbin/iptables -t mangle -A postrouting-2 -o $RED_DEV -j RETURN
 fi

@@ -4,6 +4,7 @@
  * Licence.  See the file COPYING for details.
  *
  * (c) Lawrence Manning, 2001
+ * Modified by Daniel Hokka Zakrisson 2004
  *
  * filename: networking.c
  * The big one: networking. */
@@ -15,6 +16,10 @@
 #define DEFAULT_GATEWAY 2
 #define DNSGATEWAY_TOTAL 3
 
+#define CONFIG_TYPE_ORANGE(c)	(c == 1 || c == 3 || c == 5 || c == 7)
+#define CONFIG_TYPE_PURPLE(c)	(c == 4 || c == 5 || c == 6 || c == 7)
+#define CONFIG_TYPE_RED(c)	(c == 2 || c == 3 || c == 6 || c == 7)
+
 extern FILE *flog;
 extern char *log;
 
@@ -24,9 +29,17 @@ extern int automode;
 
 extern struct nic nics[];
 
-char *configtypenames[] = { "GREEN (RED is modem/ISDN)", 
-	"GREEN + ORANGE (RED is modem/ISDN)", "GREEN + RED",
-	"GREEN + ORANGE + RED", NULL };
+char *configtypenames[] = {
+/*0*/	"GREEN (RED is modem/ISDN)", 
+/*1*/	"GREEN + ORANGE (RED is modem/ISDN)",
+/*2*/	"GREEN + RED",
+/*3*/	"GREEN + ORANGE + RED",
+/*4*/	"GREEN + PURPLE (RED is modem/ISDN)",
+/*5*/	"GREEN + PURPLE + ORANGE (RED is modem/ISDN)",
+/*6*/	"GREEN + PURPLE + RED",
+/*7*/	"GREEN + PURPLE + ORANGE + RED",
+	NULL
+};
 int netaddresschange;
 
 int oktoleave(char *errormessage);
@@ -110,12 +123,15 @@ int oktoleave(char *errormessage)
 		return 0;
 	}	
 
-	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
-	if (configtype < 0 || configtype > 3) configtype = 0;
+	strcpy(temp, "0");
+	findkey(kv, "CONFIG_TYPE", temp); configtype = atol(temp);
+	if (configtype < 0 || configtype > 7)
+		configtype = 0;
 
-	if (configtype == 1 || configtype == 3)
+	if (CONFIG_TYPE_ORANGE(configtype))
 	{
-		strcpy(temp, ""); findkey(kv, "ORANGE_DEV", temp);
+		strcpy(temp, "");
+		findkey(kv, "ORANGE_DEV", temp);
 		if (!(strlen(temp)))
 		{
 			strcpy(errormessage, ctr[TR_NO_ORANGE_INTERFACE]);
@@ -127,9 +143,25 @@ int oktoleave(char *errormessage)
 			goto EXIT;
 		}
 	}
-	if (configtype == 2 || configtype == 3)
+	if (CONFIG_TYPE_PURPLE(configtype))
 	{
-		strcpy(temp, ""); findkey(kv, "RED_DEV", temp);
+		strcpy(temp, "");
+		findkey(kv, "PURPLE_DEV", temp);
+		if (strlen(temp) == 0)
+		{
+			strcpy(errormessage, ctr[TR_NO_PURPLE_INTERFACE]);
+			goto EXIT;
+		}
+		if (!interfacecheck(kv, "PURPLE"))
+		{
+			strcpy(errormessage, ctr[TR_MISSING_PURPLE_IP]);
+			goto EXIT;
+		}
+	}
+	if (CONFIG_TYPE_RED(configtype))
+	{
+		strcpy(temp, "");
+		findkey(kv, "RED_DEV", temp);
 		if (!(strlen(temp)))
 		{
 			strcpy(errormessage, ctr[TR_NO_RED_INTERFACE]);
@@ -178,8 +210,11 @@ int firstmenu(void)
 	if (netaddresschange) 
 		strcpy(networkrestart, ctr[TR_RESTART_REQUIRED]);
 
-	strcpy(temp, ""); findkey(kv, "CONFIG_TYPE", temp); x = atol(temp);
-	if (x < 0 || x > 3) x = 0;
+	strcpy(temp, "");
+	findkey(kv, "CONFIG_TYPE", temp);
+	x = atol(temp);
+	if (x < 0 || x > 7)
+		x = 0;
 	/* Format heading bit. */
 	snprintf(message, 1000, ctr[TR_CURRENT_CONFIG], configtypenames[x],
 		networkrestart);
@@ -222,6 +257,7 @@ int configtypemenu(void)
 		sprintf(temp, "%d", choice);
 		replacekeyvalue(kv, "CONFIG_TYPE", temp);
 		replacekeyvalue(kv, "ORANGE_DEV", "");
+		replacekeyvalue(kv, "PURPLE_DEV", "");
 		replacekeyvalue(kv, "RED_DEV", "");
 		writekeyvalues(kv, CONFIG_ROOT "ethernet/settings");
 		netaddresschange = 1;
@@ -262,25 +298,37 @@ int drivermenu(void)
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
 	
 	/* This horrible big formats the heading :( */
-	strcpy(driver, ""); findkey(kv, "GREEN_DISPLAYDRIVER", driver);
+	strcpy(driver, "");
+	findkey(kv, "GREEN_DISPLAYDRIVER", driver);
 	findnicdescription(driver, temp);
-	strcpy(dev, ctr[TR_UNSET]); findkey(kv, "GREEN_DEV", dev);
-    DisplayNicInfoWithMAC(temp1, sizeof(temp1), "GREEN", dev, temp);
+	strcpy(dev, ctr[TR_UNSET]);
+	findkey(kv, "GREEN_DEV", dev);
+	DisplayNicInfoWithMAC(temp1, sizeof(temp1), "GREEN", dev, temp);
 	strcat(message, temp1);
-	if (configtype == 1 || configtype == 3)
+	if (CONFIG_TYPE_ORANGE(configtype))
 	{
 		strcpy(driver, ""); findkey(kv, "ORANGE_DISPLAYDRIVER", driver);
 		findnicdescription(driver, temp);
 		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "ORANGE_DEV", dev);
-        DisplayNicInfoWithMAC(temp1, sizeof(temp1), "ORANGE", dev, temp);
+		DisplayNicInfoWithMAC(temp1, sizeof(temp1), "ORANGE", dev, temp);
 		strcat(message, temp1);
 	}
-	if (configtype == 2 || configtype == 3)
+	if (CONFIG_TYPE_PURPLE(configtype))
+	{
+		strcpy(driver, "");
+		findkey(kv, "PURPLE_DISPLAYDRIVER", driver);
+		findnicdescription(driver, temp);
+		strcpy(dev, ctr[TR_UNSET]);
+		findkey(kv, "PURPLE_DEV", dev);
+		DisplayNicInfoWithMAC(temp1, sizeof(temp1), "PURPLE", dev, temp);
+		strcat(message, temp1);
+	}
+	if (CONFIG_TYPE_RED(configtype))
 	{
 		strcpy(driver, ""); findkey(kv, "RED_DISPLAYDRIVER", driver);
 		findnicdescription(driver, temp);
 		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "RED_DEV", dev);
-        DisplayNicInfoWithMAC(temp1, sizeof(temp1), "RED", dev, temp);
+		DisplayNicInfoWithMAC(temp1, sizeof(temp1), "RED", dev, temp);
 		strcat(message, temp1);
 	}
 	strcat(message, ctr[TR_DO_YOU_WISH_TO_CHANGE_THESE_SETTINGS]);
@@ -308,6 +356,7 @@ int changedrivers(void)
 	int c;
 	int needcards, sofarallocated, countofcards, toallocate;
 	char *orange = "ORANGE";
+	char *blue = "PURPLE";
 	char *red = "RED";
 	char *sections[3];
 	int choice;
@@ -347,14 +396,17 @@ int changedrivers(void)
 	
 	/* Blank them so the rc.netaddress.up dosnt get confused. */
 	replacekeyvalue(kv, "ORANGE_DEV", "");
+	replacekeyvalue(kv, "PURPLE_DEV", "");
 	replacekeyvalue(kv, "RED_DEV", "");
 	
 	if (configtype == 0)
 		needcards = 1;
-	else if (configtype == 1 || configtype == 2)
+	else if (configtype == 1 || configtype == 2 || configtype == 4)
 		needcards = 2;
-	else
+	else if (configtype == 3 || configtype == 5 || configtype == 6)
 		needcards = 3;
+	else
+		needcards = 4;
 
 	/* This is the green card. */		
 	sofarallocated = 1;
@@ -375,30 +427,33 @@ int changedrivers(void)
 		toallocate = countofcards - sofarallocated;
 		while (toallocate > 0 && sofarallocated < needcards)
 		{
-            char cardInfo[STRING_SIZE], mac[STRING_SIZE];
+			char cardInfo[STRING_SIZE], mac[STRING_SIZE];
 			findnicdescription(displaydriver, temp);
-            // Get device name, eth%d is hard coded.
-            sprintf(nexteth, "eth%d", sofarallocated);
-            // Get MAC address.
-            if ( (GetNicMAC(mac, sizeof(mac), nexteth)) )
-              // If MAC found put at the end of nic description.
-              snprintf(cardInfo, sizeof(cardInfo), "%s [%s]",
-                       temp, mac);
-            else
-              // MAC lookup failed so just display nic description.
-              snprintf(cardInfo, sizeof(cardInfo), "%s", temp);
-            // Ensure that the cardinfo array is null terminated
-            cardInfo[sizeof(cardInfo)-1] = '\0';
+			// Get device name, eth%d is hard coded.
+			sprintf(nexteth, "eth%d", sofarallocated);
+			// Get MAC address.
+			if (GetNicMAC(mac, sizeof(mac), nexteth))
+				// If MAC found put at the end of nic description.
+				snprintf(cardInfo, sizeof(cardInfo), "%s [%s]", temp, mac);
+			else
+				// MAC lookup failed so just display nic description.
+				snprintf(cardInfo, sizeof(cardInfo), "%s", temp);
+			// Ensure that the cardinfo array is null terminated
+			cardInfo[sizeof(cardInfo)-1] = '\0';
 			sprintf(message, ctr[TR_UNCLAIMED_DRIVER], cardInfo);
 			c = 0; choice = 0;
 			strcpy(temp, ""); findkey(kv, "ORANGE_DEV", temp);
-			if ((configtype == 1 || configtype == 3) && !strlen(temp))
+			if (CONFIG_TYPE_ORANGE(configtype) && !strlen(temp))
 			{
 				sections[c] = orange;
 				c++;
 			}
+			strcpy(temp, "");
+			findkey(kv, "PURPLE_DEV", temp);
+			if (CONFIG_TYPE_PURPLE(configtype) && !strlen(temp))
+				sections[c++] = blue;
 			strcpy(temp, ""); findkey(kv, "RED_DEV", temp);			
-			if ((configtype == 2 || configtype == 3) && !strlen(temp))
+			if (CONFIG_TYPE_RED(configtype) && !strlen(temp))
 			{
 				sections[c] = red;
 				c++;
@@ -417,6 +472,17 @@ int changedrivers(void)
 					replacekeyvalue(kv, "ORANGE_DRIVER", currentdriver);
 					replacekeyvalue(kv, "ORANGE_DRIVER_OPTIONS", currentdriveroptions);
 					replacekeyvalue(kv, "ORANGE_DISPLAYDRIVER", displaydriver);
+					sofarallocated++;
+					toallocate--;
+					strcpy(currentdriver, "");
+					strcpy(currentdriveroptions, "");
+				}
+				if (strcmp(sections[choice], blue) == 0)
+				{
+					replacekeyvalue(kv, "PURPLE_DEV", nexteth);
+					replacekeyvalue(kv, "PURPLE_DRIVER", currentdriver);
+					replacekeyvalue(kv, "PURPLE_DRIVER_OPTIONS", currentdriveroptions);
+					replacekeyvalue(kv, "PURPLE_DISPLAYDRIVER", displaydriver);
 					sofarallocated++;
 					toallocate--;
 					strcpy(currentdriver, "");
@@ -519,6 +585,7 @@ int addressesmenu(void)
 	char *sections[4];
 	char *green = "GREEN";
 	char *orange = "ORANGE";
+	char *blue = "PURPLE";
 	char *red = "RED";
 	int c = 0;
 	char temp[STRING_SIZE];
@@ -547,12 +614,14 @@ int addressesmenu(void)
 	
 	sections[c] = green;
 	c++;
-	if (configtype == 1 || configtype == 3)
+	if (CONFIG_TYPE_ORANGE(configtype))
 	{
 		sections[c] = orange;
 		c++;
 	}
-	if (configtype == 2 || configtype == 3)
+	if (CONFIG_TYPE_PURPLE(configtype))
+		sections[c++] = blue;
+	if (CONFIG_TYPE_RED(configtype))
 	{
 		sections[c] = red;
 		c++;
@@ -586,6 +655,11 @@ int addressesmenu(void)
 			if (strcmp(sections[choice], "ORANGE") == 0)
 			{
 				if (changeaddress(kv, "ORANGE", 0, ""))
+					netaddresschange = 1;
+			}
+			if (strcmp(sections[choice], "PURPLE") == 0)
+			{
+				if (changeaddress(kv, "PURPLE", 0, ""))
 					netaddresschange = 1;
 			}
 			if (strcmp(sections[choice], "RED") == 0)
@@ -629,7 +703,7 @@ int dnsgatewaymenu(void)
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
 	
-	if (configtype == 0 || configtype == 1)
+	if (!CONFIG_TYPE_RED(configtype))
 	{
 		freekeyvalues(kv);
 		errorbox(ctr[TR_DNS_GATEWAY_WITH_GREEN]);
