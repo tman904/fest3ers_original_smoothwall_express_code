@@ -17,5 +17,6 @@ INSTALL = yes
 
 install: compile
 	@install -D $(COMPILE_DIR)/ntpdate/ntpdate $(PKG_ROOT)/usr/sbin/ntpdate 
+	@install -D $(COMPILE_DIR)/ntpq/ntpq $(PKG_ROOT)/usr/sbin/ntpq 
 
 include ../Makefile.rules
