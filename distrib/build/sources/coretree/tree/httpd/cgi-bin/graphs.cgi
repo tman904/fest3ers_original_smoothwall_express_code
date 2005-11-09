@@ -55,7 +55,7 @@ my $timestamp = 'N/A';
 if ($stats{'last_update'}) {
 	$timestamp = strftime "%a %b %e %H:%M:%S %Y", localtime($stats{'last_update'}); }
    
-foreach my $iface ('eth0', 'eth1', 'eth2', 'ppp0', 'ippp0')
+foreach my $iface ('eth0', 'eth1', 'eth2', 'eth3', 'ppp0', 'ippp0')
 {
 	my %ifacestats;
 		
@@ -106,6 +106,8 @@ foreach my $iface ('eth0', 'eth1', 'eth2', 'ppp0', 'ippp0')
 			$printableiface = 'Green'; }
 		elsif ($iface eq $netsettings{'ORANGE_DEV'}) {
 			$printableiface = 'Orange'; }
+		elsif ($iface eq $netsettings{'PURPLE_DEV'}) {
+			$printableiface = 'Purple'; }
 		elsif ($iface eq $netsettings{'RED_DEV'}) {
 			$printableiface = 'Red'; }
 		elsif ($iface eq 'ppp0') {
