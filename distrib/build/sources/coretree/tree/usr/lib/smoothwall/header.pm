@@ -106,7 +106,13 @@ sub showmenu
 					@menu = @tempmenu;
 					$menu_html .= "<td>$first<a class='activemenu' href='/cgi-bin/$menu[ 0 ]->{'href'}'>$section_title</a></td>";
 				} else {
-					$menu_html .= qq { <td><div class='menu' id='$section_title' 
+					$menu_html .= qq { <td><div class='menushaddow' id='${section_title}shadow' 
+> };
+					$menu_html .= &showhovermenu( @tempmenu );
+					$menu_html .= qq { 
+</div>
+};
+					$menu_html .= qq { <div class='menu' id='$section_title' 
 onMouseOver="menu_show('$section_title')" 
 onMouseOut="menu_clear();"
 > };
@@ -139,6 +145,7 @@ END
 
 	foreach my $option ( @clear_sections ){
 		print "\t\t\tif( me != '$option') document.getElementById('$option').style.display = 'none';\n";
+		print "\t\t\tif( me != '$option') document.getElementById('${option}shadow').style.display = 'none';\n";
 	}
 
 print <<END
@@ -146,6 +153,7 @@ print <<END
 		function menu_show( what ){
 			menu_clear();
 			document.getElementById(what).style.display = 'block';
+			document.getElementById( what+'shadow' ).style.display = 'block';
 		}
 	</script>
 <table style='float: right;'>
