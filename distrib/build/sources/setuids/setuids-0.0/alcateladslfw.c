@@ -19,7 +19,7 @@ int main(void)
 	
 	if ((f = fopen("/var/smoothwall/adsl/mgmt.o", "r")))
 	{
-		system("/usr/bin/modem_run -f /var/smoothwall/adsl/mgmt.o -m");
+		system("/usr/bin/modem_run -f /var/smoothwall/adsl/mgmt.o -v 1");
 		fclose(f);
 	}
 	
