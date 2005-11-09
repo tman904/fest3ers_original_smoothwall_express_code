@@ -115,6 +115,7 @@ cdrom/smoothwall.tgz:
 		snort \
 		openswan \
 		eagle-usb \
+		wireless_tools \
 		coretree \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I-*.tar.gz ]; then \

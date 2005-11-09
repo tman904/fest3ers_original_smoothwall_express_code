@@ -159,6 +159,8 @@ build dhcp
 build snort
 build openswan
 
+build wireless_tools
+
 build install
 
 build media
