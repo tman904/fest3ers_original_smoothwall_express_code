@@ -199,6 +199,8 @@ if ($name eq "")
 	push (@graphs, ('green-day'));
 	if ($netsettings{'ORANGE_DEV'}) {
 		push (@graphs, ('orange-day')); }
+	if ($netsettings{'PURPLE_DEV'}) {
+		push (@graphs, ('purple-day')); }
 	push (@graphs, ('red-day'));
 }
 else

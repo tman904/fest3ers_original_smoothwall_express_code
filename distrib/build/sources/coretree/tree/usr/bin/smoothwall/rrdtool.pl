@@ -35,6 +35,12 @@ if ($netsettings{'ORANGE_DEV'})
 	&ProcessInterface("orange", $netsettings{'ORANGE_DEV'});
 }
 
+# check for PURPLE interface
+if ($netsettings{'PURPLE_DEV'})
+{
+	&ProcessInterface("purple", $netsettings{'PURPLE_DEV'});
+}
+
 # process data for RED interface
 if ($netsettings{'RED_DEV'} && $pppsettings{'COMPORT'} eq '') 
 {
