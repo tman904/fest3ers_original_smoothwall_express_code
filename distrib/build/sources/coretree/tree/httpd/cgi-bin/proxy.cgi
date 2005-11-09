@@ -91,15 +91,43 @@ ERROR:
 visible_hostname $mainsettings{'HOSTNAME'}
 
 http_port $netsettings{'GREEN_ADDRESS'}:800
-
-acl localnet src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
-
+acl localnetgreen src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
 END
-;
+		;
+
+		if ($netsettings{'PURPLE_DEV'}) {
+			print FILE <<END
+http_port $netsettings{'PURPLE_ADDRESS'}:800
+acl localnetpurple src $netsettings{'PURPLE_NETADDRESS'}/$netsettings{'PURPLE_NETMASK'}
+END
+			;
+		}
 
 		open (ACL, "${swroot}/proxy/acl") or die "Unable to open ACL list file";
 		while (<ACL>) { print FILE $_; }
 		close (ACL);
+
+		print FILE <<END
+http_access allow localhost
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports
+http_access allow localnetgreen
+END
+		;
+
+
+		if ($netsettings{'PURPLE_DEV'})
+		{
+			print FILE <<END
+http_access allow localnetpurple
+END
+			;
+		}
+
+		print FILE <<END
+http_access deny all
+END
+		;
 
 		$maxincomingsizebytes = $proxysettings{'MAX_INCOMING_SIZE'} * 1024;
 
