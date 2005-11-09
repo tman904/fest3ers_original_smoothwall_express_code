@@ -16,8 +16,6 @@ cdrom:
 	@mkdir cdrom/images
 
 images: cdrom
-	@make -C bootdisktwo
-#	@make -C bootdiskone MEDIA=diskone
 	@make -C bootdiskone MEDIA=cdrom
 
 cdrom/smoothwall.tgz:
