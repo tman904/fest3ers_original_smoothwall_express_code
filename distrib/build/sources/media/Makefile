@@ -16,6 +16,7 @@ cdrom:
 	@mkdir cdrom/images
 
 images: cdrom
+	@make -C bootdisktwo
 	@make -C bootdiskone MEDIA=cdrom
 
 cdrom/smoothwall.tgz:
@@ -175,7 +176,6 @@ clean:
 	@rm -rf cdrom distrib
 
 	@make -C bootdisktwo clean
-	@make -C bootdiskone MEDIA=diskone clean
 	@make -C bootdiskone MEIDA=cdrom clean
 	
 download:
