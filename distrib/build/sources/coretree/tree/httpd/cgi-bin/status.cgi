@@ -17,6 +17,7 @@ my $iface = '';
 if (open(FILE, "${swroot}/red/iface"))
 {
 	$iface = <FILE>;
+	chomp $iface;
 	close FILE;
 }
 
@@ -156,9 +157,9 @@ sub isrunning
 				if ( $days != 0 ){
 					$howlong = "$days days";
 				} elsif ( $hours != 0 ){
-					$howlong = "$hours hours $minutes mins";
+                                        $howlong = sprintf( "%d hours, %.2d minutes", $hours, $minutes );
 				} else {
-					$howlong = "$minutes:$seconds";
+                                        $howlong = sprintf( "%.d:%.2d", $minutes, $seconds );
 				}
 
 				if (open(FILE, "/proc/${pid}/cmdline"))
