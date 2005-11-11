@@ -12,14 +12,18 @@ use header qw( :standard );
 my %dhcpsettings;
 my %netsettings;
 
-my $filename = "${swroot}/dhcp/staticconfig";
-
 &showhttpheaders();
 
 $netsettings{'GREEN_DRIVER'} = '';
 $netsettings{'GREEN_ADDRESS'} = '';
 $netsettings{'GREEN_NETADDRESS'} = '';
 $netsettings{'GREEN_NETMASK'} = '';
+
+$netsettings{'PURPLE_DRIVER'} = '';
+$netsettings{'PURPLE_ADDRESS'} = '';
+$netsettings{'PURPLE_NETADDRESS'} = '';
+$netsettings{'PURPLE_NETMASK'} = '';
+
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 
 $dhcpsettings{'ACTION'} = '';
@@ -44,7 +48,17 @@ $dhcpsettings{'BOOT_ENABLE'} = 'off';
 
 my $errormessage = '';
 if ($dhcpsettings{'ACTION'} eq $tr{'save'})
-{ 
+{
+	if ($dhcpsettings{'SUBNET'} ne 'green' && $dhcpsettings{'SUBNET'} ne 'purple')
+	{
+		$errormessage = $tr{'invalid input'};
+		goto ERROR;
+	}
+	if ($dhcpsettings{'SUBNET'} ne $dhcpsettings{'CHECKSUBNET'})
+	{
+		$errormessage = 'Cannot save without selecting first.';
+		goto ERROR;
+	}
 	if (!(&validip($dhcpsettings{'START_ADDR'})))
 	{
 		$errormessage = $tr{'invalid start address'};
@@ -55,11 +69,12 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'invalid end address'};
 		goto ERROR;
 	}
-	if (!(&ip2number($dhcpsettings{'END_ADDR'}) > &ip2number($dhcpsettings{'START_ADDR'}))) {
+	if (!(&ip2number($dhcpsettings{'END_ADDR'}) > &ip2number($dhcpsettings{'START_ADDR'})))
+	{
 		$errormessage = $tr{'end must be greater than start'};
 		goto ERROR;
 	}
-	open(FILE, "$filename") or die 'Unable to open config file.';
+	open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
 	my $line;
@@ -139,8 +154,6 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'invalid domain name'};
 		goto ERROR;
 	}
-
-
 	if (!($dhcpsettings{'DEFAULT_LEASE_TIME'} =~ /^\d+$/))
 	{
 		$errormessage = $tr{'invalid default lease time'};
@@ -151,16 +164,27 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'invalid max lease time'};
 		goto ERROR;
 	}
+	
 ERROR:
 	if ($errormessage) {
 		$dhcpsettings{'VALID'} = 'no'; }
 	else {
 		$dhcpsettings{'VALID'} = 'yes'; }
-
+		
+	my %tempsettings;
+	
+	$tempsettings{'BOOT_ENABLE'} = $dhcpsettings{'BOOT_ENABLE'};
+	$tempsettings{'BOOT_SERVER'} = $dhcpsettings{'BOOT_SERVER'};
+	$tempsettings{'BOOT_FILE'} = $dhcpsettings{'BOOT_FILE'};
+	$tempsettings{'BOOT_ROOT'} = $dhcpsettings{'BOOT_ROOT'};
+	
+	&writehash("${swroot}/dhcp/global", \%tempsettings);
+	
 	delete $dhcpsettings{'STATIC_DESC'};
 	delete $dhcpsettings{'STATIC_MAC'};
 	delete $dhcpsettings{'STATIC_IP'};
-	&writehash("${swroot}/dhcp/settings", \%dhcpsettings);
+	
+	&writehash("${swroot}/dhcp/settings-$dhcpsettings{'SUBNET'}", \%dhcpsettings);
 
 	&writesettings();
 }
@@ -186,7 +210,7 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 			$errormessage = $tr{'static must be outside dynamic range'};
 		}
 	}
-	open(FILE, "$filename") or die 'Unable to open config file.';
+	open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
 	my $line;
@@ -210,7 +234,7 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 	unless(&validip($dhcpsettings{'STATIC_IP'})) { $errormessage = $tr{'ip address not valid'}; }
 	unless ($errormessage)
 	{
-		open(FILE, ">>$filename") or die 'Unable to open config file.';
+		open(FILE, ">>${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
 		flock FILE, 2;
 		print FILE "$dhcpsettings{'STATIC_HOST'},$dhcpsettings{'STATIC_MAC'},$dhcpsettings{'STATIC_IP'},$dhcpsettings{'STATIC_DESC'},$dhcpsettings{'DEFAULT_ENABLE_STATIC'}\n";
 		close(FILE);
@@ -223,14 +247,12 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 	}
 	$refreshdynamic = 'off';	
 
-	# we aren't modifying our settings, so load them.
-	&readhash("${swroot}/dhcp/settings", \%dhcpsettings);
 	&writesettings();
 }
 
 if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'edit'})
 {
-	open(FILE, "$filename") or die 'Unable to open config file.';
+	open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
 
@@ -249,7 +271,7 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 		$errormessage = $tr{'you can only select one item to edit'}; }
 	unless ($errormessage)
 	{
-		open(FILE, ">$filename") or die 'Unable to open config file.';
+		open(FILE, ">${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
 		flock FILE, 2;
  		$id = 0;
 		foreach $line (@current)
@@ -274,20 +296,24 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 	}
 	$refreshdynamic = 'off';	
 
-	# we aren't modifying our settings, so load them.
-	&readhash("${swroot}/dhcp/settings", \%dhcpsettings);
 	&writesettings();
 }
 
-&readhash("${swroot}/dhcp/settings", \%dhcpsettings);
-
-if ($dhcpsettings{'VALID'} eq '')
+if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
 {
+	if ($dhcpsettings{'ACTION'} eq '') {
+		$subnet = "green"; }
+	else {
+		$subnet = $dhcpsettings{'SUBNET'}; }
+	undef %dhcpsettings;
 
  	$dhcpsettings{'ENABLE'} = 'off';
-        $dhcpsettings{'DNS1'} = $netsettings{'GREEN_ADDRESS'};
         $dhcpsettings{'DEFAULT_LEASE_TIME'} = '60';
         $dhcpsettings{'MAX_LEASE_TIME'} = '120';
+
+	&readhash("${swroot}/dhcp/global", \%dhcpsettings);
+	&readhash("${swroot}/dhcp/settings-$subnet", \%dhcpsettings);
+	$dhcpsettings{'SUBNET'} = $subnet;
 }
 
 $checked{'ENABLE'}{'off'} = '';
@@ -300,7 +326,9 @@ $checked{'BOOT_ENABLE'}{'on'} = '';
 $checked{'BOOT_ENABLE'}{'off'} = '';
 $checked{'BOOT_ENABLE'}{$dhcpsettings{'BOOT_ENABLE'}} = 'CHECKED';
 
-
+$selected{'SUBNET'}{'green'} = '';
+$selected{'SUBNET'}{'purple'} = '';
+$selected{'SUBNET'}{$dhcpsettings{'SUBNET'}} = 'SELECTED';
 
 &openpage($tr{'dhcp configuration'}, 1, '', 'services');
 
@@ -308,9 +336,60 @@ $checked{'BOOT_ENABLE'}{$dhcpsettings{'BOOT_ENABLE'}} = 'CHECKED';
 
 &alertbox($errormessage);
 
-&openbox('DHCP:');
 print <<END
 <form method='post'>
+
+<INPUT TYPE='hidden' NAME='CHECKSUBNET' VALUE='$dhcpsettings{'SUBNET'}'>
+END
+;
+
+&openbox('Global settings:');
+print <<END
+<table class='centered'>
+<tr>
+	<td style='width: 25%;'>$tr{'network boot enabledc'}</td>
+	<td style='width: 25%;'><input type='checkbox' name='BOOT_ENABLE' $checked{'BOOT_ENABLE'}{'on'}></td>
+	<td style='width: 25%;'></td>
+	<td style='width: 25%;'></td>
+</tr>
+<tr>
+	<td>$tr{'boot serverc'}</TD>
+	<td><input type='text' name='BOOT_SERVER' value='$dhcpsettings{'BOOT_SERVER'}'></td>
+	<td>$tr{'boot filenamec'}</td>
+	<td><input type='text' name='BOOT_FILE' value='$dhcpsettings{'BOOT_FILE'}'></td>
+</tr>
+<tr>
+	<td>$tr{'root pathc'}</TD>
+	<td colspan='3'><input type='text' name='BOOT_ROOT' size='32' value='$dhcpsettings{'BOOT_ROOT'}'></td>
+</tr>
+</table>
+END
+;
+
+&closebox();
+
+&openbox('Interface:');
+print <<END
+<TABLE WIDTH='100%'>
+<TR>
+	<TD WIDTH='25%'>
+	<SELECT NAME='SUBNET'>
+	<OPTION VALUE='green' $selected{'SUBNET'}{'green'}>Green
+	<OPTION VALUE='purple' $selected{'SUBNET'}{'purple'}>Purple
+	</SELECT>
+	</TD>
+	<TD WIDTH='10%'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'select'}'></TD>
+	<TD WIDTH='65%'>&nbsp;</TD>
+</TR>
+</TABLE>
+END
+;
+
+&closebox();
+
+&openbox('DHCP:');
+
+print <<END
 <table class='centered'>
 <tr>
 	<td style='width: 25%;'>$tr{'start address'}</td>
@@ -339,17 +418,8 @@ print <<END
 <tr>
 	<td>$tr{'domain name suffix'}&nbsp;<IMG SRC='/ui/img/blob.gif' alt='*'></td>
 	<td><input type='text' name='DOMAIN_NAME' value='$dhcpsettings{'DOMAIN_NAME'}'></td>
-	<td>$tr{'enabled'}</td>
-	<td><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
-</tr>
-</table>
-<strong>$tr{'nis server supportc'}</strong>
-<table class='centered'>
-<tr>
-	<td style='width: 25%;'>$tr{'nis server enabledc'}</td>
-	<td style='width: 25%;'><input type='checkbox' name='NIS_ENABLE' $checked{'NIS_ENABLE'}{'on'}></td>
-	<td style='width: 25%;'></td>
-	<td style='width: 25%;'></td>
+	<td>$tr{'nis_domainc'}</TD>
+	<td><input type='text' name='NIS_DOMAIN' value='$dhcpsettings{'NIS_DOMAIN'}'></td>
 </tr>
 <tr>
 	<td>$tr{'primary nisc'}</TD>
@@ -358,31 +428,12 @@ print <<END
 	<td><input type='text' name='NIS2' value='$dhcpsettings{'NIS2'}'></td>
 </tr>
 <tr>
-	<td>$tr{'nis_domainc'}</TD>
-	<td><input type='text' name='NIS_DOMAIN' value='$dhcpsettings{'NIS_DOMAIN'}'></td>
+	<td>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
 	<td></td>
 	<td></td>
 </tr>
 </table>
-<strong>$tr{'network boot supportc'}</strong>
-<table class='centered'>
-<tr>
-	<td style='width: 25%;'>$tr{'network boot enabledc'}</td>
-	<td style='width: 25%;'><input type='checkbox' name='BOOT_ENABLE' $checked{'BOOT_ENABLE'}{'on'}></td>
-	<td style='width: 25%;'></td>
-	<td style='width: 25%;'></td>
-</tr>
-<tr>
-	<td>$tr{'boot serverc'}</TD>
-	<td><input type='text' name='BOOT_SERVER' value='$dhcpsettings{'BOOT_SERVER'}'></td>
-	<td>$tr{'boot filenamec'}</td>
-	<td><input type='text' name='BOOT_FILE' value='$dhcpsettings{'BOOT_FILE'}'></td>
-</tr>
-<tr>
-	<td>$tr{'root pathc'}</TD>
-	<td colspan='3'><input type='text' name='BOOT_ROOT' size='32' value='$dhcpsettings{'BOOT_ROOT'}'></td>
-</tr>
-</taBLE>
 <BR>
 <img src='/ui/img/blob.gif' alt='*' valign='top'>&nbsp; $tr{'this field may be blank'}
 <br/>
@@ -443,7 +494,7 @@ END
 ;
 
 my $id = 0;
-open(RULES, "$filename") or die 'Unable to open config file.';
+open(RULES, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
 while (<RULES>)
 {
 	$id++;
@@ -500,8 +551,6 @@ print "&nbsp;\n";
 
 &closepage();
 
-
-
 sub ip2number {
         my $ip = $_[0];
         if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
@@ -522,89 +571,123 @@ sub number2ip {
 
 
 sub writesettings {
-	if ($dhcpsettings{'VALID'} eq 'yes')
-	{
-		open(FILE, ">/${swroot}/dhcp/dhcpd.conf") or die "Unable to write dhcpd.conf file";
-		flock(FILE, 2);
+	my %dhcpsettings;
 
-		if ($dhcpsettings{'BOOT_ENABLE'} eq 'on' && $dhcpsettings{'BOOT_SERVER'} && $dhcpsettings{'BOOT_FILE'} 
-			&& $dhcpsettings{'BOOT_ROOT'}) {
-			if ($dhcpsettings{'BOOT_SERVER'}) {
-				print FILE "allow booting;\n";}
-			if ($dhcpsettings{'BOOT_SERVER'}) {
-				print FILE "allow bootp;\n";}
-			if ($dhcpsettings{'BOOT_SERVER'}) {
-				print FILE "next-server $dhcpsettings{'BOOT_SERVER'};\n" if ($dhcpsettings{'BOOT_SERVER'} ne ''); }
-			if ($dhcpsettings{'BOOT_FILE'}) {
-				print FILE "filename \"$dhcpsettings{'BOOT_FILE'}\";\n" if ($dhcpsettings{'BOOT_FILE'} ne ''); }
-			if ($dhcpsettings{'BOOT_ROOT'}) {
-				print FILE "option root-path \"$dhcpsettings{'BOOT_ROOT'}\";\n" if ($dhcpsettings{'BOOT_ROOT'} ne ''); }
-		}
-		print FILE "ddns-update-style ad-hoc;\n\n";
-		print FILE "subnet $netsettings{'GREEN_NETADDRESS'} netmask $netsettings{'GREEN_NETMASK'}\n";
-		print FILE "{\n";
-		print FILE "\toption subnet-mask $netsettings{'GREEN_NETMASK'};\n";
-		print FILE "\toption domain-name \"$dhcpsettings{'DOMAIN_NAME'}\";\n";
-		print FILE "\toption routers $netsettings{'GREEN_ADDRESS'};\n";
-		if ($dhcpsettings{'DNS1'})
-		{
-			print FILE "\toption domain-name-servers ";
-			print FILE "$dhcpsettings{'DNS1'}";
-			if ($dhcpsettings{'DNS2'}) {
-				print FILE ", $dhcpsettings{'DNS2'}"; }
-			print FILE ";\n";
-		}
-		if ($dhcpsettings{'WINS1'})
-		{
-			print FILE "\toption netbios-name-servers ";
-			print FILE "$dhcpsettings{'WINS1'}";
-			if ($dhcpsettings{'WINS2'}) {
-				print FILE ", $dhcpsettings{'WINS2'}"; }
-			print FILE ";\n";
-	        }
-		if ($dhcpsettings{'NIS_ENABLE'} eq 'on' && $dhcpsettings{'NIS1'} && $dhcpsettings{'NIS_DOMAIN'}) {
-			if ($dhcpsettings{'NIS1'}) {
-				print FILE "\toption nis-servers ";
-				print FILE "$dhcpsettings{'NIS1'}";
-				if ($dhcpsettings{'NIS2'}) {
-					print FILE ", $dhcpsettings{'NIS2'}"; }
-				print FILE ";\n";}
-			if ($dhcpsettings{'NIS_DOMAIN'}) {
-				print FILE "\toption nis-domain \"$dhcpsettings{'NIS_DOMAIN'}\";\n";}
-		}
-		my $defaultleasetime = $dhcpsettings{'DEFAULT_LEASE_TIME'} * 60;
-		my $maxleasetime = $dhcpsettings{'MAX_LEASE_TIME'} * 60;
-		print FILE "\trange dynamic-bootp $dhcpsettings{'START_ADDR'} $dhcpsettings{'END_ADDR'};\n";
-		print FILE "\tdefault-lease-time $defaultleasetime;\n";
-		print FILE "\tmax-lease-time $maxleasetime;\n";
-		my $id = 0;
-		open(RULES, "$filename") or die 'Unable to open config file.';
-		while (<RULES>)
-		{
-			$id++;
-			chomp($_);
-			my @temp = split(/\,/,$_);
-			if ($temp[4] eq 'on') {			
-				print FILE "\thost $id { hardware ethernet $temp[1]; fixed-address $temp[2]; }\n";
-			}
-		}
-		close(RULES);
-		print FILE "}\n";
-		close FILE;
-	
-		if ($dhcpsettings{'ENABLE'} eq 'on' && $dhcpsettings{'VALID'} eq 'yes')
-		{
-			system ('/bin/touch', "${swroot}/dhcp/enable");
-			&log($tr{'dhcp server enabled'})
-		}
-		else
-		{
-			unlink "${swroot}/dhcp/enable";
-			&log($tr{'dhcp server disabled'})
-		}		
-		
-		system '/usr/bin/setuids/restartdhcp';
+	unlink "${swroot}/dhcp/enable";
 
-		unlink "${swroot}/dhcp/uptodate";
+	open(FILE, ">/${swroot}/dhcp/dhcpd.conf") or die "Unable to write dhcpd.conf file";
+	flock(FILE, 2);
+
+	&readhash("${swroot}/dhcp/global", \%dhcpsettings);
+
+	if ($dhcpsettings{'BOOT_ENABLE'} eq 'on' && $dhcpsettings{'BOOT_SERVER'} && $dhcpsettings{'BOOT_FILE'}  && $dhcpsettings{'BOOT_ROOT'}) {
+		if ($dhcpsettings{'BOOT_SERVER'}) {
+			print FILE "allow booting;\n";
+		}
+		if ($dhcpsettings{'BOOT_SERVER'}) {
+			print FILE "allow bootp;\n";
+		}
+		if ($dhcpsettings{'BOOT_SERVER'}) {
+			print FILE "next-server $dhcpsettings{'BOOT_SERVER'};\n" if ($dhcpsettings{'BOOT_SERVER'} ne ''); 
+		}
+		if ($dhcpsettings{'BOOT_FILE'}) {
+			print FILE "filename \"$dhcpsettings{'BOOT_FILE'}\";\n" if ($dhcpsettings{'BOOT_FILE'} ne ''); 
+		}
+		if ($dhcpsettings{'BOOT_ROOT'}) {
+			print FILE "option root-path \"$dhcpsettings{'BOOT_ROOT'}\";\n" if ($dhcpsettings{'BOOT_ROOT'} ne ''); 
+		}
 	}
+	print FILE "ddns-update-style ad-hoc;\n\n";
+
+	my $subnet;
+	foreach $subnet ('green', 'purple')
+	{
+		%dhcpsettings = ();
+		
+		&readhash("${swroot}/dhcp/settings-$subnet", \%dhcpsettings);
+
+		if ($subnet eq 'green' && $netsettings{'GREEN_DEV'} eq '') { next; }
+		if ($subnet eq 'purple' && $netsettings{'PURPLE_DEV'} eq '') { next; }
+		
+		if ($dhcpsettings{'VALID'} eq 'yes')
+		{
+			if ($subnet eq 'green')
+			{
+				print FILE "subnet $netsettings{'GREEN_NETADDRESS'} netmask $netsettings{'GREEN_NETMASK'}\n";
+				print FILE "{\n";
+				print FILE "\toption subnet-mask $netsettings{'GREEN_NETMASK'};\n";
+				print FILE "\toption domain-name \"$dhcpsettings{'DOMAIN_NAME'}\";\n";
+				print FILE "\toption routers $netsettings{'GREEN_ADDRESS'};\n";
+			}
+			else
+			{
+				print FILE "subnet $netsettings{'PURPLE_NETADDRESS'} netmask $netsettings{'PURPLE_NETMASK'}\n";
+				print FILE "{\n";
+				print FILE "\toption subnet-mask $netsettings{'PURPLE_NETMASK'};\n";
+				print FILE "\toption domain-name \"$dhcpsettings{'DOMAIN_NAME'}\";\n";
+				print FILE "\toption routers $netsettings{'PURPLE_ADDRESS'};\n";
+			}
+						
+			if ($dhcpsettings{'DNS1'})
+			{
+				print FILE "\toption domain-name-servers ";
+				print FILE "$dhcpsettings{'DNS1'}";
+				if ($dhcpsettings{'DNS2'}) {
+					print FILE ", $dhcpsettings{'DNS2'}"; }
+				print FILE ";\n";
+			}
+			if ($dhcpsettings{'WINS1'})
+			{
+				print FILE "\toption netbios-name-servers ";
+				print FILE "$dhcpsettings{'WINS1'}";
+				if ($dhcpsettings{'WINS2'}) {
+					print FILE ", $dhcpsettings{'WINS2'}"; }
+				print FILE ";\n";
+		        }
+			if ($dhcpsettings{'NIS1'} && $dhcpsettings{'NIS_DOMAIN'}) {
+				if ($dhcpsettings{'NIS1'}) {
+					print FILE "\toption nis-servers ";
+					print FILE "$dhcpsettings{'NIS1'}";
+					if ($dhcpsettings{'NIS2'}) {
+						print FILE ", $dhcpsettings{'NIS2'}"; }
+					print FILE ";\n";}
+				if ($dhcpsettings{'NIS_DOMAIN'}) {
+					print FILE "\toption nis-domain \"$dhcpsettings{'NIS_DOMAIN'}\";\n";}
+			}
+			my $defaultleasetime = $dhcpsettings{'DEFAULT_LEASE_TIME'} * 60;
+			my $maxleasetime = $dhcpsettings{'MAX_LEASE_TIME'} * 60;
+			print FILE "\trange dynamic-bootp $dhcpsettings{'START_ADDR'} $dhcpsettings{'END_ADDR'};\n";
+			print FILE "\tdefault-lease-time $defaultleasetime;\n";
+			print FILE "\tmax-lease-time $maxleasetime;\n";
+			my $id = 0;
+			open(RULES, "${swroot}/dhcp/staticconfig-$subnet") or die 'Unable to open config file.';
+			while (<RULES>)
+			{
+				$id++;
+				chomp($_);
+				my @temp = split(/\,/,$_);
+				if ($temp[4] eq 'on') {			
+					print FILE "\thost $id { hardware ethernet $temp[1]; fixed-address $temp[2]; }\n";
+				}
+			}
+			close(RULES);
+			print FILE "}\n";
+
+			open(DEV, ">${swroot}/dhcp/${subnet}") or die "Unable to write to device file";	
+			if ($dhcpsettings{'ENABLE'} eq 'on' && $dhcpsettings{'VALID'} eq 'yes')
+			{
+				system ('/bin/touch', "${swroot}/dhcp/enable");
+				if ($subnet eq 'green') {
+					print DEV $netsettings{'GREEN_DEV'}; }
+				else {
+					print DEV $netsettings{'PURPLE_DEV'}; }
+			}
+			close(DEV);
+		}
+	}
+
+	close FILE;
+
+	system '/usr/bin/setuids/restartdhcp';
+	unlink "${swroot}/dhcp/uptodate";
 }
