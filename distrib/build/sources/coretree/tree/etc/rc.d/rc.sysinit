@@ -87,6 +87,9 @@ rm -f /etc/dhcpc/*.pid
 rm -f /var/smoothwall/red/*
 rm -f /var/lock/LCK..ttyS*
 
+echo "Setting drive DMA settings"
+/sbin/hdparm -d 1 -c 1 -u 1 /dev/harddisk
+
 echo "Setting the clock"
 /sbin/hwclock --hctosys
 
