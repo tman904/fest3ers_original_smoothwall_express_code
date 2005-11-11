@@ -15,12 +15,42 @@ int main(void)
 {
 	int fd = -1;
 	char buffer[STRING_SIZE];
+	char green[STRING_SIZE];
+	char purple[STRING_SIZE];
+	char command[STRING_SIZE];
 	int pid;
 	
 	if (!(initsetuid(1)))
 		exit(1);
 		
 	memset(buffer, 0, STRING_SIZE);
+	memset(green, 0, STRING_SIZE);
+	memset(purple, 0, STRING_SIZE);
+	memset(command, 0, STRING_SIZE);
+	
+	if ((fd = open("/var/smoothwall/dhcp/green",  O_RDONLY)) == -1)
+	{
+		goto RESTART;
+	}
+	if (read(fd, green, STRING_SIZE - 1) == -1)
+	{
+		fprintf(stderr, "Couldn't read green file");
+		goto EXIT;
+	}
+        close(fd);
+        fd = -1;	
+
+        if ((fd = open("/var/smoothwall/dhcp/purple",  O_RDONLY)) == -1)
+        {
+        	goto RESTART;
+	}
+	if (read(fd, purple, STRING_SIZE - 1) == -1)
+	{
+		fprintf(stderr, "Couldn't read purple file");
+		goto EXIT;
+	}
+	close(fd);
+	fd = -1;
 	
 	if ((fd = open("/var/run/dhcpd.pid", O_RDONLY)) == -1)
 	{
@@ -31,6 +61,9 @@ int main(void)
 		fprintf(stderr, "Couldn't read from pid file");
 		goto EXIT;
 	}
+	close(fd);
+	fd = -1;
+	
 	pid = atoi(buffer);
 	if (pid <= 1)
 	{
@@ -51,7 +84,8 @@ EXIT:
 RESTART:
 	if ((fd = open("/var/smoothwall/dhcp/enable", O_RDONLY)) != -1)
 	{
-		system("/usr/sbin/dhcpd eth0");
+		snprintf(command, STRING_SIZE - 1, "/usr/sbin/dhcpd %s %s", green, purple);
+		system(command);
 		close(fd);
 	}
 
