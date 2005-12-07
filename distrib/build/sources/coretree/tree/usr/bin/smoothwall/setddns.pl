@@ -30,6 +30,7 @@ my $ip = <IP>;
 close(IP);
 chomp $ip;
 
+
 if ($ARGV[0] ne '-f')
 {
 	open(IPCACHE, "$cachefile");
@@ -85,7 +86,8 @@ if ($ip ne $ipcache)
 				print F @sorted;
 				close(F);
 
-				my @ddnscommand = ('/usr/local/bin/noip','-c',"${swroot}/ddns/noipsettings",'-i',"$ip");
+				my @ddnscommand = ('/usr/bin/noip','-c',"${swroot}/ddns/noipsettings",'-i',"$ip");
+				&log( "ddnscommand: @ddnscommand " );
 
 				my $result = system(@ddnscommand);
 
@@ -96,27 +98,11 @@ if ($ip ne $ipcache)
 					$success++;
 				}
 			}
-		   	elsif ($settings{'SERVICE'} eq 'dyndns-custom')
-			{
-				if ($settings{'WILDCARDS'} eq 'on') {$settings{'WILDCARDS'} = '-w';}
-				else {$settings{'WILDCARDS'} = '';}
-				my @ddnscommand = ('/usr/local/bin/addns.pl', "--username=$settings{'LOGIN'}", "--password=$settings{'PASSWORD'}", "--host=$settings{'HOSTNAME'}.$settings{'DOMAIN'}", "--system=custom", "--interface=eth1", "--method-iface", "--wildcard=$settings{'WILDCARDS'}");
-
-				my $result = system(@ddnscommand);
-				$result >>= 8;
-				if ( $result == 1) { &log("Dynamic DNS addns for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: Already set"); }
-				elsif ( $result != 0) { &log("Dynamic DNS addns for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: failure $result"); }
-				else
-				{
-					&log("Dynamic DNS addns for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: success");
-					$success++;
-				}
-			}
 			else
 			{
 				if ($settings{'WILDCARDS'} eq 'on') {$settings{'WILDCARDS'} = '-w';}
 				else {$settings{'WILDCARDS'} = '';}
-				my @ddnscommand = ('/usr/local/bin/ez-ipupdate', '-a', "$ip", '-S', "$settings{'SERVICE'}", '-u', "$settings{'LOGIN'}:$settings{'PASSWORD'}", '-h', "$settings{'HOSTNAME'}.$settings{'DOMAIN'}", "$settings{'WILDCARDS'}", '-q');
+				my @ddnscommand = ('/usr/bin/ez-ipupdate', '-a', "$ip", '-S', "$settings{'SERVICE'}", '-u', "$settings{'LOGIN'}:$settings{'PASSWORD'}", '-h', "$settings{'HOSTNAME'}.$settings{'DOMAIN'}", "$settings{'WILDCARDS'}", '-q');
 
 				my $result = system(@ddnscommand);
 				if ( $result != 0) { &log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: failure"); }
