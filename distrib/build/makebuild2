@@ -161,6 +161,9 @@ build openswan
 
 build wireless_tools
 
+build noip
+build ez-ipupdate
+
 build install
 
 build media
