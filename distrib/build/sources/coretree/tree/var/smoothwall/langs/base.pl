@@ -60,6 +60,7 @@
 'ssip block' => 'ip block',
 'ssbackup' => 'backup',
 'sshosts' => 'static dns',
+'sspreferences' => 'preferences',
 'powered by' => 'powered by',
 'alt home' => 'Home', # alt
 'alt information' => 'Information', # alt
@@ -427,6 +428,9 @@
 'reboot' => 'Reboot', # button
 'rebooting' => 'Rebooting',
 'smoothwall is rebooting' => 'SmoothWall is rebooting.',
+
+# preferences
+'ui menus' => 'Drop Down Menus:',
 
 # status.cgi
 'web server' => 'Web server',

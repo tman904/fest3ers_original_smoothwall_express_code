@@ -40,6 +40,7 @@ $thisscript = basename($ENV{'SCRIPT_NAME'});
 # customised settings (such as languages)
 
 &readhash("${swroot}/main/settings", \%settings);
+&readhash("${swroot}/main/ui/settings", \%uisettings);
 $language = $settings{'LANGUAGE'};
 
 if ($language =~ /^(\w+)$/) {$language = $1;}
@@ -106,26 +107,33 @@ sub showmenu
 					@menu = @tempmenu;
 					$menu_html .= "<td>$first<a class='activemenu' href='/cgi-bin/$menu[ 0 ]->{'href'}'>$section_title</a></td>";
 				} else {
-					$menu_html .= qq { <td><div class='menushaddow' id='${section_title}shadow' 
-> };
-					$menu_html .= &showhovermenu( @tempmenu );
-					$menu_html .= qq { 
-</div>
-};
-					$menu_html .= qq { <div class='menu' id='$section_title' 
-onMouseOver="menu_show('$section_title')" 
-onMouseOut="menu_clear();"
-> };
-					$menu_html .= &showhovermenu( @tempmenu );
-					$menu_html .= qq { 
-</div></td>
-<td 
-onMouseOver="menu_show('$section_title')" 
-onMouseOut="menu_clear();"
->
-$first<a class='menu' href='/cgi-bin/$tempmenu[ 0 ]->{'href'}'>$section_title</a>
-</td>
-};
+					if ( defined $uisettings{'MENU'} and $uisettings{'MENU'} eq "on"){
+						$menu_html .= qq { 
+							<td><div class='menushaddow' id='${section_title}shadow'> 
+						};
+						$menu_html .= &showhovermenu( @tempmenu );
+						$menu_html .= qq { 
+							</div>
+						};
+						$menu_html .= qq { <div class='menu' id='$section_title' 
+							onMouseOver="menu_show('$section_title')" 
+							onMouseOut="menu_clear();"> 
+						};
+						$menu_html .= &showhovermenu( @tempmenu );
+						$menu_html .= qq { 
+							</div></td>	
+							<td 	onMouseOver="menu_show('$section_title')" 
+								onMouseOut="menu_clear();">
+								$first<a class='menu' href='/cgi-bin/$tempmenu[ 0 ]->{'href'}'>$section_title</a>
+							</td>
+						};
+					} else {
+						$menu_html .= qq { 
+							<td>
+								$first<a class='menu' href='/cgi-bin/$tempmenu[ 0 ]->{'href'}'>$section_title</a>
+							</td>
+						};
+					}
 					push @clear_sections, $section_title;
 				}
 			}
