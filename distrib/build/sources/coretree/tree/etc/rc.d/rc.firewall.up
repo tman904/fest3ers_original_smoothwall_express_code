@@ -188,7 +188,9 @@ fi
 /sbin/iptables -t nat -A jmpsquid -d 169.254.0.0/16 -j RETURN
 /sbin/iptables -t nat -A jmpsquid -j squid
 /sbin/iptables -t nat -A PREROUTING -i $GREEN_DEV -j jmpsquid
-/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpsquid
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpsquid
+fi
 
 # Masqurade
 /sbin/iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
