@@ -12,7 +12,7 @@ my @temp;
 my $filename = "${swroot}/hosts/config";
 
 &readhash("${swroot}/ethernet/settings", \%netsettings);
-&readhash("${swroot}/dhcp/settings", \%dhcpsettings);
+&readhash("${swroot}/dhcp/settings-green", \%dhcpsettings);
 &readhash("${swroot}/main/settings", \%mainsettings);
 
 open(FILE, ">${swroot}/hosts/hosts") or die 'Unable to write hosts.';
