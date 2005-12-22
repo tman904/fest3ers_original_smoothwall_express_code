@@ -68,7 +68,7 @@ int handledhcp(void)
 		
  	memset(defaults, 0, sizeof(char) * STRING_SIZE * MAX_BOXES);
 	
-	if (!(readkeyvalues(dhcpkv, CONFIG_ROOT "dhcp/green-settings")))
+	if (!(readkeyvalues(dhcpkv, CONFIG_ROOT "dhcp/settings-green")))
 	{
 		freekeyvalues(dhcpkv);
 		freekeyvalues(ethernetkv);		
@@ -207,7 +207,7 @@ int handledhcp(void)
 					unlink(CONFIG_ROOT "dhcp/enable");
 				}
 				replacekeyvalue(dhcpkv, "VALID", "yes");
-				writekeyvalues(dhcpkv, CONFIG_ROOT "dhcp/green-settings");
+				writekeyvalues(dhcpkv, CONFIG_ROOT "dhcp/settings-green");
 				
 				findkey(ethernetkv, "GREEN_ADDRESS", greenaddress);				
 				findkey(ethernetkv, "GREEN_NETADDRESS", greennetaddress);
