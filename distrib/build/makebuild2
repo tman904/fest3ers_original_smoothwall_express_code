@@ -114,6 +114,9 @@ build openssl
 build openssh
 build apache
 build cron
+build cgilib
+build freetype
+build libart
 build rrdtool
 build dnsmasq
 build whois

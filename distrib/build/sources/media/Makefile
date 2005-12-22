@@ -79,6 +79,8 @@ cdrom/smoothwall.tgz:
 		URI \
 		libwww-perl \
 		strace \
+		libart \
+		freetype \
 		rrdtool \
 		cron \
 		tcpdump \
