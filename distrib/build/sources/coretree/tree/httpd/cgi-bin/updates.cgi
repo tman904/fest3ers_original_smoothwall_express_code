@@ -388,8 +388,8 @@ END
 
 			my ( $down, $percent, $speed );
 		
-			my $uri = "http://downloads.smoothwall.org/updates/2.0/";
-			my $filename = "2.0-$required{$req}{'name'}.tar.gz";
+			my $uri = "http://downloads.smoothwall.org/updates/3.0/";
+			my $filename = "3.0-$required{$req}{'name'}.tar.gz";
 	
 			download( $uri, $filename );
 
