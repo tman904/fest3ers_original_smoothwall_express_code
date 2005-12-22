@@ -61,6 +61,8 @@
 'ssbackup' => 'backup',
 'sshosts' => 'static dns',
 'sspreferences' => 'preferences',
+'preferences' => 'Preferences',
+'user interface' => 'User interface',
 'powered by' => 'powered by',
 'alt home' => 'Home', # alt
 'alt information' => 'Information', # alt
