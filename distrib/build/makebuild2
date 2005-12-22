@@ -22,7 +22,6 @@ build()
 	docommand "$1" "make -C sources/$1"
 }
 
-
 docommand "prebuildtree script" "./prebuild2"
 
 docommand "mounting proc" "mount -t proc proc /proc"
@@ -117,6 +116,7 @@ build cron
 build cgilib
 build freetype
 build libart
+build libpng
 build rrdtool
 build dnsmasq
 build whois
@@ -134,7 +134,6 @@ build newt
 
 build squid
 
-build libpng
 build gd
 
 build libsmooth+setup
