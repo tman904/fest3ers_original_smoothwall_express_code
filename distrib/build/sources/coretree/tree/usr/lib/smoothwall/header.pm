@@ -22,7 +22,7 @@ $|=1; # line buffering
 # Work out some various details from the various system files.
 # such as fixes number etc.
 
-$version = '3.0-grizzly';
+$version = '3.0-panda';
 
 $webuirevision = 'ui-3.5';
 $viewsize = 200;
