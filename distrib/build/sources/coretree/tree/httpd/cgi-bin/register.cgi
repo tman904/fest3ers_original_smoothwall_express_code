@@ -407,7 +407,7 @@ print <<END
 			</tr>
 			<tr>
 				<td><input type='checkbox' name='mac'> Apple &reg;</td>
-				<td><input type='checkbox' name='risc'> RiscOS&copy;</td>
+				<td><input type='checkbox' name='risc'> RISC OS &copy;</td>
 				<td><input type='checkbox' name='beos'> BeOS</td>
 			</tr>
 			<tr>
