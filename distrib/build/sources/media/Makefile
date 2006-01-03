@@ -79,7 +79,7 @@ cdrom/smoothwall.tgz:
 		URI \
 		libwww-perl \
 		strace \
-		libart \
+		libart_lgpl \
 		freetype \
 		rrdtool \
 		cron \

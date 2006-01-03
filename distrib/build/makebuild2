@@ -115,7 +115,7 @@ build apache
 build cron
 build cgilib
 build freetype
-build libart
+build libart_lgpl
 build libpng
 build rrdtool
 build dnsmasq
