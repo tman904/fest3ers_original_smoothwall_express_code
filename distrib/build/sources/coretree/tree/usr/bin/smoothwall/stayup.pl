@@ -17,7 +17,7 @@ else
 	{
 		system('/usr/bin/logger', '-t', 'smoothwall', "Connection still not up; rebooting.");
 		&resetcount();
-		system('/usr/bin/smoothwall/smoothierebirth');
+		system('/usr/bin/setuids/smoothierebirth');
 	}
 }
 
