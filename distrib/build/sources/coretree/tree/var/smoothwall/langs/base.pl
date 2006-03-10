@@ -56,6 +56,7 @@
 'ssip info' => 'ip information',
 'sstime' => 'time',
 'ssip tools' => 'ip tools',
+'ssfiltering' => 'filtering',
 'ssadvanced' => 'advanced',
 'ssip block' => 'ip block',
 'ssbackup' => 'backup',
@@ -510,6 +511,17 @@
 'external ip long' => 'External IP or network (blank for "ALL"):',
 'external ip' => 'External IP',
 
+# outbound.cgi
+'outbound filtering configuration' => 'Outbound filtering configuration',
+'Outbound filtering' => 'Outbound filtering',
+'filtering' => 'Filtering',
+'filtered interfaces' => 'Filtered interfaces' ,
+'outbound port opened' => 'Outbound Port Opened',
+'outbound port closed' => 'Outbound Port Closed',
+'interface' => 'Interface',
+'invalid port or range' => 'Invalid port or range',
+'outbound rule added to ' => 'Outbound rule added to ',
+'outbound rule removed from ' => 'Outbound rule removed from ',
 
 # ddns.cgi
 'dynamic dns' => 'Dynamic DNS',

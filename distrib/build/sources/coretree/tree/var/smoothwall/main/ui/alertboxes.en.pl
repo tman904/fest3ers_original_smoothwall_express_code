@@ -44,6 +44,7 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'shutdown.cgi' 		=> 'Shutdown or restart your SmoothWall &mdash; restarts are sometimes mandated by update installation.',
 'time.cgi' 		=> 'Change timezone, manually set the time and date, configure time syncronisation and enable the time server.',
 'advnet.cgi' 		=> 'Configure ICMP settings, and other advanced features.',
+'outbound.cgi'		=> 'Configure interfaces to have outbound traffic blocked, except on specific rules.',
 'ipblock.cgi' 		=> 'Add blocking rules to prevent access from specified IP addresses or networks.',
 'backup.img' 		=> 'Use this page to create a backup floppy disk or floppy disk image file.',
 

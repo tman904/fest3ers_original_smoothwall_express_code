@@ -66,3 +66,6 @@ fi
 
 echo "Setting external access rules"
 /usr/bin/setuids/setxtaccess
+echo "Setting up Outbound filter"
+/usr/bin/setuids/setoutbound
+
