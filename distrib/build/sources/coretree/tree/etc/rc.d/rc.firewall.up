@@ -128,17 +128,24 @@ fi
 /sbin/iptables -A INPUT -j REJECT
 
 # Allow packets that we know about through.
+/sbin/iptables -N outbound
+/sbin/iptables -A outbound -j ACCEPT
 /sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -o ppp0 -j ACCEPT
 /sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -i ppp0 -j ACCEPT
-/sbin/iptables -A FORWARD -m state --state NEW -o ppp0 -j ACCEPT
+/sbin/iptables -A FORWARD -m state --state NEW -o ppp0 -j outbound
 /sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -o ippp0 -j ACCEPT
 /sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -i ippp0 -j ACCEPT
-/sbin/iptables -A FORWARD -m state --state NEW -o ippp0 -j ACCEPT
+/sbin/iptables -A FORWARD -m state --state NEW -o ippp0 -j outbound
 if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -o $RED_DEV -j ACCEPT
 	/sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -i $RED_DEV -j ACCEPT
-	/sbin/iptables -A FORWARD -m state --state NEW -o $RED_DEV -j ACCEPT
+	/sbin/iptables -A FORWARD -m state --state NEW -o $RED_DEV -j outbound
 fi
+
+# Green, Orange and Purple chains for outbound
+/sbin/iptables -N outgreen
+/sbin/iptables -N outorange
+/sbin/iptables -N outpurple
  
 # Port forwarding
 /sbin/iptables -N portfwf
