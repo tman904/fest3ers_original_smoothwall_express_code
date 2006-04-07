@@ -22,18 +22,19 @@ modprobe ipt_REJECT
 modprobe ipt_REDIRECT
 modprobe ipt_MASQUERADE
 modprobe ipt_state
+modprobe xt_tcpudp
 
 echo "Loading MASQ helper modules"
 modprobe ip_conntrack_irc
 modprobe ip_nat_irc
 modprobe ip_conntrack_ftp
 modprobe ip_nat_ftp
-modprobe ip_conntrack_mms
-modprobe ip_nat_mms
-modprobe ip_conntrack_h323
-modprobe ip_nat_h323
-modprobe ip_conntrack_sip
-modprobe ip_nat_sip
+#modprobe ip_conntrack_mms
+#modprobe ip_nat_mms
+#modprobe ip_conntrack_h323
+#modprobe ip_nat_h323
+#modprobe ip_conntrack_sip
+#modprobe ip_nat_sip
 #modprobe ip_conntrack_quake3 
 #modprobe ip_nat_quake3
 #modprobe ip_conntrack_pptp

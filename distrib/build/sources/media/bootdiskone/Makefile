@@ -26,7 +26,7 @@ endif
 
 	@cp -R dosfiles/message.txt dosfiles/message.lss floppy
 
-	@cp -R /boot/vmlinuz-$(KERNEL_VER) floppy/vmlinuz
+	@cp -R /build/buildroot/kernel-install/boot/vmlinuz-$(KERNEL_VER) floppy/vmlinuz
 	@make -C ../installroot MEDIA=$(MEDIA)
 	@cp -R ../$(INSTALL_ROOT)image.gz floppy/initrd.img
 

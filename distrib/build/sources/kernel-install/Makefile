@@ -4,9 +4,9 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-KERNEL_VER = 2.6.16.1
+include ../Makefile.conf
+include ../Makefile.versions
 
-FREESWAN_TYPE = openswan
-FREESWAN_VER = 2.4.5rc7
+include ../Makefile.kernel
 
-IPTABLES_VER = 1.2.11
+TYPE = install

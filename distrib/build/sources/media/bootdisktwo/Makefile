@@ -42,10 +42,12 @@ bin:
 	@strip bin/*
 
 lib:
-	@cp --parents -aR /lib/modules/$(KERNEL_VER)/kernel/drivers/net .
-	@cp --parents -aR /lib/modules/$(KERNEL_VER)/kernel/lib .
-
-	@cp --parents -aR /lib/modules/$(KERNEL_VER)/modules.dep .
+	@(tar -cvf - -C /build/buildroot/kernel-install \
+	/lib/modules/$(KERNEL_VER)/kernel/drivers/net  \
+	/lib/modules/$(KERNEL_VER)/kernel/lib \
+	/lib/modules/$(KERNEL_VER)/modules.dep \
+	| \
+	tar -xvf -)
 
 clean:
 	@rm -rf lib bin tmp floppy

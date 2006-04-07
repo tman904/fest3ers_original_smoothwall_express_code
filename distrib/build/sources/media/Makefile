@@ -68,7 +68,7 @@ cdrom/smoothwall.tgz:
 		wget \
 		iptables \
 		pciutils \
-		kernel \
+		kernel-runtime \
 		lilo \
 		openssl \
 		openssh \

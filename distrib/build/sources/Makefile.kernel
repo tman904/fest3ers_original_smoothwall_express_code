@@ -4,13 +4,10 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-include ../Makefile.conf
-include ../Makefile.versions
-
-KERNEL_DIR = $(SOURCES_DIR)/kernel/linux
+KERNEL_DIR = $(SOURCES_DIR)/kernel-$(TYPE)/linux
 IPTABLES_DIR = $(SOURCES_DIR)/iptables/iptables-$(IPTABLES_VER)
 
-PACKAGE = linux
+PACKAGE = kernel-$(TYPE)
 VERSION = $(KERNEL_VERSION)
 
 PATCH_O_MATIC_VER = 20050814
@@ -36,25 +33,26 @@ prepare: download
 
 	@make -C linux mrproper
 
-	@cp ../kernel.config linux/.config
+	@cp ../kernel.config-$(TYPE) linux/.config
 
 	@make -C linux CC=$(COMPILER) clean prepare
 
 	@make -C $(FREESWAN_TYPE)-$(FREESWAN_VER) CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) precheck verset kpatch
 
 apply-pom: prepare
-	@(export KERNEL_DIR=$(KERNEL_DIR); \
-	export IPTABLES_DIR=$(IPTABLES_DIR); \
-	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
-	./runme --batch CONNMARK; \
-	./runme --batch quake3-conntrack-nat; \
-	./runme --batch pptp-conntrack-nat; \
-	./runme --batch mms-conntrack-nat; \
-	./runme --batch sip-conntrack-nat; \
-	./runme --batch h323-conntrack-nat;)
+	@true
+#	@(export KERNEL_DIR=$(KERNEL_DIR); \
+#	export IPTABLES_DIR=$(IPTABLES_DIR); \
+#	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
+#	./runme --batch CONNMARK; \
+#	./runme --batch quake3-conntrack-nat; \
+#	./runme --batch pptp-conntrack-nat; \
+#	./runme --batch mms-conntrack-nat; \
+#	./runme --batch sip-conntrack-nat; \
+#	./runme --batch h323-conntrack-nat;)
 
 compile-kernel: apply-pom
-	@cp ../kernel.config linux/.config
+	@cp ../kernel.config-$(TYPE) linux/.config
 
 	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
 
@@ -79,10 +77,10 @@ package-unicorn: compile-unicorn
 	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_eth.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
-build-tarball: package-kernel package-unicorn
+build-tarball: package-kernel
 	@(cd $(PKG_ROOT); \
-	tar -zcvf $(TARGET_DIR)/smoothwall-kernel-$(KERNEL_VER).tar.gz .; \
-	tar -zxvf $(TARGET_DIR)/smoothwall-kernel-$(KERNEL_VER).tar.gz -C /);
+	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(KERNEL_VER).tar.gz .; \
+	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(KERNEL_VER).tar.gz -C /);
 
 clean:
 	@rm -f linux

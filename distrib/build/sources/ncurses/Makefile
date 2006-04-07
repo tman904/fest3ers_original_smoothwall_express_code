@@ -14,6 +14,8 @@ BASE_URL = ftp://ftp.gnu.org/gnu/ncurses/
 ifeq ($(BUILDENV), 1)
 CONFIG_OPTS = --with-shared \
     --without-debug --without-ada --enable-overwrite
+else
+CONFIG_OPTS = --with-shared
 endif
 
 include ../Makefile.rules
