@@ -13,7 +13,7 @@ BASE_URL = http://baud123.free.fr/eagle-usb/eagle-usb-2.3/
 
 EXTENSION = .tar.bz2
 
-CONFIG_OPTS = --with-kernel-src=$(SOURCES_DIR)/kernel/linux
+CONFIG_OPTS = --with-kernel-src=$(SOURCES_DIR)/kernel-runtime/linux
 
 COMPILE = yes
 INSTALL = yes

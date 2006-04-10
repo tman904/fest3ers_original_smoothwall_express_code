@@ -115,7 +115,6 @@ cdrom/smoothwall.tgz:
 		dhcp \
 		snort \
 		openswan \
-		eagle-usb \
 		wireless_tools \
 		coretree \
 	; do \
