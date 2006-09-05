@@ -10,7 +10,7 @@ include ../Makefile.versions
 PACKAGE = $(FREESWAN_TYPE)
 VERSION = $(FREESWAN_VER)
 
-BASE_URL = http://www.openswan.org/code/
+BASE_URL = http://www.openswan.org/download/
 
 #PATCH_FILE1 = openswan-paths.patch
 #PATCH_FILE2 = openswan-script-paths.patch
