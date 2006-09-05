@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = wireless_tools
-VERSION = 27
+VERSION = 28
 
 BASE_URL = http://pcmcia-cs.sourceforge.net/ftp/contrib/
 
