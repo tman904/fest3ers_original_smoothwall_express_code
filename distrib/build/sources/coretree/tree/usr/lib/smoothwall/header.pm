@@ -22,7 +22,7 @@ $|=1; # line buffering
 # Work out some various details from the various system files.
 # such as fixes number etc.
 
-$version = '3.0-panda';
+$version = '3.0-SpaceWeavil';
 
 $webuirevision = 'ui-3.5';
 $viewsize = 200;
@@ -202,9 +202,9 @@ sub showhovermenu
 	foreach my $item ( @tempmenu ){
 		my $width = 8 + (8 * length( $tr{ $item->{'title'} } ));
 		if ( defined $item->{'active'} and $item->{'active'} eq "true" ){
-			$html .= "<a href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
+			$html .= "<a class='menushade' href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
 		} else {
-			$html .= "<a href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
+			$html .= "<a class='menushade' href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
 		}
 		$span++;
 		$remaining -= $width;
@@ -275,19 +275,22 @@ END
 <table class='main'>
 <tr>
 	<td class='logo' rowspan='2'>
-		<a href="/cgi-bin/credits.cgi"><img src="/ui/img/logo.gif" alt="SmoothWall Express $version" title="SmoothWall Express $version"></a>
+<!--
+		<a href="/cgi-bin/credits.cgi"><img src="/ui/img/logo.gif" alt="SmoothWall Express $version" title="SmoothWall Express $version"></a> -->
 	</td><td class='header'>
+	<!--
 		<table>
 		<tr>
 			<td>
 				<img src="/ui/img/netstatus.label.gif" alt="current connection status" title="current connection status">
 			</td>
 			<td>
-				<a href="/cgi-bin/index.cgi"><img src="/ui/img/netstatus-wee.${currentconnection}.gif" alt="$currentconnection" title="$currentconnection">
+				<a href="/cgi-bin/index.cgi"><img src="/ui/img/netstatus-wee.${currentconnection}.gif" alt="$currentconnection" title="$currentconnection"> 
 			</td>
 		</tr>
 		</table>
-	</td>
+		-->
+	</td> 
 </tr>
 END
 		;
@@ -373,6 +376,7 @@ sub openbox
 <br/>
 <table class='box'>
 <tr>
+	<td style="background-image: url('/ui/img/faders/firewall.jpg'); background-position: top left; background-repeat: no-repeat; width: 57px;">&nbsp;</td>
 	<td>
 END
 	;

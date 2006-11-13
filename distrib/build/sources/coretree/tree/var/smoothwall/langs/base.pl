@@ -28,6 +28,7 @@
 
 # header.pl
 'sshome' => 'home',
+'ssinterfaces' => 'interfaces',
 'ssstatus' => 'status',
 'ssadvstatus' => 'advanced',
 'sstraffic graphs' => 'traffic graphs',

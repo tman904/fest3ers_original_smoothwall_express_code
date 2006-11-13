@@ -62,7 +62,7 @@ td {
 td.activetab {
 	border: 0px;
 	text-align: center;
-        font-size : 10pt;
+        font-size : 11px;
 	height: 20px;
 	font-weight: bold;
 	font-family: Arial, Helvetica, sans-serif;
@@ -73,7 +73,7 @@ td.activetab {
 
 td.inactivetab {
 	border: 0px;
-        font-size : 10pt;
+        font-size : 11px;
 	text-align: center;
 	height: 20px;
 	font-weight: normal;
@@ -86,7 +86,7 @@ td.inactivetab {
 
 td.endtab {
 	border: 0px;
-        font-size : 10pt;
+        font-size : 11px;
 	height: 20px;
 	font-weight: normal;
 	font-family: Arial, Helvetica, sans-serif;
@@ -101,7 +101,7 @@ td.endtab {
 
 
 td.mainbody {
-        font-size : 10pt;
+        font-size : 11px;
 	font-weight: normal;
 	font-family: Arial, Helvetica, sans-serif;
 	background-color: #f7f7f7;
@@ -132,7 +132,7 @@ table.warning {
 
 td.warning {
 	vertical-align: middle;
-	font-size: 11pt;
+	font-size: 11px;
 	color: red;
 	background-color: #ffe0e0;
 }
@@ -171,7 +171,7 @@ td.note {
 	text-align: center;
 	vertical-align: middle;
 	color: #000090;
-	font-size: 9pt;
+	font-size: 10px;
 	font-style: italic;
 }
 
@@ -179,7 +179,7 @@ td.expand {
 	text-align: left;
 	vertical-align: middle;
 	color: #000090;
-	font-size: 9pt;
+	font-size: 9px;
 	font-style: italic;
 	height: 20px;
 	overflow: hidden;
@@ -203,7 +203,7 @@ td.helpfooter {
 
 
 td.topend {
-        font-size : 10pt;
+        font-size : 11px;
 	height: 22px;
 	width: 4px;
 }
@@ -218,7 +218,7 @@ td.end {
 }
 
 td.bottom {
-        font-size : 10pt;
+        font-size : 11px;
 	height: 6px;
 	background-image: url( '/ui/img/bottom.jpg' );
 	background-position: top left;
@@ -226,7 +226,7 @@ td.bottom {
 }
 
 td.bottomright {
-        font-size : 10pt;
+        font-size : 11px;
 	height: 6px;
 	background-image: url( '/ui/img/bottomright.png' );
 	background-position: top left;
@@ -238,7 +238,7 @@ td.logo {
 	background-image: url( '/ui/img/banner.jpg' );
 	background-repeat: no-repeat;
 	background-position: top left;
-	height: 75px;
+	height: 65px;
 	padding: 0px;
 }
 
@@ -247,32 +247,34 @@ td.header {
 	background-image: url( '/ui/img/banner.jpg' );
 	background-repeat: no-repeat;
 	background-position: top right;
-	padding: 0px;
-	height: 45px;
+	height: 35px;
 	overflow:hidden;
 	padding: 0px;
 }
 
 td.mainmenu {
 	border: none;
-	font-size: 10pt;
+	font-size: 11px;
 	background-image: url( '/ui/img/banner.jpg' ); 
 	background-repeat: no-repeat;
 	background-position: bottom right;
 	text-align: right;
-	height: 30px;
+	height: 26px;
 	padding: 0px;
+	padding-right: 45px;
 }
 
 td.footer {
-	font-size: 10pt;
+	height: 28px;
+	font-size: 9px;
+	color: white;
 	background-image: url( '/ui/img/footer.jpg' );
 	background-repeat: no-repeat;
 	background-position: top left;
 }
 
 td.quicklink {
-	font-size: 10pt;
+	font-size: 11px;
 	background-image: url( '/ui/img/quicklink.jpg' );
 	background-repeat: no-repeat;
 	background-position: top right;
@@ -289,13 +291,13 @@ table.progressbar {
 }
 
 td.progressend {
-	height: 10px;
-	font-size: 8pt;	
+	height: 11px;
+	font-size: 8px;	
 }
 
 td.progressbar {
 	height: 18px;
-	font-size: 8pt;	
+	font-size: 8px;	
 }
 
 th {
@@ -325,30 +327,38 @@ a:hover {
 }
 
 a.menu {
-        font-size : 10pt;
+        font-size : 11px;
 	font-family: Arial, Helvetica, sans-serif;
-        color : #000000;
+        color: #a0a0e0;
         text-decoration : none;
 }
 
 a.menu:visited {
-        font-size : 10pt;
+        font-size : 11px;
 	font-family: Arial, Helvetica, sans-serif;
-        color : #000000;
+        color : #a0a0e0;
         text-decoration : none;
 }
 
-a.activemenu {
-        font-size : 10pt;
+a.menu:hover {
+        font-size : 11px;
 	font-family: Arial, Helvetica, sans-serif;
-        color : #e01000;
+        color : #e0e0e0;
+        text-decoration : none;
+}
+
+
+a.activemenu {
+        font-size : 11px;
+	font-family: Arial, Helvetica, sans-serif;
+        color : white;
         text-decoration : none;
 }
 
 a.activemenu:visited {
-        font-size : 10pt;
+        font-size : 11px;
 	font-family: Arial, Helvetica, sans-serif;
-        color : #e01000;
+        color : white;
         text-decoration : none;
 }
 
@@ -357,13 +367,21 @@ div.menu {
 	margin-top: 8px;
 	float: left;
 	position: absolute;
-	background-color: #ffd792;
+	background-color: black;
+        color : #a0a0e0;
 	text-align: left;
 	padding: 5px;
 	width: 150px;
-	filter:alpha(opacity=90);
-        -moz-opacity: 0.90;
-        opacity: 0.90; 
+}
+
+a.menushade {
+        color : #a0a0e0;
+	font-size: 11px;
+}
+
+a.menushade:hover {
+        color : #e0e0e0;
+	font-size: 11px;
 }
 
 div.menushaddow {

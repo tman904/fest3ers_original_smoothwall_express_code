@@ -73,6 +73,7 @@ cdrom/smoothwall.tgz:
 		openssl \
 		openssh \
 		apache \
+		smoothd \
 		squid \
 		HTML-Parser \
 		HTML-Tagset \
