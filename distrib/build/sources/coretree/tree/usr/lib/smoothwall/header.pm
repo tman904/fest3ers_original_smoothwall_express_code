@@ -11,7 +11,7 @@ require Exporter;
 # define the Exportlists.
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr );
+@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr tooltip );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -344,6 +344,7 @@ sub closepage
 	</td>
 </tr> 
 </table>
+	<script language='javascript' SRC='/ui/js/wz_tooltip.js'></script>
 END
 		;
 	}
@@ -376,7 +377,6 @@ sub openbox
 <br/>
 <table class='box'>
 <tr>
-	<td style="background-image: url('/ui/img/faders/firewall.jpg'); background-position: top left; background-repeat: no-repeat; width: 57px;">&nbsp;</td>
 	<td>
 END
 	;
@@ -752,5 +752,17 @@ sub connectedstate {
 	return $theconnstate;
 }
 
+sub tooltip
+{
+        my ( $tip, $options ) = @_;
+
+	my $oplist;
+
+	foreach my $option ( keys %$options ){
+		$oplist .= "this.$option = '$options->{$option}';"
+	}		
+
+        return "onMouseOver=\"$oplist return escape( $tip );\"";
+}
 
 1;
