@@ -134,7 +134,12 @@ if ($cgiparams{'ACTION'} eq $tr{'export'})
 sub displaypage
 {
 	my $head = qq{
-<script>
+<script type='text/javascript'>
+//<!--
+var addresses = new Array();
+var count = 0;
+var final_count = 0;
+
 function xmlhttpPost( type, query, element )
 {
         var xmlHttpReq = false;
@@ -147,7 +152,12 @@ function xmlhttpPost( type, query, element )
 		url = '/cgi-bin/ipinfo.cgi';
 		reqquery = 'IP=' + query + '&MODE=quick';
 		document.getElementById( element + 'lookup' ).innerHTML =  "looking";
+	} else if ( type == "block" ){
+		url = '/cgi-bin/ipblock.cgi';
+		reqquery = "SRC_IP=" + query + "&ACTION=$tr{'add'}";
+		document.getElementById( element + 'block' ).innerHTML =  "blocking";
 	}
+
 
         if (window.XMLHttpRequest) {
                 // Mozilla/Safari
@@ -172,49 +182,71 @@ function xmlhttpPost( type, query, element )
 function updatepage( type, query, id, response ){
 	if ( type == "lookup" ){
 		addresses[ query ] = response;
-		document.getElementById( id ).innerHTML += addresses[ query ];
-		document.getElementById( id + 'lookup' ).innerHTML =  "lookup";
-		document.getElementById( id + 'lookup' ).style.color = '#a0a0a0';
-		document.getElementById( id ).style.height = '200px';
-		document.getElementById( id ).style.width  = '420px';
+		document.getElementById(  id ).innerHTML += addresses[ query ];
+		document.getElementById(  id + 'lookup' ).innerHTML =  "lookup" ;
+		document.getElementById(  id + 'lookup' ).style.color = '#a0a0a0';
+		document.getElementById(  id ).style.height = '200px';
+		document.getElementById(  id ).style.width  = '420px';
+	} else if ( type == "block" ){
+		document.getElementById(  id + 'block' ).innerHTML =  "block" ;
+		document.getElementById(  id + 'block' ).style.color = '#a0a0a0';
 	}
+
 }
-
-
-var addresses = new Array();
-var count = 0;
-var final_count = 0;
 
 function update( address, id )
 {
-	var final = "<strong>" + address + "</strong><br/><div style='float: right;'>";
+	var finalt = "<strong>" + address + "</strong><br/><div style='float: right;'>";
 
 	if ( addresses[address] ){
-		document.getElementById( id ).style.height = '200px';
-		document.getElementById( id ).style.width  = '420px';
-		var lookup = "<span id='" + id + "lookup'><span style='color: #a0a0a0;'>lookup</span></span>";
-		final += lookup;
+		document.getElementById( 'a' + id ).style.height = '200px';
+		document.getElementById( 'a' + id ).style.width  = '420px';
+		var lookup = "<span id='a" + id + "lookup'><span style='color: #a0a0a0;'>lookup</span></span>";
+		finalt += lookup;
 	} else {
-		var lookup = "<span id='" + id + "lookup'><span style='color: blue; cursor: pointer;' onMouseOver=sub_menu_show('" + id + "'); onClick=lookup('" + address + "','" + id + "')>lookup</span></span>&nbsp;";
-		final += lookup;
+		var lookup = "<span id='a" + id + "lookup'><span style='color: blue; cursor: pointer;' onMouseOver=sub_menu_show('" + id + "'); onClick=lookup('" + address + "','a" + id + "')>lookup</span></span>&nbsp;";
+		finalt += lookup;
 	}
 
-	final += "<span id='" + id + "block'><span style='color: red; cursor: pointer;' onMouseOver=sub_menu_show('" + id + "'); onClick=block('" + address + "','" + id + "');>block</span></span></div>";
+	finalt += "<span id='a" + id + "block'><span style='color: red; cursor: pointer;' onMouseOver=sub_menu_show('" + id + "'); onClick=block('" + address + "','a" + id + "');>block</span></span></div>";
 
 	if ( addresses[address] ){
-		final += addresses[ address ];
+		finalt += addresses[ address ];
 	}	
 
-	document.getElementById( id ).innerHTML = final;
+	document.getElementById( 'a' + id ).innerHTML = finalt; 
 }
 
 function lookup( address, id ){
 	xmlhttpPost( "lookup", address, id );
 }
 
-</script>
-};
+function block( address, id ){
+	xmlhttpPost( "block", address, id );
+}
 
+//-->
+</script>
+<style type='text/css'>
+div.toolbox { 
+	width: 220px;
+	height: 40px;
+	display: none;
+	margin-top: 3px;
+	float: left;
+	position: absolute;
+	background-color: #f0f0f0;
+        color : black;
+	border: 1px #505050 solid;
+	text-align: left;
+	padding: 5px;
+	filter:alpha(opacity=96);
+        -moz-opacity: 0.96;
+        opacity: 0.96;
+	z-index: 3;
+	}
+</style>
+};
 	&showhttpheaders();
 	&openpage($tr{'firewall log'}, 1, $head, 'logs');
 	&openbigbox('100%', 'LEFT');
@@ -329,42 +361,26 @@ END
 ;
 
 	print <<END
-<table style='margin-left: 0px; margin-right: auto; width: 700px; border-collapse: collapse; border: 0px;'>
+<div style='width: 100%; overflow: auto; background-color: #d0d0d0;'>
+<table style='border-collapse: collapse; border: 0px;'>
 <tr>
-	<th style='width: 8%; border-right: solid 1px #909090;'>$tr{'time'}</th>
-	<th style='width: 16%; border-right: solid 1px #909090;'>Direction</th>
-	<th style='width: 8%; border-right: solid 1px #909090;'>$tr{'protocol'}</th>
-	<th style='width: 1%;'></th>
-	<th style='width: 15%;'>$tr{'source'}</th>
-	<th style='width: 2%; border-right: solid 1px #909090;'>&nbsp;</th>
-	<th style='width: 15%; border-right: solid 1px #909090;'>$tr{'src port'}</th>
-	<th style='width: 2%;'>&nbsp;</th>
-	<th style='width: 15%;'>$tr{'destination'}</th>
-	<th style='width: 2%; border-right: solid 1px #909090;'></th>
-	<th style='width: 16%;'>$tr{'dst port'}</th>
+	<th style='width: 70px;  border-right: solid 1px #909090;'>$tr{'time'}</th>
+	<th style='width: 90px;  border-right: solid 1px #909090;'>$tr{'in'} &raquo; $tr{'out'}</th>
+	<th style='width: 40px;  border-right: solid 1px #909090;'></th>
+	<th style='width: 1px;   '></th>
+	<th style='width: 115px; '>$tr{'source'}</th>
+	<th style='width: 7px;   border-right: solid 1px #909090;'></th>
+	<th style='width: 110px; border-right: solid 1px #909090;'>$tr{'src port'}</th>
+	<th style='width: 6px;   border-right: solid 1px #909090;'></th>
+	<th style='width: 1px;   '></th>
+	<th style='width: 115px; '>$tr{'destination'}</th>
+	<th style='width: 7px;   border-right: solid 1px #909090;'></th>
+	<th style='width: 108px; '>$tr{'dst port'}</th>
 </tr>
 </table>
+</div>
 <div style='width: 100%; height: 400px; overflow: auto;'>
-<style>
-div.toolbox { 
-	width: 220px;
-	height: 40px;
-	display: none;
-	margin-top: 3px;
-	float: left;
-	position: absolute;
-	background-color: #f0f0f0;
-        color : black;
-	border: 1px #505050 solid;
-	text-align: left;
-	padding: 5px;
-	filter:alpha(opacity=96);
-        -moz-opacity: 0.96;
-        opacity: 0.96;
-	}
-</style>
-<table style='margin-left: 0px; margin-right: auto; width: 700px; border-collapse: collapse; border: 0px; '>
-<tr>
+<table style='border-collapse: collapse; border: 0px; '>
 END
 ;
 
@@ -413,22 +429,25 @@ END
 		push @clear_sections, "$lines$dstaddr";
 
 		print <<END
-	<td style='width: 8%; text-align: center;'>$time</td>
-	<td style='width: 16%; text-align: center;'>$in &raquo; $out</td>
-	<td style='width: 8%; text-align: center;'>$protostr</td>
-	<td style='width: 1%; text-align: center;'>
-		<div onMouseOver="sub_menu_show('$lines$srcaddr')" onMouseOut='sub_menu_clear();' class='toolbox' id='$lines$srcaddr'></div>
+	<td style='width: 70px;  text-align: center; border-right: solid 1px #909090;'>$time</td>
+	<td style='width: 90px;  text-align: center; border-right: solid 1px #909090;'>$in &raquo; $out</td>
+	<td style='width: 40px;  text-align: center; border-right: solid 1px #909090;'>$protostr</td>
+	<td style='width: 1px;   text-align: center;'>
+		<div onMouseOver="sub_menu_show('$lines$srcaddr')" onMouseOut='sub_menu_clear();' class='toolbox' id='a$lines$srcaddr'></div>
 	</td>
-	<td style='width: 15%; text-align: left;'><span onMouseOver="this.style.color='blue'; update( '$srcaddr', '$lines$srcaddr' );" onClick="sub_menu_show('$lines$srcaddr');" onMouseOut="this.style.color='black'; sub_menu_clear();">$srcaddr</span></td>
-	<td style='width: 2%; text-align: center;' onClick="update( '$srcaddr', '$lines$srcaddr' ); sub_menu_show('$lines$srcaddr');" ><img src='/ui/img/down.png'></td>
-	<td style='width: 15%; text-align: left;'>$srcportstr</td>
-	<td style='width: 2%; text-align: center;'>&raquo;</td>
-	<td style='width: 1%; text-align: center;'>
-		<div onMouseOver="sub_menu_show('$lines$dstaddr')" onMouseOut='sub_menu_clear();' class='toolbox' id='$lines$dstaddr'></div>
+	<td style='width: 115px; text-align: left;'>
+		<input type='checkbox' name='ip' value='$srcaddr'/>
+		<span onClick="sub_menu_show('$lines$srcaddr', '$srcaddr');" onMouseOut="sub_menu_clear();">$srcaddr</span>
 	</td>
-	<td style='width: 15%; text-align: left;'><span onMouseOver="this.style.color='blue'; update( '$dstaddr', '$lines$dstaddr' );" onClick="sub_menu_show('$lines$dstaddr');" onMouseOut="this.style.color='black'; sub_menu_clear();">$dstaddr</span></td>
-	<td style='width: 2%; text-align: center;' onClick="update( '$dstaddr', '$lines$dstaddr' ); sub_menu_show('$lines$dstaddr');" ><img src='/ui/img/down.png'></td>
-	<td style='width: 16%; text-align: left;'>$dstportstr</td>
+	<td style='width: 7px; text-align: center; border-right: solid 1px #909090;'>
+		<img src='/ui/img/down.png' alt='tools' onClick="sub_menu_show('$lines$srcaddr', '$srcaddr');" >
+	</td>
+	<td style='width: 110px; text-align: left; border-right: solid 1px #909090;'>$srcportstr</td>
+	<td style='width: 6px;   text-align: center; border-right: solid 1px #909090;'>&raquo;</td>
+	<td style='width: 1px;   text-align: center;'><div onMouseOver="sub_menu_show('$lines$dstaddr')" onMouseOut='sub_menu_clear();' class='toolbox' id='a$lines$dstaddr'></div></td>
+	<td style='width: 115px; text-align: left;'><input type='checkbox' name='ip' value='$dstaddr'><span onMouseOver="update( '$dstaddr', '$lines$dstaddr' );" onClick="sub_menu_show('$lines$dstaddr');" onMouseOut="sub_menu_clear();">$dstaddr</span></td>
+	<td style='width: 7px;   text-align: center; border-right: solid 1px #909090;' onClick="update( '$dstaddr', '$lines$dstaddr' ); sub_menu_show('$lines$dstaddr');" ><img src='/ui/img/down.png' alt='tools'></td>
+	<td style='width: 108px; text-align: left; border-right: solid 1px #909090;'>$dstportstr</td>
 </tr>
 END
 		;
@@ -438,6 +457,14 @@ END
 	print <<END
 </table>
 </div>
+<table style='border-collapse: collapse; border: 0px; width: 100%; background-color: #d0d0d0;'>
+<tr>
+	<th style='text-align: right;'>
+		<input type='submit' name='ACTION' value='$tr{'lookup'}'>
+		<input type='submit' name='ACTION' value='$tr{'add to ip block'}'>
+	</th>
+</tr>
+</table>
 END
 ;
 
@@ -460,9 +487,9 @@ END
 		
 		if ( $page >= $start_page and $page <= $end_page ){
 			if ( $i == $start ){
-				print "<td style='vertical-align: top;text-align: center;'><a style='color: red; font-size: 12px;' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}''>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
+				print "<td style='vertical-align: top;text-align: center;'><a style='color: red; font-size: 12px;' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
 			} else {
-				print "<td style='vertical-align: top;text-align: center;'><a style='font-size: 12px;' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}''>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
+				print "<td style='vertical-align: top;text-align: center;'><a style='font-size: 12px;' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
 			}
 		}	
 	}
@@ -485,22 +512,27 @@ END
 	&closebox();
 
 	print <<END
-	<script>
+	<script type='text/javascript'>
+	//<!--
 		function sub_menu_clear( me )
 		{
 END
 ;
 
 	foreach my $option ( @clear_sections ){
-		print "\t\t\tif( me != '$option') document.getElementById('$option').style.display = 'none';\n";
+		print "\t\t\tif( me != '$option') document.getElementById('a$option').style.display = 'none';\n";
 	}
 
 print <<END
 		}
-		function sub_menu_show( what ){
+		function sub_menu_show( what, updatev ){
+			if ( updatev ){
+				update( updatev, what );
+			}
 			sub_menu_clear();
-			document.getElementById(what).style.display = 'block';
+			document.getElementById('a'+what).style.display = 'block';
 		}
+	//-->
 	</script>
 END
 	;

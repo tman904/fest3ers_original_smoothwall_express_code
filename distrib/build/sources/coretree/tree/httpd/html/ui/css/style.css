@@ -302,15 +302,16 @@ td.progressbar {
 
 th {
 	background-color: #d0d0d0;
-	font-weight: bold;
 }
 
 tr.light {
 	background-color: #e0e0e0;
+	font-size: 10px;
 }
 
 tr.dark {
 	background-color: #efefef;
+	font-size: 10px;
 }
 
 
