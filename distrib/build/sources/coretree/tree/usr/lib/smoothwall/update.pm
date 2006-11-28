@@ -1,3 +1,30 @@
+# SmoothWall Express 3.0 Update Mechanism 
+#
+# Common functions and procedures for updating a SmoothWall system
+#
+# (c) 2004-2006 SmoothWall Ltd
+# 
+# Original Author: Darren Taylor
+# Based upon updateslists.pl by Lawrence Manning and others
+# 
+# This Code is distributed under the terms of the GPL V2.0
+
+package update;
+require Exporter;
+
+@ISA = qw(Exporter)
+
+# Define the export lists .
+
+@EXPORT		= qw();
+@EXPORT_OK	= qw(downloadlist);
+%EXPORT_TAGS	= ( 
+			standard => [@EXPORT_OK]
+		  );
+
+# Download function, retrieves the Updates list from SmoothWall's website and stores 
+# it locally.
+
 sub downloadlist
 {
 	my %proxy;

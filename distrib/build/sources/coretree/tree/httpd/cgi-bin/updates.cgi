@@ -10,7 +10,7 @@ use IO::Socket;
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
-require '/var/smoothwall/updatelists.pl';
+use update qw( :standard );
 use smoothnet qw( :standard );
 
 &showhttpheaders();
@@ -426,7 +426,7 @@ END
 
 			print <<END
 <script>
-	document.getElementById('progress').style.width = '${comp}px;';
+	document.getElementById('progress').style.width = '${comp}px';
 </script>
 END
 ;
