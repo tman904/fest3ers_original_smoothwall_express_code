@@ -8,7 +8,7 @@ use File::Copy;
 # define the Exportlists.
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( download progress progress_bar update_bar $progress_store $download_store $server cancel clear_download_cache );
+@EXPORT_OK    = qw( download progress progress_bar update_bar $progress_store $download_store $server cancel clear_download_cache checkstatus );
 %EXPORT_TAGS  = (
 		standard   => [ @EXPORT_OK ],
 		);
@@ -91,9 +91,21 @@ sub progress
 	my ( $file ) = @_;
 
 	# check on the status of the download of $file
-	my ( $status_file, $status );
+	my ( $status_file, $status, $pid_file, $pidnumber );
 
 	my $log   = "$progress_store$file.log";
+	my $pid   = "$progress_store$file.pid";
+
+	unless( open ( $pid_file, "<$pid" ) ){
+		if ( -e "$download_store$file" ){
+			# download is completed ...
+			print STDERR "Download is complete...\n";
+			return ( "", "100%", "-", "$download_store$file" );
+		}
+
+		print STDERR "Cannot open $pid\n";
+		return "error";
+	}
 
 	unless( open ( $status_file, "<$log" ) ){
 		if ( -e "$download_store$file" ){
@@ -104,6 +116,7 @@ sub progress
 		print STDERR "Cannot open $log\n";
 		return "error";
 	}
+
 
 	my ( $down, $percent, $speed, $complete ) = ( 0, "0px", 0, "" );
 
@@ -133,6 +146,16 @@ sub progress
 		return ( $down, $percent, $speed, $final );
 	}
 
+	# get the PID and check it.
+	$pidnumber = <$pid_file>;
+
+	$status = &checkstatus( $pidnumber );
+
+	if ( $status != 1 ){
+		print STDERR "unable to get associated Process for $pidnumber $status\n";
+		return "error";
+	}
+
 	return ( $down, $percent, $speed );
 }
 
@@ -153,6 +176,19 @@ sub cancel
 	my $pid_number = <$pid_in>;
 	close $pid_in;
 
+	my $status = checkstatus( $pid_number );
+
+	if ( $status == 1 ){
+		kill 15, $pid_number;
+	}
+
+	downloadtidy( $file );
+}
+
+
+sub checkstatus
+{
+	my $pid_number = $_[0];
 	# check that this PID is a) running and b) belongs to wget...
 
 	if (open(FILE, "/proc/${pid_number}/status"))
@@ -165,16 +201,16 @@ sub cancel
 		close FILE;
 		if ($testcmd =~ /wget/)
 		{
-			print STDERR "W000T found something to kill $pid_number\n";
-			kill 15, $pid_number;
+			print STDERR "W000T found the process for $pid (it's running too)\n";
+			return 1;
 		} else {
 			print STDERR "This is not the process you're looking for\n";
+			return 0;
 		}
 	} else {
 		print STDERR "No process to kill, guess it's not there\n";
+		return 0;
 	}	
-
-	downloadtidy( $file );
 }
 
 sub downloadtidy

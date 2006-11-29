@@ -408,6 +408,8 @@ END
 END
 ;
 
+				print STDERR "Returned a rather happy $percent\n";
+
 				if ( $percent eq "100%" ){
 					$stop = 1;
 				} elsif( not defined $percent or $percent eq "" ){
@@ -419,7 +421,7 @@ END
 				sleep( 1 ); 
 			} while ( $stop == 0 );
 
-			( $down, $percent, $speed, $required{$req}{'file'} ) = &progress( $filename );
+			( $down, $percent, $speed, $required{$req}->{'file'} ) = &progress( $filename );
 
 			$complete++;
 			my $comp = $width_per_update * $complete; 
@@ -543,6 +545,7 @@ sub apply
 	{
 		chomp();
 		($id,$md5,$title,$description,$date,$url) = split(/\|/,$_);
+print STDERR "Checking MD5 Sum $md5 against $md5sum\n";
 		if ($md5sum =~ m/^$md5\s/)
 		{
 			$found = 1;
@@ -556,7 +559,7 @@ sub apply
 		tidy();
 		return undef;
 	}
-	unless (system("/usr/bin/tar", "xvfz", "/var/patches/$$/patch.tar.gz", "-C", "/var/patches/$$") == 0)
+	unless (system("/usr/bin/tar", "xfz", "/var/patches/$$/patch.tar.gz", "-C", "/var/patches/$$") == 0)
 	{
 		$errormessage = $tr{'this is not a valid archive'};
 		print STDERR "$errormessage";

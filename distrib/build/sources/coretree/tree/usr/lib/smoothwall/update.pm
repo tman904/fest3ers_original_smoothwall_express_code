@@ -12,7 +12,10 @@
 package update;
 require Exporter;
 
-@ISA = qw(Exporter)
+use lib "/usr/lib/smoothwall/";
+use header qw(:standard);
+
+@ISA = qw(Exporter);
 
 # Define the export lists .
 
