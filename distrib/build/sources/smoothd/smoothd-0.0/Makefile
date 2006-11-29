@@ -6,7 +6,7 @@ MAIN=main.cpp
 LIBS=-ldl /usr/lib/libsmoothd.so 
 BIN=smoothd
 
-MODULES=sysshutdown
+MODULES=sysshutdown sysinstall
 
 MODULEFLAGS = $(CXXFLAGS) -fPIC -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
 
@@ -30,4 +30,7 @@ clean:
 
 
 sysshutdown : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+
+sysinstall : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)

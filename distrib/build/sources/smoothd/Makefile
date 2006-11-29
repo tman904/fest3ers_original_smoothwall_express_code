@@ -19,6 +19,7 @@ install: compile
 	@install -D $(COMPILE_DIR)/smoothd.pm $(PKG_ROOT)/usr/lib/smoothwall/smoothd.pm
 
 	@install -D $(COMPILE_DIR)/sysshutdown.so $(PKG_ROOT)/usr/lib/smoothd/sysshutdown.so 
+	@install -D $(COMPILE_DIR)/sysinstall.so $(PKG_ROOT)/usr/lib/smoothd/sysinstall.so 
 
 all: install
 	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
