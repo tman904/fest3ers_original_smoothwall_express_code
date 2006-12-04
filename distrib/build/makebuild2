@@ -156,7 +156,7 @@ build rp-pppoe
 build ibod
 build dhcpcd
 build eciadsl-synch_bin
-build eciadsl-usermode 
+build eciadsl-usermode
 #build eagle-usb
 
 build dhcp
@@ -167,6 +167,10 @@ build wireless_tools
 
 build noip
 build ez-ipupdate
+
+build apr
+build apr-util
+build subversion
 
 build install
 
