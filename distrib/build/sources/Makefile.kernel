@@ -12,6 +12,7 @@ VERSION = $(KERNEL_VERSION)
 
 PATCH_O_MATIC_VER = 20050814
 UNICORN_VER = 0.9.0
+IPTABLEPROC_VER=0.1
 USR_VER = 1.08
 
 COMPILER = /opt/gcc-3.2.3/bin/gcc
@@ -21,12 +22,16 @@ download:
 	@$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	@$(DL_CMD) ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
+	# not downloading iptableproc yet...
 
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	@tar -jxvf $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/bast-$(UNICORN_VER).tgz
+	# and apply our unicorn patch
+	(cd unicorn; patch -p1 < ../../kernel-patches/unicorn.patch )
+	# not extracting the iptableproc download as no download yet.
 
 	@rm -f linux
 	@ln -s linux-$(KERNEL_VER) linux
@@ -60,8 +65,12 @@ compile-unicorn: compile-kernel
 	@make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)
 	@(cd unicorn/unicorn_pci; make CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR))
 
+# compile-iptableproc: compile-kernel
+#compile-iptableproc: 
+#	@make -C iptableproc CC=$(COMPILER) KERNEL_DIR=$(KERNEL_DIR)
+
 package-kernel: compile-kernel
-	@mkdir $(PKG_ROOT)
+	@mkdir -p $(PKG_ROOT)
 	@(cd $(PKG_ROOT); \
 	make -C $(KERNEL_DIR) CC=$(COMPILER) INSTALL_MOD_PATH=$(PKG_ROOT) modules_install; \
 	mkdir -p boot; \
@@ -71,13 +80,19 @@ package-kernel: compile-kernel
 	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config.new)
 
 package-unicorn: compile-unicorn
-	@mkdir $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
-	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_atm.ko \
+	
+	@mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+	@cp $(SOURCES_DIR)/kernel-runtime/unicorn/unicorn_pci/unicorn_pci_atm.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
-	@cp $(SOURCES_DIR)/kernel/unicorn/unicorn_pci/unicorn_pci_eth.ko \
+	@cp $(SOURCES_DIR)/kernel-runtime/unicorn/unicorn_pci/unicorn_pci_eth.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
-build-tarball: package-kernel
+# package-iptableproc: compile-iptableproc
+	# @mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+	# @cp $(SOURCES_DIR)/kernel-runtime/iptableproc/iptableproc.ko \
+		# $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+
+build-tarball: package-kernel  package-unicorn # package-iptableproc
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(KERNEL_VER).tar.gz .; \
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(KERNEL_VER).tar.gz -C /);
@@ -88,6 +103,7 @@ clean:
 	@rm -rf $(FREESWAN_TYPE)-$(FREESWAN_VER)
 	@rm -rf patch-o-matic-ng-$(PATCH_O_MATIC_VER)
 	@rm -rf unicorn
+	# dont clean out iptableproc - not downloaded
 	@rm -rf usr-sureconnect
 	@rm -rf $(PKG_ROOT)
 
@@ -99,6 +115,7 @@ packageinfo.html:
 	@cp -avR $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz /tmp/downloads
 	@cp -avR $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2 /tmp/downloads
 	@cp -avR $(DOWNLOADS_DIR)/unicorn-$(UNICORN_VER).tar.gz /tmp/downloads
+	# @cp -avR $(DOWNLOADS_DIR)/iptableproc-$(IPTABLEPROC_VER).tar.gz /tmp/downloads
 	@cp -avR $(DOWNLOADS_DIR)/usr-sureconnect.tar.gz /tmp/downloads
 	@echo "Kernel Download: <a href='http://www.uk.kernel.org/pub/linux/kernel/v2.4/linux-$(KERNEL_VER).tar.bz2'>http://www.uk.kernel.org/pub/linux/kernel/v2.4/linux-$(KERNEL_VER).tar.bz2</a>" >>/tmp/packageinfo.html
 	@echo "(<a href='downloads/linux-$(KERNEL_VER)'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
@@ -106,7 +123,8 @@ packageinfo.html:
 	@echo "(<a href='downloads/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
 	@echo "Netfilter Download: <a href='http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2'>http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2</a>" >>/tmp/packageinfo.html
 	@echo "(<a href='downloads/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
-	@echo "Unicoron Local mirror: <a href='downloads/unicorn-$(UNICORN_VER).tar.gz'>unicorn-$(UNICORN_VER).tar.gz</a>" >>/tmp/packageinfo.html
+	@echo "Unicorn Local mirror: <a href='downloads/unicorn-$(UNICORN_VER).tar.gz'>unicorn-$(UNICORN_VER).tar.gz</a>" >>/tmp/packageinfo.html
+	# @echo "Iptableproc Local mirror: <a href='downloads/iptableproc-$(IPTABLEPROC_VER).tar.gz'>iptableproc-$(IPTABLEPROC_VER).tar.gz</a>" >>/tmp/packageinfo.html
 	@echo "(<a href='downloads/usr-sureconnect.tar.gz'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
 	@echo "Patches:<br>" >>/tmp/packageinfo.html
 	@echo "<ul>" >>/tmp/packageinfo.html
