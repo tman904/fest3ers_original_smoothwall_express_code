@@ -9,13 +9,12 @@ diff -Nurb unicorn/unicorn_atm/unicorn_atmdrv.c unicorn.new/unicorn_atm/unicorn_
  #include <linux/config.h>
  #include <linux/version.h>
  #if defined(CONFIG_MODVERSIONS) && (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
-@@ -197,7 +198,8 @@
+@@ -197,7 +198,7 @@
  
  	atm_dev->link_rate = 0;	
  	atm_dev->signal = ATM_PHY_SIG_LOST;
 -	shutdown_atm_dev(atm_dev);
-+	// hmm - this func no longer seems to exist!
-+	// shutdown_atm_dev(atm_dev);
++	atm_dev_deregister(atm_dev);
  	drv->atm_dev = NULL;
  }
  
