@@ -16,12 +16,12 @@ install: compile
 	@install -o root -g nobody -m 4750 -D $(COMPILE_DIR)/listtables $(PKG_ROOT)/usr/sbin/listtables
 
 all: install
-	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C $(PKG_ROOT) .
+	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
 
 clean:
 	@make -C $(COMPILE_DIR) clean
 	@rm -rf $(PKG_ROOT)
-	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 
 download:
 	@true

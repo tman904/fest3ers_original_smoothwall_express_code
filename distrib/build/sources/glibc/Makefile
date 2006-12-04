@@ -46,8 +46,8 @@ install: compile
 	@touch $(PKG_ROOT)/etc/ld.so.conf
 	make -C $(COMPILE_DIR) install_root=$(PKG_ROOT) install
 
-$(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz: install
-	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C $(PKG_ROOT) .
-	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C / --exclude ./etc/localtime
+$(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install
+	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
+	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C / --exclude ./etc/localtime
 
 include ../Makefile.rules

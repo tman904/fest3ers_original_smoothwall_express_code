@@ -43,11 +43,11 @@ distrib:
 	@(cd distrib; rm -rf `find -name .svn`)
 
 all: distrib
-	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C distrib .
+	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C distrib .
 
 clean:
 	@rm -rf distrib
-	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 
 download:
 	@true

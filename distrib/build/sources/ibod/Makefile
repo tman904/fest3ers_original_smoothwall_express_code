@@ -16,9 +16,9 @@ install: compile
 	@install -D $(COMPILE_DIR)/ibod $(PKG_ROOT)/$(PKG_DIR)/sbin/ibod
 
 all: install
-	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C $(PKG_ROOT) .
+	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
 
 clean:
 	@rm -f $(COMPILE_DIR)/ibod
 	@rm -rf $(PKG_ROOT)
-	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz

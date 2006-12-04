@@ -41,9 +41,9 @@ install: compile
 	install -s -D src/support/htpasswd $(PKG_ROOT)/usr/bin/htpasswd; \
 	install -s -D src/support/htdigest $(PKG_ROOT)/usr/bin/htdigest);
 
-$(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz: install
+$(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install
 	@(cd $(PKG_ROOT); \
-	tar -zcvf $(TARGET_DIR)/smoothwall-$(TARBALL).tar.gz \
+	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz \
 	usr/sbin/httpd usr/bin/htpasswd usr/bin/htdigest);
 
 clean:

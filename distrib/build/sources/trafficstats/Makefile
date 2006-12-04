@@ -20,13 +20,13 @@ install: compile
 	@install -D $(COMPILE_DIR)/trafficmon $(PKG_ROOT)/$(PKG_DIR)/sbin/trafficmon
 
 all: install
-	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C $(PKG_ROOT) .
-	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C /
+	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
+	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /
 
 clean:
 	@make -C $(COMPILE_DIR) clean
 	@rm -rf $(PKG_ROOT)
-	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 
 packageinfo.html: clean
 	@echo "<li><span style='font-size:large;'>$(PACKAGE) $(VERSION)</span><br>" >>/tmp/packageinfo.html

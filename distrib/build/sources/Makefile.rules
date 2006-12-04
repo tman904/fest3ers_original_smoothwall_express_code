@@ -90,9 +90,9 @@ install: compile
 endif
 
 ifndef BUILDTARBALL
-$(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz: install
-	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C $(PKG_ROOT) .
-	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C /
+$(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install
+	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
+	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /
 endif
 
 ifndef CLEAN
@@ -120,4 +120,4 @@ packageinfo.html:
 
 endif
 
-all: $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz
+all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz

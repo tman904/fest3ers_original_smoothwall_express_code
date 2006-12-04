@@ -25,9 +25,9 @@ BUILDTARBALL = yes
 SQUID_BITS = ./usr/bin/ ./usr/libexec/ ./usr/sbin/squid \
              ./usr/etc/mime.conf ./usr/share/
 
-$(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz: install
-	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C $(PKG_ROOT) $(SQUID_BITS)
-	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(VERSION).tar.gz -C /
+$(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install
+	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) $(SQUID_BITS)
+	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /
 
 CONFIGURE = yes
 

@@ -9,7 +9,7 @@ include ../Makefile
 
 TARGET_DIR = /build/target/
 
-default: clean smoothwall-$(BASENAME).iso
+default: clean iso
 
 cdrom:
 	@mkdir cdrom
@@ -21,6 +21,34 @@ images: cdrom
 
 cdrom/smoothwall.tgz:
 	@mkdir distrib
+
+ifeq ($(TYPE), -devel)
+	@(for I in \
+		make \
+		autoconf \
+		automake \
+		binutils \
+		bison \
+		dejagnu \
+		gcc \
+		tcl \
+		apr \
+		apr-util \
+		subversion \
+	; do \
+		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
+		make -C ../$$I clean all; \
+			if [ $$? -ne 0 ]; then \
+				echo "$$I FAILED"; \
+				exit 0; \
+			fi; \
+		fi; \
+		echo "Unpacking $$I ..."; \
+		tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
+	done; \
+	);
+endif
+
 	@(for I in \
 		newt \
 		libsmooth+setup \
@@ -119,7 +147,7 @@ cdrom/smoothwall.tgz:
 		wireless_tools \
 		coretree \
 	; do \
-		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I-*.tar.gz ]; then \
+		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
 		make -C ../$$I clean all; \
 			if [ $$? -ne 0 ]; then \
 				echo "$$I FAILED"; \
@@ -127,11 +155,13 @@ cdrom/smoothwall.tgz:
 			fi; \
 		fi; \
 		echo "Unpacking $$I ..."; \
-		tar -zxf /$(TARGET_DIR)/smoothwall-$$I-*.tar.gz -C distrib; \
+		tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
 	done; \
 	);
 
+ifneq ($(TYPE), -devel)
 	@/build/striptree distrib
+endif
 
 	@echo "PRODUCT='$(PRODUCT_NAME)'" > distrib/var/smoothwall/main/productdata
 	@echo "VERSION='$(PRODUCT_VERSION)'" >> distrib/var/smoothwall/main/productdata
@@ -169,10 +199,10 @@ extracontent: cdrom
 	done);
 	@(cd cdrom; rm -rf `find -name CVS`)
 
-smoothwall-$(BASENAME).iso: images cdrom/smoothwall.tgz extracontent
-	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME).iso -J -c boot.cat \
+iso: images cdrom/smoothwall.tgz extracontent
+	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(TYPE).iso -J -c boot.cat \
 		-b images/$(BASENAME)-bootcdrom.img -V $(BASENAME) cdrom
-	@echo "smoothwall-$(BASENAME).iso build complete"
+	@echo "smoothwall-$(BASENAME)$(TYPE).iso build complete"
 
 clean:
 	@rm -rf cdrom distrib
