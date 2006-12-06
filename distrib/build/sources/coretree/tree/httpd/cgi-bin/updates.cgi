@@ -184,6 +184,54 @@ close PF;
 # Display options for adding / installing etc updates
 
 &openbox();
+
+my $available_count = 0;
+foreach my $update ( sort keys %updates ){
+	next if ( defined $updates{$update}{'installed'} );
+	$available_count ++;
+}
+
+my $height = 100;
+if ( $available_count > 3 ){
+	$height = 300;
+}
+
+if ( $available_count > 0 ){
+	print qq|<br/>
+		<div style='height: ${height}px; overflow: auto;'>
+		<table class='blank'>
+
+	|;
+
+	foreach my $update ( sort keys %updates ){
+		next if ( defined $updates{$update}{'installed'} );
+		print <<END
+		<tr>
+			<td style='width: 15%;' ><strong>$updates{$update}{'name'}</strong></td>
+			<td onClick="toggle('update-$update');" class='expand'>$updates{$update}{'summary'}...</td>
+			<td style='width: 10%; text-align: right;'>$updates{$update}{'date'}</td>
+		</tr>
+		<tr>
+			<td colspan='3'>
+			<table class='expand' id='update-$update'>
+			<tr>
+				<td>$updates{$update}{'description'}</td>
+			</tr>	
+			<tr>
+				<td style='text-align: right;'>
+					<a href='$updates{$update}{'info'}' target='_new'>$tr{'info'}</a>
+				</td>
+			</tr>
+			</table>
+			</td>
+		</tr>
+END
+	;
+	}
+
+	print "</table></div>";
+}
+
 print <<END
 <table class='blank'>
 <tr>
@@ -208,40 +256,7 @@ print <<END
 END
 ;
 &closebox();
-
 &openbox($tr{'available updates'});
-
-print qq|<br/><table class='blank'>
-|;
-
-foreach my $update ( sort keys %updates ){
-	next if ( defined $updates{$update}{'installed'} );
-	print <<END
-	<tr>
-		<td style='width: 15%;' ><strong>$updates{$update}{'name'}</strong></td>
-		<td onClick="toggle('update-$update');" class='expand'>$updates{$update}{'summary'}...</td>
-		<td style='width: 10%; text-align: right;'>$updates{$update}{'date'}</td>
-	</tr>
-	<tr>
-		<td colspan='3'>
-		<table class='expand' id='update-$update'>
-		<tr>
-			<td>$updates{$update}{'description'}</td>
-		</tr>	
-		<tr>
-			<td style='text-align: right;'>
-				<a href='$updates{$update}{'info'}' target='_new'>$tr{'info'}</a>
-			</td>
-		</tr>
-		</table>
-		<script>toggle('update-$update');</script>
-		</td>
-	</tr>
-END
-;
-}
-
-print "</table>";
 
 print <<END
 	<br/><strong>$tr{'installed updates'}</strong><br/>
