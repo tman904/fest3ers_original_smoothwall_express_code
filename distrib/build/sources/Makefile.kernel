@@ -80,17 +80,16 @@ package-kernel: compile-kernel
 	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config.new)
 
 package-unicorn: compile-unicorn
-	
 	@mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
-	@cp $(SOURCES_DIR)/kernel-runtime/unicorn/unicorn_pci/unicorn_pci_atm.ko \
+	@cp $(SOURCES_DIR)/kernel-$(TYPE)/unicorn/unicorn_pci/unicorn_pci_atm.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
-	@cp $(SOURCES_DIR)/kernel-runtime/unicorn/unicorn_pci/unicorn_pci_eth.ko \
+	@cp $(SOURCES_DIR)/kernel-$(TYPE)/unicorn/unicorn_pci/unicorn_pci_eth.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
-# package-iptableproc: compile-iptableproc
-	# @mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
-	# @cp $(SOURCES_DIR)/kernel-runtime/iptableproc/iptableproc.ko \
-		# $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+#package-iptableproc: compile-iptableproc
+#	@mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+#	@cp $(SOURCES_DIR)/kernel-$(TYPE)/iptableproc/iptableproc.ko \
+#		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
 build-tarball: package-kernel  package-unicorn # package-iptableproc
 	@(cd $(PKG_ROOT); \
