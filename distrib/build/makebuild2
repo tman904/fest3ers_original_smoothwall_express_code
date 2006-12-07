@@ -171,6 +171,7 @@ build ez-ipupdate
 build tcl
 build apr
 build apr-util
+build neon
 build subversion
 
 build install
