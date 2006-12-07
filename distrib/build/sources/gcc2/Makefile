@@ -6,9 +6,11 @@
 
 include ../Makefile.conf
 
-PACKAGE = gcc
+PACKAGE = gcc2
 #VERSION = 2.95.3
 VERSION = 3.2.3
+
+TARBALL = gcc-$(VERSION)
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gcc
 
