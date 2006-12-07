@@ -7,20 +7,10 @@ NOW=`date +%Y%m%d`
 
 cd /usr/src
 
-svn co https://svn.sourceforge.net/svnroot/smoothwall/trunk expresscore
-
 cd expresscore/distrib/build
 
 make predownload
 make build
-
-cd target/isos
-for I in *.iso; do
-	cp $I /global/nonvital/expressisos/$NOW-$I
-done
-cd ../../..
-
-cd /usr/src
 
 echo "=== BUILD END ==="
 date

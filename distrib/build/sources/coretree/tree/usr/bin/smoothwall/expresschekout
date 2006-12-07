@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd /usr/src
+
+svn co https://svn.sourceforge.net/svnroot/smoothwall/trunk expresscore
