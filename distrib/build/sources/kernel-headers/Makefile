@@ -7,6 +7,9 @@
 include ../Makefile.conf
 include ../Makefile.versions
 
+PACKAGE = kernel-headers
+VERSION = 0.0
+
 download:
 	-$(DL_CMD) http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2
 
@@ -16,14 +19,20 @@ install: download
 	make mrproper; \
 	make include/linux/version.h; \
 	make include/asm; \
-	mkdir -p /$(PKG_DIR)/include/asm; \
-	cp -v include/asm/* /$(PKG_DIR)/include/asm; \
-	cp -Rv include/asm-generic /$(PKG_DIR)/include; \
-	cp -Rv include/linux /$(PKG_DIR)/include; \
-	touch /$(PKG_DIR)/include/linux/autoconf.h)
+	mkdir -p /$(PKG_ROOT); \
+	mkdir -p /$(PKG_ROOT)/$(PKG_DIR)/include/asm; \
+	cp -v include/asm/* $(PKG_ROOT)/$(PKG_DIR)/include/asm; \
+	cp -Rv include/asm-generic $(PKG_ROOT)/$(PKG_DIR)/include; \
+	cp -Rv include/linux $(PKG_ROOT)/$(PKG_DIR)/include; \
+	touch $(PKG_ROOT)/$(PKG_DIR)/include/linux/autoconf.h)
+
+build-tarball: install
+	@(cd $(PKG_ROOT); \
+	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
+	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);
 
 clean:
 	rm -rf linux-$(KERNEL_VER)
 
-all: install
+all: build-tarball
 	

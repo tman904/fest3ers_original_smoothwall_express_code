@@ -24,6 +24,8 @@ cdrom/smoothwall.tgz:
 
 ifeq ($(TYPE), -devel)
 	@(for I in \
+		kernel-headers \
+		patch \
 		make \
 		autoconf \
 		automake \
