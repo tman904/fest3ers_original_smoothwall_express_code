@@ -175,4 +175,5 @@ build subversion
 
 build install
 
-build media
+docommand "regular ISO" "make -C sources/media"
+docommand "devel ISO" "make -C sources/media TYPE=-devel"
