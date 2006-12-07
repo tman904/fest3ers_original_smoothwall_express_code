@@ -93,8 +93,8 @@ package-unicorn: compile-unicorn
 
 build-tarball: package-kernel  package-unicorn # package-iptableproc
 	@(cd $(PKG_ROOT); \
-	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(KERNEL_VER).tar.gz .; \
-	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)-$(KERNEL_VER).tar.gz -C /);
+	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
+	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);
 
 clean:
 	@rm -f linux

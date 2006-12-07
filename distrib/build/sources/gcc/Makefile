@@ -80,6 +80,6 @@ install: compile
 endif
 
 libgcc:
-	@tar -zcvf $(TARGET_DIR)/smoothwall-libgcc-$(VERSION).tar.gz -C $(PKG_ROOT) /$(PKG_DIR)/lib/libgcc*
+	@tar -zcvf $(TARGET_DIR)/smoothwall-libgcc.tar.gz -C $(PKG_ROOT) /$(PKG_DIR)/lib/libgcc*
 
 include ../Makefile.rules
