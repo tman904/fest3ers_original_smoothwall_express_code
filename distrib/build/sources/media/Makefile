@@ -34,6 +34,8 @@ ifeq ($(TYPE), -devel)
 		dejagnu \
 		gcc \
 		tcl \
+		m4 \
+		neon \
 		apr \
 		apr-util \
 		subversion \
