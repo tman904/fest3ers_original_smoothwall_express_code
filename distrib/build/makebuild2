@@ -168,6 +168,7 @@ build wireless_tools
 build noip
 build ez-ipupdate
 
+build tcl
 build apr
 build apr-util
 build subversion
