@@ -16,7 +16,7 @@ BASE_URL = ftp://ftp.gnu.org/gnu/gcc
 
 COMPILE_DIR = $(DIR)-compile
 
-PKG_DIR = opt/$(PACKAGE)-$(VERSION)
+PKG_DIR = opt/$(TARBALL)
 
 PKG_ROOT = $(ROOT)/build/buildroot/$(PACKAGE)2
 
