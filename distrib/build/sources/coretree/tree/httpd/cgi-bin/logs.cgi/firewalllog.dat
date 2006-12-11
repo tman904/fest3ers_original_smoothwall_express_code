@@ -154,7 +154,7 @@ function xmlhttpPost( type, query, element )
 		document.getElementById( element + 'lookup' ).innerHTML =  "looking";
 	} else if ( type == "block" ){
 		url = '/cgi-bin/ipblock.cgi';
-		reqquery = "SRC_IP=" + query + "&ACTION=$tr{'add'}";
+		reqquery = "SRC_IP=" + query + "&ACTION=$tr{'add'}&TARGET=DROP&ENABLED=on";
 		document.getElementById( element + 'block' ).innerHTML =  "blocking";
 	}
 
