@@ -1,0 +1,23 @@
+<ipt_vis title="" 
+samples_per_sec="5"
+average_over="50"
+measuring="bytes"
+output_method="plain"
+output_format="kbit" 
+>
+
+<entry 
+name="eth0 IN" 
+table="mangle" 
+chain="prerouting-1" 
+rule="1" 
+bg_colour="black" 
+max_rate="1000" 
+/>
+
+
+<entry name="eth0 OUT" table="mangle" chain="postrouting-1" rule="1"
+bg_colour="black" max_rate="1000" />
+
+
+</ipt_vis>

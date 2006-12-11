@@ -1,0 +1,8 @@
+Iptableproc is a kernel module that gives access to iptables counters and other information 
+via the /proc filesystem.
+
+Written by Martin Houston <martin.houston@smoothwall.net>
+(c) Martin Houston 2006
+Released under the GPL v2
+
+Documentation to follow :)

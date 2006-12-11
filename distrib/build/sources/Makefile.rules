@@ -97,6 +97,7 @@ endif
 
 ifndef CLEAN
 clean:
+	echo "cleaning"
 	@rm -rf $(DIR)
 	@rm -rf $(COMPILE_DIR)
 ifndef BUILDENV
