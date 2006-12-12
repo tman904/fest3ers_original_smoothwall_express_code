@@ -19,8 +19,13 @@ images: cdrom
 	@make -C bootdisktwo
 	@make -C bootdiskone MEDIA=cdrom
 
-cdrom/smoothwall.tgz:
+initrd/initrd-$(KERNEL_VER).gz:
+	@make -C initrd
+
+cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 	@mkdir distrib
+
+	@install -D initrd/initrd-$(KERNEL_VER).gz distrib/boot/initrd-$(KERNEL_VER).gz
 
 ifeq ($(TYPE), -devel)
 	@(for I in \
@@ -39,6 +44,7 @@ ifeq ($(TYPE), -devel)
 		apr \
 		apr-util \
 		subversion \
+		screen \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
 		make -C ../$$I clean all; \
