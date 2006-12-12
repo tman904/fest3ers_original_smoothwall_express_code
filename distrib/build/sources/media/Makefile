@@ -45,6 +45,7 @@ ifeq ($(TYPE), -devel)
 		apr-util \
 		subversion \
 		screen \
+		diffutils \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
 		make -C ../$$I clean all; \
