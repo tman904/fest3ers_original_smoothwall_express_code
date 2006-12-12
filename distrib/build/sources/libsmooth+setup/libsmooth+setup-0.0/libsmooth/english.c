@@ -107,8 +107,8 @@ char *english_tr[] = {
 "Welcome to the SmoothWall Express installation program. Please visit our " \
 "homepage at http://www.smoothwall.org.  Selecting Cancel on any " \
 "of the following screens will reboot the computer.",
-/* TR_NO_IDE_HARDDISK */
-"No IDE harddisk found.",
+/* TR_NO_HARDDISK */
+"No harddisk found.",
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Select installation media",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
@@ -123,14 +123,14 @@ char *english_tr[] = {
 /* TR_INSERT_FLOPPY */
 "Please insert the SmoothWall Express driver diskette in the floppy drive.",
 /* TR_PREPARE_HARDDISK */
-"The installation program will now prepare the IDE harddisk on %s. " \
+"The installation program will now prepare the harddisk on %s. " \
 "First the disk will be partitioned, and then the partitions will have " \
 "a filesystem put on them.",
 /* TR_PREPARE_HARDDISK_WARNING */
 "!!! WARNING !!!",
 /* TR_PREPARE_HARDDISK_WARNING_LONG */
 "You are about to PERMANENTLY ERASE the contents of the harddisk. This will " \
-"OVERWRITE ALL DATA ON ALL PARTITIONS on your first IDE harddisk. If you " \
+"OVERWRITE ALL DATA ON ALL PARTITIONS on your harddisk. If you " \
 "would like to continue with the installation of SmoothWall Express, " \
 "press the Ok button. Otherwise press Cancel to ABORT the installation " \
 "process. There is NO UNDO FEATURE once this has been done.",
@@ -186,6 +186,10 @@ char *english_tr[] = {
 "Installing LILO...",
 /* TR_UNABLE_TO_INSTALL_LILO */
 "Unable to install LILO.",
+/* TR_SETTING_UP_BOOT_DRIVERS */
+"Setting up boot drivers...",
+/* TR_UNABLE_TO_SETUP_BOOT_DRIVERS */
+"Unable to set up boot drivers.",
 /* TR_UNABLE_TO_UNMOUNT_HARDDISK */
 "Unable to unmount harddisk.",
 /* TR_UNABLE_TO_UNMOUNT_CDROM */
@@ -271,6 +275,21 @@ char *english_tr[] = {
 /* TR_ENTER_NETWORK_DRIVER */
 "Failed to detect a network card automatically. Enter the driver and " \
 "optional parameters for the network card.",
+
+/* storage.c */
+/* TR_STORAGE_DRIVER_SELECT_OR_PROBE */
+"Please select whether you wish to auto-detect or manually select the storage driver " \
+"for the hardware in your system.",
+/* TR_UNABLE_TO_DETECT_ANY_STORAGE_INTERFACE */
+"Unable to detect any storage interface.",
+/* TR_LOOKING_FOR_STORAGE_INTERFACE (%s is the card) */
+"Looking for storage card: %s",
+/* TR_SELECT_STORAGE_DRIVER */
+"Storage device configuration",
+/* TR_SELECT_STORAGE_DRIVER_LONG */
+"Please select the correct driver for this system's mass storage device.",
+/* TR_FOUND_THE_FOLLOWING_STORAGE_DEVICE */
+"The following storage devices were found: %s",
 
 /*********/
 /* SETUP */

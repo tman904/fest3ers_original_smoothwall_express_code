@@ -11,7 +11,7 @@
 #include "libsmooth.h"
 
 extern FILE *flog;
-extern char *log;
+extern char *logname;
 
 extern char **ctr;
   
@@ -40,7 +40,7 @@ int mysystem(char *command)
 {
 	char mycommand[STRING_SIZE];
 	
-	snprintf(mycommand, STRING_SIZE, "%s >>%s 2>>%s", command, log, log);
+	snprintf(mycommand, STRING_SIZE, "%s >>%s 2>>%s", command, logname, logname);
 	fprintf(flog, "Running command: %s\n", command);
 	return system(mycommand);
 }
@@ -50,7 +50,7 @@ int mysystemnolog(char *command)
 {
 	char mycommand[STRING_SIZE];
 	
-	snprintf(mycommand, STRING_SIZE, "%s >>%s 2>>%s", command, log, log);
+	snprintf(mycommand, STRING_SIZE, "%s >>%s 2>>%s", command, logname, logname);
 	fprintf(flog, "Running command: NOT LOGGED\n");
 	return system(mycommand);
 }
@@ -160,7 +160,7 @@ int runcommandwithprogress(int width, int height, char *title, char *command,
 	newtDrawForm(f);
 	newtRefresh();
 	
-	snprintf(mycommand, STRING_SIZE, "%s 2>>%s", command, log);
+	snprintf(mycommand, STRING_SIZE, "%s 2>>%s", command, logname);
 	fprintf(flog, "Running command: %s\n", command);
 	
 	if (!(p = popen(command, "r")))

@@ -10,23 +10,35 @@
 
 #include <libsmooth.h>
 
-#define IDE_EMPTY 0
-#define IDE_CDROM 1
-#define IDE_HD 2
-#define IDE_UNKNOWN 3
+#define DISK_UNKNOWN -1
+#define DISK_EMPTY 0
+#define DISK_HD 1
+#define DISK_CDROM 2
 
 /* CDROMS and harddisks. */
-struct devparams
+struct blockdevice
 {
+	int present;
 	char devnode[STRING_SIZE];
-	int module;
-	char modulename[STRING_SIZE];
-	char options[STRING_SIZE];
+	char fmtpartdevnode[STRING_SIZE];
 };
 
-/* ide.c */
-int checkide(char letter);
-char findidetype(int type);
+struct storagedevicedriver
+{
+	char description[STRING_SIZE];
+	char path[STRING_SIZE];
+	char modulename[STRING_SIZE];
+	char moduleoptions[STRING_SIZE];
+};
+                                
+/* storagedevice.c */
+int initstoragedevices(void);
+int storagedevicedrvermenu(struct storagedevicedriver *sdd);
+int probestoragedevicedriver(struct storagedevicedriver *sdd);
+
+/* disk.c */
+int findharddiskorcdrom(struct blockdevice *bd, int type);
+int getdisksize(char *device);
 
 /* cdrom.c */
 int ejectcdrom(char *dev);
@@ -38,4 +50,4 @@ int networkmenu(struct keyvalue *ethernetkv);
 int downloadtarball(void);
 
 /* config.c */
-int writeconfigs(struct devparams *dp, struct keyvalue *ethernetkv, char *lang);
+int writeconfigs(struct blockdevice *hd, struct keyvalue *ethernetkv, char *lang);

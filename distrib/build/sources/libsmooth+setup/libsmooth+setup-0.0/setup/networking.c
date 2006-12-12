@@ -21,7 +21,7 @@
 #define CONFIG_TYPE_RED(c)	(c == 2 || c == 3 || c == 6 || c == 7)
 
 extern FILE *flog;
-extern char *log;
+extern char *logname;
 
 extern char **ctr;
 

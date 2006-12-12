@@ -16,9 +16,9 @@ for PROC_TYPE in up smp; do
 
 
 	if [ "$STORAGE_DRIVER" != "" ]; then
-		tar -cf /storagedriver.tar -C /lib/modules/${CURRENT}/kernel/drivers/ scsi/libata.o message/fusion/mptbase.o md/raid1.o $STORAGE_DRIVER
+		tar -cf /storagedriver.tar -C /lib/modules/${CURRENT}/kernel/drivers/ scsi/libata.ko $STORAGE_DRIVER
 	else
-		tar -cf /storagedriver.tar -C /lib/modules/${CURRENT}/kernel/drivers/ scsi/libata.o message/fusion/mptbase.o md/raid1.o
+		tar -cf /storagedriver.tar -C /lib/modules/${CURRENT}/kernel/drivers/ scsi/libata.ko
 	fi
 	
 	tar -xf /storagedriver.tar -C /mnt/initrd/lib
@@ -28,8 +28,7 @@ for PROC_TYPE in up smp; do
 #!/bin/sash
 
 -echo "Loading $1 driver"
-/bin/insmod /lib/scsi/libata.o
-/bin/insmod /lib/message/fusion/mptbase.o
+/bin/insmod /lib/scsi/libata.ko
 END
 
 	if [ "$STORAGE_DRIVER" != "" ]; then

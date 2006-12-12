@@ -22,7 +22,7 @@
 #define MAX_BOXES 7
 
 extern FILE *flog;
-extern char *log;
+extern char *logname;
 
 extern char **ctr;
 

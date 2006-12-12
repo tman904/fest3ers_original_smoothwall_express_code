@@ -41,6 +41,7 @@ default: clean
 	cp -aR ../etc/rc etc; chmod 755 etc/rc; \
 	cp -aR ../etc/halt etc; chmod 755 etc/halt; \
 	cp -aR ../etc/modules.conf etc; \
+	cp -aR ../etc/storagedevices etc; \
 	touch etc/ld.so.conf; \
 	/sbin/ldconfig -r .; \
 	strip bin/busybox bin/loader bin/iowrap lib/*; \

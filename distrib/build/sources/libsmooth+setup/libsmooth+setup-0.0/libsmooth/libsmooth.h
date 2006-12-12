@@ -41,6 +41,7 @@
 /* #define CONFIG_ROOT "" */
 
 #define STRING_SIZE 256
+#define BIG_STRING_SIZE 1024
 #define LETTERS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define NUMBERS "0123456789"
 #define LETTERS_NUMBERS LETTERS NUMBERS
@@ -74,7 +75,6 @@ int runcommandwithstatus(char *command, char *message);
 int runcommandwithstatusnolog(char *command, char *message);
 int checkformodule(char *module); 
 int touchfile(char *filename);
-
 
 /* netstuff.c */
 int changeaddress(struct keyvalue *kv, char *colour, int typeflag,

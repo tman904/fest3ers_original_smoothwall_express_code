@@ -27,7 +27,7 @@ clean :
 
 ######
 
-OBJS=main.o ide.o cdrom.o nic.o net.o config.o /usr/lib/libsmooth.o
+OBJS=main.o storagedevice.o disks.o cdrom.o nic.o net.o config.o /usr/lib/libsmooth.o
 
 install: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)
@@ -36,7 +36,8 @@ install: $(OBJS)
 	$(COMPILE) $< -o $@
 		
 main.o : main.c
-ide.o : ide.c
+storagedevice.o : storagedevice.c
+disks.o : disks.c
 cdrom.o : cdrom.c
 nic.o : nic.c
 net.o : net.c

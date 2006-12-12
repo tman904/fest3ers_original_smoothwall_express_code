@@ -11,7 +11,7 @@
 #include "setup.h"
 
 extern FILE *flog;
-extern char *log;
+extern char *logname;
 
 extern char **ctr;
  

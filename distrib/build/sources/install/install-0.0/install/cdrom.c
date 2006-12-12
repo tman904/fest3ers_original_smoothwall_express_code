@@ -11,7 +11,7 @@
 #include "install.h"
 
 extern FILE *flog;
-extern char *log;
+extern char *logname;
 
 extern char **ctr;
 
@@ -32,4 +32,3 @@ int ejectcdrom(char *dev)
 	
 	return 1;
 }	
-			                                                                                                                        

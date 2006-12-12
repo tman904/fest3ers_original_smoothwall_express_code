@@ -14,7 +14,7 @@
 #define URL_INSTALL 1
 
 FILE *flog = NULL;
-char *log;
+char *logname;
 
 char **ctr;
 
@@ -22,31 +22,30 @@ extern char *english_tr[];
 
 int main(int argc, char *argv[])
 {
-	char hdletter, cdromletter;		/* Drive letter holder. */
-	struct devparams hdparams, cdromparams;	/* Params for CDROM and HD */
+	int sddneeded = 0;
+	struct storagedevicedriver sdd;
+	struct blockdevice hd, cdrom;	/* Params for CDROM and HD */
 	int cdmounted;			/* Loop flag for inserting a cd. */ 
 	int rc;
 	char commandstring[STRING_SIZE];
-	char *installtypes[] = { "CDROM", "HTTP", NULL };
 	int installtype = CDROM_INSTALL; 
 	char *insertmessage, *insertdevnode;
 	char tarballfilename[STRING_SIZE];
-	int choice;
 	char shortlangname[10];
 	int allok = 0;
 	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle;
-	char disksize[STRING_SIZE];
 	char filename[STRING_SIZE];
 	int maximum_free, current_free;
 	int log_partition, boot_partition, root_partition, swap_partition;
+	struct keyvalue *hwprofilekv = initkeyvalues();
 
 	setenv("TERM", "linux", 0);
 
 	sethostname("smoothwall", 10);
 	
-	memset(&hdparams, 0, sizeof(struct devparams));
-	memset(&cdromparams, 0, sizeof(struct devparams));
+	memset(&hd, 0, sizeof(struct blockdevice));
+	memset(&cdrom, 0, sizeof(struct blockdevice));
 
 	/* Log file/terminal stuff. */
 	if (argc >= 2)
@@ -57,7 +56,7 @@ int main(int argc, char *argv[])
 	else
 		return 0;
 	
-	log = argv[1];
+	logname = argv[1];
 	
 	fprintf(flog, "Install program started.\n");
 
@@ -71,48 +70,29 @@ int main(int argc, char *argv[])
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 
 	newtWinMessage(TITLE, ctr[TR_OK], ctr[TR_WELCOME]);
-						
+
+	/* Preapre storage drivers and load them, only if we haven't
+	 * got a IDE disk. */
+	initstoragedevices();
+	if (!(findharddiskorcdrom(&hd, DISK_HD)))
+		sddneeded = probestoragedevicedriver(&sdd);
+							
 	/* Get device letter for the IDE HD.  This has to succeed. */
-	if (!(hdletter = findidetype(IDE_HD)))
+	if (!(findharddiskorcdrom(&hd, DISK_HD)))
 	{
-		errorbox(ctr[TR_NO_IDE_HARDDISK]);
+		errorbox(ctr[TR_NO_HARDDISK]);
 		goto EXIT;
 	}
-	
-	/* Make the hdparms struct and print the contents. */
-	snprintf(hdparams.devnode, STRING_SIZE, "/dev/hd%c", hdletter);
-	hdparams.module = 0;
 
-	rc = newtWinMenu(ctr[TR_SELECT_INSTALLATION_MEDIA], 
-		ctr[TR_SELECT_INSTALLATION_MEDIA_LONG],
-		50, 5, 5, 6, installtypes, &installtype, ctr[TR_OK],
-		ctr[TR_CANCEL], NULL);
-	
-	if (rc == 2)
-		goto EXIT;	
+	if (!(findharddiskorcdrom(&cdrom, DISK_CDROM)))
+		installtype = URL_INSTALL;
+	else
+		installtype = CDROM_INSTALL;
 	
 	if (installtype == CDROM_INSTALL)
-	{	
-		/* First look for an IDE CDROM. */
-		if (!(cdromletter = findidetype(IDE_CDROM)))
-		{
-			/* If it fails, go the CDROM menu. */
-//			fprintf(flog, "No IDE CDROM found.\n");
-//			if (!(cdrommenu(&cdromparams)))
-//			{
-				/* Didn't work, oops. */
-				errorbox(ctr[TR_NO_IDE_CDROM]);
-				goto EXIT;
-//			}
-		}
-		else
-		{
-			snprintf(cdromparams.devnode, STRING_SIZE, "/dev/hd%c", cdromletter);
-			cdromparams.module = 0;
-		}
-		
+	{
 		insertmessage = ctr[TR_INSERT_CDROM];
-		insertdevnode = cdromparams.devnode;
+		insertdevnode = cdrom.devnode;
 
 		/* Try to mount /cdrom in a loop. */
 		cdmounted = 0;
@@ -131,7 +111,7 @@ int main(int argc, char *argv[])
 	}
 
 	rc = newtWinChoice(TITLE, ctr[TR_OK], ctr[TR_CANCEL],
-		ctr[TR_PREPARE_HARDDISK], hdparams.devnode);
+		ctr[TR_PREPARE_HARDDISK], hd.devnode);
 	if (rc != 1)
 		goto EXIT;
 
@@ -140,19 +120,11 @@ int main(int argc, char *argv[])
 	if (rc != 1)
 		goto EXIT;
 
-
 	/* Partition, mkswp, mkfs. */
 	/* before partitioning, first determine the sizes of each
 	 * partition.  In order to do that we need to know the size of
-	 * the disk.  we can get the disk size from
-	 * /proc/ide/hda/capacity.  unfortunately, it appears that this
-	 * number is the "raw" number and makes you think you have more
-	 * disk space than you really do.  We'll cope... */
-	snprintf(filename, STRING_SIZE, "/proc/ide/hd%c/capacity", hdletter);
-	handle = fopen(filename, "r");
-	fgets(disksize, STRING_SIZE, handle);
-	fclose(handle);
-	maximum_free = atoi(disksize) / 2048;
+	 * the disk. */
+	maximum_free = getdisksize(hd.devnode) / 1024;
 	
 	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition;
@@ -172,71 +144,74 @@ int main(int argc, char *argv[])
 		boot_partition, swap_partition, log_partition);
 	fclose(handle);		
 
-	snprintf(commandstring, STRING_SIZE, "/bin/sfdisk -uM %s < /tmp/partitiontable", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/sfdisk -uM %s < /tmp/partitiontable", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s1", hdparams.devnode);	
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s1", hd.devnode);	
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mkswap %s2", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/mkswap %s2", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s3", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s3", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_LOG_FILESYSTEM]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s4", hdparams.devnode);	
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s4", hd.devnode);	
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
 		goto EXIT;
 	}
 	/* Mount harddisk. */
-	snprintf(commandstring, STRING_SIZE, "/sbin/mount %s4 /harddisk", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/sbin/mount %s4 /harddisk", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_ROOT_FILESYSTEM]);
 		goto EXIT;
 	}
 	mkdir("/harddisk/boot", S_IRWXU|S_IRWXG|S_IRWXO);
-	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);	
+	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);
 	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
 	
-	snprintf(commandstring, STRING_SIZE, "/sbin/mount %s1 /harddisk/boot", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/sbin/mount %s1 /harddisk/boot", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_BOOT_FILESYSTEM]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/swapon %s2", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/swapon %s2", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_SWAP_PARTITION]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_SWAP_PARTITION]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/sbin/mount %s3 /harddisk/var/log", hdparams.devnode);
+	snprintf(commandstring, STRING_SIZE, "/sbin/mount %s3 /harddisk/var/log", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_LOG_FILESYSTEM]);
 		goto EXIT;
 	}
 
-	/* Network driver and params. */
-	if (!(networkmenu(ethernetkv)))
+	if (installtype == URL_INSTALL)
 	{
-		errorbox(ctr[TR_NETWORK_SETUP_FAILED]);
-		goto EXIT;
+		/* Network driver and params. */
+		if (!(networkmenu(ethernetkv)))
+		{
+			errorbox(ctr[TR_NETWORK_SETUP_FAILED]);
+			goto EXIT;
+		}
 	}
 
 	/* Either use traball from cdrom or download. */
@@ -273,6 +248,16 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	replacekeyvalue(hwprofilekv, "STORAGE_DEVNODE", hd.devnode);
+	replacekeyvalue(hwprofilekv, "CDROM_DEVNODE", cdrom.devnode);
+	if (strlen(sdd.modulename))
+		snprintf(filename, STRING_SIZE - 1, "%s/%s.ko", sdd.path, sdd.modulename);
+	else
+		strncpy(filename, "", STRING_SIZE - 1);
+	replacekeyvalue(hwprofilekv, "STORAGE_DRIVER", filename);
+	replacekeyvalue(hwprofilekv, "STORAGE_DRIVER_OPTIONS", sdd.moduleoptions);
+	writekeyvalues(hwprofilekv, "/harddisk/" CONFIG_ROOT "/main/hwprofile");
+
 	if (runcommandwithstatus("/bin/chroot /harddisk /sbin/depmod -a",
 		ctr[TR_CALCULATING_MODULE_DEPENDANCIES]))
 	{
@@ -280,7 +265,26 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-	if (!(writeconfigs(&hdparams, ethernetkv, shortlangname)))
+
+	if (strlen(sdd.modulename))
+	{
+		snprintf(commandstring, STRING_SIZE - 1, "/bin/chroot /harddisk /usr/bin/installer/makeinitrd %s/%s.o \"%s\"", sdd.path, sdd.modulename, sdd.moduleoptions);
+		if (runcommandwithstatus(commandstring, ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+		{
+			errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+			goto EXIT;
+		}               
+	}
+	else
+	{
+		if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/installer/makeinitrd", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+		{
+			errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+			goto EXIT;
+		}
+	}
+
+	if (!(writeconfigs(&hd, ethernetkv, shortlangname)))
 	{
 		errorbox(ctr[TR_ERROR_WRITING_CONFIG]);
 		goto EXIT;
@@ -301,7 +305,7 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		}
 
-		if (!(ejectcdrom(cdromparams.devnode)))
+		if (!(ejectcdrom(cdrom.devnode)))
 		{
 			errorbox(ctr[TR_UNABLE_TO_EJECT_CDROM]);
 			goto EXIT;

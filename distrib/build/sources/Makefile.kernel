@@ -59,7 +59,7 @@ apply-pom: prepare
 compile-kernel: apply-pom
 	@cp ../kernel.config-$(TYPE) linux/.config
 
-	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
+	@make -C linux CC=$(COMPILER) clean oldconfig menuconfig dep bzImage modules
 
 compile-unicorn: compile-kernel
 	@make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)
@@ -90,7 +90,7 @@ package-iptableproc: compile-iptableproc
 	@cp $(SOURCES_DIR)/kernel-runtime/iptableproc/iptableproc.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
-build-tarball: package-kernel  package-unicorn package-iptableproc
+build-tarball: package-kernel package-unicorn package-iptableproc
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);
@@ -101,7 +101,6 @@ clean:
 	@rm -rf $(FREESWAN_TYPE)-$(FREESWAN_VER)
 	@rm -rf patch-o-matic-ng-$(PATCH_O_MATIC_VER)
 	@rm -rf unicorn
-	# dont clean out iptableproc - not downloaded
 	@rm -rf usr-sureconnect
 	@rm -rf $(PKG_ROOT)
 

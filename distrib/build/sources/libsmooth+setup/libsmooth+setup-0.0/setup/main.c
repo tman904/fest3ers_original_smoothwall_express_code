@@ -11,7 +11,7 @@
 #include "setup.h"
 
 FILE *flog = NULL;
-char *log;
+char *logname;
 
 char **ctr = NULL;
 
@@ -40,11 +40,11 @@ int main(int argc, char *argv[])
 			
 	/* Log file/terminal stuff. */
 	if (argc >= 2)
-		log = argv[1];	
+		logname = argv[1];	
 	else
-		log = strdup("/root/setup.log");
+		logname = strdup("/root/setup.log");
 
-	if (!(flog = fopen(log, "w+")))
+	if (!(flog = fopen(logname, "w+")))
 	{
 		printf("Couldn't open log terminal\n");
 		return 1;
