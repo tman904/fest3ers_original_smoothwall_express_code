@@ -134,6 +134,10 @@ echo "Loading USB subsystem"
 /sbin/modprobe uhci_hcd 2> /dev/null
 mount -t usbfs none /proc/bus/usb
 
+echo "Loading filesystems"
+/sbin/modprobe msdos
+/sbin/modprobe vfat
+
 echo "Running /etc/rc.d/rc.network"
 . /etc/rc.d/rc.network
 

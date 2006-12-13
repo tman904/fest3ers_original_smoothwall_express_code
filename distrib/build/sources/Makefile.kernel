@@ -63,7 +63,7 @@ apply-pom: prepare
 compile-kernel: apply-pom
 	@cp ../kernel.config-$(TYPE) linux/.config
 
-	@make -C linux CC=$(COMPILER) clean oldconfig menuconfig dep bzImage modules
+	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
 
 compile-unicorn: compile-kernel
 	@make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)
