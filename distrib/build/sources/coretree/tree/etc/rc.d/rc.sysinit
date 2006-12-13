@@ -137,6 +137,7 @@ mount -t usbfs none /proc/bus/usb
 echo "Loading filesystems"
 /sbin/modprobe msdos
 /sbin/modprobe vfat
+/sbin/modprobe nls_cp437
 
 echo "Running /etc/rc.d/rc.network"
 . /etc/rc.d/rc.network
