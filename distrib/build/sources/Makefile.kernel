@@ -17,6 +17,10 @@ USR_VER = 1.08
 
 COMPILER = /opt/gcc-3.2.3/bin/gcc
 
+ifeq ($(TYPE), runtime)
+RUNTIME_PACKAGES = package-iptableproc
+endif
+
 download:
 	@$(DL_CMD) http://www.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2
 	@$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
@@ -90,7 +94,7 @@ package-iptableproc: compile-iptableproc
 	@cp $(SOURCES_DIR)/kernel-runtime/iptableproc/iptableproc.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
-build-tarball: package-kernel package-unicorn package-iptableproc
+build-tarball: package-kernel package-unicorn $(RUNTIME_PACKAGES)
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);
