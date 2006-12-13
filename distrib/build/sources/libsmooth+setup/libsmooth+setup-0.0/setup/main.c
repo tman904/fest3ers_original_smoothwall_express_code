@@ -86,6 +86,19 @@ int main(int argc, char *argv[])
 
 	if (automode == 0)
 	{
+		sections[0] = ctr[TR_RESTORE_CONFIGURATION];
+		sections[1] = ctr[TR_KEYBOARD_MAPPING];
+		sections[2] = ctr[TR_HOSTNAME];
+		sections[3] = ctr[TR_WEB_PROXY];
+		sections[4] = ctr[TR_ISDN_CONFIGURATION];
+		sections[5] = ctr[TR_ADSL_CONFIGURATION];
+		sections[6] = ctr[TR_NETWORKING];	
+		sections[7] = ctr[TR_DHCP_SERVER_CONFIGURATION],
+		sections[8] = ctr[TR_ROOT_PASSWORD];
+		sections[9] = ctr[TR_SETUP_PASSWORD];
+		sections[10] = ctr[TR_ADMIN_PASSWORD];
+		sections[11] = NULL;	
+	
 		usbfail = 1;
 		if (!stat("/proc/bus/usb/devices", &statbuf))
 			usbfail = 0;
@@ -170,10 +183,10 @@ int main(int argc, char *argv[])
 		usbfail = 1;
 		if (!stat("/proc/bus/usb/devices", &statbuf))
 			usbfail = 0;
-		
+				
 		if (newtWinChoice(TITLE, ctr[TR_NO], ctr[TR_YES],
 			ctr[TR_RESTORE_LONG]) != 1)
-                {
+		{
 			if (!(handlerestore()))
 				goto EXIT;
 		}
@@ -185,24 +198,57 @@ int main(int argc, char *argv[])
 
 		if (!performedrestore)
 		{
-			if (!(handlewebproxy()))
-				goto EXIT;	
-			if (!(handleisdn()))
-				goto EXIT;
-			if (!(handleadsl()))
-				goto EXIT;
-			if (!(handlenetworking()))
-				goto EXIT;
-			if (!(handledhcp()))
-				goto EXIT;
-			if (!(handleadminpassword()))
-				goto EXIT;
-		}
+			choice = 0;
+			
+			for (;;)
+			{		
+				sections[0] = ctr[TR_WEB_PROXY];
+				sections[1] = ctr[TR_ISDN_CONFIGURATION];
+				sections[2] = ctr[TR_ADSL_CONFIGURATION];
+				sections[3] = ctr[TR_NETWORKING];	
+				sections[4] = ctr[TR_DHCP_SERVER_CONFIGURATION],
+				sections[5] = NULL;	
+	
+				rc = newtWinMenu(ctr[TR_SECTION_MENU],
+					ctr[TR_SELECT_THE_ITEM], 50, 5, 5, 8,
+					sections, &choice, ctr[TR_OK], ctr[TR_FINISHED], NULL);
+				
+				if (rc == 2)
+					break;
+				
+				switch (choice)
+				{
+					case 0:
+						handlewebproxy();
+						break;
+						
+					case 1:
+						handleisdn();
+						break;
+	
+					case 2:
+						handleadsl();
+						break;
+					
+					case 3:
+						handlenetworking();
+						break;
+						
+					case 4:
+						handledhcp();
+						break;
+	
+					default:
+						break;
+				}
+			}
+		}	
+
+		if (!(handleadminpassword()))
+			goto EXIT;
 		if (!(handlerootpassword()))
 			goto EXIT;
-		if (!(handlesetuppassword()))
-			goto EXIT;
-
+	
 		if (!usbfail)
 			mysystem("/bin/umount /proc/bus/usb");
 

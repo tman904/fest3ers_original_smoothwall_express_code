@@ -16,6 +16,7 @@
 #define DEFAULT_GATEWAY 2
 #define DNSGATEWAY_TOTAL 3
 
+#define CONFIG_TYPE_GREEN(c)	(1)
 #define CONFIG_TYPE_ORANGE(c)	(c == 1 || c == 3 || c == 5 || c == 7)
 #define CONFIG_TYPE_PURPLE(c)	(c == 4 || c == 5 || c == 6 || c == 7)
 #define CONFIG_TYPE_RED(c)	(c == 2 || c == 3 || c == 6 || c == 7)
@@ -287,13 +288,6 @@ int drivermenu(void)
 
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
-	
-	if (configtype == 0)
-	{
-		freekeyvalues(kv);
-		errorbox(ctr[TR_YOUR_CONFIGURATION_IS_SINGLE_GREEN_ALREADY_HAS_DRIVER]);
-		return 0;
-	}
 
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
 	
@@ -305,6 +299,7 @@ int drivermenu(void)
 	findkey(kv, "GREEN_DEV", dev);
 	DisplayNicInfoWithMAC(temp1, sizeof(temp1), "GREEN", dev, temp);
 	strcat(message, temp1);
+
 	if (CONFIG_TYPE_ORANGE(configtype))
 	{
 		strcpy(driver, ""); findkey(kv, "ORANGE_DISPLAYDRIVER", driver);
@@ -355,8 +350,9 @@ int changedrivers(void)
 	int rc;
 	int c;
 	int needcards, sofarallocated, countofcards, toallocate;
+	char *green = "GREEN";
 	char *orange = "ORANGE";
-	char *blue = "PURPLE";
+	char *purple = "PURPLE";
 	char *red = "RED";
 	char *sections[3];
 	int choice;
@@ -371,30 +367,27 @@ int changedrivers(void)
 		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
 		return 0;
 	}
-
+	
 	strcpy(temp, "0"); findkey(kv, "CONFIG_TYPE", temp);
 	configtype = atol(temp);
-
-	runcommandwithstatus("/etc/rc.d/rc.netaddress.down NOTGREEN",
+	
+	runcommandwithstatus("/etc/rc.d/rc.netaddress.down",
 		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 	
 	/* Remove all modules not needed for green networking. */
 	c = 0;
-	strcpy(driver, ""); findkey(kv, "GREEN_DRIVER", driver);
 	while (nics[c].modulename)
 	{
-		if (strcmp(nics[c].modulename, driver) != 0)
+		if (checkformodule(nics[c].modulename))
 		{
-			if (checkformodule(nics[c].modulename))
-			{
-				sprintf(temp, "/sbin/rmmod %s", nics[c].modulename);
-				mysystem(temp);
-			}
+			sprintf(temp, "/sbin/rmmod %s", nics[c].modulename);
+			mysystem(temp);
 		}
 		c++;
 	}
 	
 	/* Blank them so the rc.netaddress.up dosnt get confused. */
+	replacekeyvalue(kv, "GREEN_DEV", "");
 	replacekeyvalue(kv, "ORANGE_DEV", "");
 	replacekeyvalue(kv, "PURPLE_DEV", "");
 	replacekeyvalue(kv, "RED_DEV", "");
@@ -409,14 +402,10 @@ int changedrivers(void)
 		needcards = 4;
 
 	/* This is the green card. */		
-	sofarallocated = 1;
+	sofarallocated = 0;
 
-	findkey(kv, "GREEN_DRIVER", currentdriver);
-	findkey(kv, "GREEN_DRIVER_OPTIONS", currentdriveroptions);
-	strcpy(displaydriver, currentdriver);
-	
-	if (countcards() > 1)
-		strcpy(currentdriver, "");
+	strcpy(displaydriver, "");
+	strcpy(currentdriver, "");
 		
 	abort = 0;
 	/* Keep going till all cards are got, or they give up. */
@@ -442,22 +431,18 @@ int changedrivers(void)
 			cardInfo[sizeof(cardInfo)-1] = '\0';
 			sprintf(message, ctr[TR_UNCLAIMED_DRIVER], cardInfo);
 			c = 0; choice = 0;
+			strcpy(temp, ""); findkey(kv, "GREEN_DEV", temp);
+			if (CONFIG_TYPE_GREEN(configtype) &&!strlen(temp))
+				sections[c++] = green;
 			strcpy(temp, ""); findkey(kv, "ORANGE_DEV", temp);
 			if (CONFIG_TYPE_ORANGE(configtype) && !strlen(temp))
-			{
-				sections[c] = orange;
-				c++;
-			}
-			strcpy(temp, "");
-			findkey(kv, "PURPLE_DEV", temp);
+				sections[c++] = orange;
+			strcpy(temp, ""); findkey(kv, "PURPLE_DEV", temp);
 			if (CONFIG_TYPE_PURPLE(configtype) && !strlen(temp))
-				sections[c++] = blue;
+				sections[c++] = purple;
 			strcpy(temp, ""); findkey(kv, "RED_DEV", temp);			
 			if (CONFIG_TYPE_RED(configtype) && !strlen(temp))
-			{
-				sections[c] = red;
-				c++;
-			}
+				sections[c++] = red;
 			sections[c] = NULL;
 			rc = newtWinMenu(ctr[TR_CARD_ASSIGNMENT],
 				message, 50, 5,	5, 6, sections, &choice, ctr[TR_OK],
@@ -466,6 +451,17 @@ int changedrivers(void)
 			{
 				/* Now we see which iface needs its settings changed. */
 				sprintf(nexteth, "eth%d", sofarallocated);
+				if (strcmp(sections[choice], green) == 0)
+				{
+					replacekeyvalue(kv, "GREEN_DEV", nexteth);
+					replacekeyvalue(kv, "GREEN_DRIVER", currentdriver);
+					replacekeyvalue(kv, "GREEN_DRIVER_OPTIONS", currentdriveroptions);
+					replacekeyvalue(kv, "GREEN_DISPLAYDRIVER", displaydriver);
+					sofarallocated++;
+					toallocate--;
+					strcpy(currentdriver, "");
+					strcpy(currentdriveroptions, "");
+				}
 				if (strcmp(sections[choice], orange) == 0)
 				{
 					replacekeyvalue(kv, "ORANGE_DEV", nexteth);
@@ -477,7 +473,7 @@ int changedrivers(void)
 					strcpy(currentdriver, "");
 					strcpy(currentdriveroptions, "");
 				}
-				if (strcmp(sections[choice], blue) == 0)
+				if (strcmp(sections[choice], purple) == 0)
 				{
 					replacekeyvalue(kv, "PURPLE_DEV", nexteth);
 					replacekeyvalue(kv, "PURPLE_DRIVER", currentdriver);
@@ -585,7 +581,7 @@ int addressesmenu(void)
 	char *sections[4];
 	char *green = "GREEN";
 	char *orange = "ORANGE";
-	char *blue = "PURPLE";
+	char *purple = "PURPLE";
 	char *red = "RED";
 	int c = 0;
 	char temp[STRING_SIZE];
@@ -620,7 +616,7 @@ int addressesmenu(void)
 		c++;
 	}
 	if (CONFIG_TYPE_PURPLE(configtype))
-		sections[c++] = blue;
+		sections[c++] = purple;
 	if (CONFIG_TYPE_RED(configtype))
 	{
 		sections[c] = red;

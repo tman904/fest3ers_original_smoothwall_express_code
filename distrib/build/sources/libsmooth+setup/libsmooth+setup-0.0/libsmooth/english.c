@@ -26,6 +26,8 @@ char *english_tr[] = {
 "              <Tab>/<Alt-Tab> between elements   |  <Space> selects",
 /* TR_QUIT */
 "Quit",
+/* TR_FINISHED */
+"Finished",
 /* TR_DISABLED */
 "Disabled",
 /* TR_ENABLED */
