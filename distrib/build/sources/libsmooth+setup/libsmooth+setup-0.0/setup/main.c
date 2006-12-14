@@ -195,6 +195,8 @@ int main(int argc, char *argv[])
 			goto EXIT;
 		if (!(handlehostname()))
 			goto EXIT;
+		if (!(handlenetworking()))
+			goto EXIT;
 
 		if (!performedrestore)
 		{
@@ -205,7 +207,6 @@ int main(int argc, char *argv[])
 				sections[0] = ctr[TR_WEB_PROXY];
 				sections[1] = ctr[TR_ISDN_CONFIGURATION];
 				sections[2] = ctr[TR_ADSL_CONFIGURATION];
-				sections[3] = ctr[TR_NETWORKING];	
 				sections[4] = ctr[TR_DHCP_SERVER_CONFIGURATION],
 				sections[5] = NULL;	
 	
@@ -229,12 +230,8 @@ int main(int argc, char *argv[])
 					case 2:
 						handleadsl();
 						break;
-					
+											
 					case 3:
-						handlenetworking();
-						break;
-						
-					case 4:
 						handledhcp();
 						break;
 	
