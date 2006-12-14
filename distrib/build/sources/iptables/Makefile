@@ -12,7 +12,7 @@ VERSION =  $(IPTABLES_VER)
 
 EXTENSION = .tar.bz2
 
-BASE_URL = http://www.netfilter.org/files
+BASE_URL = ftp://ftp.netfilter.org/pub/iptables
 
 CONFIGURE = yes
 COMPILE = yes
