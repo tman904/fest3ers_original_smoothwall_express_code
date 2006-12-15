@@ -12,6 +12,7 @@ use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use update qw( :standard );
 use smoothnet qw( :standard );
+use smoothd qw(message);
 
 &showhttpheaders();
 
@@ -119,7 +120,8 @@ if ($uploadsettings{'ACTION'} eq "upload")
 		}
 	}
 	chdir("/var/patches/$$");
-	unless (system("/usr/bin/setuids/installpackage $$ > /dev/null") == 0)
+	print STDERR "Going for installation attempt\n";
+	unless (message( "install", "$$" ))
 	{
 		$errormessage = $tr{'package failed to install'};
 		goto ERROR;
@@ -166,7 +168,7 @@ while (<AV>){
 	next if $_ =~ m/^#/;
 	chomp $_;
 	my @temp = split(/\|/,$_);
-	my ($summary) = ( $temp[3] =~ /(.{85})/ );
+	my ($summary) = ( $temp[3] =~ /^(.{0,85})/ );
 	$updates{ $temp[ 0 ] } = { name => $temp[2], summary => $summary, description => $temp[3], date => $temp[4], info => $temp[5], size => $temp[6], md5 => $temp[1] };
 }
 close(AV);
@@ -191,51 +193,89 @@ foreach my $update ( sort keys %updates ){
 	$available_count ++;
 }
 
-my $height = 100;
-if ( $available_count > 3 ){
-	$height = 300;
-}
+my $height = 250;
 
-if ( $available_count > 0 ){
-	print qq|<br/>
-		<div style='height: ${height}px; overflow: auto;'>
-		<table class='blank'>
-
+print qq|<br/>
+	<div style='height: ${height}px; overflow: auto;'>
+	<table class='blank'>
 	|;
 
-	foreach my $update ( sort keys %updates ){
-		next if ( defined $updates{$update}{'installed'} );
-		print <<END
+foreach my $update ( sort keys %updates ){
+	next if ( defined $updates{$update}{'installed'} );
+	print <<END
+	<tr>
+		<td style='width: 15%;' ><a href='$updates{$update}{'info'}' target='_new'>$updates{$update}{'name'}</a></td>
+		<td onClick="toggle('update-$update');" class='expand'>$updates{$update}{'summary'}...</td>
+		<td style='width: 10%; text-align: right;'>$updates{$update}{'date'}</td>
+	</tr>
+	<tr>
+		<td colspan='3'>
+		<table class='expand' id='update-$update'>
 		<tr>
-			<td style='width: 15%;' ><strong>$updates{$update}{'name'}</strong></td>
-			<td onClick="toggle('update-$update');" class='expand'>$updates{$update}{'summary'}...</td>
-			<td style='width: 10%; text-align: right;'>$updates{$update}{'date'}</td>
-		</tr>
-		<tr>
-			<td colspan='3'>
-			<table class='expand' id='update-$update'>
-			<tr>
-				<td>$updates{$update}{'description'}</td>
-			</tr>	
-			<tr>
-				<td style='text-align: right;'>
-					<a href='$updates{$update}{'info'}' target='_new'>$tr{'info'}</a>
-				</td>
-			</tr>
-			</table>
-			</td>
-		</tr>
+			<td>$updates{$update}{'description'}</td>
+		</tr>	
+		</table>
+		</td>
+	</tr>
 END
-	;
-	}
-
-	print "</table></div>";
+;
 }
+
+print qq{
+	</table>
+};
+
+my $installed_count = 0;
+foreach my $update ( sort keys %updates ){
+	next if ( not defined $updates{$update}{'installed'} );
+	$installed_count ++;
+}
+
+if ( $installed_count > 0 ){
+	print qq{
+		<strong>$tr{'installed updates'}</strong><br>
+		<span style='color: #808080;'>The following updates have already been applied to your SmoothWall Express system</span>
+		<br/>
+		<br/>
+	};
+}
+
+print qq{
+	<table class='blank'>
+};
+
+foreach my $update ( sort keys %updates ){
+	next if ( not defined $updates{$update}{'installed'} );
+	print <<END
+	<tr>
+		<td style='width: 15%;' ><a style='color: #808080;' href='$updates{$update}{'info'}' target='_new'>$updates{$update}{'name'}</a></td>
+		<td onClick="toggle('update-$update');" class='expand' style='color: #8080ff;'>$updates{$update}{'summary'}</td>
+		<td style='width: 10%; text-align: right;' style='color: #805080;' >$updates{$update}{'date'}</td>
+	</tr>
+	<tr>
+		<td colspan='3'>
+		<table class='expand' id='update-$update'>
+		<tr>
+			<td style='color: #808080;' >$updates{$update}{'description'}</td>
+		</tr>	
+		</table>
+		<script>toggle('update-$update');</script>
+		</td>
+	</tr>
+END
+;
+}
+
+print qq|</table>|;
+print "</div>";
+
+&closebox();
+&openbox();
 
 print <<END
 <table class='blank'>
 <tr>
-	<form action='/cgi-bin/updates.cgi' method='post'>
+
 	<td id='progressbar'>
 <table class='progressbar' style='width: 380px;'>
 	<tr>
@@ -246,58 +286,24 @@ print <<END
 	<span id='status'></span>
 	</td>
 	<td>&nbsp;</td>
-	<td style='width: 350px;'>
+	<form action='/cgi-bin/updates.cgi' method='post'>
+	<td style='width: 350px;' style='text-align: right;'>
 		<input type='submit' name='ACTION' value='$tr{'refresh update list'}'>
 		<input type='submit' name='ACTION' value='$tr{'update'}'>
 	</td>
 	</form>
+	<td style='text-align: right;' id='actionsection'>
+	</td>
+
 </tr>
 </table>
 END
 ;
 &closebox();
-&openbox($tr{'available updates'});
 
-print <<END
-	<br/><strong>$tr{'installed updates'}</strong><br/>
-END
-;
-
-print <<END
-<table class='blank'>
-END
-;
-
-foreach my $update ( sort keys %updates ){
-	next if ( not defined $updates{$update}{'installed'} );
-	print <<END
-	<tr>
-		<td style='width: 15%;' ><strong>$updates{$update}{'name'}</strong></td>
-		<td onClick="toggle('update-$update');" class='expand'>$updates{$update}{'summary'}...</td>
-		<td style='width: 10%; text-align: right;'>$updates{$update}{'date'}</td>
-	</tr>
-	<tr>
-		<td colspan='3'>
-		<table class='expand' id='update-$update'>
-		<tr>
-			<td>$updates{$update}{'description'}</td>
-		</tr>	
-		<tr>
-			<td style='text-align: right;'>
-				<a href='$updates{$update}{'info'}' target='_new'>$tr{'info'}</a>
-			</td>
-		</tr>
-		</table>
-		<script>toggle('update-$update');</script>
-		</td>
-	</tr>
-END
-;
-}
-
-print qq|</table>|;
-
-&closebox();
+print qq{
+	<div id='manualinstall'>
+};
 
 &openbox( $tr{'install new update'} );
 
@@ -317,6 +323,14 @@ $tr{'to install an update'}
 </table>|;
 
 &closebox();
+print qq{
+	</div>
+	<script>
+		var add = "<input type='button' value='Advanced >>' onClick=\\"toggle('manualinstall');\\">";
+		document.getElementById('actionsection').innerHTML += add;
+		toggle('manualinstall');
+	</script>
+};
 
 &closebigbox();
 
@@ -560,13 +574,14 @@ sub apply
 	{
 		chomp();
 		($id,$md5,$title,$description,$date,$url) = split(/\|/,$_);
-print STDERR "Checking MD5 Sum $md5 against $md5sum\n";
+print STDERR "Checking MD5 Sum for $f $md5sum against $md5 ($title)\n";
 		if ($md5sum =~ m/^$md5\s/)
 		{
 			$found = 1;
 			last;
 		}
 	}
+print STDERR "Checking Authority\n";
 	unless ($found == 1)
 	{
 		$errormessage = $tr{'this is not an authorised update'};
@@ -574,6 +589,7 @@ print STDERR "Checking MD5 Sum $md5 against $md5sum\n";
 		tidy();
 		return undef;
 	}
+print STDERR "Attempting Tar Operation\n";
 	unless (system("/usr/bin/tar", "xfz", "/var/patches/$$/patch.tar.gz", "-C", "/var/patches/$$") == 0)
 	{
 		$errormessage = $tr{'this is not a valid archive'};
@@ -581,6 +597,7 @@ print STDERR "Checking MD5 Sum $md5 against $md5sum\n";
 		tidy();
 		return undef;
 	}
+print STDERR "Attempting to extract information file\n";
 	unless (open(INFO, "/var/patches/$$/information"))
 	{
 		$errormessage = $tr{'could not open update information file'};
@@ -590,6 +607,7 @@ print STDERR "Checking MD5 Sum $md5 against $md5sum\n";
 	}
 	my $info = <INFO>;
 	close(INFO);
+print STDERR "Checking status of installed updates\n";
 	open(INS, "${swroot}/patches/installed") or $errormessage = $tr{'could not open installed updates file'};
 	while (<INS>)
 	{
@@ -603,7 +621,7 @@ print STDERR "Checking MD5 Sum $md5 against $md5sum\n";
 		}
 	}
 	chdir("/var/patches/$$");
-	unless (system("/usr/local/bin/installpackage $$") == 0)
+	unless (message("install", "$$"))
 	{
 		$errormessage = $tr{'package failed to install'};
 		print STDERR $errormessage;
