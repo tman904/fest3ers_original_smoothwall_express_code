@@ -1,4 +1,7 @@
-// C++ interface between AF4 and tc/netfilter statistics collection
+// C++ interface between AF5 and tc/netfilter statistics collection
+// For SmoothTraffic
+// Written by Martin Houston 2004 - 2006
+
 extern "C" {
 #include <stdio.h>
 #include <sys/socket.h>
@@ -6,6 +9,7 @@ extern "C" {
 #include <arpa/inet.h>
 #include <asm/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <linux/if.h>
 #include <linux/pkt_sched.h>
 #include <resolv.h>
@@ -20,156 +24,164 @@ extern "C" {
 #include <iostream>
 #include <iterator>
 #include <ostream>
+#include <istream>
 #include <sstream>
-#include "configvar.hpp"
+#include <smoothwall/config.h>
 #include "trafstats_core.hpp"
 
 
 
-traf_stat_collection_item::traf_stat_collection_item() {
-    Vtraf_stat in,out,tmp;
-    Vtraf_iterator ia;
-    StrSet_iterator d;
-        
-    // oh this would be sooo much easier in perl
-    
-    // make sure these are all empty
-    collection_start.t.tv_sec = 0;
-    collection_start.t.tv_usec = 0;
-    collection_end.t.tv_sec = 0;
-    collection_end.t.tv_usec = 0;
-    
-    int_devs.clear();
-    ext_devs.clear();
-    classes.clear();
-    rules.clear();
-    stats.clear(); 
-    
-    in.clear(); 
-    out.clear();
-    in = list_rules("prerouting-1");
-    out = list_rules("postrouting-1");
-    
-    if(in.size() == 0 || out.size() == 0) {
-        // odd we have no interfaces!
-        // std::cerr << __LINE__ << " no internal interfaces!" << std::endl;
-        // cant do anything sensible
-        return; 
+// constructor for an individual stats snapshot
+traf_stat_collection_item::traf_stat_collection_item(bool interfaces_only) {
+  Vtraf_stat in,out,uptmp,dntmp;
+  Vtraf_iterator ia;
+  StrSet_iterator d;
+  
+  // oh this would be sooo much easier in perl
+  
+  // make sure these are all empty
+  collection_start.t.tv_sec = 0;
+  collection_start.t.tv_usec = 0;
+  collection_end.t.tv_sec = 0;
+  collection_end.t.tv_usec = 0;
+  
+  // clear all the vectors  
+  int_devs.clear();
+  ext_devs.clear();
+  classes.clear();
+  rules.clear();
+  stats.clear(); 
+  
+  in.clear(); 
+  out.clear();
+  
+  // pre/postrouting-1 contains entries for all possible
+  // internal interfaces, even ones that are not up
+  // ipsec and ppp9+ are considered internal but are really to do with VPN
+  in = list_rules("prerouting-1");
+  out = list_rules("postrouting-1");
+  
+  // timestamp this lot
+  gettimeofday(&collection_start.t, NULL);
+  for(ia = in.begin(); ia != in.end(); ia++) {
+    // use a ref so debugger can see this stuff!
+    const std::string &dev = ia->dev;
+    if(dev.size() > 0) {
+      int_devs.insert(dev); // remember dev
+      std::string label = dev + "_int_in"; 
+      traf_stat &item = *ia;
+      stats[label] = item;
+    }
+  } 
+  
+  for(ia = out.begin(); ia != out.end(); ia++) {
+    const std::string &dev = ia->dev;
+    if(dev.size() > 0) {
+      // e.g ethA_int_out
+      std::string label = dev + "_int_out";  
+      traf_stat &item = *ia;
+      stats[label] = item;
+    }
+  }
+  
+  // external interfaces should exist in iptables even if
+  // not up. Get ppp and ippp 
+  // may not always have external interfaces
+  in = list_rules("prerouting-2"); 
+  out = list_rules("postrouting-2");
+  
+  for(ia = in.begin(); ia != in.end(); ia++) { 
+    const std::string &dev = ia->dev;
+    if(dev.size() > 0) {
+      ext_devs.insert(dev); // remember dev
+      std::string label = dev + "_ext_in";
+      // std::cerr << label << std::endl;
+      traf_stat &item = *ia;  
+      stats[label] = item;
+    }
+  } 
+
+  for(ia = out.begin(); ia != out.end(); ia++) {
+    const std::string &dev = ia->dev;
+    if(dev.size() > 0) {                
+      std::string label = dev + "_ext_out";
+      traf_stat &item = *ia;           
+	  stats[label] = item;
     }
     
-    // timestamp this lot
-    gettimeofday(&collection_start.t, NULL);
-    for(ia = in.begin(); ia != in.end(); ia++) {
-        // use a ref so debugger can see this stuff!
-        const std::string &sdev = ia->dev;
-        if(sdev.size() > 0) {
-            int_devs.insert(sdev); // remember dev
-            std::string label = sdev + std::string("_int_in"); 
-            traf_stat &item = *ia;
-            stats[label] = item;
-        }
-        else {
-            // std::cerr << __LINE__ << " no dev in record" << std::endl;
-        }
-        
-    } 
+  }
+  if(!interfaces_only) {
+    // go through internal then external devices
+    for(d = int_devs.begin(); d != ext_devs.end(); d++) {
+      if(d == int_devs.end())
+	d = ext_devs.begin();
+      if(d == ext_devs.end())
+	break;
+      // iterator can be considerd as a pointer to the current element in the vector
+      // so we make a reference for easier access
+      const std::string &dev = *d;    
+      // get defaults if not present
+      
+      traf_config[dev].set_dev(dev);
     
-    for(ia = out.begin(); ia != out.end(); ia++) {
-        const std::string &sdev = ia->dev;
-        if(sdev.size() > 0) {
-            // e.g ethA_int_out
-            std::string label = sdev + std::string("_int_out");  
-            traf_stat &item = *ia;
-            stats[label] = item;
-        }
-        else {
-            // std::cerr << __LINE__ << " no dev in record" << std::endl;
-        }
+
+      traffic_config & myconf = traf_config[dev];
+      
+      uptmp = list_rules_for_dev(dev, "up");	
+      dntmp = list_rules_for_dev(dev, "dn");
+      
+      if(uptmp.size() > 0 && dntmp.size() > 0) {
+	for(ia = uptmp.begin(); ia != uptmp.end(); ia++) {
+	  // and store them 
+	  std::string rule_name = myconf.rule_name(ia->rule_num);
+	  rules.insert(rule_name);
+	  std::string label = dev + "_up_rule_" + rule_name; 
+	  traf_stat &item = *ia;
+	  stats[label] = item;    
+	}
+	for(ia = dntmp.begin(); ia != dntmp.end(); ia++) {
+	  // and store them 
+	  std::string rule_name = myconf.rule_name(ia->rule_num);
+	  rules.insert(rule_name);
+	  std::string label = dev + "_dn_rule_" + rule_name; 
+	  
+	  traf_stat &item = *ia;
+	  stats[label] = item; 
+	}
+      }
+      // upload classes are related to the dev
+      // download classes are related to the imq partner
+      const std::string & imq =  myconf.imq();
+      if(imq.size() > 0) {
+	uptmp = list_class(dev);
+	dntmp = list_class(imq);
+	if(uptmp.size() > 0) {
+	  for(ia = uptmp.begin(); ia != uptmp.end(); ia++) {
+	    // and store them
+	    std::string class_name = myconf.class_name(ia->classid);
+	    classes.insert(class_name);                
+	    std::string label = dev + "_up_class_" + class_name;
+	    traf_stat &item = *ia;  
+	    stats[label] = item;
+	  }
+	}
+      
+	if(dntmp.size() > 0) {
+	  for(ia = dntmp.begin(); ia != dntmp.end(); ia++) {
+	    // and store them
+	    std::string class_name = myconf.class_name(ia->classid);
+	    classes.insert(class_name);                
+	    std::string label = dev + "_dn_class_" + class_name; 
+	    traf_stat &item = *ia;    
+	    stats[label] = item;
+	  }
+	}
+      }
     }
-    
-    // external interfaces should exist in iptables even if
-    // not up.
-    in.clear();
-    in = list_rules("prerouting-2");
-    for(ia = in.begin(); ia != in.end(); ia++) { 
-        const std::string &sdev = ia->dev;
-        if(sdev.size() > 0) {
-            ext_devs.insert(sdev); // remember dev
-            std::string label = sdev + std::string("_ext_in");
-            traf_stat &item = *ia;  
-            stats[label] = item;
-        }
-        else {
-            // std::cerr << __LINE__ << " no dev in record" << std::endl;
-        }
-    } 
-    out.clear();
-    
-    out = list_rules("postrouting-2");
-    for(ia = out.begin(); ia != out.end(); ia++) {
-        const std::string &sdev = ia->dev;
-        if(sdev.size() > 0) {                
-            std::string label = sdev + std::string("_ext_out");
-            traf_stat &item = *ia;           
-            stats[label] = item;
-        }
-        else {
-            // std::cerr << __LINE__ << " no dev in record" << std::endl;
-        }
-        
-    }
-    
-    if(int_devs.size() == 0 || ext_devs.size() == 0) {
-        // std::cerr << __LINE__ << " devs are empty" << std::endl;
-    }
-    else 
-        // go through internal then external devices
-        for(d = int_devs.begin(); d != ext_devs.end(); d++) {
-            // we get all classes for this device 
-            if(d == int_devs.end())
-                d = ext_devs.begin();
-            if(d == ext_devs.end())
-                break;
-            
-            
-            tmp.clear();
-            const std::string &dev = *d;
-            tmp = list_rules_for_dev(dev);
-            if(tmp.size() == 0) { 
-                // std::cerr << __LINE__ << " rules are empty for " << dev << std::endl;
-            }
-            else 
-                for(ia = tmp.begin(); ia != tmp.end(); ia++) {
-                    // and store them 
-                    std::string rule_name = traf_config.rule_name(ia->rule_num);
-                    rules.insert(rule_name);
-                    std::string label = *d + "_rule_" + rule_name; 
-                    traf_stat &item = *ia;
-                    stats[label] = item;
-                    
-                }
-            // only try for classes if had any rules, otherwise traffic not there
-            if(tmp.size() > 0) {
-                tmp.clear();
-                tmp = list_class(dev);
-                if(tmp.size() == 0) { 
-                    // std::cerr << __LINE__ << " classes are empty for " << dev << std::endl;
-                }
-                else
-                    for(ia = tmp.begin(); ia != tmp.end(); ia++) {
-                        // and store them
-                        std::string class_name = traf_config.class_name(ia->classid);
-                        classes.insert(class_name);                
-                        std::string label = *d + "_class_" + class_name; 
-                        traf_stat &item = *ia; 
-                        stats[label] = item;
-                    }
-            }
-            
-        }
-        
-    // this should not have taken too long...
-    gettimeofday(&collection_end.t, NULL);
+  }
+       
+  // this should not have taken too long...
+  gettimeofday(&collection_end.t, NULL);
     
 }
 
@@ -191,7 +203,7 @@ Vstring traf_stat_collection_item::class_indexes_in_order() {
     }
     sort(classstats.begin(),classstats.end());
     for(i = classstats.begin(); i != classstats.end(); i++) {
-        std::string classname = traf_config.class_name(i->classid);
+        std::string classname = traf_config[i->dev].class_name(i->classid);
         fs = find(idxes.begin(), idxes.end(), classname);
         if(fs == idxes.end())
             // only one copy of each
@@ -371,12 +383,12 @@ std::ostream& operator << (std::ostream& out, const traf_stat& i) {
     }
     else if(i.dev != "" && i.dev != "unknown") {
         out << "dev=" << i.dev;
-        double ispeed = traf_config.interface_speed(i.dev);
+        double ispeed = traf_config[i.dev].interface_speed();
         if(ispeed == 0.0) {
             // have separate up and download speeds
-            ispeed = traf_config.interface_speed(i.dev, "upload");
+            ispeed = traf_config[i.dev].interface_speed("upload");
             out << "(upload=" << format_rate(ispeed);
-            ispeed = traf_config.interface_speed(i.dev, "download"); 
+            ispeed = traf_config[i.dev].interface_speed("download"); 
             out << ", download=" << format_rate(ispeed) << ") ";
         }
         else {
@@ -386,9 +398,9 @@ std::ostream& operator << (std::ostream& out, const traf_stat& i) {
     }
 
     if(i.is_class()) {
-        out << "Class " << traf_config.class_name(i.classid) << "(" << i.classid << ") ";
+        out << "Class " << traf_config[i.dev].class_name(i.classid) << "(" << i.classid << ") ";
         if(i.has_parent()) {
-            out << traf_config.class_name(i.parentid) << "(" << i.parentid << ") ";
+            out << traf_config[i.dev].class_name(i.parentid) << "(" << i.parentid << ") ";
         }        
         if(i.rate >= 1.0) {
             out << " rate=" << format_rate(i.rate) << " ceiling=" << format_rate(i.ceiling) << " ";
@@ -399,8 +411,8 @@ std::ostream& operator << (std::ostream& out, const traf_stat& i) {
     else if(i.is_rule()) { 
         if(i.has_class()) {
             // rule names only relivant for rules attached to a class
-            out << "Rule " << traf_config.rule_name(i.rule_num) << "(" << i.rule_num << ") ";
-            out << traf_config.class_name(i.classid) << "(" << i.classid << ") ";
+            out << "Rule " << traf_config[i.dev].rule_name(i.rule_num) << "(" << i.rule_num << ") ";
+            out << traf_config[i.dev].class_name(i.classid) << "(" << i.classid << ") ";
         }        
         else {
             out << "Rule (" << i.rule_num << ") ";
@@ -608,84 +620,91 @@ Vtraf_stat list_class(const char *dev) {
 
 Vtraf_stat list_rules(std::string chain) {
  
-    Vtraf_stat stats;
-    struct iptable_data res[MAX_RULES] = {0};
-    
-    stats.clear();
-    unsigned int num = fetch_counts(chain.c_str(), res, MAX_RULES);
+  std::string::size_type pos;
+  std::string dev;
+  Vtraf_stat stats;
+  struct iptable_data res[MAX_RULES] = {0};
+  int rn;
+  
+  stats.clear();
+  unsigned int num = fetch_counts(chain.c_str(), res, MAX_RULES);
+  unsigned int i;
 
+  // we are a traffic controlled chain	
+  if((pos = chain.find("-traf-tot")) != std::string::npos) { 
+    traf_stat thisstat;
+    thisstat.direction = chain.substr(0,pos);
+    pos = thisstat.direction.find("-");
+    thisstat.dev = thisstat.direction.substr(0, pos);
+    thisstat.direction.erase(0,pos+1);
    
-    unsigned int i;
-    if(!strncmp("traf-tots-",  chain.c_str(), 10)) {
-        for(i = 0; i < num; i++) {
-            traf_stat thisstat;
-
-            // go from positions in the table back to meaningful
-            // rule numbers (and therefore names) using info put
-            // in place by trafficloader script
-            thisstat.rule_num = traf_config.pos_to_rulenum(i);
-        
-       
-            thisstat.classid = traf_config.rule_to_classid(thisstat.rule_num);
-            // rule does not need to contain dev, implicit in chain name
-            thisstat.dev = chain.substr(strlen("traf-tots-"));
-             // iptables can only tell us bytes and packets
-            // not the rich set of stats that the traffic queues do   
-            thisstat.stats.bytes = res[i].bcnt;
-            thisstat.stats.packets = res[i].pcnt;
-            stats.push_back(thisstat);
-        }
+    if(traf_config.count(thisstat.dev) == 0) {
+      // std::cerr << __LINE__ << " bad device " << thisstat.dev << " direction " << thisstat.direction << " in the chain " << chain << std::endl;
+      return stats;
     }
-    else { 
-        if(num == 0) {
-            // std::cerr << __LINE__ << " fetch_counts fail for " << chain << std::endl;
-            return stats;
-        }
-        // Assume its non traffic stats (pre|post)routing-(1|2)
-        for(i = 0; i < num; i++) {
-            traf_stat thisstat;
-            thisstat.rule_num = i;
-            // must get dev from the rule, its either attached to
-            // incomming or outgoing, never both
-            if(strlen(res[i].iniface)) {
-                thisstat.dev = res[i].iniface;
-            }
-            else if (strlen(res[i].outiface)) {
-                thisstat.dev = res[i].outiface;
-            }
-            else {
-                thisstat.dev = "unknown"; // should never happen in (pre|post)routing(1|2)
-                // std::cerr << __LINE__ << " rule " << i << " unknown dev" << std::endl;
-            } 
-            // iptables can only tell us bytes and packets
-            // not the rich set of stats that the traffic queues do   
-            thisstat.stats.bytes = res[i].bcnt;
-            thisstat.stats.packets = res[i].pcnt;
-            stats.push_back(thisstat);
-            
-        }
-        
+    // good device seen - one under control
+    traffic_config & myconf = traf_config[thisstat.dev];
+    for(i = 0; i < num; i++) {
+      if((rn =  myconf.pos_to_rulenum(i)) >= 0) {
+	// go from positions in the table back to meaningful
+	// rule numbers (and therefore names) using info put
+	// in place by trafficloader script
+      
+	thisstat.rule_num = rn;
+	thisstat.classid = myconf.rule_to_classid(rn);
+      
+	// iptables can only tell us bytes and packets
+	// not the rich set of stats that the traffic queues do   
+	thisstat.stats.bytes = (__u64)res[i].bcnt;
+	thisstat.stats.packets = (__u32)res[i].pcnt;
+	// copy to the vector
+	stats.push_back(thisstat);
+      }
+    }
+  }
+  else { 
+    if(num == 0) {
+      // std::cerr << __LINE__ << " fetch_counts fail for " << chain << std::endl;
+      return stats;
+    }
+    // Assume its non traffic stats (pre|post)routing-(1|2)
+    for(i = 0; i < num; i++) {
+      
+      traf_stat thisstat;
+      thisstat.rule_num = i;
+      
+      // must get dev from the rule, its either attached to
+      // incomming or outgoing, never both
+      if(strlen(res[i].iniface)) {
+	thisstat.dev = res[i].iniface;
+      }
+      else if (strlen(res[i].outiface)) {
+	thisstat.dev = res[i].outiface;
+      }
+      else {
+	// this interface not up
+	continue;
+      } 
+      // iptables can only tell us bytes and packets
+      // not the rich set of stats that the traffic queues do   
+      thisstat.stats.bytes = (__u64)res[i].bcnt;
+      thisstat.stats.packets = (__u32)res[i].pcnt;
+      stats.push_back(thisstat);
     }
     
-    return stats;
+  }
+  return stats;
 }
                 
  
-// optomised for traffic stats - provide just a device so assume
-// want to see traffic rules for that device
-          
-Vtraf_stat list_rules_for_dev(std::string dev) {
-    return list_rules_for_dev(dev.c_str());
-}
 
-// which means mangle table traf-tots-? chain
-Vtraf_stat list_rules_for_dev(const char *dev) {
+Vtraf_stat list_rules_for_dev(std::string dev, std::string direction) {
 
-    return list_rules(std::string("traf-tots-") + dev);
+    return list_rules(dev + "-" + direction + "-traf-tot");
 }
 
 
-// takes a difference between timestampss as double floating number of microsecs
+// takes a difference between timestamps as double floating number of microsecs
 // 1 million microsecs in a second
 // if the old or new times are not valid then interval is 0
 // 
@@ -763,25 +782,12 @@ void calculate_rates(traf_stat_collection_item & older,
 }
 
 // collect a single sample - true if valid data in it
-bool collect_a_sample(Vtraf_stat_samples &s) {
-    traf_stat_collection_item thisone;
+bool collect_a_sample(Vtraf_stat_samples &s, bool interfaces_only) {
+  traf_stat_collection_item thisone(interfaces_only);
     s.push_back(thisone);
-    return thisone.ext_devs.size() > 0;
+    return thisone.ext_devs.size() > 0 ||  thisone.int_devs.size() > 0;
 }
 
-// collect some samples, add to the end of what we have 
-int collect_samples(int number, int interval, Vtraf_stat_samples &s) {
-    int i;
-    
-    if(interval <= 0 || number < 1|| traffic_iptables_missing())
-        return 0; // nothing to do, have to have at least 2 samples
-    for(i = 0; i < number; i++) {
-        collect_a_sample(s);
-        usleep(interval);
-    }
-    return number;
-}
- 
 
 // do averages over time
 // find timespan we are interested in and 
@@ -847,7 +853,8 @@ double average_bit_rate(Vtraf_stat_samples &samples, const std::string &idx,  co
     while(middle < (samples.size()-1) && samples[middle+1].collection_start.t.tv_sec <= end.t.tv_sec)
         middle++; // get the last possible matching value
     // middle is the nearest thing to end time but does it have content for idx?
-    while(samples[middle].stats.count(idx) == 0 && samples[middle].collection_start.t.tv_sec >= start.t.tv_sec)
+    
+    while((middle > 0) && samples[middle].stats.count(idx) == 0 && samples[middle].collection_start.t.tv_sec >= start.t.tv_sec)
         middle--;
     e = middle;
 
@@ -899,7 +906,7 @@ void truncate_sample_set(Vtraf_stat_samples &samples, const timestamp &oldest) {
 // nice user firendly rate - 2 decimal places kbit mbit or gbit
 // Then followed by same as bytes
 std::string format_rate(double t1, double t2) {
-    return format_rate(t1) + " " + format_rate(t2);
+    return format_rate(t1) + " (20 sec avg) " + format_rate(t2) + " (last sec)";
 } 
 std::string format_rate(double tmp) {
     std::ostringstream out;
@@ -907,19 +914,23 @@ std::string format_rate(double tmp) {
     
     if(rint(tmp) != 0) {
         if(tmp >= 1024 * 1024 * 1023) {
-            sprintf(floatbuf, "%*.2f", 7,tmp/(1024*1024*1024));
+            sprintf(floatbuf, "%*.1f", 7,tmp/(1024*1024*1024));
             out << floatbuf << " Gbit"; 
         }
         else if(tmp >= 1024 * 1023) {
-            sprintf(floatbuf, "%*.2f", 7,tmp/(1024*1024));
+            sprintf(floatbuf, "%*.1f", 7,tmp/(1024*1024));
             out << floatbuf << " Mbit"; 
         }
-        else {
-            sprintf(floatbuf, "%*.2f", 7,tmp/(1024));
+        else  if(tmp >= 1024){
+            sprintf(floatbuf, "%*.1f", 7,tmp/(1024));
             out << floatbuf << " Kbit";
         }
+	else {
+	  sprintf(floatbuf, "%*.0f", 7,tmp);
+	  out << floatbuf << "  bit";
+	}
     
-
+#ifdef NEVER
         tmp /= 8;
         out << ' ';
         if(rint(tmp) != 0) {
@@ -940,14 +951,32 @@ std::string format_rate(double tmp) {
             sprintf(floatbuf, "%*.2f", 7,0.0);
             out << floatbuf<< " KB";
         }
+#endif
     }
     else {
-        sprintf(floatbuf, "%*.2f", 7,0.0); 
-        out << floatbuf << " Kbit";
+        sprintf(floatbuf, "%*.0f", 7,0.0); 
+        out << floatbuf << "  bit";
+#ifdef NEVER
         out << ' ';
-        sprintf(floatbuf, "%*.2f", 7,0.0);
-        out << floatbuf << " KB";
+        sprintf(floatbuf, "%*.0f", 7,0.0);
+        out << floatbuf << " B";
+#endif
     }
     return out.str();
 }       
+
+// indicate if a specified interface is up at the moment 
+bool interface_up(const char *dev) {
+  bool up = false;
+  struct ifreq ifr;
+  // make any old socket
+  int skfd = socket(AF_UNIX, SOCK_STREAM, 0);
+
+  strncpy(ifr.ifr_name, dev, IFNAMSIZ-1);
+  if (ioctl(skfd, SIOCGIFFLAGS, &ifr) >= 0)
+    up = (ifr.ifr_flags & IFF_UP) != 0;
+  close(skfd);
+  return up;
+}
+
 

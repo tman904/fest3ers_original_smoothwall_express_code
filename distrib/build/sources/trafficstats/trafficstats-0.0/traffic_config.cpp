@@ -1,11 +1,26 @@
 #include "traffic_config.hpp"
 #include <sys/stat.h>
+#include <syslog.h>
 #include <sstream> // for ostringstream
+#include <iostream>
 
 // take a string quanity plus units and converts to double bits  value
 // coded for speed, sees NUM then optional k or m or g then bit or bps
 // bit is bits bps is bytes so mult by 8
 
+// why cant strings do this themselves?
+
+std::string itostr(int i) {
+  std::ostringstream out;
+  out << i;
+  return out.str();
+}
+
+std::string dtostr(double d) {
+  std::ostringstream out;
+  out << d;
+  return out.str();
+}
 
 double to_bits(const char *in) {
 
@@ -40,10 +55,10 @@ double to_bits(const std::string &in) {
     return to_bits(in.c_str());
 }
 
-double traffic_config::interface_speed(std::string dev, std::string direction) {
+double traffic_config::interface_speed(std::string direction) {
     struct stat st;
     std::string idx, file;
-    file = MODSWROOT "/chosen_speeds";
+    file = std::string(MODSWROOT) + "/chosen_speeds";
     if(stat(file.c_str(), &st)) {
         // chosen_speeds not there so default to stadard ADSL for upload/download
         // and 100mbit ethernet if not
@@ -55,18 +70,25 @@ double traffic_config::interface_speed(std::string dev, std::string direction) {
             return to_bits("100mbit");
     }
     if(st.st_mtime >  chosen_speeds_last_mod) {
-        chosen_speeds.readvar(file);
+      chosen_speeds.readvar(file.c_str());
         chosen_speeds_last_mod = st.st_mtime;
     }
     if(direction != "")
-        idx = dev + "_" + direction;
+        idx = _dev + "_" + direction;
     else
-        idx = dev;
-    if(chosen_speeds[idx] != "") {
-        return to_bits(chosen_speeds[idx]);
+        idx = _dev;
+    if(chosen_speeds[idx.c_str()] != "") {
+      return to_bits(chosen_speeds[idx.c_str()]);
     }
     else {
-        return 0.0;
+      // try without direction
+      if(direction != "") {
+	idx = _dev;
+	if(chosen_speeds[idx.c_str()] != "") {
+	  return to_bits(chosen_speeds[idx.c_str()]);
+	}
+      }
+      return 0.0;
     }
 }
     
@@ -74,7 +96,7 @@ double traffic_config::interface_speed(std::string dev, std::string direction) {
 // implemented
 
 
-int traffic_config::pos_to_rulenum(const int rule) {
+int traffic_config::pos_to_rulenum(int rule) {
    
     std::ostringstream out;
     out << rule;
@@ -84,84 +106,100 @@ int traffic_config::pos_to_rulenum(const int rule) {
 
 int traffic_config::pos_to_rulenum(const std::string &rstr) {
     struct stat st;
-    std::string file = MODSWROOT "/rulenumbers";
+    std::string file = std::string(MODSWROOT) + "/" + (_dev != "" ? _dev + "_rulenumbers" : "rulenumbers");
     if(stat(file.c_str(), &st)) {
         // if non zero there is no rulenumbers file so return 0
         return 0;
     }
     if(st.st_mtime >  rule_numbers_last_mod) {
-        rule_numbers.readvar(file);
+      rule_numbers.readvar(file.c_str());
         rule_numbers_last_mod = st.st_mtime;
     }
-    
-    return safeatoi(rule_numbers[rstr]);
+    return (rule_numbers[rstr.c_str()] != "" ? safeatoi(rule_numbers[rstr.c_str()]) : -1);
     
 }
 
 // change a rule (connection tracking) number into associated class
 
-std::string traffic_config::rule_to_classid(const int rule) {
-   
-    std::ostringstream out;
-    out << rule;
-    std::string str = out.str();
-    return rule_to_classid(str);
+const std::string traffic_config::rule_to_classid(int rule) {
+    return rule_to_classid(itostr(rule));
 }
 
-std::string traffic_config::rule_to_classid(const std::string &res) { 
+const std::string traffic_config::rule_to_classid(const std::string &res) { 
     struct stat st;     
     
-    std::string file = MODSWROOT "/rule2class";
+    std::string file = std::string(MODSWROOT) +  "/" + (_dev != "" ?_dev + "_rule2class" : "rule2class");
     if(stat(file.c_str(), &st)) {
         // cant look up rules to classids without this file
         return res;
     }
     if(st.st_mtime >  rule_to_class_last_mod) {
-        rule_to_class.readvar(file);
+      rule_to_class.readvar(file.c_str());
         rule_to_class_last_mod = st.st_mtime;
     }
    
-    return rule_to_class[res];
+    return (rule_to_class[res.c_str()] != "" ? rule_to_class[res.c_str()] : res);
     
 }
 
-std::string traffic_config::class_name(const std::string &res) {
+// look for specific one if _dev not ""
+const std::string traffic_config::class_name(const std::string &res) {
     struct stat st;
-    std::string file = MODSWROOT "/classnames";
+    std::string file = std::string(MODSWROOT) + "/" + (_dev != "" ? _dev + "_classnames" : "classnames");
     if(stat(file.c_str(), &st)) {
         // if non zero there is no classnames file so return raw classid
-        return res;
+      std::ostringstream log;
+                
+      log << "cant stat  " << _dev << "_classnames!" << std::endl;
+      syslog(LOG_WARNING,log.str().c_str());
+      return res;
     }
     if(st.st_mtime >  class_names_last_mod) {
-        class_names.readvar(file);
+      class_names.readvar(file.c_str());
         class_names_last_mod = st.st_mtime;
     }
-    
-    return class_names[res];
+    if(class_names[res.c_str()] == "") {
+      std::ostringstream log;
+                
+      log << "empty map for " << res << " in classnames" << std::endl;
+      syslog(LOG_WARNING,log.str().c_str());
+    }
+    return (class_names[res.c_str()] != "" ? class_names[res.c_str()] : res);
    
 }
 
 // we turn rule numbers into current names
-std::string traffic_config::rule_name(const int rulenum) {
-   
-    std::ostringstream out;
-    out << rulenum;
-    std::string res = out.str();
-    return rule_name(res);
+const std::string traffic_config::rule_name(int rulenum) {
+    return rule_name(itostr(rulenum));
 }
 
-std::string traffic_config::rule_name(const std::string & rulenum) {
+const std::string traffic_config::rule_name(const std::string & rulenum) {
     struct stat st;
-    std::string file = MODSWROOT  "/rulenames";
+    std::string file = std::string(MODSWROOT)  + "/" + (_dev != "" ? _dev + "_rulenames" : "rulenames");
     if(stat(file.c_str(), &st)) {
         // if non zero there is no rulenames file so return raw rule number
         return rulenum;
     }
     if(st.st_mtime >  rule_names_last_mod) {
-        rule_names.readvar(file);
+      rule_names.readvar(file.c_str());
         rule_names_last_mod = st.st_mtime;
     }
-    
-    return rule_names[rulenum];
+    // return name if there is one or number
+    return (rule_names[rulenum.c_str()] != "" ? rule_names[rulenum.c_str()] : "DEFAULT");
 }
 
+const std::string traffic_config::imq() {
+  struct stat st;
+  std::string file = std::string(MODSWROOT)  + "/" + (_dev != "" ? _dev + "_2imq" : "2imq");
+  if(stat(file.c_str(), &st)) {
+    return "";
+  }
+  if(st.st_mtime >  to_imq_last_mod) {
+    to_imq.readvar(file.c_str());
+    to_imq_last_mod = st.st_mtime;
+  }
+  if(to_imq[_dev.c_str()] == "") {
+    return "";
+  }
+  return to_imq[_dev.c_str()];
+}

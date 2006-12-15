@@ -1,9 +1,3 @@
-# SmoothWall Build system.
-#
-# (c) SmoothWall Ltd 2005
-#
-# This code is distributed under the terms of the GPL v2.
-
 #! /usr/bin/make
 # Makefile to make the trafficmon/trafficlogger iptables extensions against a ready compiled iptables source tree
 # Martin Houston, SmoothWall Ltd. 
@@ -20,12 +14,13 @@ IPTABLES_OBJS= $(IPTABLES_SRC_DIR)/iptables.o \
 
 COPT_FLAGS=-O2
 # COPT_FLAGS:=-g
-CFLAGS=$(COPT_FLAGS) -DMODSWROOT=\"$(MODSWROOT)\" -DIPTABLES_VERSION=\"$(IPTABLES_VERSION)\" -Wall -Wunused -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I$(IPROUTE_INC_DIR)  -I. 
+CFLAGS=$(COPT_FLAGS) -DMODSWROOT=\"$(MODSWROOT)\" -DIPTABLES_VERSION=\"$(IPTABLES_VERSION)\" -Wall -Wunused -I/usr/include/smoothwall -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I$(IPROUTE_INC_DIR)  -I. 
 
 
-OBJS= trafstats_core.o trafstats_iptables.o configvar.o traffic_config.o
+OBJS= trafstats_core.o trafstats_iptables.o traffic_config.o
 
-LDFLAGS      = -L$(IPROUTE_LIB_DIR) -rdynamic
+# LDFLAGS      = -lsmoothwall -L$(IPROUTE_LIB_DIR) -rdynamic
+LDFLAGS      = -lsmoothd -L$(IPROUTE_LIB_DIR) -rdynamic
 LDLIBS       = -lcurses -lnetlink -ldl -lnsl
 
 
@@ -33,7 +28,7 @@ LDLIBS       = -lcurses -lnetlink -ldl -lnsl
 all: trafficmon trafficlogger
 
 # no fancy include paths should be needed for this unit test
-unittests: reltimes_unittest configvar_unittest
+unittests: reltimes_unittest 
 
 # want to build the unit test from source each time, with profiling code
 reltimes_unittest: reltimes_unittest.cpp reltimes.hpp timestamp.hpp
@@ -42,18 +37,10 @@ reltimes_unittest: reltimes_unittest.cpp reltimes.hpp timestamp.hpp
 	mv gmon.out gmon.reltimes_unittest
 
 
-configvar_unittest: configvar_unittest.cpp configvar.o configvar.hpp 
-	$(CXX) -pg -o configvar_unittest configvar.o configvar_unittest.cpp
-	./configvar_unittest
-	mv gmon.out gmon.configvar_unittest
-
-
-
-
 trafficmon:	trafficmon.o $(OBJS) $(IPTABLES_OBJS)
 	$(CXX) $(COPT_FLAGS) $(LDFLAGS) -o trafficmon trafficmon.o $(OBJS) $(IPTABLES_OBJS) $(LDLIBS)
 
-trafficmon.o: trafficmon.cpp trafstats_core.hpp configvar.hpp timestamp.hpp
+trafficmon.o: trafficmon.cpp trafstats_core.hpp timestamp.hpp
 	$(CXX) -c $(CFLAGS) trafficmon.cpp
 
 trafstats_core.o: trafstats_core.cpp trafstats_core.hpp
@@ -62,13 +49,10 @@ trafstats_core.o: trafstats_core.cpp trafstats_core.hpp
 trafficlogger:	trafficlogger.o $(OBJS) $(IPTABLES_OBJS)
 	$(CXX) $(COPT_FLAGS) $(LDFLAGS) -o trafficlogger trafficlogger.o $(OBJS) $(IPTABLES_OBJS) $(LDLIBS)
 
-trafficlogger.o: trafficlogger.cpp trafstats_core.hpp configvar.hpp reltimes.hpp timestamp.hpp
+trafficlogger.o: trafficlogger.cpp trafstats_core.hpp reltimes.hpp timestamp.hpp
 	$(CXX) -c $(CFLAGS) trafficlogger.cpp
 
-configvar.o: configvar.cpp configvar.hpp
-	$(CXX) -c $(CFLAGS) configvar.cpp
-
-traffic_config.o: traffic_config.cpp traffic_config.hpp configvar.hpp
+traffic_config.o: traffic_config.cpp traffic_config.hpp 
 	$(CXX) -c $(CFLAGS) traffic_config.cpp
 
 
