@@ -344,7 +344,6 @@ sub closepage
 	</td>
 </tr> 
 </table>
-	<script language='javascript' SRC='/ui/js/wz_tooltip.js'></script>
 END
 		;
 	}
@@ -352,6 +351,7 @@ END
 
 	if ( $thissection ne "update" ) {
 		print <<END
+	<script language='javascript' SRC='/ui/js/wz_tooltip.js'></script>
 	</body>
 	</html>
 END

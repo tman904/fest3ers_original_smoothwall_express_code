@@ -9,6 +9,16 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
+# load the glossary of terms.
+# this is similar to the TR hash, but only required here, and therefore not
+# included in it, (it could do with replacing anyhow)
+
+require "${swroot}/langs/glossary.pl";
+
+if ( -e "${swroot}/langs/${language}_glossary.pl" ){
+	require "${swroot}/langs/${language}_glossary.pl";
+}
+
 my $needhelpwith = $ENV{'QUERY_STRING'};
 
 &showhttpheaders();
@@ -20,7 +30,11 @@ my $needhelpwith = $ENV{'QUERY_STRING'};
 &openbox('');
 
 open (FILE, "/httpd/html/help/$needhelpwith.html.$language");
-my @content = <FILE>;
+my $line;
+while ( <FILE> ){
+	$line =~s/\n/ /g;
+	$line .= $_;
+}
 close (FILE);
 print <<END
 <table>
@@ -30,11 +44,16 @@ print <<END
 	</td>
 </tr>
 <tr>
-	<td>
+	<td style='text-align: justify;'>
 END
 ;
 
-print "@content";
+foreach my $term ( keys %glossary ){
+	$line =~s/([\s,\.])$term([\s,\.])/$1\01$glossary{$term}\02$term\03$2/ig;
+}
+$line =~s/\01([^\02]*)\02([^\03]*)\03/<span style='color: #008b00;' onMouseOver="return escape('$1');">$2<\/span>/ig;
+print $line;
+
 print <<END
 	</td>
 </tr>

@@ -8,8 +8,10 @@ require valid-user
 <Files credits.cgi>
 require valid-user
 </Files>
-
 <Files pppsetup.cgi>
+require user admin
+</Files>
+<Files interfaces.cgi>
 require user admin
 </Files>
 <Files modem.cgi>
@@ -90,11 +92,13 @@ require user admin
 <Files extensions.cgi>
 require user admin
 </Files>
-
 <Files register.cgi>
 require valid-user
 </Files>
-
 <Files dial.cgi>
 require user admin dial
 </Files>
+<Files trafficmon.cgi>
+require valid-user
+</Files>
+
