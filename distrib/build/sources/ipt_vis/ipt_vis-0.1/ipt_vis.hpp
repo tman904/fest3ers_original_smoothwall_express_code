@@ -44,6 +44,11 @@ public:
   unsigned int numlines; // 1 unless this is a whole chain
   unsigned int numrules; // number of rules we need to collect in order to show numlines (can only collect whole chains)
   unsigned int numsamples;
+  unsigned int avsamples; // important until our sample buffer is full, so that
+                          // in order to get an average we devide by the 
+  // number of samples actualy  collected.
+  // once we have been running long enough for the buffer to be full this stays
+  // == numsamples
   unsigned int curses_start_line; // where in the screen buffer to render this
   std::string name; // may be comma separated if whole chain
   std::string table;
@@ -57,6 +62,7 @@ public:
   ulong_t **counters; 
   double *rates; // for the instant rate calculations
   double *averages; // for the average calculations
+ 
   unsigned int cur_counter; // which counter is the current one - cycles round in buffer
   // once we get going the instantaneous rate is this sample - previous one and
   // rate over the sample period is this sample - the one we replace.
@@ -92,14 +98,15 @@ public:
     bar_colour = "";
     max_rate = "";
     output_format = "";
-    // stage 1 allocate the pointers to pointers array - plus extra ointer for NULL termination
+    // stage 1 allocate the pointers to pointers array - plus extra pointer for NULL termination
     // first index is which part of the sample history buffer we are in
-    counters = (ulong_t **)calloc(numsamples+1, sizeof(ulong_t **));
+    // always have one more sample than ask for
+    counters = (ulong_t **)calloc(numsamples+2, sizeof(ulong_t **));
     if(counters) {
-      for(i = 0; i < numsamples; i++)
+      for(i = 0; i < numsamples+1; i++)
 	// second index is the counters for the rules themselves.
 	counters[i] = (ulong_t *)calloc(numrules+1, sizeof(ulong_t));
-      counters[numsamples] = NULL;
+      counters[numsamples+1] = NULL;
     }
     rates = (double *)calloc(numrules+1, sizeof(double)); // calloc means they start zero
     averages = (double *)calloc(numrules+1, sizeof(double)); // calloc means they start zero
@@ -122,7 +129,7 @@ public:
   void get_sample();
   
   int curses_render();
-  int plain_render();
+  int plain_render(FILE *outf = stdout);
   // have to free the low level stuff we calloced
   ~data_line() {
     int i;
@@ -182,7 +189,8 @@ public:
   std::string max_rate;
   std::string bg_colour;
   std::string bar_colour; // globals so individual lines dont need to specify
-  std::string output_format; 
+  std::string output_format;  
+  FILE *outfile; // if we are writing to a file directly
   std::vector<data_line *> lines; // 1 'line' represents a single collection point from iptableproc
   // may represent several on screen lines if a whole chain
   fd_set *select_fds; // for selecing on for read multiplexing

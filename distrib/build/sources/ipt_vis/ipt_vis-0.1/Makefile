@@ -1,9 +1,12 @@
+CFLAGS=-g
 all: ipt_vis
 
+.cpp.o:
+	g++ $(CFLAGS) -c -o $@ $(@:.o=.cpp)
 
 ipt_vis: ipt_vis.o
-	g++ -o $@ $+ -lncurses -lexpat
-	strip $@
+	g++ $(CFLAGS) -o $@ $+ -lncurses -lexpat
+	# strip $@
 
 ipt_vis.o: ipt_vis.hpp ipt_vis.cpp
 

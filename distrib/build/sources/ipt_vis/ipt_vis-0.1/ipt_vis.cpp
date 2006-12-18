@@ -1,7 +1,7 @@
 // ipt_vis - a curses front end onto iptableproc
 // an xml file is used to describe which rules to read and what
 // format the output should be in.
-// choices are curses, plain and xml
+// choices are curses, plain and anything else which is assumed to be a filename in which to write a single entry in plain form
 // see README
 // (c) 2006 SmoothWall Ltd. Author: <martin.houston@smoothwall.net>
 // Released under the GPLv2
@@ -86,7 +86,7 @@ void ipt_vis::start_hdlr(void *data, const XML_Char *el, const XML_Char **attr) 
     // some defaults
     measuring = "bytes";
     samples_per_sec = "1";
-    average_over = "5";
+    average_over = "1";
     title = "";
     output_method = "plain";
     table = "filter"; // if dont specify the table we want assume filter (same as iptables -L)
@@ -192,6 +192,7 @@ ipt_vis::ipt_vis(const char *xml_file) {
   lines.clear();
   working = false;
   output_method = "curses";
+  bool name_is_config = false;
 
   p = XML_ParserCreate("UTF-8");
   if(p) {
@@ -205,32 +206,48 @@ ipt_vis::ipt_vis(const char *xml_file) {
       return; // cant parse an empty file
     }
     buf = (char *)malloc(sbuf.st_size +1);
-    if(buf != NULL) {
+  }
+  else {
+    buf = (char *)malloc(strlen(xml_file) + 1);
+    name_is_config = true;
+  }
+  if(buf != NULL) {
+    buf[0] = 0;
+    if(name_is_config) {
+      strcpy(buf, xml_file);
+    }
+    else {
       if((fd = open(xml_file, O_RDONLY)) >= 0) {
 	read(fd, buf, sbuf.st_size);
 	close(fd);
-	if (! XML_Parse(p, buf, sbuf.st_size, 0)) {
-	  std::cerr << "ipt_vis config file " << xml_file << " has parse error at line " << XML_GetCurrentLineNumber(p) << ": " <<  XML_ErrorString(XML_GetErrorCode(p)) << std::endl;
-	}
-	else {
-	  working = true;
-	}
       }
-      else {
-	std::cerr << "ipt_vis config file " << xml_file << " cannot be opened! " << std::endl;
-      }
-      free(buf);
+    }
+    if (! XML_Parse(p, buf, strlen(buf), 0)) {
+      std::cerr << "ipt_vis config " << xml_file << " has parse error at line " << XML_GetCurrentLineNumber(p) << ": " <<  XML_ErrorString(XML_GetErrorCode(p)) << std::endl;
     }
     else {
-      std::cerr << "ipt_vis config file " << xml_file << " cannot allocate buffer space! " << std::endl;
+      working = true;
     }
+    free(buf);
   }
   else {
-    std::cerr << "ipt_vis config file " << xml_file << " cannot stat! " << std::endl;
+    std::cerr << "ipt_vis config " << xml_file << " cannot allocate buffer space! " << std::endl;
+    
   }
+  // if we are not "curses" or "plain" take this as a file to use
+  outfile = (FILE *)NULL;
+  if(!(output_method == "curses" || output_method == "plain")) {
+    if((outfile = fopen(output_method.c_str(), "w")) == NULL) {
+      working = false;
+    }
+    else
+      output_method = "plain";
+  }
+    
+  
 }
 
-// 
+// We use select to listen to a number of file descriptors
 bool ipt_vis::get_samples() {
   int i,numsamples, result;
   int sps = atoi(samples_per_sec.c_str());
@@ -302,9 +319,13 @@ static int percentage_to_colour(const char *bc, double percent) {
 }
 
 // no nonsense just blast out the samples
-int data_line::plain_render() { 
+// to the named file if there
+int data_line::plain_render(FILE *outf) { 
   char *crule,*nextr;
   int rulenum;
+  const char *fmt = "%.0f,%.0f";
+
+  
   if(numlines == 1) {
     //only one rule so index 0
     crule = NULL;
@@ -316,15 +337,20 @@ int data_line::plain_render() {
     if(rulenum >= numrules)
       return 0;
   }
+  // special super super terse if samples_per_sec and average_over both 1
+  // only show rate
   // super terse - dont even keep saying uints
+  if(container->average_over == "1")
+    fmt = "%.0f";
+
   if(output_format == "mbit" && container->measuring == "bytes")
-    fprintf(stdout,"%.0f,%.0f", (rates[rulenum]*8)/(1024*1024), (averages[rulenum]*8)/(1024*1024));
+    fprintf(outf, fmt, (rates[rulenum]*8)/(1024*1024), (averages[rulenum]*8)/(1024*1024));
   if(output_format == "kbit" && container->measuring == "bytes")
-    fprintf(stdout,"%.0f,%.0f", (rates[rulenum]*8)/1024, (averages[rulenum]*8)/1024);
+    fprintf(outf, fmt, (rates[rulenum]*8)/1024, (averages[rulenum]*8)/1024);
   else if(output_format == "bit" && container->measuring == "bytes")
-    fprintf(stdout,"%.0f,%.0f", (rates[rulenum]*8), (averages[rulenum]*8));
+    fprintf(outf,fmt, (rates[rulenum]*8), (averages[rulenum]*8));
   else
-    fprintf(stdout,"%.0f,%.0f", rates[rulenum], averages[rulenum]);
+    fprintf(outf,fmt, rates[rulenum], averages[rulenum]);
 
   if(numlines > 1) {
     while((nextr = strchr(crule, ',')) != NULL) {
@@ -334,18 +360,20 @@ int data_line::plain_render() {
 	// sanity check
 	if(rulenum >= numrules)
 	  break;
-	if(output_format == "mbit" && container->measuring == "bytes")
-	  fprintf(stdout,"\t%.0f,%.0f", (rates[rulenum]*8)/(1024*1024), (averages[rulenum]*8)/(1024*1024));
-	if(output_format == "kbit" && container->measuring == "bytes")
-	  fprintf(stdout,"\t%.0f,%.0f", (rates[rulenum]*8)/1024, (averages[rulenum]*8)/1024);
+	fputs("\t", outf);
+	if(output_format == "mbit" && container->measuring == "bytes") 
+	  fprintf(outf,fmt, (rates[rulenum]*8)/(1024*1024), (averages[rulenum]*8)/(1024*1024));
+	
+	if(output_format == "kbit" && container->measuring == "bytes")  
+	  fprintf(outf,fmt, (rates[rulenum]*8)/1024, (averages[rulenum]*8)/1024);
 	else if(output_format == "bit" && container->measuring == "bytes")
-	  fprintf(stdout,"\t%.0f,%.0f", (rates[rulenum]*8), (averages[rulenum]*8));
+	  fprintf(outf,fmt, (rates[rulenum]*8), (averages[rulenum]*8));
 	else
-	  fprintf(stdout,"\t%.0f,%.0f", rates[rulenum], averages[rulenum]);
+	  fprintf(outf,fmt, rates[rulenum], averages[rulenum]);
       }
     }
   }
-  fprintf(stdout,"\t");
+  fprintf(outf,"\t");
   return 0;
 }
 
@@ -441,7 +469,7 @@ int data_line::curses_render() {
 void ipt_vis::render_samples(void) {
   int i;
   int linenum = 0;
-  
+  FILE *outf = (outfile ? outfile : stdout);
   //std::cout << *this << std::endl;
   if(output_method == "curses") {
     if(do_resize) {
@@ -460,13 +488,19 @@ void ipt_vis::render_samples(void) {
 	       
   }
  
+  // position back at start
+  if(outfile) {
+    rewind(outf);
+    // and lock
+    lockf(fileno(outf), F_LOCK, 0);
+  }
   // now render each line
   for(i = 0; i <  lines.size(); i++) {
     if(output_method == "curses") {
       linenum = lines[i]->curses_render();
     }
     else { 
-      linenum = lines[i]->plain_render();
+      linenum = lines[i]->plain_render((outfile ? outfile : stdout));
     }
 
   } 
@@ -477,13 +511,21 @@ void ipt_vis::render_samples(void) {
     refresh();
   }
   else {
-    fprintf(stdout,"\n");
-    fflush(stdout);
+    fprintf(outf,"\n");
+    fflush(outf);
+    if(outfile) {
+      // and unlock 
+      rewind(outf);
+      lockf(fileno(outf), F_ULOCK, 0);
+    }
   }
 }
 
 void doit(const char *file) {
   ipt_vis workload(file);
+
+  if(!workload.working)
+    return; // cant do anything
 
   // print out what we have parsed
   // std::cout << workload << std::endl;
@@ -693,16 +735,9 @@ void data_line::get_sample() {
   
   // stats
   // instananeous stats is these less previous
-    // over peroid stats is these less oldest
-  if(!gotsample) {
-    // first ever sample - so set our starting value into our 'history' so we dont just jump from 0
-    // also we can assume that cur_counter will only ever be 0 so just clone our readings upwards
-    for(i = 1; i < numsamples; i++) {
-      if(counters[i])
-	memcpy(counters[i], counters[0],  numrules * sizeof(ulong_t));
-    }
-    gotsample = true; // so only happens once
-  }
+  // over peroid stats is these less oldest
+  
+ 
   if(cur_counter == 0) {
     prev_cnt = numsamples-1;
     next_cnt = cur_counter + 1;
@@ -717,9 +752,24 @@ void data_line::get_sample() {
     next_cnt = cur_counter + 1;
   }
 
-    
+  if(!gotsample) {
+    // first ever sample - so set our starting value into our 'history' so we dont just jump from 0
+    // also we can assume that cur_counter will only ever be 0 so just clone our readings upwards
+    for(i = 1; i < numsamples; i++) {
+      if(counters[i])
+	memcpy(counters[i], counters[0],  numrules * sizeof(ulong_t));
+    }
+    avsamples = 1;
+
+    gotsample = true; // so only happens once
+  } 
+  else {
+    if(avsamples < numsamples)
+      avsamples++;
+  }
+  // check that counter[prev_cnt] is non null before derefing it
   for(i = 0; i < numrules; i++) {
-    if(counters[cur_counter][i] >= counters[prev_cnt][i]) {
+    if(counters[prev_cnt] && counters[cur_counter][i] >= counters[prev_cnt][i]) {
       rates[i] = (long)(counters[cur_counter][i] - counters[prev_cnt][i]);
       rates[i] *= samp_per_sec;
     }
@@ -727,11 +777,11 @@ void data_line::get_sample() {
       rates[i] = 0;
 
 
-    // next is in fact the oldest we have so it is amout transferred over the period we are scanning
-    if(counters[cur_counter][i] >= counters[next_cnt][i]) {
+    // next is in fact the oldest we have so it is amount transferred over the period we are scanning
+    if(counters[next_cnt] && counters[cur_counter][i] >= counters[next_cnt][i]) {
       averages[i] = (long)(counters[cur_counter][i] - counters[next_cnt][i]);
       averages[i] *= samp_per_sec;
-      averages[i] /= numsamples;
+      averages[i] /= avsamples;
     }
     
   }     
@@ -743,7 +793,7 @@ void data_line::get_sample() {
 
 int  main(int argc, char *argv[]) {
 
-  // initialise our idea of valid colours
+  // initialise our idea of valid colours before XML parsing
   curses_colours["black"] = COLOR_BLACK;
   curses_colours["red"] = COLOR_RED;
   curses_colours["green"] = COLOR_GREEN;
@@ -757,7 +807,7 @@ int  main(int argc, char *argv[]) {
     doit(argv[1]);
   }
   else {
-    std::cerr << "ipt_vis must have an xml config file as 1st parameter, no default action" << std::endl;
+    std::cerr << "ipt_vis must have an xml config file or actual config as string as 1st parameter, no default action" << std::endl;
     exit(1);
   }
 }
