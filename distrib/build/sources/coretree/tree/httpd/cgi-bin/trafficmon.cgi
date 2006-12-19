@@ -11,9 +11,8 @@ use header qw( :standard );
 
 &showhttpheaders();
 
-&openpage($tr{'credits'}, 1, '', 'control');
-
-&openbigbox('100%', 'CENTER');
+&openpage($tr{'network traffic graphs'}."$title", 1, ' <META HTTP-EQUIV="Refresh" CONTENT="300"> <META HTTP-EQUIV="Cache-Control" content="no-cache"> <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> ', 'about your smoothie');
+&openbigbox('100%', 'LEFT');
 
 use Data::Dumper;
 
@@ -23,24 +22,35 @@ my @bar_names;
 my $oururl = "/cgi-bin/trafficstats.cgi";
 
 
-&openbox('');
+	my @devices = ( "eth0", "eth1", "eth2" );#, "ippp0" , "ppp0" );
 
-print "<div id='dbg'></div>";
 
-# construct the bar graphs accordingly.
+&openbox('Traffic Statistics');
+&realtime_graphs();
+&closebox();
 
-my %interfaces;
+&closebigbox();
+&closepage($errormessage);
 
-open INPUT, "</var/log/quicktrafficstats";
-while ( my $line = <INPUT> ){
-	next if ( not $line =~ /^cur_/ );
-	my ( $rule, $interface, $value ) = ( $line =~ /(.*)_([^_]*)=([\d\.]+)$/i );
-	print STDERR "looking to $rule, $interface, $value\n";
-	$interfaces{ $interface }{ $rule } = $value;
-}
 
-print	"<div style='width: 100%; text-align: right;'><span id='status' style='background-color: #fef1b5; display: none;'>Updating</span>&nbsp;</div>\n";
-print qq { 
+sub realtime_graphs 
+{
+	print "<div id='dbg'></div>";
+
+	# construct the bar graphs accordingly.
+
+	my %interfaces;
+
+	open INPUT, "</var/log/quicktrafficstats";
+	while ( my $line = <INPUT> ){
+		next if ( not $line =~ /^cur_/ );
+		my ( $rule, $interface, $value ) = ( $line =~ /(.*)_([^_]*)=([\d\.]+)$/i );
+		print STDERR "looking to $rule, $interface, $value\n";
+		$interfaces{ $interface }{ $rule } = $value;
+	}
+
+	print	"<div style='width: 100%; text-align: right;'><span id='status' style='background-color: #fef1b5; display: none;'>Updating</span>&nbsp;</div>\n";
+	print qq { 
 	<div id='main_content'>
 	<style>  
 		.s0{ display: none; } 
@@ -65,14 +75,12 @@ print qq {
 		.s19{ } 
 	</style>
 		<div style='width: 90%; margin-left: auto; margin-right: auto;'>
-};
-my @rules;
+	};
+	my @rules;
 
-my @devices = ( "eth0", "eth1", "eth2", "ippp0", "ppp0" );
-
-foreach my $interface ( @devices ){
-	my $iftitle = $interface;
-	print qq{
+	foreach my $interface ( @devices ){
+		my $iftitle = $interface;
+		print qq{
 		<table id='${interface}_container' style='width: 90%; border-collapse: collapse; border: 0px; margin-left: auto; margin-right: auto;'>
 		<tr style='background-color: #C3D1E5;'>
 			<td style="background-image: url('/themes/default/squaretopleft.jpg'); background-position: top left; background-repeat: no-repeat; text-align: left; vertical-align: middle;">&nbsp;<strong>$iftitle</strong></td>
@@ -80,21 +88,21 @@ foreach my $interface ( @devices ){
 		</tr>
 		<tr>
 			<td colspan='2' style='background-image: url( "/themes/default/squarebackdrop.jpg" ); background-position: top left; background-repeat: no-repeat; vertical-align: top;' ><br/><table style='width: 95%; margin-left: auto; margin-right: auto; border: 0px; border-collapse: collapse;'>
-	};
+		};
 
-	foreach my $section ( keys %{$interfaces{$interface}} ){
-		my $colour = $table1colour;
-		my $title  = $section;
+		foreach my $section ( keys %{$interfaces{$interface}} ){
+			my $colour = $table1colour;
+			my $title  = $section;
 		
-		if ( $section eq "cur_inc_rate" ){
-			$title  = "Incoming";
-			$colour = "#4D71A3";
-		} elsif ( $section = "cur_out_rate" ){
-			$title  = "Outgoing";
-			$colour = "#4F8E83";
-		}
+			if ( $section eq "cur_inc_rate" ){
+				$title  = "Incoming";
+				$colour = "#4D71A3";
+			} elsif ( $section = "cur_out_rate" ){
+				$title  = "Outgoing";
+				$colour = "#4F8E83";
+			}
 
-		print qq{
+			print qq{
 			<tr>
 				<td style='width: 15%;' rowspan='2' style='vertical-align: top;'>$title</td>
 				<td style='width: 400px; background-color: $table2colour; font-size: 6pt; padding: 0px;'  id='${section}_${interface}_scale' >
@@ -116,29 +124,25 @@ foreach my $interface ( @devices ){
 				</td>
 			</tr>
 			<tr style='height: 5px;'><td colspan='3'></td></tr>
-		};
-		push @rules, "${section}_${interface}";
-	}
+			};
+			push @rules, "${section}_${interface}";
+		}
 
-	print qq{
+		print qq{
 			</table>
 		</td>
 	</tr>
 	<tr><td colspan='2'></td></tr>
 	</table>
-	};
+		};
+	}
+
+	print "</div><script>";
+	show_script( \@rules );
+	print "</script>";
+	print "</div>";
+	print "<script> monitor(); fader(); </script>\n";
 }
-
-print "</div><script>";
-show_script( \@rules );
-print "</script>";
-print "</div>";
-print "<script> monitor(); fader(); </script>\n";
-
-&closebox();
-
-&closebigbox();
-&closepage($errormessage);
 
 sub show_script
 {
@@ -223,6 +227,9 @@ function updatepage(str){
 		if ( rows[ i ] != "" ){
 			var results = splitter.exec(rows[i]);	
 			var id = results[ 1 ] + '_' + results[2];
+			if ( !document.getElementById( id + '_rate' ) ){
+				continue;
+			}
 			var divider = 0;;
 			var rate = 0;
 			var s1; var s2; var s3; var s4;
@@ -269,7 +276,7 @@ function updatepage(str){
 			scale[ id ] = s4;
 			old[ id ] = cur[ id ];
 			cur[ id ] = parseInt( divider );
-			//document.getElementById( id ).style.width = cur[ id ] + 'px';
+			document.getElementById( id ).style.width = cur[ id ] + 'px';
 			document.getElementById( id + '_rate' ).innerHTML = rate;
 			document.getElementById( id + '_scale_1' ).innerHTML = s1;
 			document.getElementById( id + '_scale_2' ).innerHTML = s2;

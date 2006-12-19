@@ -4,7 +4,7 @@ use IO::Socket;
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
-require '/var/smoothwall/updatelists.pl';
+use update qw( :standard );
 
 my @this;
 my $return = &downloadlist();
