@@ -16,6 +16,7 @@ use IO::Socket;
 &openbigbox();
 
 my (%settings,$errormessage);
+&getcgihash(\%settings);
 
 my @temp = split('\&',$ENV{'QUERY_STRING'});
 
@@ -23,9 +24,6 @@ foreach my $pair ( @temp ){
 	my ( $var, $val ) = split /=/, $pair;
 	$settings{ $var } = $val;
 }
-
-use Data::Dumper;
-print STDERR Dumper %settings;
 
 my ( $reg, $regval );
 if ( open ( $reg, "</var/smoothwall/registered" )){
@@ -37,8 +35,10 @@ if ( $regval ne "" ){
 	print $regval;
 	&closebox();
 	close $reg;
-} elsif ($settings{'ACTION'} eq "Register" ){
+} elsif ($settings{'ACTION'} eq $tr{'register'} ){
 	register( \%settings );
+} elsif ($settings{'ACTION'} eq $tr{'no thanks'} ){
+	&dont_register();
 } else {
 	register_page();
 }
@@ -47,6 +47,26 @@ if ( $regval ne "" ){
 
 &closebigbox();
 &closepage();
+
+sub dont_register
+{
+	my ( $settings ) = @_;
+	
+	&openbox();
+	
+	print <<END
+	$tr{'reg nevermind'}
+END
+;
+
+	my $reg;
+	if( open ( $reg, ">/var/smoothwall/registered" )){
+		print $reg "";
+		close $reg;
+	}
+
+	&closebox();
+}
 
 sub register
 {
@@ -62,7 +82,7 @@ END
 
 	my $reg;
 	if( open ( $reg, ">/var/smoothwall/registered" )){
-		print $reg "$tr{'reg thankyou'} <strong>$settings->{'id'}</strong>\n";
+		print $reg "$tr{'reg thankyou'}; <strong>$settings->{'id'}</strong>\n";
 		close $reg;
 	}
 
@@ -468,6 +488,9 @@ print <<END
 <table class='centered'>
 	<tr>
 		<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'register'}'></td>
+</form>
+<form method='post'>
+		<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'no thanks'}'></td>
 	</tr>
 </table>
 END

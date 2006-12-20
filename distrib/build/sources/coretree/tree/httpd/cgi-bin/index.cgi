@@ -134,9 +134,7 @@ else
 my ( $reg, $regval );
 if ( open ( $reg, "</var/smoothwall/registered" )){
 	$regval = <$reg>;
-}
-
-if ( $regval eq "" ){
+} else {
 	&openbox();
 	print <<END
 	<div style='width: 100%; text-align: center;'>

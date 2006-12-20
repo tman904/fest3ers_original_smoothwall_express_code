@@ -10,10 +10,35 @@ my %cgiparams;
 
 # Configuration options  -----  Mostly colours and suchlike
 
-my $protocol_colour     = 'blue';
-my $local_colour        = 'green';
-my $remote_colour       = 'red';
-my $conversation_colour = 'darkgreen';
+my $protocol_colour     = '#06264d';
+my $local_colour        = '#1d398b';
+my $remote_colour       = '#2149c1';
+my $conversation_colour = '#335ebe';
+
+my $local_user_colour   = 'blue';
+my $remote_user_colour  = 'green';
+
+my %smilies = (  
+	':)' => 'icon_smile.gif',
+	':-)' => 'icon_smile.gif',
+	':(' => 'icon_sad.gif',
+	':-(' => 'icon_sad.gif',
+	';)' => 'icon_wink.gif',
+	';-)' => 'icon_wink.gif',
+	':o' => 'icon_surprised.gif',
+	':-o' => 'icon_surprised.gif',
+	':d' => 'icon_biggrin.gif',
+	':-d' => 'icon_biggrin.gif',
+	':-?' => 'icon_confused.gif',
+	':?' => 'icon_confused.gif',
+	':roll:' => 'icon_rolleyes.gif',
+	'lol' => 'icon_lol.gif',
+	':shock:' => 'icon_eek.gif',
+	':x'	=> 'icon_mad.gif',
+	':evil:' => 'icon_evil.gif',
+	':twisted:' => 'icon_twisted.gif',
+);
+
 
 # and now back with things that shouldn't be changed :)
 
@@ -62,7 +87,11 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 				}
 				my @conversations = grep {!/^\./} readdir( CONVERSATIONS );
 				foreach my $conversation ( @conversations ){
-					print "$protocol|$localuser|$remoteuser|$conversation\n";
+					my $protocol_img = "";
+					if ( -e "/httpd/html/ui/img/im/$protocol.png" ){
+						$protocol_img = "/ui/img/im/$protocol.png";
+					}
+					print "$protocol_img|$protocol|$localuser|$remoteuser|$conversation\n";
 				}
 				closedir CONVERSATIONS;
 			}
@@ -72,12 +101,16 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 	}
 	closedir DIR;
 
-	print "--END--";
+	print "--END--\n";
 
 	# now check the log file ...
 	
 	if ( $cgiparams{'section'} ne "none" ){
 		my ( $protocol, $localuser, $remoteuser, $conversation ) = split /\|/, $cgiparams{'section'};
+		
+		print "$protocol, $localuser, $remoteuser, $conversation\n";
+		print "--END--\n";
+		
 		my $filename = "/var/log/imspector/$protocol/$localuser/$remoteuser/$conversation";
 		print STDERR "looking at $filename\n";
 		
@@ -147,13 +180,18 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 				# incoming message (from remote user)
 				my $u = $remoteuser;
 				$u =~ s/\@.*//g;
-				$user = "&lt;<span style='color: green;'>$u</span>&gt;";
+				$user = "&lt;<span style='color: $remote_user_colour;'>$u</span>&gt;";
 			} elsif ( $type eq "2" ){
 				# outgoing message
 				my $u = $localuser;
 				$u =~ s/\@.*//g;
-				$user = "&lt;<span style='color: blue;'>$u</span>&gt;";
+				$user = "&lt;<span style='color: $local_user_colour;'>$u</span>&gt;";
 			}
+			foreach my $smiley ( keys %smilies ){
+				my $smile = quotemeta $smiley;
+				$data =~s/$smile/<img src='\/ui\/img\/im\/smiles\/$smilies{$smiley}' alt='$smiley'\/>/igm;
+			}
+
 			my $t = strftime "%H:%M:%S", localtime($timestamp);
 			print "<tr><td style='width: 30px; vertical-align: top;'>[$t]</td><td style=' width: 60px; vertical-align: top;'>$user</td><td style='vertical-align: top;'>$data</td></tr>";
 		}
@@ -166,6 +204,7 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 my $script = qq {
 <script language="Javascript">
 var section='none';
+var moveit = 1;
 var the_timeout;
 
 function xmlhttpPost()
@@ -198,37 +237,65 @@ function xmlhttpPost()
 function updatepage(str){
 	/* update the list of conversations ( if we need to ) */
 
-	var parts = str.split( "--END--" );
+	var parts = str.split( "--END--\\n" );
 
 	var lines = parts[0].split( "\\n" );
 			
 	for ( var line = 0 ; line < lines.length ; line ++ ){
 		var a = lines[line].split("|");
 
-		if ( !a[0] || !a[1] || !a[2] ){
+		if ( !a[1] || !a[2] || !a[3] ){
 			continue;
 		}
 
 		/* create titling information if needed */
-		if ( !document.getElementById( a[0] ) ){
-			document.getElementById('conversations').innerHTML += "<div id='" + a[0] + "_t' style='width: 100%; color: $protocol_colour;'>" + a[0] + "</div><div id='" + a[0] + "' style='width: 100%;'></div>";
+		if ( !document.getElementById( a[1] ) ){
+			document.getElementById('conversations').innerHTML += "<div id='" + a[1] + "_t' style='width: 100%; background-color: #d9d9f3; color: $protocol_colour;'>" + a[1] + "</div><div id='" + a[1] + "' style='width: 100%; background-color: #e5e5f3;'></div>";
 		 }
 
-		if ( !document.getElementById( a[0] + "_" + a[1] ) ){
-			document.getElementById( a[0] ).innerHTML += "<div id='" + a[0] + "_" + a[1] + "_t' style='width: 100%; color: $local_colour; margin-left: 10px;'>" + a[1] + "</div><div id='" + a[0] + "_" + a[1] + "' style='width: 100%;'></div>";
+		if ( !document.getElementById( a[1] + "_" + a[2] ) ){
+			var imageref = "";
+			if ( a[0] ){
+				imageref = "<img src='" + a[0] + "' alt='" + a[1] + "'/>";
+			}
+			document.getElementById( a[1] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_t' style='width: 100%; color: $local_colour; padding-left: 5px;'>" + imageref + a[2] + "</div><div id='" + a[1] + "_" + a[2] + "' style='width: 100%; background-color: #efeffa; border-bottom: solid 1px #d9d9f3;'></div>";
 		}
 
-		if ( !document.getElementById( a[0] + "_" + a[1] + "_" + a[2] ) ){
-			document.getElementById( a[0] + "_" + a[1] ).innerHTML += "<div id='" + a[0] + "_" + a[1] + "_" + a[2] + "_t' style='width: 100%; color: $remote_colour; margin-left: 20px;'>" + a[2] + "</div><div id='" + a[0] + "_" + a[1] + "_" + a[2] + "' style='width: 100%;'></div>";
+		if ( !document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) ){
+			document.getElementById( a[1] + "_" + a[2] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_t' style='width: 100%; color: $remote_colour; padding-left: 10px;'>" + a[3] + "</div><div id='" + a[1] + "_" + a[2] + "_" + a[3] + "' style='width: 100%;'></div>";
 		}
 
-		if ( !document.getElementById( a[0] + "_" + a[1] + "_" + a[2] + "_" + a[3] ) ){
-			document.getElementById( a[0] + "_" + a[1] + "_" + a[2] ).innerHTML += "<div id='" + a[0] + "_" + a[1] + "_" + a[2] + "_" + a[3] + "' style='width: 100%; color: $conversation_colour; margin-left: 30px; cursor: pointer;' onClick=" + '"' + "setsection('" + a[0] + "|" + a[1] + "|" + a[2] + "|" + a[3] + "');" + '"' + "' + >" + a[3] + "</div>";
+		if ( !document.getElementById( a[1] + "_" + a[2] + "_" + a[3] + "_" + a[4] ) ){
+			document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_" + a[4] + "' style='width: 100%; color: $conversation_colour; cursor: pointer; padding-left: 15px;' onClick=" + '"' + "setsection('" + a[1] + "|" + a[2] + "|" + a[3] + "|" + a[4] + "');" + '"' + "' + >&raquo;" + a[4] + "</div>";
 		}
 	}
 
+	/* determine the title of this conversation */
+	var details = parts[1].split(",");
+	var title = details[0] + " conversation between <span style='color: $local_user_colour;'>" + details[ 1 ] + "</span> and <span style='color: $remote_user_colour;'>" + details[2] + "</span>";
+	if ( !details[1] ){
+		title = "&nbsp;";
+	}
+	if ( !parts[2] ){
+		parts[2] = "&nbsp;";
+	}
+
 	document.getElementById('status').style.display = "none";
-	document.getElementById('content').innerHTML = parts[1];
+	
+	var bottom  = parseInt( document.getElementById('content').scrollTop );
+	var bottom2 = parseInt( document.getElementById('content').style.height );
+	var absheight = parseInt( bottom + bottom2 );
+	if ( absheight == document.getElementById('content').scrollHeight ){	
+		moveit = 1;
+	} else {
+		moveit = 0;
+	}
+	document.getElementById('content').innerHTML = parts[2];
+	if (moveit == 1 ){
+		document.getElementById('content').scrollTop = 0;
+		document.getElementById('content').scrollTop = document.getElementById('content').scrollHeight;
+	}
+	document.getElementById('content_title').innerHTML = title;
 	the_timeout = setTimeout( "xmlhttpPost();", 5000 );
 }
 
@@ -237,6 +304,8 @@ function setsection( value )
 	section = value;
 	clearTimeout(the_timeout);
 	xmlhttpPost();
+	document.getElementById('content').scrollTop = 0;
+	document.getElementById('content').scrollTop = document.getElementById('content').scrollHeight;
 }
 
 </script>
@@ -252,10 +321,10 @@ print qq{
 	<div style='width: 100%; text-align: right;'><span id='status' style='background-color: #fef1b5; display: none;'>Updating</span>&nbsp;</div>
 	<table style='width: 100%;'>
 		<tr>
-			<td style='width: 14%; text-align: left; vertical-align: top; overflow: auto; font-size: 8pt; border: solid 1px #c0c0c0;'><div id='conversations'></div></td>
+			<td style='width: 170px; text-align: left; vertical-align: top; overflow: auto; font-size: 8pt; border: solid 1px #c0c0c0;'><div id='conversations' style='height: 400px; overflow: auto; font-size: 9px; overflow-x: hidden;'></div></td>
 			<td style='border: solid 1px #c0c0c0;'>
-				<div id='content_title' style='height: 20px; overflow: auto; vertical-align: top; border-bottom: solid 1px #c0c0c0;'></div>
-				<div id='content' style='height: 380px; overflow: auto; vertical-align: top; border: solid 1px #c0c0c0;'></div>
+				<div id='content_title' style='height: 20px; overflow: auto; vertical-align: top; background-color: #E6E8FA; border-bottom: solid 1px #c0c0c0;'></div>
+				<div id='content' style='height: 380px; overflow: auto; vertical-align: bottom; border-bottom: solid 1px #c0c0c0; overflow-x: hidden;'></div>
 			</td>
 		</tr>
 	</table>

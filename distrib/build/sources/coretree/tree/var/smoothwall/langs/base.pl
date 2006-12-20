@@ -279,6 +279,7 @@
 
 'ssregister'    => 'register',
 'reg thankyou'  => 'Thank you for registering this SmoothWall Express System.<br/>Your Registration ID is',
+'reg nevermind'  => 'If at any time you would like to register your SmoothWall Express System you can do so, in the meantime we thank you for using our product and hope that you enjoy it.',
 'reg title'     => 'Title:',
 'reg title title' => 'Mr, Mrs, Dr, Miss, Dark Overlord etc',
 'reg name'      => 'Name:',
@@ -307,6 +308,7 @@
 'reg ltd optin'      => 'I would like to receive information, news and updates from <strong>SmoothWall Ltd</strong>.',
 'reg privacy'        => 'Privacy Notice<br/>The SmoothWall GPL Project values your right to privacy. All registration information submitted by this page is processed safely and stored confidentially. We do not share data with any other organisations.',
 'register'       => 'Register',
+'no thanks'	 => 'No Thank You',
 'reg about you'  => 'About you',
 'reg about network' => 'About your network',
 'reg please support' => "Please support the SmoothWall GPL project by <a href='/cgi-bin/register.cgi'>registering</a> this SmoothWall Express system.",
