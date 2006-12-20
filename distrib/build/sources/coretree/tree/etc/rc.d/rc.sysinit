@@ -154,11 +154,10 @@ echo "Starting sshd (if enabled)"
 /usr/bin/setuids/restartssh
 echo "Starting time service (if enabled)"
 /usr/bin/setuids/restartntpd
-
-if [ -e "/var/smoothwall/proxy/squid.conf" ]; then
-	echo "Starting squid (if enabled)"
-	/usr/bin/setuids/restartsquid
-fi
+echo "Starting squid (if enabled)"
+/usr/bin/setuids/restartsquid
+echo "Starting IMSpector (if enabled)"
+/usr/bin/smoothcom imrestart
 
 echo "Silencing kernel, syslog output on tty12"
 echo >/proc/sys/kernel/printk "1 4 1 7"
