@@ -221,6 +221,8 @@ sub showsection
 END
 ;
 	my $remaining = 795;
+
+	$span = 0;
 	
 	foreach my $item ( @menu ){
 		my $width = 8 + (8 * length( $tr{ $item->{'title'} } ));
@@ -240,7 +242,7 @@ END
 	<td class='topend'></td>
 </tr>
 <tr>
-	<td class='mainbody' colspan='$span'>
+	<td class='mainbody' colspan='$span'> 
 END
 ;
 
