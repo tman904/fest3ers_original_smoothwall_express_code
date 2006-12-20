@@ -106,6 +106,7 @@ endif
 		joe \
 		wget \
 		iptables \
+		ipbatch \
 		pciutils \
 		kernel-runtime \
 		lilo \
@@ -156,6 +157,7 @@ endif
 		snort \
 		openswan \
 		wireless_tools \
+		imspector \
 		coretree \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \

@@ -21,5 +21,6 @@ configure: patch
 
 install: compile
 	@make -C $(DIR) install PREFIX=$(PKG_ROOT)/$(PKG_DIR)
+	@rm -f $(PKG_ROOT)/$(PKG_DIR)/etc/imspector/imspector.conf
 
 include ../Makefile.rules

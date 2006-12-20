@@ -199,6 +199,19 @@ if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpsquid
 fi
 
+# im
+/sbin/iptables -t nat -N im
+/sbin/iptables -t nat -N jmpim
+/sbin/iptables -t nat -A jmpim -d 10.0.0.0/8 -j RETURN
+/sbin/iptables -t nat -A jmpim -d 172.16.0.0/12 -j RETURN
+/sbin/iptables -t nat -A jmpim -d 192.168.0.0/16 -j RETURN
+/sbin/iptables -t nat -A jmpim -d 169.254.0.0/16 -j RETURN
+/sbin/iptables -t nat -A jmpim -j im
+/sbin/iptables -t nat -A PREROUTING -i $GREEN_DEV -j jmpim
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpim
+fi
+
 # Masqurade
 /sbin/iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
 /sbin/iptables -t nat -A POSTROUTING -o ippp0 -j MASQUERADE

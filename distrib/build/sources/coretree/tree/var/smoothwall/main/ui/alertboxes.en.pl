@@ -47,6 +47,8 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'outbound.cgi'		=> 'Configure interfaces to have outbound traffic blocked, except on specific rules.',
 'ipblock.cgi' 		=> 'Add blocking rules to prevent access from specified IP addresses or networks.',
 'backup.img' 		=> 'Use this page to create a backup floppy disk or floppy disk image file.',
+'im.cgi'		=> 'Configure the IM logging proxy.',
+'imviewer.cgi'		=> 'Check logs for the IM proxy service',
 
 );
 
