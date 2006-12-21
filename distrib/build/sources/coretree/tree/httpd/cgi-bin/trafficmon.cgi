@@ -11,7 +11,7 @@ use header qw( :standard );
 
 &showhttpheaders();
 
-&openpage($tr{'network traffic graphs'}."$title", 1, ' <META HTTP-EQUIV="Refresh" CONTENT="300"> <META HTTP-EQUIV="Cache-Control" content="no-cache"> <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> ', 'about your smoothie');
+&openpage("Realtime bandwidth bars", 1, ' <META HTTP-EQUIV="Refresh" CONTENT="300"> <META HTTP-EQUIV="Cache-Control" content="no-cache"> <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> ', 'about your smoothie');
 &openbigbox('100%', 'LEFT');
 
 use Data::Dumper;
@@ -22,10 +22,10 @@ my @bar_names;
 my $oururl = "/cgi-bin/trafficstats.cgi";
 
 
-	my @devices = ( "eth0", "eth1", "eth2" );#, "ippp0" , "ppp0" );
+	my @devices = ( "eth0", "eth1", "eth2", "eth3" );#, "ippp0" , "ppp0" );
 
 
-&openbox('Traffic Statistics');
+&openbox('Bandwidth bars:');
 &realtime_graphs();
 &closebox();
 
@@ -299,7 +299,6 @@ function updatepage(str){
 
 function monitor()
 {
-dbg.innerHTML += "hello dolly<br/>";
 	xmlhttpPost();
 }
 
