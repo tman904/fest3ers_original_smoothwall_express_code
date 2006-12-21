@@ -22,7 +22,7 @@ $|=1; # line buffering
 # Work out some various details from the various system files.
 # such as fixes number etc.
 
-$version = '3.0';
+$version = '3.0 - ALPHA Koala';
 
 $webuirevision = 'ui-3.5';
 $viewsize = 200;
@@ -338,7 +338,7 @@ sub closepage
 			SmoothWall&trade; is a trademark of <a href='http://www.smoothwall.net/'>SmoothWall Limited</a>.
 		</td>
 		<td style='text-align: right;'>
-		    	&copy; 2000 - 2005 <a href='http://smoothwall.org/team/'>The SmoothWall Team</a><br/>
+		    	&copy; 2000 - 2007 <a href='http://smoothwall.org/team/'>The SmoothWall Team</a><br/>
 			<a href='/cgi-bin/credits.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://smoothwall.org/sources.html'>original authors</a>
 		</td>
 	</tr>
