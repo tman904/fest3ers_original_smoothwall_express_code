@@ -207,8 +207,8 @@ int main(int argc, char *argv[])
 				sections[0] = ctr[TR_WEB_PROXY];
 				sections[1] = ctr[TR_ISDN_CONFIGURATION];
 				sections[2] = ctr[TR_ADSL_CONFIGURATION];
-				sections[4] = ctr[TR_DHCP_SERVER_CONFIGURATION],
-				sections[5] = NULL;	
+				sections[3] = ctr[TR_DHCP_SERVER_CONFIGURATION],
+				sections[4] = NULL;	
 	
 				rc = newtWinMenu(ctr[TR_SECTION_MENU],
 					ctr[TR_SELECT_THE_ITEM], 50, 5, 5, 8,
