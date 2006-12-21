@@ -51,7 +51,7 @@ int main(void)
 	{
 		system("/bin/rm -rf /var/squid/cache" );
 		system("/bin/mkdir /var/squid/cache");
-		system("/bin/chown squid:squid /var/squid/cache");
+		system("/bin/chown squid:squid /var/spool/squid/cache");
 
 	}
 	
@@ -64,7 +64,7 @@ int main(void)
 	if (transparent && enable)
 		system("/sbin/iptables -t nat -A squid -p tcp --dport 80 -j REDIRECT --to-ports 800");
 
-	system("/bin/chown squid:squid /var/squid/cache");
+	system("/bin/chown squid:squid /var/spool/squid/cache");
 
 	unlink("/var/smoothwall/proxy/clearedcache");	
 					
