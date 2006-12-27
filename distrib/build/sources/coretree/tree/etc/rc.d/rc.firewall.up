@@ -94,8 +94,8 @@ fi
 # IPSEC
 /sbin/iptables -N ipsec
 /sbin/iptables -A ipsec -p udp --destination-port 500 -j ACCEPT
-/sbin/iptables -A ipsec -p 47 -j ACCEPT
 /sbin/iptables -A ipsec -p 50 -j ACCEPT
+/sbin/iptables -A ipsec -p 51 -j ACCEPT
 /sbin/iptables -A block -i ppp0 -j ipsec
 /sbin/iptables -A block -i ippp0 -j ipsec
 if [ "$RED_DEV" != "" ]; then
