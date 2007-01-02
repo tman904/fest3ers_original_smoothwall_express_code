@@ -33,6 +33,7 @@
 'ssstatus' => 'status',
 'ssadvstatus' => 'advanced',
 'sstraffic graphs' => 'traffic graphs',
+'sstraffic graph' => 'traffic monitor',
 'ssbandwidth bars' => 'bandwidth bars',
 'sssquid graphs' => 'squid graphs',
 'ssppp settings' => 'ppp settings',
