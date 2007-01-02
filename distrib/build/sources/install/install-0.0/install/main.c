@@ -43,7 +43,8 @@ int main(int argc, char *argv[])
 	setenv("TERM", "linux", 0);
 
 	sethostname("smoothwall", 10);
-	
+
+	memset(&sdd, 0, sizeof(struct storagedevicedriver));
 	memset(&hd, 0, sizeof(struct blockdevice));
 	memset(&cdrom, 0, sizeof(struct blockdevice));
 
