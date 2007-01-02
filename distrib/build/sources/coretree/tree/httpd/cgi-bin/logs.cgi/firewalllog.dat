@@ -51,6 +51,8 @@ my @now = localtime(time);
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
+$viewsize = 100;
+
 my %cgiparams;
 my $errormessage;
 my %hithash;
@@ -311,6 +313,7 @@ END
 	if ($start == -1) {
 	        $start = $lines - $viewsize; 
 	}
+
 	if ($start >= $lines - $viewsize) { $start = $lines - $viewsize; };
 	if ($start < 0) { $start = 0; }
 
@@ -361,26 +364,20 @@ END
 ;
 
 	print <<END
-<div style='width: 100%; overflow: auto; background-color: #d0d0d0;'>
-<table style='border-collapse: collapse; border: 0px;'>
+<table style='border-collapse: collapse; border: 0px; width: 100%;'>
 <tr>
-	<th style='width: 70px;  border-right: solid 1px #909090;'>$tr{'time'}</th>
-	<th style='width: 90px;  border-right: solid 1px #909090;'>$tr{'in'} &raquo; $tr{'out'}</th>
-	<th style='width: 40px;  border-right: solid 1px #909090;'></th>
-	<th style='width: 1px;   '></th>
-	<th style='width: 115px; '>$tr{'source'}</th>
-	<th style='width: 7px;   border-right: solid 1px #909090;'></th>
-	<th style='width: 110px; border-right: solid 1px #909090;'>$tr{'src port'}</th>
-	<th style='width: 6px;   border-right: solid 1px #909090;'></th>
-	<th style='width: 1px;   '></th>
-	<th style='width: 115px; '>$tr{'destination'}</th>
-	<th style='width: 7px;   border-right: solid 1px #909090;'></th>
-	<th style='width: 108px; '>$tr{'dst port'}</th>
+	<th style='width: 15%;  border-right: solid 1px #909090;'>$tr{'time'}</th>
+	<th style='width: 10%;  border-right: solid 1px #909090;'>$tr{'in'} &raquo; $tr{'out'}</th>
+	<th style='width: 8%;  border-right: solid 1px #909090;'></th>
+	<th style='width: 1%;   '></th>
+	<th style='width: 18%; '>$tr{'source'}</th>
+	<th style='width: 2%;   border-right: solid 1px #909090;'></th>
+	<th style='width: 15%; border-right: solid 1px #909090;'>$tr{'src port'}</th>
+	<th style='width: 1%;   '></th>
+	<th style='width: 18%; '>$tr{'destination'}</th>
+	<th style='width: 2%;   border-right: solid 1px #909090;'></th>
+	<th style=' '>$tr{'dst port'}</th>
 </tr>
-</table>
-</div>
-<div style='width: 100%; height: 400px; overflow: auto;'>
-<table style='border-collapse: collapse; border: 0px; '>
 END
 ;
 
@@ -429,25 +426,24 @@ END
 		push @clear_sections, "$lines$dstaddr";
 
 		print <<END
-	<td style='width: 70px;  text-align: center; border-right: solid 1px #909090;'>$time</td>
-	<td style='width: 90px;  text-align: center; border-right: solid 1px #909090;'>$in &raquo; $out</td>
-	<td style='width: 40px;  text-align: center; border-right: solid 1px #909090;'>$protostr</td>
-	<td style='width: 1px;   text-align: center;'>
+	<td style='text-align: center; border-right: solid 1px #909090;'>$time</td>
+	<td style='text-align: center; border-right: solid 1px #909090;'>$in &raquo; $out</td>
+	<td style='text-align: center; border-right: solid 1px #909090;'>$protostr</td>
+	<td style='text-align: center;'>
 		<div onMouseOver="sub_menu_show('$lines$srcaddr')" onMouseOut='sub_menu_clear();' class='toolbox' id='a$lines$srcaddr'></div>
 	</td>
-	<td style='width: 115px; text-align: left;'>
+	<td style='text-align: left;'>
 		<input type='checkbox' name='ip' value='$srcaddr'/>
 		<span onClick="sub_menu_show('$lines$srcaddr', '$srcaddr');" onMouseOut="sub_menu_clear();">$srcaddr</span>
 	</td>
 	<td style='width: 7px; text-align: center; border-right: solid 1px #909090;'>
 		<img src='/ui/img/down.png' alt='tools' onClick="sub_menu_show('$lines$srcaddr', '$srcaddr');" >
 	</td>
-	<td style='width: 110px; text-align: left; border-right: solid 1px #909090;'>$srcportstr</td>
-	<td style='width: 6px;   text-align: center; border-right: solid 1px #909090;'>&raquo;</td>
-	<td style='width: 1px;   text-align: center;'><div onMouseOver="sub_menu_show('$lines$dstaddr')" onMouseOut='sub_menu_clear();' class='toolbox' id='a$lines$dstaddr'></div></td>
-	<td style='width: 115px; text-align: left;'><input type='checkbox' name='ip' value='$dstaddr'><span onMouseOver="update( '$dstaddr', '$lines$dstaddr' );" onClick="sub_menu_show('$lines$dstaddr');" onMouseOut="sub_menu_clear();">$dstaddr</span></td>
-	<td style='width: 7px;   text-align: center; border-right: solid 1px #909090;' onClick="update( '$dstaddr', '$lines$dstaddr' ); sub_menu_show('$lines$dstaddr');" ><img src='/ui/img/down.png' alt='tools'></td>
-	<td style='width: 108px; text-align: left; border-right: solid 1px #909090;'>$dstportstr</td>
+	<td style='text-align: left; border-right: solid 1px #909090;'>$srcportstr</td>
+	<td style='text-align: center;'><div onMouseOver="sub_menu_show('$lines$dstaddr')" onMouseOut='sub_menu_clear();' class='toolbox' id='a$lines$dstaddr'></div></td>
+	<td style='text-align: left;'><input type='checkbox' name='ip' value='$dstaddr'><span onMouseOver="update( '$dstaddr', '$lines$dstaddr' );" onClick="sub_menu_show('$lines$dstaddr');" onMouseOut="sub_menu_clear();">$dstaddr</span></td>
+	<td style='text-align: center; border-right: solid 1px #909090;' onClick="update( '$dstaddr', '$lines$dstaddr' ); sub_menu_show('$lines$dstaddr');" ><img src='/ui/img/down.png' alt='tools'></td>
+	<td style='text-align: left;'>$dstportstr</td>
 </tr>
 END
 		;
@@ -456,7 +452,6 @@ END
 
 	print <<END
 </table>
-</div>
 <table style='border-collapse: collapse; border: 0px; width: 100%; background-color: #d0d0d0;'>
 <tr>
 	<th style='text-align: right;'>
