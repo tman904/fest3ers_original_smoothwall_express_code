@@ -193,8 +193,7 @@ int simplesecurepopenvenv(int writing, pid_t *ppid, char *argv[], char *envp[])
 {
 	int pipefds[2] = { 0, 0 };
 	int n;
-	pid_t pid = 0;
-	int status = 0;
+
 
 	if (pipe(pipefds) == -1) { return -1; }
 

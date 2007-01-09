@@ -12,6 +12,7 @@
 #include <syslog.h>
 #include <signal.h>
 #include "module.h"
+#include "ipbatch.h"
 
 extern "C" {
 	int load( std::vector<CommandFunctionPair> &  );
@@ -52,64 +53,49 @@ int restart_im( std::vector<std::string> & parameters, std::string & response )
 
 
 int stop_im( std::vector<std::string> & parameters, std::string & response )
-{
+{	
+        std::vector<std::string>ipb;
 	response = "IMSpector Process Terminated";
 
 	signalprocess("/var/run/imspector.pid", 15);
-
-	FILE *output = popen("/usr/sbin/ipbatch", "w");
-	fprintf(output, "/sbin/iptables -t nat -F im\n");
-	fflush(output);
-	fprintf(output, "commit\n");
-	fflush(output);
-	fprintf(output, "end\n");
-	fflush(output);
-	pclose(output);
+	ipb.push_back("iptables -t nat -F im");
+	ipbatch(ipb);
 
 	return 0;
 }
 
 int start_im( std::vector<std::string> & parameters, std::string & response )
 {
+        std::vector<std::string>ipb;
 	response = "IMSpector Process started";
 
 	ConfigVAR settings("/var/smoothwall/im/settings");
 
-	FILE *output = popen("/usr/sbin/ipbatch", "w");
-
-	fprintf(output, "/sbin/iptables -t nat -F im\n");
-	fflush(output);
+	ipb.push_back("iptables -t nat -F im");
+	
 
 	syslog(LOG_ERR, "starting accordingly");
 	if (settings["ENABLE"] == "on")
 	{
 		if (settings["MSN"] == "on")
 		{
-			fprintf(output, "/sbin/iptables -t nat -A im -p tcp --dport 1863 -j REDIRECT --to-ports 16667\n");
-			fflush(output);
+		        ipb.push_back("iptables -t nat -A im -p tcp --dport 1863 -j REDIRECT --to-ports 16667");
 		}
 		if (settings["ICQ"] == "on")
 		{
-			fprintf(output, "/sbin/iptables -t nat -A im -p tcp --dport 5190 -j REDIRECT --to-ports 16667\n");
-			fflush(output);
+		        ipb.push_back("iptables -t nat -A im -p tcp --dport 5190 -j REDIRECT --to-ports 16667");
 		}
 		if (settings["YAHOO"] == "on")
 		{
-			fprintf(output, "/sbin/iptables -t nat -A im -p tcp --dport 5050 -j REDIRECT --to-ports 16667\n");
-			fflush(output);
+		  ipb.push_back("iptables -t nat -A im -p tcp --dport 5050 -j REDIRECT --to-ports 16667");
 		}
 		if (settings["IRC"] == "on")
 		{
-			fprintf(output, "/sbin/iptables -t nat -A im -p tcp --dport 6667 -j REDIRECT --to-ports 16667\n");
-			fflush(output);
+		        ipb.push_back("iptables -t nat -A im -p tcp --dport 6667 -j REDIRECT --to-ports 16667");
 		}
 	}
 
-	fprintf(output, "commit\n");
-	fflush(output);
-	fprintf(output, "end\n");
-	fflush(output);
-	pclose(output);
+	ipbatch(ipb);
 
 	syslog(LOG_ERR, "starting accordingly");
 	if (settings["ENABLE"] == "on")
