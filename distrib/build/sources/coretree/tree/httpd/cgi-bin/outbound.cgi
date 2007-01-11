@@ -13,6 +13,7 @@ use smoothtype qw( :standard );
 my (%cgiparams,%selected,%checked);
 my $config = "${swroot}/outbound/config";
 my $settings = "${swroot}/outbound/settings";
+my $machinesettings = "${swroot}/outbound/machines";
 my $ethSetFile = "${swroot}/ethernet/settings";
 
 my $errormessage = '';
@@ -133,6 +134,63 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or $cg
 	}
 }
 
+if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{'add'} ){
+	my $machine = $cgiparams{'MACHINE'};
+	my $enabled = $cgiparams{'MACHINEENABLED'};
+
+	unless ( &validip( $machine ) ){
+		$errormessage = "invalid ip";
+	}
+
+	if ( $errormessage eq "" ){	
+		open(FILE,">>$machinesettings") or die 'Unable to open config file.';
+		flock FILE, 2;
+		print FILE "$machine,$enabled\n";
+		close(FILE);
+	}
+}
+
+if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{'edit'} or $cgiparams{'MACHINEACTION'} eq $tr{'remove'}){
+	open(FILE, "$machinesettings") or die 'Unable to open config file.';
+	my @current = <FILE>;
+	close(FILE);
+
+	foreach $line (@current)
+	{
+		$id++;
+		if ($cgiparams{$id} eq "on") {
+			$count++; 
+		}
+	}
+
+	if ($count == 0) {
+		$errormessage = $tr{'nothing selected'}; 
+	}
+	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
+		$errormessage = $tr{'you can only select one item to edit'}; 
+	}
+	
+	unless ($errormessage)
+	{
+		open(FILE, ">$machinesettings") or die 'Unable to open config file.';
+		flock FILE, 2;
+		$id = 0;
+		foreach $line (@current)
+		{
+			$id++;
+			unless ($cgiparams{$id} eq "on") {
+				print FILE "$line"; 
+			} elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
+				chomp($line);
+				my @temp = split(/\,/,$line);
+				$cgiparams{'MACHINE'} = $temp[0];
+				$cgiparams{'MACHINEENABLED'} = $temp[1];
+				$service = $temp[2];
+			}
+		}
+		close(FILE);
+	}
+}
 
 &openpage($tr{'outbound filtering'}, 1, '', 'networking');
 
@@ -213,11 +271,13 @@ print qq{
 	<form method='post'>
 	<table style='width: 100%;'>
 	<tr>
-		<td>$tr{'ip addressc'}</td>
-		<td><input type='text' name='ADDRESS' id='address' @{[jsvalidip('address')]}/></td>
+		<td style='width: 25%;'>$tr{'ip addressc'}</td>
+		<td style='width: 25%;'><input type='text' name='MACHINE' id='address' @{[jsvalidip('address')]}/></td>
+		<td style='width: 25%;'>$tr{'enabled'}</td>
+		<td style='width: 25%;'><input type='checkbox' name='MACHINEENABLED' $checked{$cgiparams{'MACHINEENABLED'}}></td>
 	</tr>
 	<tr>
-		<td colspan='2' style='text-align: center;'><input type='submit' value='$tr{'add'}'></td>
+		<td colspan='4' style='text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'add'}'></td>
 	</tr>
 	</table>
 	</form>
@@ -280,35 +340,52 @@ print <<END
 </form>
 END
 ;
+&closebox();
 
-# Write out configuration
-if($configChanged > 0) {
-	if(open(FILE, ">$config")) {
-		foreach $line (@portRules) {
-			print FILE "$line\n";
-		}
-		close(FILE);
-	} else {
-		die 'Unable to write out config.';
-	}
-}
+&openbox($tr{'current exceptions'});
+print "<form method='post'>\n";
 
-# Write out settings
-if($settingsChanged > 0) {
-	if(open(FILE, ">$settings")) {
-		foreach $interface (keys %interfaces) {
-			print FILE "$interface,";
-			print FILE join(',',@{ $interfaceRules{$interface} });
-			print FILE "\n";
-		}
-	} else {
-		die 'Unable to write out settings.';
-	}
-}	
+my %render_settings = (
+                        'url'     => "/cgi-bin/outbound.cgi?$cgiparams{'COLUMN'},$cgiparams{'ORDER'},[%COL%],[%ORD%]",
+                        'columns' => [ 
+                                { 
+                                        column => '1',
+                                        title  => "$tr{'ip address'}",
+                                        size   => 30,
+					sort   => 'cmp',
+                                },
+                                {
+                                        column => '2',
+                                        title  => "$tr{'enabledtitle'}",
+                                        size   => 10,
+                                        tr     => 'onoff',
+                                        align  => 'center',
+                                },
+                                {
+                                        title  => "$tr{'mark'}", 
+                                        size   => 10,
+                                        mark   => ' ',
+                                },
+                                { 
+                                        column => '3',
+                                        title => "$tr{'comment'}",
+                                        break => 'line',
+                                }
+                        ]
+                );
 
-if(($configChanged > 0) || ($settingsChanged > 0)) {
-	system('/usr/bin/setuids/setoutbound');
-}
+&displaytable( $machinesettings, \%render_settings, $cgiparams{'MACHINEORDER'}, $cgiparams{'MACHINECOLUMN'} );
+
+print <<END
+<table class='blank'>
+<tr>
+	<td style='width: 50%; text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'remove'}'></td>
+	<td style='width: 50%; text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'edit'}'></td>
+</tr>
+</table>
+</form>
+END
+;
 
 &closebox();
 &alertbox('add','add');
