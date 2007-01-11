@@ -22,9 +22,14 @@ my $errormessage = '';
 
 $cgiparams{'COLUMN'} = 1;
 $cgiparams{'ORDER'} = $tr{'log ascending'};
-$cgiparams{'RULEENABLED'} = 'on';
 
 &getcgihash(\%cgiparams);
+
+$cgiparams{'RULEENABLED'} = 'on'     if ( not defined $cgiparams{'ACTION'} );
+$cgiparams{'MACHINEENABLED'} = 'on'  if ( not defined $cgiparams{'MACHINEACTION'} );
+
+use Data::Dumper;
+print STDERR Dumper %cgiparams;
 
 if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
 {
@@ -147,6 +152,9 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 		flock FILE, 2;
 		print FILE "$machine,$enabled\n";
 		close(FILE);
+		$cgiparams{'MACHINE'} = "";
+		$cgiparams{'MACHINEENABLED'} = "on";
+
 	}
 }
 
@@ -180,7 +188,7 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 			$id++;
 			unless ($cgiparams{$id} eq "on") {
 				print FILE "$line"; 
-			} elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
+			} elsif ($cgiparams{'MACHINEACTION'} eq $tr{'edit'}) {
 				chomp($line);
 				my @temp = split(/\,/,$line);
 				$cgiparams{'MACHINE'} = $temp[0];
@@ -272,7 +280,7 @@ print qq{
 	<table style='width: 100%;'>
 	<tr>
 		<td style='width: 25%;'>$tr{'ip addressc'}</td>
-		<td style='width: 25%;'><input type='text' name='MACHINE' id='address' @{[jsvalidip('address')]}/></td>
+		<td style='width: 25%;'><input type='text' name='MACHINE' id='address' @{[jsvalidip('address')]} value='$cgiparams{'MACHINE'}'/></td>
 		<td style='width: 25%;'>$tr{'enabled'}</td>
 		<td style='width: 25%;'><input type='checkbox' name='MACHINEENABLED' $checked{$cgiparams{'MACHINEENABLED'}}></td>
 	</tr>
@@ -342,7 +350,7 @@ END
 ;
 &closebox();
 
-&openbox($tr{'current exceptions'});
+&openbox($tr{'allowed machines'});
 print "<form method='post'>\n";
 
 my %render_settings = (

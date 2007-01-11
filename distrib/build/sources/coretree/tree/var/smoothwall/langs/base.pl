@@ -543,6 +543,7 @@
 'traffic is 1' => 'Traffic originating on ',
 'traffic is 2' => ' is:',
 'current exceptions' => 'Current exceptions:',
+'allowed machines' => 'Always allowed:',
 'always allow'  => 'Always allow:',
 
 # ddns.cgi
