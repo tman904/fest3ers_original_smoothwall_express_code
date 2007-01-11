@@ -167,6 +167,57 @@ table.centered {
 	width: 100%;
 }
 
+table.list {
+	width: 98%;
+	margin-left: auto;
+	margin-right: auto;
+	border: solid 1px #c0c0c0;
+	border-collapse: collapse;
+}
+
+th.list {
+	width: 30%; 
+	border-width: 0px; 
+	border-right: 1px; 
+	border-color: #b0b0b0; 
+	background-color: #dedede;
+	border-style: solid;
+}
+
+th.listcomment {
+	width: 30%; 
+	border-width: 0px; 
+	border-right: 1px; 
+	border-color: #b0b0b0; 
+	background-color: #eeeeee;
+	border-style: solid;
+}
+
+tr.list {
+	border-width: 0px; 
+	border-top: 1px;
+	border-color: #c0c0c0;
+	border-style: solid;
+}
+
+td.list {
+	border-width: 0px;  
+	border-right: 1px; 
+	border-color: #b0b0b0; 
+	border-style: solid; 
+	text-align: center;
+}
+
+td.listcomment {
+	border-width: 0px; 
+	border-top: 1px;
+	border-color: #b0b0b0;
+	border-style: solid;
+	text-align: center;
+}
+
+
+
 td.note {
 	text-align: center;
 	vertical-align: middle;
@@ -408,6 +459,18 @@ div.menushaddow {
 
 img {
 	border: 0px;
+}
+
+span.green {
+	color: #488214;
+}
+
+span.orange {
+	color: #FF8C00;
+}
+
+span.purple {
+	color: #7D26CD;
 }
 
 

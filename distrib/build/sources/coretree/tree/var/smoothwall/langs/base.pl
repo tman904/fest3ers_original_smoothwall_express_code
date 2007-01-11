@@ -8,6 +8,7 @@
 
 # common
 
+'user defined' => 'User Defined',
 'invalid input' => 'Invalid input',
 'save' => 'Save', # button
 'refresh' => 'Refresh', # button
@@ -26,6 +27,8 @@
 'this field may be blank' => 'This field may be blank.',
 'these fields may be blank' => 'These fields may be blank.',
 'smoothd failure' => 'Unable to run command.',
+'log ascending' => 'ascending',
+'log descending' => 'descending',
 
 # header.pl
 'sshome' => 'home',
@@ -44,9 +47,9 @@
 'ssweb proxy' => 'web proxy',
 'ssim proxy' => 'im proxy',
 'ssdhcp' => 'dhcp',
-'ssport forwarding' => 'port forwarding',
+'ssport forwarding' => 'incoming',
 'ssexternal service access' => 'external service access',
-'ssdmz pinholes' => 'dmz pinholes',
+'ssdmz pinholes' => 'internal',
 'ssdynamic dns' => 'dynamic dns',
 'ssids' => 'intrusion detection system',
 'ssim' => 'instant messages',
@@ -62,7 +65,7 @@
 'ssip info' => 'ip information',
 'sstime' => 'time',
 'ssip tools' => 'ip tools',
-'ssfiltering' => 'filtering',
+'ssfiltering' => 'outgoing',
 'ssadvanced' => 'advanced',
 'ssip block' => 'ip block',
 'ssbackup' => 'backup',
@@ -488,6 +491,7 @@
 'dmz pinhole configuration' => 'DMZ pinhole configuration',
 'external access configuration' => 'External access configuration',
 'add a new rule' => 'Add a new rule:',
+'add a new exception' => 'Add a new exception:',
 'sourcec' => 'External source IP (or network):',
 'sourcec hint' => 'enter an IP or network address, or leave blank for "ALL"',
 'source ipc' => 'Source IP:',
@@ -521,16 +525,25 @@
 'external ip' => 'External IP',
 
 # outbound.cgi
+'application servicec' => 'Application / Service(s):',
+'application service'  => 'Application / Service(s)',
 'outbound filtering configuration' => 'Outbound filtering configuration',
 'Outbound filtering' => 'Outbound filtering',
 'filtering' => 'Filtering',
-'filtered interfaces' => 'Filtered interfaces' ,
+'filtered interfaces' => 'Interface defaults' ,
 'outbound port opened' => 'Outbound Port Opened',
 'outbound port closed' => 'Outbound Port Closed',
-'interface' => 'Interface',
 'invalid port or range' => 'Invalid port or range',
 'outbound rule added to ' => 'Outbound rule added to ',
 'outbound rule removed from ' => 'Outbound rule removed from ',
+'portc' => 'Port:',
+'unfiltered' => 'Unfiltered',
+'allowed' => 'Allowed',
+'blocked' => 'Blocked',
+'traffic is 1' => 'Traffic originating on ',
+'traffic is 2' => ' is:',
+'current exceptions' => 'Current exceptions:',
+'always allow'  => 'Always allow:',
 
 # ddns.cgi
 'dynamic dns' => 'Dynamic DNS',

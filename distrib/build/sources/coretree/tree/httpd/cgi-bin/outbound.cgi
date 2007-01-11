@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothtype qw( :standard );
 
 my (%cgiparams,%selected,%checked);
 my $config = "${swroot}/outbound/config";
@@ -18,7 +19,18 @@ my $errormessage = '';
 
 &showhttpheaders();
 
+$cgiparams{'COLUMN'} = 1;
+$cgiparams{'ORDER'} = $tr{'log ascending'};
+$cgiparams{'RULEENABLED'} = 'on';
+
 &getcgihash(\%cgiparams);
+
+if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
+{
+        my @temp = split(',',$ENV{'QUERY_STRING'});
+        $cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+        $cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+}
 
 # Load inbound interfaces into %interfaces (excluding RED)
 my %interfaces;
@@ -31,132 +43,96 @@ while(<ETHSET>) {
 	}
 }
 
-# Load Configuration
-my $configChanged = 0;
-my @portRules = ();
-if(open(FILE, $config)) {
-	while(<FILE>) {
-		chomp;
-		push(@portRules, $_);
-	}
-} else {
-	$configChanged++;
-	# generate default config
+my %settings;
+
+&readhash("$config", \%settings);
+
+my %selected;
+$selected{"GREEN$settings{'GREEN'}"} = " selected ";
+$selected{"ORANGE$settings{'ORANGE'}"} = " selected ";
+$selected{"PURPLE$settings{'PURPLE'}"} = " selected ";
+
+my %checked;
+$checked{'on'} = " checked ";
+
+# Save the settings as is required.
+
+if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} ){
+	$settings{'GREEN'} = $cgiparams{'ENABLEGREEN'};
+	$settings{'ORANGE'} = $cgiparams{'ENABLEORANGE'};
+	$settings{'PURPLE'} = $cgiparams{'ENABLEPURPLE'};
+
+	&writehash("$config", \%settings);
 }
 
-# Load Settings
-my $settingsChanged = 0;
-my %interfaceRules;
-if(open(FILE, $settings)) {
-	while(<FILE>) {
-		chomp;
-		my @tempInterface = split(',', $_);
-		@{ $interfaceRules{$tempInterface[0]} } = @tempInterface[1..$#tempInterface];
-	}
-} else {
-	# generate default settings
-	foreach $interface (keys %interfaces) {
-		@{ $interfaceRules{$interface} } = ( 
-			$interfaces{$interface},
-			"off" );
-	}
-	$settingsChanged++;
-}
+my $errormessage = "";
 
-# Save enables and disabled the outbound filtering service
-if ($cgiparams{'ACTION'} eq $tr{'save'}) {
-	foreach $interface (keys %interfaces) {
-		if($cgiparams{"ENABLE$interface"} eq 'on') {
-			@{ $interfaceRules{$interface} }[1] = 'on';
-		} else {
-			@{ $interfaceRules{$interface} }[1] = 'off';
-		}
-	}
-	$settingsChanged++;
-}
+if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'add'} ){
+	my $interface = $cgiparams{'INTERFACE'};
+	my $enabled   = $cgiparams{'RULEENABLED'};
+	my $service   = $cgiparams{'SERVICE'};
+	my $port      = $cgiparams{'PORT'};
 
-# Add a new allowed port
-if ($cgiparams{'ACTION'} eq $tr{'add'}) {
-	my $port;
-	if(defined $cgiparams{'DEST_PORT'}) {
-		$port = $cgiparams{'DEST_PORT'};
-		if(!validportrange($port)) {
+	if ( $service eq "user" ){
+		if ( not &validportrange( $port ) ){
 			$errormessage = $tr{'invalid port or range'};
+		} else {
+			$service = $port;
 		}
 	}
-	unless($errormessage) {
-		if (defined $interfaces{$cgiparams{'INTERFACE'}}) {
-			my $ruleEnable;
-			if($cgiparams{'RULEENABLED'} eq 'on') {
-				$ruleEnable = 'on';
-			} else {
-				$ruleEnable = 'off';
-			}
-			
-			push(@portRules, "$cgiparams{'INTERFACE'},$cgiparams{'PROTOCOL'},$cgiparams{'DEST_PORT'},$ruleEnable");
-			$configChanged++;
-			&log($tr{'outbound rule added to '} . $cgiparams{'INTERFACE'});
-		}
+
+	if ( $errormessage eq "" ){	
+		open(FILE,">>$settings") or die 'Unable to open config file.';
+		flock FILE, 2;
+		print FILE "$interface,$enabled,$service\n";
+		close(FILE);
 	}
 }
 
-$cgiparams{'INTERFACE'} = '';
-$cgiparams{'PROTOCOL'} = '';
-$cgiparams{'DEST_PORT'} = '';
-$cgiparams{'RULEENABLED'} = '';
+my $service = 'user';
 
-if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}) {
-	my $id = 1;
-	my $count = 0;
-	foreach $line (@portRules) {
-		if($cgiparams{$id} eq 'on') {
-			$count++;
-		}
+if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or $cgiparams{'ACTION'} eq $tr{'remove'}){
+	open(FILE, "$settings") or die 'Unable to open config file.';
+	my @current = <FILE>;
+	close(FILE);
+
+	foreach $line (@current)
+	{
 		$id++;
-	}
-	
-	if ($count == 0) {
-		$errormessage = $tr{'nothing selected'};
-	} elsif ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-		$errormessage = $tr{'you can only select one item to edit'};
-	}
-	
-	unless ($errormessage) {
-		my $id = 1;
-		my @newRules;
- 		foreach $line (@portRules) {
-			my @temp = split(',',$line);
-			if($cgiparams{"$id"} eq 'on') {	
-				if($cgiparams{'ACTION'} eq $tr{'edit'}) {
-					$cgiparams{'INTERFACE'} = $temp[0];
-					$cgiparams{'PROTOCOL'} = $temp[1];
-					$cgiparams{'DEST_PORT'} = $temp[2];
-					$cgiparams{'RULEENABLED'} = $temp[3];
-				}
-				&log($tr{'outbound rule removed from '} . $temp[0]);
-			} else {
-				push(@newRules, $line);
-			}
-			$id++;
+		if ($cgiparams{$id} eq "on") {
+			$count++; 
 		}
-		@portRules = @newRules;
+	}
 
-		$configChanged++;
+	if ($count == 0) {
+		$errormessage = $tr{'nothing selected'}; 
+	}
+	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
+		$errormessage = $tr{'you can only select one item to edit'}; 
+	}
+	
+	unless ($errormessage)
+	{
+		open(FILE, ">$settings") or die 'Unable to open config file.';
+		flock FILE, 2;
+		$id = 0;
+		foreach $line (@current)
+		{
+			$id++;
+			unless ($cgiparams{$id} eq "on") {
+				print FILE "$line"; 
+			} elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
+				chomp($line);
+				my @temp = split(/\,/,$line);
+				$cgiparams{'INTERFACE'} = $temp[0];
+				$cgiparams{'RULEENABLED'} = $temp[1];
+				$service = $temp[2];
+			}
+		}
+		close(FILE);
 	}
 }
 
-$selected{'INTERFACE'}{'ORANGE'} = '';
-$selected{'INTERFACE'}{'PURPLE'} = '';
-$selected{'INTERFACE'}{'GREEN'} = '';
-$selected{'INTERFACE'}{$cgiparams{'INTERFACE'}} = 'SELECTED';
-
-$selected{'PROTOCOL'}{'TCP'} = '';
-$selected{'PROTOCOL'}{'UDP'} = '';
-$selected{'PROTOCOL'}{$cgiparams{'PROTOCOL'}} = 'SELECTED';
-
-$checked{'RULEENABLED'}{'off'} = '';
-$checked{'RULEENABLED'}{'on'} = '';
-$checked{'RULEENABLED'}{$cgiparams{'RULEENABLED'}} = 'CHECKED';
 
 &openpage($tr{'outbound filtering'}, 1, '', 'networking');
 
@@ -164,130 +140,144 @@ $checked{'RULEENABLED'}{$cgiparams{'RULEENABLED'}} = 'CHECKED';
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
-
 &openbox($tr{'filtered interfaces'} . ':');
+print "<form method='post'>\n";
 print '<table style=\'width: 100%;\'>' . "\n";
 print '<tr>' . "\n";
 
 my $unused = 6;
 my $width = 90 / $unused;
 foreach $interface (keys(%interfaces)) {
-	print "<td style='width: $width%;'>" . $interface . ':</td>';
-	print "<td style='width: $width%;'><input type=\"checkbox\" name=\"ENABLE" . $interface . '"';
-	if(@{ $interfaceRules{$interface} }[1] eq 'on') { print " CHECKED"; }
-	print '></td>' . "\n";
-	$unused -= 2;
+	print qq{
+	<tr>
+	<td style='width: 35%;'>$tr{'traffic is 1'}$interface$tr{'traffic is 2'}</td>
+	<td style='width: 25%;'>
+		<select name=\"ENABLE$interface\"'>
+			<option $selected{'GREENoff'} value='off'>$tr{'unfiltered'}</option>
+			<option $selected{'GREENallow'} value='allow'>$tr{'allowed'}</option>
+			<option $selected{'GREENblock'} value='block'>$tr{'blocked'}</option>
+		</select>
+	</td>
+	<td style='width: 40%;'></td>
+	</tr>
+	};
 }
-print "<td style='width: $width%;'>&nbsp;</td>\n"x$unused;
 
-print '<td><input type="submit" name="ACTION" value="' . "$tr{'save'}" . '"></td></tr>' . "\n";
-print '</table>' . "\n";
-
+print qq{
+	<tr>
+	<td colspan='3' style='text-align: center;'>
+		<input type="submit" name="ACTION" value="$tr{'save'}">
+	</td></tr>
+	</table>
+	</form>
+};
 &closebox();
 
-&openbox($tr{'add a new rule'});
-print <<END
+&openbox($tr{'add a new exception'});
+
+print qq{
+<form method='post'>
 <table style='width: 100%;'>
 <tr>
-	<td style='width: 15%;'>
-		$tr{'interface'}:
-	</td>
-	<td style='width: 15%;'>
-		<select name='INTERFACE'>
-END
-;
+	<td>$tr{'interface'}</td>
+	<td><select name='INTERFACE'>
+};
+
 foreach my $colour (sort keys %interfaces) {
 	print "<option value='$colour'>$colour</option>\n";
 }
 
-print <<END
+print qq{
 		</select>
 	</td>
-
-	<td style='width: 15%;'>
-		$tr{'protocol'}:
+	<td>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='RULEENABLED' $checked{$cgiparams{'RULEENABLED'}}></td>
+</tr>
+<tr>
+	@{[&portlist('SERVICE', $tr{'application servicec'}, 'PORT', $tr{'portc'}, $service)]}
+</tr>
+<tr>
+	<td colspan='4' style='text-align: center;'>
+		<input type="submit" name="ACTION" value="$tr{'add'}">
 	</td>
-	<td style='width: 15%;'>
-		<select name='PROTOCOL'>
-			<option value='TCP'>TCP</option>
-			<option value='UDP'>UDP</option>
-		</select>
-	</td>
-
-
-	<td style='width: 15%;'>
-		$tr{'destination portc'}
-	</td>
-
-	<td style='width: 20%;'>
-		<input type='text' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='6'>
-	</td>
-	</tr>
+</tr>
 </table>
+</form>
+};
 
-<table style='width: 100%;'>
-	<tr>
-	<td class='base' width='50%' align='center'>$tr{'enabled'}<input type='CHECKBOX' name='RULEENABLED' $checked{'RULEENABLED'}{'on'}></td>
-	<td width='50%' align='center'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
-	</tr>
-</table>
-END
-;
 &closebox();
 
-&openbox($tr{'current rules'});
-print <<END
-<table class='centered'>
-<tr>
-	<th style='width: 25%;'>$tr{'interface'}</th>
-	<th style='width: 25%;'>$tr{'protocol'}</th>
-	<th style='width: 25%;'>$tr{'destination port'}</th>
-	<th style='width: 15%;'>$tr{'enabledtitle'}</th>
-	<th style='width: 10%;'>$tr{'mark'}</th>
-</tr>
-END
-;
+&openbox($tr{'always allow'});
 
-my $id = 0;
-foreach $line (@portRules) {
-	$id++;
-	my @temp = split(',', $line);
-	
-	$interface = $temp[0];
-	$protocol = $temp[1];
-	$destport = $temp[2];
-
-	if ($id % 2) {
-		print "<tr class='dark'>\n";
-	} else {
-              	print "<tr class='light'>\n";
-	}
-	
-	if ($temp[3] eq 'on') {
-		$gif = 'on.gif';
-	} else {
-		$gif = 'off.gif';
-	}
-	print <<END
-	<td align='center'>$interface</td>
-	<td align='center'>$protocol</td>
-	<td align='center'>$destport</td>
-	<td align='center'><img src='/ui/img/$gif'></td>
-	<td align='center'><input type='checkbox' name='$id'></td>
+print qq{
+	<form method='post'>
+	<table style='width: 100%;'>
+	<tr>
+		<td>$tr{'ip addressc'}</td>
+		<td><input type='text' name='ADDRESS' id='address' @{[jsvalidip('address')]}/></td>
 	</tr>
-END
-;
-}
+	<tr>
+		<td colspan='2' style='text-align: center;'><input type='submit' value='$tr{'add'}'></td>
+	</tr>
+	</table>
+	</form>
+};
+
+&closebox();
+
+&openbox($tr{'current exceptions'});
+print "<form method='post'>\n";
+
+my %render_settings = (
+                        'url'     => "/cgi-bin/outbound.cgi?[%COL%],[%ORD%]",
+                        'columns' => [ 
+                                { 
+                                        column => '1',
+                                        title  => "$tr{'interface'}",
+                                        size   => 30,
+					sort   => 'cmp',
+                                },
+                                {
+                                        column => '3',
+                                        title  => "$tr{'application service'}",
+                                        size   => 50,
+                                        sort   => \&ipcompare,
+                                },
+                                {
+                                        column => '2',
+                                        title  => "$tr{'enabledtitle'}",
+                                        size   => 10,
+                                        tr     => 'onoff',
+                                        align  => 'center',
+                                },
+                                {
+                                        title  => "$tr{'mark'}", 
+                                        size   => 10,
+                                        mark   => ' ',
+                                },
+				{
+					column => '1',
+					colour => 'colour',
+					tr     => { 'GREEN' => 'green', 'ORANGE' => 'orange', 'PURPLE' => 'purple' },
+				},
+                                { 
+                                        column => '4',
+                                        title => "$tr{'comment'}",
+                                        break => 'line',
+                                }
+                        ]
+                );
+
+&displaytable( $settings, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
 
 print <<END
-</table>
 <table class='blank'>
 <tr>
 	<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
 	<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
 </tr>
 </table>
+</form>
 END
 ;
 

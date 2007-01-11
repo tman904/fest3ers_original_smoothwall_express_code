@@ -10,8 +10,10 @@ require Exporter;
 
 # define the Exportlists.
 
+our @_validation_items;
+
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr tooltip );
+@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr @_validation_items );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -354,6 +356,16 @@ END
 	if ( $thissection ne "update" ) {
 		print <<END
 	<script language='javascript' SRC='/ui/js/wz_tooltip.js'></script>
+	<script>
+END
+;
+
+foreach my $item ( @_validation_items ){
+	print "$item;\n";
+}
+
+print <<END
+	</script>
 	</body>
 	</html>
 END
@@ -752,19 +764,6 @@ sub connectedstate {
 		$theconnstate = "idle";
 	}
 	return $theconnstate;
-}
-
-sub tooltip
-{
-        my ( $tip, $options ) = @_;
-
-	my $oplist;
-
-	foreach my $option ( keys %$options ){
-		$oplist .= "this.$option = '$options->{$option}';"
-	}		
-
-        return "onMouseOver=\"$oplist return escape( $tip );\"";
 }
 
 1;

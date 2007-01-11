@@ -23,3 +23,102 @@ function MM_swapImage() {
 function displayHelp(url) {
 	window.open("/cgi-bin/help.cgi?"+url,"disposableHelpWindow","resizable=yes,status=no,scrollbars=yes,width=300,height=400");
 }
+
+/* Validation functions and related options */
+
+function _disable(field)
+{
+	if ( document.getElementById(field) ){
+		document.getElementById(field).disabled = true;
+	}
+}
+
+function _enable(field)
+{
+	if ( document.getElementById(field) ){
+		document.getElementById(field).disabled = false;
+	}
+}
+
+function _error(field)
+{
+	if ( document.getElementById(field) ){
+		document.getElementById(field).style.backgroundColor = '#FFdddd';
+	}
+}
+
+function _ok(field)
+{
+	if ( document.getElementById(field) ){
+		document.getElementById(field).style.backgroundColor = 'white';
+	}
+}
+	
+
+function portlist( selectf, inputf, enabledon )
+{
+	var selectval = document.getElementById(selectf).value;
+	var inputval  = document.getElementById(inputf).value;
+
+	if ( selectval == enabledon ){
+		_enable(inputf);
+		validport(inputf);
+	} else {
+		_ok(inputf);
+		_disable(inputf);
+	}
+}
+
+function validport(field)
+{
+	var inputval = document.getElementById(field).value;
+	/* check it for validity */
+	var errored = !/^[\d:]+$/.test(inputval);
+	if(!errored) {
+		errored = (inputval < 1 || inputval > 0xFFFF);
+	}
+	if ( errored ){
+		_error(field);
+	} else {
+		_ok(field);
+	}
+}
+
+function validip(field)
+{
+	var address = document.getElementById(field).value;
+	var numbers = address.split( "." );
+	var valid = true;
+
+	if ( numbers.length != 4 ){
+		valid = false;
+	}
+		
+	for ( var number = 0 ; number < 4 ; number++ ){			
+		if ( ! numbers[ number ] ){
+			valid = false;
+			break;
+		}		
+		
+		for ( var character = 0 ; character < numbers[ number ].length ; character++ ){
+			if ( 
+				( numbers[ number ].charAt( character ) < '0' ) ||
+				( numbers[ number ].charAt( character ) > '9' ) ){
+				valid = false;
+				break;
+			}
+		}
+		
+		if (( numbers[ number ] < 0 ) || ( numbers[ number ] > 255 )){
+			valid = false;
+		}
+	}
+
+	if ( valid ){
+		_ok(field);
+	} else {
+		_error(field);
+	}
+}
+
+
