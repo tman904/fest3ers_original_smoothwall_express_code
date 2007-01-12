@@ -55,21 +55,21 @@ function _ok(field)
 }
 	
 
-function portlist( selectf, inputf, enabledon )
+function portlist( selectf, inputf, enabledon, allowblank )
 {
 	var selectval = document.getElementById(selectf).value;
 	var inputval  = document.getElementById(inputf).value;
 
 	if ( selectval == enabledon ){
 		_enable(inputf);
-		validport(inputf);
+		validport(inputf,allowblank);
 	} else {
 		_ok(inputf);
 		_disable(inputf);
 	}
 }
 
-function validport(field)
+function validport(field,allowblank)
 {
 	var inputval = document.getElementById(field).value;
 	/* check it for validity */
@@ -77,6 +77,10 @@ function validport(field)
 	if(!errored) {
 		errored = (inputval < 1 || inputval > 0xFFFF);
 	}
+	if( inputval == "" && allowblank == true){
+		errored = 0;
+	}
+
 	if ( errored ){
 		_error(field);
 	} else {

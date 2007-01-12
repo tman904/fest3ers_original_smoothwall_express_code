@@ -8,14 +8,30 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothtype qw( :standard );
 
 my (%cgiparams,%selected,%checked);
 my $filename = "${swroot}/portfw/config";
 
 &showhttpheaders();
 
+$cgiparams{'COLUMN'} = 1;
+$cgiparams{'ORDER'} = $tr{'log ascending'};
 $cgiparams{'ENABLED'} = 'off';
+
+my $service = "user";
+my $dest_service = "user";
+
 &getcgihash(\%cgiparams);
+
+
+if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
+{
+        my @temp = split(',',$ENV{'QUERY_STRING'});
+        $cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+        $cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+}
+
 
 my $errormessage = '';
 
@@ -29,11 +45,23 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		else {
 			$cgiparams{'EXT'} = '0.0.0.0/0'; }
 	}
-	unless(&validportrange($cgiparams{'SRC_PORT'})) { $errormessage = $tr{'source port numbers'}; }
-	if ($cgiparams{'DEST_PORT'}) {
-		unless(&validport($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; } }
-	else {
-		$cgiparams{'DEST_PORT'} = 0; }
+
+	if ( defined $cgiparams{'SRC_PORT_SEL'} and $cgiparams{'SRC_PORT_SEL'} ne "user" ){
+		$cgiparams{'SRC_PORT'} = $cgiparams{'SRC_PORT_SEL'};
+	} else {
+		unless(&validportrange($cgiparams{'SRC_PORT'})) { $errormessage = $tr{'source port numbers'}; }
+	}
+
+	if ( defined $cgiparams{'DST_PORT_SEL'} and $cgiparams{'SRC_DST_SEL'} ne "user" ){
+		$cgiparams{'DEST_PORT'} = $cgiparams{'DST_PORT_SEL'};
+	} else {
+		if ($cgiparams{'DEST_PORT'}) {
+			unless(&validport($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; } }
+		else {
+			$cgiparams{'DEST_PORT'} = 0; 
+		}
+	}
+
 	unless(&validip($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
@@ -99,6 +127,9 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'DEST_IP'} = $temp[3];
 				$cgiparams{'DEST_PORT'} = $temp[4];
 				$cgiparams{'ENABLED'} = $temp[5];
+				$service = $temp[2];
+				$dst_service = $temp[4];
+
 			}
 		}
 		close(FILE);
@@ -133,15 +164,30 @@ print <<END
 <table>
 <tr>
 	<td style='width: 30%;'>$tr{'sourcec'}</td>
-	<td style='width: 20%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}'></td>
-	<td style='width: 30%;'>$tr{'source port or rangec'}</td>
-	<td style='width: 20%;'><input type='text' name='SRC_PORT' value='$cgiparams{'SRC_PORT'}' size='10'></td>
+	<td style='width: 30%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}' id='extaddress' @{[jsvalidip('extaddress')]}></td>
+	<td style='width: 10%;'></td>
+	<td style='width: 28%;'></td>
+	<td style='width: 2%;'></td>
+</tr>
+<tr>
+	@{[&portlist('SRC_PORT_SEL', $tr{'source port or rangec'}, 'SRC_PORT', $tr{'portc'}, $service, { 'ungrouped' => "true" })]}
+	<td></td>
+</tr>
+<tr>
+	<td colspan='5'>&nbsp;</td>
 </tr>
 <tr>
 	<td>$tr{'destination ipc'}</td>
-	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18'></td>
-	<td>$tr{'destination portc'}<img src='/ui/img/blob.gif'>&nbsp;</td>
-	<td><input type='text' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' size='8' title='$tr{'portfw destination port'}'></td>
+	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18' id='iaddress' @{[jsvalidip('iaddress')]}></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	@{[&portlist('DEST_PORT_SEL', $tr{'destination portc'}, 'DEST_PORT', $tr{'portc'}, $dst_service, { ungrouped => "true", 'blank' => 'true'} )]}
+	<td><img src='/ui/img/blob.gif'></td>
+</tr>
+<tr>
+	<td colspan='5'>&nbsp;</td>
 </tr>
 <tr>
 	<td>$tr{'protocol'}</td>
@@ -152,7 +198,8 @@ print <<END
 		</select>
 	</td>
 	<td>$tr{'enabled'}<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
-	<td><input type='submit' name='ACTION' value='$tr{'add'}'></td>
+	<td style='text-align: right;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
+	<td></td>
 </tr>
 </table>
 <br/>
@@ -162,64 +209,68 @@ END
 &closebox();
 
 &openbox($tr{'current rules'});
-print <<END
-<table class='centered'>
-<tr>
-	<th style='width: 10%;'>$tr{'protocol'}</th>
-	<th style='width: 15%;'>External source IP</th>
-	<th style='width: 20%;'>$tr{'source port'}</th>
-	<th style='width: 20%;'>$tr{'destination ip'}</th>
-	<th style='width: 15%;'>$tr{'destination port'}</th>
-	<th style='width: 10%;'>$tr{'enabledtitle'}</th>
-	<th style='width: 10%;'>$tr{'mark'}</th>
-</tr>
-END
-;
 
-my $id = 0;
-open(RULES, "$filename") or die 'Unable to open config file.';
-while (<RULES>)
-{
-	my $protocol = '';
-	my $gif = '';
-	$id++;
-	chomp($_);
-	my @temp = split(/\,/,$_);
-	if ($temp[0] eq 'udp') {
-		$protocol = 'UDP'; }
-	else {
-		$protocol = 'TCP' }
-	if ($temp[1] eq '0.0.0.0/0') {
-		$external = $tr{'all'}; }
-	else {
-		$external = $temp[1]; }
-	if ($temp[4] eq '0') {
-		$destport = 'N/A'; }
-	else {
-		$destport = $temp[4]; }
+my $portmap = &portmap();
 
-	if ($id % 2) {
-		print "<tr class='dark'>\n"; }
-	else {
-              	print "<tr class='light'>\n"; }
-	if ($temp[5] eq 'on') { $gif = 'on.gif'; }
-		else { $gif = 'off.gif'; }
-print <<END
-<td>$protocol</td>
-<td>$external</td>
-<td>$temp[2]</td>
-<td>$temp[3]</td>
-<td>$destport</td>
-<td><img src='/ui/img/$gif'></td>
-<td><input type='checkbox' name='$id'></td>
-</tr>
-END
-	;
-}
-close(RULES);
+my %render_settings = (
+                        'url'     => "/cgi-bin/portfw.cgi?[%COL%],[%ORD%]",
+                        'columns' => [ 
+                                { 
+                                        column => '1',
+                                        title  => "$tr{'protocol'}",
+                                        size   => 10,
+					sort   => 'cmp',
+					tr     =>  { 'tcp' => 'TCP', 'udp' => 'UDP' },
+                                },
+                                { 
+                                        column => '2',
+                                        title  => "External source IP",
+                                        size   => 15,
+					sort   => &ipcompare,
+                                },
+                                { 
+                                        column => '3',
+                                        title  => "$tr{'source port'}",
+                                        size   => 20,
+					sort   => 'cmp',
+					tr     => \%{$portmap}
+                                },
+                                { 
+                                        column => '4',
+                                        title  => "$tr{'destination ip'}",
+                                        size   => 20,
+					sort   => &ipcompare,
+                                },
+                                { 
+                                        column => '5',
+                                        title  => "$tr{'destination port'}",
+                                        size   => 15,
+					sort   => 'cmp',
+					tr     => \%{$portmap}
+                                },
+                                {
+                                        column => '6',
+                                        title  => "$tr{'enabledtitle'}",
+                                        size   => 10,
+                                        tr     => 'onoff',
+                                        align  => 'center',
+                                },
+                                {
+                                        title  => "$tr{'mark'}", 
+                                        size   => 10,
+                                        mark   => ' ',
+                                },
+                                { 
+                                        column => '7',
+                                        title => "$tr{'comment'}",
+                                        break => 'line',
+                                }
+                        ]
+                );
+
+&displaytable( $filename, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
 
 print <<END
-</table>
 <table class='blank'>
 <tr>
 	<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>

@@ -28,9 +28,6 @@ $cgiparams{'ORDER'} = $tr{'log ascending'};
 $cgiparams{'RULEENABLED'} = 'on'     if ( not defined $cgiparams{'ACTION'} );
 $cgiparams{'MACHINEENABLED'} = 'on'  if ( not defined $cgiparams{'MACHINEACTION'} );
 
-use Data::Dumper;
-print STDERR Dumper %cgiparams;
-
 if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
 {
         my @temp = split(',',$ENV{'QUERY_STRING'});
@@ -296,6 +293,8 @@ print qq{
 &openbox($tr{'current exceptions'});
 print "<form method='post'>\n";
 
+my $portmap = &portmap();
+
 my %render_settings = (
                         'url'     => "/cgi-bin/outbound.cgi?[%COL%],[%ORD%]",
                         'columns' => [ 
@@ -309,7 +308,8 @@ my %render_settings = (
                                         column => '3',
                                         title  => "$tr{'application service'}",
                                         size   => 50,
-                                        sort   => \&ipcompare,
+                                        sort   => 'cmp',
+					tr     => \%{$portmap}
                                 },
                                 {
                                         column => '2',

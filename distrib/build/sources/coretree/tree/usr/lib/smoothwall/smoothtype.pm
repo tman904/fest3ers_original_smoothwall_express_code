@@ -15,6 +15,7 @@ use header qw(:standard);
 @EXPORT       = qw();
 @EXPORT_OK    = qw( 
 	ipcompare
+	portmap
 	tooltip portlist displaytable 
 	jsvalidip
 	);
@@ -35,10 +36,45 @@ sub tooltip
         return "onMouseOver=\"$oplist return escape( $tip );\"";
 }
 
+sub portmap
+{
+	unless (open(FILE, "/var/smoothwall/main/wellknownports"))
+	{
+		return undef;
+	}
+
+	my %ports;
+
+	while ( my $line = <FILE> ){
+		chomp $line;
+		next if ( $line eq "" );
+
+		my ( $name, $value ) = split /,/, $line;
+
+		if ( $name eq "--" ){
+			next;
+		} elsif ( not defined $value or $value eq "" ){
+			next;
+		}
+		$ports{$value} = "$name ($value)";
+	}
+	return \%ports;
+}
+
 sub portlist
 {
-	my ( $selectfield, $selectfieldname, $inputfield, $inputfieldname, $chosen ) = @_; 
+	my ( $selectfield, $selectfieldname, $inputfield, $inputfieldname, $chosen, $options ) = @_; 
 	my %ports;
+
+use Data::Dumper;
+print STDERR Dumper $options;
+
+	my $ungrouped = $options->{'ungrouped'};
+	my $allowblank = $options->{'blank'};
+
+	$allowblank = 'false' if ( not defined $allowblank or $allowblank ne 'true' );
+
+print STDERR "setting allowblank to be $allowblank\n";
 
 	unless (open(FILE, "/var/smoothwall/main/wellknownports"))
 	{
@@ -66,7 +102,7 @@ sub portlist
 
 	my $response = qq{
 	<td>$selectfieldname</td>
-	<td><select name='$selectfield' id='$selectfield' onChange="portlist('$selectfield','$inputfield','user');">
+	<td><select name='$selectfield' id='$selectfield' onChange="portlist('$selectfield','$inputfield','user',$allowblank);">
 		<option value='user'>$tr{'user defined'}</option>
 	};
 
@@ -75,27 +111,33 @@ sub portlist
 
 	foreach my $key ( keys %{$ports{'main'}} ){
 		if ( $chosen eq $key ){
-			$response .= "<option value='$key' selected>$key</option>\n";
+			$response .= "<option value='$ports{'main'}{$key}' selected>$key</option>\n";
 			$found = "";
 		} else {
-			$response .= "<option value='$key'>$key</option>\n";
+			$response .= "<option value='$ports{'main'}{$key}'>$key</option>\n";
 		}
 	}
 
 	foreach my $section ( keys %ports ){
 		next if ( $section eq 'main' );
-		if ( $chosen eq $key ){
-			$response .= "<option selected value='$section'>$section</option>\n";
-			$found = "";
-		} else {
-			$response .= "<option value='$section'>$section</option>\n";
+
+		my $precursor = "";
+
+		if ( not defined $ungrouped ){
+			if ( $chosen eq $key ){
+				$response .= "<option selected value='$section'>$section</option>\n";
+				$found = "";
+			} else {
+				$response .= "<option value='$section'>$section</option>\n";
+			}
+			$precursor = " - ";
 		}
 		foreach my $key ( keys %{$ports{$section}} ){
 			if ( $chosen eq $key ){
-				$response .= "<option selected value='$key'> - $key</option>\n";
+				$response .= "<option selected value='$ports{$section}{$key}'>$precursor$key</option>\n";
 				$found = "";
 			} else {
-				$response .= "<option value='$key'> - $key</option>\n";
+				$response .= "<option value='$ports{$section}{$key}'>$precursor$key</option>\n";
 			}
 		}
 	}
@@ -103,12 +145,12 @@ sub portlist
 	$response .= qq{
 	</select></td>
 	<td>$inputfieldname</td>
-	<td><input type='text' id='$inputfield' name='$inputfield' @{[script("validport('$inputfield');")]} value='$found'/></td>
+	<td><input type='text' id='$inputfield' name='$inputfield' @{[script("validport('$inputfield', $allowblank);")]} value='$found'/></td>
 	};
 
 	
-	push @_validation_items, "validport('$inputfield')" ;
-	push @_validation_items, "portlist('$selectfield','$inputfield','user')" ;
+	push @_validation_items, "validport('$inputfield', $allowblank)" ;
+	push @_validation_items, "portlist('$selectfield','$inputfield','user', $allowblank)" ;
 
 
 	return $response;

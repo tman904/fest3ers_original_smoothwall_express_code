@@ -32,6 +32,9 @@ require user admin
 <Files portfw.cgi>
 require user admin
 </Files>
+<Files outbound.cgi>
+require user admin
+</Files>
 <Files shutdown.cgi>
 require user admin
 </Files>
