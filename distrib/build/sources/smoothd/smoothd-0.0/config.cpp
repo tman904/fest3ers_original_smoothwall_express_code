@@ -247,6 +247,40 @@ std::vector<std::string> ConfigVAR::interfaces( void )
 	return interfacelist;
 }
 
+// ConfigSTR stuff is simple, the contents is the whole file - no delimeters etc.
+ConfigSTR::ConfigSTR()
+{
+	thisstr = "";
+}
+
+ConfigSTR::ConfigSTR(std::string filename)
+{
+        readvar( filename.c_str());
+}
+
+ConfigSTR::ConfigSTR(const char *filename)
+{
+        readvar( filename);
+}
+int ConfigSTR::readvar(const char *filename) 
+{
+	std::string::size_type n;
+	std::ifstream input ( filename );
+	if ( !input ) return 1;
+	input >> thisstr;
+	// remove trailing newlines
+	while((n = thisstr.rfind('\n')) != std::string::npos)
+		thisstr.resize(n-1);
+	input.close();
+
+	return 0;
+}
+
+std::string ConfigSTR::str()
+{
+	return thisstr;
+}
+
 #include <syslog.h>
 
 int list_files( std::vector<std::string> & files, const char * path )
@@ -346,6 +380,8 @@ int safeatoi( std::string a )
 {
 	return( safeatoi( a.c_str() ) );
 }
+
+
 
 
 	

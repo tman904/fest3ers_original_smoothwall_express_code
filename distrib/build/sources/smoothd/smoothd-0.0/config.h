@@ -59,4 +59,16 @@ class ConfigVAR {
   		std::map<std::string, std::string, ltstr> params;
 };
 
+class ConfigSTR {
+	public:
+		ConfigSTR();
+		ConfigSTR( const char * filename);
+		ConfigSTR( std::string filename);
+		int readvar( const char * filename);
+		std::string str();
+	private:
+		std::string thisstr;
+};
+
+
 #endif
