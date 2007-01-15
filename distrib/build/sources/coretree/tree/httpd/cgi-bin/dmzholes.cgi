@@ -131,6 +131,7 @@ print <<END
 <tr>
 	<td>$tr{'source ipc'}</td>
 	<td><input type='text' name='SRC_IP' value='$cgiparams{'SRC_IP'}'id='iaddress' @{[jsvalidip('iaddress')]}></td>
+	<td>$tr{'protocol'}</td>
 	<td>
 		<SELECT NAME='PROTOCOL'>
 			<OPTION VALUE='udp' $selected{'PROTOCOL'}{'udp'}>UDP
