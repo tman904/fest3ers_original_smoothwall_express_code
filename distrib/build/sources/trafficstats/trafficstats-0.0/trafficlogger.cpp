@@ -84,7 +84,7 @@ class livestats {
 		  std::string bclabel = *s + bclabel_part;
                   
 		  if(byte_counts.count(bclabel) == 0) {
-		    syslog(LOG_WARNING, "Initialising %s", bclabel.c_str());
+		    // syslog(LOG_WARNING, "Initialising %s", bclabel.c_str());
 		    bytecount_t &count = byte_counts[bclabel];
 		    count = 0ull;
                     
