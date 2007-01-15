@@ -13,29 +13,6 @@ SMB SSN,139
 SMB All,137:139
 LDAP,389
 SOCKS,1080
-
-Web Browsing
-HTTP,80
-HTTPS,443
---
-
-Email and News
-SMTP,25
-POP2,109
-POP3,110
-IMAP2,143
-POP3 over SSL,995
-IMAP over SSL,993
-NNTP,119
---
-
-Instant Messaging
-MSN Messenger,1863
-ICQ,4000
-AOL,5190
-IRC,6667:7000
---
-
 PC Anywhere,5631
 GNUTella,6346
 Real Audio,7070

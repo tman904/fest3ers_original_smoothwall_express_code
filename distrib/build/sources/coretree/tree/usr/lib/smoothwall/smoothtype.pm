@@ -36,27 +36,26 @@ sub tooltip
         return "onMouseOver=\"$oplist return escape( $tip );\"";
 }
 
+my $files = "/var/smoothwall/knownports/*";
+
 sub portmap
 {
-	unless (open(FILE, "/var/smoothwall/main/wellknownports"))
-	{
-		return undef;
-	}
-
 	my %ports;
-
-	while ( my $line = <FILE> ){
-		chomp $line;
-		next if ( $line eq "" );
-
-		my ( $name, $value ) = split /,/, $line;
-
-		if ( $name eq "--" ){
-			next;
-		} elsif ( not defined $value or $value eq "" ){
+	
+	foreach my $filename ( glob $files ){
+		unless (open(FILE, $filename))
+		{
 			next;
 		}
-		$ports{$value} = "$name ($value)";
+
+		while ( my $line = <FILE> ){
+			chomp $line;
+			next if ( $line eq "" );
+	
+			my ( $name, $value ) = split /,/, $line;
+
+			$ports{$value} = "$name ($value)";
+		}
 	}
 	return \%ports;
 }
@@ -76,29 +75,26 @@ print STDERR Dumper $options;
 
 print STDERR "setting allowblank to be $allowblank\n";
 
-	unless (open(FILE, "/var/smoothwall/main/wellknownports"))
-	{
-		return undef;
-	}
-
-	my $section = "main";
-	while ( my $line = <FILE> ){
-		chomp $line;
-		next if ( $line eq "" );
-
-		my ( $name, $value ) = split /,/, $line;
-
-		if ( $name eq "--" ){
-			$section = "main";
-			next;
-		} elsif ( not defined $value or $value eq "" ){
-			$section = $name;
+	foreach my $filename ( glob $files ){
+print STDERR "Filename is $filename\n";
+		unless (open(FILE, $filename))
+		{
 			next;
 		}
-		$ports{$section}{$name} = $value;
-	}
+
+		my ( $section ) = ( $filename =~/([^\/]*)$/i );
+
+		while ( my $line = <FILE> ){
+			chomp $line;
+			next if ( $line eq "" );
+
+			my ( $name, $value ) = split /,/, $line;
 	
-	close FILE;
+			$ports{$section}{$name} = $value;
+		}
+	
+		close FILE;
+	}
 
 	my $response = qq{
 	<td>$selectfieldname</td>
