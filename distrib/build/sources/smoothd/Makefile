@@ -21,7 +21,7 @@ install: compile
 
 	@install -D $(COMPILE_DIR)/sysshutdown.so $(PKG_ROOT)/usr/lib/smoothd/sysshutdown.so 
 	@install -D $(COMPILE_DIR)/sysinstall.so $(PKG_ROOT)/usr/lib/smoothd/sysinstall.so 
-	@install -D $(COMPILE_DIR)/sysiptables.so $(PKG_ROOT)/usr/lib/smoothd/sysiptables.so 
+	#@install -D $(COMPILE_DIR)/sysiptables.so $(PKG_ROOT)/usr/lib/smoothd/sysiptables.so 
 	@install -D $(COMPILE_DIR)/sysim.so $(PKG_ROOT)/usr/lib/smoothd/sysim.so 
 
 all: install

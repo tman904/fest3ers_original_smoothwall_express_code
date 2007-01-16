@@ -13,7 +13,7 @@ MAIN=main.cpp
 LIBS=-ldl /usr/lib/libsmoothd.so 
 BIN=smoothd
 
-MODULES=sysshutdown sysinstall sysim sysiptables
+MODULES=sysshutdown sysinstall sysim #sysiptables
 
 MODULEFLAGS = $(CXXFLAGS) -fPIC -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
 
