@@ -30,7 +30,10 @@ default: clean
 	done; \
 	cd ..; \
 	cp -aR ../$(PROGS)/loader  ../$(PROGS)/iowrap bin; \
-	cp -aR /lib/ld-*.so /lib/ld-linux.so.* /lib/libc-*.so /lib/libc.so.* lib; \
+	cp -aR /lib/ld-*.so /lib/ld-*.so.* /lib/libc-*.so /lib/libc.so.* lib; \
+ifdef BITS_64
+	ln -s lib lib64; \
+endif
 	cp -aR ../etc/fstab etc; \
 	cp -aR ../etc/group etc; \
 	cp -aR ../etc/inittab etc; \

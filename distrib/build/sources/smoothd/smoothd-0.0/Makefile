@@ -13,16 +13,16 @@ MAIN=main.cpp
 LIBS=-ldl /usr/lib/libsmoothd.so 
 BIN=smoothd
 
-MODULES=sysshutdown sysinstall sysim #sysiptables
+MODULES=sysshutdown sysinstall sysim sysiptables
 
-MODULEFLAGS = $(CXXFLAGS) -fPIC -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
+MODULEFLAGS = $(CXXFLAGS) -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
 
 all: libsmoothd smoothd $(MODULES) smoothcom ipbatchtest
 
 modules: $(MODULES)
 
 libsmoothd : $(LIB_OBJS)
-	$(CXX) -shared -fPIC -o libsmoothd.so $(LIB_OBJS) 
+	$(CXX) -shared  -o libsmoothd.so $(LIB_OBJS) 
 	@install -D ./libsmoothd.so /usr/lib/libsmoothd.so
 
 smoothd: $(OBJS) 

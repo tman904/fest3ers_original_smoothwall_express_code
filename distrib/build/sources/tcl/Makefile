@@ -15,6 +15,10 @@ TARBALL = $(PACKAGE)$(VERSION)-src
 
 DIR = $(PACKAGE)$(VERSION)
 
+ifdef BITS_64
+CONFIG_OPTS = --enable-64bit
+endif
+
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes

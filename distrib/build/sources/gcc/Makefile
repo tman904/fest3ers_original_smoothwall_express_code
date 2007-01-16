@@ -7,16 +7,19 @@
 include ../Makefile.conf
 
 PACKAGE = gcc
-VERSION = 3.3.2
+VERSION = 3.3.5
 
-BASE_URL = ftp://ftp.gnu.org/gnu/gcc
+BASE_URL = ftp://ftp.gnu.org/gnu/gcc/gcc-$(VERSION)
 
 COMPILE_DIR = $(DIR)-compile
 
+PATCH_FILE1 = gcc-HAVE_LD_RO_RW_SECTION_MIXING.diff
+PATCH_FILE2 = gcc-3.3_3.3.6-13.diff.gz
+PATCH_FILE3 = gcc-3.3.3-no_fixincludes-1.patch
+
 ifeq ($(BUILDENV), 1)
-PATCH_FILE1 = configure_trap.patch
 CONFIG_OPTS = --disable-nls --with-local-prefix=/tools \
-    --disable-nls --enable-shared --enable-languages=c
+    --disable-nls --enable-shared --enable-languages=c --disable-multilib
 
 COMPILE = yes
 INSTALL = yes
@@ -31,12 +34,11 @@ install: compile
 endif
 
 ifeq ($(BUILDENV), 2)
-PATCH_FILE1 = gcc-3.3.3-no_fixincludes-1.patch
-PATCH_FILE2 = gcc-3.3.3-specs-1.patch
+PATCH_FILE4 = gcc-3.3.3-specs-1.patch
 
 CONFIG_OPTS = --enable-clocale=gnu --enable-shared \
     --enable-threads=posix --enable-__cxa_atexit \
-    --enable-languages=c,c++
+    --enable-languages=c,c++ --disable-multilib
 
 COMPILE = yes
 INSTALL = yes
@@ -50,13 +52,12 @@ install:  compile
 endif
 
 ifndef BUILDENV
-PATCH_FILE1 = gcc-3.3.3-no_fixincludes-1.patch
 
 CONFIG_OPTS = -enable-shared --enable-threads=posix \
 	--enable-__cxa_atexit --enable-clocale=gnu \
-	--enable-languages=c,c++
+	--enable-languages=c,c++ --disable-multilib
 
-CONFIGURE = ues
+CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
 
@@ -80,6 +81,6 @@ install: compile
 endif
 
 libgcc:
-	@tar -zcvf $(TARGET_DIR)/smoothwall-libgcc.tar.gz -C $(PKG_ROOT) /$(PKG_DIR)/lib/libgcc*
+	@tar -zcvf $(TARGET_DIR)/smoothwall-libgcc.tar.gz -C $(PKG_ROOT) /$(PKG_DIR)/lib*/libgcc*
 
 include ../Makefile.rules

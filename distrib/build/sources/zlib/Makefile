@@ -16,6 +16,6 @@ INSTALL = yes
 CONFIG_OPTS =
 
 install: compile
-	@make -C $(DIR) install prefix=$(PKG_ROOT)/$(PKG_DIR)
+	@make -C $(DIR) prefix=$(PKG_ROOT)/$(PKG_DIR) install
 
 include ../Makefile.rules

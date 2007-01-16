@@ -13,19 +13,36 @@ BASE_URL = ftp://ftp.gnu.org/gnu/binutils/
 
 COMPILE_DIR = $(DIR)-compile
 
+PATCH_FILE1 = binutils_2.15-6.diff.gz
+
 SPEC=/tools/lib/gcc-lib/*/*/specs
 
 ifeq ($(BUILDENV), 1)
 CONFIG_OPTS = --disable-nls
 
 COMPILE = yes
+INSTALL = yes
 
 compile: configure
 	@make -C $(COMPILE_DIR) configure-host
 	@make -C $(COMPILE_DIR) LDFLAGS="-all-static"
 
+install: compile
+	@mkdir -p /tools/lib
+ifdef BITS_64
+	@(cd /tools; ln -s lib lib64)
+endif
+	@make -C $(COMPILE_DIR) install
+	@make -C $(COMPILE_DIR)/ld clean
+	@make -C $(COMPILE_DIR)/ld LDFLAGS="-all-static" LIB_PATH=/tools/lib
+
 adjust:
 	@make -C $(COMPILE_DIR)/ld DISTDIR=$(PKG_ROOT) install
+ifeq ($(HOSTTYPE), x86_64)
+	@sed -e 's@ /lib64/ld-linux-x86-64.so.2@ /tools/lib64/ld-linux-x86-64.so.2@g' \
+		$(SPEC) > tempspec
+	@mv -f tempspec $(SPEC)
+endif
 	@sed -e 's@ /lib/ld-linux.so.2@ /tools/lib/ld-linux.so.2@g' \
 		$(SPEC) > tempspec
 	@mv -f tempspec $(SPEC)
@@ -34,7 +51,12 @@ adjust:
 endif
 
 ifeq ($(BUILDENV), 2)
-CONFIG_OPTS = --enable-shared --with-lib-path=/$(TOOLS_DIR)/lib
+CONFIG_OPTS = --disable-nls --enable-shared --with-lib-path=/$(TOOLS_DIR)/lib
+
+INSTALL = yes
+
+install: compile
+	@make -C $(COMPILE_DIR) install
 
 adjust:
 	@make -C $(COMPILE_DIR)/ld clean
@@ -42,7 +64,7 @@ adjust:
 endif
 
 ifndef BUILDENV
-COINFIG_OPTS = --enable-shared
+CONFIG_OPTS = --enable-shared
 
 COMPILE = yes
 INSTALL = yes
@@ -56,11 +78,16 @@ install: compile
 	@cp $(DIR)/include/libiberty.h $(PKG_ROOT)/$(PKG_DIR)/include
 
 adjust:
-	@make -C $(COMPILE_DIR)/ld INSTALL=/$(TOOLS_DIR)/bin/install install
+ifeq ($(HOSTTYPE), x86_64)
+	@sed -e 's@ /tools/lib64/ld-linux-x86-64.so.2@ /lib64/ld-linux-x86-64.so.2@g' \
+		$(SPEC) > tempspec
+	@mv -f tempspec $(SPEC)
+endif
 	@sed -e 's@ /tools/lib/ld-linux.so.2@ /lib/ld-linux.so.2@g' \
 		$(SPEC) > tempspec
 	@mv -f tempspec $(SPEC)
 	@rm -f tempspec
+	@make -C $(COMPILE_DIR)/ld INSTALL=/$(TOOLS_DIR)/bin/install install
 endif
 
 include ../Makefile.rules

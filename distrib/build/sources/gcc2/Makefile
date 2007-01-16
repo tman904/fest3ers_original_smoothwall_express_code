@@ -25,7 +25,7 @@ PKG_ROOT = $(ROOT)/build/buildroot/$(PACKAGE)2
 #	http://linuxfromscratch.mirror.ac.uk/sites/www.linuxfromscratch.org/patches/lfs/5.0/gcc-2.95.3-returntype-fix.patch
 
 CONFIG_OPTS = -enable-shared --enable-languages=c \
-    --enable-threads=posix
+    --enable-threads=posix --disable-multilib
 
 CONFIGURE = ues
 COMPILE = yes

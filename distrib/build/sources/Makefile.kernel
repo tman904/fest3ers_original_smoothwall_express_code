@@ -33,16 +33,14 @@ prepare: download
 	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	@tar -jxvf $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/bast-$(UNICORN_VER).tgz
-	# and apply our unicorn patch
 	(cd unicorn; patch -p1 < ../../kernel-patches/unicorn.patch )
-	# not extracting the iptableproc download as no download yet.
 
 	@rm -f linux
 	@ln -s linux-$(KERNEL_VER) linux
 
 	@make -C linux mrproper
 
-	@cp ../kernel.config-$(TYPE) linux/.config
+	@cp ../kernel.config-$(TYPE)-$(HOSTTYPE) linux/.config
 
 	@make -C linux CC=$(COMPILER) clean prepare
 
@@ -61,7 +59,7 @@ apply-pom: prepare
 #	./runme --batch h323-conntrack-nat;)
 
 compile-kernel: apply-pom
-	@cp ../kernel.config-$(TYPE) linux/.config
+	@cp ../kernel.config-$(TYPE)-$(HOSTTYPE) linux/.config
 
 	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
 
@@ -77,10 +75,10 @@ package-kernel: compile-kernel
 	@(cd $(PKG_ROOT); \
 	make -C $(KERNEL_DIR) CC=$(COMPILER) INSTALL_MOD_PATH=$(PKG_ROOT) modules_install; \
 	mkdir -p boot; \
-	cp $(KERNEL_DIR)/arch/i386/boot/bzImage boot/vmlinuz-$(KERNEL_VER); \
+	cp $(KERNEL_DIR)/arch/*/boot/bzImage boot/vmlinuz-$(KERNEL_VER); \
 	cp $(KERNEL_DIR)/System.map boot/System.map-$(KERNEL_VER); \
 	rm -f lib/modules/$(KERNEL_VER)/build; \
-	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config.new)
+	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config-$(TYPE)-$(HOSTTYPE).new)
 
 package-unicorn: compile-unicorn
 	@mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
@@ -94,7 +92,7 @@ package-iptableproc: compile-iptableproc
 	@cp $(SOURCES_DIR)/kernel-runtime/iptableproc/iptableproc.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
-build-tarball: package-kernel package-unicorn $(RUNTIME_PACKAGES)
+build-tarball: package-kernel $(RUNTIME_PACKAGES)
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);

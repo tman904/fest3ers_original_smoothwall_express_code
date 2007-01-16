@@ -11,4 +11,6 @@ VERSION = 0.14.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gettext
 
+CONFIG_OPTS = --disable-libasprintf --without-csharp
+
 include ../Makefile.rules

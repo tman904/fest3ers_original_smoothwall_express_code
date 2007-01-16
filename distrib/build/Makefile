@@ -7,7 +7,6 @@
 # Top level Makefile for SmoothWall Build system.
 
 # Please set to working nameservers.  DNS_SERVER2 is optional
-#DNS_SERVER1 = 192.168.0.254
 DNS_SERVER1 = 192.168.72.1
 
 default:
@@ -78,7 +77,7 @@ clean-tools:
 clean-distrib:
 	@(cd ..; \
 	umount proc; \
-	rm -rf bin etc lib proc sbin var boot dev home opt root tmp usr);
+	rm -rf bin etc lib lib64 proc sbin var boot dev home opt root tmp usr);
 
 clean:
 	@echo "No general 'clean' target. Type 'make' with no target for info."

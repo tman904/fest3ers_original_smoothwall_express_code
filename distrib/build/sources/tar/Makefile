@@ -7,10 +7,8 @@
 include ../Makefile.conf
 
 PACKAGE = tar
-VERSION = 1.13.25
+VERSION = 1.16
 
-BASE_URL = ftp://alpha.gnu.org/gnu/tar/
-
-PATCH_FILE1 = tar-1.13.22-nolibrt.patch
+BASE_URL = ftp://ftp.gnu.org/gnu/tar
 
 include ../Makefile.rules

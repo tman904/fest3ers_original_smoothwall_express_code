@@ -7,9 +7,13 @@
 include ../Makefile.conf
 
 PACKAGE = dhcpcd
-VERSION =  1.3.22-pl4
+VERSION =  2.0.3
 
-BASE_URL = http://www.phystech.com/ftp/
+BASE_URL = http://ftp.debian.org/debian/pool/main/d/dhcpcd/
+
+TARBALL = $(PACKAGE)_$(VERSION).orig
+
+DIR =  $(PACKAGE)-$(VERSION).orig
 
 CONFIG_OPTS = --mandir=/$(PKG_DIR)/man
 

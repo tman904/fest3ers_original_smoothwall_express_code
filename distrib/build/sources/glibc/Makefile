@@ -20,12 +20,11 @@ COMPILE_DIR = $(DIR)-compile
 ifeq ($(BUILDENV), 1)
 CONFIG_OPTS = --disable-profile --enable-add-ons=linuxthreads \
     --with-binutils=/tools/bin --with-headers=/tools/include \
-    --without-gd --without-cvs --build=i386-pc-linux-gnu
-
+    --without-gd --without-cvs
 else
 CONFIG_OPTS = --disable-profile --enable-add-ons=linuxthreads \
     --libexecdir=/usr/lib --with-headers=/usr/include \
-    --without-cvs --build=i386-pc-linux-gnu
+    --without-cvs
 endif
 
 DOWNLOAD = yes
@@ -42,8 +41,15 @@ $(DIR)/: download
 	tar -jxvf $(DOWNLOADS_DIR)/glibc-linuxthreads-$(VERSION)$(EXTENSION) -C $(DIR)
 
 install: compile
-	@mkdir -p $(PKG_ROOT)/etc
-	@touch $(PKG_ROOT)/etc/ld.so.conf
+ifndef BUILDENV
+	@mkdir -p $(PKG_ROOT)/lib
+	@mkdir -p $(PKG_ROOT)/usr/lib
+
+ifdef BITS_64
+	@(cd $(PKG_ROOT); ln -s lib lib64)
+	@(cd $(PKG_ROOT)/usr; ln -s lib lib64)
+endif
+endif
 	make -C $(COMPILE_DIR) install_root=$(PKG_ROOT) install
 
 $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install

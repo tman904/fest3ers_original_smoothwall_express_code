@@ -27,45 +27,12 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 
 	@install -D initrd/initrd-$(KERNEL_VER).gz distrib/boot/initrd-$(KERNEL_VER).gz
 
-ifeq ($(TYPE), -devel)
 	@(for I in \
-		kernel-headers \
-		patch \
-		make \
-		autoconf \
-		automake \
-		binutils \
-		bison \
-		dejagnu \
-		gcc \
-		tcl \
-		m4 \
-		neon \
-		apr \
-		apr-util \
-		subversion \
-		screen \
-		diffutils \
-	; do \
-		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
-		make -C ../$$I clean all; \
-			if [ $$? -ne 0 ]; then \
-				echo "$$I FAILED"; \
-				exit 0; \
-			fi; \
-		fi; \
-		echo "Unpacking $$I ..."; \
-		tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
-	done; \
-	);
-endif
-
-	@(for I in \
+		glibc \
 		newt \
 		libsmooth+setup \
 		newt \
 		devnodes \
-		glibc \
 		libstdc++ \
 		libgcc \
 		binutils \
@@ -125,7 +92,6 @@ endif
 		rrdtool \
 		cron \
 		tcpdump \
-		traceroute \
 		dnsmasq \
 		libcap \
 		ntp \
@@ -158,6 +124,7 @@ endif
 		openswan \
 		wireless_tools \
 		imspector \
+		diffutils \
 		coretree \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
@@ -171,6 +138,38 @@ endif
 		tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
 	done; \
 	);
+
+ifeq ($(TYPE), -devel)
+	@(for I in \
+		kernel-headers \
+		patch \
+		make \
+		autoconf \
+		automake \
+		binutils \
+		bison \
+		dejagnu \
+		gcc \
+		tcl \
+		m4 \
+		neon \
+		apr \
+		apr-util \
+		subversion \
+		screen \
+	; do \
+		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
+		make -C ../$$I clean all; \
+			if [ $$? -ne 0 ]; then \
+				echo "$$I FAILED"; \
+				exit 0; \
+			fi; \
+		fi; \
+		echo "Unpacking $$I ..."; \
+		tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
+	done; \
+	);
+endif
 
 ifneq ($(TYPE), -devel)
 	@/build/striptree distrib
@@ -186,7 +185,7 @@ endif
 
 	@echo "Securing tree ..."
 	@/build/securetree distrib
-	@chmod u+s distrib/bin/traceroute
+#	@chmod u+s distrib/bin/traceroute
 	@chmod u+s distrib/usr/bin/ping
 	@chmod u+s distrib/usr/sbin/listtables
 	@chown root:nobody distrib/usr/bin/setuids/*
@@ -211,11 +210,12 @@ extracontent: cdrom
 		> cdrom/$$I; \
 	done);
 	@(cd cdrom; rm -rf `find -name CVS`)
+	@(cd cdrom; rm -rf `find -name .svn`)
 
 iso: images cdrom/smoothwall.tgz extracontent
-	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(TYPE).iso -J -c boot.cat \
+	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(TYPE)-$(HOSTTYPE).iso -J -c boot.cat \
 		-b images/$(BASENAME)-bootcdrom.img -V $(BASENAME) cdrom
-	@echo "smoothwall-$(BASENAME)$(TYPE).iso build complete"
+	@echo "smoothwall-$(BASENAME)$(TYPE)-$(HOSTTYPE).iso build complete"
 
 clean:
 	@rm -rf cdrom distrib
