@@ -46,6 +46,7 @@ build less
 build groff
 build sed
 build flex
+build dejagnu
 build gettext
 build net-tools
 build inetutils
