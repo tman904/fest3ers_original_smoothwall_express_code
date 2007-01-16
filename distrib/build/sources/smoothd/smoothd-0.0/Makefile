@@ -13,7 +13,7 @@ MAIN=main.cpp
 LIBS=-ldl /usr/lib/libsmoothd.so 
 BIN=smoothd
 
-MODULES=sysshutdown sysinstall sysim
+MODULES=sysshutdown sysinstall sysim sysiptables
 
 MODULEFLAGS = $(CXXFLAGS) -fPIC -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
 
@@ -38,6 +38,8 @@ clean:
 	rm -f $(OBJS) $(BIN) *.o *.so modules smoothcom
 
 sysshutdown : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysiptables : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 sysinstall : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
