@@ -31,9 +31,6 @@ default: clean
 	cd ..; \
 	cp -aR ../$(PROGS)/loader  ../$(PROGS)/iowrap bin; \
 	cp -aR /lib/ld-*.so /lib/ld-*.so.* /lib/libc-*.so /lib/libc.so.* lib; \
-ifdef BITS_64
-	ln -s lib lib64; \
-endif
 	cp -aR ../etc/fstab etc; \
 	cp -aR ../etc/group etc; \
 	cp -aR ../etc/inittab etc; \
@@ -55,6 +52,10 @@ endif
 		/dev/{ida,rd,cciss}/c0d0 /dev/{ida,rd,cciss}/c0d0p[1-4] \
 		/dev/kmem /dev/mem /dev/null \
 	.);
+
+ifdef BITS_64
+	$(cd tmp; ln -s lib lib64)
+endif
 
 ifeq ($(MEDIA), cdrom)
 	@touch tmp/cdrominstall
