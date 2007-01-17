@@ -19,9 +19,9 @@ sub message
 	
 	# create a local socket
 	socket( my $localsocket, PF_UNIX, SOCK_STREAM, 0 );
-
+	my $cmds = join(' ', @commands);
 	if ( not defined $localsocket ) {
-		`/usr/bin/logger -t SmoothDClient "Unable to bind socket for communications with SmoothD"`;
+		`/usr/bin/logger -t SmoothDClient "Unable to bind socket for communications with SmoothD for $cmds"`;
 		return undef; 
 	}
 
@@ -30,7 +30,7 @@ sub message
 	connect( $localsocket, sockaddr_un( "/dev/smoothd" ));
 	
 	if ( not defined $localsocket ){
-		`/usr/bin/logger -t SmoothDClient "Unable to connect socket for communications with SmoothD"`;
+		`/usr/bin/logger -t SmoothDClient "Unable to connect socket for communications with SmoothD for $cmds"`;
 		return undef; 
 	}
 
@@ -54,15 +54,15 @@ sub message
 	};
 	die $@ if $@ && $@ !~ /alarm timeout/;
 	if ($@) {
-		`/usr/bin/logger -t SmoothDClient "Unable to communicate with SmoothD"`;
+		`/usr/bin/logger -t SmoothDClient "Unable to communicate with SmoothD for $cmds"`;
 	    return 'TIMEOUT';
 	}
 
 	if ( not defined $line or $line =~ /Error:/ ){
 		if ( not defined $line ){
-			`/usr/bin/logger -t SmoothDClient "Unable to execute command, no response"`;
+			`/usr/bin/logger -t SmoothDClient "Unable to execute command, no response for $cmds"`;
 		} else {
-			`/usr/bin/logger -t SmoothDClient "Unable to execute command $line"`;
+			`/usr/bin/logger -t SmoothDClient "Unable to execute command $line for $cmds"`;
 		}
 		return undef; 
 	}

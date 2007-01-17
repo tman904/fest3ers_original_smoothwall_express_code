@@ -33,14 +33,14 @@ int ipbatch(std::vector<std::string> &arg);
 int ipbatch(const std::string & arg);
 
 extern "C" {
-int ipbatch(const char *arg);
+	int ipbatch(const char *arg);
 }
 
 // has to be in C for iptables linkage
 // could be used directly from other places
 // if they have a buffer ready in place.
 extern "C" {
-  int dobatch(char *store);
+	int dobatch(char *store);
 }
 
 // this is here because its handy to use with ipbatch.
@@ -49,22 +49,25 @@ extern "C" {
 // time differes then have a potential buffer overflow problem!
 // must not used with functions that can return a different value each time they// are called - such a value should be saved into a variable first.
 
-inline std::string Sprintf(const char *fmt, ...) {
-  va_list argp;
-  char fixed_fmtbuf[256]; // should be enough for most cases - if not malloc
-  char *fmtbuf = fixed_fmtbuf;
-  unsigned int n;
-  std::string retstr = "";
-  va_start(argp, fmt);
-  if((n = vsnprintf(fmtbuf,sizeof(fixed_fmtbuf)-1, fmt, argp)) >= (sizeof(fixed_fmtbuf)-1)) {
-    if((fmtbuf = (char *)malloc(n+1))) 
-	vsnprintf(fmtbuf, n+1, fmt, argp); // bound to work this time	  
-  }
-  if(fmtbuf) {
-    retstr = fmtbuf; // malloc did not fail etc.
-    if(fmtbuf != fixed_fmtbuf)
-      free(fmtbuf); // as it was malloced
-  }
-  return retstr;
+inline std::string Sprintf(const char *fmt, ...) 
+{
+	va_list argp;
+	char fixed_fmtbuf[256]; // should be enough for most cases - if not malloc
+	char *fmtbuf = fixed_fmtbuf;
+	unsigned int n;
+	std::string retstr = "";
+	va_start(argp, fmt);
+	if((n = vsnprintf(fmtbuf,sizeof(fixed_fmtbuf)-1, fmt, argp)) >= (sizeof(fixed_fmtbuf)-1)) 
+	{
+		if((fmtbuf = (char *)malloc(n+1))) 
+			vsnprintf(fmtbuf, n+1, fmt, argp); // bound to work this time	  
+	}
+	if(fmtbuf) 
+	{
+		retstr = fmtbuf; // malloc did not fail etc.
+		if(fmtbuf != fixed_fmtbuf)
+			free(fmtbuf); // as it was malloced
+	}
+	return retstr;
 }
 #endif

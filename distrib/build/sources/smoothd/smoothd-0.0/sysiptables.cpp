@@ -248,7 +248,7 @@ int  set_outbound( std::vector<std::string> & parameters, std::string & response
 		const std::string & enabled = config[1];
 		const std::string & port = config[2];
 
-		for (int j = 0; j < colour.length(); ++j)
+		for (int j = 0; j < (int)colour.length(); ++j)
 		{
 			colour[j] = tolower( colour[ j ] );
 		}

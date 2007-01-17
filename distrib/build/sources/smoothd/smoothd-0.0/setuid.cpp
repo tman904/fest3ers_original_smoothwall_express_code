@@ -491,7 +491,7 @@ std::string message( std::string messageString )
 	sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
 
 	if(sockfd < 0) {
-		syslog(LOG_NOTICE, "Unable to bind socket for communications with SmoothD");
+		syslog(LOG_NOTICE, "Unable to bind socket for communications with SmoothD for %s",  messageString.c_str());
 		return( "" );
 	}
 	
@@ -503,13 +503,13 @@ std::string message( std::string messageString )
 	timeOut.tv_usec = 0;
 
 	if(setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeOut, sizeof(timeOut))) {
-		syslog(LOG_NOTICE, "Couldn't set timeout on socket for communications with SmoothD");
+		syslog(LOG_NOTICE, "Couldn't set timeout on socket for communications with SmoothD for %s", messageString.c_str());
 		return( "" );
 	}
 	result = connect(sockfd, (struct sockaddr *)&address, len);
 
 	if(result == -1) {
-		syslog(LOG_NOTICE, "Unable to connect socket for communications with SmoothD");
+		syslog(LOG_NOTICE, "Unable to connect socket for communications with SmoothD for %s",  messageString.c_str());
 		return( "" );
 	}
 
@@ -519,7 +519,7 @@ std::string message( std::string messageString )
 	int inputCharCount = read(sockfd, inputBuffer, sizeof(inputBuffer));
 
 	if((inputCharCount == 0) || (errno == EAGAIN) || (errno == EWOULDBLOCK)) {
-		syslog(LOG_NOTICE, "No response from SmoothD");
+		syslog(LOG_NOTICE, "No response from SmoothD for %s",  messageString.c_str());
 		return( "" );
 	}
 	
