@@ -38,7 +38,7 @@ endif
 
 adjust:
 	@make -C $(COMPILE_DIR)/ld DISTDIR=$(PKG_ROOT) install
-ifeq ($(HOSTTYPE), x86_64)
+ifeq ($(ARCH), x86_64)
 	@sed -e 's@ /lib64/ld-linux-x86-64.so.2@ /tools/lib64/ld-linux-x86-64.so.2@g' \
 		$(SPEC) > tempspec
 	@mv -f tempspec $(SPEC)
@@ -78,7 +78,7 @@ install: compile
 	@cp $(DIR)/include/libiberty.h $(PKG_ROOT)/$(PKG_DIR)/include
 
 adjust:
-ifeq ($(HOSTTYPE), x86_64)
+ifeq ($(ARCH), x86_64)
 	@sed -e 's@ /tools/lib64/ld-linux-x86-64.so.2@ /lib64/ld-linux-x86-64.so.2@g' \
 		$(SPEC) > tempspec
 	@mv -f tempspec $(SPEC)

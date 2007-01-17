@@ -40,7 +40,7 @@ prepare: download
 
 	@make -C linux mrproper
 
-	@cp ../kernel.config-$(TYPE)-$(HOSTTYPE) linux/.config
+	@cp ../kernel.config-$(TYPE)-$(ARCH) linux/.config
 
 	@make -C linux CC=$(COMPILER) clean prepare
 
@@ -59,7 +59,7 @@ apply-pom: prepare
 #	./runme --batch h323-conntrack-nat;)
 
 compile-kernel: apply-pom
-	@cp ../kernel.config-$(TYPE)-$(HOSTTYPE) linux/.config
+	@cp ../kernel.config-$(TYPE)-$(ARCH) linux/.config
 
 	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
 
@@ -78,7 +78,7 @@ package-kernel: compile-kernel
 	cp $(KERNEL_DIR)/arch/*/boot/bzImage boot/vmlinuz-$(KERNEL_VER); \
 	cp $(KERNEL_DIR)/System.map boot/System.map-$(KERNEL_VER); \
 	rm -f lib/modules/$(KERNEL_VER)/build; \
-	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config-$(TYPE)-$(HOSTTYPE).new)
+	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config-$(TYPE)-$(ARCH).new)
 
 package-unicorn: compile-unicorn
 	@mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc

@@ -13,7 +13,7 @@ umask 022
 LC_ALL=POSIX
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/tools/bin
 LD_LIBRARY_PATH=/usr/ssl/lib
-export PATH LC_ALL LD_LIBRARY_PATH HOSTTYPE
+export PATH LC_ALL LD_LIBRARY_PATH
 
 source functions
 
