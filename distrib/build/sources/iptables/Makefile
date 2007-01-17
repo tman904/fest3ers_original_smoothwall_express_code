@@ -22,7 +22,7 @@ configure: $(DIR)/
 	@true
 
 compile: configure
-	@make -C $(COMPILE_DIR) KERNEL_DIR=$(SOURCES_DIR)/kernel-up/linux PREFIX=/$(PKG_DIR)
+	@make -C $(COMPILE_DIR) COPT_FLAGS='$(CFLAGS)' KERNEL_DIR=$(SOURCES_DIR)/kernel-up/linux PREFIX=/$(PKG_DIR)
 
 install: compile
 	@make -C $(DIR) KERNEL_DIR=$(SOURCES_DIR)/kernel-up/linux PREFIX=$(PKG_ROOT)/$(PKG_DIR) install
