@@ -22,7 +22,7 @@ int main(int argsc, char* argsv[]) {
     v.push_back(std::string(argsv[i]));
 
   ipbatch(v);
-
+#ifdef NEVER
   // and now the char * form
   for(i = 1; i < argsc; i++) {
     ipbatch(argsv[i]);
@@ -30,7 +30,7 @@ int main(int argsc, char* argsv[]) {
   ipbatch("commit");
 
   std::cout << "sprintf test: " << Sprintf("ipbatch -t %s -s %d.%d.%d.%d", "mangle", 1,2,3,4) << std::endl;
-
+#endif
   
 }
 

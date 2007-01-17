@@ -13,7 +13,9 @@ MAIN=main.cpp
 LIBS=-ldl /usr/lib/libsmoothd.so 
 BIN=smoothd
 
-MODULES=sysshutdown sysinstall sysim sysiptables
+MODULES=sysshutdown sysinstall sysim sysalcatel sysdhcpd sysdnsproxy \
+	sysntpd syssnort syssquid syssshd sysupnpd sysadvnet sysipblock \
+	sysxtaccess sysupdown sysipsec systimeset sysiptables
 
 MODULEFLAGS = $(CXXFLAGS) -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
 
@@ -29,7 +31,7 @@ smoothd: $(OBJS)
 	$(CXX) -o $(BIN) $(DFLAGS) $(MAIN) $(OBJS) $(LIBS)
 
 ipbatchtest: $(OBJS) 
-	$(CXX) -o ipbatchtest $(DFLAGS) ipbatchtest.cpp $(OBJS) $(LIBS) 
+	$(CXX) -g -o ipbatchtest $(DFLAGS) ipbatchtest.cpp $(OBJS) $(LIBS) 
 
 smoothcom:
 	$(CXX) -o smoothcom $(CXXFLAGS) smoothcom.cpp -ldl /usr/lib/libsmoothd.so 
@@ -44,6 +46,36 @@ sysiptables : $(OBJS)
 sysinstall : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 sysim : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysalcatel : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysdhcpd : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysdnsproxy : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysntpd : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+syssnort : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+syssquid : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+syssshd : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysupnpd : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysadvnet : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysipblock : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysxtaccess : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysupdown : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysipsec : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+systimeset : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysiptabes : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 
 ipbatchc.o: ipbatch.h 

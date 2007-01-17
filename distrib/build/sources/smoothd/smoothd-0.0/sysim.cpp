@@ -1,11 +1,16 @@
-/* SysProxy Module for the SmoothWall SUIDaemon                           */
-/* Contains functions relating to the management of the SQUID Proxy       */
+/* SysIM Module for the SmoothWall SUIDaemon                              */
+/* Contains functions relating to the management of the IMspector         */
 /* (c) 2005 SmoothWall Ltd                                                */
 /* ---------------------------------------------------------------------- */
 /* Original Author : D.K.Taylor                                           */
 
 /* include the usual headers.  iostream gives access to stderr (cerr)     */
 /* module.h includes vectors and strings which are important              */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+
 #include <iostream>
 #include <fstream>
 #include <fcntl.h>
@@ -57,7 +62,7 @@ int stop_im( std::vector<std::string> & parameters, std::string & response )
         std::vector<std::string>ipb;
 	response = "IMSpector Process Terminated";
 
-	signalprocess("/var/run/imspector.pid", 15);
+	killprocess("/var/run/imspector.pid");
 	ipb.push_back("iptables -t nat -F im");
 	ipbatch(ipb);
 
@@ -66,7 +71,10 @@ int stop_im( std::vector<std::string> & parameters, std::string & response )
 
 int start_im( std::vector<std::string> & parameters, std::string & response )
 {
+	int error = 0;
         std::vector<std::string>ipb;
+	struct stat sb;
+
 	response = "IMSpector Process started";
 
 	ConfigVAR settings("/var/smoothwall/im/settings");
@@ -95,14 +103,32 @@ int start_im( std::vector<std::string> & parameters, std::string & response )
 		}
 	}
 
-	ipbatch(ipb);
+	error = ipbatch(ipb);
+	if(!error) {
+		syslog(LOG_ERR, "starting accordingly");
+		if (settings["ENABLE"] == "on")
+		{
+			if((stat("/var/smoothwall/im/imspector.conf",&sb) == 0) && sb.st_mode & S_IRUSR)
+			{
+			
+				syslog(LOG_ERR, "im enabled, starting accordingly");
+				error = simplesecuresysteml("/usr/sbin/imspector", "-c", 
+								"/var/smoothwall/im/imspector.conf", NULL);
+				if(error)
+					response = "IMSpector Start Failed!";
+				else
+					response = "IMSpector Start Successful";
+			}
+			else 
+			{
+				error = 1;
+				response = "IMSpector imspector.conf missing";
+			}
 
-	syslog(LOG_ERR, "starting accordingly");
-	if (settings["ENABLE"] == "on")
-	{
-		syslog(LOG_ERR, "im enabled, starting accordingly");
-		simplesecuresysteml("/usr/sbin/imspector", "-c", "/var/smoothwall/im/imspector.conf", NULL);
+		}
 	}
+	else
+		response = "ipbatch failure";
 
-	return 0;
+	return error;
 }

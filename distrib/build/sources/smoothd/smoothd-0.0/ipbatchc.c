@@ -54,11 +54,13 @@ int table_changed(char *buf)
 int execute( char * commands )
 {
   /* split the command into an array of the appropriate */
+  int rval = 0;
   char * arguments[ MAX_ARGS ];
   
   char * current_reference;
   int counter;
-  
+ 
+  // syslog(LOG_WARNING, "executing %s\n", commands); 
   for (counter=0, current_reference = strtok( commands, " " );
        counter < MAX_ARGS && current_reference != NULL;
        current_reference = strtok( NULL, " " ) )
@@ -66,7 +68,9 @@ int execute( char * commands )
   arguments[counter] = 0; // mate it pleasant for the debugger
   
   // call down to iptables
-  return do_command( counter, arguments, &table, &handle );
+  rval = do_command( counter, arguments, &table, &handle );
+  // syslog(LOG_WARNING, "executing %s rval = %d\n", commands, rval);
+  return rval;
 	
 }
 
@@ -77,7 +81,7 @@ int dobatch(char *store) {
 
   char linebuf[1024];
   char *eol;
-  int pos = 0;
+  char *pos;
   int error = 0;
   int linelen;
 
@@ -89,33 +93,43 @@ int dobatch(char *store) {
   lib_dir = getenv("IPTABLES_LIB_DIR");
   if (!lib_dir)
     lib_dir = IPT_LIB_DIR;
-  
-  while(pos < size && (eol = index(&(store[pos]),'\n')) != NULL) {
-    linelen = eol - &(store[pos]);
+  pos = store; // start at beginning
+  while(pos < &store[size] && (eol = index(pos,'\n')) != NULL) {
+    linelen = eol - pos;
     if(linelen > 0 && linelen < sizeof(linebuf)) {
-      strncpy(linebuf, &(store[pos]), linelen);
+      strncpy(linebuf, pos, linelen);
+
       linebuf[linelen] = 0;
-      if((pos + linelen) < size)
+      // syslog(LOG_WARNING, "linebuf %s\n", linebuf);
+      if((pos + linelen) < &store[size])
 	pos += linelen;
       else
-	pos = size;
+	pos += size;
       if(!have_committed) {
       	if(table_changed(linebuf)) {
 	  error =  iptc_commit(&handle);
 	  have_committed = 1;
 	}
       }
-      if(strlen(linebuf) > 0)
+      if(strlen(linebuf) > 0) {
 	error = execute(linebuf);
+	// syslog(LOG_WARNING, "have execed 1\n");
+      }
       have_committed = 0;
     }
     else {
-      break;
+      // empty or too big
+      if(eol == NULL)
+	break;
+      else {
+	pos = eol +1;
+      }
     }
   }
 
   if(!have_committed) {
     error =  iptc_commit(&handle);
+    // syslog(LOG_WARNING, "have committed 2\n");
   }
 	      
   return !error;

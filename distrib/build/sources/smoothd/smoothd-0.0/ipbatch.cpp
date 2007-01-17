@@ -27,7 +27,7 @@ int ipbatch(const char *arg) {
     mybatch.clear();
   }
   else {
-    mybatch.push_back(arg);
+    mybatch.push_back(std::string(arg));
   }
   return rval;
 }
@@ -64,12 +64,14 @@ int ipbatch(std::vector<std::string> &arg) {
       continue; // a comment
     
     if(s.find("commit", pos) == pos) {
+      syslog(LOG_WARNING, "commit\n");
       rval = dobatch(batchstore);
       batchstoreidx = 0;
       batchstore[batchstoreidx] = 0;
     }
     else {
       // maybe some sanity checking here?
+      syslog(LOG_WARNING, "batchline %s\n", s.c_str());
       len =  strlen(s.c_str());
       if(batchstoreidx + len < BATCHSTORE_SIZE) {
 	strncpy(&(batchstore[batchstoreidx]), s.c_str(), len);

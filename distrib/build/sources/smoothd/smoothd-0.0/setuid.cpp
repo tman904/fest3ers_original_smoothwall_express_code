@@ -70,7 +70,7 @@ void stripnl(char *s)
 /* This is an alternative to mysystem(), that uses a fork(),exec() combination
  * to avoid the perils of calling the shell. */
 
-int simplesecuresysteml(char *arg, ...)
+int simplesecuresysteml(const char *arg, ...)
 {
 	va_list ap;
 	char *p = NULL;
@@ -93,12 +93,12 @@ int simplesecuresysteml(char *arg, ...)
 	return ret;
 }
 
-int simplesecuresystemv(char *argv[])
+int simplesecuresystemv(char *const argv[])
 {
 	return simplesecuresystemvenv(argv,NULL);
 }
 
-int simplesecuresystemvenv(char *argv[], char *envp[])
+int simplesecuresystemvenv(char *const argv[], char *const envp[])
 {	
 	pid_t pid = 0;
 	int status = 0;
@@ -150,7 +150,7 @@ int simplesecuresystemvector(std::vector<std::string> &args)
 }
 
 /* Secure alternative to popen(). */
-int simplesecurepopenl(int writing, pid_t *ppid, char *arg, ...)
+int simplesecurepopenl(int writing, pid_t *ppid, char *const arg, ...)
 {
 	va_list ap;
 	char *p;
@@ -172,7 +172,7 @@ int simplesecurepopenl(int writing, pid_t *ppid, char *arg, ...)
 	return ret;
 }
 
-int simplesecurepopenv(int writing, pid_t *ppid, char *argv[])
+int simplesecurepopenv(int writing, pid_t *ppid, char *const argv[])
 {
 	return simplesecurepopenvenv(writing, ppid, argv, NULL);
 }
@@ -189,7 +189,7 @@ int simplesecurepeopenvector(int writing, pid_t *ppid, std::vector<std::string> 
 	return (simplesecurepopenv(writing, ppid, arglist));
 }
 
-int simplesecurepopenvenv(int writing, pid_t *ppid, char *argv[], char *envp[])
+int simplesecurepopenvenv(int writing, pid_t *ppid, char *const argv[], char *const envp[])
 {
 	int pipefds[2] = { 0, 0 };
 	int n;
@@ -246,7 +246,7 @@ int simplesecurepopenvenv(int writing, pid_t *ppid, char *argv[], char *envp[])
 	}
 }
 
-int simplesecurepopenextl( int * pipefds, pid_t *ppid, char *arg, ...)
+int simplesecurepopenextl( int * pipefds, pid_t *ppid, const char *arg, ...)
 {
 	va_list ap;
 	char *p;
@@ -268,7 +268,7 @@ int simplesecurepopenextl( int * pipefds, pid_t *ppid, char *arg, ...)
 	return ret;
 }
 
-int simplesecurepopenextv( int * pipefds, pid_t *ppid, char *argv[] )
+int simplesecurepopenextv( int * pipefds, pid_t *ppid, char *const argv[] )
 {
 	pipefds[ 0 ] = 0;
 	pipefds[ 1 ] = 0;
