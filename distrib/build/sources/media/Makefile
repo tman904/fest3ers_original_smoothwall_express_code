@@ -4,12 +4,11 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
+include ../Makefile.conf
 include ../Makefile.versions
 include ../Makefile
 
 TARGET_DIR = /build/target/
-
-default: clean iso
 
 cdrom:
 	@mkdir cdrom
@@ -212,7 +211,7 @@ extracontent: cdrom
 	@(cd cdrom; rm -rf `find -name CVS`)
 	@(cd cdrom; rm -rf `find -name .svn`)
 
-iso: images cdrom/smoothwall.tgz extracontent
+all: images cdrom/smoothwall.tgz extracontent
 	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(TYPE)-$(ARCH).iso -J -c boot.cat \
 		-b images/$(BASENAME)-bootcdrom.img -V $(BASENAME) cdrom
 	@echo "smoothwall-$(BASENAME)$(TYPE)-$(ARCH).iso build complete"
