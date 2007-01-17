@@ -33,7 +33,7 @@ if ($remotesettings{'ACTION'} eq $tr{'save'})
                 unlink "${swroot}/remote/enablessh";
 	} 
 
-	system '/usr/bin/setuids/restartssh';
+	system ('/usr/bin/smoothcom', 'sshdrestart');
 }
 
 $remotesettings{'ENABLE_SECURE_ADMIN'} = 'off';

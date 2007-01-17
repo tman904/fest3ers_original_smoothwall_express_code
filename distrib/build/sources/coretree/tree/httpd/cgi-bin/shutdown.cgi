@@ -22,13 +22,13 @@ if ($cgiparams{'ACTION'} eq $tr{'shutdown'})
 {
 	$death = 1;
 	&log($tr{'shutting down smoothwall'});
-	system '/usr/bin/setuids/smoothiedeath';
+	system ('/usr/bin/smoothcom', 'systemshutdown', 'now');
 }
 elsif ($cgiparams{'ACTION'} eq $tr{'reboot'})
 {
 	$rebirth = 1;
 	&log($tr{'rebooting smoothwall'});
-	system '/usr/bin/setuids/smoothierebirth';
+	system ('/usr/bin/smoothcom', 'systemrestart', 'now');
 }
 if ($death == 0 && $rebirth == 0) {
 	&openpage($tr{'shutdown control'}, 1, '', 'maintenance');

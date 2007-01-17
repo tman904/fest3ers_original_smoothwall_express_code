@@ -95,8 +95,7 @@ if ($timesettings{'ACTION'} eq $tr{'save'})
 		$day = $timesettings{'DAY'};
 
 		$timedate = "$timesettings{'HOUR'}:$timesettings{'MINUTE'}:$timesettings{'SECOND'} $year/$month/$day";
-		open(PIPE, '-|') || exec('/usr/bin/setuids/date', '-s', $timedate);
-		close(PIPE);
+		system('/usr/bin/smoothcom', 'timeset', $timedate);
 		&log($tr{'setting time'});
 	}
 
@@ -131,7 +130,7 @@ END
 	else {
 		unlink "${swroot}/time/enablentpd"; }
 		
-	system('/usr/bin/setuids/restartntpd');
+	system('/usr/bin/smoothcom', 'ntpdrestart');
 }
 
 if ($timesettings{'VALID'} eq '')

@@ -29,7 +29,7 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'})
 		$extramessage = $tr{'upload successful'};
 	}
 	undef $uploadsettings{'FH'};
-	system('/usr/bin/setuids/usbadslfw');
+	system('/usr/bin/smoothcom', 'alcateladslfw');
 }
 
 &openpage($tr{'usb adsl setup'}, 1, '', 'maintenance');

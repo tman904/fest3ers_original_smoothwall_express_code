@@ -32,7 +32,7 @@ if ($snortsettings{'ACTION'} eq $tr{'save'})
                 unlink "${swroot}/snort/enable";
 	} 
 
-	system '/usr/bin/setuids/restartsnort';
+	system ('/usr/bin/smoothcom', 'snortrestart');
 }
 
 &readhash("${swroot}/snort/settings", \%snortsettings);

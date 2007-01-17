@@ -35,11 +35,11 @@ if ($cgiparams{'ACTION'} eq $tr{'save'})
 
 if ($cgiparams{'ACTION'} eq $tr{'restart'})
 {
-	system('/usr/bin/setuids/ipsecctrl', 'R');
+	system('/usr/bin/smoothcom', 'ipsecrestart');
 }
 if ($cgiparams{'ACTION'} eq $tr{'stop'})
 {
-	system('/usr/bin/setuids/ipsecctrl', 'S');
+	system('/usr/bin/smoothcom', 'ipsecstop');
 }
 
 if ($cgiparams{'VALID'} eq '')

@@ -47,8 +47,8 @@ if ($advnetsettings{'ACTION'} eq $tr{'save'})
                 unlink "${swroot}/advnet/upnp"; } 
 
 	&log($tr{'restarting advanced networking features'});
-	system '/usr/bin/setuids/setadvnet';
-	system '/usr/bin/setuids/restartupnp';
+	system ('/usr/bin/smoothcom', 'advnetset');
+	system ('/usr/bin/smoothcom', 'upnpdrestart');
 }
 
 &readhash("${swroot}/advnet/settings", \%advnetsettings);

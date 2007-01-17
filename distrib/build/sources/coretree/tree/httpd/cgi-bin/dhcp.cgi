@@ -688,6 +688,6 @@ sub writesettings {
 
 	close FILE;
 
-	system '/usr/bin/setuids/restartdhcp';
+	system ('/usr/bin/smoothcom','dhcpdrestart');
 	unlink "${swroot}/dhcp/uptodate";
 }

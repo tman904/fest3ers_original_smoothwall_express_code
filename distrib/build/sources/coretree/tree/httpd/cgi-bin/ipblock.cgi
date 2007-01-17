@@ -41,7 +41,7 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '')
 		}
 	}
 	if ($needrestart) {
-		system('/usr/bin/setuids/setipblock'); }
+		system('/usr/bin/smoothcom', 'ipblockset'); }
 }
 
 
@@ -61,7 +61,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		close(FILE);
 		undef %cgiparams;
 		&log($tr{'ip block rule added'});
-		system('/usr/bin/setuids/setipblock');
+		system('/usr/bin/smoothcom', 'ipblockset');
 	}
 }
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
@@ -104,7 +104,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			}
 		}
 		close(FILE);
-		system('/usr/bin/setuids/setipblock');
+		system('/usr/bin/smoothcom', 'ipblockset');
 		&log($tr{'ip block rule removed'});
 	}
 }

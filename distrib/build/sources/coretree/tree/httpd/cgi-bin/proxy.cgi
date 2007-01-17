@@ -174,7 +174,7 @@ END
 		if ($proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'}) {
                                 system ('/bin/touch', "${swroot}/proxy/clearedcache"); }
 
-		system('/usr/bin/setuids/restartsquid');
+		system('/usr/bin/smoothcom', 'squidrestart');
 	}
 }
 

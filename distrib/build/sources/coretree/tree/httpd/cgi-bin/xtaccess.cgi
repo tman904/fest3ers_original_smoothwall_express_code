@@ -41,7 +41,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		close(FILE);
 		undef %cgiparams;
 		&log($tr{'external access rule added'});
-		system('/usr/bin/setuids/setxtaccess');
+		system('/usr/bin/smoothcom', 'xtaccessset');
 	}
 }
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
@@ -84,7 +84,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			}
 		}
 		close(FILE);
-		system('/usr/bin/setuids/setxtaccess');
+		system('/usr/bin/smoothcom', 'xtaccessset');
 		&log($tr{'external access rule removed'});
 	}
 }

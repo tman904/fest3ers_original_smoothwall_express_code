@@ -31,7 +31,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		undef %cgiparams;
 		&log($tr{'host added to hosts list.'});
 		system('/usr/bin/smoothwall/writehosts.pl');
-                system('/usr/bin/setuids/restartdnsproxy', 'HUP');
+                system('/usr/bin/smoothcom', 'dnsproxyrestart', 'HUP');
 	}
 }
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
@@ -75,7 +75,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		}
 		close(FILE);
  		system('/usr/bin/smoothwall/writehosts.pl');
-                system('/usr/bin/setuids/restartdnsproxy', 'HUP');
+                system('/usr/bin/smoothcom', 'dnsproxyrestart', 'HUP');
 		&log($tr{'host removed from host list'});
 	}
 }
