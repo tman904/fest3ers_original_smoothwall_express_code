@@ -4,4 +4,4 @@ if [ ! -e "/var/run/pluto.pid" ]; then
 	exit
 fi;
 
-/usr/bin/setuids/ipsecctrl S
+/usr/bin/smoothcom ipsecstop

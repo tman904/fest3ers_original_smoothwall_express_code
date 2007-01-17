@@ -149,13 +149,13 @@ echo "Starting cron"
 echo "Starting httpd"
 /usr/sbin/httpd -DSSL
 echo "Starting dhcpd (if enabled)"
-/usr/bin/setuids/restartdhcp
+/usr/bin/smoothcom dhcpdrestart
 echo "Starting sshd (if enabled)"
-/usr/bin/setuids/restartssh
+/usr/bin/smoothcom sshdrestart
 echo "Starting time service (if enabled)"
-/usr/bin/setuids/restartntpd
+/usr/bin/smoothcom ntpdrestart
 echo "Starting squid (if enabled)"
-/usr/bin/setuids/restartsquid
+/usr/bin/smoothcom squidrestart
 echo "Starting IMSpector (if enabled)"
 /usr/bin/smoothcom imrestart
 

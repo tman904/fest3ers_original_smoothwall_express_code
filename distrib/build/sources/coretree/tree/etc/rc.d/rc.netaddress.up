@@ -5,7 +5,7 @@
 . /etc/rc.d/rc.firewall.down
 
 echo "Restarting DNS proxy"
-/usr/bin/setuids/restartdnsproxy
+/usr/bin/smoothcom dnsproxyrestart
 
 if [ "$1" != "NOTGREEN" ]; then
 	if [ "$GREEN_DEV" != "" ]; then
@@ -54,18 +54,18 @@ echo "Setting up firewall"
 echo "Starting traffic stats collector"
 /usr/sbin/trafficlogger
 echo "Setting DMZ pinholes"
-/usr/bin/setuids/setdmzholes
+/usr/bin/smoothcom setinternal
 echo "Setting up advanced networking features"
-/usr/bin/setuids/setadvnet
+/usr/bin/smoothcom advnetset
 echo "Setting up IP block"
-/usr/bin/setuids/setipblock
+/usr/bin/smoothcom ipblockset
 
 if [ "$RED_DEV" != "" -a "$RED_TYPE" == "STATIC" ]; then
 	/etc/rc.d/rc.updatered
 fi
 
 echo "Setting external access rules"
-/usr/bin/setuids/setxtaccess
+/usr/bin/smoothcom xtaccessset
 echo "Setting up Outbound filter"
-/usr/bin/setuids/setoutbound
+/usr/bin/smoothcom setoutbound
 

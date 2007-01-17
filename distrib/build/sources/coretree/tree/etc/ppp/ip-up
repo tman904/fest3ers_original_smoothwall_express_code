@@ -38,7 +38,7 @@ if ($dns eq 'Automatic')
 	}
 }
 
-system ('/usr/bin/setuids/restartdnsproxy', $primarydns, $secondarydns);
+system ('/usr/bin/smoothcom','dnsproxyrestart', $primarydns, $secondarydns);
 
 if (open(FILE, ">${swroot}/red/iface")) { print FILE $ARGV[0]; close (FILE); }
 if (open(FILE, ">${swroot}/red/local-ipaddress"))  { print FILE $ARGV[3]; close (FILE); }
@@ -49,9 +49,9 @@ if (open(FILE, ">${swroot}/red/dns2")) { print FILE $secondarydns; close
 FILE; }
 system('/bin/touch', "${swroot}/red/active");
 
-system('/usr/bin/setuids/setaliases');
-system('/usr/bin/setuids/setportfw');
-system('/usr/bin/setuids/setsubnets');
+# system('/usr/bin/setuids/setaliases');
+system('/usr/bin/smoothcom', 'setinbound');
+# system('/usr/bin/setuids/setsubnets');
 
 system('/usr/bin/sounds/onlinesound');
 
