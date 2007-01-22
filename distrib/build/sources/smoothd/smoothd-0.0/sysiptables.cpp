@@ -103,14 +103,13 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 
 	std::string::size_type n;
 	std::vector<std::string>ipb;
-	response = "portforw rules loaded";
 	ConfigSTR localip("/var/smoothwall/red/local-ipaddress");
 	ConfigSTR iface("/var/smoothwall/red/iface");
 	ConfigCSV fwdfile("/var/smoothwall/portfw/config");
 
 	if ((error = (localip.str() == "")))
 	{
-		response = "Couldn't open local ip file";
+		response = "Couldn't open local IP file";
 		goto EXIT;
 	}
 	// carry on
