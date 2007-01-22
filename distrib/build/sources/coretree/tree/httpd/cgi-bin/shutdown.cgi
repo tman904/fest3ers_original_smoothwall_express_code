@@ -25,7 +25,7 @@ if ($cgiparams{'ACTION'} eq $tr{'shutdown'})
 	
 	&log($tr{'shutting down smoothwall'});
 	
-	my $success = message('systemshutdown', 'now');
+	my $success = message('systemshutdown');
 	
 	if (not defined $success) {
 		$errormessage = $tr{'smoothd failure'}; }	
@@ -36,7 +36,7 @@ elsif ($cgiparams{'ACTION'} eq $tr{'reboot'})
 	
 	&log($tr{'rebooting smoothwall'});
 	
-	my $success = message('systemrestart', 'now');
+	my $success = message('systemrestart');
 	
 	if (not defined $success) {
 		$errormessage = $tr{'smoothd failure'}; }

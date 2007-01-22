@@ -70,9 +70,8 @@ int shutdown_command(std::vector<std::string> & parameters, std::string & respon
 		{
 			if (((*position) < '0' || (*position) > '9') && ((*position) != ':'))
 			{
-				syslog(LOG_ERR, "Shutdown called with invalid time specifier");
 				response = "Invalid time identifier";
-				return -1;
+				return 1;
 			} 
 			else if ((*position) == ':')
 				time_hours = 1;

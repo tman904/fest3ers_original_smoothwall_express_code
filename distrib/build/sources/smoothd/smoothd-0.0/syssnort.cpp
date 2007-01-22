@@ -82,6 +82,12 @@ int start_snort(std::vector<std::string> & parameters, std::string & response)
 	int fd;
 	int trys;
 	struct stat sb;
+	
+	if (iface.str() == "")
+	{
+		response = "Couldn't open iface file";
+		goto EXIT;
+	}
 
 	if ((n = iface.str().find_first_not_of(LETTERS_NUMBERS)) != std::string::npos) 
 	{
@@ -104,7 +110,6 @@ int start_snort(std::vector<std::string> & parameters, std::string & response)
 	if (locip.str() == "")
 	{
 		response = "Couldn't open local ip file";
-		error = 1;
 		goto EXIT;
 	}
 	

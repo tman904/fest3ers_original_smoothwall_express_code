@@ -96,7 +96,7 @@ if ($timesettings{'ACTION'} eq $tr{'save'})
 		$day = $timesettings{'DAY'};
 
 		$timedate = "$timesettings{'HOUR'}:$timesettings{'MINUTE'}:$timesettings{'SECOND'} $year/$month/$day";
-		system('/usr/bin/smoothcom', 'timeset', $timedate);
+		system('/usr/bin/smoothcom', 'settime', $timedate);
 		&log($tr{'setting time'});
 	}
 

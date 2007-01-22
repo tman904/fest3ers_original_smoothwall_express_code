@@ -64,8 +64,7 @@ int set_time(std::vector<std::string> & parameters, std::string & response)
 		goto EXIT;
 	}
 	
-	cmd.push_back(time);
-	cmd.push_back(date);
+	cmd.push_back(time + " " + date);
 	error = simplesecuresystemvector(cmd);
 
 	if (error)

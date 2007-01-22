@@ -62,12 +62,9 @@ int stop_upnpd(std::vector<std::string> & parameters, std::string & response)
 	int error = 0;
 	
 	killunknownprocess("upnpd");
-	error = simplesecuresysteml("/sbin/route", "del", "-net", "239.0.0.0", "netmask", "255.0.0.0", NULL);
-	
-	if (error)
-		response = "killing upnpd failed!";
-	else
-		response = "Upnpd Process Terminated";
+	simplesecuresysteml("/sbin/route", "del", "-net", "239.0.0.0", "netmask", "255.0.0.0", NULL);
+
+	response = "Upnpd Process Terminated";
 
 	return error;
 }
@@ -83,7 +80,6 @@ int start_upnpd(std::vector<std::string> & parameters, std::string & response)
 	if (iface.str() == "")
 	{
 		response = "Couldn't open iface file";
-		error = 1;
 		goto EXIT;
 	}
 	if ((n = iface.str().find_first_not_of(LETTERS_NUMBERS)) != std::string::npos) 
@@ -100,7 +96,7 @@ int start_upnpd(std::vector<std::string> & parameters, std::string & response)
 		{
 			error = simplesecuresysteml("/usr/sbin/upnpd " , iface.str().c_str() , "eth0", NULL);
 			if (error)
-				response = "Can't start upnpd";
+				response = "Can't start Upnpd";
 			else
 				response = "Upnpd Start Successful";
 		}
