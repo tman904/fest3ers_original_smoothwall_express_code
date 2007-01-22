@@ -28,8 +28,8 @@
 extern "C" {
 	int load(std::vector<CommandFunctionPair> & );
 
-	int set_inbound(std::vector<std::string> & parameters, std::string & response);
-	int set_outbound(std::vector<std::string> & parameters, std::string & response);
+	int set_incoming(std::vector<std::string> & parameters, std::string & response);
+	int set_outgoing(std::vector<std::string> & parameters, std::string & response);
 	int set_internal(std::vector<std::string> & parameters, std::string & response);
 }
 
@@ -86,18 +86,18 @@ int load_portlist()
 int load(std::vector<CommandFunctionPair> & pairs)
 {
 	/* CommandFunctionPair name("command", "function"); */
-	CommandFunctionPair  set_inbound_function("setinbound", "set_inbound", 0, 0);
-	CommandFunctionPair  set_outbound_function("setoutbound", "set_outbound", 0, 0);
+	CommandFunctionPair  set_incoming_function("setincoming", "set_incoming", 0, 0);
+	CommandFunctionPair  set_outgoing_function("setoutgoing", "set_outgoing", 0, 0);
 	CommandFunctionPair  set_internal_function("setinternal", "set_internal", 0, 0);
 
-	pairs.push_back( set_inbound_function);
-	pairs.push_back( set_outbound_function);
+	pairs.push_back( set_incoming_function);
+	pairs.push_back( set_outgoing_function);
 	pairs.push_back( set_internal_function);
 
 	return 0;
 }
 
-int set_inbound(std::vector<std::string> & parameters, std::string & response)
+int set_incoming(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 
@@ -218,10 +218,10 @@ EXIT:
 	return (error);
 }
 
-int set_outbound(std::vector<std::string> & parameters, std::string & response)
+int set_outgoing(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
-	ConfigCSV config("/var/smoothwall/outbound/settings");
+	ConfigCSV config("/var/smoothwall/outgoing/settings");
 	std::vector<std::string>ipb;
 	std::string::size_type n;
 	
@@ -229,7 +229,7 @@ int set_outbound(std::vector<std::string> & parameters, std::string & response)
 
 	if (config.first())
 	{
-		response = "Couldn't open outbound config file";
+		response = "Couldn't open outgoing config file";
 		error = 1;
 		goto EXIT;
 	}
