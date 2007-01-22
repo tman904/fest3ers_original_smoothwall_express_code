@@ -21,46 +21,48 @@
 #include "setuid.h"
 
 extern "C" {
-	int load( std::vector<CommandFunctionPair> &  );
-	int set_xtaccess( std::vector<std::string> & parameters, std::string & response );
+	int load(std::vector<CommandFunctionPair> & );
+	int set_xtaccess(std::vector<std::string> & parameters, std::string & response);
 }
 
-int load( std::vector<CommandFunctionPair> & pairs )
+int load(std::vector<CommandFunctionPair> & pairs)
 {
-	/* CommandFunctionPair name( "command", "function" ); */
-	CommandFunctionPair set_xtaccess_function( "xtaccessset", "set_xtaccess", 0, 0 );
-	pairs.push_back(set_xtaccess_function );
+	/* CommandFunctionPair name("command", "function"); */
+	CommandFunctionPair set_xtaccess_function("setxtaccess", "set_xtaccess", 0, 0);
 
-	return ( 0 );
+	pairs.push_back(set_xtaccess_function);
+
+	return 0;
 }
 
-int set_xtaccess( std::vector<std::string> & parameters, std::string & response )
+int set_xtaccess(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 	ConfigSTR ifacef("/var/smoothwall/red/iface");
 	ConfigCSV config("/var/smoothwall/xtaccess/config");
-        std::vector<std::string>ipb;
+	std::vector<std::string>ipb;
 	std::string::size_type n;
 	std::string iface = ifacef.str();
 
-	if(iface.substr(0,3) == "ppp" || iface.substr(0,4) == "ippp")
+	if (iface.substr(0, 3) == "ppp" || iface.substr(0, 4) == "ippp")
 		iface = ""; // ignore ppp
-	if(iface != "" && ((n = iface.find_first_not_of(LETTERS_NUMBERS)) != std::string::npos))
+	if (iface != "" && ((n = iface.find_first_not_of(LETTERS_NUMBERS)) != std::string::npos))
 	{
 		response = "Bad iface: " + iface; 
 		error = 1;
 		goto EXIT;
 	}
-
-        
-	if(config.first())
+   
+	if (config.first())
 	{
 		response = "Couldn't open xtaccess config file";
 		error = 1;
 		goto EXIT;
 	}
+	
 	ipb.push_back("iptables  -F xtaccess");
-	for(int line = config.first(); line == 0; line = config.next())
+
+	for (int line = config.first(); line == 0; line = config.next())
 	{
 		const std::string & protocol = config[0];
 		const std::string & remip = config[1];
@@ -68,36 +70,37 @@ int set_xtaccess( std::vector<std::string> & parameters, std::string & response 
 		const std::string & enabled = config[3];
 
 		// are we complete?
-		if(protocol == "" || remip == "" || locport == "" || enabled == "")
+		if (protocol == "" || remip == "" || locport == "" || enabled == "")
 			break;
 
-		if((n = protocol.find_first_not_of(LETTERS)) != std::string::npos)
+		if ((n = protocol.find_first_not_of(LETTERS)) != std::string::npos)
 		{
 			response = "Bad protocol: " + protocol;
 			error = 1;
 			goto EXIT;
 		}
-		if((n = remip.find_first_not_of(IP_NUMBERS)) != std::string::npos)
+		if ((n = remip.find_first_not_of(IP_NUMBERS)) != std::string::npos)
 		{
 			response = "Bad remote IP: " + remip;
 			error = 1;
 			goto EXIT;
 		}
-		if((n = locport.find_first_not_of(NUMBERS)) != std::string::npos)
+		if ((n = locport.find_first_not_of(NUMBERS)) != std::string::npos)
 		{
 			response = "Bad port: " + locport;
 			error = 1;
 			goto EXIT;
 		}
-		if(enabled == "on")
+		if (enabled == "on")
 		{
 			ipb.push_back("iptables -A xtaccess -i ppp0 -p " + protocol + 
-			" -s " + remip + 
-			" --destination-port " + locport + " -j ACCEPT");
+				" -s " + remip + 
+				" --destination-port " + locport + " -j ACCEPT");
 			ipb.push_back("iptables -A xtaccess -i ippp0 -p " + protocol + 
-			" -s " + remip + 
-			" --destination-port " + locport + " -j ACCEPT");
-			if(iface != "")
+				" -s " + remip + 
+				" --destination-port " + locport + " -j ACCEPT");
+
+			if (iface != "")
 			{
 				ipb.push_back("iptables -A xtaccess -i " + iface + " -p " + protocol + 
 					" -s " + remip + 
@@ -107,10 +110,11 @@ int set_xtaccess( std::vector<std::string> & parameters, std::string & response 
 	}
 
 	error = ipbatch(ipb);
-	if(error)
+	if (error)
 		response = "ipbatch failure";
 	else
 		response = "xtaccess set";
+
 EXIT:
 	return error;
 }

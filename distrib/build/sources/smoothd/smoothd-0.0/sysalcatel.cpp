@@ -11,49 +11,48 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-
 #include <iostream>
 #include <fstream>
 #include <fcntl.h>
 #include <syslog.h>
 #include <signal.h>
+
 #include "module.h"
 #include "ipbatch.h"
+#include "setuid.h"
 
 extern "C" {
-	int load( std::vector<CommandFunctionPair> &  );
-	int set_alcatel( std::vector<std::string> & parameters, std::string & response );
+	int load(std::vector<CommandFunctionPair> & );
+	int set_alcatel(std::vector<std::string> & parameters, std::string & response);
 }
 
-int load( std::vector<CommandFunctionPair> & pairs )
+int load(std::vector<CommandFunctionPair> & pairs)
 {
-	/* CommandFunctionPair name( "command", "function" ); */
-	CommandFunctionPair set_alcatel_function("alcateladslfw", "set_alcatel", 0, 0 );
-	pairs.push_back(set_alcatel_function );
+	/* CommandFunctionPair name("command", "function"); */
+	CommandFunctionPair set_alcatel_function("alcateladslfw", "set_alcatel", 0, 0);
 
-	return ( 0 );
+	pairs.push_back(set_alcatel_function);
+
+	return 0;
 }
 
-
-
-// load the Alcatel firmware if the file is present.
-
-int set_alcatel( std::vector<std::string> & parameters, std::string & response )
+int set_alcatel(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 	struct stat sb;
 
-	if ((stat("/var/smoothwall/adsl/mgmt.o",&sb) == 0) && sb.st_mode & S_IRUSR)
+	if ((stat("/var/smoothwall/adsl/mgmt.o", &sb) == 0) && sb.st_mode & S_IRUSR)
 	{
 		error = simplesecuresysteml("/usr/bin/modem_run", "-f", "/var/smoothwall/adsl/mgmt.o", "-v", "1", NULL);
 		response = "Alcatel USB firmware loaded";
-		if(error)
-			response += Sprintf(" but with error return %d", error);
+		if (error)
+			response += stringprintf(" but with error return %d", error);
 	}
 	else
 	{
 		response = "No Alcatel USB firmware to load!";
 		error = 1;
 	}
+
 	return error;
 }

@@ -10,56 +10,57 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-
 #include <iostream>
 #include <fstream>
 #include <fcntl.h>
 #include <syslog.h>
 #include <signal.h>
+
 #include "module.h"
 #include "ipbatch.h"
+#include "setuid.h"
 
 extern "C" {
-	int load( std::vector<CommandFunctionPair> &  );
+	int load(std::vector<CommandFunctionPair> & );
 
-	int restart_im( std::vector<std::string> & parameters, std::string & response );
-	int   start_im( std::vector<std::string> & parameters, std::string & response );
-	int    stop_im( std::vector<std::string> & parameters, std::string & response );
+	int restart_im(std::vector<std::string> & parameters, std::string & response);
+	int   start_im(std::vector<std::string> & parameters, std::string & response);
+	int    stop_im(std::vector<std::string> & parameters, std::string & response);
 }
 
-int load( std::vector<CommandFunctionPair> & pairs )
+int load(std::vector<CommandFunctionPair> & pairs)
 {
-	/* CommandFunctionPair name( "command", "function" ); */
-	CommandFunctionPair restart_im_function( "imrestart", "restart_im", 0, 0 );
-	CommandFunctionPair   start_im_function( "imstart",     "start_im", 0, 0 );
-	CommandFunctionPair    stop_im_function( "imstop",       "stop_im", 0, 0 );
+	/* CommandFunctionPair name("command", "function"); */
+	CommandFunctionPair restart_im_function("imrestart", "restart_im", 0, 0);
+	CommandFunctionPair   start_im_function("imstart",     "start_im", 0, 0);
+	CommandFunctionPair    stop_im_function("imstop",       "stop_im", 0, 0);
 
-	pairs.push_back( restart_im_function );
-	pairs.push_back(   start_im_function );
-	pairs.push_back(    stop_im_function );
+	pairs.push_back(restart_im_function);
+	pairs.push_back(  start_im_function);
+	pairs.push_back(   stop_im_function);
 
-	return ( 0 );
+	return 0;
 }
 
-int restart_im( std::vector<std::string> & parameters, std::string & response )
+int restart_im(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 
-	error += stop_im( parameters, response );
+	error += stop_im(parameters, response);
 
-	if ( !error )
-		error += start_im( parameters, response );
+	if (!error)
+		error += start_im(parameters, response);
 
-	if ( !error )
+	if (!error)
 		response = "IMSpector Restart Successful";
 
 	return error;
 }
 
 
-int stop_im( std::vector<std::string> & parameters, std::string & response )
+int stop_im(std::vector<std::string> & parameters, std::string & response)
 {	
-        std::vector<std::string>ipb;
+	std::vector<std::string>ipb;
 	response = "IMSpector Process Terminated";
 
 	killprocess("/var/run/imspector.pid");
@@ -69,11 +70,10 @@ int stop_im( std::vector<std::string> & parameters, std::string & response )
 	return 0;
 }
 
-int start_im( std::vector<std::string> & parameters, std::string & response )
+int start_im(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
-        std::vector<std::string>ipb;
-	struct stat sb;
+	std::vector<std::string>ipb;
 
 	response = "IMSpector Process started";
 
@@ -81,54 +81,37 @@ int start_im( std::vector<std::string> & parameters, std::string & response )
 
 	ipb.push_back("iptables -t nat -F im");
 	
-
-	syslog(LOG_ERR, "starting accordingly");
 	if (settings["ENABLE"] == "on")
 	{
 		if (settings["MSN"] == "on")
-		{
-		        ipb.push_back("iptables -t nat -A im -p tcp --dport 1863 -j REDIRECT --to-ports 16667");
-		}
+			ipb.push_back("iptables -t nat -A im -p tcp --dport 1863 -j REDIRECT --to-ports 16667");
 		if (settings["ICQ"] == "on")
-		{
-		        ipb.push_back("iptables -t nat -A im -p tcp --dport 5190 -j REDIRECT --to-ports 16667");
-		}
+			ipb.push_back("iptables -t nat -A im -p tcp --dport 5190 -j REDIRECT --to-ports 16667");
 		if (settings["YAHOO"] == "on")
-		{
-		  ipb.push_back("iptables -t nat -A im -p tcp --dport 5050 -j REDIRECT --to-ports 16667");
-		}
+			ipb.push_back("iptables -t nat -A im -p tcp --dport 5050 -j REDIRECT --to-ports 16667");
 		if (settings["IRC"] == "on")
-		{
-		        ipb.push_back("iptables -t nat -A im -p tcp --dport 6667 -j REDIRECT --to-ports 16667");
-		}
+			ipb.push_back("iptables -t nat -A im -p tcp --dport 6667 -j REDIRECT --to-ports 16667");
 	}
 
 	error = ipbatch(ipb);
-	if(!error) {
-		syslog(LOG_ERR, "starting accordingly");
-		if (settings["ENABLE"] == "on")
-		{
-			if((stat("/var/smoothwall/im/imspector.conf",&sb) == 0) && sb.st_mode & S_IRUSR)
-			{
-			
-				syslog(LOG_ERR, "im enabled, starting accordingly");
-				error = simplesecuresysteml("/usr/sbin/imspector", "-c", 
-								"/var/smoothwall/im/imspector.conf", NULL);
-				if(error)
-					response = "IMSpector Start Failed!";
-				else
-					response = "IMSpector Start Successful";
-			}
-			else 
-			{
-				error = 1;
-				response = "IMSpector imspector.conf missing";
-			}
 
-		}
-	}
-	else
+	if (error)
+	{
 		response = "ipbatch failure";
+		goto EXIT;
+	}
 
+	if (settings["ENABLE"] == "on")
+	{
+		error = simplesecuresysteml("/usr/sbin/imspector", "-c", 
+			"/var/smoothwall/im/imspector.conf", NULL);
+
+		if (error)
+			response = "IMSpector Start Failed!";
+		else
+			response = "IMSpector Start Successful";
+	}
+
+EXIT:
 	return error;
 }

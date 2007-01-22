@@ -16,36 +16,39 @@
 #include <fcntl.h>
 #include <syslog.h>
 #include <signal.h>
+
 #include "module.h"
 #include "ipbatch.h"
 #include "setuid.h"
 
 extern "C" {
-	int load( std::vector<CommandFunctionPair> &  );
-	int set_updown( std::vector<std::string> & parameters, std::string & response );
+	int load(std::vector<CommandFunctionPair> & );
+	int set_updown(std::vector<std::string> & parameters, std::string & response);
 }
 
-int load( std::vector<CommandFunctionPair> & pairs )
+int load(std::vector<CommandFunctionPair> & pairs)
 {
-	/* CommandFunctionPair name( "command", "function" ); */
-	CommandFunctionPair set_updown_function( "updown", "set_updown", 0, 0 );
-	pairs.push_back(set_updown_function );
+	/* CommandFunctionPair name("command", "function"); */
+	CommandFunctionPair set_updown_function("updown", "set_updown", 0, 0);
+	pairs.push_back(set_updown_function);
 
-	return ( 0 );
+	return (0);
 }
 
-int set_updown( std::vector<std::string> & parameters, std::string & response )
+int set_updown(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 	const std::string & choice = parameters[0];
 
-	if(choice == "UP")
+	if (choice == "UP")
 		error = simplesecuresysteml("/usr/bin/smoothwall/ppp-on", NULL);
 	else
 		error = simplesecuresysteml("/usr/bin/smoothwall/ppp-off", NULL);
-	if(error)
+
+	if (error)
 		response = std::string(choice == "UP" ? "ppp-on" : "ppp-off") + " failed";
 	else
 		response = std::string(choice == "UP" ? "updown started" : "updown stopped");
+
 	return error;
 }

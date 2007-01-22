@@ -8,13 +8,17 @@
 #include <errno.h>
 #include "setuid.h"
 
-int main(int argsc, char* argsv[]) {
+int main(int argsc, char* argsv[])
+{
 	openlog("smoothcom", 0, LOG_USER);
 	
 	int firstParam = 1;
+	
 	// check for -q
-	if(argsc > 1) {
-		if(std::string(argsv[1]) == std::string("-q")) {
+	if (argsc > 1)
+	{
+		if (strcmp(argsv[1], "-q") == 0)
+		{
 			// The user wants quiet mode but there is only a 
 			// quiet mode so we don't do anything.
 			firstParam++;
@@ -22,25 +26,25 @@ int main(int argsc, char* argsv[]) {
 	}
 	
 	std::string messageString;
-	for(int i=firstParam; i<argsc; i++) {
+	for (int i = firstParam; i < argsc; i++)
+	{
 		messageString += argsv[i];
-		if(i<(argsc-1)) {
+		if (i < (argsc - 1))
 			messageString += " ";
-		}
 	}
 
 	// send message
 	std::string success = message(messageString);
 	int found = success.find( "Error:", 0 );
 
-	syslog( LOG_ERR, "This is smoothcom with '%s', %d", success.c_str(), found );
+	syslog(LOG_ERR, "This is smoothcom with '%s', %d", success.c_str(), found);
 
 	closelog();
-	if ( success == "" ){
+	
+	if (success == "" )
 		return 1;
-	} else if ( found >= 0 ){
+	else if (found >= 0)
 		return 2;
-	} else {
+	else
 		return 0;
-	}
 }

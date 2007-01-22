@@ -1,19 +1,17 @@
 
-CXXFLAGS= $(CFLAGS)
+CXXFLAGS = $(CFLAGS)
 # where to find it - relative path
-IPTABLES_SRC_DIR:=../../iptables/iptables-$(IPTABLES_VER)
+IPTABLES_SRC_DIR = ../../iptables/iptables-$(IPTABLES_VER)
 # where the IPT shared libs live
-IPT_LIB_DIR:=/usr/lib/iptables
-
-KERNEL_DIR:=/usr/src/linux
+IPT_LIB_DIR = /usr/lib/iptables
 
 OBJS=
-LIB_OBJS=module.o UDSocket.o pid.o setuid.o config.o ipbatch.o ipbatchc.o $(IPTABLES_SRC_DIR)/iptables.o $(IPTABLES_SRC_DIR)/libiptc/libiptc.a
-MAIN=main.cpp
-LIBS=-ldl /usr/lib/libsmoothd.so 
-BIN=smoothd
+LIB_OBJS = module.o UDSocket.o pid.o setuid.o config.o ipbatch.o ipbatchc.o $(IPTABLES_SRC_DIR)/iptables.o $(IPTABLES_SRC_DIR)/libiptc/libiptc.a
+MAIN = main.cpp
+LIBS = -ldl /usr/lib/libsmoothd.so 
+BIN = smoothd
 
-MODULES=sysshutdown sysinstall sysim sysalcatel sysdhcpd sysdnsproxy \
+MODULES = sysshutdown sysinstall sysim sysalcatel sysdhcpd sysdnsproxy \
 	sysntpd syssnort syssquid syssshd sysupnpd sysadvnet sysipblock \
 	sysxtaccess sysupdown sysipsec systimeset sysiptables
 
@@ -80,10 +78,3 @@ sysiptabes : $(OBJS)
 
 ipbatchc.o: ipbatch.h 
 	$(CC) -c $(CFLAGS) -DIPTABLES_VERSION=\"$(IPTABLES_VER)\" -Wall -Wunused -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I. -DIPT_LIB_DIR=\"$(IPT_LIB_DIR)\"  ipbatchc.c 
-
-
-$(IPTABLES_SRC_DIR)/iptables.o :
-	echo "warning: is  " $(IPTABLES_SRC_DIR)/iptables.o  "up to date?"
-
-$(IPTABLES_SRC_DIR)/libiptc/libiptc.a :
-	echo "warning: is " $(IPTABLES_SRC_DIR)/libiptc/libiptc.a " up to date?"

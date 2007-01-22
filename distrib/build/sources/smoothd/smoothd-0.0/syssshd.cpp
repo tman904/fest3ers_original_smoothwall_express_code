@@ -16,68 +16,74 @@
 #include <fcntl.h>
 #include <syslog.h>
 #include <signal.h>
+
 #include "module.h"
 #include "ipbatch.h"
 #include "setuid.h"
 
 extern "C" {
-	int load( std::vector<CommandFunctionPair> &  );
-	int   restart_sshd( std::vector<std::string> & parameters, std::string & response );
-	int   start_sshd( std::vector<std::string> & parameters, std::string & response );
-	int   stop_sshd( std::vector<std::string> & parameters, std::string & response );
+	int load(std::vector<CommandFunctionPair> & );
+	int restart_sshd(std::vector<std::string> & parameters, std::string & response);
+	int start_sshd(std::vector<std::string> & parameters, std::string & response);
+	int stop_sshd(std::vector<std::string> & parameters, std::string & response);
 }
 
-int load( std::vector<CommandFunctionPair> & pairs )
+int load(std::vector<CommandFunctionPair> & pairs)
 {
-	/* CommandFunctionPair name( "command", "function" ); */
-	CommandFunctionPair   restart_sshd_function( "sshdrestart",   "restart_sshd", 0, 0 );
-	CommandFunctionPair     start_sshd_function( "sshdstart",     "start_sshd", 0, 0 );
-	CommandFunctionPair     stop_sshd_function( "sshdstop",       "stop_sshd", 0, 0 );
-	pairs.push_back(     restart_sshd_function );
-	pairs.push_back(       start_sshd_function );
-	pairs.push_back(       stop_sshd_function );
+	/* CommandFunctionPair name("command", "function"); */
+	CommandFunctionPair restart_sshd_function("sshdrestart", "restart_sshd", 0, 0);
+	CommandFunctionPair start_sshd_function("sshdstart", "start_sshd", 0, 0);
+	CommandFunctionPair stop_sshd_function("sshdstop", "stop_sshd", 0, 0);
 
-	return ( 0 );
+	pairs.push_back(restart_sshd_function);
+	pairs.push_back(start_sshd_function);
+	pairs.push_back(stop_sshd_function);
+
+	return 0;
 }
 
-int restart_sshd( std::vector<std::string> & parameters, std::string & response )
-{
-        int error = 0;
-
-        error += stop_sshd( parameters, response );
-
-        if ( !error )
-                error += start_sshd( parameters, response );
-
-        if ( !error )
-                response = "Sshd Restart Successful";
-
-        return error;
-}
-
-int stop_sshd( std::vector<std::string> & parameters, std::string & response )
+int restart_sshd(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
+	
+	error += stop_sshd(parameters, response);
+	
+	if (!error)
+		error += start_sshd(parameters, response);
+	
+	if (!error)
+		response = "Sshd Restart Successful";
+	
+	return error;
+}
+
+int stop_sshd(std::vector<std::string> & parameters, std::string & response)
+{
+	int error = 0;
+
 	killprocess("/var/run/sshd.pid");
 	sleep(1);
 	response = "Sshd Process Terminated";
+
 	return error;
 }
 
 
-int start_sshd( std::vector<std::string> & parameters, std::string & response )
+int start_sshd(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 	struct stat sb;
 	int enable = (stat("/var/smoothwall/remote/enablessh", &sb) == 0);
 	
-	if(enable) 
+	if (enable) 
 	{
 		error = simplesecuresysteml("/usr/sbin/sshd", NULL);
-		if(error)
+
+		if (error)
 			response = "Can't start sshd";
 		else
 			response = "Sshd Start Successful";
 	}
-        return error;
+	
+	return error;
 }
