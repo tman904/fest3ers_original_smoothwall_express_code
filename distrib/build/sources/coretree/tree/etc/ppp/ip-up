@@ -49,7 +49,7 @@ if (open(FILE, ">${swroot}/red/dns1")) { print FILE $primarydns; close FILE; }
 if (open(FILE, ">${swroot}/red/dns2")) { print FILE $secondarydns; close FILE; }
 system('/bin/touch', "${swroot}/red/active");
 
-system('/usr/bin/smoothcom', 'setinbound');
+system('/usr/bin/smoothcom', 'setincoming');
 
 system('/usr/bin/sounds/onlinesound');
 

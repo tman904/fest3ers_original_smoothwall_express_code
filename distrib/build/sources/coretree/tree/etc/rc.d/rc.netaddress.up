@@ -66,6 +66,6 @@ fi
 
 echo "Setting external access rules"
 /usr/bin/smoothcom setxtaccess
-echo "Setting up outbound filter"
-/usr/bin/smoothcom setoutbound
+echo "Setting up outgoing filter"
+/usr/bin/smoothcom setoutgoing
 
