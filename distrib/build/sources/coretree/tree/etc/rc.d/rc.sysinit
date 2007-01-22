@@ -139,11 +139,12 @@ echo "Loading filesystems"
 /sbin/modprobe vfat
 /sbin/modprobe nls_cp437
 
+echo "Starting smoothd"
+/usr/sbin/smoothd
+
 echo "Running /etc/rc.d/rc.network"
 . /etc/rc.d/rc.network
 
-echo "Starting smoothd"
-/usr/sbin/smoothd
 echo "Starting cron"
 /usr/sbin/cron
 echo "Starting httpd"

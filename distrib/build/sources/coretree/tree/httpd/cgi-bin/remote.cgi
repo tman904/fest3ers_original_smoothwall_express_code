@@ -35,7 +35,7 @@ if ($remotesettings{'ACTION'} eq $tr{'save'})
 		unlink "${swroot}/remote/enablessh";
 	} 
 
-	my $success = message('sshrestart');
+	my $success = message('sshdrestart');
 	
 	if (not defined $success) {
 		$errormessage = $tr{'smoothd failure'}; }
