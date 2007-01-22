@@ -12,9 +12,9 @@ use smoothd qw( message );
 use smoothtype qw( :standard );
 
 my (%cgiparams,%selected,%checked);
-my $config = "${swroot}/outbound/config";
-my $settings = "${swroot}/outbound/settings";
-my $machinesettings = "${swroot}/outbound/machines";
+my $config = "${swroot}/outgoing/config";
+my $settings = "${swroot}/outgoing/settings";
+my $machinesettings = "${swroot}/outgoing/machines";
 my $ethSetFile = "${swroot}/ethernet/settings";
 
 my $errormessage = '';
@@ -204,7 +204,7 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 	}
 }
 
-&openpage($tr{'outbound filtering'}, 1, '', 'networking');
+&openpage($tr{'outgoing filtering'}, 1, '', 'networking');
 
 &openbigbox('100%', 'LEFT');
 
@@ -304,7 +304,7 @@ my $portmap = &portmap();
 
 my %render_settings =
 (
-	'url'     => "/cgi-bin/outbound.cgi?[%COL%],[%ORD%]",
+	'url'     => "/cgi-bin/outgoing.cgi?[%COL%],[%ORD%]",
 	'columns' => 
 	[
 		{ 
@@ -364,7 +364,7 @@ print "<form method='post'>\n";
 
 my %render_settings =
 (
-	'url'     => "/cgi-bin/outbound.cgi?$cgiparams{'COLUMN'},$cgiparams{'ORDER'},[%COL%],[%ORD%]",
+	'url'     => "/cgi-bin/outgoing.cgi?$cgiparams{'COLUMN'},$cgiparams{'ORDER'},[%COL%],[%ORD%]",
 	'columns' => 
 	[
 		{ 
