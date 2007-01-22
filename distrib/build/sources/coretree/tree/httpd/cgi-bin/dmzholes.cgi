@@ -9,6 +9,7 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothtype qw( :standard );
+use smoothd qw( message );
 
 my (%cgiparams,%checked,%selected);
 my $filename = "${swroot}/dmzholes/config";
@@ -52,8 +53,13 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'SRC_IP'},$cgiparams{'DEST_IP'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'}\n";
 		close(FILE);
 		undef %cgiparams;
+		
 		&log($tr{'dmz pinhole rule added'});
-		system('/usr/bin/setuids/setdmzholes');
+
+		my $success = message('setinternal');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 
@@ -99,8 +105,13 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			}
 		}
 		close(FILE);
-		system('/usr/bin/setuids/setdmzholes');
+
 		&log($tr{'dmz pinhole rule removed'});
+
+		my $success = message('setinternal');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 if ($cgiparams{'ACTION'} eq '')

@@ -21,7 +21,6 @@ if (open(FILE, "${swroot}/red/iface"))
 	close FILE;
 }
 
-
 # build the list of services.
 
 my %servicenames;
@@ -120,7 +119,6 @@ sub status_line
 
 	return "<img src='/ui/img/service_$status.png' alt='$status'>";
 }
-
 
 sub isrunning
 {

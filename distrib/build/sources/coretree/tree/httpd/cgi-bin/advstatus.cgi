@@ -205,7 +205,6 @@ print qq|
 </table>|;
 &closebox();
 
-
 &openbox($tr{'uptime and users'});
 print "<PRE>";
 system '/usr/bin/w';
@@ -250,7 +249,8 @@ table.modules td {
 END
 ;
 
-foreach my $module ( @modules ){
+foreach my $module ( @modules )
+{
 	my ( $mod, $size, $used ) = ( $module =~ /([^\s]*)\s+(\d+)\s+(.*)/ );
 	$used =~ s/\,/\ /g;
 	print "<tr>\n";
@@ -269,7 +269,7 @@ system ('/bin/uname', '-a');
 print "</PRE>\n";
 &closebox();
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

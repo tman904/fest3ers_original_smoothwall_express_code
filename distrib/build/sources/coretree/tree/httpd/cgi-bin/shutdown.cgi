@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my %cgiparams;
 my $death = 0;
@@ -21,16 +22,28 @@ $cgiparams{'ACTION'} = '';
 if ($cgiparams{'ACTION'} eq $tr{'shutdown'})
 {
 	$death = 1;
+	
 	&log($tr{'shutting down smoothwall'});
-	system ('/usr/bin/smoothcom', 'systemshutdown', 'now');
+	
+	my $success = message('systemshutdown', 'now');
+	
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }	
 }
 elsif ($cgiparams{'ACTION'} eq $tr{'reboot'})
 {
 	$rebirth = 1;
+	
 	&log($tr{'rebooting smoothwall'});
-	system ('/usr/bin/smoothcom', 'systemrestart', 'now');
+	
+	my $success = message('systemrestart', 'now');
+	
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
-if ($death == 0 && $rebirth == 0) {
+	
+if ($death == 0 && $rebirth == 0)
+{
 	&openpage($tr{'shutdown control'}, 1, '', 'maintenance');
 
 	&openbigbox('100%', 'LEFT');
@@ -89,11 +102,9 @@ END
 </DIV>
 END
 	;
-
-
 }
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

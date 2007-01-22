@@ -22,7 +22,7 @@ echo "$DNSMASQ_DNS2" >/var/smoothwall/red/dns2
 
 /usr/bin/smoothcom dnsproxyrestart $DNSMASQ_DNS1 $DNSMASQ_DNS2
 
-/usr/bin/smoothcom xtaccessset
+/usr/bin/smoothcom setxtaccess
 /usr/bin/smoothcom setinbound
 /usr/bin/smoothcom snortrestart
 /usr/bin/smoothcom upnpdrestart

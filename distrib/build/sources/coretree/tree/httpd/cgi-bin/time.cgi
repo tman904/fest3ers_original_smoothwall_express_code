@@ -8,9 +8,10 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
-        'Sep', 'Oct', 'Nov', 'Dec' );
+	'Sep', 'Oct', 'Nov', 'Dec' );
 
 my (%timesettings, %netsettings, $errormessage, my %timeservers);
 my $found;
@@ -108,6 +109,7 @@ if ($timesettings{'ACTION'} eq $tr{'save'})
 
 	unlink("${swroot}/time/localtime");
 	system('/bin/ln', '-s', "${tzroot}/$timesettings{'TIMEZONE'}", "${swroot}/time/localtime");
+
 ERROR:
 	if ($errormessage) {
 		$timeettings{'VALID'} = 'no'; }
@@ -130,7 +132,10 @@ END
 	else {
 		unlink "${swroot}/time/enablentpd"; }
 		
-	system('/usr/bin/smoothcom', 'ntpdrestart');
+	my $success = message('ntpdrestart');
+	
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
 
 if ($timesettings{'VALID'} eq '')
@@ -414,7 +419,7 @@ END
 
 print "</FORM>\n";
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

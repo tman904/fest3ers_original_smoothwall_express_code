@@ -8,8 +8,9 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
-my (%snortsettings,%checked);
+my (%snortsettings, %checked);
 
 &showhttpheaders();
 
@@ -21,18 +22,21 @@ $errormessage = '';
 if ($snortsettings{'ACTION'} eq $tr{'save'})
 {
 	&writehash("${swroot}/snort/settings", \%snortsettings);
-        if ($snortsettings{'ENABLE_SNORT'} eq 'on')
+	if ($snortsettings{'ENABLE_SNORT'} eq 'on')
 	{
 		&log($tr{'snort is enabled'});
-                system ('/bin/touch', "${swroot}/snort/enable");
+		system ('/bin/touch', "${swroot}/snort/enable");
 	}
-        else
+	else
 	{
 		&log($tr{'snort is disabled'});
-                unlink "${swroot}/snort/enable";
+		unlink "${swroot}/snort/enable";
 	} 
 
-	system ('/usr/bin/smoothcom', 'snortrestart');
+	my $success = message('snortrestart');
+	
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
 
 &readhash("${swroot}/snort/settings", \%snortsettings);
@@ -76,7 +80,7 @@ END
 
 print "</FORM>\n";
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

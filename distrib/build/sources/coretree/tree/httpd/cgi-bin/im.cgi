@@ -39,7 +39,7 @@ ERROR:
 	if ($errormessage) {
 		$imsettings{'VALID'} = 'no'; }
 	else {
-              	$imsettings{'VALID'} = 'yes'; }
+		$imsettings{'VALID'} = 'yes'; }
 
 	&writehash("${swroot}/im/settings", \%imsettings);
 
@@ -135,7 +135,7 @@ END
 
 print "</FORM>\n";
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

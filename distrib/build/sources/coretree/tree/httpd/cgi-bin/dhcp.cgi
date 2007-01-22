@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my %dhcpsettings;
 my %netsettings;
@@ -78,10 +79,12 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 	my @current = <FILE>;
 	close(FILE);
 	my $line;
-	foreach $line (@current) {
+	foreach $line (@current)
+	{
 		chomp($line);
 		my @temp = split(/\,/,$line);
-		if ($temp[5] eq 'on') {
+		if ($temp[5] eq 'on')
+		{
 			unless(!((&ip2number($temp[2]) <= &ip2number($dhcpsettings{'END_ADDR'}) 
 				&& (&ip2number($temp[2]) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
 				$errormessage = $tr{'dynamic range cannot overlap static'};
@@ -89,17 +92,20 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 			}
 		}
 	}
-	if ($dhcpsettings{'DNS1'}) {
+	if ($dhcpsettings{'DNS1'})
+	{
 		if (!(&validip($dhcpsettings{'DNS1'}))) {
 			$errormessage = $tr{'invalid primary dns'};
 			goto ERROR;
 		}
 	}
-	if (!($dhcpsettings{'DNS1'}) && $dhcpsettings{'DNS2'}) {
+	if (!($dhcpsettings{'DNS1'}) && $dhcpsettings{'DNS2'})
+	{
 		$errormessage = $tr{'cannot specify secondary dns without specifying primary'};
 		goto ERROR;
 	}
-	if ($dhcpsettings{'DNS2'}) {
+	if ($dhcpsettings{'DNS2'})
+	{
 		if (!(&validip($dhcpsettings{'DNS2'}))) {
 			$errormessage = $tr{'invalid secondary dns'};
 			goto ERROR;
@@ -138,13 +144,15 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'cannot specify secondary nis without specifying primary'};
 		goto ERROR;
 	}
-	if ($dhcpsettings{'NIS1'}) {
+	if ($dhcpsettings{'NIS1'})
+	{
 		if (!(&validip($dhcpsettings{'NIS1'}))) {
 			$errormessage = $tr{'invalid primary nis'};
 			goto ERROR;
 		}
 	}
-	if ($dhcpsettings{'NIS2'}) {
+	if ($dhcpsettings{'NIS2'})
+	{
 		if (!(&validip($dhcpsettings{'NIS2'}))) {
 			$errormessage = $tr{'invalid secondary nis'};
 			goto ERROR;
@@ -187,6 +195,11 @@ ERROR:
 	&writehash("${swroot}/dhcp/settings-$dhcpsettings{'SUBNET'}", \%dhcpsettings);
 
 	&writesettings();
+
+	my $success = message('dhcprestart');
+		
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
 
 if ($dhcpsettings{'ACTION'} eq $tr{'add'})
@@ -204,7 +217,8 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 	unless($dhcpsettings{'STATIC_HOST'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) { $errormessage = $tr{'invalid host name'}; }
 	unless(&validmac($dhcpsettings{'STATIC_MAC'})) { $errormessage = $tr{'mac address not valid'}; }
 	unless(&validip($dhcpsettings{'STATIC_IP'})) { $errormessage = $tr{'ip address not valid'}; }
-	if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on') {
+	if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on')
+	{
 		unless(!((&ip2number($dhcpsettings{'STATIC_IP'}) <= &ip2number($dhcpsettings{'END_ADDR'}) 
 			&& (&ip2number($dhcpsettings{'STATIC_IP'}) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
 			$errormessage = $tr{'static must be outside dynamic range'};
@@ -214,10 +228,12 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 	my @current = <FILE>;
 	close(FILE);
 	my $line;
-	foreach $line (@current) {
+	foreach $line (@current)
+	{
 		chomp($line);
 		my @temp = split(/\,/,$line);
-		if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on') {
+		if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on')
+		{
 			if (($dhcpsettings{'STATIC_HOST'} eq $temp[0]) && ($temp[4] eq 'on')) {
 				$errormessage = "$tr{'hostnamec'} $temp[0] $tr{'already exists and has assigned ip'} $tr{'ip address'} $temp[2].";
 			}
@@ -297,6 +313,11 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 	$refreshdynamic = 'off';	
 
 	&writesettings();
+
+	my $success = message('dhcprestart');
+		
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
 
 if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
@@ -308,9 +329,9 @@ if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
 	undef %dhcpsettings;
 
  	$dhcpsettings{'ENABLE'} = 'off';
-        $dhcpsettings{'DEFAULT_LEASE_TIME'} = '60';
-        $dhcpsettings{'MAX_LEASE_TIME'} = '120';
-
+	$dhcpsettings{'DEFAULT_LEASE_TIME'} = '60';
+	$dhcpsettings{'MAX_LEASE_TIME'} = '120';
+	
 	&readhash("${swroot}/dhcp/global", \%dhcpsettings);
 	&readhash("${swroot}/dhcp/settings-$subnet", \%dhcpsettings);
 	$dhcpsettings{'SUBNET'} = $subnet;
@@ -551,26 +572,29 @@ print "&nbsp;\n";
 
 &closepage();
 
-sub ip2number {
-        my $ip = $_[0];
-        if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
-                return 0; }
-        else {
-                return ($1*(256*256*256))+($2*(256*256))+($3*256)+($4);
-        }
+sub ip2number
+{
+	my $ip = $_[0];
+	
+	if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
+		return 0; }
+	else {
+		return ($1*(256*256*256))+($2*(256*256))+($3*256)+($4); }
 }
 
-sub number2ip {
-        my $number = $_[0];
-        my $n1 = int($number/(256*256*256));
-        my $n2 = int(($number-($n1*256*256*256))/(256*256));
-        my $n3 = int(($number-($n1*256*256*256)-($n2*256*256))/256);
-        my $n4 = $number-($n1*256*256*256)-($n2*256*256)-($n3*256);
-        return "$n1.$n2.$n3.$n4";
+sub number2ip
+{
+	my $number = $_[0];
+	my $n1 = int($number/(256*256*256));
+	my $n2 = int(($number-($n1*256*256*256))/(256*256));
+	my $n3 = int(($number-($n1*256*256*256)-($n2*256*256))/256);
+	my $n4 = $number-($n1*256*256*256)-($n2*256*256)-($n3*256);
+	
+	return "$n1.$n2.$n3.$n4";
 }
 
-
-sub writesettings {
+sub writesettings
+{
 	my %dhcpsettings;
 
 	unlink "${swroot}/dhcp/enable";
@@ -580,22 +604,19 @@ sub writesettings {
 
 	&readhash("${swroot}/dhcp/global", \%dhcpsettings);
 
-	if ($dhcpsettings{'BOOT_ENABLE'} eq 'on' && $dhcpsettings{'BOOT_SERVER'} && $dhcpsettings{'BOOT_FILE'}  && $dhcpsettings{'BOOT_ROOT'}) {
+	if ($dhcpsettings{'BOOT_ENABLE'} eq 'on' && $dhcpsettings{'BOOT_SERVER'} &&
+		$dhcpsettings{'BOOT_FILE'}  && $dhcpsettings{'BOOT_ROOT'})
+	{
 		if ($dhcpsettings{'BOOT_SERVER'}) {
-			print FILE "allow booting;\n";
-		}
+			print FILE "allow booting;\n"; }
 		if ($dhcpsettings{'BOOT_SERVER'}) {
-			print FILE "allow bootp;\n";
-		}
+			print FILE "allow bootp;\n"; }
 		if ($dhcpsettings{'BOOT_SERVER'}) {
-			print FILE "next-server $dhcpsettings{'BOOT_SERVER'};\n" if ($dhcpsettings{'BOOT_SERVER'} ne ''); 
-		}
+			print FILE "next-server $dhcpsettings{'BOOT_SERVER'};\n" if ($dhcpsettings{'BOOT_SERVER'} ne ''); }
 		if ($dhcpsettings{'BOOT_FILE'}) {
-			print FILE "filename \"$dhcpsettings{'BOOT_FILE'}\";\n" if ($dhcpsettings{'BOOT_FILE'} ne ''); 
-		}
+			print FILE "filename \"$dhcpsettings{'BOOT_FILE'}\";\n" if ($dhcpsettings{'BOOT_FILE'} ne ''); }
 		if ($dhcpsettings{'BOOT_ROOT'}) {
-			print FILE "option root-path \"$dhcpsettings{'BOOT_ROOT'}\";\n" if ($dhcpsettings{'BOOT_ROOT'} ne ''); 
-		}
+			print FILE "option root-path \"$dhcpsettings{'BOOT_ROOT'}\";\n" if ($dhcpsettings{'BOOT_ROOT'} ne ''); }
 	}
 	print FILE "ddns-update-style ad-hoc;\n\n";
 
@@ -643,14 +664,15 @@ sub writesettings {
 				if ($dhcpsettings{'WINS2'}) {
 					print FILE ", $dhcpsettings{'WINS2'}"; }
 				print FILE ";\n";
-		        }
+			}
 			if ($dhcpsettings{'NIS1'} && $dhcpsettings{'NIS_DOMAIN'}) {
 				if ($dhcpsettings{'NIS1'}) {
 					print FILE "\toption nis-servers ";
 					print FILE "$dhcpsettings{'NIS1'}";
 					if ($dhcpsettings{'NIS2'}) {
 						print FILE ", $dhcpsettings{'NIS2'}"; }
-					print FILE ";\n";}
+					print FILE ";\n";
+				}
 				if ($dhcpsettings{'NIS_DOMAIN'}) {
 					print FILE "\toption nis-domain \"$dhcpsettings{'NIS_DOMAIN'}\";\n";}
 			}
@@ -667,8 +689,7 @@ sub writesettings {
 				chomp($_);
 				my @temp = split(/\,/,$_);
 				if ($temp[4] eq 'on') {			
-					print FILE "\thost $id { hardware ethernet $temp[1]; fixed-address $temp[2]; }\n";
-				}
+					print FILE "\thost $id { hardware ethernet $temp[1]; fixed-address $temp[2]; }\n"; }
 			}
 			close(RULES);
 			print FILE "}\n";
@@ -688,6 +709,5 @@ sub writesettings {
 
 	close FILE;
 
-	system ('/usr/bin/smoothcom','dhcpdrestart');
 	unlink "${swroot}/dhcp/uptodate";
 }

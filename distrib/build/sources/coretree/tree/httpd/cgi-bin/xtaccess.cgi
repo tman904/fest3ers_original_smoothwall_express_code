@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my (%cgiparams, %checked, %selected);
 my $filename = "${swroot}/xtaccess/config";
@@ -40,8 +41,13 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'}\n";
 		close(FILE);
 		undef %cgiparams;
+		
 		&log($tr{'external access rule added'});
-		system('/usr/bin/smoothcom', 'xtaccessset');
+
+		my $success = message('setxtaccess');
+	
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
@@ -84,8 +90,13 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			}
 		}
 		close(FILE);
-		system('/usr/bin/smoothcom', 'xtaccessset');
+
 		&log($tr{'external access rule removed'});
+
+		my $success = message('setxtaccess');
+	
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 if ($cgiparams{'ACTION'} eq '')
@@ -209,7 +220,7 @@ END
 ;
 &closebox();
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

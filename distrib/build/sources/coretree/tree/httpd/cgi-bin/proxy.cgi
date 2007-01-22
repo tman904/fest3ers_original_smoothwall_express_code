@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my %proxysettings;
 my %netsettings;
@@ -172,10 +173,12 @@ END
 			system ('/bin/touch', "${swroot}/proxy/transparent"); }
  		
 		if ($proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'}) {
-                                system ('/bin/touch', "${swroot}/proxy/clearedcache"); }
+			system ('/bin/touch', "${swroot}/proxy/clearedcache"); }
 
-		system('/usr/bin/smoothcom', 'squidrestart');
-	}
+		my $success = message('squidrestart');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }	}
 }
 
 &readhash("${swroot}/proxy/settings", \%proxysettings);
@@ -256,7 +259,7 @@ END
 
 print "</FORM>\n";
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

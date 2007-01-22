@@ -83,6 +83,5 @@ echo "Bringing network up"
 . /var/smoothwall/ppp/settings
 if [ "$AUTOCONNECT" = "on" ]; then
 	echo "Bringing up modem/ISDN link"
-	# su nobody -c "/usr/bin/setuids/updown UP"
 	/usr/bin/smoothcom updown UP
 fi

@@ -56,16 +56,16 @@ echo "Starting traffic stats collector"
 echo "Setting DMZ pinholes"
 /usr/bin/smoothcom setinternal
 echo "Setting up advanced networking features"
-/usr/bin/smoothcom advnetset
+/usr/bin/smoothcom setadvnet
 echo "Setting up IP block"
-/usr/bin/smoothcom ipblockset
+/usr/bin/smoothcom setipblock
 
 if [ "$RED_DEV" != "" -a "$RED_TYPE" == "STATIC" ]; then
 	/etc/rc.d/rc.updatered
 fi
 
 echo "Setting external access rules"
-/usr/bin/smoothcom xtaccessset
-echo "Setting up Outbound filter"
+/usr/bin/smoothcom setxtaccess
+echo "Setting up outbound filter"
 /usr/bin/smoothcom setoutbound
 

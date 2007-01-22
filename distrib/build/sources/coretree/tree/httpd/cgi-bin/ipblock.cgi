@@ -9,6 +9,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my (%cgiparams,%checked,%selected);
 my $filename = "${swroot}/ipblock/config";
@@ -40,10 +41,14 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '')
 			}
 		}
 	}
-	if ($needrestart) {
-		system('/usr/bin/smoothcom', 'ipblockset'); }
+	if ($needrestart)
+	{
+		my $success = message('setipblock');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
+	}
 }
-
 
 my $errormessage = '';
 
@@ -61,7 +66,11 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		close(FILE);
 		undef %cgiparams;
 		&log($tr{'ip block rule added'});
-		system('/usr/bin/smoothcom', 'ipblockset');
+
+		my $success = message('setipblock');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
@@ -104,8 +113,12 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			}
 		}
 		close(FILE);
-		system('/usr/bin/smoothcom', 'ipblockset');
 		&log($tr{'ip block rule removed'});
+
+		my $success = message('setipblock');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 if ($cgiparams{'ACTION'} eq '')

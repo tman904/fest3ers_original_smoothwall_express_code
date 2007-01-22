@@ -20,17 +20,17 @@ $modemsettings{'VALID'} = '';
 
 $errormessage = '';
 if ($modemsettings{'ACTION'} eq $tr{'save'})
-{ 
-        if (!($modemsettings{'TIMEOUT'} =~ /^\d+$/))
-        {
-      	 	$errormessage = $tr{'timeout must be a number'};
-	 	goto ERROR;
-        }
+{
+	if (!($modemsettings{'TIMEOUT'} =~ /^\d+$/))
+	{
+		$errormessage = $tr{'timeout must be a number'};
+		goto ERROR;
+	}
 ERROR:   
-        if ($errormessage) {
-                $modemsettings{'VALID'} = 'no'; }
-        else {
-                $modemsettings{'VALID'} = 'yes'; }
+	if ($errormessage) {
+		$modemsettings{'VALID'} = 'no'; }
+	else {
+		$modemsettings{'VALID'} = 'yes'; }
 
 	&writehash("${swroot}/modem/settings", \%modemsettings);
 }

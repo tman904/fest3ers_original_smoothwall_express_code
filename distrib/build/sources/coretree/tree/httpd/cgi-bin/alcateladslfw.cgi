@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my %uploadsettings;
 
@@ -29,7 +30,11 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'})
 		$extramessage = $tr{'upload successful'};
 	}
 	undef $uploadsettings{'FH'};
-	system('/usr/bin/smoothcom', 'alcateladslfw');
+
+	my $success = message('alcateladslfw');
+		
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }	
 }
 
 &openpage($tr{'usb adsl setup'}, 1, '', 'maintenance');

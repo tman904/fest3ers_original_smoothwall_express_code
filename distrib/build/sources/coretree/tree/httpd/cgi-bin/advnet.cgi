@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my (%advnetsettings,%checked);
 
@@ -25,30 +26,38 @@ $errormessage = '';
 if ($advnetsettings{'ACTION'} eq $tr{'save'})
 {
 	&writehash("${swroot}/advnet/settings", \%advnetsettings);
-        if ($advnetsettings{'ENABLE_NOPING'} eq 'on') {
-                system ('/bin/touch', "${swroot}/advnet/noping"); }
-        else {
-                unlink "${swroot}/advnet/noping"; } 
-        if ($advnetsettings{'ENABLE_COOKIES'} eq 'on') {
-                system ('/bin/touch', "${swroot}/advnet/cookies"); }
-        else {
-                unlink "${swroot}/advnet/cookies"; } 
-        if ($advnetsettings{'ENABLE_NOIGMP'} eq 'on') {
-                system ('/bin/touch', "${swroot}/advnet/noigmp"); }
-        else {
-                unlink "${swroot}/advnet/noigmp"; } 
-        if ($advnetsettings{'ENABLE_NOMULTICAST'} eq 'on') {
-                system ('/bin/touch', "${swroot}/advnet/nomulticast"); }
-        else {
-                unlink "${swroot}/advnet/nomulticast"; } 
-        if ($advnetsettings{'ENABLE_UPNP'} eq 'on') {
-                system ('/bin/touch', "${swroot}/advnet/upnp"); }
-        else {
-                unlink "${swroot}/advnet/upnp"; } 
+	if ($advnetsettings{'ENABLE_NOPING'} eq 'on') {
+		system ('/bin/touch', "${swroot}/advnet/noping"); }
+	else {
+		unlink "${swroot}/advnet/noping"; } 
+	if ($advnetsettings{'ENABLE_COOKIES'} eq 'on') {
+		system ('/bin/touch', "${swroot}/advnet/cookies"); }
+	else {
+		unlink "${swroot}/advnet/cookies"; } 
+	if ($advnetsettings{'ENABLE_NOIGMP'} eq 'on') {
+		system ('/bin/touch', "${swroot}/advnet/noigmp"); }
+	else {
+		unlink "${swroot}/advnet/noigmp"; } 
+	if ($advnetsettings{'ENABLE_NOMULTICAST'} eq 'on') {
+		system ('/bin/touch', "${swroot}/advnet/nomulticast"); }
+	else {
+		unlink "${swroot}/advnet/nomulticast"; } 
+	if ($advnetsettings{'ENABLE_UPNP'} eq 'on') {
+		system ('/bin/touch', "${swroot}/advnet/upnp"); }
+	else {
+		unlink "${swroot}/advnet/upnp"; } 
 
 	&log($tr{'restarting advanced networking features'});
-	system ('/usr/bin/smoothcom', 'advnetset');
-	system ('/usr/bin/smoothcom', 'upnpdrestart');
+	
+	my $success = message('advnetset');
+		
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }	
+
+	my $success = message('upnpdrestart');
+		
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
 
 &readhash("${swroot}/advnet/settings", \%advnetsettings);

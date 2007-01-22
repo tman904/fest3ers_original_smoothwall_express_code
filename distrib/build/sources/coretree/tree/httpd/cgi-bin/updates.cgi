@@ -144,19 +144,20 @@ elsif ($uploadsettings{'ACTION'} eq $tr{'refresh update list'})
 	my $return = &downloadlist();
 	if ($return =~ m/^HTTP\/\d+\.\d+ 200/)
 	{
-                unless(open(LIST, ">${swroot}/patches/available"))
+		unless(open(LIST, ">${swroot}/patches/available"))
 		{
-                        $errormessage = $tr{'could not open available updates file'};
-                        goto ERROR;
-                }
+			$errormessage = $tr{'could not open available updates file'};
+			goto ERROR;
+		}
 		flock LIST, 2;
-                my @this = split(/----START LIST----\n/,$return);
-                print LIST $this[1];
-                close(LIST);
+		my @this = split(/----START LIST----\n/,$return);
+		print LIST $this[1];
+		close(LIST);
+		
 		&log($tr{'successfully refreshed updates list'});
-        } 
+	} 
 	else {
-                $errormessage = $tr{'could not download the available updates list'}; }
+		$errormessage = $tr{'could not download the available updates list'}; }
 }
 
 ERROR:
@@ -200,7 +201,8 @@ print qq|<br/>
 	<table class='blank'>
 	|;
 
-foreach my $update ( sort keys %updates ){
+foreach my $update ( sort keys %updates )
+{
 	next if ( defined $updates{$update}{'installed'} );
 	print <<END
 	<tr>
@@ -218,7 +220,7 @@ foreach my $update ( sort keys %updates ){
 		</td>
 	</tr>
 END
-;
+	;
 }
 
 print qq{
@@ -347,8 +349,8 @@ print qq{
 
 &closepage( "update" );
 
-if ($uploadsettings{'ACTION'} eq "$tr{'update'}" ){
-
+if ($uploadsettings{'ACTION'} eq "$tr{'update'}" )
+{
 	use lib "/usr/lib/smoothwall/";
 
 	print STDERR "Performing Update\n";
@@ -621,13 +623,15 @@ print STDERR "Checking status of installed updates\n";
 		}
 	}
 	chdir("/var/patches/$$");
-	unless (message("install", "$$"))
+	
+	my $success = message('nstall', $$);
+	if (not defined $success)
 	{
-		$errormessage = $tr{'package failed to install'};
-		print STDERR $errormessage;
+		$errormessage = $tr{'smoothd failure'};
 		tidy();
 		return undef;
 	}
+	
 	unless (open(IS, ">>${swroot}/patches/installed")) {
  		$errormessage = $tr{'update installed but'}; }
 	flock IS, 2;
@@ -640,6 +644,7 @@ print STDERR "Checking status of installed updates\n";
 	print IS "$info|$time[5]-$time[4]-$time[3]\n";
 	close(IS);
 	tidy();
+	
 	&log("$tr{'the following update was successfully installedc'} $title"); 
 }
 
@@ -651,7 +656,8 @@ sub tidy
 	my @files = readdir (CUSTOM);
 	closedir(CUSTOM);
 
-	foreach my $file (@files) {
+	foreach my $file (@files)
+	{
 		print STDERR "Unlinking $file\n";
 		next if ( $file =~ /^\..*/ );
 		unlink "/var/patches/$$/$file";

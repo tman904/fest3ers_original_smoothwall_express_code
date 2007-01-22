@@ -48,8 +48,7 @@ if ($cgiparams{'ACTION_DIAL'} eq $tr{'save'})
 	if ($password1 eq $password2)
 	{
 		if($password1 =~ m/\s|\"/) {
-			$errormessage = $tr{'password contains illegal characters'};
-                }
+			$errormessage = $tr{'password contains illegal characters'}; }
 		elsif (length($password1) >= 6)
 		{
 			system('/usr/bin/htpasswd', '-m', '-b', "${swroot}/auth/users", 'dial', "${password1}"); 
@@ -102,7 +101,7 @@ END
 
 print "</FORM>\n";
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

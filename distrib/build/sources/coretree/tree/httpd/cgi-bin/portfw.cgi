@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 use smoothtype qw( :standard );
 
 my (%cgiparams,%selected,%checked);
@@ -27,11 +28,10 @@ my $dest_service = "user";
 
 if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
 {
-        my @temp = split(',',$ENV{'QUERY_STRING'});
-        $cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
-        $cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+	my @temp = split(',',$ENV{'QUERY_STRING'});
+	$cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
 }
-
 
 my $errormessage = '';
 
@@ -46,23 +46,22 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 			$cgiparams{'EXT'} = '0.0.0.0/0'; }
 	}
 
-	if ( defined $cgiparams{'SRC_PORT_SEL'} and $cgiparams{'SRC_PORT_SEL'} ne "user" ){
+	if (defined $cgiparams{'SRC_PORT_SEL'} and $cgiparams{'SRC_PORT_SEL'} ne "user") {
 		$cgiparams{'SRC_PORT'} = $cgiparams{'SRC_PORT_SEL'};
 	} else {
-		unless(&validportrange($cgiparams{'SRC_PORT'})) { $errormessage = $tr{'source port numbers'}; }
-	}
+		unless(&validportrange($cgiparams{'SRC_PORT'})) { $errormessage = $tr{'source port numbers'}; } }
 
-	if ( defined $cgiparams{'DST_PORT_SEL'} and $cgiparams{'SRC_DST_SEL'} ne "user" ){
-		$cgiparams{'DEST_PORT'} = $cgiparams{'DST_PORT_SEL'};
-	} else {
+	if (defined $cgiparams{'DST_PORT_SEL'} and $cgiparams{'SRC_DST_SEL'} ne "user" ){
+		$cgiparams{'DEST_PORT'} = $cgiparams{'DST_PORT_SEL'}; } 
+	else 
+	{
 		if ($cgiparams{'DEST_PORT'}) {
 			unless(&validport($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; } }
 		else {
-			$cgiparams{'DEST_PORT'} = 0; 
-		}
+			$cgiparams{'DEST_PORT'} = 0; }
 	}
 
-	unless(&validip($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
+	unless (&validip($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -70,7 +69,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	foreach $line (@current)
 	{
 		my @temp = split(/\,/,$line);
-		if($cgiparams{'SRC_PORT'} eq $temp[1] &&
+		if ($cgiparams{'SRC_PORT'} eq $temp[1] &&
 			$cgiparams{'PROTOCOL'} eq $temp[0])
 		{
 			 $errormessage =  
@@ -84,10 +83,16 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'SRC_PORT'},$cgiparams{'DEST_IP'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'}\n";
 		close(FILE);
 		undef %cgiparams;
+
 		&log($tr{'forwarding rule added'});
-		system('/usr/bin/setuids/setportfw');
+		
+		my $success = message('setincoming');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
+
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
 {
 	open(FILE, "$filename") or die 'Unable to open config file.';
@@ -133,10 +138,16 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			}
 		}
 		close(FILE);
-		system('/usr/bin/setuids/setportfw');
+
 		&log($tr{'forwarding rule removed'});
+
+		my $success = message('setincoming');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
+
 if ($cgiparams{'ACTION'} eq '')
 {
 	$cgiparams{'PROTOCOL'} = 'tcp';
@@ -212,61 +223,63 @@ END
 
 my $portmap = &portmap();
 
-my %render_settings = (
-                        'url'     => "/cgi-bin/portfw.cgi?[%COL%],[%ORD%]",
-                        'columns' => [ 
-                                { 
-                                        column => '1',
-                                        title  => "$tr{'protocol'}",
-                                        size   => 10,
-					sort   => 'cmp',
-					tr     =>  { 'tcp' => 'TCP', 'udp' => 'UDP' },
-                                },
-                                { 
-                                        column => '2',
-                                        title  => "External source IP",
-                                        size   => 15,
-					sort   => &ipcompare,
-                                },
-                                { 
-                                        column => '3',
-                                        title  => "$tr{'source port'}",
-                                        size   => 20,
-					sort   => 'cmp',
-					tr     => \%{$portmap}
-                                },
-                                { 
-                                        column => '4',
-                                        title  => "$tr{'destination ip'}",
-                                        size   => 20,
-					sort   => &ipcompare,
-                                },
-                                { 
-                                        column => '5',
-                                        title  => "$tr{'destination port'}",
-                                        size   => 15,
-					sort   => 'cmp',
-					tr     => \%{$portmap}
-                                },
-                                {
-                                        column => '6',
-                                        title  => "$tr{'enabledtitle'}",
-                                        size   => 10,
-                                        tr     => 'onoff',
-                                        align  => 'center',
-                                },
-                                {
-                                        title  => "$tr{'mark'}", 
-                                        size   => 10,
-                                        mark   => ' ',
-                                },
-                                { 
-                                        column => '7',
-                                        title => "$tr{'comment'}",
-                                        break => 'line',
-                                }
-                        ]
-                );
+my %render_settings =
+(
+	'url'     => "/cgi-bin/portfw.cgi?[%COL%],[%ORD%]",
+	'columns' =>
+	[ 
+		{ 
+			column => '1',
+			title  => "$tr{'protocol'}",
+			size   => 10,
+			sort   => 'cmp',
+			tr     =>  { 'tcp' => 'TCP', 'udp' => 'UDP' },
+		},
+		{ 
+			column => '2',
+			title  => "External source IP",
+			size   => 15,
+			sort   => &ipcompare,
+		},
+		{ 
+			column => '3',
+			title  => "$tr{'source port'}",
+			size   => 20,
+			sort   => 'cmp',
+			tr     => \%{$portmap}
+		},
+		{ 
+			column => '4',
+			title  => "$tr{'destination ip'}",
+			size   => 20,
+			sort   => &ipcompare,
+		},
+		{ 
+			column => '5',
+			title  => "$tr{'destination port'}",
+			size   => 15,
+			sort   => 'cmp',
+			tr     => \%{$portmap}
+		},
+		{
+			column => '6',
+			title  => "$tr{'enabledtitle'}",
+			size   => 10,
+			tr     => 'onoff',
+			align  => 'center',
+		},
+		{
+			title  => "$tr{'mark'}", 
+			size   => 10,
+			mark   => ' ',
+		},
+		{ 
+			column => '7',
+			title => "$tr{'comment'}",
+			break => 'line',
+		}
+	]
+);
 
 &displaytable( $filename, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
 
@@ -281,7 +294,7 @@ END
 ;
 &closebox();
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

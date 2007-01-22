@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my (%cgiparams,%checked);
 my $filename = "${swroot}/vpn/config";
@@ -35,11 +36,17 @@ if ($cgiparams{'ACTION'} eq $tr{'save'})
 
 if ($cgiparams{'ACTION'} eq $tr{'restart'})
 {
-	system('/usr/bin/smoothcom', 'ipsecrestart');
+	my $success = message('ipsecrestart');
+	
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
 if ($cgiparams{'ACTION'} eq $tr{'stop'})
 {
-	system('/usr/bin/smoothcom', 'ipsecstop');
+	my $success = message('ipsecstop');
+	
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
 
 if ($cgiparams{'VALID'} eq '')

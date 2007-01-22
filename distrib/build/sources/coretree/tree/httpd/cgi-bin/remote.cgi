@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my (%remotesettings, %checked, $errormessage);
 
@@ -22,18 +23,22 @@ $errormessage = '';
 if ($remotesettings{'ACTION'} eq $tr{'save'})
 {
 	&writehash("${swroot}/remote/settings", \%remotesettings);
-        if ($remotesettings{'ENABLE_SSH'} eq 'on')
+
+	if ($remotesettings{'ENABLE_SSH'} eq 'on')
 	{
 		&log($tr{'ssh is enabled'});
-                system ('/bin/touch', "${swroot}/remote/enablessh");
+		system ('/bin/touch', "${swroot}/remote/enablessh");
 	}
-        else
+	else
 	{
 		&log($tr{'ssh is disabled'});
-                unlink "${swroot}/remote/enablessh";
+		unlink "${swroot}/remote/enablessh";
 	} 
 
-	system ('/usr/bin/smoothcom', 'sshdrestart');
+	my $success = message('sshrestart');
+	
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
 
 $remotesettings{'ENABLE_SECURE_ADMIN'} = 'off';
@@ -85,7 +90,7 @@ END
 
 print "</FORM>\n";
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 

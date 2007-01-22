@@ -41,9 +41,9 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '')
 		}
 	}
 	$cgiparams{'ACTION'} = 'Run';
-} else {
-	@addrs = split(/,/, $cgiparams{'IP'}); 
 }
+else {
+	@addrs = split(/,/, $cgiparams{'IP'});  }
 
 if ( $cgiparams{'MODE'} ne "quick" ){
 	&openpage($tr{'ip info'}, 1, '', 'tools');
@@ -93,18 +93,20 @@ END
 	&closebigbox();
 
 	&closepage();
-} else {
-		unless ($errormessage)
+}
+else
+{
+	unless ($errormessage)
+	{
+		foreach $addr (@addrs)
 		{
-			foreach $addr (@addrs)
-			{
-	        		$hostname = gethostbyaddr(inet_aton($addr), AF_INET);
-        			if (!$hostname) { $hostname = $tr{'lookup failed'}; }
-				&openbox("$addr ($hostname)");
-				print "<div style='height: 140px; width: 400px; overflow: auto;'><pre style='font-size: 9px;'>";
-				system('/usr/bin/whois', '--nocgi', $addr);
-				print "</pre></div>";
-				&closebox();
-			}
-		}	
+			$hostname = gethostbyaddr(inet_aton($addr), AF_INET);
+			if (!$hostname) { $hostname = $tr{'lookup failed'}; }
+			&openbox("$addr ($hostname)");
+			print "<div style='height: 140px; width: 400px; overflow: auto;'><pre style='font-size: 9px;'>";
+			system('/usr/bin/whois', '--nocgi', $addr);
+			print "</pre></div>";
+			&closebox();
+		}
+	}	
 }

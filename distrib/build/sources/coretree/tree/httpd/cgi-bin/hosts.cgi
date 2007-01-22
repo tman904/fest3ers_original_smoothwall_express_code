@@ -2,10 +2,11 @@
 #
 # SmoothWall CGIs
 #
-# (c) SmoothWall Ltd, 2002-2003
+# (c) SmoothWall Ltd, 2002-2007
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 my (%cgiparams,%selected);
 my $filename = "${swroot}/hosts/config";
@@ -29,9 +30,13 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		print FILE "$cgiparams{'IP'},$cgiparams{'HOSTNAME'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
 		undef %cgiparams;
+		
 		&log($tr{'host added to hosts list.'});
-		system('/usr/bin/smoothwall/writehosts.pl');
-                system('/usr/bin/smoothcom', 'dnsproxyrestart', 'HUP');
+		
+		my $success = message('dnsproxyrestart', 'HUP');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
@@ -74,9 +79,15 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			}
 		}
 		close(FILE);
- 		system('/usr/bin/smoothwall/writehosts.pl');
-                system('/usr/bin/smoothcom', 'dnsproxyrestart', 'HUP');
+		
 		&log($tr{'host removed from host list'});
+		
+ 		system('/usr/bin/smoothwall/writehosts.pl');
+ 		
+		my $success = message('dnsproxyrestart', 'HUP');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 if ($cgiparams{'ACTION'} eq '')

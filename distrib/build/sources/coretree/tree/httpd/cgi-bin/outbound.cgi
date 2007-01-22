@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 use smoothtype qw( :standard );
 
 my (%cgiparams,%selected,%checked);
@@ -30,19 +31,20 @@ $cgiparams{'MACHINEENABLED'} = 'on'  if ( not defined $cgiparams{'MACHINEACTION'
 
 if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
 {
-        my @temp = split(',',$ENV{'QUERY_STRING'});
-        $cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
-        $cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+	my @temp = split(',',$ENV{'QUERY_STRING'});
+	$cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
 }
 
 # Load inbound interfaces into %interfaces (excluding RED)
 my %interfaces;
 open(ETHSET, $ethSetFile) or die 'Unable to open ethernet settings.';
-while(<ETHSET>) {
-	if($_ =~ m/(\S+)_DEV=(\S+)/) {
+while(<ETHSET>)
+{
+	if ($_ =~ m/(\S+)_DEV=(\S+)/)
+	{
 		if(!($1 eq 'RED')) {
-			$interfaces{$1} = $2;
-		}
+			$interfaces{$1} = $2; }
 	}
 }
 
@@ -60,7 +62,8 @@ $checked{'on'} = " checked ";
 
 # Save the settings as is required.
 
-if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} ){
+if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
+{
 	$settings{'GREEN'} = $cgiparams{'ENABLEGREEN'};
 	$settings{'ORANGE'} = $cgiparams{'ENABLEORANGE'};
 	$settings{'PURPLE'} = $cgiparams{'ENABLEPURPLE'};
@@ -70,21 +73,23 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} ){
 
 my $errormessage = "";
 
-if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'add'} ){
+if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'add'} )
+{
 	my $interface = $cgiparams{'INTERFACE'};
 	my $enabled   = $cgiparams{'RULEENABLED'};
 	my $service   = $cgiparams{'SERVICE'};
 	my $port      = $cgiparams{'PORT'};
 
-	if ( $service eq "user" ){
+	if ( $service eq "user" )
+	{
 		if ( not &validportrange( $port ) ){
 			$errormessage = $tr{'invalid port or range'};
 		} else {
-			$service = $port;
-		}
+			$service = $port; }
 	}
 
-	if ( $errormessage eq "" ){	
+	if ( $errormessage eq "" )
+	{	
 		open(FILE,">>$settings") or die 'Unable to open config file.';
 		flock FILE, 2;
 		print FILE "$interface,$enabled,$service\n";
@@ -94,7 +99,9 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'add'} ){
 
 my $service = 'user';
 
-if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or $cgiparams{'ACTION'} eq $tr{'remove'}){
+if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or
+	$cgiparams{'ACTION'} eq $tr{'remove'})
+{
 	open(FILE, "$settings") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -108,11 +115,9 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or $cg
 	}
 
 	if ($count == 0) {
-		$errormessage = $tr{'nothing selected'}; 
-	}
+		$errormessage = $tr{'nothing selected'};  }
 	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-		$errormessage = $tr{'you can only select one item to edit'}; 
-	}
+		$errormessage = $tr{'you can only select one item to edit'};  }
 	
 	unless ($errormessage)
 	{
@@ -136,26 +141,28 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or $cg
 	}
 }
 
-if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{'add'} ){
+if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{'add'} )
+{
 	my $machine = $cgiparams{'MACHINE'};
 	my $enabled = $cgiparams{'MACHINEENABLED'};
 
 	unless ( &validip( $machine ) ){
-		$errormessage = "invalid ip";
-	}
+		$errormessage = "invalid ip"; }
 
-	if ( $errormessage eq "" ){	
+	if ( $errormessage eq "" )
+	{
 		open(FILE,">>$machinesettings") or die 'Unable to open config file.';
 		flock FILE, 2;
 		print FILE "$machine,$enabled\n";
 		close(FILE);
 		$cgiparams{'MACHINE'} = "";
 		$cgiparams{'MACHINEENABLED'} = "on";
-
 	}
 }
 
-if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{'edit'} or $cgiparams{'MACHINEACTION'} eq $tr{'remove'}){
+if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{'edit'} or
+	$cgiparams{'MACHINEACTION'} eq $tr{'remove'})
+{
 	open(FILE, "$machinesettings") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -164,8 +171,7 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 	{
 		$id++;
 		if ($cgiparams{$id} eq "on") {
-			$count++; 
-		}
+			$count++; }
 	}
 
 	if ($count == 0) {
@@ -184,8 +190,9 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 		{
 			$id++;
 			unless ($cgiparams{$id} eq "on") {
-				print FILE "$line"; 
-			} elsif ($cgiparams{'MACHINEACTION'} eq $tr{'edit'}) {
+				print FILE "$line"; }
+			elsif ($cgiparams{'MACHINEACTION'} eq $tr{'edit'})
+			{
 				chomp($line);
 				my @temp = split(/\,/,$line);
 				$cgiparams{'MACHINE'} = $temp[0];
@@ -210,7 +217,8 @@ print '<tr>' . "\n";
 
 my $unused = 6;
 my $width = 90 / $unused;
-foreach $interface (keys(%interfaces)) {
+foreach $interface (keys(%interfaces))
+{
 	print qq{
 	<tr>
 	<td style='width: 35%;'>$tr{'traffic is 1'}$interface$tr{'traffic is 2'}</td>
@@ -247,8 +255,7 @@ print qq{
 };
 
 foreach my $colour (sort keys %interfaces) {
-	print "<option value='$colour'>$colour</option>\n";
-}
+	print "<option value='$colour'>$colour</option>\n"; }
 
 print qq{
 		</select>
@@ -295,46 +302,48 @@ print "<form method='post'>\n";
 
 my $portmap = &portmap();
 
-my %render_settings = (
-                        'url'     => "/cgi-bin/outbound.cgi?[%COL%],[%ORD%]",
-                        'columns' => [ 
-                                { 
-                                        column => '1',
-                                        title  => "$tr{'interface'}",
-                                        size   => 30,
-					sort   => 'cmp',
-                                },
-                                {
-                                        column => '3',
-                                        title  => "$tr{'application service'}",
-                                        size   => 50,
-                                        sort   => 'cmp',
-					tr     => \%{$portmap}
-                                },
-                                {
-                                        column => '2',
-                                        title  => "$tr{'enabledtitle'}",
-                                        size   => 10,
-                                        tr     => 'onoff',
-                                        align  => 'center',
-                                },
-                                {
-                                        title  => "$tr{'mark'}", 
-                                        size   => 10,
-                                        mark   => ' ',
-                                },
-				{
-					column => '1',
-					colour => 'colour',
-					tr     => { 'GREEN' => 'green', 'ORANGE' => 'orange', 'PURPLE' => 'purple' },
-				},
-                                { 
-                                        column => '4',
-                                        title => "$tr{'comment'}",
-                                        break => 'line',
-                                }
-                        ]
-                );
+my %render_settings =
+(
+	'url'     => "/cgi-bin/outbound.cgi?[%COL%],[%ORD%]",
+	'columns' => 
+	[
+		{ 
+			column => '1',
+			title  => "$tr{'interface'}",
+			size   => 30,
+			sort   => 'cmp',
+		},
+		{
+			column => '3',
+			title  => "$tr{'application service'}",
+			size   => 50,
+			sort   => 'cmp',
+			tr     => \%{$portmap}
+		},
+		{
+			column => '2',
+			title  => "$tr{'enabledtitle'}",
+			size   => 10,
+			tr     => 'onoff',
+			align  => 'center',
+		},
+		{
+			title  => "$tr{'mark'}", 
+			size   => 10,
+			mark   => ' ',
+		},
+		{
+			column => '1',
+			colour => 'colour',
+			tr     => { 'GREEN' => 'green', 'ORANGE' => 'orange', 'PURPLE' => 'purple' },
+		},
+		{ 
+			column => '4',
+			title => "$tr{'comment'}",
+			break => 'line',
+		}
+	]
+);
 
 &displaytable( $settings, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
 
@@ -353,34 +362,36 @@ END
 &openbox($tr{'allowed machines'});
 print "<form method='post'>\n";
 
-my %render_settings = (
-                        'url'     => "/cgi-bin/outbound.cgi?$cgiparams{'COLUMN'},$cgiparams{'ORDER'},[%COL%],[%ORD%]",
-                        'columns' => [ 
-                                { 
-                                        column => '1',
-                                        title  => "$tr{'ip address'}",
-                                        size   => 30,
-					sort   => 'cmp',
-                                },
-                                {
-                                        column => '2',
-                                        title  => "$tr{'enabledtitle'}",
-                                        size   => 10,
-                                        tr     => 'onoff',
-                                        align  => 'center',
-                                },
-                                {
-                                        title  => "$tr{'mark'}", 
-                                        size   => 10,
-                                        mark   => ' ',
-                                },
-                                { 
-                                        column => '3',
-                                        title => "$tr{'comment'}",
-                                        break => 'line',
-                                }
-                        ]
-                );
+my %render_settings =
+(
+	'url'     => "/cgi-bin/outbound.cgi?$cgiparams{'COLUMN'},$cgiparams{'ORDER'},[%COL%],[%ORD%]",
+	'columns' => 
+	[
+		{ 
+			column => '1',
+			title  => "$tr{'ip address'}",
+			size   => 30,
+			sort   => 'cmp',
+		},
+		{
+			column => '2',
+			title  => "$tr{'enabledtitle'}",
+			size   => 10,
+			tr     => 'onoff',
+			align  => 'center',
+		},
+		{
+			title  => "$tr{'mark'}", 
+			size   => 10,
+			mark   => ' ',
+		},
+		{ 
+			column => '3',
+			title => "$tr{'comment'}",
+			break => 'line',
+		}
+	]
+);
 
 &displaytable( $machinesettings, \%render_settings, $cgiparams{'MACHINEORDER'}, $cgiparams{'MACHINECOLUMN'} );
 
@@ -396,7 +407,9 @@ END
 ;
 
 &closebox();
-&alertbox('add','add');
-&closebigbox();
-&closepage();
 
+&alertbox('add','add');
+
+&closebigbox();
+
+&closepage();

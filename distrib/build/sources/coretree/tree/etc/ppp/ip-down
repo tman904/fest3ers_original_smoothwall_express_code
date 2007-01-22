@@ -7,6 +7,7 @@
 # (c) The SmoothWall Team
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothd qw( message );
 
 &log("PPP has gone down on $ARGV[0]");
 
@@ -37,8 +38,9 @@ if ((-e "${swroot}/red/dial-on-demand") &&
 
 # Leave dnrd running if dial on demand for DNS
 if ((! -e "${swroot}/red/dial-on-demand") ||
-    ($pppsettings{'DIALONDEMANDDNS'} ne 'on')) {
-        system('/usr/bin/smoothcom', 'dnsproxyrestart');
+	($pppsettings{'DIALONDEMANDDNS'} ne 'on'))
+{
+	message('dnsproxyrestart');
 }
 
 # If not on DoD, make sure ISDN is dead

@@ -69,7 +69,7 @@ END
 
 &closebox();
 
-&alertbox('add','add');
+&alertbox('add', 'add');
 
 &closebigbox();
 
