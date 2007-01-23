@@ -102,7 +102,9 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 	int error = 0;
 
 	std::string::size_type n;
-	std::vector<std::string>ipb;
+	std::vector<std::string>ipbfilter;
+	std::vector<std::string>ipbnat;
+
 	ConfigSTR localip("/var/smoothwall/red/local-ipaddress");
 	ConfigSTR iface("/var/smoothwall/red/iface");
 	ConfigCSV fwdfile("/var/smoothwall/portfw/config");
@@ -134,13 +136,10 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 		goto EXIT;
 	}
 	if (fwdfile.first())
-	{
-		response = "Couldn't open portfw settings file";
-		error = 1;
 		goto EXIT;
-	}
-	ipb.push_back("iptables -F portfwf");
-	ipb.push_back("iptables -t nat -F portfw");
+
+	ipbfilter.push_back("iptables -F portfwf");
+	ipbnat.push_back("iptables -t nat -F portfw");
 
 	// iterate the CSV
 	for (int line = fwdfile.first(); line == 0; line = fwdfile.next())
@@ -195,23 +194,33 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 			else 
 				remdouble = remip;
 
-			ipb.push_back("iptables -A portfwf -m state --state NEW -i " + 
+			ipbfilter.push_back("iptables -A portfwf -m state --state NEW -i " + 
 				iface.str() + " -p " + protocol +  			
 				" -s " + extip +  			
 				" -d " + remip +  			
 				" --dport " + remport + " -j ACCEPT");
-			ipb.push_back("iptables -t nat -A portfw -p " + protocol +
+			ipbnat.push_back("iptables -t nat -A portfw -p " + protocol +
 				" -s " + extip +  
 				" -d " + localip.str() +  			
 				" --dport " + locport + " -j DNAT --to " + remdouble);
 		}
 	}
 
-	error = ipbatch(ipb);
+	error = ipbatch(ipbfilter);
 	if (error)
-		response = "ipbatch failure";
-	else
-		response = "Portfw rules set";
+	{
+		response = "ipbatch failure (filter)";
+		goto EXIT;
+	}
+
+	error = ipbatch(ipbfilter);
+	if (error)
+	{
+		response = "ipbatch failure (nat)";
+		goto EXIT;
+	}
+	
+	response = "Portfw rules set";
 
 EXIT:
 	return (error);
@@ -227,11 +236,7 @@ int set_outgoing(std::vector<std::string> & parameters, std::string & response)
 	load_portlist();
 
 	if (config.first())
-	{
-		response = "Couldn't open outgoing config file";
-		error = 1;
 		goto EXIT;
-	}
 
 	ipb.push_back("iptables -F outgreen\n");
 	ipb.push_back("iptables -F outorange");
@@ -308,11 +313,7 @@ int set_internal(std::vector<std::string> & parameters, std::string & response)
 	std::string::size_type n;
 
 	if (config.first())
-	{
-		response = "Couldn't open dmzholes config file";
-		error = 1;
 		goto EXIT;
-	}
 	
 	ipb.push_back("iptables  -F dmzholes");
 

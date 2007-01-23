@@ -43,11 +43,7 @@ int set_ipblock(std::vector<std::string> & parameters, std::string & response)
 	std::string::size_type n;
 
 	if (config.first())
-	{
-		response = "Couldn't open ipblock config file";
-		error = 1;
 		goto EXIT;
-	}
 	
 	ipb.push_back("iptables  -F ipblock");
 	for (int line = config.first(); line == 0; line = config.next())
