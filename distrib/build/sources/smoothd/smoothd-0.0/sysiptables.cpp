@@ -211,7 +211,7 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 		goto EXIT;
 	}
 
-	error = ipbatch(ipbfilter);
+	error = ipbatch(ipbnat);
 	if (error)
 	{
 		response = "ipbatch failure (nat)";
