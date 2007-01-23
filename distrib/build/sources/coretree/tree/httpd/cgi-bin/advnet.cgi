@@ -49,7 +49,7 @@ if ($advnetsettings{'ACTION'} eq $tr{'save'})
 
 	&log($tr{'restarting advanced networking features'});
 	
-	my $success = message('advnetset');
+	my $success = message('setadvnet');
 		
 	if (not defined $success) {
 		$errormessage = $tr{'smoothd failure'}; }	
