@@ -5,12 +5,13 @@
 # This code is distributed under the terms of the GPL v2.
 
 include ../../Makefile
+include ../../Makefile.conf
 
 PROGS = bootdiskprogs
 INSTALL_ROOT = installroot
 BB = /opt/busybox
 
-default: clean
+all: clean
 	@make -C $(PROGS)
 
 	@mkdir tmp
@@ -54,7 +55,7 @@ default: clean
 	.);
 
 ifdef BITS_64
-	$(cd tmp; ln -s lib lib64)
+	@(cd tmp; ln -s lib lib64)
 endif
 
 ifeq ($(MEDIA), cdrom)
