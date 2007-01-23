@@ -9,7 +9,7 @@ include ../Makefile.conf
 GCC = gcc
 
 PACKAGE = libstdc++
-VERSION = 3.3.2
+VERSION = 3.3.5
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gcc
 
