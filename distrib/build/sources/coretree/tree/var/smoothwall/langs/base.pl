@@ -131,6 +131,7 @@
 'mac addressc' => 'MAC address:',
 'ip addressc' => 'IP address:',
 'mac address' => 'MAC address',
+'protocolc' => 'Protocol:',
 'ip address' => 'IP address',
 'note' => 'Note:',
 'there are unsaved changes' => 'There are unsaved changes in to the list of static assignments. To activate them, press the Save button.',

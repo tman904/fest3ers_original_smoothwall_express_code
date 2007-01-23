@@ -70,6 +70,10 @@ print STDERR Dumper $options;
 
 	my $ungrouped = $options->{'ungrouped'};
 	my $allowblank = $options->{'blank'};
+	my $blob = $options->{'blob'};
+	
+	my $blobgif;
+	if ($blob eq 'true') { $blobgif = '<img src=\'/ui/img/blob.gif\'>'; }
 
 	$allowblank = 'false' if ( not defined $allowblank or $allowblank ne 'true' );
 
@@ -140,7 +144,7 @@ print STDERR "Filename is $filename\n";
 
 	$response .= qq{
 	</select></td>
-	<td>$inputfieldname</td>
+	<td>$inputfieldname $blobgif</td>
 	<td><input type='text' id='$inputfield' name='$inputfield' @{[script("validport('$inputfield', $allowblank);")]} value='$found'/></td>
 	};
 

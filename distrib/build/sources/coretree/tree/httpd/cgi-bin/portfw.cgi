@@ -171,20 +171,15 @@ print "<FORM METHOD='POST'>\n";
 
 &openbox($tr{'add a new rule'});
 print <<END
-<table>
+<table style='width: 100%;'>
 <tr>
-	<td style='width: 30%;'>$tr{'sourcec'}</td>
-	<td style='width: 30%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}' id='extaddress' @{[jsvalidip('extaddress')]}></td>
-	<td style='width: 10%;'></td>
-	<td style='width: 28%;'></td>
-	<td style='width: 2%;'></td>
+	<td style='width: 25%;'>$tr{'sourcec'}</td>
+	<td style='width: 25%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}' id='extaddress' @{[jsvalidip('extaddress')]}></td>
+	<td style='width: 25%;'></td>
+	<td style='width: 25%;'></td>
 </tr>
 <tr>
-	@{[&portlist('SRC_PORT_SEL', $tr{'source port or rangec'}, 'SRC_PORT', $tr{'portc'}, $service, { 'ungrouped' => "true" })]}
-	<td></td>
-</tr>
-<tr>
-	<td colspan='5'>&nbsp;</td>
+	@{[&portlist('SRC_PORT_SEL', $tr{'source port or rangec'}, 'SRC_PORT', $tr{'portc'}, $service, { 'ungrouped' => 'true' })]}
 </tr>
 <tr>
 	<td>$tr{'destination ipc'}</td>
@@ -193,14 +188,10 @@ print <<END
 	<td></td>
 </tr>
 <tr>
-	@{[&portlist('DEST_PORT_SEL', $tr{'destination portc'}, 'DEST_PORT', $tr{'portc'}, $dst_service, { ungrouped => "true", 'blank' => 'true'} )]}
-	<td><img src='/ui/img/blob.gif'></td>
+	@{[&portlist('DEST_PORT_SEL', $tr{'destination portc'}, 'DEST_PORT', $tr{'portc'}, $dst_service, { 'ungrouped' => 'true', 'blank' => 'true', 'blob' => 'true' } )]}
 </tr>
 <tr>
-	<td colspan='5'>&nbsp;</td>
-</tr>
-<tr>
-	<td>$tr{'protocol'}</td>
+	<td>$tr{'protocolc'}</td>
 	<td>
 		<select name='PROTOCOL'>
 			<option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP
@@ -208,8 +199,7 @@ print <<END
 		</select>
 	</td>
 	<td>$tr{'enabled'}<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
-	<td style='text-align: right;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
-	<td></td>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
 </tr>
 </table>
 <br/>

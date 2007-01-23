@@ -277,26 +277,6 @@ print qq{
 
 &closebox();
 
-&openbox($tr{'always allow'});
-
-print qq{
-	<form method='post'>
-	<table style='width: 100%;'>
-	<tr>
-		<td style='width: 25%;'>$tr{'ip addressc'}</td>
-		<td style='width: 25%;'><input type='text' name='MACHINE' id='address' @{[jsvalidip('address')]} value='$cgiparams{'MACHINE'}'/></td>
-		<td style='width: 25%;'>$tr{'enabled'}</td>
-		<td style='width: 25%;'><input type='checkbox' name='MACHINEENABLED' $checked{$cgiparams{'MACHINEENABLED'}}></td>
-	</tr>
-	<tr>
-		<td colspan='4' style='text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'add'}'></td>
-	</tr>
-	</table>
-	</form>
-};
-
-&closebox();
-
 &openbox($tr{'current exceptions'});
 print "<form method='post'>\n";
 
@@ -358,6 +338,28 @@ print <<END
 END
 ;
 &closebox();
+
+
+&openbox($tr{'always allow'});
+
+print qq{
+	<form method='post'>
+	<table style='width: 100%;'>
+	<tr>
+		<td style='width: 25%;'>$tr{'ip addressc'}</td>
+		<td style='width: 25%;'><input type='text' name='MACHINE' id='address' @{[jsvalidip('address')]} value='$cgiparams{'MACHINE'}'/></td>
+		<td style='width: 25%;'>$tr{'enabled'}</td>
+		<td style='width: 25%;'><input type='checkbox' name='MACHINEENABLED' $checked{$cgiparams{'MACHINEENABLED'}}></td>
+	</tr>
+	<tr>
+		<td colspan='4' style='text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'add'}'></td>
+	</tr>
+	</table>
+	</form>
+};
+
+&closebox();
+
 
 &openbox($tr{'allowed machines'});
 print "<form method='post'>\n";
