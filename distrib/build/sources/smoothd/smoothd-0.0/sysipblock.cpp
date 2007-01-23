@@ -41,9 +41,6 @@ int set_ipblock(std::vector<std::string> & parameters, std::string & response)
 	ConfigCSV config("/var/smoothwall/ipblock/config");
 	std::vector<std::string>ipb;
 	std::string::size_type n;
-
-	if (config.first())
-		goto EXIT;
 	
 	ipb.push_back("iptables  -F ipblock");
 	for (int line = config.first(); line == 0; line = config.next())

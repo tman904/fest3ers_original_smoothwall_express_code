@@ -52,9 +52,6 @@ int set_xtaccess(std::vector<std::string> & parameters, std::string & response)
 		error = 1;
 		goto EXIT;
 	}
-   
-	if (config.first())
-		goto EXIT;
 	
 	ipb.push_back("iptables  -F xtaccess");
 

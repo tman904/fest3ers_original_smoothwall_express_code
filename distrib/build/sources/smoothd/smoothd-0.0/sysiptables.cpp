@@ -135,8 +135,6 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 		error = 1;
 		goto EXIT;
 	}
-	if (fwdfile.first())
-		goto EXIT;
 
 	ipbfilter.push_back("iptables -F portfwf");
 	ipbnat.push_back("iptables -t nat -F portfw");
@@ -235,9 +233,6 @@ int set_outgoing(std::vector<std::string> & parameters, std::string & response)
 	
 	load_portlist();
 
-	if (config.first())
-		goto EXIT;
-
 	ipb.push_back("iptables -F outgreen\n");
 	ipb.push_back("iptables -F outorange");
 	ipb.push_back("iptables -F outpurple");
@@ -311,9 +306,6 @@ int set_internal(std::vector<std::string> & parameters, std::string & response)
 	ConfigCSV config("/var/smoothwall/dmzholes/config");
 	std::vector<std::string>ipb;
 	std::string::size_type n;
-
-	if (config.first())
-		goto EXIT;
 	
 	ipb.push_back("iptables  -F dmzholes");
 
