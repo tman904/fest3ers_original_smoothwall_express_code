@@ -124,6 +124,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		wireless_tools \
 		imspector \
 		diffutils \
+		traceroute \
 		coretree \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
@@ -184,7 +185,7 @@ endif
 
 	@echo "Securing tree ..."
 	@/build/securetree distrib
-#	@chmod u+s distrib/bin/traceroute
+	@chmod u+s distrib/bin/traceroute
 	@chmod u+s distrib/usr/bin/ping
 	@chmod u+s distrib/usr/sbin/listtables
 	@chown root:nobody distrib/usr/bin/setuids/*

@@ -51,7 +51,7 @@ build gettext
 build net-tools
 build inetutils
 build iputils
-#build traceroute
+build traceroute
 build perl
 build HTML-Parser
 build HTML-Tagset
