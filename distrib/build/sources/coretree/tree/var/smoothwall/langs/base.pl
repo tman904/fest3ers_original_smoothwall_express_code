@@ -8,7 +8,7 @@
 
 # common
 
-'user defined' => 'User Defined',
+'user defined' => 'User defined',
 'invalid input' => 'Invalid input',
 'save' => 'Save', # button
 'refresh' => 'Refresh', # button
@@ -492,7 +492,7 @@
 'dmz pinhole configuration' => 'DMZ pinhole configuration',
 'external access configuration' => 'External access configuration',
 'add a new rule' => 'Add a new rule:',
-'add a new exception' => 'Add a new exception:',
+'add exception' => 'Add exception:',
 'sourcec' => 'External source IP (or network):',
 'sourcec hint' => 'enter an IP or network address, or leave blank for "ALL"',
 'source ipc' => 'Source IP:',
@@ -524,10 +524,13 @@
 'reject packet' => 'Reject packet',
 'external ip long' => 'External IP or network (blank for "ALL"):',
 'external ip' => 'External IP',
+'interfacenc' => 'Interface',
+'comment' => 'Comment',
+'commentc' => 'Comment:',
 
 # outgoing.cgi
-'application servicec' => 'Application / Service(s):',
-'application service'  => 'Application / Service(s)',
+'application servicec' => 'Application or service(s):',
+'application service'  => 'Application or service(s)',
 'outgoing filtering configuration' => 'Outgoing filtering configuration',
 'Outgoing filtering' => 'Outgoing filtering',
 'filtering' => 'Filtering',
@@ -538,14 +541,13 @@
 'outgoing rule added to ' => 'Outgoing rule added to ',
 'outgoing rule removed from ' => 'Outgoing rule removed from ',
 'portc' => 'Port:',
-'unfiltered' => 'Unfiltered',
-'allowed' => 'Allowed',
-'blocked' => 'Blocked',
+'allowed' => 'Allowed with exceptions',
+'blocked' => 'Blocked with exceptions',
 'traffic is 1' => 'Traffic originating on ',
 'traffic is 2' => ' is:',
 'current exceptions' => 'Current exceptions:',
-'allowed machines' => 'Always allowed:',
-'always allow'  => 'Always allow:',
+'current allowed machines' => 'Current always allowed machines:',
+'add allowed machine'  => 'Add always allowed machine:',
 
 # ddns.cgi
 'dynamic dns' => 'Dynamic DNS',

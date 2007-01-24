@@ -227,7 +227,9 @@ EXIT:
 int set_outgoing(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
-	ConfigCSV config("/var/smoothwall/outgoing/settings");
+	ConfigVAR settings("/var/smoothwall/outgoing/settings");
+	ConfigCSV config("/var/smoothwall/outgoing/config");
+	ConfigCSV machineconfig("/var/smoothwall/outgoing/machineconfig");
 	std::vector<std::string>ipb;
 	std::string::size_type n;
 	
@@ -239,23 +241,26 @@ int set_outgoing(std::vector<std::string> & parameters, std::string & response)
 
 	for (int line = config.first(); line == 0; line = config.next())
 	{
-		std::string colour = config[0];
+		const std::string & colour = config[0];
 		const std::string & enabled = config[1];
 		const std::string & port = config[2];
-
-		for (int j = 0; j < (int)colour.length(); ++j)
-			colour[j] = tolower(colour[j]);
 
 		// are we complete?
 		if (colour == "" || port == "" || enabled == "")
 			continue;
 
-		if ((n = colour.find_first_not_of(LETTERS)) != std::string::npos)
+		if (!(colour == "GREEN" || colour == "ORANGE" || colour == "PURPLE"))
 		{
 			response = "Bad colour: " + colour;
 			error = 1;
 			goto EXIT;
 		}
+
+		std::string chain = "out" + colour;
+		std::transform(chain.begin(), chain.end(), chain.begin(), tolower);
+		
+		std::string action = settings[colour.c_str()];
+		if (action == "") action = "REJECT";
 		
 		if (enabled == "on")
 		{
@@ -269,8 +274,8 @@ int set_outgoing(std::vector<std::string> & parameters, std::string & response)
 						i != vect.end(); i++)
 					{
 						std::string nport = *i;
-						ipb.push_back("iptables -A out" + colour + " -p tcp --dport " + nport + " -j ACCEPT");
-						ipb.push_back("iptables -A out" + colour + " -p udp --dport " + nport + " -j ACCEPT");
+						ipb.push_back("iptables -A " + chain + " -p tcp --dport " + nport + " -j " + action);
+						ipb.push_back("iptables -A " + chain + " -p udp --dport " + nport + " -j " + action);
 					}
 				}
 				else
@@ -282,12 +287,38 @@ int set_outgoing(std::vector<std::string> & parameters, std::string & response)
 			} 
 			else
 			{
-				ipb.push_back("iptables -A out" + colour + " -p tcp --dport " + port + " -j ACCEPT");
-				ipb.push_back("iptables -A out" + colour + " -p udp --dport " + port + " -j ACCEPT");
+				ipb.push_back("iptables -A " + chain + " -p tcp --dport " + port + " -j " + action);
+				ipb.push_back("iptables -A " + chain + " -p udp --dport " + port + " -j " + action);
 			}
 		}
 	}
 
+	if (settings["GREEN"] != "ACCEPT") ipb.push_back("iptables -A outgreen -j ACCEPT");
+	if (settings["ORANGE"] != "ACCEPT") ipb.push_back("iptables -A outorange -j ACCEPT");
+	if (settings["PURPLE"] != "ACCEPT") ipb.push_back("iptables -A outpurple -j ACCEPT");
+
+	ipb.push_back("iptables -F allows");
+
+	for (int line = machineconfig.first(); line == 0; line = machineconfig.next())
+	{
+		const std::string & ip = machineconfig[0];
+		const std::string & enabled = machineconfig[1];
+
+		// are we complete?
+		if (ip == "" || enabled == "")
+			continue;
+	
+		if ((n = ip.find_first_not_of(IP_NUMBERS)) != std::string::npos)
+		{
+			response = "Bad IP: " + ip;
+			error = 1;
+			goto EXIT;
+		}
+		
+		if (enabled == "on")
+			ipb.push_back("iptables -A allows -s " + ip + " -j ACCEPT");
+	}
+	
 	error = ipbatch(ipb);
 	if (error)
 		response = "ipbatch failure";

@@ -11,11 +11,10 @@ use header qw( :standard );
 use smoothd qw( message );
 use smoothtype qw( :standard );
 
-my (%cgiparams,%selected,%checked);
+my (%cgiparams, %selected, %checked);
+
 my $config = "${swroot}/outgoing/config";
-my $settings = "${swroot}/outgoing/settings";
-my $machinesettings = "${swroot}/outgoing/machines";
-my $ethSetFile = "${swroot}/ethernet/settings";
+my $machineconfig = "${swroot}/outgoing/machineconfig";
 
 my $errormessage = '';
 
@@ -23,6 +22,9 @@ my $errormessage = '';
 
 $cgiparams{'COLUMN'} = 1;
 $cgiparams{'ORDER'} = $tr{'log ascending'};
+
+$cgiparams{'RULEENABLED'} = 'off';
+$cgiparams{'MACHINEENABLED'} = 'off';
 
 &getcgihash(\%cgiparams);
 
@@ -37,39 +39,44 @@ if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'AC
 }
 
 # Load inbound interfaces into %interfaces (excluding RED)
+my %netsettings;
+
+&readhash("${swroot}/ethernet/settings", \%netsettings);
+
 my %interfaces;
-open(ETHSET, $ethSetFile) or die 'Unable to open ethernet settings.';
-while(<ETHSET>)
-{
-	if ($_ =~ m/(\S+)_DEV=(\S+)/)
-	{
-		if(!($1 eq 'RED')) {
-			$interfaces{$1} = $2; }
-	}
-}
 
-my %settings;
+$interfaces{'GREEN'} = $netsettings{'GREEN_DEV'};
+$interfaces{'ORANGE'} = $netsettings{'ORANGE_DEV'};
+$interfaces{'PURPLE'} = $netsettings{'PURPLE_DEV'};
 
-&readhash("$config", \%settings);
-
-my %selected;
-$selected{"GREEN$settings{'GREEN'}"} = " selected ";
-$selected{"ORANGE$settings{'ORANGE'}"} = " selected ";
-$selected{"PURPLE$settings{'PURPLE'}"} = " selected ";
-
-my %checked;
-$checked{'on'} = " checked ";
 
 # Save the settings as is required.
 
 if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 {
-	$settings{'GREEN'} = $cgiparams{'ENABLEGREEN'};
-	$settings{'ORANGE'} = $cgiparams{'ENABLEORANGE'};
-	$settings{'PURPLE'} = $cgiparams{'ENABLEPURPLE'};
-
-	&writehash("$config", \%settings);
+	my %settings;
+	
+	$settings{'GREEN'} = $cgiparams{'GREEN'};
+	$settings{'ORANGE'} = $cgiparams{'ORANGE'};
+	$settings{'PURPLE'} = $cgiparams{'PURPLE'};
+		
+	&writehash("${swroot}/outgoing/settings", \%settings);
+	
+	my $success = message('setoutgoing');
+	
+	unless (defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
 }
+
+&readhash("${swroot}/outgoing/settings", \%cgiparams);
+
+my %selected;
+$selected{'GREEN'}{$cgiparams{'GREEN'}} = " selected ";
+$selected{'ORANGE'}{$cgiparams{'ORANGE'}} = " selected ";
+$selected{'PURPLE'}{$cgiparams{'PURPLE'}} = " selected ";
+
+my %checked;
+$checked{'on'} = " checked ";
 
 my $errormessage = "";
 
@@ -90,10 +97,15 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'add'} )
 
 	if ( $errormessage eq "" )
 	{	
-		open(FILE,">>$settings") or die 'Unable to open config file.';
+		open(FILE,">>$config") or die 'Unable to open config file.';
 		flock FILE, 2;
 		print FILE "$interface,$enabled,$service\n";
 		close(FILE);
+		
+		my $success = message('setoutgoing');
+	
+		unless (defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 
@@ -102,7 +114,7 @@ my $service = 'user';
 if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or
 	$cgiparams{'ACTION'} eq $tr{'remove'})
 {
-	open(FILE, "$settings") or die 'Unable to open config file.';
+	open(FILE, "$config") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
 
@@ -121,7 +133,7 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or
 	
 	unless ($errormessage)
 	{
-		open(FILE, ">$settings") or die 'Unable to open config file.';
+		open(FILE, ">$config") or die 'Unable to open config file.';
 		flock FILE, 2;
 		$id = 0;
 		foreach $line (@current)
@@ -138,6 +150,11 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or
 			}
 		}
 		close(FILE);
+
+		my $success = message('setoutgoing');
+	
+		unless (defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }		
 	}
 }
 
@@ -151,19 +168,24 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 
 	if ( $errormessage eq "" )
 	{
-		open(FILE,">>$machinesettings") or die 'Unable to open config file.';
+		open(FILE,">>$machineconfig") or die 'Unable to open config file.';
 		flock FILE, 2;
 		print FILE "$machine,$enabled\n";
 		close(FILE);
 		$cgiparams{'MACHINE'} = "";
 		$cgiparams{'MACHINEENABLED'} = "on";
+
+		my $success = message('setoutgoing');
+	
+		unless (defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 
 if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{'edit'} or
 	$cgiparams{'MACHINEACTION'} eq $tr{'remove'})
 {
-	open(FILE, "$machinesettings") or die 'Unable to open config file.';
+	open(FILE, "$machineconfig") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
 
@@ -183,7 +205,7 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 	
 	unless ($errormessage)
 	{
-		open(FILE, ">$machinesettings") or die 'Unable to open config file.';
+		open(FILE, ">$machineconfig") or die 'Unable to open config file.';
 		flock FILE, 2;
 		$id = 0;
 		foreach $line (@current)
@@ -201,6 +223,11 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 			}
 		}
 		close(FILE);
+
+		my $success = message('setoutgoing');
+	
+		unless (defined $success) {
+			$errormessage = $tr{'smoothd failure'}; }
 	}
 }
 
@@ -219,17 +246,18 @@ my $unused = 6;
 my $width = 90 / $unused;
 foreach $interface (keys(%interfaces))
 {
+	if ($interfaces{$interface} eq '') { next; }
+	
 	print qq{
 	<tr>
-	<td style='width: 35%;'>$tr{'traffic is 1'}$interface$tr{'traffic is 2'}</td>
+	<td style='width: 25%;'>$tr{'traffic is 1'}$interface$tr{'traffic is 2'}</td>
 	<td style='width: 25%;'>
-		<select name=\"ENABLE$interface\"'>
-			<option $selected{'GREENoff'} value='off'>$tr{'unfiltered'}</option>
-			<option $selected{'GREENallow'} value='allow'>$tr{'allowed'}</option>
-			<option $selected{'GREENblock'} value='block'>$tr{'blocked'}</option>
+		<select name=\"$interface\">
+			<option $selected{"$interface"}{'REJECT'} value='REJECT'>$tr{'allowed'}</option>
+			<option $selected{"$interface"}{'ACCEPT'} value='ACCEPT'>$tr{'blocked'}</option>
 		</select>
 	</td>
-	<td style='width: 40%;'></td>
+	<td style='width: 50%;'></td>
 	</tr>
 	};
 }
@@ -239,19 +267,22 @@ print qq{
 	<td colspan='3' style='text-align: center;'>
 		<input type="submit" name="ACTION" value="$tr{'save'}">
 	</td></tr>
-	</table>
-	</form>
+</table>
+</form>
 };
+print "</form>\n";
+
 &closebox();
 
-&openbox($tr{'add a new exception'});
+&openbox($tr{'add exception'});
 
 print qq{
 <form method='post'>
 <table style='width: 100%;'>
 <tr>
-	<td>$tr{'interface'}</td>
-	<td><select name='INTERFACE'>
+	<td style='width: 25%;'>$tr{'interface'}</td>
+	<td style='width: 25%;'>
+	<select name='INTERFACE'>
 };
 
 foreach my $colour (sort keys %interfaces) {
@@ -260,8 +291,8 @@ foreach my $colour (sort keys %interfaces) {
 print qq{
 		</select>
 	</td>
-	<td>$tr{'enabled'}</td>
-	<td><input type='checkbox' name='RULEENABLED' $checked{$cgiparams{'RULEENABLED'}}></td>
+	<td style='width: 25%;'>$tr{'enabled'}</td>
+	<td style='width: 25%;'><input type='checkbox' name='RULEENABLED' $checked{$cgiparams{'RULEENABLED'}}></td>
 </tr>
 <tr>
 	@{[&portlist('SERVICE', $tr{'application servicec'}, 'PORT', $tr{'portc'}, $service)]}
@@ -289,7 +320,7 @@ my %render_settings =
 	[
 		{ 
 			column => '1',
-			title  => "$tr{'interface'}",
+			title  => "$tr{'interfacenc'}",
 			size   => 30,
 			sort   => 'cmp',
 		},
@@ -325,7 +356,7 @@ my %render_settings =
 	]
 );
 
-&displaytable( $settings, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
+&displaytable($config, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
 
 print <<END
 <table class='blank'>
@@ -339,29 +370,28 @@ END
 ;
 &closebox();
 
-
-&openbox($tr{'always allow'});
+&openbox($tr{'add allowed machine'});
 
 print qq{
-	<form method='post'>
-	<table style='width: 100%;'>
-	<tr>
-		<td style='width: 25%;'>$tr{'ip addressc'}</td>
-		<td style='width: 25%;'><input type='text' name='MACHINE' id='address' @{[jsvalidip('address')]} value='$cgiparams{'MACHINE'}'/></td>
-		<td style='width: 25%;'>$tr{'enabled'}</td>
-		<td style='width: 25%;'><input type='checkbox' name='MACHINEENABLED' $checked{$cgiparams{'MACHINEENABLED'}}></td>
-	</tr>
-	<tr>
-		<td colspan='4' style='text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'add'}'></td>
-	</tr>
-	</table>
-	</form>
+<form method='post'>
+<table style='width: 100%;'>
+<tr>
+	<td style='width: 25%;'>$tr{'ip addressc'}</td>
+	<td style='width: 25%;'><input type='text' name='MACHINE' id='address' @{[jsvalidip('address')]} value='$cgiparams{'MACHINE'}'/></td>
+	<td style='width: 25%;'>$tr{'enabled'}</td>
+	<td style='width: 25%;'><input type='checkbox' name='MACHINEENABLED' $checked{$cgiparams{'MACHINEENABLED'}}></td>
+</tr>
+<tr>
+	<td colspan='4' style='text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'add'}'></td>
+</tr>
+</table>
+</form>
 };
 
 &closebox();
 
 
-&openbox($tr{'allowed machines'});
+&openbox($tr{'current allowed machines'});
 print "<form method='post'>\n";
 
 my %render_settings =
@@ -395,7 +425,7 @@ my %render_settings =
 	]
 );
 
-&displaytable( $machinesettings, \%render_settings, $cgiparams{'MACHINEORDER'}, $cgiparams{'MACHINECOLUMN'} );
+&displaytable($machineconfig, \%render_settings, $cgiparams{'MACHINEORDER'}, $cgiparams{'MACHINECOLUMN'} );
 
 print <<END
 <table class='blank'>

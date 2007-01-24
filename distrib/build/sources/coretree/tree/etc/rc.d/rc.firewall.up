@@ -127,9 +127,27 @@ fi
 /sbin/iptables -A INPUT -j LOG
 /sbin/iptables -A INPUT -j REJECT
 
-# Allow packets that we know about through.
+# Green, Orange and Purple chains for outbound, and allows for always allowed.
+/sbin/iptables -N outgreen
+/sbin/iptables -N outorange
+/sbin/iptables -N outpurple
+/sbin/iptables -N allows
+
+# Setup our outgoing filter stub chains.
 /sbin/iptables -N outbound
-/sbin/iptables -A outbound -j ACCEPT
+/sbin/iptables -A outbound -p icmp -j ACCEPT
+/sbin/iptables -A outbound -j allows
+if [ "$GREEN_DEV" != "" ]; then
+	/sbin/iptables -A outbound -i $GREEN_DEV -j outgreen
+fi
+if [ "$ORANGE_DEV" != "" ]; then
+	/sbin/iptables -A outbound -i $ORANGE_DEV -j outorange
+fi
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -A outbound -i $PURPLE_DEV -j outpurple
+fi
+
+# Allow packets that we know about through.
 /sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -o ppp0 -j ACCEPT
 /sbin/iptables -A FORWARD -m state --state ESTABLISHED,RELATED -i ppp0 -j ACCEPT
 /sbin/iptables -A FORWARD -m state --state NEW -o ppp0 -j outbound
@@ -142,11 +160,6 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -m state --state NEW -o $RED_DEV -j outbound
 fi
 
-# Green, Orange and Purple chains for outbound
-/sbin/iptables -N outgreen
-/sbin/iptables -N outorange
-/sbin/iptables -N outpurple
- 
 # Port forwarding
 /sbin/iptables -N portfwf
 /sbin/iptables -A FORWARD -j portfwf
@@ -234,19 +247,19 @@ fi
 /sbin/iptables -t mangle -A POSTROUTING -j postrouting-1
 /sbin/iptables -t mangle -A POSTROUTING -j postrouting-2
 
-/sbin/iptables -t mangle -A prerouting-1 -i eth0 -j RETURN
-/sbin/iptables -t mangle -A postrouting-1 -o eth0 -j RETURN
-
 /sbin/iptables -t mangle -A prerouting-2 -i ppp0 -j RETURN
 /sbin/iptables -t mangle -A postrouting-2 -o ppp0 -j RETURN
 /sbin/iptables -t mangle -A prerouting-2 -i ippp0 -j RETURN
 /sbin/iptables -t mangle -A postrouting-2 -o ippp0 -j RETURN
 
+if [ "$GREEN_DEV" != "" ]; then
+	/sbin/iptables -t mangle -A prerouting-1 -i $GREEN_DEV -j RETURN
+	/sbin/iptables -t mangle -A postrouting-1 -o $GREEN_DEV -j RETURN
+fi
 if [ "$ORANGE_DEV" != "" ]; then
 	/sbin/iptables -t mangle -A prerouting-1 -i $ORANGE_DEV -j RETURN
 	/sbin/iptables -t mangle -A postrouting-1 -o $ORANGE_DEV -j RETURN
 fi
-
 if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -t mangle -A prerouting-1 -i $PURPLE_DEV -j RETURN
 	/sbin/iptables -t mangle -A postrouting-1 -o $PURPLE_DEV -j RETURN
