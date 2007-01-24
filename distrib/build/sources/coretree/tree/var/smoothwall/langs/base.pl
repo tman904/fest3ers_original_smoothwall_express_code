@@ -532,7 +532,7 @@
 'application servicec' => 'Application or service(s):',
 'application service'  => 'Application or service(s)',
 'outgoing filtering configuration' => 'Outgoing filtering configuration',
-'Outgoing filtering' => 'Outgoing filtering',
+'outgoing filtering' => 'Outgoing filtering',
 'filtering' => 'Filtering',
 'filtered interfaces' => 'Interface defaults' ,
 'outgoing port opened' => 'Outgoing Port Opened',
