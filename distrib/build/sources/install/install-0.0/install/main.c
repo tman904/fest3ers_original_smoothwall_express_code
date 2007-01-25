@@ -39,6 +39,8 @@ int main(int argc, char *argv[])
 	int maximum_free, current_free;
 	int log_partition, boot_partition, root_partition, swap_partition;
 	struct keyvalue *hwprofilekv = initkeyvalues();
+	FILE *hkernelcmdline;
+	char kernelcmdline[STRING_SIZE];
 
 	setenv("TERM", "linux", 0);
 
@@ -47,6 +49,8 @@ int main(int argc, char *argv[])
 	memset(&sdd, 0, sizeof(struct storagedevicedriver));
 	memset(&hd, 0, sizeof(struct blockdevice));
 	memset(&cdrom, 0, sizeof(struct blockdevice));
+
+	memset(kernelcmdline, 0, STRING_SIZE);
 
 	/* Log file/terminal stuff. */
 	if (argc >= 2)
@@ -60,6 +64,18 @@ int main(int argc, char *argv[])
 	logname = argv[1];
 	
 	fprintf(flog, "Install program started.\n");
+
+	if (!(hkernelcmdline = fopen("/proc/cmdline", "r")))
+		return 0;
+	fgets(kernelcmdline, STRING_SIZE - 1, hkernelcmdline);
+	fclose(hkernelcmdline);
+
+	/* Load USB keyboard modules so dialogs can respond to USB-keyboards */
+	fprintf(flog, "Loading USB-keyboard modules.\n");
+	mysystem("/sbin/modprobe usbcore");
+	mysystem("/sbin/modprobe ohci-hcd");
+	mysystem("/sbin/modprobe uhci-hcd");
+	mysystem("/sbin/modprobe usbhid");
 
 	newtInit();
 	newtCls();
@@ -86,7 +102,14 @@ int main(int argc, char *argv[])
 	}
 
 	if (!(findharddiskorcdrom(&cdrom, DISK_CDROM)))
-		installtype = URL_INSTALL;
+	{
+		mysystem("/sbin/modprobe usb-storage");
+		sleep(10);
+		if (!(findharddiskorcdrom(&cdrom, DISK_CDROM)))
+			installtype = URL_INSTALL;
+		else
+			installtype = CDROM_INSTALL;
+	}
 	else
 		installtype = CDROM_INSTALL;
 	

@@ -130,8 +130,9 @@ echo "Starting klogd"
 
 echo "Loading USB subsystem"
 /sbin/modprobe usbcore 2> /dev/null
-/sbin/modprobe ohci_hcd 2> /dev/null
-/sbin/modprobe uhci_hcd 2> /dev/null
+/sbin/modprobe ohci-hcd 2> /dev/null
+/sbin/modprobe uhci-hcd 2> /dev/null
+/sbin/modprobe usbhid 2> /dev/null
 mount -t usbfs none /proc/bus/usb
 
 echo "Loading filesystems"

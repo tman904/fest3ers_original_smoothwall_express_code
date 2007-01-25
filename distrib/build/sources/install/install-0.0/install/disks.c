@@ -71,17 +71,27 @@ int findharddiskorcdrom(struct blockdevice *bd, int type)
 		}
 	}
 	
-	/* We don't (yet) support SCSI CDROMs. */
-	if (type == DISK_CDROM) return result;
-	
-	if ((fd = open("/dev/sda", O_RDONLY|O_NONBLOCK)) != -1)
+	if (type == DISK_CDROM)
 	{
-		close(fd);
-		strncpy(bd->devnode, "/dev/sda", STRING_SIZE - 1);
-		bd->present = 1;
-		result = 1;
+		if ((fd = open("/dev/scd0", O_RDONLY|O_NONBLOCK)) != -1)
+		{
+			close(fd);
+			strncpy(bd->devnode, "/dev/scd0", STRING_SIZE - 1);
+			bd->present = 1;
+			result = 1;
+		}
 	}
-
+	else
+	{	
+		if ((fd = open("/dev/sda", O_RDONLY|O_NONBLOCK)) != -1)
+		{
+			close(fd);
+			strncpy(bd->devnode, "/dev/sda", STRING_SIZE - 1);
+			bd->present = 1;
+			result = 1;
+		}
+	}
+	
 	return result;
 }
 

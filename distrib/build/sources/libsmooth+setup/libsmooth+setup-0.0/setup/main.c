@@ -173,11 +173,6 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		mysystem("/sbin/modprobe usbcore");
-		
-		mysystem("/sbin/modprobe ohci_hcd");
-		mysystem("/sbin/modprobe uhci_hcd");
-		
 		mysystem("/bin/mount -t usbfs none /proc/bus/usb");
 		
 		usbfail = 1;
