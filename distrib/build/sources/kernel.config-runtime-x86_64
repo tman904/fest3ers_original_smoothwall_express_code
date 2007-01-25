@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16.1
-# Fri Dec 29 22:59:42 2006
+# Linux kernel version: 2.6.16.38
+# Thu Jan 25 11:21:08 2007
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -120,6 +120,7 @@ CONFIG_FLATMEM=y
 CONFIG_FLAT_NODE_MEM_MAP=y
 # CONFIG_SPARSEMEM_STATIC is not set
 CONFIG_SPLIT_PTLOCK_CPUS=4
+CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG=y
 CONFIG_HPET_TIMER=y
 CONFIG_GART_IOMMU=y
 CONFIG_SWIOTLB=y
@@ -545,6 +546,7 @@ CONFIG_SCSI_ATA_PIIX=m
 CONFIG_SCSI_SATA_MV=m
 CONFIG_SCSI_SATA_NV=m
 CONFIG_SCSI_PDC_ADMA=m
+# CONFIG_SCSI_HPTIOP is not set
 CONFIG_SCSI_SATA_QSTOR=m
 CONFIG_SCSI_SATA_PROMISE=m
 CONFIG_SCSI_SATA_SX4=m
@@ -724,6 +726,7 @@ CONFIG_STRIP=m
 #
 # Wireless 802.11b ISA/PCI cards support
 #
+# CONFIG_AIRO is not set
 CONFIG_HERMES=m
 CONFIG_PLX_HERMES=m
 CONFIG_TMD_HERMES=m
@@ -1016,11 +1019,8 @@ CONFIG_AGP_AMD64=y
 #
 # Hardware Monitoring support
 #
-CONFIG_HWMON=y
+# CONFIG_HWMON is not set
 # CONFIG_HWMON_VID is not set
-# CONFIG_SENSORS_F71805F is not set
-# CONFIG_SENSORS_HDAPS is not set
-# CONFIG_HWMON_DEBUG_CHIP is not set
 
 #
 # Misc devices
@@ -1099,13 +1099,27 @@ CONFIG_USB_ACM=m
 #
 # may also be needed; see USB_STORAGE Help for more information
 #
-# CONFIG_USB_STORAGE is not set
+CONFIG_USB_STORAGE=m
+# CONFIG_USB_STORAGE_DEBUG is not set
+# CONFIG_USB_STORAGE_DATAFAB is not set
+# CONFIG_USB_STORAGE_FREECOM is not set
+# CONFIG_USB_STORAGE_ISD200 is not set
+# CONFIG_USB_STORAGE_DPCM is not set
+# CONFIG_USB_STORAGE_USBAT is not set
+# CONFIG_USB_STORAGE_SDDR09 is not set
+# CONFIG_USB_STORAGE_SDDR55 is not set
+# CONFIG_USB_STORAGE_JUMPSHOT is not set
+# CONFIG_USB_STORAGE_ALAUDA is not set
 # CONFIG_USB_LIBUSUAL is not set
 
 #
 # USB Input Devices
 #
-# CONFIG_USB_HID is not set
+CONFIG_USB_HID=m
+CONFIG_USB_HIDINPUT=y
+# CONFIG_USB_HIDINPUT_POWERBOOK is not set
+# CONFIG_HID_FF is not set
+# CONFIG_USB_HIDDEV is not set
 
 #
 # USB HID Boot Protocol drivers
