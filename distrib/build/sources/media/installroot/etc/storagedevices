@@ -25,3 +25,4 @@ SATA VIA|scsi|sata_via
 SATA VSC|scsi|sata_vsc
 SATA Pacific Digital QStor|scsi|sata_qstor
 SATA MV|scsi|sata_mv
+AHCI SATA|scsi|ahci
