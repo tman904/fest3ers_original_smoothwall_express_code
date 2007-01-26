@@ -142,7 +142,7 @@ print <<END
 <tr>
 	<td>$tr{'source ipc'}</td>
 	<td><input type='text' name='SRC_IP' value='$cgiparams{'SRC_IP'}'id='iaddress' @{[jsvalidip('iaddress')]}></td>
-	<td>$tr{'protocol'}</td>
+	<td>$tr{'protocolc'}</td>
 	<td>
 		<SELECT NAME='PROTOCOL'>
 			<OPTION VALUE='udp' $selected{'PROTOCOL'}{'udp'}>UDP
@@ -173,53 +173,55 @@ END
 
 my $portmap = &portmap();
 
-my %render_settings = (
-                        'url'     => "/cgi-bin/dmzholes.cgi?[%COL%],[%ORD%]",
-                        'columns' => [ 
-                                { 
-                                        column => '1',
-                                        title  => "$tr{'protocol'}",
-                                        size   => 15,
-					sort   => 'cmp',
-                                },
-                                {
-                                        column => '2',
-                                        title  => "$tr{'source ip'}",
-                                        size   => 20,
-                                        sort   => &ipcompare,
-                                },
-                                {
-                                        column => '3',
-                                        title  => "$tr{'destination ip'}",
-                                        size   => 20,
-                                        sort   => &ipcompare,
-                                },
-                                {
-                                        column => '4',
-                                        title  => "$tr{'destination port'}",
-                                        size   => 15,
-                                        sort   => 'cmp',
-					tr     => \%{$portmap}
-                                },
-                                {
-                                        column => '5',
-                                        title  => "$tr{'enabledtitle'}",
-                                        size   => 10,
-                                        tr     => 'onoff',
-                                        align  => 'center',
-                                },
-                                {
-                                        title  => "$tr{'mark'}", 
-                                        size   => 10,
-                                        mark   => ' ',
-                                },
-                                { 
-                                        column => '6',
-                                        title => "$tr{'comment'}",
-                                        break => 'line',
-                                }
-                        ]
-                );
+my %render_settings =
+(
+	'url'     => "/cgi-bin/dmzholes.cgi?[%COL%],[%ORD%]",
+	'columns' =>
+	[
+		{ 
+			column => '1',
+			title  => "$tr{'protocol'}",
+			size   => 15,
+			sort   => 'cmp',
+		},
+		{
+			column => '2',
+			title  => "$tr{'source ip'}",
+			size   => 20,
+			sort   => &ipcompare,
+		},
+		{
+			column => '3',
+			title  => "$tr{'destination ip'}",
+			size   => 20,
+			sort   => &ipcompare,
+		},
+		{
+			column => '4',
+			title  => "$tr{'destination port'}",
+			size   => 15,
+			sort   => 'cmp',
+			tr     => \%{$portmap}
+		},
+		{
+			column => '5',
+			title  => "$tr{'enabledtitle'}",
+			size   => 10,
+			tr     => 'onoff',
+			align  => 'center',
+		},
+		{
+			title  => "$tr{'mark'}", 
+			size   => 10,
+			mark   => ' ',
+		},
+		{ 
+			column => '6',
+			title => "$tr{'comment'}",
+			break => 'line',
+		}
+	]
+);
 
 &displaytable( $filename, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
 
