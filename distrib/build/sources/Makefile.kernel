@@ -10,9 +10,10 @@ IPTABLES_DIR = $(SOURCES_DIR)/iptables/iptables-$(IPTABLES_VER)
 PACKAGE = kernel-$(TYPE)
 VERSION = $(KERNEL_VERSION)
 
-PATCH_O_MATIC_VER = 20050814
+PATCH_O_MATIC_VER = 20070117
+IPT_ACCOUNT_VER = 1.6
 UNICORN_VER = 0.9.0
-IPTABLEPROC_VER=0.1
+IPTABLEPROC_VER = 0.1
 USR_VER = 1.08
 
 COMPILER = /opt/gcc-3.2.3/bin/gcc
@@ -26,7 +27,7 @@ download:
 	@$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	@$(DL_CMD) ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
-	# not downloading iptableproc yet...
+	@$(DL_CMD) http://www.intra2net.com/de/produkte/opensource/ipt_account/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz
 
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
@@ -47,10 +48,15 @@ prepare: download
 	@make -C $(FREESWAN_TYPE)-$(FREESWAN_VER) CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) precheck verset kpatch
 
 apply-pom: prepare
-	@true
-#	@(export KERNEL_DIR=$(KERNEL_DIR); \
-#	export IPTABLES_DIR=$(IPTABLES_DIR); \
-#	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
+	@(cd patch-o-matic-ng-$(PATCH_O_MATIC_VER)/patchlets; \
+	tar xvzf $(DOWNLOADS_DIR)/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz; \
+	rm ACCOUNT/iptables.patch;)
+
+	@(export KERNEL_DIR=$(KERNEL_DIR); \
+	export IPTABLES_DIR=$(IPTABLES_DIR); \
+	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
+	./runme --batch ACCOUNT)
+
 #	./runme --batch CONNMARK; \
 #	./runme --batch quake3-conntrack-nat; \
 #	./runme --batch pptp-conntrack-nat; \

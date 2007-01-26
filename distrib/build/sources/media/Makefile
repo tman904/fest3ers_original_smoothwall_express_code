@@ -72,6 +72,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		joe \
 		wget \
 		iptables \
+		libipt_ACCOUNT \
 		ipbatch \
 		pciutils \
 		kernel-runtime \
@@ -180,6 +181,7 @@ endif
 	@echo "REVISION='$(REVISION)'" >> distrib/var/smoothwall/main/productdata
 	@echo "UI_VERSION='$(UI_VERSION)'" >> distrib/var/smoothwall/main/productdata
 	@echo "FIXES='$(FIXES_NUMBER)'" >> distrib/var/smoothwall/main/productdata
+	@echo "ARCH='$(ARCH)'" >> distrib/var/smoothwall/main/productdata
 
 	@chown nobody:nobody distrib/var/smoothwall/main/productdata
 
