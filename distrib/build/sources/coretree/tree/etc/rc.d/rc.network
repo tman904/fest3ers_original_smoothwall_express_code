@@ -77,6 +77,30 @@ echo 1 > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
 echo 1 > /proc/sys/net/ipv4/tcp_syncookies
 echo 0 > /proc/sys/net/ipv4/tcp_ecn
 
+
+echo "Setting up accounting"
+modprobe ipt_ACCOUNT 
+/sbin/iptables -t mangle -F account || /sbin/iptables -t mangle -N account
+if [ "$RED_DEV" != "" ] ; then
+	/sbin/iptables -t mangle -A account -j ACCOUNT --addr $RED_NETADDRESS/$RED_NETMASK --tname RED
+fi
+
+if [ "$GREEN_DEV" != "" ] ; then
+	/sbin/iptables -t mangle -A account -j ACCOUNT --addr $GREEN_NETADDRESS/$GREEN_NETMASK --tname GREEN
+fi
+
+if [ "$ORANGE_DEV" != "" ] ; then
+	/sbin/iptables -t mangle -A account -j ACCOUNT --addr $ORANGE_NETADDRESS/$ORANGE_NETMASK --tname ORANGE
+fi
+
+if [ "$PURPLE_DEV" != "" ] ; then
+	/sbin/iptables -t mangle -A account -j ACCOUNT --addr $PURPLE_NETADDRESS/$PURPLE_NETMASK --tname PURPLE
+fi
+for i in INPUT OUTPUT FORWARD; do
+	/sbin/iptables -t mangle -D $i -j account 2>/dev/null
+	/sbin/iptables -t mangle -A $i -j account
+done
+	
 echo "Bringing network up"
 . /etc/rc.d/rc.netaddress.up
 
