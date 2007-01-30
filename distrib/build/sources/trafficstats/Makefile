@@ -7,13 +7,14 @@
 include ../Makefile.conf
 include ../Makefile.versions # for IPTABLES version to use
 
+
 PACKAGE = trafficstats
 VERSION = 0.0
 
 MODSWROOT = /modules/traffic/settings
 
 compile:
-	@make -C $(COMPILE_DIR) MODSWROOT=$(MODSWROOT) IPTABLES_VERSION=$(IPTABLES_VER) KERNEL_VER=$(KERNNEL_VER) 
+	@make -C $(COMPILE_DIR) MODSWROOT=$(MODSWROOT) IPTABLES_VERSION=$(IPTABLES_VER) KERNEL_VER=$(KERNEL_VER) 
 
 install: compile
 	@install -D $(COMPILE_DIR)/trafficlogger $(PKG_ROOT)/$(PKG_DIR)/sbin/trafficlogger
