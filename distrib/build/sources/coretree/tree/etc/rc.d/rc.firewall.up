@@ -264,8 +264,30 @@ if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -t mangle -A prerouting-1 -i $PURPLE_DEV -j RETURN
 	/sbin/iptables -t mangle -A postrouting-1 -o $PURPLE_DEV -j RETURN
 fi
-
 if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -t mangle -A prerouting-2 -i $RED_DEV -j RETURN
 	/sbin/iptables -t mangle -A postrouting-2 -o $RED_DEV -j RETURN
 fi
+
+/sbin/iptables -t mangle -F account
+/sbin/iptables -t mangle -N account
+
+if [ "$GREEN_DEV" != "" ] ; then
+	/sbin/iptables -t mangle -A account -j ACCOUNT \
+		--addr $GREEN_NETADDRESS/$GREEN_NETMASK --tname GREEN
+fi
+if [ "$ORANGE_DEV" != "" ] ; then
+	/sbin/iptables -t mangle -A account -j ACCOUNT \
+		--addr $ORANGE_NETADDRESS/$ORANGE_NETMASK --tname ORANGE
+fi
+if [ "$PURPLE_DEV" != "" ] ; then
+	/sbin/iptables -t mangle -A account -j ACCOUNT \
+		--addr $PURPLE_NETADDRESS/$PURPLE_NETMASK --tname PURPLE
+fi
+if [ "$RED_DEV" != "" ] ; then
+	/sbin/iptables -t mangle -A account -j ACCOUNT \
+		--addr $RED_NETADDRESS/$RED_NETMASK --tname RED
+fi
+for I in INPUT OUTPUT FORWARD; do
+	/sbin/iptables -t mangle -A $I -j account
+done
