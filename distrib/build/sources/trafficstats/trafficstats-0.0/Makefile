@@ -1,12 +1,13 @@
 #! /usr/bin/make
 # Makefile to make the trafficmon/trafficlogger iptables extensions against a ready compiled iptables source tree
 # Martin Houston, SmoothWall Ltd. 
+# This version with added support for ipt_ACCOUNT
 
 # where to find the external stuff - you will probably have to change this
 IPTABLES_SRC_DIR=/build/sources/iptables/iptables-$(IPTABLES_VERSION)
 IPROUTE_INC_DIR=/build/sources/iproute2/iproute2/include
 IPT_LIB_DIR=/usr/lib/iptables
-KERNEL_DIR=/build/sources/kernel-up/linux-$(KERNEL_VER)
+KERNEL_DIR=/build/sources/kernel-runtime/linux-$(KERNEL_VER)
 IPROUTE_LIB_DIR=/build/sources/iproute2/iproute2/lib
 IPTABLES_OBJS= $(IPTABLES_SRC_DIR)/iptables.o \
 	$(IPTABLES_SRC_DIR)/libipq/libipq.a \
@@ -21,7 +22,7 @@ OBJS= trafstats_core.o trafstats_iptables.o traffic_config.o
 
 # LDFLAGS      = -lsmoothwall -L$(IPROUTE_LIB_DIR) -rdynamic
 LDFLAGS      = -lsmoothd -L$(IPROUTE_LIB_DIR) -rdynamic
-LDLIBS       = -lcurses -lnetlink -ldl -lnsl
+LDLIBS       = -lipt_ACCOUNT -lcurses -lnetlink -ldl -lnsl
 
 
 
