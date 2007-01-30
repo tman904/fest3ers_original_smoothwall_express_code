@@ -46,45 +46,49 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} ){
 		$errormessage .= "The IP Address for the Green interface appears to be invalid<br/>";
 	}
 
-	if ( not &validip( $settings{'ORANGE_ADDRESS'} )){
-		$errormessage .= "The IP Address for the Orange interface appears to be invalid<br/>";
-	}
-
-	if ( not &validip( $settings{'PURPLE_ADDRESS'} )){
-		$errormessage .= "The IP Address for the Purple interface appears to be invalid<br/>";
-	}
-
 	if ( not &validmask( $settings{'GREEN_NETMASK'} )){
 		$errormessage .= "The Netmask for the Green interface appears to be invalid<br/>";
 	}
 
-	if ( not &validmask( $settings{'ORANGE_NETMASK'} )){
-		$errormessage .= "The Netmask for the Orange interface appears to be invalid<br/>";
-	}
-
-	if ( not &validmask( $settings{'PURPLE_NETMASK'} )){
-		$errormessage .= "The Netmask for the Purple interface appears to be invalid<br/>";
-	}
-
-	unless ( $settings{'GREEN_MTU'} =~ /\d{1,4}/ and $settings{'GREEN_MTU'} > 68 and $settings{'GREEN_MTU'} > 65536 ){
+	unless ( $settings{'GREEN_MTU'} =~ /\d{1,4}/ and $settings{'GREEN_MTU'} > 68 and $settings{'GREEN_MTU'} < 65536 ){
 		$errormessage .= "The MTU for the Green interface appears to be invalid<br/>";
 	}
-
-	unless ( not defined $settings{'ORANGE_MTU'} or ( $settings{'ORANGE_MTU'} =~ /\d{1,4}/ and $settings{'ORANGE_MTU'} > 68 and $settings{'ORANGE_MTU'} > 65536 ) ){
-		$errormessage .= "The MTU for the Orange interface appears to be invalid<br/>";
-	}
-
-	unless ( not defined $settings{'PURPLE_MTU'} or ( $settings{'PURPLE_MTU'} =~ /\d{1,4}/ and $settings{'PURPLE_MTU'} > 68 and $settings{'PURPLE_MTU'} > 65536 ) ){
-		$errormessage .= "The MTU for the Purplee interface appears to be invalid<br/>";
-	}
-
-
-	# determine the correct broadcast and net addresses for the above interfaces.
 	
 	( $settings{'GREEN_NETADDRESS'}, $settings{'GREEN_BROADCAST'} ) = &bcast_and_net( $settings{'GREEN_ADDRESS'}, $settings{'GREEN_NETMASK'} );
-	( $settings{'ORANGE_NETADDRESS'}, $settings{'ORANGE_BROADCAST'} ) = &bcast_and_net( $settings{'ORANGE_ADDRESS'}, $settings{'ORANGE_NETMASK'} );
-	( $settings{'PURPLE_NETADDRESS'}, $settings{'PURPLE_BROADCAST'} ) = &bcast_and_net( $settings{'PURPLE_ADDRESS'}, $settings{'PURPLE_NETMASK'} );
 
+
+	if ( defined $settings{'ORANGE_ADDRESS'} and $settings{'ORANGE_ADDRESS'} ne "" ){
+		if ( not &validip( $settings{'ORANGE_ADDRESS'} )){
+			$errormessage .= "The IP Address for the Orange interface appears to be invalid<br/>";
+		}
+	
+		if ( not &validmask( $settings{'ORANGE_NETMASK'} )){
+			$errormessage .= "The Netmask for the Orange interface appears to be invalid<br/>";
+		}
+
+		unless ( not defined $settings{'ORANGE_MTU'} or ( $settings{'ORANGE_MTU'} =~ /\d{1,4}/ and $settings{'ORANGE_MTU'} > 68 and $settings{'ORANGE_MTU'} < 65536 ) ){
+			$errormessage .= "The MTU for the Orange interface appears to be invalid<br/>";
+		}
+
+		( $settings{'ORANGE_NETADDRESS'}, $settings{'ORANGE_BROADCAST'} ) = &bcast_and_net( $settings{'ORANGE_ADDRESS'}, $settings{'ORANGE_NETMASK'} );
+	}
+
+
+	if ( defined $settings{'PURPLE_ADDRESS'} and $settings{'PURPLE_ADDRESS'} ne "" ){
+		if ( not &validip( $settings{'PURPLE_ADDRESS'} )){
+			$errormessage .= "The IP Address for the Purple interface appears to be invalid<br/>";
+		}
+
+		if ( not &validmask( $settings{'PURPLE_NETMASK'} )){
+			$errormessage .= "The Netmask for the Purple interface appears to be invalid<br/>";
+		}
+
+		unless ( not defined $settings{'PURPLE_MTU'} or ( $settings{'PURPLE_MTU'} =~ /\d{1,4}/ and $settings{'PURPLE_MTU'} > 68 and $settings{'PURPLE_MTU'} < 65536 ) ){
+			$errormessage .= "The MTU for the Purplee interface appears to be invalid<br/>";
+		}
+
+		( $settings{'PURPLE_NETADDRESS'}, $settings{'PURPLE_BROADCAST'} ) = &bcast_and_net( $settings{'PURPLE_ADDRESS'}, $settings{'PURPLE_NETMASK'} );
+	}
 
 }
 
