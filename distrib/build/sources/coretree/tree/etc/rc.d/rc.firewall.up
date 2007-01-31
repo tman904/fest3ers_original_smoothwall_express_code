@@ -16,7 +16,7 @@ for FILE in /proc/sys/net/ipv4/conf/*/log_martians; do
 done
 
 # Set timeouts.  2.5 hours for TCP.
-#/sbin/ipchains -M -S 9000 0 0
+echo 9000 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_established
 
 /sbin/iptables -F
 /sbin/iptables -X
@@ -269,7 +269,6 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -t mangle -A postrouting-2 -o $RED_DEV -j RETURN
 fi
 
-/sbin/iptables -t mangle -F account
 /sbin/iptables -t mangle -N account
 
 if [ "$GREEN_DEV" != "" ] ; then
