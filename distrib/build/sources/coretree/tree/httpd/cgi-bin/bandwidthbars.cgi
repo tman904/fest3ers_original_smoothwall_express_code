@@ -32,7 +32,6 @@ my $oururl = "/cgi-bin/trafficstats.cgi";
 &closebigbox();
 &closepage($errormessage);
 
-
 sub realtime_graphs 
 {
 	print "<div id='dbg'></div>";
@@ -40,14 +39,20 @@ sub realtime_graphs
 	# construct the bar graphs accordingly.
 
 	my %interfaces;
+	my %addresses;
 
 	open INPUT, "</var/log/quicktrafficstats";
 	while ( my $line = <INPUT> ){
 		next if ( not $line =~ /^cur_/ );
 		my ( $rule, $interface, $value ) = ( $line =~ /(.*)_([^_]*)=([\d\.]+)$/i );
-		print STDERR "looking to $rule, $interface, $value\n";
 		$interfaces{ $interface }{ $rule } = $value;
+		if($interface =~ /^\d+\.\d+\.\d+\.\d+$/ && $rule eq 'cur_out_rate') {
+			$addresses{$interface} = $value;
+		}
 	}
+
+	push @devices, sort { $addresses{$b} <=> $addresses{$a}; } keys %addresses;
+
 
 	print	"<div style='width: 100%; text-align: right;'><span id='status' style='background-color: #fef1b5; display: none;'>Updating</span>&nbsp;</div>\n";
 	print qq { 

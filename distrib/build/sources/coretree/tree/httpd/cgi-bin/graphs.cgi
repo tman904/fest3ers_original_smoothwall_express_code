@@ -46,6 +46,7 @@ if ($name ne "") { $title = " for $name interface"; }
 my @message;
 
 my @details;
+my @addr_details;
 	
 my %stats;
 
@@ -121,7 +122,52 @@ foreach my $iface ('eth0', 'eth1', 'eth2', 'eth3', 'ppp0', 'ippp0')
 	}
 }
 
-close(PIPE);
+my %addrstats = ();
+foreach my $stat (keys %stats) {
+	if($stat =~ /_(\d+\.\d+\.\d+\.\d+)$/) {
+		my $addr = $1;
+		my $field = "$`";
+		my $value = $stats{$stat};
+		my $units;
+		if ($field =~ /^cur/) {
+			$units = "bit/s";
+			if ($value > 1000)
+			{
+				$value /= 1000;
+				$units = 'Kbits/s';
+			}
+			if ($value > 1000)
+			{
+				$value /= 1000;
+				$units = 'Mbits/s';
+			}
+		}
+		else
+		{
+			$units = 'KB';
+			if ($value > 1024)
+			{
+				$value /= 1024;
+				$units = 'MB';
+			}
+			if ($value > 1024)
+			{
+				$value /= 1024;
+				$units = 'GB';
+			}
+		}
+		$value = sprintf("%0.1f", $value);
+		$addrstats{$addr} = {} unless defined $addrstats{$addr};
+		$addrstats{$addr}->{$field} = "$value $units";
+	}
+}
+
+foreach my $addr (keys %addrstats) {
+	if($addrstats{$addr}->{'this_day_inc_total'} > 0) {
+		push @addr_details, {Address => $addr, %{$addrstats{$addr}}};
+	}
+}
+	
 
 &openbox("Traffic statistics - ${timestamp}:");
 
@@ -145,6 +191,76 @@ foreach my $row ( sort { $a->{'Interface'} cmp $b->{'Interface'} } @details )
 	print <<END
 <TR>
 <TD>$row->{ 'Interface' }</TD>
+<TD>$tr{'traffic stats current'}</TD>
+<TD>$tr{'traffic stats in'}</TD>
+<TD>$row->{ 'cur_inc_rate' }</TD>
+<TD>$row->{ 'this_hour_inc_total' }</TD>
+<TD>$row->{ 'this_day_inc_total' }</TD>
+<TD>$row->{ 'this_week_inc_total' }</TD>
+<TD>$row->{ 'this_month_inc_total' }</TD>
+</TR>
+<TR>
+<TD>&nbsp;</TD>
+<TD>&nbsp;</TD>
+<TD>$tr{'traffic stats out'}</TD>
+<TD>$row->{ 'cur_out_rate' }</TD>
+<TD>$row->{ 'this_hour_out_total' }</TD>
+<TD>$row->{ 'this_day_out_total' }</TD>
+<TD>$row->{ 'this_week_out_total' }</TD>
+<TD>$row->{ 'this_month_out_total' }</TD>
+</TR>
+<TR>
+<TD>&nbsp;</TD>
+<TD>$tr{'traffic stats previous'}</TD>
+<TD>$tr{'traffic stats in'}</TD>
+<TD>&nbsp;</TD>
+<TD>$row->{ 'prev_hour_inc_total' }</TD>
+<TD>$row->{ 'prev_day_inc_total' }</TD>
+<TD>$row->{ 'prev_week_inc_total' }</TD>
+<TD>$row->{ 'prev_month_inc_total' }</TD>
+</TR>
+<TR>
+<TD>&nbsp;</TD>
+<TD>&nbsp;</TD>
+<TD>$tr{'traffic stats out'}</TD>
+<TD>&nbsp;</TD>
+<TD>$row->{ 'prev_hour_out_total' }</TD>
+<TD>$row->{ 'prev_day_out_total' }</TD>
+<TD>$row->{ 'prev_week_out_total' }</TD>
+<TD>$row->{ 'prev_month_out_total' }</TD>
+</TR>
+END
+	;
+}
+
+print "</TABLE>";
+
+&closebox();
+# now per address stats
+
+
+&openbox("Traffic address statistics - ${timestamp}:");
+
+print <<END
+<table class='centered'>
+<tr>
+<th style='width: 10%;'>Address</th>
+<th style='width: 15%;'>$tr{'traffic stats period'}</th>
+<th style='width: 11%;'>$tr{'traffic stats direction'}</th>
+<th style='width: 15%;'>$tr{'traffic stats current rate'}</th>
+<th style='width: 12%;'>$tr{'traffic stats hour'}</th>
+<th style='width: 12%;'>$tr{'traffic stats day'}</th>
+<th style='width: 12%;'>$tr{'traffic stats week'}</th>
+<th style='width: 12%;'>$tr{'traffic stats month'}</th>
+</tr>
+END
+;
+
+foreach my $row ( sort { $a->{'Address'} cmp $b->{'Address'} } @addr_details )
+{
+	print <<END
+<TR>
+<TD>$row->{ 'Address' }</TD>
 <TD>$tr{'traffic stats current'}</TD>
 <TD>$tr{'traffic stats in'}</TD>
 <TD>$row->{ 'cur_inc_rate' }</TD>
