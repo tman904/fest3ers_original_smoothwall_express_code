@@ -13,9 +13,9 @@ IPTABLES_OBJS= $(IPTABLES_SRC_DIR)/iptables.o \
 	$(IPTABLES_SRC_DIR)/libipq/libipq.a \
 	$(IPTABLES_SRC_DIR)/libiptc/libiptc.a
 
-COPT_FLAGS=-O2
+# COPT_FLAGS=-O2
 # COPT_FLAGS:=-g
-CFLAGS=$(COPT_FLAGS) -DMODSWROOT=\"$(MODSWROOT)\" -DIPTABLES_VERSION=\"$(IPTABLES_VERSION)\" -Wall -Wunused -I/usr/include/smoothwall -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I$(IPROUTE_INC_DIR)  -I. 
+MYCFLAGS=-DMODSWROOT=\"$(MODSWROOT)\" -DIPTABLES_VERSION=\"$(IPTABLES_VERSION)\" -Wall -Wunused -I/usr/include/smoothwall -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I$(IPROUTE_INC_DIR)  -I. 
 
 
 OBJS= trafstats_core.o trafstats_iptables.o traffic_config.o
@@ -39,26 +39,28 @@ reltimes_unittest: reltimes_unittest.cpp reltimes.hpp timestamp.hpp
 
 
 trafficmon:	trafficmon.o $(OBJS) $(IPTABLES_OBJS)
-	$(CXX) $(COPT_FLAGS) $(LDFLAGS) -o trafficmon trafficmon.o $(OBJS) $(IPTABLES_OBJS) $(LDLIBS)
+	$(CXX) $(CFLAGS) $(MYCFLAGS) $(LDFLAGS) -o trafficmon trafficmon.o $(OBJS) $(IPTABLES_OBJS) $(LDLIBS)
 
 trafficmon.o: trafficmon.cpp trafstats_core.hpp timestamp.hpp
-	$(CXX) -c $(CFLAGS) trafficmon.cpp
+	$(CXX) -c $(CFLAGS) $(MYCFLAGS) trafficmon.cpp
 
 trafstats_core.o: trafstats_core.cpp trafstats_core.hpp
-	$(CXX) -c $(CFLAGS) trafstats_core.cpp
+	$(CXX) -c $(CFLAGS) $(MYCFLAGS) trafstats_core.cpp
 
 trafficlogger:	trafficlogger.o $(OBJS) $(IPTABLES_OBJS)
-	$(CXX) $(COPT_FLAGS) $(LDFLAGS) -o trafficlogger trafficlogger.o $(OBJS) $(IPTABLES_OBJS) $(LDLIBS)
+	$(CXX) $(CFLAGS) $(MYCFLAGS) $(LDFLAGS) -o trafficlogger trafficlogger.o $(OBJS) $(IPTABLES_OBJS) $(LDLIBS)
 
 trafficlogger.o: trafficlogger.cpp trafstats_core.hpp reltimes.hpp timestamp.hpp
-	$(CXX) -c $(CFLAGS) trafficlogger.cpp
+	$(CXX) -c $(CFLAGS) $(MYCFLAGS) trafficlogger.cpp
 
 traffic_config.o: traffic_config.cpp traffic_config.hpp 
-	$(CXX) -c $(CFLAGS) traffic_config.cpp
+	$(CXX) -c $(CFLAGS) $(MYCFLAGS) traffic_config.cpp
 
 
 # this has to be C not C++ code as the iptables headers wont compile in a C++ prog :(
 trafstats_iptables.o: trafstats_iptables.h
+	$(CC)  -c $(CFLAGS) $(MYCFLAGS) -o trafstats_iptables.o trafstats_iptables.c
+
 
 clean:
 	@-rm *.o

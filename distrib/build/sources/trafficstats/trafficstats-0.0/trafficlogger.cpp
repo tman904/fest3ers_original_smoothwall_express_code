@@ -440,7 +440,7 @@ bool livestats::check_rollovers(const timestamp timestamp, const reltimes &times
 			// syslog(LOG_INFO, "NOW(%ld) tstamp %ld puts us out of range %s %ld-%ld",time(NULL),last_update.t.tv_sec, s->c_str(), times.start(*s), times.end(*s) ); 
 			// go through all the relivant byte_counts
 			for(i = nc_byte_counts.begin(); i != nc_byte_counts.end(); i++) {
-				unsigned int pos = i->first.find(*s);
+				std::string::size_type pos = i->first.find(*s);
 				if(pos  != std::string::npos) {
 					// found the "this_week" etc
 					const std::string & this_idx = i->first;
@@ -540,7 +540,7 @@ bool livestats::save(FILE *fd, reltimes & times) {
 		const std::string & address = *addridx;
 		std::string direction = "(dn)";
 		std::string addr = "0.0.0.0";
-		unsigned int pos = address.find("(");
+		std::string::size_type pos = address.find("(");
 		if(pos != std::string::npos) {
 			direction = address.substr(pos);
 			addr = address.substr(0,pos);
@@ -673,7 +673,7 @@ bool livestats::refresh_stats(Vtraf_stat_samples &s, reltimes & times) {
 		const std::string &address = *addridx;
 		std::string direction = "(dn)";
 		std::string addr = "0.0.0.0";
-		unsigned int pos = address.find("(");
+		std::string::size_type  pos = address.find("(");
 		if(pos != std::string::npos) {
 			direction = address.substr(pos);
 			addr = address.substr(0,pos);

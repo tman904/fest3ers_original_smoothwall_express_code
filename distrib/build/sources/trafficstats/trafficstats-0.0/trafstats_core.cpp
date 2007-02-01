@@ -212,7 +212,7 @@ Vstring traf_stat_collection_item::class_indexes_in_order() {
 	Vstring_iterator fs;
 	Vtraf_stat classstats; // tmp so can sort
 	Vtraf_iterator i;
-	unsigned int pos; 
+	std::string::size_type pos; 
 		
 	for(si = stats.begin(); si != stats.end(); si++) { 
 		pos = si->first.find("_class_");

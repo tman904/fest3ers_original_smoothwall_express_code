@@ -490,7 +490,7 @@ int main(int argc, char *argv[]) {
 						if(last.stats.count(label) > 0) {
 							std::string direction = "(dn)";
 							std::string addr = "0.0.0.0";
-							unsigned int pos = label.find("(");
+							std::string::size_type pos = label.find("(");
 							if(pos != std::string::npos) {
 								direction = label.substr(pos);
 								addr = label.substr(0,pos);
