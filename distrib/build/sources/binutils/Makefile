@@ -74,7 +74,7 @@ compile: configure
 	
 install: compile
 	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)/include
-	@make -C $(COMPILE_DIR) tooldir=$(PKG_ROOT)/$(PKG_DIR) install
+	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	@cp $(DIR)/include/libiberty.h $(PKG_ROOT)/$(PKG_DIR)/include
 
 adjust:
