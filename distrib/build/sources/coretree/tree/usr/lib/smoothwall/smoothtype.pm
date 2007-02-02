@@ -415,9 +415,10 @@ sub ipcompare
 
 sub jsvalidip
 {
-	my ( $id ) = @_;
-	my $ret = &script("validip('$id')");
-	push @_validation_items, "validip('$id')" ;
+	my ( $id, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validip('$id','$blank')");
+	push @_validation_items, "validip('$id','$blank')" ;
 	return $ret;
 }
 

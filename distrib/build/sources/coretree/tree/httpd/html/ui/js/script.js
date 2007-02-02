@@ -88,33 +88,38 @@ function validport(field,allowblank)
 	}
 }
 
-function validip(field)
+function validip(field,blank)
 {
 	var address = document.getElementById(field).value;
-	var numbers = address.split( "." );
 	var valid = true;
 
-	if ( numbers.length != 4 ){
-		valid = false;
-	}
-		
-	for ( var number = 0 ; number < 4 ; number++ ){			
-		if ( ! numbers[ number ] ){
+	if ( address == "" && blank == 'true' ){
+		valid = true;
+	} else {
+		var numbers = address.split( "." );
+
+		if ( numbers.length != 4 ){
 			valid = false;
-			break;
-		}		
-		
-		for ( var character = 0 ; character < numbers[ number ].length ; character++ ){
-			if ( 
-				( numbers[ number ].charAt( character ) < '0' ) ||
-				( numbers[ number ].charAt( character ) > '9' ) ){
-				valid = false;
-				break;
-			}
 		}
 		
-		if (( numbers[ number ] < 0 ) || ( numbers[ number ] > 255 )){
-			valid = false;
+		for ( var number = 0 ; number < 4 ; number++ ){			
+			if ( ! numbers[ number ] ){
+				valid = false;
+				break;
+			}		
+			
+			for ( var character = 0 ; character < numbers[ number ].length ; character++ ){
+				if ( 
+					( numbers[ number ].charAt( character ) < '0' ) ||
+					( numbers[ number ].charAt( character ) > '9' ) ){
+					valid = false;
+					break;
+				}
+			}
+			
+			if (( numbers[ number ] < 0 ) || ( numbers[ number ] > 255 )){
+				valid = false;
+			}
 		}
 	}
 
