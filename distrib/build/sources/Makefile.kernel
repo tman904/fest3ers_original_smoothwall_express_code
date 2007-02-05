@@ -19,7 +19,11 @@ USR_VER = 1.08
 COMPILER = /opt/gcc-3.2.3/bin/gcc
 
 ifeq ($(TYPE), runtime)
-RUNTIME_PACKAGES = package-iptableproc
+PACKAGES += package-iptableproc
+endif
+
+ifeq ($(ARCH), i686)
+PACKAGES += package-unicorn
 endif
 
 download:
@@ -98,7 +102,7 @@ package-iptableproc: compile-iptableproc
 	@cp $(SOURCES_DIR)/kernel-runtime/iptableproc/iptableproc.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 
-build-tarball: package-kernel $(RUNTIME_PACKAGES)
+build-tarball: package-kernel $(PACKAGES)
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);
