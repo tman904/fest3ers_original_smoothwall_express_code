@@ -1,0 +1,46 @@
+diff -urbB clamav-0.88.4/clamd/clamd.c clamav-0.88.4-openlog/clamd/clamd.c
+--- clamav-0.88.4/clamd/clamd.c	2006-06-23 14:04:30.000000000 +0100
++++ clamav-0.88.4-openlog/clamd/clamd.c	2006-06-23 14:03:48.000000000 +0100
+@@ -61,6 +61,8 @@
+ 
+ short debug_mode = 0, logok = 0;
+ 
++extern char* progname;
++
+ void clamd(struct optstruct *opt)
+ {
+ 	struct cfgstruct *copt, *cpt;
+@@ -161,7 +163,7 @@
+ 	    }
+ 	}
+ 
+-	openlog("clamd", LOG_PID, fac);
++	openlog(progname, LOG_PID, fac);
+ 	logg_syslog = 1;
+ 	syslog(LOG_INFO, "Daemon started.\n");
+     }
+diff -urbB clamav-0.88.4/clamd/options.c clamav-0.88.4-openlog/clamd/options.c
+--- clamav-0.88.4/clamd/options.c	2006-06-23 14:04:49.000000000 +0100
++++ clamav-0.88.4-openlog/clamd/options.c	2006-06-23 14:00:23.000000000 +0100
+@@ -38,6 +38,8 @@
+ #include "../libclamav/others.h"
+ #include "memory.h"
+ 
++char* progname;
++
+ void clamd(struct optstruct *opt);
+ 
+ int main(int argc, char **argv)
+@@ -111,6 +113,12 @@
+ 
+     }
+ 
++    progname = strrchr(argv[0], '/');
++    if(progname)
++	progname++;
++    else
++	progname = "clamd";
++
+     clamd(opt);
+ 
+     free_opt(opt);
