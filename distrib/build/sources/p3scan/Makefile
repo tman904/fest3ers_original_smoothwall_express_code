@@ -9,6 +9,8 @@ CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
 
+PATCH_FILE1 = p3scan.patch
+
 configure: patch
 	@true
 
