@@ -9,6 +9,7 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use smoothtype qw( :standard );
 
 my %dhcpsettings;
 my %netsettings;
@@ -50,6 +51,13 @@ $dhcpsettings{'BOOT_ENABLE'} = 'off';
 my $errormessage = '';
 if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 {
+print STDERR "Checking $dhcpsettings{'NIS_DOMAIN'}\n";
+	unless ($dhcpsettings{'NIS_DOMAIN'} eq "" or $dhcpsettings{'NIS_DOMAIN'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) {
+print STDERR "yup..\n";
+		$errormessage = $tr{'invalid domain name'};
+		goto ERROR;
+	}
+
 	if ($dhcpsettings{'SUBNET'} ne 'green' && $dhcpsettings{'SUBNET'} ne 'purple')
 	{
 		$errormessage = $tr{'invalid input'};
@@ -158,7 +166,7 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 			goto ERROR;
 		}
 	}
-	unless (!$cgiparams{'DOMAIN_NAME'} || $cgiparams{'DOMAIN_NAME'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) {
+	unless (!$dhcpsettings{'DOMAIN_NAME'} || $dhcpsettings{'DOMAIN_NAME'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) {
 		$errormessage = $tr{'invalid domain name'};
 		goto ERROR;
 	}
@@ -196,10 +204,13 @@ ERROR:
 
 	&writesettings();
 
-	my $success = message('dhcprestart');
+	if ( $errormessage eq "" ){
+		my $success = message('dhcprestart');
 		
-	if (not defined $success) {
-		$errormessage = $tr{'smoothd failure'}; }
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; 
+		}
+	}
 }
 
 if ($dhcpsettings{'ACTION'} eq $tr{'add'})
@@ -414,39 +425,39 @@ print <<END
 <table class='centered'>
 <tr>
 	<td style='width: 25%;'>$tr{'start address'}</td>
-	<td style='width: 25%;'><input type='text' name='START_ADDR' value='$dhcpsettings{'START_ADDR'}'></td>
+	<td style='width: 25%;'><input type='text' name='START_ADDR' value='$dhcpsettings{'START_ADDR'}' id='start_addr' @{[jsvalidip('start_addr')]} ></td>
 	<td style='width: 25%;'>$tr{'end address'}</td>
-	<td style='width: 25%;'><input type='text' name='END_ADDR' value='$dhcpsettings{'END_ADDR'}'></td>
+	<td style='width: 25%;'><input type='text' name='END_ADDR' value='$dhcpsettings{'END_ADDR'}' id='end_addr' @{[jsvalidip('end_addr')]} ></td>
 </tr>
 <tr>
 	<td>$tr{'primary dns'}</td>
-	<td><input type='text' name='DNS1' value='$dhcpsettings{'DNS1'}'></td>
+	<td><input type='text' name='DNS1' value='$dhcpsettings{'DNS1'}'  id='dns1' @{[jsvalidip('dns1')]} ></td>
 	<td>$tr{'secondary dns'}</TD>
-	<td><input type='text' name='DNS2' value='$dhcpsettings{'DNS2'}'></td>
+	<td><input type='text' name='DNS2' value='$dhcpsettings{'DNS2'}' id='dns2' @{[jsvalidip('dns2')]}  ></td>
 </tr>
 <tr>
 	<td>$tr{'primary wins'}</td>
-	<td><input type='text' name='WINS1' value='$dhcpsettings{'WINS1'}'></td>
+	<td><input type='text' name='WINS1' value='$dhcpsettings{'WINS1'}' id='wins1' @{[jsvalidip('wins1')]} ></td>
 	<td>$tr{'secondary wins'}</td>
-	<td><input type='text' name='WINS2' value='$dhcpsettings{'WINS2'}'></td>
+	<td><input type='text' name='WINS2' value='$dhcpsettings{'WINS2'}' id='wins2' @{[jsvalidip('wins2')]}  ></td>
 </tr>
 <tr>
 	<td>$tr{'default lease time'}</td>
-	<td><input type='text' name='DEFAULT_LEASE_TIME' value='$dhcpsettings{'DEFAULT_LEASE_TIME'}'></td>
+	<td><input type='text' name='DEFAULT_LEASE_TIME' value='$dhcpsettings{'DEFAULT_LEASE_TIME'}' id='default_lease_time' @{[jsvalidnumber('default_lease_time',1,400)]}></td>
 	<td>$tr{'max lease time'}</td>
-	<td><input type='text' name='MAX_LEASE_TIME' value='$dhcpsettings{'MAX_LEASE_TIME'}'></td>
+	<td><input type='text' name='MAX_LEASE_TIME' value='$dhcpsettings{'MAX_LEASE_TIME'}' id='max_lease_time' @{[jsvalidnumber('max_lease_time',1,400)]}></td>
 </tr>
 <tr>
 	<td>$tr{'domain name suffix'}&nbsp;<IMG SRC='/ui/img/blob.gif' alt='*'></td>
-	<td><input type='text' name='DOMAIN_NAME' value='$dhcpsettings{'DOMAIN_NAME'}'></td>
+	<td><input type='text' name='DOMAIN_NAME' value='$dhcpsettings{'DOMAIN_NAME'}' id='domain_name' @{[jsvalidregex('domain_name','^([a-zA-Z])+([\.a-zA-Z0-9_-])+$')]} ></td>
 	<td>$tr{'nis_domainc'}</TD>
-	<td><input type='text' name='NIS_DOMAIN' value='$dhcpsettings{'NIS_DOMAIN'}'></td>
+	<td><input type='text' name='NIS_DOMAIN' value='$dhcpsettings{'NIS_DOMAIN'}' id='nis_domain' @{[jsvalidregex('nis_domain','^([a-zA-Z])+([\.a-zA-Z0-9_-])+$')]} ></td>
 </tr>
 <tr>
 	<td>$tr{'primary nisc'}</TD>
-	<td><input type='text' name='NIS1' value='$dhcpsettings{'NIS1'}'></td>
+	<td><input type='text' name='NIS1' value='$dhcpsettings{'NIS1'}' id='nis1' @{[(jsvalidip('nis1'))]}></td>
 	<td>$tr{'secondary nisc'}</TD>
-	<td><input type='text' name='NIS2' value='$dhcpsettings{'NIS2'}'></td>
+	<td><input type='text' name='NIS2' value='$dhcpsettings{'NIS2'}' id='nis2' @{[(jsvalidip('nis2'))]}></td>
 </tr>
 <tr>
 	<td>$tr{'enabled'}</td>
@@ -475,15 +486,15 @@ print <<END
 <table class='centered'>
 <tr>
 	<td style='width: 25%;'>$tr{'hostnamec'}</td>
-	<td style='width: 25%;'><input type='text' name='STATIC_HOST' value='$dhcpsettings{'STATIC_HOST'}'></td>
+	<td style='width: 25%;'><input type='text' name='STATIC_HOST' value='$dhcpsettings{'STATIC_HOST'}' id='static_host' @{[jsvalidregex('static_host','^([a-zA-Z])+([\.a-zA-Z0-9_-])+$')]}></td>
 	<td style='width: 25%;'>$tr{'descriptionc'}</td>
-	<td style='width: 25%;'><input type='text' name='STATIC_DESC' value='$dhcpsettings{'STATIC_DESC'}'></td>
+	<td style='width: 25%;'><input type='text' name='STATIC_DESC' value='$dhcpsettings{'STATIC_DESC'}' id='static_desc' @{[jsvalidregex('static_desc','^([a-zA-Z0-9_-]+)$')]} ></td>
 </tr>
 <tr>
 	<td>$tr{'mac addressc'}</td>
-	<td><input type='text' name='STATIC_MAC' value='$dhcpsettings{'STATIC_MAC'}'></td>
+	<td><input type='text' name='STATIC_MAC' value='$dhcpsettings{'STATIC_MAC'}' id='static_mac' @{[(jsvalidmac('static_mac'))]} ></td>
 	<td>$tr{'ip addressc'}</td>
-	<td><input type='text' name='STATIC_IP' value='$dhcpsettings{'STATIC_IP'}'></td>
+	<td><input type='text' name='STATIC_IP' value='$dhcpsettings{'STATIC_IP'}' id='static_ip' @{[(jsvalidip('static_ip'))]}></td>
 </tr>
 <tr>
 	<td>$tr{'enabled'}</td>

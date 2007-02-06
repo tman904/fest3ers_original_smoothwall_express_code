@@ -17,7 +17,7 @@ use header qw(:standard);
 	ipcompare
 	portmap
 	tooltip portlist displaytable 
-	jsvalidip
+	jsvalidip jsvalidmask jsvalidipormask jsvalidipandmask jsvalidport jsvalidportrange jsvalidmac jsvalidhostname jsvalidregex  jsvalidnumber
 	);
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
@@ -421,6 +421,92 @@ sub jsvalidip
 	push @_validation_items, "validip('$id','$blank')" ;
 	return $ret;
 }
+
+sub jsvalidmask
+{
+	my ( $id, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validmask('$id','$blank')");
+	push @_validation_items, "validmask('$id','$blank')" ;
+	return $ret;
+}
+
+sub jsvalidipormask
+{
+	my ( $id, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validipormask('$id','$blank')");
+	push @_validation_items, "validipormask('$id','$blank')" ;
+	return $ret;
+}
+
+sub jsvalidipandmask
+{
+	my ( $id, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validipandmask('$id','$blank')");
+	push @_validation_items, "validipandmask('$id','$blank')" ;
+	return $ret;
+}
+
+sub jsvalidport
+{
+	my ( $id, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validport('$id','$blank')");
+	push @_validation_items, "validport('$id','$blank')" ;
+	return $ret;
+}
+
+sub jsvalidportrange
+{
+	my ( $id, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validportrange('$id','$blank')");
+	push @_validation_items, "validportrange('$id','$blank')" ;
+	return $ret;
+}
+
+sub jsvalidmac
+{
+	my ( $id, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validmac('$id','$blank')");
+	push @_validation_items, "validmac('$id','$blank')" ;
+	return $ret;
+}
+
+sub jsvalidhostname
+{
+	my ( $id, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validhostname('$id','$blank')");
+	push @_validation_items, "validhostname('$id','$blank')" ;
+	return $ret;
+}
+
+sub jsvalidregex
+{
+	my ( $id, $expr, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validregex('$id','$expr', '$blank')");
+	push @_validation_items, "validregex('$id','$expr','$blank')" ;
+	return $ret;
+}
+
+sub jsvalidnumber
+{
+	my ( $id, $min, $max, $expr ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validnumber('$id', $min, $max, '$expr')");
+	push @_validation_items, "validnumber('$id', $min, $max, '$expr')" ;
+	return $ret;
+}
+
+
+
+
+
 
 
 

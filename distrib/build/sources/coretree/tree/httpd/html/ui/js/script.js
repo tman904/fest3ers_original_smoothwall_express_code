@@ -130,4 +130,229 @@ function validip(field,blank)
 	}
 }
 
+function validmask(field, blank)
+{
+	var mask = document.getElementById(field).value;
+	var valid = true;
+	
+	if ( mask == "" && blank == 'true' ){
+		valid = true;
+	} else {
+		// is it a valid ip ?
+		if ( validip( field, blank ) ){
+			valid = true;
+		} else if ( mask > 0 && mask <= 32 ){
+			valid = true;
+		} else {
+			valid = false;
+		}
+	}
+
+	if ( valid ){
+		_ok( field );
+	} else {
+		_error( field );
+	}
+}
+
+function validipormask(field, blank)
+{
+	var ipormask = document.getElementById(field).value;
+	var valid = true;
+	
+	if ( mask == "" && blank == 'true' ){
+		valid = true;
+	} else {
+		// is it an ip only ?
+		if ( validip( field, blank ) ){
+			valid = true;
+		} else {
+			/* split it into a number and a mask */
+			var detail_finder = new RegExp( /^(.*?)\/(.*?)$/ );
+			var matches = detail_finder.exec( ipormask );
+			if ( !matches ){
+				valid = false;
+			} else {
+				if ( !validip(matches[1]) ){
+					valid = false;
+				} else {
+					valid = validmask(matches[2]);
+				}
+			}
+		}
+	}
+
+	if ( valid ){
+		_ok( field );
+	} else {
+		_error( field );
+	}
+}
+
+function validipormask(field, blank)
+{
+	var ipandmask = document.getElementById(field).value;
+	var valid = true;
+	
+	if ( mask == "" && blank == 'true' ){
+		valid = true;
+	} else {
+		/* split it into a number and a mask */
+		var detail_finder = new RegExp( /^(.*?)\/(.*?)$/ );
+		var matches = detail_finder.exec( ipormask );
+		if ( !matches ){
+			valid = false;
+		} else {
+			if ( !validip(matches[1]) ){
+				valid = false;
+			} else {
+				valid = validmask(matches[2]);
+			}
+		}
+	}
+
+	if ( valid ){
+		_ok( field );
+	} else {
+		_error( field );
+	}
+}
+
+function validport(field, blank)
+{
+	var port = document.getElementById(field).value;
+	var valid = true;
+	
+	if ( mask == "" && blank == 'true' ){
+		valid = true;
+	} else {
+		if ( port > 0 && port <= 65535 ){
+			valid = false;
+		} else {
+			valid = false;
+		}
+	}
+
+	if ( valid ){
+		_ok( field );
+	} else {
+		_error( field );
+	}
+}
+
+function validportrange( field, blank )
+{	
+	var port = document.getElementById(field).value;
+	var valid = false;
+	
+	if ( validport(field, blank) ){
+		valid = true;
+	} else {
+		var detail_finder = new RegExp( /^(.*):(.*)$/ );
+		var matches = detail_finder.exec( port );
+		if ( validport( matches[1] ) && validport( matches[2] ) ){
+			if ( matches[1] < matches[2] ){
+				valid = true;
+			}
+		}
+	}
+
+	if ( valid ){
+		_ok( field );
+	} else {
+		_error( field );
+	}
+}
+
+
+function validmac( field, blank )
+{	
+	var inputval = document.getElementById(field).value;
+	var valid = false;
+
+	var errored = !/^[0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}[\:\-][0-9a-fA-F]{2}$/.test(inputval);
+
+	if(errored) {
+		valid = true;
+	}
+	if( inputval == "" && blank == true){
+		valid = true;
+	}
+
+	if ( valid ){
+		_error(field);
+	} else {
+		_ok(field);
+	}
+}
+
+function validhostname( field, blank )
+{	
+	var inputval = document.getElementById(field).value;
+	var valid = true;
+
+	var parts = name.split(".");
+
+    	for(var part in parts) {
+		// if we only consist of a-z0-9 and - and each part has at least one non number
+		if(!(/^[\w\d-]+$/.test(parts[part]) && /[^\d]+/.test(parts[part]))) { 
+			valid = false;
+		}
+	}
+
+	if ( valid ){
+		_error(field);
+	} else {
+		_ok(field);
+	}
+}
+
+function validnumber( field,lower, upper, allowempty )
+{
+	var value = document.getElementById(field).value;
+	var valid = false;
+	if( value == undefined || value == "" ) {
+		value = ( allowempty != true );
+	} else {
+		if ( value >= lower && value <= upper ){
+			valid = false;
+		} else {
+			valid = true;
+		}
+	}
+	if ( valid ){
+		_error(field);
+	} else {
+		_ok(field);
+	}
+}
+
+function validregex(field,regex,blank)
+{
+	var inputval = document.getElementById(field).value;
+	var valid = false;
+
+	if( inputval == "" && blank == true){
+		valid = true;
+	} else {
+		var re = new RegExp( regex );
+		var ma = re.exec( inputval );
+
+		if ( ma != null ){
+			valid = false;
+		} else {
+			valid = true;
+		}
+	}
+	
+	if ( valid ){
+		_error(field);
+	} else {
+		_ok(field);
+	}
+}
+
+
+
+
 
