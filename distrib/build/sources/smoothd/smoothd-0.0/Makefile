@@ -11,7 +11,7 @@ MAIN = main.cpp
 LIBS = -ldl /usr/lib/libsmoothd.so 
 BIN = smoothd
 
-MODULES = sysshutdown sysinstall sysim sysalcatel sysdhcpd sysdnsproxy \
+MODULES = sysshutdown sysinstall sysim sysp3scan sysalcatel sysdhcpd sysdnsproxy \
 	sysntpd syssnort syssquid syssshd sysupnpd sysadvnet sysipblock \
 	sysxtaccess sysupdown sysipsec systimeset sysiptables
 
@@ -44,6 +44,8 @@ sysiptables : $(OBJS)
 sysinstall : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 sysim : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+sysp3scan : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 sysalcatel : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)

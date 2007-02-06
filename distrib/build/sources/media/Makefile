@@ -126,6 +126,8 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		imspector \
 		diffutils \
 		traceroute \
+		clamav \
+		p3scan \
 		coretree \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \

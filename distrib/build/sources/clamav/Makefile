@@ -15,6 +15,6 @@ INSTALL = yes
 install: compile
 	-mkdir $(PKG_ROOT)
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
-	@chown -R nobody:nobody $(PKG_ROOT)/var/clamav
+	@chown -R 105:105 $(PKG_ROOT)/var/clamav
 
 include ../Makefile.rules

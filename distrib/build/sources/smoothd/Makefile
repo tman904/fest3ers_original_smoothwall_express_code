@@ -23,6 +23,7 @@ install: compile
 	@install -D $(COMPILE_DIR)/sysinstall.so $(PKG_ROOT)/usr/lib/smoothd/sysinstall.so 
 	@install -D $(COMPILE_DIR)/sysiptables.so $(PKG_ROOT)/usr/lib/smoothd/sysiptables.so 
 	@install -D $(COMPILE_DIR)/sysim.so $(PKG_ROOT)/usr/lib/smoothd/sysim.so 
+	@install -D $(COMPILE_DIR)/sysp3scan.so $(PKG_ROOT)/usr/lib/smoothd/sysp3scan.so 
 	@install -D $(COMPILE_DIR)/sysalcatel.so $(PKG_ROOT)/usr/lib/smoothd/sysalcatel.so 
 	@install -D $(COMPILE_DIR)/sysdhcpd.so $(PKG_ROOT)/usr/lib/smoothd/sysdhcpd.so 
 	@install -D $(COMPILE_DIR)/sysdnsproxy.so $(PKG_ROOT)/usr/lib/smoothd/sysdnsproxy.so 

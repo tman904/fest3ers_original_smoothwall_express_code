@@ -225,6 +225,19 @@ if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpim
 fi
 
+# p3scan
+/sbin/iptables -t nat -N p3scan
+/sbin/iptables -t nat -N jmpp3scan
+/sbin/iptables -t nat -A jmpp3scan -d 10.0.0.0/8 -j RETURN
+/sbin/iptables -t nat -A jmpp3scan -d 172.16.0.0/12 -j RETURN
+/sbin/iptables -t nat -A jmpp3scan -d 192.168.0.0/16 -j RETURN
+/sbin/iptables -t nat -A jmpp3scan -d 169.254.0.0/16 -j RETURN
+/sbin/iptables -t nat -A jmpp3scan -j p3scan
+/sbin/iptables -t nat -A PREROUTING -i $GREEN_DEV -j jmpp3scan
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpp3scan
+fi
+
 # Masqurade
 /sbin/iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
 /sbin/iptables -t nat -A POSTROUTING -o ippp0 -j MASQUERADE

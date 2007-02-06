@@ -16,3 +16,4 @@ snort:x:101:
 sshd:x:102:
 ntpd:x:103:
 imspector:x:104:
+clam:x:105:

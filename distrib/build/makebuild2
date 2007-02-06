@@ -170,6 +170,9 @@ build ez-ipupdate
 
 build imspector
 
+build clamav
+build p3scan
+
 build tcl
 build apr
 build apr-util
