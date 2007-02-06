@@ -7,15 +7,19 @@
 include ../Makefile.conf
 
 PACKAGE = bzip2
-VERSION = 1.0.2
+VERSION = 1.0.4
 
-BASE_URL = ftp://sources.redhat.com/pub/bzip2/v102/
+BASE_URL = http://www.bzip.org/$(VERSION)/
 
 CONFIGURE = yes
+COMPILE = yes
 INSTALL = yes
 
-configure : $(DIR)/
+configure : patch
 	@true
+
+compile : configure
+	@make -C $(DIR) CC="gcc $(CFLAGS)"
 
 install : compile
 	@make -C $(DIR) PREFIX=$(PKG_ROOT)/$(PKG_DIR) install
