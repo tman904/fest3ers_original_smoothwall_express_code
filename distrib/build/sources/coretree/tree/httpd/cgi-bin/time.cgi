@@ -9,6 +9,7 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use smoothtype qw( :standard );
 
 my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
 	'Sep', 'Oct', 'Nov', 'Dec' );
@@ -84,7 +85,7 @@ if ($timesettings{'ACTION'} eq $tr{'save'})
 
 	if ($timesettings{'NTP_SERVER_TYPE'} eq 'USERDEFINED')
 	{
-		unless ($timesettings{'NTP_SERVER_USERDEFINED'}) {
+		unless ($timesettings{'NTP_SERVER_USERDEFINED'} and ($timesettings{'NTP_SERVER_USERDEFINED'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
 			$errormessage = $tr{'bad ntp host'};
 			goto ERROR; }
 	}	
@@ -131,11 +132,14 @@ END
 		system('/bin/touch', "${swroot}/time/enablentpd"); }
 	else {
 		unlink "${swroot}/time/enablentpd"; }
-		
-	my $success = message('ntpdrestart');
 	
-	if (not defined $success) {
-		$errormessage = $tr{'smoothd failure'}; }
+	if ( $errormessage eq "" ){	
+		my $success = message('ntpdrestart');
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'}; 
+		}
+	}
 }
 
 if ($timesettings{'VALID'} eq '')
@@ -385,7 +389,7 @@ print <<END
 <INPUT TYPE='radio' NAME='NTP_SERVER_TYPE' VALUE='USERDEFINED' $selected{'NTP_SERVER_TYPE'}{'USERDEFINED'}>
 $tr{'user defined single public or local server'}
 </TD>
-<TD><INPUT TYPE='text' SIZE='35' NAME='NTP_SERVER_USERDEFINED' VALUE='$timesettings{'NTP_SERVER_USERDEFINED'}'></TD>
+<TD><INPUT TYPE='text' SIZE='35' NAME='NTP_SERVER_USERDEFINED' VALUE='$timesettings{'NTP_SERVER_USERDEFINED'}' id='ntp_server_userdefined' @{[jsvalidregex('ntp_server_userdefined','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
 </TABLE>
 END
 ;
