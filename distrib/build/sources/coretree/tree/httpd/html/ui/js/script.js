@@ -86,11 +86,16 @@ function validport(field,allowblank)
 	} else {
 		_ok(field);
 	}
+
+	return errored;
 }
 
 function validip(field,blank)
 {
-	var address = document.getElementById(field).value;
+	var address = field;
+	if ( document.getElementById(field) ){
+		address = document.getElementById(field).value;
+	}
 	var valid = true;
 
 	if ( address == "" && blank == 'true' ){
@@ -128,11 +133,16 @@ function validip(field,blank)
 	} else {
 		_error(field);
 	}
+
+	return valid;
 }
 
 function validmask(field, blank)
 {
-	var mask = document.getElementById(field).value;
+	var mask = field;
+	if ( document.getElementById(field) ){
+		mask = document.getElementById(field).value;
+	}
 	var valid = true;
 	
 	if ( mask == "" && blank == 'true' ){
@@ -153,6 +163,7 @@ function validmask(field, blank)
 	} else {
 		_error( field );
 	}
+	return valid;
 }
 
 function validipormask(field, blank)
@@ -160,7 +171,7 @@ function validipormask(field, blank)
 	var ipormask = document.getElementById(field).value;
 	var valid = true;
 	
-	if ( mask == "" && blank == 'true' ){
+	if ( ipormask == "" && blank == 'true' ){
 		valid = true;
 	} else {
 		// is it an ip only ?
@@ -168,7 +179,7 @@ function validipormask(field, blank)
 			valid = true;
 		} else {
 			/* split it into a number and a mask */
-			var detail_finder = new RegExp( /^(.*?)\/(.*?)$/ );
+			var detail_finder = new RegExp( /^(.*)\/(.*)$/ );
 			var matches = detail_finder.exec( ipormask );
 			if ( !matches ){
 				valid = false;
@@ -187,19 +198,20 @@ function validipormask(field, blank)
 	} else {
 		_error( field );
 	}
+	return valid;
 }
 
-function validipormask(field, blank)
+function validipandmask(field, blank)
 {
 	var ipandmask = document.getElementById(field).value;
 	var valid = true;
 	
-	if ( mask == "" && blank == 'true' ){
+	if ( ipandmask == "" && blank == 'true' ){
 		valid = true;
 	} else {
 		/* split it into a number and a mask */
 		var detail_finder = new RegExp( /^(.*?)\/(.*?)$/ );
-		var matches = detail_finder.exec( ipormask );
+		var matches = detail_finder.exec( ipandmask );
 		if ( !matches ){
 			valid = false;
 		} else {
@@ -216,28 +228,7 @@ function validipormask(field, blank)
 	} else {
 		_error( field );
 	}
-}
-
-function validport(field, blank)
-{
-	var port = document.getElementById(field).value;
-	var valid = true;
-	
-	if ( mask == "" && blank == 'true' ){
-		valid = true;
-	} else {
-		if ( port > 0 && port <= 65535 ){
-			valid = false;
-		} else {
-			valid = false;
-		}
-	}
-
-	if ( valid ){
-		_ok( field );
-	} else {
-		_error( field );
-	}
+	return valid;
 }
 
 function validportrange( field, blank )
@@ -262,6 +253,7 @@ function validportrange( field, blank )
 	} else {
 		_error( field );
 	}
+	return valid;
 }
 
 
@@ -305,6 +297,7 @@ function validhostname( field, blank )
 	} else {
 		_ok(field);
 	}
+	return valid;
 }
 
 function validnumber( field,lower, upper, allowempty )
@@ -325,6 +318,7 @@ function validnumber( field,lower, upper, allowempty )
 	} else {
 		_ok(field);
 	}
+	return valid;
 }
 
 function validregex(field,regex,blank)
@@ -350,6 +344,7 @@ function validregex(field,regex,blank)
 	} else {
 		_ok(field);
 	}
+	return valid;
 }
 
 

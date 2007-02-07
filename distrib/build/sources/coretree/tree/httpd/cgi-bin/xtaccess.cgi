@@ -9,6 +9,7 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use smoothtype qw( :standard );
 
 my (%cgiparams, %checked, %selected);
 my $filename = "${swroot}/xtaccess/config";
@@ -147,9 +148,9 @@ print <<END
 </SELECT>
 </TD>
 <TD CLASS='base'><FONT COLOR='$colourred'>$tr{'sourcec'}</FONT></TD>
-<TD><INPUT TYPE='TEXT' NAME='EXT' VALUE='$cgiparams{'EXT'}' SIZE='32'></TD>
+<TD><INPUT TYPE='TEXT' NAME='EXT' VALUE='$cgiparams{'EXT'}' SIZE='32' id='ext' @{[jsvalidipormask('ext')]}></TD>
 <TD CLASS='base'><FONT COLOR='$colourred'>$tr{'destination portc'}</FONT></TD>
-<TD><INPUT TYPE='TEXT' NAME='DEST_PORT' VALUE='$cgiparams{'DEST_PORT'}' SIZE='5'></TD>
+<TD><INPUT TYPE='TEXT' NAME='DEST_PORT' VALUE='$cgiparams{'DEST_PORT'}' SIZE='5' id='dest_port' @{[jsvalidport('dest_port')]}></TD>
 </TR>
 </TABLE>
 <TABLE WIDTH='100%'>

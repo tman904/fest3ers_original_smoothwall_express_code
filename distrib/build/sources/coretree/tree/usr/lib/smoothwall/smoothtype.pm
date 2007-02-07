@@ -65,9 +65,6 @@ sub portlist
 	my ( $selectfield, $selectfieldname, $inputfield, $inputfieldname, $chosen, $options ) = @_; 
 	my %ports;
 
-use Data::Dumper;
-print STDERR Dumper $options;
-
 	my $ungrouped = $options->{'ungrouped'};
 	my $allowblank = $options->{'blank'};
 	my $blob = $options->{'blob'};
@@ -77,10 +74,7 @@ print STDERR Dumper $options;
 
 	$allowblank = 'false' if ( not defined $allowblank or $allowblank ne 'true' );
 
-print STDERR "setting allowblank to be $allowblank\n";
-
 	foreach my $filename ( glob $files ){
-print STDERR "Filename is $filename\n";
 		unless (open(FILE, $filename))
 		{
 			next;
