@@ -168,7 +168,7 @@ sub display_interface
 	print qq{
 		<table style='width: 100%;'>
 		<tr>
-			<td style='wdith: 25%;'>Physical Interface:</td>
+			<td style='width: 25%;'>Physical Interface:</td>
 			<td>$interface</td>
 			<td>IP Address:</td>
 			<td><input type='text' name='${prefix}_ADDRESS' value='$settings{"${prefix}_ADDRESS"}'></td>

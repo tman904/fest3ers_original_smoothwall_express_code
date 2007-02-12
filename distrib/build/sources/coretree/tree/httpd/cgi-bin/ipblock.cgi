@@ -10,6 +10,7 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use smoothtype qw( :standard );
 
 my (%cgiparams,%checked,%selected);
 my $filename = "${swroot}/ipblock/config";
@@ -152,7 +153,7 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 <TD WIDTH='20%' CLASS='base'><FONT COLOR='$colourred'>$tr{'source ip or networkc'}</FONT></TD>
-<TD WIDTH='20%'><INPUT TYPE='TEXT' NAME='SRC_IP' VALUE='$cgiparams{'SRC_IP'}' SIZE='15'></TD>
+<TD WIDTH='20%'><INPUT TYPE='TEXT' NAME='SRC_IP' VALUE='$cgiparams{'SRC_IP'}' SIZE='15' id='src_ip' @{[jsvalidipormask('src_ip')]}></TD>
 <TD WIDTH='20%' CLASS='base'>
 <INPUT TYPE='radio' NAME='TARGET' VALUE='DROP' $checked{'TARGET'}{'DROP'}>$tr{'drop packet'}
 </TD>

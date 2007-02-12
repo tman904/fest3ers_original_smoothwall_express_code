@@ -19,6 +19,8 @@
 'primary dns' => 'Primary DNS:',
 'secondary dns' => 'Secondary DNS:',
 'invalid primary dns' => 'Invalid primary DNS.',
+'invalid username' => 'Invalid username.',
+'invalid password' => 'Invalid password.',
 'invalid secondary dns' => 'Invalid secondary DNS.',
 'dhcp server' => 'DHCP server',
 'username' => 'Username:',

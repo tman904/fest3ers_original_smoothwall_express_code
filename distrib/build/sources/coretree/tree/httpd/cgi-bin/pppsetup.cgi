@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothtype qw( :standard );
 
 my %pppsettings;
 my %temppppsettings;
@@ -93,6 +94,15 @@ elsif ($pppsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'invalid input'};
 		goto ERROR;
 	}
+	unless ($pppsettings{'USERNAME'} and ($pppsettings{'USERNAME'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'invalid username'};
+		goto ERROR; 
+	}
+	unless ($pppsettings{'PASSWORD'} and ($pppsettings{'PASSWORD'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'invalid password'};
+		goto ERROR; 
+	}
+
 
 	if ($pppsettings{'PROFILENAME'} eq '') {
 		$errormessage = $tr{'profile name not given'};
@@ -421,7 +431,7 @@ print <<END
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'number'}</TD>
-	<TD><INPUT TYPE='text' NAME='TELEPHONE' VALUE='$pppsettings{'TELEPHONE'}'></TD>
+	<TD><INPUT TYPE='text' NAME='TELEPHONE' VALUE='$pppsettings{'TELEPHONE'}' id='telephone' @{[jsvalidregex('telephone', '^[0-9\*\#\,]+$')]}></TD>
 	<TD CLASS='base'>$tr{'modem speaker on'}</TD>
 	<TD><INPUT TYPE='checkbox' NAME='SPEAKER' VALUE='on' $checked{'SPEAKER'}{'on'}></TD>
 </TR>
@@ -434,11 +444,11 @@ print <<END
 	</SELECT>
 	</TD>
 	<TD CLASS='base'>$tr{'maximum retries'}</TD>
-	<TD><INPUT TYPE='text' NAME='MAXRETRIES' VALUE='$pppsettings{'MAXRETRIES'}'></TD>
+	<TD><INPUT TYPE='text' NAME='MAXRETRIES' VALUE='$pppsettings{'MAXRETRIES'}' id='maxretries' @{[jsvalidnumber('maxretries','0','10000')]}></TD>
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'idle timeout'}</TD>
-	<TD><INPUT TYPE='text' NAME='TIMEOUT' VALUE='$pppsettings{'TIMEOUT'}'></TD>
+	<TD><INPUT TYPE='text' NAME='TIMEOUT' VALUE='$pppsettings{'TIMEOUT'}' id='timeout' @{[jsvalidnumber('timeout','0','10000')]}  ></TD>
 	<TD CLASS='base'>$tr{'persistent connection'}</TD>
 	<TD><INPUT TYPE='checkbox' NAME='PERSISTENT' VALUE='on' $checked{'PERSISTENT'}{'on'}></TD>
 </TR>
@@ -532,9 +542,9 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'username'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='USERNAME' VALUE='$pppsettings{'USERNAME'}'></TD>
+	<TD WIDTH='25%'><INPUT TYPE='text' NAME='USERNAME' VALUE='$pppsettings{'USERNAME'}' id='username' @{[jsvalidregex('username','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
 	<TD WIDTH='25%' CLASS='base'>$tr{'password'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='password' NAME='PASSWORD' VALUE='$pppsettings{'PASSWORD'}'></TD>
+	<TD WIDTH='25%'><INPUT TYPE='password' NAME='PASSWORD' VALUE='$pppsettings{'PASSWORD'}' id='password' @{[jsvalidregex('password','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'method'}</TD>
@@ -568,9 +578,9 @@ print <<END
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'primary dns'}</TD>
-	<TD><INPUT TYPE='text' NAME='DNS1' VALUE='$pppsettings{'DNS1'}'></TD>
+	<TD><INPUT TYPE='text' NAME='DNS1' VALUE='$pppsettings{'DNS1'}' id='dns1' @{[jsvalidip('dns1')]}></TD>
 	<TD CLASS='base'>$tr{'secondary dns'}</TD>
-	<TD><INPUT TYPE='text' NAME='DNS2' VALUE='$pppsettings{'DNS2'}'></TD>
+	<TD><INPUT TYPE='text' NAME='DNS2' VALUE='$pppsettings{'DNS2'}' id='dns2' @{[jsvalidip('dns2','true')]}></TD>
 </TR>
 </TABLE>
 END

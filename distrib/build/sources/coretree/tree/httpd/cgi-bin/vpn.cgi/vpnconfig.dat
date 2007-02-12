@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothtype qw(:standard);
 
 my %cgiparams;
 my $filename = "${swroot}/vpn/config";
@@ -30,6 +31,15 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		$errormessage = $tr{'right ip is invalid'}; }
 	unless (&validipandmask($cgiparams{'RIGHT_SUBNET'})) {
 		$errormessage = $tr{'right subnet is invalid'}; }
+
+	unless ($timesettings{'SECRET1'} and ($timesettings{'SECRET1'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'bad password'};
+	}
+
+	unless ($timesettings{'SECRET2'} and ($timesettings{'SECRET2'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'bad password'};
+	}
+
 	if ($cgiparams{'SECRET1'} ne $cgiparams{'SECRET2'}) {
 		$errormessage = $tr{'passwords do not match'}; }
 	unless ($cgiparams{'SECRET1'}) {
@@ -163,30 +173,30 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 <TD WIDTH='25%' CLASS='base'>$tr{'namec'}</TD>
-<TD WIDTH='25%'><INPUT TYPE='TEXT' NAME='NAME' VALUE='$cgiparams{'NAME'}'></TD>
+<TD WIDTH='25%'><INPUT TYPE='TEXT' NAME='NAME' VALUE='$cgiparams{'NAME'}' id='name' @{[jsvalidregex('name','^[a-zA-Z]+$')]}></TD>
 <TD WIDTH='25%'>&nbsp;</TD>
 <TD WIDTH='25%'>&nbsp;</TD>
 <TR>
 <TD CLASS='base'>$tr{'leftc'}</TD>
-<TD><INPUT TYPE=TEXT NAME='LEFT' VALUE='$cgiparams{'LEFT'}'></TD>
+<TD><INPUT TYPE=TEXT NAME='LEFT' VALUE='$cgiparams{'LEFT'}' id='left' @{[jsvalidip('left')]}></TD>
 <TD CLASS='base'>$tr{'left subnetc'}</TD>
-<TD><INPUT TYPE=TEXT NAME='LEFT_SUBNET' VALUE='$cgiparams{'LEFT_SUBNET'}'></TD>
+<TD><INPUT TYPE=TEXT NAME='LEFT_SUBNET' VALUE='$cgiparams{'LEFT_SUBNET'}' id='left_subnet' @{[jsvalidipandmask('left_subnet')]}></TD>
 </TR>
 <TR>
 <TD CLASS='base'>$tr{'rightc'}</TD>
-<TD><INPUT TYPE=TEXT NAME='RIGHT' VALUE='$cgiparams{'RIGHT'}'></TD>
+<TD><INPUT TYPE=TEXT NAME='RIGHT' VALUE='$cgiparams{'RIGHT'}' id='right' @{[jsvalidip('right')]} ></TD>
 <TD CLASS='base'>$tr{'right subnetc'}</TD>
-<TD><INPUT TYPE=TEXT NAME='RIGHT_SUBNET' VALUE='$cgiparams{'RIGHT_SUBNET'}'></TD>
+<TD><INPUT TYPE=TEXT NAME='RIGHT_SUBNET' VALUE='$cgiparams{'RIGHT_SUBNET'}' id='right_subnet' @{[jsvalidipandmask('right_subnet')]}></TD>
 </TR>
 <TR>
 <TD CLASS='base'>$tr{'secretc'}</TD>
 <TD COLSPAN='4'>
-<INPUT TYPE='PASSWORD' NAME='SECRET1' VALUE='$cgiparams{'SECRET1'}' SIZE='40'></TD>
+<INPUT TYPE='PASSWORD' NAME='SECRET1' VALUE='$cgiparams{'SECRET1'}' SIZE='40' id='secret1' @{[jsvalidregex('secret1','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
 </TR>
 <TR>
 <TD CLASS='base'>$tr{'again'}</TD>
 <TD COLSPAN='4'>
-<INPUT TYPE='PASSWORD' NAME='SECRET2' VALUE='$cgiparams{'SECRET2'}' SIZE='40'></TD>
+<INPUT TYPE='PASSWORD' NAME='SECRET2' VALUE='$cgiparams{'SECRET2'}' SIZE='40' id='secret2' @{[jsvalidregex('secret2','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 </TR>
 </TABLE>
 <TABLE WIDTH='100%'>
