@@ -14,6 +14,7 @@ EXTENSION = .tar.bz2
 BASE_URL = ftp://ftp.gnu.org/gnu/glibc
 
 PATCH_FILE1 = generic-sscanf.diff
+PATCH_FILE2 = glibc_2.3.2.ds1-22sarge4.diff.gz
 
 COMPILE_DIR = $(DIR)-compile
 
