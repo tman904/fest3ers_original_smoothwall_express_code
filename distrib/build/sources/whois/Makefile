@@ -13,10 +13,6 @@ EXTENSION = .tgz
 
 BASE_URL = http://whois.bw.org/dist/
 
-TARBALL = $(PACKAGE)-current
-
-DIR = $(PACKAGE)-$(VERSION)
-
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
