@@ -603,6 +603,11 @@
 'pulse dial' => 'Pulse dial:',
 'connect timeout' => 'Connect timeout:',
 'send cr' => 'ISP requires Carriage Return:',
+'modem invalid init' => 'Invalid Initialization string',
+'modem invalid speaker' => 'Invalid speaker initialization command',
+'modem invalid tone dial' => 'Invalid Tone dial command',
+'modem invalid hangup' => 'Inavlid Hangup command',
+'modem invalid pulse dial' => 'Invalid Pulse dial command',
 
 # vpnmain.cgi
 'restart' => 'Restart',

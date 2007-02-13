@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothtype qw( :standard );
 
 my (%modemsettings,$errormessage);
 
@@ -26,6 +27,38 @@ if ($modemsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'timeout must be a number'};
 		goto ERROR;
 	}
+
+	unless ($modemsettings{'INIT'} and ($modemsettings{'INIT'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'modem invalid init'};
+		goto ERROR; 
+	}
+
+	unless ($modemsettings{'HANGUP'} and ($modemsettings{'HANGUP'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'modem invalid hangup'};
+		goto ERROR; 
+	}
+
+	unless ($modemsettings{'SPEAKER_ON'} and ($modemsettings{'SPEAKER_ON'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'modem invalid speaker'};
+		goto ERROR; 
+	}
+
+	unless ($modemsettings{'SPEAKER_OFF'} and ($modemsettings{'SPEAKER_OFF'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'modem invalid speaker'};
+		goto ERROR; 
+	}
+
+	unless ($modemsettings{'TONE_DIAL'} and ($modemsettings{'TONE_DIAL'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'modem invalid tone dial'};
+		goto ERROR; 
+	}
+
+	unless ($modemsettings{'PULSE_DIAL'} and ($modemsettings{'PULSE_DIAL'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage = $tr{'modem invalid pulse dial'};
+		goto ERROR; 
+	}
+
+
 ERROR:   
 	if ($errormessage) {
 		$modemsettings{'VALID'} = 'no'; }
@@ -55,25 +88,25 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'init string'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='INIT' VALUE='$modemsettings{'INIT'}'></TD>
+	<TD WIDTH='25%'><INPUT TYPE='text' NAME='INIT' VALUE='$modemsettings{'INIT'}' id='init' @{[jsvalidregex('init','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
 	<TD WIDTH='25%' CLASS='base'>$tr{'hangup string'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='HANGUP' VALUE='$modemsettings{'HANGUP'}'></TD>
+	<TD WIDTH='25%'><INPUT TYPE='text' NAME='HANGUP' VALUE='$modemsettings{'HANGUP'}' id='hangup' @{[jsvalidregex('hangup','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'speaker on'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
-	<TD><INPUT TYPE='text' NAME='SPEAKER_ON' VALUE='$modemsettings{'SPEAKER_ON'}'></TD>
+	<TD><INPUT TYPE='text' NAME='SPEAKER_ON' VALUE='$modemsettings{'SPEAKER_ON'}' id='speakeron' @{[jsvalidregex('speakeron','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 	<TD CLASS='base'>$tr{'speaker off'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
-	<TD><INPUT TYPE='text' NAME='SPEAKER_OFF' VALUE='$modemsettings{'SPEAKER_OFF'}'></TD>
+	<TD><INPUT TYPE='text' NAME='SPEAKER_OFF' VALUE='$modemsettings{'SPEAKER_OFF'}' id='speakeroff' @{[jsvalidregex('speakeroff','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'tone dial'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
-	<TD><INPUT TYPE='text' NAME='TONE_DIAL' VALUE='$modemsettings{'TONE_DIAL'}'></TD>
+	<TD><INPUT TYPE='text' NAME='TONE_DIAL' VALUE='$modemsettings{'TONE_DIAL'}' id='tone' @{[jsvalidregex('tone','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 	<TD CLASS='base'>$tr{'pulse dial'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
-	<TD><INPUT TYPE='text' NAME='PULSE_DIAL' VALUE='$modemsettings{'PULSE_DIAL'}'></TD>
+	<TD><INPUT TYPE='text' NAME='PULSE_DIAL' VALUE='$modemsettings{'PULSE_DIAL'}' id='pulse' @{[jsvalidregex('pulse','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'connect timeout'}</TD>
-	<TD><INPUT TYPE='text' NAME='TIMEOUT' VALUE='$modemsettings{'TIMEOUT'}'></TD>
+	<TD><INPUT TYPE='text' NAME='TIMEOUT' VALUE='$modemsettings{'TIMEOUT'}' id='timeout' @{[jsvalidnumber('timeout','0','10000000')]}></TD>
 	<TD CLASS='base'>&nbsp;</TD>
 	<TD>&nbsp;</TD>
 </TR>
