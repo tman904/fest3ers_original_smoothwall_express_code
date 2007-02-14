@@ -13,20 +13,14 @@ BASE_URL = http://developer.osdl.org/dev/iproute2/download/
 
 PATCH_FILE1 = iproute2-2.4.7-nomisc.patch
 
-
 CONFIGURE = yes
 COMPILE = yes
-INSTALL = yes
 
 configure: patch
 	@true
 
 compile: configure
 	@make -C $(COMPILE_DIR) KERNEL_INCLUDE=/usr/include
-
-install: compile
-	@mkdir -p $(PKG_ROOT)/sbin
-	@install -D $(COMPILE_DIR)/ip/ip $(PKG_ROOT)/sbin/ip
-	@install -D $(COMPILE_DIR)/tc/tc $(PKG_ROOT)/sbin/tc
+	@ln -s $(DIR) $(PACKAGE)
 
 include ../Makefile.rules
