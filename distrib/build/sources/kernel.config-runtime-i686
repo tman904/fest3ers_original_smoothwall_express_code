@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16.38
-# Fri Jan 26 12:28:26 2007
+# Linux kernel version: 2.6.16.40
+# Wed Feb 14 17:20:39 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -613,8 +613,9 @@ CONFIG_AIC79XX_DEBUG_ENABLE=y
 CONFIG_AIC79XX_DEBUG_MASK=0
 CONFIG_AIC79XX_REG_PRETTY_PRINT=y
 # CONFIG_SCSI_DPT_I2O is not set
-# CONFIG_SCSI_ADVANSYS is not set
+CONFIG_SCSI_ADVANSYS=m
 CONFIG_SCSI_IN2000=m
+# CONFIG_SCSI_ARCMSR is not set
 # CONFIG_MEGARAID_NEWGEN is not set
 # CONFIG_MEGARAID_LEGACY is not set
 # CONFIG_MEGARAID_SAS is not set
