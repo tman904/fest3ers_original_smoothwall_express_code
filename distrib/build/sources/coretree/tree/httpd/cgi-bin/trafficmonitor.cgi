@@ -269,7 +269,7 @@ function create_graph(tinterface)
 	var tinterfacetitle = tinterface;
 
 	if ( translations[tinterface] && translations[ tinterface ] != "" ){
-		tinterfacetitle = translations[tinterface] + " (" + tinterface + ")";
+		tinterfacetitle = translations[tinterface];
 	}
 
 	document.getElementById('content').innerHTML += "<div style='width: 60%; margin-left: auto; margin-right: auto;' id='outer_" + tinterface + "'><div id='graph_" + tinterface + "'><div style='border: 1px solid #c0c0c0; margin-bottom: 3px;'><div style='background-color: #d0d0d0; text-align: center; width: 100%;'>" + tinterfacetitle + "</div><div style='padding: 5px;'>" + graph_html + "</div></div></div></div>";
