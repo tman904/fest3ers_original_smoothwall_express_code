@@ -505,7 +505,7 @@ std::ostream& operator << (std::ostream& out, const Vtraf_stat & i) {
 // callback from the tc code to get queue stats
 // unlike iptables this compiles OK in C++
 	 
-extern "C" int tc_callback(struct sockaddr_nl *who, struct nlmsghdr *n, void *s) {
+extern "C" int tc_callback(const struct sockaddr_nl *who, struct nlmsghdr *n, void *s) {
 
 	// passed pointer to vector of traffic stats
 	Vtraf_stat *trafstats = (Vtraf_stat *)s;
