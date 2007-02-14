@@ -16,7 +16,6 @@ PATCH_FILE1 = snort-pidfix.patch
 INSTALL = yes
 
 install: compile
-
 	-mkdir $(PKG_ROOT)
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/rules/
