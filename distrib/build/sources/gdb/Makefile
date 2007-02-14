@@ -4,11 +4,11 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-include ../../Makefile.conf
+include ../Makefile.conf
 
 PACKAGE = gdb
 VERSION = 6.6
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gdb
 
-include ../../Makefile.rules
+include ../Makefile.rules

@@ -11,6 +11,6 @@ VERSION = 4.5.15
 
 EXTENSION = .tar.bz2
 
-BASE_URL = http://puzzle.dl.sourceforge.net/sourceforge/strace/
+BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/strace/
 
 include ../Makefile.rules
