@@ -92,6 +92,7 @@ sub ProcessInterface
 	# create traffic graphs
 	&CreatePreviewGraph($_[0], "hour");
 	&CreateGraph($_[0], "day");
+	&CreatePreviewGraph($_[0], "day");
 	&CreateGraph($_[0], "week");
 	&CreateGraph($_[0], "month"); 
 	&CreateGraph($_[0], "year");

@@ -15,6 +15,27 @@ my $history = 60;
 my $oururl = "/cgi-bin/trafficstats.cgi";
 my $ubermax = 40;
 
+# calculate some name translations 
+
+my %ethersettings;
+&readhash(  "/var/smoothwall/ethernet/settings", \%ethersettings );
+
+my $etherline = "var translations = new Array(); ";
+
+if ( defined $ethersettings{'GREEN_DEV'} and $ethersettings{'GREEN_DEV'} ne "" ){
+	$etherline .= "translations[\"$ethersettings{'GREEN_DEV'}\"] = \"Green\"; ";
+}
+if ( defined $ethersettings{'ORANGE_DEV'} and $ethersettings{'ORANGE_DEV'} ne "" ){
+	$etherline .= "translations[\"$ethersettings{'ORANGE_DEV'}\"] = \"Orange (DMZ)\"; ";
+}
+if ( defined $ethersettings{'PURPLE_DEV'} and $ethersettings{'PURPLE_DEV'} ne "" ){
+	$etherline .= "translations[\"$ethersettings{'PURPLE_DEV'}\"] = \"Purple\"; ";
+}
+if ( defined $ethersettings{'RED_DEV'} and $ethersettings{'RED_DEV'} ne "" ){
+	$etherline .= "translations[\"$ethersettings{'RED_DEV'}\"] = \"Red (External)\"; ";
+}
+
+
 my $script = qq {
 <script language="Javascript">
 
@@ -40,6 +61,7 @@ var titles = new Array();
 titles[ 'inc' ] = "I<br/>n<br/>c<br/>o<br/>m<br/>i<br/>n<br/>g";
 titles[ 'out' ] = "O<br/>u<br/>t<br/>g<br/>o<br/>i<br/>n<br/>g";
 
+$etherline
 
 function xmlhttpPost()
 {
@@ -244,7 +266,13 @@ function create_graph(tinterface)
 		graph_html += "<td></td></tr></table></div>";
 	}
 
-	document.getElementById('content').innerHTML += "<div style='width: 60%; margin-left: auto; margin-right: auto;' id='outer_" + tinterface + "'><div id='graph_" + tinterface + "'><div style='border: 1px solid #c0c0c0; margin-bottom: 3px;'><div style='background-color: #d0d0d0; text-align: center; width: 100%;'>" + tinterface + "</div><div style='padding: 5px;'>" + graph_html + "</div></div></div></div>";
+	var tinterfacetitle = tinterface;
+
+	if ( translations[tinterface] && translations[ tinterface ] != "" ){
+		tinterfacetitle = translations[tinterface] + " (" + tinterface + ")";
+	}
+
+	document.getElementById('content').innerHTML += "<div style='width: 60%; margin-left: auto; margin-right: auto;' id='outer_" + tinterface + "'><div id='graph_" + tinterface + "'><div style='border: 1px solid #c0c0c0; margin-bottom: 3px;'><div style='background-color: #d0d0d0; text-align: center; width: 100%;'>" + tinterfacetitle + "</div><div style='padding: 5px;'>" + graph_html + "</div></div></div></div>";
 	interfaces[ tinterface ] = new Array();
 	interfaces[ tinterface ]["inc"] = new Array();
 	interfaces[ tinterface ]["out"] = new Array();

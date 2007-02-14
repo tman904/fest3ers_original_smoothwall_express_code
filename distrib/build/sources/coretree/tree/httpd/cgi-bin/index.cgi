@@ -300,6 +300,22 @@ sub showstats
 	my( $daystatsin, $daystatsout, $monthstatsin, $monthstatsout, $ratein, $rateout );
 
 	print "<td style='vertical-align: top;'>\n";
+	print "<table style='width: 100%; border-collapse: collapse;'>";
+
+	if ( open ( $iface_file, "</var/smoothwall/red/local-ipaddress" )){
+		my $ip = <$iface_file>;
+		chomp $ip;
+		print "<tr><td><strong>Local:</strong></td><td>$ip</td></tr>";
+		close $iface_file;
+	}
+
+	if ( open ( $iface_file, "</var/smoothwall/red/remote-ipaddress" )){
+		my $ip = <$iface_file>;
+		chomp $ip;
+		print "<tr><td><strong>Remote:</strong></td><td>$ip</td></tr>";
+		close $iface_file;
+	}
+
 
 	if ( open ( $iface_file, "</var/smoothwall/red/iface" )){
 		my $iface = <$iface_file>;
@@ -360,18 +376,19 @@ sub showstats
 		$monthstatsout = &rerange( $monthstatsout );
 
 		print <<END
-	Current: $rateout / $ratein (Out/In)<br/> 
-	Today:  $daystatsout / $daystatsin (Out/In)<br/>
-	Month: $monthstatsout / $monthstatsin (Out/In)<br/>
+		<tr><td>Current:</td><td>$rateout / $ratein (Out / In)</td></tr> 
+		<tr><td>Today:</td><td>$daystatsout / $daystatsin (Out / In)</td></tr>
+		<tr><td>Month:</td><td>$monthstatsout / $monthstatsin (Out / In)</td></tr>
 END
 ;
 	}
 
+	print "</table>\n";
 	print "$control</td>\n";
 
 	# we even have a preview graph thingy
 
 	if ( -e "/httpd/html/rrdtool/red-hour_preview.png" ){
-		print "<td>&nbsp;</td><td style='vertical-align: top;'><img src='/rrdtool/red-hour_preview.png' alt='traffic'></td>\n";
+		print "<td>&nbsp;</td><td style='vertical-align: top;'><img src='/rrdtool/red-day_preview.png' alt='traffic'></td>\n";
 	}
 }
