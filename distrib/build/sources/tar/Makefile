@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = tar
-VERSION = 1.16
+VERSION = 1.16.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/tar
 

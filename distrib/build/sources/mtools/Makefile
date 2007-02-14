@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = mtools
-VERSION = 3.9.9
+VERSION = 3.9.10
 
 BASE_URL = http://mtools.linux.lu/
 

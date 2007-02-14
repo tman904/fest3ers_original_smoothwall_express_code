@@ -14,7 +14,7 @@ BASE_URL = http://ftp.debian.org/debian/pool/main/i/iputils/
 DIR = $(PACKAGE)
 TARBALL = $(PACKAGE)_$(VERSION).orig
 
-PATCH_FILE1 = iputils_20020927-2.diff.gz
+PATCH_FILE1 = iputils_20020927-6.diff.gz
 
 CONFIGURE = yes
 INSTALL = yes

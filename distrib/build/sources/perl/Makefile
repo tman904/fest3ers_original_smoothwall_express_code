@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = perl
-VERSION = 5.8.4
+VERSION = 5.8.8
 
 BASE_URL = http://ftp.funet.fi/pub/CPAN/src/
 

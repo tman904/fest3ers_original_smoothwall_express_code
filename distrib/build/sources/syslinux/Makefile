@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = syslinux
-VERSION = 2.09
+VERSION = 3.35
 
-BASE_URL = http://www.kernel.org/pub/linux/utils/boot/syslinux/Old/
+BASE_URL = http://www.kernel.org/pub/linux/utils/boot/syslinux/
 
 CONFIGURE = yes
 COMPILE = yes

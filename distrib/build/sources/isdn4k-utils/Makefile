@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = isdn4k-utils
-VERSION = CVS-2003-09-23
+VERSION = CVS-2007-01-06
 
 BASE_URL = ftp://ftp.isdn4linux.de/pub/isdn4linux/CVS-Snapshots/
 

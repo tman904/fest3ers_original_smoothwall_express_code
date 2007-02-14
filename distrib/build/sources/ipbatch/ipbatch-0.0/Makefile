@@ -8,7 +8,6 @@ KERNEL_DIR:=/usr/src/linux
 CC=gcc 
 CXX=g++
 COPT_FLAGS:=$(CFLAGS) -g -DDEBUG
-
 CFLAGS:=$(COPT_FLAGS) -DIPTABLES_VERSION=\"$(IPTABLES_VER)\" -Wall -Wunused -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I.
 
 LDFLAGS      = -rdynamic

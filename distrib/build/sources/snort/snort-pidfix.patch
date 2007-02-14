@@ -1,10 +1,10 @@
 diff -Nurb snort-2.3.0/src/util.c snort-2.3.0.new/src/util.c
 --- snort-2.3.0/src/util.c	2005-01-13 20:36:20.000000000 +0000
 +++ snort-2.3.0.new/src/util.c	2005-01-31 16:07:03.000000000 +0000
-@@ -772,6 +772,7 @@
+@@ -907,6 +907,7 @@
          LogMessage("Writing PID \"%d\" to file \"%s\"\n", pid, pv.pid_filename);
          fprintf(pid_file, "%d\n", pid);
-         fclose(pid_file);
+         fflush(pid_file);
 +        chmod(pv.pid_filename, 0644);
      }
      else

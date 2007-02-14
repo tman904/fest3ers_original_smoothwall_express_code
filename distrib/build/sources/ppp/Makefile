@@ -7,13 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = ppp
-VERSION = 2.4.2
+VERSION = 2.4.4
 
-BASE_URL = ftp://ftp.samba.org/pub/ppp/
-
-PATCH_FILE1 = ppp-2.4.2-pppoatm.patch
-PATCH_FILE2 = ppp-2.4.2-pppoatm-persist.patch
-PATCH_FILE3 = ppp-2.4.2-signal.patch
+BASE_URL = http://samba.org/ftp/ppp/
 
 CONFIGURE = yes
 COMPILE = yes

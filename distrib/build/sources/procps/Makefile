@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = procps
-VERSION = 3.2.1
+VERSION = 3.2.7
 
 BASE_URL = http://procps.sourceforge.net/
 

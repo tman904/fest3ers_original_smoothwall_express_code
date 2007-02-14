@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = ncurses
-VERSION = 5.4
+VERSION = 5.6
 
 BASE_URL = ftp://ftp.gnu.org/gnu/ncurses/
 

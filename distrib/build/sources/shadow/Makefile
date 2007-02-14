@@ -7,11 +7,13 @@
 include ../Makefile.conf
 
 PACKAGE = shadow
-VERSION = 4.0.12
+VERSION = 4.0.18.1
 
 BASE_URL = ftp://ftp.pld.org.pl/software/shadow
 
 INSTALL = yes
+
+CONFIG_OPTS= --with-selinux=no
 
 install: compile
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install

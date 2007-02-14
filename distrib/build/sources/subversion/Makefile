@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = subversion
-VERSION = 1.4.2
+VERSION = 1.4.3
 
 BASE_URL = http://subversion.tigris.org/downloads/
 

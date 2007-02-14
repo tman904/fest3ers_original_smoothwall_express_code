@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = ntp
-VERSION = 4.2.0
+VERSION = 4.2.4
 
 CONFIG_OPTS = --enable-linuxcaps
 

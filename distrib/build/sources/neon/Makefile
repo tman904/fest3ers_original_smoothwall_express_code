@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = neon
-VERSION = 0.25.5
+VERSION = 0.26.3
 
 BASE_URL = http://www.webdav.org/neon/
 

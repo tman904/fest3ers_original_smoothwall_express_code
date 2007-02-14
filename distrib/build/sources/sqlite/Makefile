@@ -6,11 +6,12 @@
 
 include ../Makefile.conf
 
-PACKAGE = wget
-VERSION = 1.10.2
+PACKAGE = sqlite
+VERSION = 3.3.13
 
-BASE_URL = ftp://ftp.gnu.org/gnu/wget
+BASE_URL = http://www.sqlite.org/
 
-CONFIG_OPTS = --without-ssl
+
+CONFIG_OPTS = --enable-threadsafe --enable-cross-thread-connections
 
 include ../Makefile.rules

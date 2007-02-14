@@ -7,8 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = texinfo
-VERSION = 4.7
+VERSION = 4.8a
 
 BASE_URL = ftp://ftp.gnu.org/gnu/texinfo
+DIR = $(PACKAGE)-4.8
 
 include ../Makefile.rules

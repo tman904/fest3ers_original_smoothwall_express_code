@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = coreutils
-VERSION = 5.2.1
+VERSION = 6.7
 
 BASE_URL = ftp://ftp.gnu.org/gnu/coreutils/
 

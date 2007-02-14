@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = lilo
-VERSION = 22.7
+VERSION = 22.7.3
 
 BASE_URL = http://home.san.rr.com/johninsd/pub/linux/lilo/
 

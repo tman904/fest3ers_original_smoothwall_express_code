@@ -7,8 +7,8 @@
 include ../Makefile.conf
 
 PACKAGE = tcpdump
-VERSION = 2005.08.25
+VERSION = 2007.01.22
 
-BASE_URL = http://www.tcpdump.org/daily/
+BASE_URL = http://www.tcpdump.org/weekly/
 
 include ../Makefile.rules

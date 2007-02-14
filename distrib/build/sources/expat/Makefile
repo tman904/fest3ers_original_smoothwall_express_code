@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = expat
-VERSION = 1.95.8
+VERSION = 2.0.0
 SFMIRROR = heanet
 BASE_URL = http://$(SFMIRROR).dl.sourceforge.net/sourceforge/$(PACKAGE)/
 

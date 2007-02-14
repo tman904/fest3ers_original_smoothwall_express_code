@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = gd
-VERSION = 2.0.22
+VERSION = 2.0.33
 
 BASE_URL = http://www.boutell.com/gd/http/
 

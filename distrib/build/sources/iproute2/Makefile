@@ -7,15 +7,12 @@
 include ../Makefile.conf
 
 PACKAGE = iproute2
-VERSION = 2.4.7-now-ss020116-try
+VERSION = 2.6.18-061002
 
-BASE_URL = http://ftp.iasi.roedu.net/mirrors/ftp.inr.ac.ru/ip-routing/
+BASE_URL = http://developer.osdl.org/dev/iproute2/download/
 
-PATCH_FILE1 = iproute2-2.4.7-htb3-tc.patch
-PATCH_FILE2 = iproute2-2.4.7-db.patch
-PATCH_FILE3 = iproute2-2.4.7-nomisc.patch
+PATCH_FILE1 = iproute2-2.4.7-nomisc.patch
 
-DIR = iproute2
 
 CONFIGURE = yes
 COMPILE = yes

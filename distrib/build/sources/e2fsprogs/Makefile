@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = e2fsprogs
-VERSION = 1.35
+VERSION = 1.39
 
 BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/e2fsprogs/
 

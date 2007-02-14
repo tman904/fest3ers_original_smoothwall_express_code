@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = libwww-perl
-VERSION = 5.64
+VERSION = 5.805
 
-BASE_URL = http://lwp.linpro.no/lwp/
+BASE_URL = http://cpan.m.flirble.org/authors/id/G/GA/GAAS/
 
 
 CONFIGURE = yes

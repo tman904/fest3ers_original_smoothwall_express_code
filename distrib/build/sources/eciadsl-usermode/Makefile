@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = eciadsl-usermode
-VERSION = 0.9
+VERSION = 0.11
 
 BASE_URL = http://eciadsl.flashtux.org/download/
 

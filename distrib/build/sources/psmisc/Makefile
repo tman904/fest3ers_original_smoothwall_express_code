@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = psmisc
-VERSION = 21.4
+VERSION = 22.3
 
 BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/psmisc/
 

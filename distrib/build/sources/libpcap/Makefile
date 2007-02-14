@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = libpcap
-VERSION = 2005.08.25
+VERSION = 2007.01.22
 
-BASE_URL = http://www.tcpdump.org/daily/
+BASE_URL = http://www.tcpdump.org/weekly/
 
 INSTALL = yes
 

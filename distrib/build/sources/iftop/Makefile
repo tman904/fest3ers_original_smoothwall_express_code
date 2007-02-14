@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = iftop
-VERSION = 0.16
+VERSION = 0.17
 
 BASE_URL = http://www.ex-parrot.com/~pdw/iftop/download/
 

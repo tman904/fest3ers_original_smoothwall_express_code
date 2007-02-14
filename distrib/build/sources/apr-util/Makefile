@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = apr-util
-VERSION = 1.2.7
+VERSION = 1.2.8
 
 BASE_URL = http://apache.mirror.positive-internet.com/apr/
 

@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = findutils
-VERSION = 4.1.20
+VERSION = 4.3.2
 
 BASE_URL = ftp://alpha.gnu.org/gnu/findutils/
 

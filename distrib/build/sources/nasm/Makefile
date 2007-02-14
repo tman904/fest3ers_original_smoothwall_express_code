@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = nasm
-VERSION = 0.98.37
+VERSION = 0.98.39
 
 BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/nasm
 

@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = make
-VERSION = 3.80
+VERSION = 3.81
 
 BASE_URL = ftp://ftp.gnu.org/gnu/make/
 
