@@ -181,6 +181,7 @@ build neon
 build subversion
 build screen
 build gdb
+build lynx
 
 build install
 
