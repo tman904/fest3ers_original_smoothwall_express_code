@@ -128,6 +128,7 @@ build logrotate
 build expat
 build ethtool
 build iftop
+build which
 
 build ntp
 build openntpd
@@ -179,6 +180,7 @@ build apr-util
 build neon
 build subversion
 build screen
+build gdb
 
 build install
 
