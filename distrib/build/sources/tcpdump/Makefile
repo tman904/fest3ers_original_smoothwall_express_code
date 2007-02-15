@@ -7,8 +7,13 @@
 include ../Makefile.conf
 
 PACKAGE = tcpdump
-VERSION = 2007.01.22
+VERSION = 2007.02.12
 
 BASE_URL = http://www.tcpdump.org/weekly/
+
+INSTALL = yes
+
+install: compile
+	@install -D $(DIR)/tcpdump $(PKG_ROOT)/$(PKG_DIR)/sbin/tcpdump
 
 include ../Makefile.rules
