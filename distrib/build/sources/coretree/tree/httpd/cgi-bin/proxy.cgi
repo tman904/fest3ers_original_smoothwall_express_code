@@ -90,18 +90,22 @@ ERROR:
 		flock(FILE, 2);
 		print FILE <<END
 visible_hostname $mainsettings{'HOSTNAME'}
-
-http_port $netsettings{'GREEN_ADDRESS'}:800
 acl localnetgreen src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
+acl localnetpurple src $netsettings{'PURPLE_NETADDRESS'}/$netsettings{'PURPLE_NETMASK'}
 END
 		;
 
-		if ($netsettings{'PURPLE_DEV'}) {
-			print FILE <<END
-http_port $netsettings{'PURPLE_ADDRESS'}:800
-acl localnetpurple src $netsettings{'PURPLE_NETADDRESS'}/$netsettings{'PURPLE_NETMASK'}
-END
-			;
+		print FILE "http_port $netsettings{'GREEN_ADDRESS'}:800";
+		if ($proxysettings{'TRANSPARENT'} eq 'on') {
+			print FILE " transparent"; }
+		print FILE "\n";
+
+		if ($netsettings{'PURPLE_DEV'})
+		{
+			print FILE "http_port $netsettings{'PURPLE_ADDRESS'}:800";
+			if ($proxysettings{'TRANSPARENT'} eq 'on') {
+				print FILE " transparent"; }
+			print FILE "\n";
 		}
 
 		open (ACL, "${swroot}/proxy/acl") or die "Unable to open ACL list file";
@@ -151,16 +155,6 @@ END
 				print FILE " login=$proxysettings{'PEER_USERNAME'}:$proxysettings{'PEER_PASSWORD'}"; }
 			print FILE "\n";
 			print FILE "never_direct allow all\n";
-		}
-		if ($proxysettings{'TRANSPARENT'} eq 'on')
-		{
-			print FILE <<END
-httpd_accel_host virtual 
-httpd_accel_port 80 
-httpd_accel_with_proxy on
-httpd_accel_uses_host_header on 
-END
-			;
 		}
 		close FILE;
 
