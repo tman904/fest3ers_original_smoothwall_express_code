@@ -13,6 +13,7 @@ BASE_URL = ftp://ftp.gnu.org/gnu/inetutils/
 
 CONFIG_OPTS = -sysconfdir=/etc --localstatedir=/var --disable-logger \
 	--disable-syslogd --disable-whois --disable-servers  --disable-talk \
-	--disable-rcp --disable-rlogin --disable-rsh --disable-ping
+	--disable-rcp --disable-rlogin --disable-rsh --disable-ping \
+	--disable-ifconfig
 
 include ../Makefile.rules
