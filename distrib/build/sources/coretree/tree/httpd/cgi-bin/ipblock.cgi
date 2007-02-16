@@ -22,7 +22,14 @@ my $needrestart = 0;
 
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'LOG'} = 'off';
+
+$cgiparams{'COLUMN'} = 1;
+$cgiparams{'ORDER'} = $tr{'log ascending'};
+
 &getcgihash(\%cgiparams);
+
+
+
 
 if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '')
 {
@@ -49,6 +56,15 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '')
 		if (not defined $success) {
 			$errormessage = $tr{'smoothd failure'}; }
 	}
+
+
+}
+
+if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
+{
+        my @temp = split(',',$ENV{'QUERY_STRING'});
+        $cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+        $cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
 }
 
 my $errormessage = '';
@@ -65,7 +81,15 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		flock FILE, 2;
 		print FILE "$cgiparams{'SRC_IP'},$cgiparams{'LOG'},$cgiparams{'TARGET'},$cgiparams{'ENABLED'}\n";
 		close(FILE);
+
+		my $column = $cgiparams{ 'COLUMN' };
+		my $order  = $cgiparams{ 'ORDER' };
+
 		undef %cgiparams;
+
+		$cgiparams{ 'COLUMN' } = $column;
+		$cgiparams{ 'ORDER' } = $order;
+
 		&log($tr{'ip block rule added'});
 
 		my $success = message('setipblock');
@@ -176,50 +200,54 @@ END
 &closebox();
 
 &openbox($tr{'current rules'});
+
+my %render_settings = (
+			'url'     => "/cgi-bin/ipblock.cgi?[%COL%],[%ORD%]",
+			'columns' => [ 
+				{ 
+					column => '1',
+					title  => "$tr{'source ip'}",
+					size   => 30,
+					sort   => \&ipcompare,
+					tr     => {
+						'0.0.0.0/0' => 'N/A',
+					},					
+				},
+				{
+					column => '3',
+					title  => "$tr{'action'}", 
+					size   => 20,
+					tr     => {
+						'REJECT' => 'REJECT',
+						'DROP'   => 'DROP',
+						'RETURN' => 'EXCEPTION',
+					},
+				},
+				{
+					column => '2',
+					title => "$tr{'log'}",
+					size   => 20,
+					tr     => 'onoff',
+					align  => 'center',
+				},
+				{
+					column => '4',
+					title  => "$tr{'enabledtitle'}",
+					size   => 15,
+					tr     => 'onoff',
+					align  => 'center',
+				},
+				{
+					title  => "$tr{'mark'}", 
+					size   => 15,
+					mark   => ' ',
+				},
+			]
+			);
+
+&displaytable( $filename, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
+
 print <<END
-<table class='centered'>
-<tr>
-<th style='width: 30%; text-align: center;'>$tr{'source ip'}</th>
-<th style='width: 20%; text-align: center;'>$tr{'action'}</th>
-<th style='width: 20%; text-align: center;'>$tr{'log'}</th>
-<th style='width: 15%; text-align: center;'>$tr{'enabledtitle'}</th>
-<th style='width: 15%; text-align: center;'>$tr{'mark'}</th>
-END
-;
-
-my $id = 0;
-open(RULES, "$filename") or die 'Unable to open config file.';
-while (<RULES>)
-{
-	my ($protocol, $loggif, $enabledgif);
-	$id++;
-	chomp($_);
-	my @temp = split(/\,/,$_);
-	if ($id % 2) {
-		$colour = 'light'; }
-	else {
-		$colour = 'dark'; }
-
-	if ($temp[1] eq 'on') { $loggif = 'on.gif'; }
-		else { $loggif = 'off.gif'; }
-	if ($temp[3] eq 'on') { $enabledgif = 'on.gif'; }
-		else { $enabledgif = 'off.gif'; }
-
-	print <<END
-<tr class='$colour'>
-<td style='text-align: center;'>$temp[0]</td>
-<td style='text-align: center;'>$temp[2]</td>
-<td style='text-align: center;'><IMG SRC='/ui/img/$loggif'></td>
-<td style='text-align: center;'><IMG SRC='/ui/img/$enabledgif'></td>
-<td style='text-align: center;'><INPUT TYPE='CHECKBOX' NAME='$id'></td>
-</tr>
-END
-	;
-}
-close(RULES);
-
-print <<END
-</table>
 <table class='blank'>
 <tr>
 <td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>

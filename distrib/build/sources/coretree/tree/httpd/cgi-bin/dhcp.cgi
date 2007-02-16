@@ -46,14 +46,22 @@ $dhcpsettings{'BOOT_FILE'} = '';
 $dhcpsettings{'BOOT_ROOT'} = '';
 $dhcpsettings{'BOOT_ENABLE'} = 'off';
 
+$dhcpsettings{'COLUMN'} = 1;
+$dhcpsettings{'ORDER'} = $tr{'log ascending'};
+
 &getcgihash(\%dhcpsettings);
+
+if ($ENV{'QUERY_STRING'} && ( not defined $dhcpsettings{'ACTION'} or $dhcpsettings{'ACTION'} eq "" ))
+{
+	my @temp = split(',',$ENV{'QUERY_STRING'});
+	$dhcpsettings{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+	$dhcpsettings{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+}
 
 my $errormessage = '';
 if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 {
-print STDERR "Checking $dhcpsettings{'NIS_DOMAIN'}\n";
 	unless ($dhcpsettings{'NIS_DOMAIN'} eq "" or $dhcpsettings{'NIS_DOMAIN'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) {
-print STDERR "yup..\n";
 		$errormessage = $tr{'invalid domain name'};
 		goto ERROR;
 	}
@@ -333,6 +341,9 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 
 if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
 {
+	my $c = $dhcpsettings{'COLUMN'};
+	my $o = $dhcpsettings{'ORDER'};
+
 	if ($dhcpsettings{'ACTION'} eq '') {
 		$subnet = "green"; }
 	else {
@@ -342,6 +353,9 @@ if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
  	$dhcpsettings{'ENABLE'} = 'off';
 	$dhcpsettings{'DEFAULT_LEASE_TIME'} = '60';
 	$dhcpsettings{'MAX_LEASE_TIME'} = '120';
+
+	$dhcpsettings{'COLUMN'} = $c;
+	$dhcpsettings{'ORDER'} = $o;
 	
 	&readhash("${swroot}/dhcp/global", \%dhcpsettings);
 	&readhash("${swroot}/dhcp/settings-$subnet", \%dhcpsettings);
@@ -509,57 +523,108 @@ END
 &closebox();
 
 &openbox($tr{'current static assignments'});
+
+
+my %render_settings =
+(
+	'url'     => "/cgi-bin/dhcp.cgi?[%COL%],[%ORD%]",
+	'columns' => 
+	[
+		{ 
+			column => '1',
+			title  => "$tr{'hostname'}",
+			size   => 25,
+			sort   => 'cmp',
+		},
+		{
+			column => '3',
+			title  => "$tr{'ip address'}",
+			size   => 25,
+			sort   => \&ipcompare,
+		},
+		{
+			column => '3',
+			title  => "$tr{'mac address'}",
+			size   => 20,
+			sort   => 'cmp',
+		},
+		{
+			column => '5',
+			title  => "$tr{'enabledtitle'}",
+			size   => 10,
+			tr     => 'onoff',
+			align  => 'center',
+		},
+		{
+			title  => "$tr{'mark'}", 
+			size   => 10,
+			mark   => ' ',
+		},
+		{ 
+			column => '4',
+			title => "$tr{'comment'}",
+			break => 'line',
+		}
+	]
+);
+
+use Data::Dumper;
+print STDERR Dumper %dhcpsettings;
+
+&displaytable( "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}", \%render_settings, $dhcpsettings{'ORDER'}, $dhcpsettings{'COLUMN'} );
+
+#
+#print <<END
+#<form method='post'>
+#<table class='centered'>
+#<tr>
+#<th style='width: 25%;'>$tr{'hostname'}</th>
+#<th style='width: 25%;'>$tr{'ip address'}</th>
+#<th style='width: 20%;'>$tr{'mac address'}</th>
+#<th style='width: 10%;'>$tr{'enabledtitle'}</th>
+#<th style='width: 10%;'>$tr{'mark'}</th>
+#</tr>
+#<tr>
+#<th colspan='5'>$tr{'description'}</th>
+#</tr>
+#END
+#;
+
+#my $id = 0;
+#open(RULES, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
+#while (<RULES>)
+#{
+#	$id++;
+#	chomp($_);
+#	my @temp = split(/\,/,$_);
+#	my $row;
+#	if ($id % 2) {
+#		$row = "<tr class='dark'>\n"; }
+#	else {
+#		$row = "<tr class='light'>\n"; }
+#
+#	if ($temp[4] eq 'on') { $gif = 'on.gif'; }
+#		else { $gif = 'off.gif'; 
+#	}
+#
+#	print <<END
+#$row
+#<td style='text-align: center;'>$temp[0]</td>
+#<td style='text-align: center;'>$temp[2]</td>
+#<td style='text-align: center;'>$temp[1]</td>
+#<td style='text-align: center;'><img src='/ui/img/$gif'></td>
+#<td style='text-align: center;'><input type='checkbox' name='$id'></td
+#</tr>
+#END
+#;
+#	if ( defined $temp[3] and $temp[3] ne "" ){
+#		print "$row<td colspan='5' style='text-align: center;'>$temp[3]</td></tr>\n";
+#	}
+#}
+#close(RULES);
+#
 print <<END
-<form method='post'>
-<table class='centered'>
-<tr>
-<th style='width: 25%;'>$tr{'hostname'}</th>
-<th style='width: 25%;'>$tr{'ip address'}</th>
-<th style='width: 20%;'>$tr{'mac address'}</th>
-<th style='width: 10%;'>$tr{'enabledtitle'}</th>
-<th style='width: 10%;'>$tr{'mark'}</th>
-</tr>
-<tr>
-<th colspan='5'>$tr{'description'}</th>
-</tr>
-END
-;
-
-my $id = 0;
-open(RULES, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
-while (<RULES>)
-{
-	$id++;
-	chomp($_);
-	my @temp = split(/\,/,$_);
-	my $row;
-	if ($id % 2) {
-		$row = "<tr class='dark'>\n"; }
-	else {
-		$row = "<tr class='light'>\n"; }
-
-	if ($temp[4] eq 'on') { $gif = 'on.gif'; }
-		else { $gif = 'off.gif'; 
-	}
-
-	print <<END
-$row
-<td style='text-align: center;'>$temp[0]</td>
-<td style='text-align: center;'>$temp[2]</td>
-<td style='text-align: center;'>$temp[1]</td>
-<td style='text-align: center;'><img src='/ui/img/$gif'></td>
-<td style='text-align: center;'><input type='checkbox' name='$id'></td
-</tr>
-END
-;
-	if ( defined $temp[3] and $temp[3] ne "" ){
-		print "$row<td colspan='5' style='text-align: center;'>$temp[3]</td></tr>\n";
-	}
-}
-close(RULES);
-
-print <<END
-</table>
+<!--</table>-->
 <table class='blank'>
 <tr>
 <td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>

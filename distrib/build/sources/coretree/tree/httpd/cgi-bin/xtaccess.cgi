@@ -17,7 +17,18 @@ my $filename = "${swroot}/xtaccess/config";
 &showhttpheaders();
 
 $cgiparams{'ENABLED'} = 'off';
+$cgiparams{'COLUMN'} = 1;
+$cgiparams{'ORDER'} = $tr{'log ascending'};
+
 &getcgihash(\%cgiparams);
+
+if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
+{
+	my @temp = split(',',$ENV{'QUERY_STRING'});
+	$cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+}
+
 
 my $errormessage = '';
 
@@ -42,6 +53,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'}\n";
 		close(FILE);
 		undef %cgiparams;
+		$cgiparams{'COLUMN'} = 1;
+		$cgiparams{'ORDER'} = $tr{'log ascending'};
 		
 		&log($tr{'external access rule added'});
 
@@ -164,53 +177,48 @@ END
 &closebox();
 
 &openbox($tr{'current rules'});
-print <<END
-<table class='centered'>
-<tr>
-<th style='width: 10%; text-align: center;'>$tr{'protocol'}</th>
-<th style='width: 40%; text-align: center;'>$tr{'source'}</th>
-<th style='width: 30%; text-align: center;'>$tr{'destination port'}</th>
-<th style='width: 10%; text-align: center;'>$tr{'enabledtitle'}</th>
-<th style='width: 10%; text-align: center;'>$tr{'mark'}</th>
-</tr>
-END
-;
 
-my $id = 0;
-open(RULES, "$filename") or die 'Unable to open config file.';
-while (<RULES>)
-{
-	$id++;
-	chomp($_);
-	my @temp = split(/\,/,$_);
-	my $protocol = '';
-	my $gif = '';
-	if ($temp[0] eq 'udp') {
-		$protocol = 'UDP'; }
-	else {
-		$protocol = 'TCP' }
-	if ($id % 2) {
-		print "<tr class='dark'>\n"; }
-	else {
-              	print "<tr class='light'>\n"; }
-	if ($temp[3] eq 'on') { $gif = 'on.gif'; }
-		else { $gif = 'off.gif'; }
-	if ($temp[1] eq '0.0.0.0/0') {
-		$temp[1] = $tr{'all'}; }
-print <<END
-<td style='text-align: center;'>$protocol</td>
-<td style='text-align: center;'>$temp[1]</td>
-<td style='text-align: center;'>$temp[2]</td>
-<td style='text-align: center;'><IMG SRC='/ui/img/$gif'></td>
-<td style='text-align: center;'><INPUT TYPE='CHECKBOX' NAME='$id'></td>
-</tr>
-END
-	;
-}
-close(RULES);
+my %render_settings =
+(
+	'url'     => "/cgi-bin/xtaccess.cgi?[%COL%],[%ORD%]",
+	'columns' => 
+	[
+		{ 
+			column => '1',
+			title  => "$tr{'protocol'}",
+			size   => 10,
+			tr     => { 'udp' => 'UDP', 'tcp' => 'TCP' },
+			sort   => 'cmp',
+		},
+		{
+			column => '2',
+			title  => "$tr{'source'}",
+			size   => 40,
+			sort   => 'cmp'
+		},
+		{
+			column => '3',
+			title  => "$tr{'desination port'}",
+			size   => 30,
+		},
+		{
+			column => '8',
+			title  => "$tr{'enabledtitle'}",
+			size   => 10,
+			tr     => 'onoff',
+			align  => 'center',
+		},
+		{
+			title  => "$tr{'mark'}", 
+			size   => 10,
+			mark   => ' ',
+		},
+	]
+);
+
+&displaytable($filename, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
 
 print <<END
-</table>
 <table class='blank'>
 <tr>
 <td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>

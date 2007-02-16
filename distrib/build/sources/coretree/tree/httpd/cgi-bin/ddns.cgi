@@ -18,7 +18,18 @@ my $filename = "${swroot}/ddns/config";
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'PROXY'} = 'off';
 $cgiparams{'WILDCARDS'} = 'off';
+
+$cgiparams{'COLUMN'} = 1;
+$cgiparams{'ORDER'} = $tr{'log ascending'};
+
 &getcgihash(\%cgiparams);
+
+if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
+{
+	my @temp = split(',',$ENV{'QUERY_STRING'});
+	$cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+}
 
 my $errormessage = '';
 my @service = ();
@@ -55,6 +66,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		print FILE "$cgiparams{'SERVICE'},$cgiparams{'HOSTNAME'},$cgiparams{'DOMAIN'},$cgiparams{'PROXY'},$cgiparams{'WILDCARDS'},$cgiparams{'LOGIN'},$cgiparams{'PASSWORD'},$cgiparams{'ENABLED'}\n";
 		close(FILE);
 		undef %cgiparams;
+		$cgiparams{'COLUMN'} = 1;
+		$cgiparams{'ORDER'} = $tr{'log ascending'};
 		&log($tr{'ddns hostname added'});
 	}
 }
@@ -174,7 +187,7 @@ print <<END
 	<TD CLASS='base'>$tr{'hostnamec'}</TD>
 	<TD><INPUT TYPE='text' NAME='HOSTNAME' VALUE='$cgiparams{'HOSTNAME'}' id='hostname' @{[jsvalidregex('hostname','^[a-zA-Z_0-9-]+$')]}></TD>
 	<TD CLASS='base'>$tr{'domainc'}</TD>
-	<TD><INPUT TYPE='text' NAME='DOMAIN' VALUE='$cgiparams{'DOMAIN'}' id='domain' @{[jsvalidregex('domain','^[a-zA-Z_0-9-]+$')]}></TD>
+	<TD><INPUT TYPE='text' NAME='DOMAIN' VALUE='$cgiparams{'DOMAIN'}' id='domain' @{[jsvalidregex('domain','^[a-zA-Z_0-9-\.]+$')]}></TD>
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'username'}</TD>
@@ -194,56 +207,62 @@ END
 &closebox();
 
 &openbox($tr{'current hosts'});
-print <<END
-<table class='centered'>
-<tr>
-	<th style='width: 15%;'>$tr{'service'}</th>
-	<th style='width: 20%;'>$tr{'hostname'}</th>
-	<th style='width: 25%;'>$tr{'domain'}</th>
-	<th style='width: 10%;'>$tr{'proxy'}</th>
-	<th style='width: 10%;'>$tr{'wildcards'}</th>
-	<th style='width: 10%;'>$tr{'enabledtitle'}</th>
-	<th style='width: 10%;'>$tr{'mark'}</th>
-</tr>
-END
-;
 
-my $id = 0;
-open(SETTINGS, "$filename") or die 'Unable to open config file.';
-while (<SETTINGS>)
-{
-	my ($gifproxy,$gifwildcards,$gifenabled);
-	$id++;
-	chomp($_);
-	my @temp = split(/\,/,$_);
-	if ($id % 2) { 
-		print "<tr class='light'>\n"; 
-	}
-	else { 
-		print "<tr class='dark'>\n"; 
-	}
-	if ($temp[3] eq 'on') { $gifproxy = 'on.gif'; }
-		else { $gifproxy = 'off.gif'; }
-	if ($temp[4] eq 'on') { $gifwildcards = 'on.gif'; }
-		else { $gifwildcards = 'off.gif'; }
-	if ($temp[7] eq 'on') { $gifenabled = 'on.gif'; }
-		else { $gifenabled = 'off.gif'; }
+my %render_settings =
+(
+	'url'     => "/cgi-bin/ddns.cgi?[%COL%],[%ORD%]",
+	'columns' => 
+	[
+		{ 
+			column => '1',
+			title  => "$tr{'service'}",
+			size   => 15,
+			sort   => 'cmp',
+		},
+		{
+			column => '2',
+			title  => "$tr{'hostname'}",
+			size   => 20,
+			sort   => 'cmp'
+		},
+		{
+			column => '3',
+			title  => "$tr{'domain'}",
+			size   => 25,
+			sort   => 'cmp'
+		},
+		{
+			column => '4',
+			title  => "$tr{'proxy'}",
+			tr     => 'onoff',
+			size   => 10,
+			align  => 'center',
+		},
+		{
+			column => '5',
+			title  => "$tr{'wildcards'}",
+			tr     => 'onoff',
+			size   => 10,
+			align  => 'center',
+		},
+		{
+			column => '8',
+			title  => "$tr{'enabledtitle'}",
+			size   => 10,
+			tr     => 'onoff',
+			align  => 'center',
+		},
+		{
+			title  => "$tr{'mark'}", 
+			size   => 10,
+			mark   => ' ',
+		},
+	]
+);
+
+&displaytable($filename, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
 
 print <<END
-<td style='text-align: center;'>$temp[0]</td>
-<td style='text-align: center;'>$temp[1]</td>
-<td style='text-align: center;'>$temp[2]</td>
-<td style='text-align: center;'><img src='/ui/img/$gifproxy'></td>
-<td style='text-align: center;'><img src='/ui/img/$gifwildcards'></td>
-<td style='text-align: center;'><img src='/ui/img/$gifenabled'></td>
-<td style='text-align: center;'><input type='checkbox' name='$id'></td>
-</tr>
-END
-	;
-}
-close(SETTINGS);
-print <<END
-</table>
 <table class='blank'>
 <tr>
 <td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
