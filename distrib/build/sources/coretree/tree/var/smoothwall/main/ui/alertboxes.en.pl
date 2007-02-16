@@ -22,7 +22,7 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'proxy.cgi' 		=> 'Configure and enable your SmoothWall\'s integrated caching web proxy service.',
 'dhcp.cgi' 		=> 'Configure and enable your SmoothWall\'s DHCP service, to automatically allocate LAN IP addresses to your network clients.',
 'ddns.cgi' 		=> 'Especially suited when your ISP assigned you a different IP address every time you connect, you can configure your SmoothWall to manage and update your dynamic DNS names from several popular services.',
-'ids.cgi' 		=> 'Enable the Snort IDS service to detect potential security breach attempts from outside your network.  Note that Snort <strong>does not</strong> prevent these attempts &mdash; your port forwarding and access rules are used to allow and deny inbound access from the outside.',
+'ids.cgi' 		=> 'Enable the Snort IDS service to detect potential security breach attempts from outside your network.  Note that Snort <strong>does not</strong> prevent these attempts &mdash; your port forwarding and access rules are used to allow and deny inbound access from the outside.<br>Snort is no longer shipped with any rules. In order to fetch rules you need to visit <a href="http://www.snort.org">www.snort.org</a> and register for an Oink code',
 'remote.cgi' 		=> 'Enable Secure Shell access to your SmoothWall, and restrict access based upon referral URL to ignore external links to your SmoothWall.',
 'portfw.cgi' 		=> 'Forward ports from your external IP address to ports on machines inside your LAN or DMZ.',
 'xtaccess.cgi' 		=> 'Allow access to admin services running on the SmoothWall to external hosts.',
