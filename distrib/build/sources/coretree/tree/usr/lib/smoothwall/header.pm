@@ -24,9 +24,12 @@ $|=1; # line buffering
 # Work out some various details from the various system files.
 # such as fixes number etc.
 
-$version = '3.0-koala';
+my %productdata;
+&readhash( "/var/smoothwall/main/productdata", \%productdata );
 
-$webuirevision = 'ui-3.5';
+$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
+
+$webuirevision = $productdata{'UI_VERSION'};
 $viewsize = 200;
 
 # some system wide (yuck) global variables.  not pretty, but make things easier.
