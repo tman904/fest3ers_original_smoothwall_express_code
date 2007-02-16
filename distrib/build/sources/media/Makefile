@@ -121,6 +121,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		eciadsl-usermode \
 		dhcp \
 		snort \
+		oinkmaster \
 		openswan \
 		wireless_tools \
 		imspector \
