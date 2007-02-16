@@ -30,6 +30,7 @@ build glibc
 docommand "adjusting bintuils" "make -C sources/binutils adjust"
 build binutils
 build gcc
+build gdb
 docommand "making libgcc archive" "make -C sources/gcc libgcc"
 build libstdc++
 build coreutils
@@ -162,6 +163,7 @@ build eciadsl-usermode
 
 build dhcp
 build snort
+build oinkmaster
 build openswan
 
 build wireless_tools
@@ -180,9 +182,9 @@ build apr-util
 build neon
 build subversion
 build screen
+build which
 build gdb
 build lynx
-
 build install
 
 docommand "regular ISO" "make -C sources/media"
