@@ -30,7 +30,6 @@ build glibc
 docommand "adjusting bintuils" "make -C sources/binutils adjust"
 build binutils
 build gcc
-build gdb
 docommand "making libgcc archive" "make -C sources/gcc libgcc"
 build libstdc++
 build coreutils
@@ -182,7 +181,6 @@ build apr-util
 build neon
 build subversion
 build screen
-build which
 build gdb
 build lynx
 build install
