@@ -9,14 +9,12 @@ include ../Makefile.conf
 PACKAGE = oinkmaster
 VERSION = 1.2
 
-BASE_URL = http://www.snort.org/dl/current
+BASE_URL = http://www.snort.org/dl/contrib/rule_management/oinkmaster
 
 INSTALL = yes
 
 install: patch
-	-mkdir -p $(PKG_ROOT)/var/smoothwall/snort
 	@install -D $(COMPILE_DIR)/oinkmaster.pl $(PKG_ROOT)/usr/bin/oinkmaster.pl
-	@install -D $(COMPILE_DIR)/oinkmaster.conf $(PKG_ROOT)/var/smoothwall/snort/oinkmaster.conf
-	@chown nobody:nobody -R $(PKG_ROOT)/var/smoothwall/
+	@install -D $(COMPILE_DIR)/oinkmaster.conf $(PKG_ROOT)/usr/lib/smoothwall/oinkmaster.conf
 
 include ../Makefile.rules
