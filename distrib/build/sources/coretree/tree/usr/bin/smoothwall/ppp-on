@@ -317,7 +317,7 @@ sub doadsldialeagle
 
 sub doadsldialunicorn
 {
-	my @pppcommand = ('/usr/sbin/pppd', 'plugin', '/usr/lib/pppd/2.4.2/pppoatm.so');
+	my @pppcommand = ('/usr/sbin/pppd', 'plugin', '/usr/lib/pppd/2.4.4/pppoatm.so');
 
 	if ($pppsettings{'DNS'} eq 'Automatic') {
 		push(@pppcommand, ('usepeerdns')); }
