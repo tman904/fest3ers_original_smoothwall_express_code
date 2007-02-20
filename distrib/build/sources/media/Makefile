@@ -164,6 +164,9 @@ ifeq ($(TYPE), -devel)
 		subversion \
 		screen \
 		lynx \
+		groff \
+		man \
+		man-pages \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
 		make -C ../$$I clean all; \

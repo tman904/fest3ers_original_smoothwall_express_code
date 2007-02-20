@@ -44,6 +44,8 @@ build m4
 build bison
 build less
 build groff
+build man
+build man-pages
 build sed
 build flex
 build dejagnu
