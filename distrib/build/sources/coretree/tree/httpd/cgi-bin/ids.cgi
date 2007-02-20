@@ -20,48 +20,38 @@ $snortsettings{'ACTION'} = '';
 &getcgihash(\%snortsettings);
 
 $errormessage = '';
-$extramessage = '';
 if ($snortsettings{'ACTION'} eq 'Save & Update rules')
 {
-	if (defined $snortsettings{'OINK'} && $snortsettings{'OINK'} ne '') 
+	if ($snortsettings{'OINK'} !~ /^([\da-f]){40}$/i)
 	{
-		if ($snortsettings{'OINK'} !~ /^([\da-f]){40}$/i)
-		{
-			$errormessage = 'Bad Oink code - must be 40 hex digits';
-		}
-		else
-		{
-			my $curdir = getcwd;
-			my $url = 'http://www.snort.org/pub-bin/oinkmaster.cgi/' . $snortsettings{'OINK'} . '/snortrules-snapshot-CURRENT.tar.gz';
-			chdir "${swroot}/snort/";
-			if (open(FD, "/usr/bin/oinkmaster.pl -C ./oinkmaster.conf -o rules -u $url|"))
-			{
-				while(<FD>) {
-					$extramessage .= $_ . "\n";
-				}
-				close(FD);
-	
-				if ($extramessage ne '')	
-				{
-					warn $extramessage;
-				}
-				else
-				{
-					$errormessage = "Rules not available - try later";
-				}
-			}
-			else
-			{
-				$errormessage = "Cannot run oinkmaster.pl";
-			}
-			chdir $curdir;
-		} 
+		$errormessage = 'Bad Oink code - must be 40 hex digits';
+		goto EXIT;
 	}
+
+EXIT:
+	my $curdir = getcwd;
+	my $url = 'http://www.snort.org/pub-bin/oinkmaster.cgi/' . $snortsettings{'OINK'} . '/snortrules-snapshot-CURRENT.tar.gz';
+	chdir "${swroot}/snort/";
+
+	if (open(FD, "/usr/bin/oinkmaster.pl -C /usr/lib/smoothwall/oinkmaster.conf -o rules -u $url|"))
+	{
+		$errormessage = "Rules not available.";
+		while(<FD>)
+		{
+			$errormessage = '';
+			print STDERR $_;
+		}
+		close(FD);
+	}
+	else {
+		$errormessage = 'Unable to fetch rules.'; }
+
+	chdir $curdir;
 }
 if ($snortsettings{'ACTION'} eq $tr{'save'} || $snortsettings{'ACTION'} eq 'Save & Update rules')
 {
-
 	&writehash("${swroot}/snort/settings", \%snortsettings);
+
 	if ($snortsettings{'ENABLE_SNORT'} eq 'on')
 	{
 		&log($tr{'snort is enabled'});
@@ -80,10 +70,14 @@ if ($snortsettings{'ACTION'} eq $tr{'save'} || $snortsettings{'ACTION'} eq 'Save
 }
 
 &readhash("${swroot}/snort/settings", \%snortsettings);
-$snortsettings{OINK} = '' unless defined $snortsettings{OINK};
+
 $checked{'ENABLE_SNORT'}{'off'} = '';
 $checked{'ENABLE_SNORT'}{'on'} = '';
 $checked{'ENABLE_SNORT'}{$snortsettings{'ENABLE_SNORT'}} = 'CHECKED';
+
+my $ruleage = 'N/A';
+if (-e "${swroot}/snort/rules/VRT-License.txt") {
+	$ruleage = int(-M "${swroot}/snort/rules/VRT-License.txt"); }
 
 &openpage($tr{'intrusion detection system'}, 1, '', 'services');
 
@@ -118,13 +112,13 @@ print <<END
 END
 ;
 
-my $ruleage = int(-M "${swroot}/snort/rules/VRT-License.txt");
+
 &openbox('Rules retreval:');
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='25%'>Oink code:</TD>
-	<TD WIDTH='75%'><INPUT TYPE='text' NAME='OINK' SIZE=42 MAXLENGTH=42 VALUE=$snortsettings{OINK}></TD>
+	<TD WIDTH='75%'><INPUT TYPE='text' NAME='OINK' SIZE='42' MAXLENGTH='40' VALUE=$snortsettings{OINK}></TD>
 </TR>
 <TR>
 	<TD>Rule age in days:</TD><TD>$ruleage</TD>
