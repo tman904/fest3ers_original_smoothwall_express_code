@@ -16,7 +16,7 @@ UNICORN_VER = 0.9.0
 IPTABLEPROC_VER = 0.1
 USR_VER = 1.08
 
-COMPILER = /opt/gcc-3.2.3/bin/gcc
+COMPILER = /usr/bin/gcc
 
 ifeq ($(TYPE), runtime)
 PACKAGES += package-iptableproc
