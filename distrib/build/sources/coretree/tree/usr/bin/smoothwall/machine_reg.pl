@@ -150,6 +150,9 @@ close $sock;
 
 @page = split(/\n/,$retsrt,-1);
 $found = 0;
+
+my $id;
+
 foreach(@page)
 {
 	if($_ =~ m/^status/)
@@ -157,14 +160,27 @@ foreach(@page)
 		@temp = split(/\=/,$_,2);
 		$found = 1;
 	}
+	if($_ =~ m/^id/)
+        {
+                ( $junk, $id ) = split(/\=/,$_,2);
+        }
 }
+
+
+&readhash("/var/smoothwall/main/ownership", \%ownership);
+$ownership{'ID'} = $id;
+$ownership{'REGISTERED'} = time();
+&writehash("/var/smoothwall/main/ownership", \%ownership);
+
 
 if ($found == 1)
 {
 	if ($temp[1] =~ /^success/) {
-		exit 0; }
-	else {
-		exit 1; }
+		print STDERR "success with id $id\n";
+		exit 0; 
+	} else {
+		exit 1; 
+	}
+} else {
+	exit 2; 
 }
-else {
-	exit 2; }

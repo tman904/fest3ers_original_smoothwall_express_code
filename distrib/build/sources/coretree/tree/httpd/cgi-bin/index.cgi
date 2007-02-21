@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothnet qw( checkmd5 );
 
 my %pppsettings;
 my %modemsettings;
@@ -144,6 +145,32 @@ END
 ;
 	&closebox();
 }
+
+
+&openbox('');
+if(open(LIST, "<${swroot}/banners/available")) {
+	my @images;
+	while ( my $input = <LIST> ){
+		my ( $url, $md5, $link, $alt ) = ( $input =~/([^,]*),([^,]*),([^,]*),(.*)/ );
+	
+		if ( -e "/httpd/html/ui/img/frontpage/$md5.jpg" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.jpg", $md5) == 1 )){
+	print STDERR "Whooopit $md5, ";
+			push @images, { md5 => $md5, href => $link, alt => $alt };
+		}
+	}
+
+	if ( scalar( @images ) >= 1 ){
+		my $image = $images[rand(scalar(@images))];
+		print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/$image->{'md5'}.jpg' alt='$image->{'alt'}'/></div>";
+	} else {
+		print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.jpg' alt='SmoothWall Express'/></div>";
+	}
+} else {
+	print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.jpg' alt='SmoothWall Express'/></div>";
+}
+
+&closebox();
+
 
 &openbox('');
 

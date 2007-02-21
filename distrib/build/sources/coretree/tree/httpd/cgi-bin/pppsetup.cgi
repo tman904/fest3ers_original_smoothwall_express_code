@@ -94,11 +94,11 @@ elsif ($pppsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'invalid input'};
 		goto ERROR;
 	}
-	unless ($pppsettings{'USERNAME'} and ($pppsettings{'USERNAME'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+	unless ($pppsettings{'USERNAME'} and ($pppsettings{'USERNAME'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
 		$errormessage = $tr{'invalid username'};
 		goto ERROR; 
 	}
-	unless ($pppsettings{'PASSWORD'} and ($pppsettings{'PASSWORD'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+	unless ($pppsettings{'PASSWORD'} and ($pppsettings{'PASSWORD'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
 		$errormessage = $tr{'invalid password'};
 		goto ERROR; 
 	}

@@ -8,7 +8,7 @@ use File::Copy;
 # define the Exportlists.
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( download progress progress_bar update_bar $progress_store $download_store $server cancel clear_download_cache checkstatus );
+@EXPORT_OK    = qw( download progress progress_bar update_bar $progress_store $download_store $server cancel clear_download_cache checkstatus checkmd5 );
 %EXPORT_TAGS  = (
 		standard   => [ @EXPORT_OK ],
 		);
