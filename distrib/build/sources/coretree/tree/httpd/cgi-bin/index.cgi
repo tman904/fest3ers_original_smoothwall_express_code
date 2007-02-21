@@ -388,7 +388,7 @@ END
 
 	# we even have a preview graph thingy
 
-	if ( -e "/httpd/html/rrdtool/red-hour_preview.png" ){
+	if (-e '/var/smoothwall/red/active' && -e '/httpd/html/rrdtool/red-hour_preview.png' ){
 		print "<td>&nbsp;</td><td style='vertical-align: top;'><img src='/rrdtool/red-day_preview.png' alt='traffic'></td>\n";
 	}
 }
