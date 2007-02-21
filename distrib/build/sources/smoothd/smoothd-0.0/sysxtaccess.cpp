@@ -78,7 +78,7 @@ int set_xtaccess(std::vector<std::string> & parameters, std::string & response)
 			error = 1;
 			goto EXIT;
 		}
-		if ((n = locport.find_first_not_of(NUMBERS)) != std::string::npos)
+		if ((n = locport.find_first_not_of(NUMBERS_COLON)) != std::string::npos)
 		{
 			response = "Bad port: " + locport;
 			error = 1;

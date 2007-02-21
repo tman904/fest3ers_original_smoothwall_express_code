@@ -42,7 +42,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		else {
 			$cgiparams{'EXT'} = '0.0.0.0/0'; }
 	}
-	unless(&validport($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; }
+	unless(&validportrange($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; }
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);

@@ -264,7 +264,7 @@ int set_outgoing(std::vector<std::string> & parameters, std::string & response)
 		
 		if (enabled == "on")
 		{
-			if ((n = port.find_first_not_of(NUMBERS)) != std::string::npos)
+			if ((n = port.find_first_not_of(NUMBERS_COLON)) != std::string::npos)
 			{
 				if (portlist[port.c_str()].size() > 0)
 				{
@@ -373,7 +373,7 @@ int set_internal(std::vector<std::string> & parameters, std::string & response)
 		
 		if (enabled == "on")
 		{
-			if ((n = remport.find_first_not_of(NUMBERS)) != std::string::npos)
+			if ((n = remport.find_first_not_of(NUMBERS_COLON)) != std::string::npos)
 			{
 				if (portlist[remport.c_str()].size() > 0)
 				{

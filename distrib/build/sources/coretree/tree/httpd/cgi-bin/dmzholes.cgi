@@ -40,7 +40,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	if ( defined $cgiparams{'SERVICE'} and $cgiparams{'SERVICE'} ne "user" ){
 		$cgiparams{'DEST_PORT'} = $cgiparams{'SERVICE'};
 	} else {
-		unless(&validport($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; }
+		unless(&validportrange($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; }
 	}
 	unless(&validip($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
 	open(FILE, $filename) or die 'Unable to open config file.';
@@ -182,6 +182,7 @@ my %render_settings =
 			column => '1',
 			title  => "$tr{'protocol'}",
 			size   => 15,
+			tr     => { 'udp' => 'UDP', 'tcp' => 'TCP' },
 			sort   => 'cmp',
 		},
 		{
