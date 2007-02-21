@@ -20,11 +20,11 @@ $snortsettings{'ACTION'} = '';
 &getcgihash(\%snortsettings);
 
 $errormessage = '';
-if ($snortsettings{'ACTION'} eq 'Save & Update rules')
+if ($snortsettings{'ACTION'} eq $tr{'save and update rules'})
 {
 	if ($snortsettings{'OINK'} !~ /^([\da-f]){40}$/i)
 	{
-		$errormessage = 'Bad Oink code - must be 40 hex digits';
+		$errormessage = $tr{'oink code must be 40 hex digits'};
 		goto EXIT;
 	}
 
@@ -33,9 +33,10 @@ EXIT:
 	my $url = 'http://www.snort.org/pub-bin/oinkmaster.cgi/' . $snortsettings{'OINK'} . '/snortrules-snapshot-CURRENT.tar.gz';
 	chdir "${swroot}/snort/";
 
-	if (open(FD, "/usr/bin/oinkmaster.pl -C /usr/lib/smoothwall/oinkmaster.conf -o rules -u $url|"))
+	if (open(FD, '-|') || exec('/usr/bin/oinkmaster.pl', '-C',
+		'/usr/lib/smoothwall/oinkmaster.conf', '-o', 'rules', '-u', $url))
 	{
-		$errormessage = "Rules not available.";
+		$errormessage = $tr{'rules not available'};
 		while(<FD>)
 		{
 			$errormessage = '';
@@ -44,11 +45,11 @@ EXIT:
 		close(FD);
 	}
 	else {
-		$errormessage = 'Unable to fetch rules.'; }
+		$errormessage = $tr{'unable to fetch rules'}; }
 
 	chdir $curdir;
 }
-if ($snortsettings{'ACTION'} eq $tr{'save'} || $snortsettings{'ACTION'} eq 'Save & Update rules')
+if ($snortsettings{'ACTION'} eq $tr{'save'} || $snortsettings{'ACTION'} eq $tr{'save and update rules'})
 {
 	&writehash("${swroot}/snort/settings", \%snortsettings);
 
@@ -66,7 +67,6 @@ if ($snortsettings{'ACTION'} eq $tr{'save'} || $snortsettings{'ACTION'} eq 'Save
 
 	if (not defined $success) {
 		$errormessage = $tr{'smoothd failure'}; }
-
 }
 
 &readhash("${swroot}/snort/settings", \%snortsettings);
@@ -76,8 +76,11 @@ $checked{'ENABLE_SNORT'}{'on'} = '';
 $checked{'ENABLE_SNORT'}{$snortsettings{'ENABLE_SNORT'}} = 'CHECKED';
 
 my $ruleage = 'N/A';
-if (-e "${swroot}/snort/rules/VRT-License.txt") {
-	$ruleage = int(-M "${swroot}/snort/rules/VRT-License.txt"); }
+if (-e "${swroot}/snort/rules/VRT-License.txt")
+{
+	my $days = int(-M "${swroot}/snort/rules/VRT-License.txt");
+	$ruleage = "$days $tr{'days'}";
+}
 
 &openpage($tr{'intrusion detection system'}, 1, '', 'services');
 
@@ -113,15 +116,15 @@ END
 ;
 
 
-&openbox('Rules retreval:');
+&openbox($tr{'rule retreval'});
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-	<TD WIDTH='25%'>Oink code:</TD>
+	<TD WIDTH='25%'>$tr{'oink code'}</TD>
 	<TD WIDTH='75%'><INPUT TYPE='text' NAME='OINK' SIZE='42' MAXLENGTH='40' VALUE=$snortsettings{OINK}></TD>
 </TR>
 <TR>
-	<TD>Rule age in days:</TD><TD>$ruleage</TD>
+	<TD>$tr{'rule age'}</TD><TD>$ruleage</TD>
 </TR>
 </TABLE>
 END
@@ -133,7 +136,7 @@ print <<END
 <DIV ALIGN='CENTER'>
 <TABLE WIDTH='60%'>
 <TR>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='Save & Update rules'></TD> 
+	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save and update rules'}'></TD> 
 </TR>
 </TABLE>
 </DIV>

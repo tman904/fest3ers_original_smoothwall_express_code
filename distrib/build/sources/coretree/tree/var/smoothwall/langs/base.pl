@@ -713,7 +713,14 @@
 'snort is enabled' => 'Snort is enabled',
 'snort is disabled' => 'Snort is disabled',
 'intrusion detection system2' => 'Intrusion Detection System:',
-
+'oink code must be 40 hex digits' => 'Oink code must be 40 hex digits.',
+'rules not available' => 'Rules not available.',
+'unable to fetch rules' => 'Unable to fetch rules.',
+'rule retreval' => 'Rule retreval:',
+'oink code' => 'Oink code:',
+'rule age' => 'Rule age:',
+'save and update rules' => 'Save and update rules',
+'days' => 'days',
 
 # time.cgi
 'time settings' => 'Time settings',              
