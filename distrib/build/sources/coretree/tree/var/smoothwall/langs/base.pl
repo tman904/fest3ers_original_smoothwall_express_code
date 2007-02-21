@@ -43,7 +43,7 @@
 'sssquid graphs' => 'squid graphs',
 'ssppp settings' => 'ppp settings',
 'ssmodem' => 'modem',
-'ssusb adsl firmware upload' => 'alcatel speedtouch usb adsl firmware upload',
+'ssusb adsl firmware upload' => 'speedtouch usb firmware',
 'ssremote access' => 'remote access',
 'sspasswords' => 'passwords',
 'ssweb proxy' => 'web proxy',
@@ -53,7 +53,7 @@
 'ssexternal service access' => 'external service access',
 'ssdmz pinholes' => 'internal',
 'ssdynamic dns' => 'dynamic dns',
-'ssids' => 'intrusion detection system',
+'ssids' => 'ids',
 'ssim' => 'instant messages',
 'sscontrol' => 'control',
 'ssconnections' => 'connections',
@@ -668,12 +668,12 @@
 'traffic stats out' => 'Out',
 
 # usbadsl.cgi
-'usb adsl setup' => 'Alcatel SpeedTouch USB ADSL setup',
-'usb adsl help' => 'To utilise the Alcatel SpeedTouch USB modem you must upload the firmware to your SmoothWall box. Please download the tarball from Alcatel and then upload the file <B>mgmt.o</B> using the form below.',
+'usb adsl setup' => 'Alcatel/Thompson SpeedTouch USB ADSL setup',
+'usb adsl help' => 'To utilise the Alcatel/Thompson SpeedTouch USB modem you must upload the firmware to your SmoothWall box. Please download the tarball and then upload the file, usually called <B>mgmt.o</B>, using the form below.',
 'upload' => 'Upload', # button
 'upload successful' => 'Upload successful.',
 'could not create file' => 'Could not create file.',
-'mgmt upload' => 'Alcatel SpeedTouch USB ADSL driver upload:',
+'mgmt upload' => 'Alcatel/Thompson SpeedTouch USB ADSL driver upload:',
 'upload filec' => 'Upload file:',
 
 # updates.cgi
