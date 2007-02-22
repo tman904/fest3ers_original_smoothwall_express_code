@@ -119,6 +119,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		dhcpcd \
 		eciadsl-synch_bin \
 		eciadsl-usermode \
+		eagle-usb \
 		dhcp \
 		snort \
 		oinkmaster \

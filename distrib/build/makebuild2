@@ -160,7 +160,7 @@ build ibod
 build dhcpcd
 build eciadsl-synch_bin
 build eciadsl-usermode
-#build eagle-usb
+build eagle-usb
 
 build dhcp
 build snort

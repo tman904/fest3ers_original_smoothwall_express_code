@@ -15,8 +15,11 @@ IPT_ACCOUNT_VER = 1.6
 UNICORN_VER = 0.9.0
 IPTABLEPROC_VER = 0.1
 USR_VER = 1.08
+EAGLE_VER = 2.3.3
 
 COMPILER = /usr/bin/gcc
+
+PACKAGES = package-eagle
 
 ifeq ($(TYPE), runtime)
 PACKAGES += package-iptableproc
@@ -32,13 +35,18 @@ download:
 	@$(DL_CMD) ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
 	@$(DL_CMD) http://www.intra2net.com/de/produkte/opensource/ipt_account/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz
+	@$(DL_CMD) http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2
 
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	@tar -jxvf $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/bast-$(UNICORN_VER).tgz
-	(cd unicorn; patch -p1 < ../../kernel-patches/unicorn.patch )
+	(cd unicorn; patch -p1 < ../../kernel-patches/unicorn.patch)
+	@tar -jxvf $(DOWNLOADS_DIR)/eagle-usb-$(EAGLE_VER).tar.bz2
+	@(cd eagle-usb-$(EAGLE_VER); \
+	patch -p1 <../../kernel-patches/eagle-stats.patch; \
+	patch -p1 <../../kernel-patches/eagle-2.6-fix.patch)
 
 	@rm -f linux
 	@ln -s linux-$(KERNEL_VER) linux
@@ -80,6 +88,10 @@ compile-unicorn: compile-kernel
 compile-iptableproc: compile-kernel
 	@make -C iptableproc CC=$(COMPILER) KERNEL_DIR=$(KERNEL_DIR)
 
+compile-eagle: compile-kernel
+	@(cd eagle-usb-$(EAGLE_VER); ./configure --with-kernel-src=$(KERNEL_DIR))
+	@make -C eagle-usb-$(EAGLE_VER)/driver CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) driver
+
 package-kernel: compile-kernel
 	@mkdir -p $(PKG_ROOT)
 	@(cd $(PKG_ROOT); \
@@ -101,6 +113,10 @@ package-iptableproc: compile-iptableproc
 	@mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
 	@cp $(SOURCES_DIR)/kernel-runtime/iptableproc/iptableproc.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
+
+package-eagle: compile-eagle
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/eagle-usb-$(EAGLE_VER)/driver/eagle-usb.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/usb/eagle-usb.ko
 
 build-tarball: package-kernel $(PACKAGES)
 	@(cd $(PKG_ROOT); \
