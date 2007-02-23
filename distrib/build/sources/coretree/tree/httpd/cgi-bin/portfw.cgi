@@ -183,7 +183,7 @@ print <<END
 </tr>
 <tr>
 	<td>$tr{'destination ipc'}</td>
-	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18' id='iaddress' @{[jsvalidip('iaddress')]}></td>
+	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18' id='iaddress' @{[jsvalidip('iaddress','true')]}></td>
 	<td></td>
 	<td></td>
 </tr>

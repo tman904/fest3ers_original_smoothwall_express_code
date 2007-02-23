@@ -431,7 +431,7 @@ print <<END
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'number'}</TD>
-	<TD><INPUT TYPE='text' NAME='TELEPHONE' VALUE='$pppsettings{'TELEPHONE'}' id='telephone' @{[jsvalidregex('telephone', '^[0-9\*\#\,]+$')]}></TD>
+	<TD><INPUT TYPE='text' NAME='TELEPHONE' VALUE='$pppsettings{'TELEPHONE'}' id='telephone' @{[jsvalidregex('telephone', '^[0-9\*\#\,]+$', 'true')]}></TD>
 	<TD CLASS='base'>$tr{'modem speaker on'}</TD>
 	<TD><INPUT TYPE='checkbox' NAME='SPEAKER' VALUE='on' $checked{'SPEAKER'}{'on'}></TD>
 </TR>
@@ -566,12 +566,29 @@ END
 
 &openbox('DNS:');
 print <<END
+<script>
+function checkdns(option,field1, field2)
+{
+	var val = document.getElementById(option).value;
+	if ( val == 'Automatic' ){
+		_ok(field1);
+		_ok(field2);
+		document.getElementById(field1).disabled = true;
+		document.getElementById(field2).disabled = true;
+	} else {
+		document.getElementById(field1).disabled = false;
+		document.getElementById(field2).disabled = false;
+		validip(field1,'false');
+		validip(field2,'true');
+	}
+}
+</script>
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'type'}</TD>
 	<TD WIDTH='25%' CLASS='base'>
-	<INPUT TYPE='radio' NAME='DNS' VALUE='Manual' $checked{'DNS'}{'Manual'}>$tr{'manual'}
-	<INPUT TYPE='radio' NAME='DNS' VALUE='Automatic' $checked{'DNS'}{'Automatic'}>$tr{'automatic'}
+	<INPUT TYPE='radio' NAME='DNS' VALUE='Manual' $checked{'DNS'}{'Manual'} id='r1' onClick="checkdns('r1','dns1', 'dns2')">$tr{'manual'}
+	<INPUT TYPE='radio' NAME='DNS' VALUE='Automatic' $checked{'DNS'}{'Automatic'} id='r2' onClick="checkdns('r2','dns1', 'dns2')" >$tr{'automatic'}
 	</TD>
 	<TD WIDTH='25%'>&nbsp;</TD>
 	<TD WIDTH='25%'>&nbsp;</TD>
@@ -586,6 +603,8 @@ print <<END
 END
 ;
 &closebox();
+
+push @_validation_items, "checkdns('r2','dns1','dns2')";
 	
 print <<END
 <DIV ALIGN='CENTER'>

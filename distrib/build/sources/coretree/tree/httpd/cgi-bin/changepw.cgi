@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothtype qw( :standard );
 
 my %cgiparams;
 
@@ -74,9 +75,10 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='15%' CLASS='base'>$tr{'password'}</TD>
-	<TD WIDTH='30%'><INPUT TYPE='password' NAME='ADMIN_PASSWORD1'></TD>
+	<TD WIDTH='30%'><INPUT TYPE='password' NAME='ADMIN_PASSWORD1' id='admin_password1' @{[jsvalidregex('admin_password1','^([^ \|]*)$')]}></TD>
+
 	<TD WIDTH='15%' CLASS='base'>$tr{'again'}</TD>
-	<TD WIDTH='30%'><INPUT TYPE='password' NAME='ADMIN_PASSWORD2'></TD>
+	<TD WIDTH='30%'><INPUT TYPE='password' NAME='ADMIN_PASSWORD2' id='admin_password2' @{[jsvalidregex('admin_password2','^([^ \|]*)$')]} ></TD>
 	<TD WIDTH='10%'><INPUT TYPE='submit' NAME='ACTION_ADMIN' VALUE='$tr{'save'}'></TD>
 </TR>
 </TABLE>
@@ -89,9 +91,9 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='15%' CLASS='base'>$tr{'password'}</TD>
-	<TD WIDTH='30%'><INPUT TYPE='password' NAME='DIAL_PASSWORD1'></TD>
+	<TD WIDTH='30%'><INPUT TYPE='password' NAME='DIAL_PASSWORD1'id='dial_password1' @{[jsvalidregex('dial_password1','^([^ \|]*)$')]} ></TD>
 	<TD WIDTH='15%' CLASS='base'>$tr{'again'}</TD>
-	<TD WIDTH='30%'><INPUT TYPE='password' NAME='DIAL_PASSWORD2'></TD>
+	<TD WIDTH='30%'><INPUT TYPE='password' NAME='DIAL_PASSWORD2' id='dial_password2' @{[jsvalidregex('dial_password2','^([^ \|]*)$')]} ></TD>
 	<TD WIDTH='10%'><INPUT TYPE='submit' NAME='ACTION_DIAL' VALUE='$tr{'save'}'></TD>
 </TR>
 </TABLE>

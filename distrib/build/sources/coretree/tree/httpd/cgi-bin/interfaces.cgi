@@ -171,13 +171,13 @@ sub display_interface
 			<td style='width: 25%;'>Physical Interface:</td>
 			<td>$interface</td>
 			<td>IP Address:</td>
-			<td><input type='text' name='${prefix}_ADDRESS' value='$settings{"${prefix}_ADDRESS"}'></td>
+			<td><input type='text' name='${prefix}_ADDRESS' value='$settings{"${prefix}_ADDRESS"}' id='${prefix}address' @{[jsvalidip("${prefix}address",'true')]}></td>
 		</tr>
 		<tr>
 			<td>Device:</td>
 			<td>$settings{"${prefix}_DISPLAYDRIVER"}</td>
 			<td>Netmask:</td>
-			<td><input type='text'  name='${prefix}_NETMASK' value='$settings{"${prefix}_NETMASK"}'></td>
+			<td><input type='text'  name='${prefix}_NETMASK' value='$settings{"${prefix}_NETMASK"}' id='${prefix}mask' @{[jsvalidmask("${prefix}mask",'true')]}></td>
 		</tr>
 		<tr>
 			<td>MAC Address:</td><td>$macaddress</td>

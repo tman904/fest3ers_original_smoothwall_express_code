@@ -445,15 +445,15 @@ print <<END
 </tr>
 <tr>
 	<td>$tr{'primary dns'}</td>
-	<td><input type='text' name='DNS1' value='$dhcpsettings{'DNS1'}'  id='dns1' @{[jsvalidip('dns1')]} ></td>
+	<td><input type='text' name='DNS1' value='$dhcpsettings{'DNS1'}'  id='dns1' @{[jsvalidip('dns1','true')]} ></td>
 	<td>$tr{'secondary dns'}</TD>
-	<td><input type='text' name='DNS2' value='$dhcpsettings{'DNS2'}' id='dns2' @{[jsvalidip('dns2')]}  ></td>
+	<td><input type='text' name='DNS2' value='$dhcpsettings{'DNS2'}' id='dns2' @{[jsvalidip('dns2','true')]}  ></td>
 </tr>
 <tr>
 	<td>$tr{'primary wins'}</td>
-	<td><input type='text' name='WINS1' value='$dhcpsettings{'WINS1'}' id='wins1' @{[jsvalidip('wins1')]} ></td>
+	<td><input type='text' name='WINS1' value='$dhcpsettings{'WINS1'}' id='wins1' @{[jsvalidip('wins1','true')]} ></td>
 	<td>$tr{'secondary wins'}</td>
-	<td><input type='text' name='WINS2' value='$dhcpsettings{'WINS2'}' id='wins2' @{[jsvalidip('wins2')]}  ></td>
+	<td><input type='text' name='WINS2' value='$dhcpsettings{'WINS2'}' id='wins2' @{[jsvalidip('wins2','true')]}  ></td>
 </tr>
 <tr>
 	<td>$tr{'default lease time'}</td>
@@ -463,15 +463,15 @@ print <<END
 </tr>
 <tr>
 	<td>$tr{'domain name suffix'}&nbsp;<IMG SRC='/ui/img/blob.gif' alt='*'></td>
-	<td><input type='text' name='DOMAIN_NAME' value='$dhcpsettings{'DOMAIN_NAME'}' id='domain_name' @{[jsvalidregex('domain_name','^([a-zA-Z])+([\.a-zA-Z0-9_-])+$')]} ></td>
+	<td><input type='text' name='DOMAIN_NAME' value='$dhcpsettings{'DOMAIN_NAME'}' id='domain_name' @{[jsvalidregex('domain_name','^([a-zA-Z])+([\.a-zA-Z0-9_-])+$', 'true')]} ></td>
 	<td>$tr{'nis_domainc'}</TD>
-	<td><input type='text' name='NIS_DOMAIN' value='$dhcpsettings{'NIS_DOMAIN'}' id='nis_domain' @{[jsvalidregex('nis_domain','^([a-zA-Z])+([\.a-zA-Z0-9_-])+$')]} ></td>
+	<td><input type='text' name='NIS_DOMAIN' value='$dhcpsettings{'NIS_DOMAIN'}' id='nis_domain' @{[jsvalidregex('nis_domain','^([a-zA-Z])+([\.a-zA-Z0-9_-])+$','true')]} ></td>
 </tr>
 <tr>
 	<td>$tr{'primary nisc'}</TD>
-	<td><input type='text' name='NIS1' value='$dhcpsettings{'NIS1'}' id='nis1' @{[(jsvalidip('nis1'))]}></td>
+	<td><input type='text' name='NIS1' value='$dhcpsettings{'NIS1'}' id='nis1' @{[(jsvalidip('nis1','true'))]}></td>
 	<td>$tr{'secondary nisc'}</TD>
-	<td><input type='text' name='NIS2' value='$dhcpsettings{'NIS2'}' id='nis2' @{[(jsvalidip('nis2'))]}></td>
+	<td><input type='text' name='NIS2' value='$dhcpsettings{'NIS2'}' id='nis2' @{[(jsvalidip('nis2','true'))]}></td>
 </tr>
 <tr>
 	<td>$tr{'enabled'}</td>

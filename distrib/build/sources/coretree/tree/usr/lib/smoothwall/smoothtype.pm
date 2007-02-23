@@ -483,17 +483,17 @@ sub jsvalidregex
 {
 	my ( $id, $expr, $blank ) = @_;
 	$blank = 'false' if ( not defined $blank or $blank ne "true" );
-	my $ret = &script("validregex('$id','$expr', '$blank')");
-	push @_validation_items, "validregex('$id','$expr','$blank')" ;
+	my $ret = &script("validregex('$id','$expr', $blank)");
+	push @_validation_items, "validregex('$id','$expr',$blank)" ;
 	return $ret;
 }
 
 sub jsvalidnumber
 {
-	my ( $id, $min, $max, $expr ) = @_;
+	my ( $id, $min, $max, $blank ) = @_;
 	$blank = 'false' if ( not defined $blank or $blank ne "true" );
-	my $ret = &script("validnumber('$id', $min, $max, '$expr')");
-	push @_validation_items, "validnumber('$id', $min, $max, '$expr')" ;
+	my $ret = &script("validnumber('$id', $min, $max, $blank)");
+	push @_validation_items, "validnumber('$id', $min, $max, '$blank')" ;
 	return $ret;
 }
 

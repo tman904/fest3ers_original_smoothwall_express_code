@@ -155,7 +155,7 @@ print <<END
 	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' id='dstiaddress' @{[jsvalidip('dstiaddress')]}></td>
 </tr>
 <tr>
-	@{[&portlist('SERVICE', $tr{'application servicec'}, 'DEST_PORT', $tr{'destination portc'}, $service)]}
+	@{[&portlist('SERVICE', $tr{'application servicec'}, 'DEST_PORT', $tr{'destination portc'}, $service, { blank => 'true'} )]}
 </tr>
 <tr>	
 </table>

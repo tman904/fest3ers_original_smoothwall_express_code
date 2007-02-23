@@ -305,7 +305,7 @@ function validnumber( field,lower, upper, allowempty )
 	var value = document.getElementById(field).value;
 	var valid = false;
 	if( value == undefined || value == "" ) {
-		value = ( allowempty != true );
+		valid = allowempty;
 	} else {
 		if ( value >= lower && value <= upper ){
 			valid = false;
@@ -326,8 +326,10 @@ function validregex(field,regex,blank)
 	var inputval = document.getElementById(field).value;
 	var valid = false;
 
-	if( inputval == "" && blank == true){
-		valid = true;
+var dbg = document.getElementById('dbg');
+
+	if( inputval == undefined || inputval == ""){
+		valid = !blank;
 	} else {
 		var re = new RegExp( regex );
 		var ma = re.exec( inputval );
