@@ -611,7 +611,6 @@ print <<END
 <TABLE WIDTH='80%'>
 <TR>
 	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save'}'></TD>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'restore'}'></TD>
 </TR>
 </TABLE>
 </DIV>

@@ -75,7 +75,7 @@
 'sspreferences' => 'preferences',
 'sspop3 proxy' => 'pop3 proxy',
 'preferences' => 'Preferences',
-'user interface' => 'User interface',
+'user interface' => 'User interface:',
 'powered by' => 'powered by',
 'alt home' => 'Home', # alt
 'alt information' => 'Information', # alt
@@ -448,7 +448,7 @@
 'smoothwall is rebooting' => 'SmoothWall is rebooting.',
 
 # preferences
-'ui menus' => 'Drop Down Menus:',
+'ui menus' => 'Drop down menus:',
 
 # status.cgi
 'web server' => 'Web server',
