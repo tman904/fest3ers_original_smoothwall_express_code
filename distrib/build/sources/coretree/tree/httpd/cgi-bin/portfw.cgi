@@ -61,6 +61,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 			$cgiparams{'DEST_PORT'} = 0; }
 	}
 
+	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'}; }	
+
 	unless (&validip($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
@@ -79,7 +81,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	{
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'SRC_PORT'},$cgiparams{'DEST_IP'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'}\n";
+		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'SRC_PORT'},$cgiparams{'DEST_IP'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
 		undef %cgiparams;
 
@@ -131,6 +133,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'DEST_IP'} = $temp[3];
 				$cgiparams{'DEST_PORT'} = $temp[4];
 				$cgiparams{'ENABLED'} = $temp[5];
+				$cgiparams{'COMMENT'} = $temp[6];
 				$service = $temp[2];
 				$dst_service = $temp[4];
 
@@ -173,10 +176,15 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <table style='width: 100%;'>
 <tr>
+	<td style='width: 25%;'>$tr{'protocolc'}</td>
+	<td style='width: 25%;'>
+		<select name='PROTOCOL'>
+			<option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP
+			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP
+		</select>
+	</td>
 	<td style='width: 25%;'>$tr{'sourcec'}</td>
 	<td style='width: 25%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}' id='extaddress' @{[jsvalidip('extaddress')]}></td>
-	<td style='width: 25%;'></td>
-	<td style='width: 25%;'></td>
 </tr>
 <tr>
 	@{[&portlist('SRC_PORT_SEL', $tr{'source port or rangec'}, 'SRC_PORT', $tr{'portc'}, $service, { 'ungrouped' => 'true' })]}
@@ -191,15 +199,13 @@ print <<END
 	@{[&portlist('DEST_PORT_SEL', $tr{'destination portc'}, 'DEST_PORT', $tr{'portc'}, $dst_service, { 'ungrouped' => 'true', 'blank' => 'true', 'blob' => 'true' } )]}
 </tr>
 <tr>
-	<td>$tr{'protocolc'}</td>
-	<td>
-		<select name='PROTOCOL'>
-			<option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP
-			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP
-		</select>
-	</td>
-	<td>$tr{'enabled'}<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
-	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
+	<td>$tr{'comment'}</td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
+</tr>
+<tr>
+	<td>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
+	<td colspan='2' style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
 </tr>
 </table>
 <br/>

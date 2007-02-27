@@ -72,6 +72,8 @@ my $errormessage = '';
 if ($cgiparams{'ACTION'} eq $tr{'add'})
 {
 	unless(&validipormask($cgiparams{'SRC_IP'})) { $errormessage = $tr{'source ip bad'}; }
+	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'}; }	
+
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -79,7 +81,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	{
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$cgiparams{'SRC_IP'},$cgiparams{'LOG'},$cgiparams{'TARGET'},$cgiparams{'ENABLED'}\n";
+		print FILE "$cgiparams{'SRC_IP'},$cgiparams{'LOG'},$cgiparams{'TARGET'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
 
 		my $column = $cgiparams{ 'COLUMN' };
@@ -135,6 +137,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'LOG'} = $temp[1];
 				$cgiparams{'TARGET'} = $temp[2];
 				$cgiparams{'ENABLED'} = $temp[3];
+				$cgiparams{'COMMENT'} = $temp[4];
 			}
 		}
 		close(FILE);
@@ -188,6 +191,10 @@ print <<END
 $tr{'logc'}<INPUT TYPE='checkbox' NAME='LOG' $checked{'LOG'}{'on'}>
 </TD>
 </TR>
+<tr>
+	<td>$tr{'comment'}</td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
+</tr>
 </TABLE>
 <TABLE WIDTH='100%'>
 <TR>
@@ -242,6 +249,11 @@ my %render_settings = (
 					size   => 15,
 					mark   => ' ',
 				},
+				{ 
+					column => '5',
+					title => "$tr{'comment'}",
+					break => 'line',
+				}
 			]
 			);
 

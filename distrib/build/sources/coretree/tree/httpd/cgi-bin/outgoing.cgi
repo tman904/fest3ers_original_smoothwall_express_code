@@ -86,6 +86,7 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'add'} )
 	my $enabled   = $cgiparams{'RULEENABLED'};
 	my $service   = $cgiparams{'SERVICE'};
 	my $port      = $cgiparams{'PORT'};
+	my $comment   = $cgiparams{'RULECOMMENT'};
 
 	if ( $service eq "user" )
 	{
@@ -99,7 +100,7 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'add'} )
 	{	
 		open(FILE,">>$config") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$interface,$enabled,$service\n";
+		print FILE "$interface,$enabled,$service,$comment\n";
 		close(FILE);
 		
 		my $success = message('setoutgoing');
@@ -146,6 +147,7 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or
 				my @temp = split(/\,/,$line);
 				$cgiparams{'INTERFACE'} = $temp[0];
 				$cgiparams{'RULEENABLED'} = $temp[1];
+				$cgiparams{'RULECOMMENT'} = $temp[3];
 				$service = $temp[2];
 			}
 		}
@@ -162,6 +164,7 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 {
 	my $machine = $cgiparams{'MACHINE'};
 	my $enabled = $cgiparams{'MACHINEENABLED'};
+	my $comment = $cgiparams{'MACHINECOMMENT'};
 
 	unless ( &validip( $machine ) ){
 		$errormessage = "invalid ip"; }
@@ -170,10 +173,11 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 	{
 		open(FILE,">>$machineconfig") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$machine,$enabled\n";
+		print FILE "$machine,$enabled,$comment\n";
 		close(FILE);
 		$cgiparams{'MACHINE'} = "";
 		$cgiparams{'MACHINEENABLED'} = "on";
+		$cgiparams{'MACHINECOMMENT'} = "";
 
 		my $success = message('setoutgoing');
 	
@@ -219,6 +223,7 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 				my @temp = split(/\,/,$line);
 				$cgiparams{'MACHINE'} = $temp[0];
 				$cgiparams{'MACHINEENABLED'} = $temp[1];
+				$cgiparams{'MACHINECOMMENT'} = $temp[3];
 				$service = $temp[2];
 			}
 		}
@@ -291,14 +296,20 @@ foreach my $colour (sort keys %interfaces) {
 print qq{
 		</select>
 	</td>
-	<td style='width: 25%;'>$tr{'enabled'}</td>
-	<td style='width: 25%;'><input type='checkbox' name='RULEENABLED' $checked{$cgiparams{'RULEENABLED'}}></td>
+	<td style='width: 25%;'></td>
+	<td style='width: 25%;'></td>
 </tr>
 <tr>
 	@{[&portlist('SERVICE', $tr{'application servicec'}, 'PORT', $tr{'portc'}, $service)]}
 </tr>
 <tr>
-	<td colspan='4' style='text-align: center;'>
+	<td>$tr{'comment'}</td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='RULECOMMENT' value='$cgiparams{'RULECOMMENT'}' id='rulecomment' @{[jsvalidcomment('rulecomment')]}  ></td>
+</tr>
+<tr>
+	<td style='width: 25%;'>$tr{'enabled'}</td>
+	<td style='width: 25%;'><input type='checkbox' name='RULEENABLED' $checked{$cgiparams{'RULEENABLED'}}></td>
+	<td colspan='2' style='text-align: center;'>
 		<input type="submit" name="ACTION" value="$tr{'add'}">
 	</td>
 </tr>
@@ -378,11 +389,17 @@ print qq{
 <tr>
 	<td style='width: 25%;'>$tr{'ip addressc'}</td>
 	<td style='width: 25%;'><input type='text' name='MACHINE' id='address' @{[jsvalidip('address')]} value='$cgiparams{'MACHINE'}'/></td>
-	<td style='width: 25%;'>$tr{'enabled'}</td>
-	<td style='width: 25%;'><input type='checkbox' name='MACHINEENABLED' $checked{$cgiparams{'MACHINEENABLED'}}></td>
+	<td style='width: 25%;'></td>
+	<td style='width: 25%;'></td>	
 </tr>
 <tr>
-	<td colspan='4' style='text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'add'}'></td>
+	<td>$tr{'comment'}</td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='MACHINECOMMENT' value='$cgiparams{'MACHINECOMMENT'}' id='machinecomment' @{[jsvalidcomment('machinecomment')]}  ></td>
+</tr>
+<tr>
+	<td>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='MACHINEENABLED' $checked{$cgiparams{'MACHINEENABLED'}}></td>
+	<td colspan='2' style='text-align: center;'><input type='submit' name='MACHINEACTION' value='$tr{'add'}'></td>
 </tr>
 </table>
 </form>

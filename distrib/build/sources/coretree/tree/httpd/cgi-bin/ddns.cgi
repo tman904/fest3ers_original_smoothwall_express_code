@@ -199,7 +199,7 @@ print <<END
 </TR>
 <TR>
 	<td>$tr{'comment'}</td>
-	<td colspan='3'><input type='text' name='COMMENT' value='$cgiparams{'COMMENT'}'></td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' id='comment' @{[jsvalidcomment('comment')]} value='$cgiparams{'COMMENT'}'></td>
 </tr>
 </TABLE>
 <TABLE WIDTH='100%'>

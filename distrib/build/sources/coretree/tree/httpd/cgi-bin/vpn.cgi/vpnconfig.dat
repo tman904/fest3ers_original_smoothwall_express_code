@@ -32,6 +32,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	unless (&validipandmask($cgiparams{'RIGHT_SUBNET'})) {
 		$errormessage = $tr{'right subnet is invalid'}; }
 
+	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'};  }
+
 	unless ($timesettings{'SECRET1'} and ($timesettings{'SECRET1'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
 		$errormessage = $tr{'bad password'};
 	}
@@ -51,7 +53,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	{
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$cgiparams{'NAME'},$cgiparams{'LEFT'},$cgiparams{'LEFT_SUBNET'},$cgiparams{'RIGHT'},$cgiparams{'RIGHT_SUBNET'},$cgiparams{'SECRET1'},$cgiparams{'ENABLED'},$cgiparams{'COMPRESSION'}\n";
+		print FILE "$cgiparams{'NAME'},$cgiparams{'LEFT'},$cgiparams{'LEFT_SUBNET'},$cgiparams{'RIGHT'},$cgiparams{'RIGHT_SUBNET'},$cgiparams{'SECRET1'},$cgiparams{'ENABLED'},$cgiparams{'COMPRESSION'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
 		undef %cgiparams;
 		&writeipsecfiles();
@@ -99,6 +101,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'SECRET2'} = $temp[5];
 				$cgiparams{'ENABLED'} = $temp[6];
 				$cgiparams{'COMPRESSION'} = $temp[7];
+				$cgiparams{'COMMENT'} = $temp[8];
 			}
 		}
 		close(FILE);
@@ -174,8 +177,8 @@ print <<END
 <TR>
 <TD WIDTH='25%' CLASS='base'>$tr{'namec'}</TD>
 <TD WIDTH='25%'><INPUT TYPE='TEXT' NAME='NAME' VALUE='$cgiparams{'NAME'}' id='name' @{[jsvalidregex('name','^[a-zA-Z]+$')]}></TD>
-<TD WIDTH='25%'>&nbsp;</TD>
-<TD WIDTH='25%'>&nbsp;</TD>
+<TD WIDTH='25%'>Compression:</tD>
+<TD WIDTH='25%'><INPUT TYPE='CHECKBOX' NAME='COMPRESSION' $checked{'COMPRESSION'}{'on'}></TD>
 <TR>
 <TD CLASS='base'>$tr{'leftc'}</TD>
 <TD><INPUT TYPE=TEXT NAME='LEFT' VALUE='$cgiparams{'LEFT'}' id='left' @{[jsvalidip('left')]}></TD>
@@ -198,12 +201,16 @@ print <<END
 <TD COLSPAN='4'>
 <INPUT TYPE='PASSWORD' NAME='SECRET2' VALUE='$cgiparams{'SECRET2'}' SIZE='40' id='secret2' @{[jsvalidregex('secret2','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 </TR>
+<tr>
+	<td>$tr{'comment'}</td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
+</tr>
 </TABLE>
 <TABLE WIDTH='100%'>
 <TR>
-<TD WIDTH='33%' ALIGN='CENTER'>Compression:<INPUT TYPE='CHECKBOX' NAME='COMPRESSION' $checked{'COMPRESSION'}{'on'}></TD>
-<TD WIDTH='33%' ALIGN='CENTER'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
-<TD WIDTH='33%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
+<TD WIDTH='25%' ALIGN='CENTER'>$tr{'enabled'}</TD>
+<TD WIDTH='25%' ALIGN='CENTER'><INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
+<TD WIDTH='50%' colspan='2' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
 </TR>
 </TABLE>
 END
@@ -330,6 +337,7 @@ sub writeipsecfiles()
 		$conn{'SECRET'} = $temp[5];
 		$conn{'ENABLED'} = $temp[6];
 		$conn{'COMPRESSION'} = $temp[7];		
+		$conn{'COMMENT'} = $temp[8];
 
 		if ($conn{'ENABLED'} eq 'on')
 		{

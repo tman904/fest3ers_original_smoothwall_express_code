@@ -42,6 +42,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		else {
 			$cgiparams{'EXT'} = '0.0.0.0/0'; }
 	}
+
+	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'}; }	
 	unless(&validportrange($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; }
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
@@ -50,7 +52,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	{
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'}\n";
+		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
 		undef %cgiparams;
 		$cgiparams{'COLUMN'} = 1;
@@ -101,6 +103,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'EXT'} = $temp[1];
 				$cgiparams{'DEST_PORT'} = $temp[2];
 				$cgiparams{'ENABLED'} = $temp[3];
+				$cgiparams{'COMMENT'} = $temp[4];
 			}
 		}
 		close(FILE);
@@ -165,6 +168,10 @@ print <<END
 <TD CLASS='base'><FONT COLOR='$colourred'>$tr{'destination portc'}</FONT></TD>
 <TD><INPUT TYPE='TEXT' NAME='DEST_PORT' VALUE='$cgiparams{'DEST_PORT'}' SIZE='5' id='dest_port' @{[jsvalidport('dest_port')]}></TD>
 </TR>
+<tr>
+	<td>$tr{'comment'}</td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
+</tr>
 </TABLE>
 <TABLE WIDTH='100%'>
 <TR>
@@ -202,7 +209,7 @@ my %render_settings =
 			size   => 30,
 		},
 		{
-			column => '8',
+			column => '4',
 			title  => "$tr{'enabledtitle'}",
 			size   => 10,
 			tr     => 'onoff',
@@ -212,6 +219,11 @@ my %render_settings =
 			title  => "$tr{'mark'}", 
 			size   => 10,
 			mark   => ' ',
+		},
+		{
+			title  => "$tr{'comment'}",
+			break  => 'line',
+			column => '5',
 		},
 	]
 );

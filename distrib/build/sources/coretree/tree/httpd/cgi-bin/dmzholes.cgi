@@ -43,6 +43,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		unless(&validportrange($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; }
 	}
 	unless(&validip($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
+	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'}; }	
+	
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -50,7 +52,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	{
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'SRC_IP'},$cgiparams{'DEST_IP'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'}\n";
+		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'SRC_IP'},$cgiparams{'DEST_IP'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
 		undef %cgiparams;
 		
@@ -101,6 +103,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'DEST_IP'} = $temp[2];
 				$cgiparams{'DEST_PORT'} = $temp[3];
 				$cgiparams{'ENABLED'} = $temp[4];
+				$cgiparams{'COMMENT'} = $temp[5];
 				$service = $temp[3];
 			}
 		}
@@ -157,7 +160,10 @@ print <<END
 <tr>
 	@{[&portlist('SERVICE', $tr{'application servicec'}, 'DEST_PORT', $tr{'destination portc'}, $service, { blank => 'true'} )]}
 </tr>
-<tr>	
+<tr>
+	<td>$tr{'comment'}</td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
+</tr>
 </table>
 <table style='width: 100%;'>
 	<tr>
