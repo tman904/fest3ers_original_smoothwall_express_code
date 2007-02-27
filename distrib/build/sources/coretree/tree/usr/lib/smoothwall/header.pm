@@ -13,7 +13,7 @@ require Exporter;
 our @_validation_items;
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr @_validation_items );
+@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr @_validation_items );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -45,13 +45,15 @@ $thisscript = basename($ENV{'SCRIPT_NAME'});
 # customised settings (such as languages)
 
 &readhash("${swroot}/main/settings", \%settings);
-&readhash("${swroot}/main/ui/settings", \%uisettings);
+&readhash("${swroot}/main/uisettings", \%uisettings);
 $language = $settings{'LANGUAGE'};
 
 if ($language =~ /^(\w+)$/) {$language = $1;}
-require "${swroot}/langs/base.pl";
-require "${swroot}/langs/${language}.pl";
-require "${swroot}/main/ui/alertboxes.en.pl";
+require "/usr/lib/smoothwall/langs/base.pl";
+require "/usr/lib/smoothwall/langs/${language}.pl";
+
+require "/usr/lib/smoothwall/langs/alertboxes.base.pl";
+require "/usr/lib/smoothwall/langs/alertboxes.${language}.pl";
 
 # Display the page HTTP header
 
@@ -69,12 +71,12 @@ sub showhttpheaders
 
 sub showmenu
 {
+	my $menuprefix = '/usr/lib/smoothwall/menu/';
 	$scriptname = $_[0];
 
 	# load the list of sections from the relevant location.
-        opendir(DIR, "/var/smoothwall/menu/");
+        opendir(DIR, "$menuprefix/");
         my @files = grep {!/\./} readdir(DIR);
-
 
 	my $first = "";
 
@@ -82,9 +84,9 @@ sub showmenu
 	my @clear_sections;
 
 	foreach my $file ( sort @files ){
-		if ( -d "/var/smoothwall/menu/$file" ){
+		if ( -d "$menuprefix/$file" ){
 			# this is a section ....
-		        opendir(DIR2, "/var/smoothwall/menu/$file/");
+		        opendir(DIR2, "$menuprefix/$file/");
 		        my @pages = grep {/\.list/} readdir(DIR2);
 
 			my $section = "no";
@@ -92,7 +94,7 @@ sub showmenu
 
 			foreach my $page ( sort @pages ){
 				my $detail;
-				open $detail, "</var/smoothwall/menu/$file/$page" or next;
+				open $detail, "<$menuprefix/$file/$page" or next;
 				my ( $title, $link ) = split /:/, <$detail>;
 				chomp $link;
 				my ( $menu, $pos ) = ( $file =~ /(\d{2})(\d{2}).*/ );
@@ -592,6 +594,17 @@ sub log
 {
 	system('/usr/bin/logger', '-t', 'smoothwall', $_[0]);
 }
+
+sub pipeopen
+{
+	my $ret;
+	
+	open(PIPE, '-|') || exec(@_) or die "Couldn't run @_";
+	while (<PIPE>) { $ret .= $_; }
+	close (PIPE);
+
+	return $ret;
+}	
 
 sub age
 {

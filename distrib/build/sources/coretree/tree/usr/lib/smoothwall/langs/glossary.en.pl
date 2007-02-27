@@ -4,8 +4,8 @@
 #
 # (c) The SmoothWall Team
 
-%tr = (
+%glossary = (
 
-%basetr
+%baseglossary
 
 );

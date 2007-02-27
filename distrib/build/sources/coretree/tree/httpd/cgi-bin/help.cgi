@@ -13,11 +13,8 @@ use header qw( :standard );
 # this is similar to the TR hash, but only required here, and therefore not
 # included in it, (it could do with replacing anyhow)
 
-require "${swroot}/langs/glossary.pl";
-
-if ( -e "${swroot}/langs/${language}_glossary.pl" ){
-	require "${swroot}/langs/${language}_glossary.pl";
-}
+require "/usr/lib/smoothwall/langs/glossary.base.pl";
+require "/usr/lib/smoothwall/langs/glossary.${language}.pl";
 
 my $needhelpwith = $ENV{'QUERY_STRING'};
 
