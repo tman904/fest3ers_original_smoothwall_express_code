@@ -24,13 +24,17 @@
 extern "C" {
 	int load(std::vector<CommandFunctionPair> & );
 	int set_updown(std::vector<std::string> & parameters, std::string & response);
+	int cycle_networking(std::vector<std::string> & parameters, std::string & response);
 }
 
 int load(std::vector<CommandFunctionPair> & pairs)
 {
 	/* CommandFunctionPair name("command", "function"); */
 	CommandFunctionPair set_updown_function("updown", "set_updown", 0, 0);
+	CommandFunctionPair cycle_networking_function("cyclenetworking", "cycle_networking", 0, 0);
+	
 	pairs.push_back(set_updown_function);
+	pairs.push_back(cycle_networking_function);
 
 	return (0);
 }
@@ -50,5 +54,26 @@ int set_updown(std::vector<std::string> & parameters, std::string & response)
 	else
 		response = std::string(choice == "UP" ? "updown started" : "updown stopped");
 
+	return error;
+}
+
+int cycle_networking(std::vector<std::string> & parameters, std::string & response)
+{
+	int error = 0;
+	
+	error = simplesecuresysteml("/etc/rc.d/rc.netaddress.down", NULL);
+	if (error)
+	{
+		response = "Unable to take down networking";
+		return error;
+	}
+	
+	error = simplesecuresysteml("/etc/rc.d/rc.netaddress.up", NULL);
+	if (error)
+	{
+		response = "Unable to bring up networking";
+		return error;
+	}
+	
 	return error;
 }
