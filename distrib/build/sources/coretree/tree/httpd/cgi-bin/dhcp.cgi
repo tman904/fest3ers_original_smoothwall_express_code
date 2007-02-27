@@ -488,7 +488,6 @@ print <<END
 	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
 </tr>
 </table>
-</form>
 END
 ;
 
@@ -496,13 +495,12 @@ END
 
 &openbox($tr{'add a new static assignment'});
 print <<END
-<form method='post'>
 <table class='centered'>
 <tr>
 	<td style='width: 25%;'>$tr{'hostnamec'}</td>
 	<td style='width: 25%;'><input type='text' name='STATIC_HOST' value='$dhcpsettings{'STATIC_HOST'}' id='static_host' @{[jsvalidregex('static_host','^([a-zA-Z])+([\.a-zA-Z0-9_-])+$')]}></td>
 	<td style='width: 25%;'>$tr{'descriptionc'}</td>
-	<td style='width: 25%;'><input type='text' name='STATIC_DESC' value='$dhcpsettings{'STATIC_DESC'}' id='static_desc' @{[jsvalidregex('static_desc','^([a-zA-Z0-9_-]+)$')]} ></td>
+	<td style='width: 25%;'><input type='text' name='STATIC_DESC' value='$dhcpsettings{'STATIC_DESC'}' id='static_desc' @{[jsvalidregex('static_desc','^([a-zA-Z0-9_-]+)$','true')]} ></td>
 </tr>
 <tr>
 	<td>$tr{'mac addressc'}</td>
@@ -543,7 +541,7 @@ my %render_settings =
 			sort   => \&ipcompare,
 		},
 		{
-			column => '3',
+			column => '2',
 			title  => "$tr{'mac address'}",
 			size   => 20,
 			sort   => 'cmp',
@@ -562,69 +560,15 @@ my %render_settings =
 		},
 		{ 
 			column => '4',
-			title => "$tr{'comment'}",
+			title => "$tr{'description'}",
 			break => 'line',
 		}
 	]
 );
 
-use Data::Dumper;
-print STDERR Dumper %dhcpsettings;
-
 &displaytable( "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}", \%render_settings, $dhcpsettings{'ORDER'}, $dhcpsettings{'COLUMN'} );
 
-#
-#print <<END
-#<form method='post'>
-#<table class='centered'>
-#<tr>
-#<th style='width: 25%;'>$tr{'hostname'}</th>
-#<th style='width: 25%;'>$tr{'ip address'}</th>
-#<th style='width: 20%;'>$tr{'mac address'}</th>
-#<th style='width: 10%;'>$tr{'enabledtitle'}</th>
-#<th style='width: 10%;'>$tr{'mark'}</th>
-#</tr>
-#<tr>
-#<th colspan='5'>$tr{'description'}</th>
-#</tr>
-#END
-#;
-
-#my $id = 0;
-#open(RULES, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
-#while (<RULES>)
-#{
-#	$id++;
-#	chomp($_);
-#	my @temp = split(/\,/,$_);
-#	my $row;
-#	if ($id % 2) {
-#		$row = "<tr class='dark'>\n"; }
-#	else {
-#		$row = "<tr class='light'>\n"; }
-#
-#	if ($temp[4] eq 'on') { $gif = 'on.gif'; }
-#		else { $gif = 'off.gif'; 
-#	}
-#
-#	print <<END
-#$row
-#<td style='text-align: center;'>$temp[0]</td>
-#<td style='text-align: center;'>$temp[2]</td>
-#<td style='text-align: center;'>$temp[1]</td>
-#<td style='text-align: center;'><img src='/ui/img/$gif'></td>
-#<td style='text-align: center;'><input type='checkbox' name='$id'></td
-#</tr>
-#END
-#;
-#	if ( defined $temp[3] and $temp[3] ne "" ){
-#		print "$row<td colspan='5' style='text-align: center;'>$temp[3]</td></tr>\n";
-#	}
-#}
-#close(RULES);
-#
 print <<END
-<!--</table>-->
 <table class='blank'>
 <tr>
 <td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>

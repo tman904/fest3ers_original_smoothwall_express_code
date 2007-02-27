@@ -46,6 +46,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	unless ($cgiparams{'DOMAIN'} ne '') { $errormessage = $tr{'domain not set'}; }
 	unless ($cgiparams{'DOMAIN'} =~ /^[a-zA-Z_0-9.-]+$/) { $errormessage = $tr{'invalid domain name'}; }
 	unless ($cgiparams{'DOMAIN'} =~ /[.]/) { $errormessage = $tr{'invalid domain name'}; }
+	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'};  }
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -63,7 +64,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	{
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
-		print FILE "$cgiparams{'SERVICE'},$cgiparams{'HOSTNAME'},$cgiparams{'DOMAIN'},$cgiparams{'PROXY'},$cgiparams{'WILDCARDS'},$cgiparams{'LOGIN'},$cgiparams{'PASSWORD'},$cgiparams{'ENABLED'}\n";
+		print FILE "$cgiparams{'SERVICE'},$cgiparams{'HOSTNAME'},$cgiparams{'DOMAIN'},$cgiparams{'PROXY'},$cgiparams{'WILDCARDS'},$cgiparams{'LOGIN'},$cgiparams{'PASSWORD'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
 		undef %cgiparams;
 		$cgiparams{'COLUMN'} = 1;
@@ -113,6 +114,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'LOGIN'} = $temp[5];
 				$cgiparams{'PASSWORD'} = $temp[6];
 				$cgiparams{'ENABLED'} = $temp[7];
+				$cgiparams{'COMMENT'} = $temp[8];
 			}
 		}
 		close(FILE);
@@ -195,6 +197,10 @@ print <<END
 	<TD CLASS='base'>$tr{'password'}</TD>
 	<TD><INPUT TYPE='PASSWORD' NAME='PASSWORD' VALUE='$cgiparams{'PASSWORD'}' id='password' @{[jsvalidregex('password','^[a-zA-Z0-9\@\s~#!\(\)&^\%\$£\*]+$')]}></TD>
 </TR>
+<TR>
+	<td>$tr{'comment'}</td>
+	<td colspan='3'><input type='text' name='COMMENT' value='$cgiparams{'COMMENT'}'></td>
+</tr>
 </TABLE>
 <TABLE WIDTH='100%'>
 <TR>
@@ -257,6 +263,12 @@ my %render_settings =
 			size   => 10,
 			mark   => ' ',
 		},
+		{ 
+			column => '9',
+			title => "$tr{'comment'}",
+			break => 'line',
+		},
+
 	]
 );
 

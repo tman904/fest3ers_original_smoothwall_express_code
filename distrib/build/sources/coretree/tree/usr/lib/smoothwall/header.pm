@@ -13,7 +13,7 @@ require Exporter;
 our @_validation_items;
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname basename connectedstate %tr @_validation_items );
+@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -734,6 +734,19 @@ sub validmac
 		return 1; }
 	return 0;
 }
+
+sub validcomment
+{
+	$_ = $_[0];
+	if (/^[\w\d\.\-,\(\)\@£\$!\%\^\&\*=\+_ ]*$/){
+                if ( length $_ > 255 ){
+                        return 0;
+                }
+                return 1;
+        }
+	return 0;
+}
+
 
 sub validhostname
 {

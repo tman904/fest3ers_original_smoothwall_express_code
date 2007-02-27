@@ -278,6 +278,29 @@ function validmac( field, blank )
 	}
 }
 
+
+function validcomment( field, blank )
+{	
+	var inputval = document.getElementById(field).value;
+	var valid = false;
+
+	var errored = !/^[\w\d\.\-,\(\)\@£\$!\%\^\&\*=\+_ ]*$/.test(inputval);
+
+	if(errored) {
+		valid = true;
+	}
+	if( inputval == "" && blank == true){
+		valid = true;
+	}
+
+	if ( valid ){
+		_error(field);
+	} else {
+		_ok(field);
+	}
+}
+
+
 function validhostname( field, blank )
 {	
 	var inputval = document.getElementById(field).value;
