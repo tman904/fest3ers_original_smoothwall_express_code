@@ -248,6 +248,10 @@ print <<END
 <td style='width: 25%;'>&nbsp;</td>
 </tr>
 <tr class='$class'>
+<td><strong>$tr{'comment'}</strong></td>
+<td colspan='3'>$temp[8]</td>
+</tr>
+<tr class='$class'>
 <td><strong>$tr{'leftc'}</strong> $temp[1]</td>
 <td><strong>$tr{'left subnetc'}</strong> $temp[2]</td>
 <td><strong>$tr{'rightc'} </strong>$temp[3]</td>
