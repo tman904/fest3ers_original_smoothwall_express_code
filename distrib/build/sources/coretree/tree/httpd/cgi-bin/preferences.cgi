@@ -9,56 +9,63 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
-my %cgiparams;
-my $death = 0;
-my $rebirth = 0;
+my %cgiparams; 
 
 &showhttpheaders();
 
 $cgiparams{'ACTION'} = '';
+$cgiparams{'MENU'} = 'off';
+
 &getcgihash(\%cgiparams);
-
-my %uisettings;
-my %checked;
-$checked{'on'} = " checked";
-
-&readhash("${swroot}/main/ui/settings", \%uisettings);
 
 if ($cgiparams{'ACTION'} eq $tr{'save'})
 {
-	$uisettings{'MENU'} = $cgiparams{'MENU'};
-	&writehash("${swroot}/main/ui/settings", \%uisettings);
+	&writehash("${swroot}/main/uisettings", \%cgiparams);
 }
 
-use Data::Dumper;
-print STDERR Dumper %uisettings;
-	
+if ($cgiparams{'ACTION'} eq '')
+{
+	$cgiparams{'MENU'} = 'on';
+}
+
+my %checked;
+
+$checked{'MENU'}{$cgiparams{'MENU'}} = " checked";
+
+&readhash("${swroot}/main/uisettings", \%cgiparams);
+
 &openpage( $tr{'preferences'}, 1, '', 'maintenance');
 
 &openbigbox('100%', 'LEFT');
 
 print "<form method='post'>\n";
 
-&openbox($tr{'user interface'});
+&openbox($tr{'user interfacec'});
 
 print <<END
 <table style='width: 100%;'>
 <tr>
-	<td style='width: 25%;'>$tr{'ui menus'}</td>
-	<td style='width: 25%;'><input type='checkbox' name='MENU' $checked{$uisettings{'MENU'}}></td>
+	<td style='width: 25%;'>$tr{'drop down menus'}</td>
+	<td style='width: 25%;'><input type='checkbox' name='MENU' $checked{'MENU'}{'on'}></td>
 	<td style='width: 25%;'>&nbsp;</td>
 	<td style='width: 25%;'>&nbsp;</td>
-</tr>
-<tr>
-	<td colspan='4' style='text-align: center;'>
-		<input type='submit' name='ACTION' value='$tr{'save'}'>
-	</td>
 </tr>
 </table>
 END
 ;
 
 &closebox();
+
+print <<END
+<table style='width: 100%;'>
+<tr>
+	<td style='width: 100%; text-align: center;'>
+	<input type='submit' name='ACTION' value='$tr{'save'}'>
+	</td>
+</tr>
+</table>
+END
+;
 
 print "</form>\n";
 

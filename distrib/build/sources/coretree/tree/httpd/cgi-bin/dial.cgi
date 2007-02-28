@@ -17,14 +17,14 @@ $cgiparams{'ACTION'} = '';
 
 if ($cgiparams{'ACTION'} eq $tr{'dial'})
 {
-	my $success = message('updown' 'UP');
+	my $success = message('updown', 'UP');
 		
 	if (not defined $success) {
 		&log("Dial failed"); }
 }
 elsif ($cgiparams{'ACTION'} eq $tr{'hangup'})
 {
-	my $success = message('updown' 'DOWN');
+	my $success = message('updown', 'DOWN');
 		
 	if (not defined $success) {
 		&log("Hangup failed"); }
