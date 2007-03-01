@@ -65,8 +65,10 @@ int handledhcp(void)
 	int intfinal = 0;
 	char *final;
 	struct in_addr addr;
-		
+	char greendev[STRING_SIZE];
+	
  	memset(defaults, 0, sizeof(char) * STRING_SIZE * MAX_BOXES);
+ 	memset(greendev, 0, STRING_SIZE);
 	
 	if (!(readkeyvalues(dhcpkv, CONFIG_ROOT "dhcp/settings-green")))
 	{
@@ -82,6 +84,9 @@ int handledhcp(void)
 		errorbox(ctr[TR_UNABLE_TO_OPEN_SETTINGS_FILE]);
 		return 0;
 	}
+
+	/* Get the green dev. */
+	findkey(ethernetkv, "GREEN_DEV", greendev);
 
 	/* Set default values. */	
 	findkey(ethernetkv, "GREEN_NETADDRESS", temp);
@@ -234,9 +239,13 @@ int handledhcp(void)
 				fprintf(file, "\tmax-lease-time %d;\n",	(int) atol(results[MAX_LEASE_TIME]) * 60);
 				fprintf(file, "}\n");
 				fclose(file);
-				chown(CONFIG_ROOT "dhcp/dhcpd.conf", 99, 99);
+
+				file = fopen(CONFIG_ROOT "dhcp/green", "w");
+				fprintf(file, "%s", greendev);
+				fclose(file);
+				
 				if (automode == 0)
-					mysystem("/usr/bin/setuids/restartdhcp");
+					mysystem("/usr/bin/smoothcom dhcpdrestart");
 			}
 			result = 1;
 		}
