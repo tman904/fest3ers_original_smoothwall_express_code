@@ -447,7 +447,7 @@
 'smoothwall is rebooting' => 'SmoothWall is rebooting.',
 
 # preferences
-'ui menus' => 'Drop down menus:',
+'drop down menus' => 'Drop down menus:',
 
 # status.cgi
 'web server' => 'Web server',
