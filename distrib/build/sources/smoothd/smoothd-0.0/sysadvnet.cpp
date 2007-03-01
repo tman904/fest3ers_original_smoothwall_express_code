@@ -38,16 +38,17 @@ int load(std::vector<CommandFunctionPair> & pairs)
 
 int set_advnet(std::vector<std::string> & parameters, std::string & response)
 {
-	struct stat sb;
 	int error = 0;
 	int fd = -1;
+	ConfigVAR settings("/var/smoothwall/advnet/settings");
+	
 	char noping[] = "0\n";
 	char cookies[] = "0\n";
 	std::vector<std::string>ipb;
 
-	if (stat("/var/smoothwall/advnet/noping", &sb) == 0)
+	if (settings["ENABLE_NOPING"] == "on")
 		noping[0] = '1';
-	if (stat("/var/smoothwall/advnet/cookies", &sb) == 0)
+	if (settings["ENABLE_COOKIES"] == "on")
 		cookies[0] = '1';
 
 	if ((fd = open("/proc/sys/net/ipv4/icmp_echo_ignore_all", O_WRONLY)) != -1)
@@ -63,12 +64,18 @@ int set_advnet(std::vector<std::string> & parameters, std::string & response)
 	}
 	
 	ipb.push_back("iptables -F advnet"); // at least flush out any existing rules
-	if (stat("/var/smoothwall/advnet/noigmp", &sb) == 0)
+	if (settings["ENABLE_NOIGMP"] == "on")
 		ipb.push_back("iptables -A advnet -p igmp -j DROP");
 	
-	if (stat("/var/smoothwall/advnet/nomulticast", &sb) == 0)
+	if (settings["EABLE_NOMULTICAST"] == "on")
 		ipb.push_back("iptables -A advnet -d 224.0.0.0/4 -j DROP");
 
+	if (settings["BAD_TRAFFIC"] == "DROP")
+	{
+		ipb.push_back("iptables -A badtraffic -j LOG");
+		ipb.push_back("iptables -A badtraffic -j DROP");
+	}
+	
 	error = ipbatch(ipb);
 
 	if (error)
