@@ -114,7 +114,7 @@ sub showmenu
 					@menu = @tempmenu;
 					$menu_html .= "<td>$first<a class='activemenu' href='/cgi-bin/$menu[ 0 ]->{'href'}'>$section_title</a></td>";
 				} else {
-					if ( defined $uisettings{'MENU'} and $uisettings{'MENU'} eq "on"){
+					unless ( defined $uisettings{'MENU'} and $uisettings{'MENU'} eq "off"){
 						$menu_html .= qq { 
 							<td><div class='menushaddow' id='${section_title}shadow'> 
 						};

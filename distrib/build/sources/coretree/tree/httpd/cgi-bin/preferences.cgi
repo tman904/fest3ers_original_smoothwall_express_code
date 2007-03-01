@@ -28,11 +28,11 @@ if ($cgiparams{'ACTION'} eq '')
 	$cgiparams{'MENU'} = 'on';
 }
 
+&readhash("${swroot}/main/uisettings", \%cgiparams);
+
 my %checked;
 
 $checked{'MENU'}{$cgiparams{'MENU'}} = " checked";
-
-&readhash("${swroot}/main/uisettings", \%cgiparams);
 
 &openpage( $tr{'preferences'}, 1, '', 'maintenance');
 
