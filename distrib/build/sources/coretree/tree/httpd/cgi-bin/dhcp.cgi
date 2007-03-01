@@ -213,7 +213,7 @@ ERROR:
 	&writesettings();
 
 	if ( $errormessage eq "" ){
-		my $success = message('dhcprestart');
+		my $success = message('dhcpdrestart');
 		
 		if (not defined $success) {
 			$errormessage = $tr{'smoothd failure'}; 
@@ -333,7 +333,7 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 
 	&writesettings();
 
-	my $success = message('dhcprestart');
+	my $success = message('dhcpdrestart');
 		
 	if (not defined $success) {
 		$errormessage = $tr{'smoothd failure'}; }
