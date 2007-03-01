@@ -70,6 +70,7 @@ int set_advnet(std::vector<std::string> & parameters, std::string & response)
 	if (settings["EABLE_NOMULTICAST"] == "on")
 		ipb.push_back("iptables -A advnet -d 224.0.0.0/4 -j DROP");
 
+	ipb.push_back("iptables -F badtraffic");
 	if (settings["BAD_TRAFFIC"] == "DROP")
 	{
 		ipb.push_back("iptables -A badtraffic -j LOG");
