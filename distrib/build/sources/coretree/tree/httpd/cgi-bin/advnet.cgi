@@ -19,6 +19,7 @@ $advnetsettings{'ENABLE_COOKIES'} = 'off';
 $advnetsettings{'ENABLE_NOIGMP'} = 'off';
 $advnetsettings{'ENABLE_NOMULTICAST'} = 'off';
 $advnetsettings{'ENABLE_UPNP'} = 'off';
+$advnetsettings{'BAD_TRAFFIC'} = 'REJECT';
 $advnetsettings{'ACTION'} = '';
 &getcgihash(\%advnetsettings);
 
@@ -26,34 +27,12 @@ $errormessage = '';
 if ($advnetsettings{'ACTION'} eq $tr{'save'})
 {
 	&writehash("${swroot}/advnet/settings", \%advnetsettings);
-	if ($advnetsettings{'ENABLE_NOPING'} eq 'on') {
-		system ('/bin/touch', "${swroot}/advnet/noping"); }
-	else {
-		unlink "${swroot}/advnet/noping"; } 
-	if ($advnetsettings{'ENABLE_COOKIES'} eq 'on') {
-		system ('/bin/touch', "${swroot}/advnet/cookies"); }
-	else {
-		unlink "${swroot}/advnet/cookies"; } 
-	if ($advnetsettings{'ENABLE_NOIGMP'} eq 'on') {
-		system ('/bin/touch', "${swroot}/advnet/noigmp"); }
-	else {
-		unlink "${swroot}/advnet/noigmp"; } 
-	if ($advnetsettings{'ENABLE_NOMULTICAST'} eq 'on') {
-		system ('/bin/touch', "${swroot}/advnet/nomulticast"); }
-	else {
-		unlink "${swroot}/advnet/nomulticast"; } 
-	if ($advnetsettings{'ENABLE_UPNP'} eq 'on') {
-		system ('/bin/touch', "${swroot}/advnet/upnp"); }
-	else {
-		unlink "${swroot}/advnet/upnp"; } 
-
-	&log($tr{'restarting advanced networking features'});
 	
 	my $success = message('setadvnet');
-		
+	
 	if (not defined $success) {
 		$errormessage = $tr{'smoothd failure'}; }	
-
+	
 	my $success = message('upnpdrestart');
 		
 	if (not defined $success) {
@@ -82,6 +61,10 @@ $checked{'ENABLE_UPNP'}{'off'} = '';
 $checked{'ENABLE_UPNP'}{'on'} = '';
 $checked{'ENABLE_UPNP'}{$advnetsettings{'ENABLE_UPNP'}} = 'CHECKED';
 
+$selected{'BAD_TRAFFIC'}{'REJECT'} = '';
+$selected{'BAD_TRAFFIC'}{'DROP'} = '';
+$selected{'BAD_TRAFFIC'}{$advnetsettings{'BAD_TRAFFIC'}} = 'SELECTED';
+
 &openpage($tr{'advanced networking features'}, 1, '', 'networking');
 
 &openbigbox('100%', 'LEFT');
@@ -108,8 +91,13 @@ print <<END
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'upnp support'}</TD>
 	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_UPNP' $checked{'ENABLE_UPNP'}{'on'}></TD>
-	<TD WIDTH='25%'>&nbsp;</TD>
-	<TD WIDTH='25%'>&nbsp;</TD>
+	<TD WIDTH='25%' CLASS='base'>$tr{'action to perform on bad external traffic'}</TD>
+	<TD WIDTH='25%'>
+	<SELECT NAME='BAD_TRAFFIC'>
+	<OPTION VALUE='REJECT' $selected{'BAD_TRAFFIC'}{'REJECT'}>$tr{'reject'}
+	<OPTION VALUE='DROP' $selected{'BAD_TRAFFIC'}{'DROP'}>$tr{'drop'}
+	</SELECT>
+	</TD>
 </TR>
 </TABLE>
 END

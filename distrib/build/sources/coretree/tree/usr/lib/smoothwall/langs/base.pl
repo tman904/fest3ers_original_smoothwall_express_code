@@ -758,6 +758,9 @@
 'block and ignore igmp packets' => 'Block and ignore IGMP packets:',
 'block and ignore multicast traffic' => 'Block and ignore multicast traffic:',
 'upnp support' => 'Enable UPnP (Universal Plug and Play) support:',
+'action to perform on bad external traffic' => 'Action to perform on bad external traffic:',
+'reject' => 'Reject',
+'drop' => 'Drop',
 
 # backup.cgi
 'create backup floppy disk' => 'Create backup floppy disk', # button
