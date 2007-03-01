@@ -9,7 +9,7 @@ echo "Restarting DNS proxy"
 
 if [ "$1" != "NOTGREEN" ]; then
 	if [ "$GREEN_DEV" != "" ]; then
-		ifconfig $GREEN_DEV $GREEN_ADDRESS netmask $GREEN_NETMASK broadcast $GREEN_BROADCAST up
+		/sbin/ifconfig $GREEN_DEV $GREEN_ADDRESS netmask $GREEN_NETMASK broadcast $GREEN_BROADCAST up
 	else
 		echo "WARNING: No driver set for GREEN"
 	fi
@@ -17,7 +17,7 @@ fi
 
 if [ "$CONFIG_TYPE" = "1" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "7" ]; then
 	if [ "$ORANGE_DEV" != "" ]; then
-		ifconfig $ORANGE_DEV $ORANGE_ADDRESS netmask $ORANGE_NETMASK broadcast $ORANGE_BROADCAST up
+		/sbin/ifconfig $ORANGE_DEV $ORANGE_ADDRESS netmask $ORANGE_NETMASK broadcast $ORANGE_BROADCAST up
 	else
 		echo "WARNING: No driver set for ORANGE"
 	fi
@@ -25,7 +25,7 @@ fi
 
 if [ "$CONFIG_TYPE" = "4" -o "$CONFIG_TYPE" = "5" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
 	if [ "$PURPLE_DEV" != "" ]; then
-		ifconfig $PURPLE_DEV $PURPLE_ADDRESS netmask $PURPLE_NETMASK broadcast $PURPLE_BROADCAST up
+		/sbin/ifconfig $PURPLE_DEV $PURPLE_ADDRESS netmask $PURPLE_NETMASK broadcast $PURPLE_BROADCAST up
 	else
 		echo "WARNING: No driver set for PURPLE"
 	fi
@@ -34,15 +34,15 @@ fi
 if [ "$CONFIG_TYPE" = "2" -o "$CONFIG_TYPE" = "3" -o "$CONFIG_TYPE" = "6" -o "$CONFIG_TYPE" = "7" ]; then
 	if [ "$RED_DEV" != "" ]; then
 		if [ "$RED_TYPE" = "DHCP" ]; then
-			rm /etc/dhcpc/*.info -f
+			rm /usr/etc/dhcpc/*.info -f
 			/usr/sbin/dhcpcd -h $RED_DHCP_HOSTNAME -R $RED_DEV -c /etc/rc.d/rc.updatered
 		elif [ "$RED_TYPE" = "STATIC" ]; then
-			ifconfig $RED_DEV $RED_ADDRESS netmask $RED_NETMASK broadcast $RED_BROADCAST up
+			/sbin/ifconfig $RED_DEV $RED_ADDRESS netmask $RED_NETMASK broadcast $RED_BROADCAST up
 			if [ "$DEFAULT_GATEWAY" != "" ]; then
-				route add default gw $DEFAULT_GATEWAY
+				/sbin/route add default gw $DEFAULT_GATEWAY
 			fi
 		else
-			ifconfig $RED_DEV 1.1.1.1 netmask 255.255.255.0 broadcast 1.1.1.255 up
+			/sbin/ifconfig $RED_DEV 1.1.1.1 netmask 255.255.255.0 broadcast 1.1.1.255 up
 		fi
 	else
 		echo "WARNING: No driver set for RED"

@@ -6,42 +6,51 @@ echo "Setting up ISDN"
 echo "Setting up ADSL"
 . /etc/rc.d/rc.adsl
 
-modprobe ppp_synctty
-modprobe ppp_async
+/sbin/modprobe ppp_synctty
+/sbin/modprobe ppp_async
 
 echo "Setting up loopback"
 ifconfig lo localhost up
 
+echo "Loading QOS modules"
+/sbin/modprobe sch_sfq
+/sbin/modprobe sch_htb
+
 echo "Loading SPI modules"
-modprobe ip_tables
-modprobe iptable_filter
-modprobe iptable_nat
-modprobe iptable_mangle
-modprobe ipt_LOG
-modprobe ipt_REJECT
-modprobe ipt_REDIRECT
-modprobe ipt_MASQUERADE
-modprobe ipt_ACCOUNT
-modprobe ipt_state
-modprobe xt_tcpudp
+/sbin/modprobe ip_tables
+/sbin/modprobe iptable_filter
+/sbin/modprobe iptable_nat
+/sbin/modprobe iptable_mangle
+/sbin/modprobe ipt_LOG
+/sbin/modprobe ipt_REJECT
+/sbin/modprobe ipt_REDIRECT
+/sbin/modprobe ipt_MASQUERADE
+/sbin/modprobe ipt_ACCOUNT
+/sbin/modprobe ipt_CLASSIFY
+/sbin/modprobe ipt_TOS
+/sbin/modprobe ipt_state
+/sbin/modprobe ipt_multiport
+/sbin/modprobe xt_tcpudp
+/sbin/modprobe xt_length
+/sbin/modprobe xt_CONNMARK
 
 echo "Loading MASQ helper modules"
-modprobe ip_conntrack_irc
-modprobe ip_nat_irc
-modprobe ip_conntrack_ftp
-modprobe ip_nat_ftp
-#modprobe ip_conntrack_mms
-#modprobe ip_nat_mms
-#modprobe ip_conntrack_h323
-#modprobe ip_nat_h323
-#modprobe ip_conntrack_sip
-#modprobe ip_nat_sip
-#modprobe ip_conntrack_quake3 
-#modprobe ip_nat_quake3
-#modprobe ip_conntrack_pptp
-#modprobe ip_conntrack_proto_gre
-#modprobe ip_nat_pptp
-#modprobe ip_nat_proto_gre
+/sbin/modprobe ip_conntrack_irc
+/sbin/modprobe ip_nat_irc
+/sbin/modprobe ip_conntrack_ftp
+/sbin/modprobe ip_nat_ftp
+#/sbin/modprobe ip_conntrack_mms
+#/sbin/modprobe ip_nat_mms
+#/sbin/modprobe ip_conntrack_h323
+#/sbin/modprobe ip_nat_h323
+#/sbin/modprobe ip_conntrack_sip
+#/sbin/modprobe ip_nat_sip
+#/sbin/modprobe ip_conntrack_quake3 
+#/sbin/modprobe ip_nat_quake3
+#/sbin/modprobe ip_conntrack_pptp
+#/sbin/modprobe ip_conntrack_proto_gre
+#/sbin/modprobe ip_nat_pptp
+#/sbin/modprobe ip_nat_proto_gre
 
 # Remove possible leftover files
 rm -f /var/smoothwall/red/*
@@ -50,22 +59,22 @@ for NIC in 0 1 2; do
 	ETHX="eth${NIC}"
 	if [ "$GREEN_DEV" = "$ETHX" ]; then
 		if [ "$GREEN_DRIVER" != "" ]; then
-			modprobe $GREEN_DRIVER $GREEN_DRIVER_OPTIONS
+			/sbin/modprobe $GREEN_DRIVER $GREEN_DRIVER_OPTIONS
 		fi
 	fi
 	if [ "$ORANGE_DEV" = "$ETHX" ]; then
 		if [ "$ORANGE_DRIVER" != "" ]; then
-			modprobe $ORANGE_DRIVER $ORANGE_DRIVER_OPTIONS
+			/sbin/modprobe $ORANGE_DRIVER $ORANGE_DRIVER_OPTIONS
 		fi
 	fi
 	if [ "$RED_DEV" = "$ETHX" ]; then
 		if [ "$RED_DRIVER" != "" ]; then
-			modprobe $RED_DRIVER $RED_DRIVER_OPTIONS
+			/sbin/modprobe $RED_DRIVER $RED_DRIVER_OPTIONS
 		fi
 	fi
 	if [ "$PURPLE_DEV" = "$ETHX" ]; then
 		if [ "$PURPLE_DRIVER" != "" ]; then
-			modprobe $PURPLE_DRIVER $PURPLE_DRIVER_OPTIONS
+			/sbin/modprobe $PURPLE_DRIVER $PURPLE_DRIVER_OPTIONS
 		fi
 	fi
 done

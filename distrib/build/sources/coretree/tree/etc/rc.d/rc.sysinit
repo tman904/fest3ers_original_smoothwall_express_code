@@ -83,7 +83,7 @@ echo "Clearing old files"
 chmod 660 /dev/ttyS*
 chmod 660 /dev/ttyI*
 rm -f /var/run/*.pid
-rm -f /etc/dhcpc/*.pid
+rm -f /usr/etc/dhcpc/*.pid
 rm -f /var/smoothwall/red/*
 rm -f /var/lock/LCK..ttyS*
 
