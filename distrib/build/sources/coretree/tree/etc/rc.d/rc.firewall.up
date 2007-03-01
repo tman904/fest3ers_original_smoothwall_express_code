@@ -121,6 +121,9 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A block -p icmp -i $RED_DEV -d $RED_NETADDRESS/$RED_NETMASK -j ACCEPT
 fi
 
+/sbin/iptables -N badtraffic
+/sbin/iptables -A block -j badtraffic
+
 /sbin/iptables -A INPUT -j block
 
 # last rule in INPUT chain is for logging.
