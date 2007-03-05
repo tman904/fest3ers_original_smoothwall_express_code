@@ -106,7 +106,7 @@ int traffic_config::pos_to_rulenum(int rule) {
 
 int traffic_config::pos_to_rulenum(const std::string &rstr) {
     struct stat st;
-    std::string file = std::string(MODSWROOT) + "/" + (_dev != "" ? _dev + "_rulenumbers" : "rulenumbers");
+    std::string file = std::string(MODSWROOT) + "/rulenumbers";
     if(stat(file.c_str(), &st)) {
         // if non zero there is no rulenumbers file so return 0
         return 0;
@@ -128,7 +128,7 @@ const std::string traffic_config::rule_to_classid(int rule) {
 const std::string traffic_config::rule_to_classid(const std::string &res) { 
     struct stat st;     
     
-    std::string file = std::string(MODSWROOT) +  "/" + (_dev != "" ?_dev + "_rule2class" : "rule2class");
+    std::string file = std::string(MODSWROOT) +  "/rule2class";
     if(stat(file.c_str(), &st)) {
         // cant look up rules to classids without this file
         return res;
@@ -145,12 +145,12 @@ const std::string traffic_config::rule_to_classid(const std::string &res) {
 // look for specific one if _dev not ""
 const std::string traffic_config::class_name(const std::string &res) {
     struct stat st;
-    std::string file = std::string(MODSWROOT) + "/" + (_dev != "" ? _dev + "_classnames" : "classnames");
+    std::string file = std::string(MODSWROOT) + "/classnames";
     if(stat(file.c_str(), &st)) {
         // if non zero there is no classnames file so return raw classid
       std::ostringstream log;
                 
-      log << "cant stat  " << _dev << "_classnames!" << std::endl;
+      log << "cant stat  " <<  "classnames!" << std::endl;
       syslog(LOG_WARNING,log.str().c_str());
       return res;
     }
@@ -175,7 +175,7 @@ const std::string traffic_config::rule_name(int rulenum) {
 
 const std::string traffic_config::rule_name(const std::string & rulenum) {
     struct stat st;
-    std::string file = std::string(MODSWROOT)  + "/" + (_dev != "" ? _dev + "_rulenames" : "rulenames");
+    std::string file = std::string(MODSWROOT)  + "/rulenames";
     if(stat(file.c_str(), &st)) {
         // if non zero there is no rulenames file so return raw rule number
         return rulenum;
@@ -190,7 +190,7 @@ const std::string traffic_config::rule_name(const std::string & rulenum) {
 
 const std::string traffic_config::imq() {
   struct stat st;
-  std::string file = std::string(MODSWROOT)  + "/" + (_dev != "" ? _dev + "_2imq" : "2imq");
+  std::string file = std::string(MODSWROOT)  + "/2imq";
   if(stat(file.c_str(), &st)) {
     return "";
   }

@@ -134,7 +134,7 @@ traf_stat_collection_item::traf_stat_collection_item(bool interfaces_only, bool 
 			uptmp = list_rules_for_dev(dev, "up");	
 			dntmp = list_rules_for_dev(dev, "dn");
 		
-			if(uptmp.size() > 0 && dntmp.size() > 0) {
+			if(uptmp.size() > 0) {
 				for(ia = uptmp.begin(); ia != uptmp.end(); ia++) {
 					// and store them 
 					std::string rule_name = myconf.rule_name(ia->rule_num);
@@ -143,6 +143,8 @@ traf_stat_collection_item::traf_stat_collection_item(bool interfaces_only, bool 
 					traf_stat &item = *ia;
 					stats[label] = item;
 				}
+			}
+			if(dntmp.size() > 0) {
 				for(ia = dntmp.begin(); ia != dntmp.end(); ia++) {
 					// and store them 
 					std::string rule_name = myconf.rule_name(ia->rule_num);
@@ -154,22 +156,22 @@ traf_stat_collection_item::traf_stat_collection_item(bool interfaces_only, bool 
 				}
 			}
 			// upload classes are related to the dev
-			// download classes are related to the imq partner
+			// download classes are related to the imq partner (if present)
+			uptmp = list_class(dev);
+			if(uptmp.size() > 0) {
+				for(ia = uptmp.begin(); ia != uptmp.end(); ia++) {
+					// and store them
+					std::string class_name = myconf.class_name(ia->classid);
+					classes.insert(class_name);
+					std::string label = dev + "_up_class_" + class_name;
+					traf_stat &item = *ia;
+					stats[label] = item;
+				}
+			}
+		
 			const std::string & imq = myconf.imq();
 			if(imq.size() > 0) {
-				uptmp = list_class(dev);
 				dntmp = list_class(imq);
-				if(uptmp.size() > 0) {
-					for(ia = uptmp.begin(); ia != uptmp.end(); ia++) {
-						// and store them
-						std::string class_name = myconf.class_name(ia->classid);
-						classes.insert(class_name);
-						std::string label = dev + "_up_class_" + class_name;
-						traf_stat &item = *ia;
-						stats[label] = item;
-					}
-				}
-		
 				if(dntmp.size() > 0) {
 					for(ia = dntmp.begin(); ia != dntmp.end(); ia++) {
 						// and store them
@@ -190,7 +192,8 @@ traf_stat_collection_item::traf_stat_collection_item(bool interfaces_only, bool 
 			for(ia = uptmp.begin(); ia != uptmp.end(); ia++) {
 				traf_stat &item = *ia;
 				// and store them
-				std::string label = std::string(item.addr_as_string()) + "(" + item.direction + ")";
+				std::string label = std::string(item.addr_as_string()) + " " + item.account_table +" (" + item.direction + ")";
+				// syslog(LOG_WARNING, "Getting stats for %s\n", label.c_str());
 				addresses.insert(label);
 				// label is the address
 				stats[label] = item;
@@ -251,8 +254,8 @@ void traf_stat_collection_item::compress () {
 			if(data.bytes() < latest.bytes()) {
 				std::ostringstream log;
 				
-				// log << "counter wrap around for " << label << " old = (" << latest << ") new = (" << data << ")" << std::endl;
-				// syslog(LOG_WARNING,log.str().c_str());
+				log << "counter wrap around for " << label << " old = (" << latest << ") new = (" << data << ")" << std::endl;
+				syslog(LOG_WARNING,log.str().c_str());
 				
 				// zero the older counters, get the last part of the
 				// wrap around at least
@@ -739,7 +742,8 @@ Vtraf_stat list_rules_for_dev(std::string dev, std::string direction) {
 // list account info for all addresses
 
 Vtraf_stat list_account() {
-    struct ipt_acc_handle_ip *entry;
+	struct ipt_acc_handle_ip *entry;
+				
 	Vstring tablenames;
 	Vstring_iterator ti;
 	int rtn;
@@ -751,7 +755,7 @@ Vtraf_stat list_account() {
 			return stats;
 		}
 		ctx_good = true;
-    }
+	}
 
 	// check what table names are available
 	if((rtn = ipt_ACCOUNT_get_table_names(&ctx)) >=0) {
@@ -769,6 +773,7 @@ Vtraf_stat list_account() {
 			// massive failure
 			ipt_ACCOUNT_deinit(&ctx);
 			ctx_good = false;
+			syslog(LOG_ERR,"ipt_ACCOUNT internal error at %s", table.c_str());
 			return stats;
 		}
 
@@ -778,6 +783,7 @@ Vtraf_stat list_account() {
 		    traf_stat instat;
 			traf_stat outstat;
 
+			outstat.account_table = instat.account_table = table;
 			outstat.net_ip = instat.net_ip = entry->ip;
 			outstat.direction = "up";
 			outstat.stats.bytes = (__u64)entry->src_bytes;
