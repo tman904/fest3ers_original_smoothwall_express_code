@@ -37,6 +37,8 @@ if ($cgiparams{'ACTION'} eq $tr{'save'})
 
 if ($cgiparams{'ACTION'} eq $tr{'restart'})
 {
+	system('/usr/bin/smoothwall/writeipsec.pl');
+
 	my $success = message('ipsecrestart');
 	
 	if (not defined $success) {
@@ -66,22 +68,6 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
-
-print <<END
-<!-- 
-<CENTER>
-<TABLE BORDER='0' CELLPADDING='0' CELLSPACING='0'>
-<TR><TD VALIGN='top' ALIGN='CENTER'>
-<A HREF='http://www.smoothwall.co.uk/'><IMG
- SRC='/ui/img/inlinepromo.smoothtunnel.png' BORDER='0'
- ALT='Visit smoothwall.co.uk for enhanced commercial SmoothWall products'></A>
-</TD></TR>
-</TABLE>
-</CENTER>
- -->
-END
-;
-
 
 print "<FORM METHOD='POST'>\n";
 
@@ -132,6 +118,8 @@ END
 my $id = 0;
 my $line;
 
+# 0          192.168.0.0/24     -> 192.168.0.0/16     => tun0x1002@82.69.176.133
+
 foreach $line (@current)
 {
 	$id++;
@@ -154,6 +142,7 @@ foreach $line (@current)
 		$targetl =~ /\//; $targetl = $`;
 		$targetr = $temp[3];
 		$targetr =~ /\//; $targetr = $`;
+		&log("TL $targetl NL $netmaskl TR $targetr NR $netmaskr");
 		if (($targetl eq $netmaskl && $targetr eq $netmaskr) ||
 			($targetl eq $netmaskr && $targetr eq $netmaskl))
 		 {

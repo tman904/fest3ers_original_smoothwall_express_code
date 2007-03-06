@@ -40,12 +40,14 @@ download:
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
+	(cd $(FREESWAN_TYPE)-$(FREESWAN_VER); \
+	patch -p1 <../../kernel-patches/openswan-procpermsfix.diff)
 	@tar -jxvf $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/bast-$(UNICORN_VER).tgz
-	(cd unicorn; patch -p1 < ../../kernel-patches/unicorn.patch)
+	(cd unicorn; \
+	patch -p1 < ../../kernel-patches/unicorn.patch)
 	@tar -jxvf $(DOWNLOADS_DIR)/eagle-usb-$(EAGLE_VER).tar.bz2
 	@(cd eagle-usb-$(EAGLE_VER); \
-	patch -p1 <../../kernel-patches/eagle-stats.patch; \
 	patch -p1 <../../kernel-patches/eagle-2.6-fix.patch)
 
 	@rm -f linux
@@ -67,19 +69,15 @@ apply-pom: prepare
 	@(export KERNEL_DIR=$(KERNEL_DIR); \
 	export IPTABLES_DIR=$(IPTABLES_DIR); \
 	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
-	./runme --batch ACCOUNT)
-
-#	./runme --batch CONNMARK; \
-#	./runme --batch quake3-conntrack-nat; \
-#	./runme --batch pptp-conntrack-nat; \
-#	./runme --batch mms-conntrack-nat; \
-#	./runme --batch sip-conntrack-nat; \
-#	./runme --batch h323-conntrack-nat;)
+	./runme --batch ACCOUNT; \
+	./runme --batch mms-conntrack-nat; \
+	./runme --batch directx8-conntrack-nat; \
+	./runme --batch msnp-conntrack-nat)
 
 compile-kernel: apply-pom
 	@cp ../kernel.config-$(TYPE)-$(ARCH) linux/.config
 
-	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
+	@make -C linux CC=$(COMPILER) clean oldconfig menuconfig dep bzImage modules
 
 compile-unicorn: compile-kernel
 	@make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)

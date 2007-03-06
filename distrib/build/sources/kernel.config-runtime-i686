@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16.40
-# Thu Mar  1 13:41:08 2007
+# Tue Mar  6 12:25:37 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -373,6 +373,8 @@ CONFIG_IP_NF_ARPTABLES=m
 CONFIG_IP_NF_ARPFILTER=m
 CONFIG_IP_NF_ARP_MANGLE=m
 CONFIG_IP_NF_TARGET_ACCOUNT=m
+CONFIG_IP_NF_NAT_MMS=m
+CONFIG_IP_NF_MMS=m
 
 #
 # DCCP Configuration (EXPERIMENTAL)
