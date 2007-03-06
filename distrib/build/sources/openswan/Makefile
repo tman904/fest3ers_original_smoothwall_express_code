@@ -26,7 +26,7 @@ configure: patch
 	@true
 	
 compile: configure
-	@make -C $(COMPILE_DIR) INC_USRLOCAL=/$(PKG_DIR) FINALCONFDIR=/$(PKG_DIR)/etc FINALRCDIR=/$(PKG_DIR)/bin programs
+	@make -C $(COMPILE_DIR) USERCOMPILE='$(CFLAGS)' INC_USRLOCAL=/$(PKG_DIR) FINALCONFDIR=/$(PKG_DIR)/etc FINALRCDIR=/$(PKG_DIR)/bin programs
 
 install: compile
 	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)
