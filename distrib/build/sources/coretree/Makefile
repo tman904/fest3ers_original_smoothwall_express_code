@@ -27,9 +27,9 @@ distrib:
 	
 	@(cd distrib/etc/httpd/conf; ln -s /var/smoothwall/main/hostname.conf)
 	@(cd distrib/usr/etc ln -s /var/smoothwall/dhcp/dhcpd.conf)
+	@(cd distrib/usr/etc; ln -s /var/smoothwall/vpn/ipsec.conf)
+	@(cd distrib/usr/etc; ln -s /var/smoothwall/vpn/ipsec.secrets)
 	@(cd distrib/etc; ln -s /var/smoothwall/time/localtime)
-	@(cd distrib/etc; ln -s /var/smoothwall/vpn/ipsec.conf)
-	@(cd distrib/etc; ln -s /var/smoothwall/vpn/ipsec.secrets)
 	@(cd distrib/etc; ln -s /var/smoothwall/vpn/ibod.cf)
 	@(cd distrib/etc; ln -s /var/smoothwall/hosts/hosts)
 	@(cd distrib/usr/etc; ln -s /var/smoothwall/dhcp/dhcpd.conf)
