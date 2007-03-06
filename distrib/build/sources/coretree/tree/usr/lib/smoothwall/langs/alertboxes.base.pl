@@ -50,6 +50,12 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'im.cgi'		=> 'Configure the IM logging proxy.',
 'imviewer.cgi'		=> 'Check logs for the IM proxy service.',
 'outgoing.cgi' 		=> 'Add rules to control local machine\'s access to external services.',
+'traffic.cgi' => 'Set the speed at which you think your network interfaces run at.
+ Increase the headroom (default 10% of speed) if you think that traffic 
+shaping is having no effect. You may also be able to reduce headroom too. 
+<b>NOTE:</b> this machine has to be the <b>slowest</b> point in the connection in 
+order to be in control of traffic. 
+You can choose what priority for all traffic and for different groups of services.',
 
 );
 

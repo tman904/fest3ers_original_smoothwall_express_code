@@ -809,4 +809,23 @@
 'dns and gateway settings' => 'DNS and Gateway settings:',
 'default gateway' => 'Default gateway:',
 
+# traffic.cgi
+'traffic configuration' => 'Traffic configuration',
+'traffic general options' => 'General Options:',
+'traffic enable' => 'Enable traffic shaping:',
+'traffic external up' => 'External upload speed:',
+'traffic external down' => 'Download speed:',
+'traffic internal speed' => 'Internal upload &amp; download:',
+'traffic headroom' => 'Headroom:',
+'traffic default' => 'Traffic that does not match below gets treated as:',
+'traffic high' => 'high',
+'traffic normal' => 'normal',
+'traffic slow' => 'slow',
+'traffic low' => 'low',
+'traffic none' => 'none',
+'traffic rules' => 'Rule selection:',
+'traffic name' => 'Rule name',
+'traffic class' => 'Treat this traffic as:',
+'ssqos' => 'qos',
+
 );
