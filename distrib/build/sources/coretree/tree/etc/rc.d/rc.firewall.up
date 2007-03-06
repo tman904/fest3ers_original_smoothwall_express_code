@@ -306,3 +306,11 @@ fi
 for I in INPUT OUTPUT FORWARD; do
 	/sbin/iptables -t mangle -A $I -j account
 done
+
+# QoS stuff
+/sbin/iptables -t mangle -N trafficoutput
+/sbin/iptables -t mangle -A OUTPUT -j trafficoutput
+/sbin/iptables -t mangle -N trafficforward
+/sbin/iptables -t mangle -A FORWARD -j trafficforward
+/sbin/iptables -t mangle -N trafficpostrouting
+/sbin/iptables -t mangle -A POSTROUTING -j trafficpostrouting
