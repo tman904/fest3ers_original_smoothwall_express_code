@@ -13,4 +13,6 @@ BASE_URL = ftp://ftp.gnu.org/gnu/gmp
 
 CONFIG_OPTS = --disable-nls
 
+OPT_FLAGS =
+
 include ../Makefile.rules
