@@ -13,7 +13,7 @@ BIN = smoothd
 
 MODULES = sysshutdown sysinstall sysim sysp3scan sysalcatel sysdhcpd sysdnsproxy \
 	sysntpd syssnort syssquid syssshd sysupnpd sysadvnet sysipblock \
-	sysxtaccess sysupdown sysipsec systimeset sysiptables
+	sysxtaccess sysupdown sysipsec systimeset sysiptables systraffic
 
 MODULEFLAGS = $(CXXFLAGS) -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
 
@@ -76,6 +76,8 @@ sysipsec : $(OBJS)
 systimeset : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 sysiptabes : $(OBJS)  
+	$(CXX) $(MODULEFLAGS)
+systraffic : $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 
 ipbatchc.o: ipbatch.h 
