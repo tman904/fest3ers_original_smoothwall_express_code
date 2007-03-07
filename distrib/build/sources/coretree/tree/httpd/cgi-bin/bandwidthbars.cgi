@@ -43,10 +43,12 @@ sub realtime_graphs
 
 	open INPUT, "</var/log/quicktrafficstats";
 	while ( my $line = <INPUT> ){
-		next if ( not $line =~ /^cur_/ );
-		my ( $rule, $interface, $value ) = ( $line =~ /(.*)_([^_]*)=([\d\.]+)$/i );
+		next if ( not $line =~ /^cur_(inc|out)_rate/ );
+		my $rule = $&;
+		$line = $';
+		my ($interface, $value ) = ( $line =~ /_([^=]+)=([\d\.]+)$/i );
 		$interfaces{ $interface }{ $rule } = $value;
-		if($interface =~ /^\d+\.\d+\.\d+\.\d+$/ && $rule eq 'cur_out_rate') {
+		if($interface =~ /^\d+\.\d+\.\d+\.\d+/ && $rule eq 'cur_out_rate') {
 			$addresses{$interface} = $value;
 		}
 	}
@@ -85,6 +87,8 @@ sub realtime_graphs
 
 	foreach my $interface ( @devices ){
 		my $iftitle = $interface;
+		$iftitle =~ s/_/ /g;
+		$iftitle =~ s/(GREEN|RED|ORANGE|PURPLE)//;
 		print qq{
 		<table id='${interface}_container' style='width: 90%; border-collapse: collapse; border: 0px; margin-left: auto; margin-right: auto;'>
 		<tr style='background-color: #C3D1E5;'>
@@ -215,11 +219,10 @@ function xmlhttpPost()
     	self.xmlHttpReq.send( null );
 }
 
-var splitter = /(.*)_([^_]*)=([\\d\\.]+)\$/i;
+var splitter = /^cur_(inc|out)_rate_([^=]+)=([\\d\\.]+)\$/i;
 
 function updatepage(str){
 	document.getElementById('status').style.display = "none";
-	
 	var rows = str.split( '\\n' );
 	
 	for ( var i = 0; i < ifnames.length ; i++ ){
@@ -231,7 +234,7 @@ function updatepage(str){
 	for ( var i = 0; i < rows.length ; i++ ){
 		if ( rows[ i ] != "" ){
 			var results = splitter.exec(rows[i]);	
-			var id = results[ 1 ] + '_' + results[2];
+			var id = 'cur_' + results[ 1 ] + '_rate_' + results[2];
 			if ( !document.getElementById( id + '_rate' ) ){
 				continue;
 			}

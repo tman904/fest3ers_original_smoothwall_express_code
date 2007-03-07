@@ -11,13 +11,13 @@ open INPUT, "</var/log/quicktrafficstats";
 my (%incaddr,%outaddr);
 while ( my $line = <INPUT> ){
 	next if ( not $line =~ /^cur_/ );
-	my ( $rule, $interface, $value ) = ( $line =~ /(.*)_([^_]*)=([\d\.]+)$/i );
+	my ( $rule, $interface, $value ) = ( $line =~ /cur_(inc|out)_rate_([^=]+)=([\d\.]+)$/i );
 	next if $value == 0;
-	if($interface =~ /^\d+\.\d+\.\d+\.\d+$/) {
-		if($rule eq 'cur_out_rate') {
+	if($interface =~ /^\d+\.\d+\.\d+\.\d+/) {
+		if($rule eq 'out') {
 			$outaddr{$interface} = [$value,$line];
 		}
-		if($rule eq 'cur_inc_rate') {
+		if($rule eq 'inc') {
 			$incaddr{$interface} = [$value,$line];
 		}
 	
