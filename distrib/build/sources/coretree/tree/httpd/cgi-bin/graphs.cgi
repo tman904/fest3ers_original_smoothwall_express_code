@@ -124,7 +124,7 @@ foreach my $iface ('eth0', 'eth1', 'eth2', 'eth3', 'ppp0', 'ippp0')
 
 my %addrstats = ();
 foreach my $stat (keys %stats) {
-	if($stat =~ /_(\d+\.\d+\.\d+\.\d+)$/) {
+	if($stat =~ /_(\d+\.\d+\.\d+\.\d+)/) {
 		my $addr = $1;
 		my $field = "$`";
 		my $value = $stats{$stat};

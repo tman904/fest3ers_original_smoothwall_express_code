@@ -9,6 +9,9 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
+my %netsettings;
+
+&readhash("${swroot}/ethernet/settings", \%netsettings);
 &showhttpheaders();
 
 &openpage("Realtime bandwidth bars", 1, ' <META HTTP-EQUIV="Refresh" CONTENT="300"> <META HTTP-EQUIV="Cache-Control" content="no-cache"> <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> ', 'about your smoothie');
@@ -32,6 +35,19 @@ my $oururl = "/cgi-bin/trafficstats.cgi";
 &closebigbox();
 &closepage($errormessage);
 
+sub printableiface 
+{
+	my $iface = shift;
+	my %ifaces = (
+			$netsettings{'GREEN_DEV'} => 'Green',
+			$netsettings{'ORANGE_DEV'} => 'Orange',
+			$netsettings{'PURPLE_DEV'} => 'Purple',
+			$netsettings{'RED_DEV'} => 'Red',
+			'ppp0' => 'Modem',
+			'ippp0' => 'ISDN');
+	return $ifaces{$iface} || $iface;
+}
+			
 sub realtime_graphs 
 {
 	print "<div id='dbg'></div>";
@@ -89,6 +105,7 @@ sub realtime_graphs
 		my $iftitle = $interface;
 		$iftitle =~ s/_/ /g;
 		$iftitle =~ s/(GREEN|RED|ORANGE|PURPLE)//;
+		$iftitle = printableiface($iftitle);
 		print qq{
 		<table id='${interface}_container' style='width: 90%; border-collapse: collapse; border: 0px; margin-left: auto; margin-right: auto;'>
 		<tr style='background-color: #C3D1E5;'>

@@ -9,6 +9,9 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
+my %netsettings;
+
+&readhash("${swroot}/ethernet/settings", \%netsettings);
 &showhttpheaders();
 
 my $history = 60;
@@ -243,6 +246,26 @@ function rationalise( value )
 	}
 }
 
+function printableinterface(tinterface)
+{
+
+	if (tinterface == '$netsettings{'GREEN_DEV'}') {
+		return 'Green'; 
+	} else if (tinterface == '$netsettings{'ORANGE_DEV'}') {
+		return 'Orange'; 
+	} else if (tinterface == '$netsettings{'PURPLE_DEV'}') {
+		return 'Purple'; 
+	} else if (tinterface == '$netsettings{'RED_DEV'}') {
+		return 'Red'; 
+	} else if (tinterface == 'ppp0') {
+		return 'Modem'; 
+	} else if (tinterface == 'ippp0') {
+		return 'ISDN'; 
+	} else {
+		return tinterface;
+	}
+}
+
 function create_graph(tinterface)
 {
 	var directions = new Array( "inc", "out" );
@@ -268,7 +291,7 @@ function create_graph(tinterface)
 
 	var tinterfacetitle = tinterface;
 	tinterfacetitle = tinterfacetitle.replace(/_/g," ");
-	tinterfacetitle = tinterfacetitle.replace(/(GREEN|ORANGE|PURPLE|RED)/g," ");
+	tinterfacetitle = printableinterface(tinterfacetitle.replace(/(GREEN|ORANGE|PURPLE|RED)/g," "));
 
 	if ( translations[tinterface] && translations[ tinterface ] != "" ){
 		tinterfacetitle = translations[tinterface];
