@@ -11,8 +11,8 @@ VERSION = 4.1.4
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gmp
 
-CONFIG_OPTS = --disable-nls
-
-OPT_FLAGS =
+ifeq ($(ARCH), i686)
+CONFIG_OPTS = --disable-nls --host=i386-pc-linux-gnu
+endif
 
 include ../Makefile.rules
