@@ -132,8 +132,14 @@ sub isrunning
 	$exename = $1;
 
 	my $howlong = "";
-
-	if (open(FILE, "/var/run/${cmd}.pid"))
+	# qos is a special case
+	if ($cmd eq 'qos')
+	{
+		my $running = qx{/usr/sbin/tc qdisc list | fgrep htb | wc -l};
+    		chomp $running; # loose \n or 0\n is considered true!
+		$status = status_line( "running" ) if $running;
+	}
+	elsif (open(FILE, "/var/run/${cmd}.pid"))
 	{
  		$pid = <FILE>; chop $pid;
 		close FILE;

@@ -82,14 +82,14 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 		next if /^(all|none)$/;
 		my $mulfactor = ($_ eq 'localtraffic' ? $settings{'INTERNAL_SPEED'} : 
 			$settings{'DOWNLOAD_SPEED'} * ((100 - $settings{'HEADROOM'})/100));
-		$settings{'DRATE'} .= "$_," . int($scale{$_}->[0] * $mulfactor);
-		$settings{'DCEIL'} .= "$_," . int($scale{$_}->[1] * $mulfactor);
+		$settings{'DRATE'} .= "$_," . int($scale{$_}->[0] * $mulfactor) . ',';
+		$settings{'DCEIL'} .= "$_," . int($scale{$_}->[1] * $mulfactor) . ',';
 		# now uploads
 		$mulfactor = ($_ eq 'localtraffic' ? $settings{'INTERNAL_SPEED'} : 
 			$settings{'UPLOAD_SPEED'} * ((100 - $settings{'HEADROOM'})/100));
 		
-		$settings{'URATE'} .= "$_," . int($scale{$_}->[0] * $mulfactor);
-		$settings{'UCEIL'} .= "$_," . int($scale{$_}->[1] * $mulfactor);
+		$settings{'URATE'} .= "$_," . int($scale{$_}->[0] * $mulfactor) . ',';
+		$settings{'UCEIL'} .= "$_," . int($scale{$_}->[1] * $mulfactor) . ',';
 	}
 
 	# now the rules - these need to be collected from class choices
@@ -178,11 +178,11 @@ sub display_speeds
 	%selected = ($settings->{'UPLOAD_SPEED'} => ' selected');
 	$upload_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288));
+			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 1310720, 1572864, 2097152));
 	%selected = ($settings->{'DOWNLOAD_SPEED'} => ' selected');
 	$download_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288));
+			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 1310720, 1572864, 2097152));
 	%selected = ($settings->{'INTERNAL_SPEED'} => ' selected');
 	$internal_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
@@ -270,5 +270,12 @@ sub display_rules
 	&closebox();
 
 	return;
+}
+
+sub is_running
+{
+    my $running = qx{/sbin/tc qdisc list | fgrep htb | wc -l};
+    chomp $running; # loose \n or 0\n is considered true!
+    return $running;
 }
 

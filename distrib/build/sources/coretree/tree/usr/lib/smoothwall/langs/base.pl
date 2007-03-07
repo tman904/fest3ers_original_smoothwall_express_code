@@ -827,5 +827,6 @@
 'traffic name' => 'Rule name',
 'traffic class' => 'Treat this traffic as:',
 'ssqos' => 'qos',
+'qos' => 'Quality of Service traffic shaping',
 
 );
