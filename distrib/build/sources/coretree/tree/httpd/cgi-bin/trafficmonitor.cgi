@@ -267,6 +267,8 @@ function create_graph(tinterface)
 	}
 
 	var tinterfacetitle = tinterface;
+	tinterfacetitle = tinterfacetitle.replace(/_/g," ");
+	tinterfacetitle = tinterfacetitle.replace(/(GREEN|ORANGE|PURPLE|RED)/g," ");
 
 	if ( translations[tinterface] && translations[ tinterface ] != "" ){
 		tinterfacetitle = translations[tinterface];
