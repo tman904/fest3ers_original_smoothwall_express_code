@@ -91,9 +91,9 @@ int start_dhcpd(std::vector<std::string> & parameters, std::string & response)
 	
 	// purple is optional
 	if (purple.str() == "")
-		error = simplesecuresysteml("/usr/sbin/dhcpd " , green.str().c_str() , NULL);
+		error = simplesecuresysteml("/usr/sbin/dhcpd" , green.str().c_str() , NULL);
 	else
-		error = simplesecuresysteml("/usr/sbin/dhcpd " , green.str().c_str() , purple.str().c_str(), NULL);
+		error = simplesecuresysteml("/usr/sbin/dhcpd" , green.str().c_str() , purple.str().c_str(), NULL);
 
 	if (error)
 		response = "DHCPD Start failed!";
