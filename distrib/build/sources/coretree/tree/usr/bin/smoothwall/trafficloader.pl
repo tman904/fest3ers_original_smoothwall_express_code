@@ -283,6 +283,24 @@ for my $p (@{$rule->{'protocol'}}) {
 
 # could put in code to handle special rules - handling based on rule name
 # .... indication is the word 'special' instead of port
+# the name of the rule is used to trigger special treatement
+for my $rule (@rules) {
+	# we are doing this on
+	my $name = $rule->{'name'};
+	my $mark = $rule->{'connmark'};
+	my $port =  $rule->{'port'};
+	next unless $port eq 'special'; 
+	$connmarks{$name} = $mark;
+	$connmark_to_class{$mark} = $rule->{'class'};
+	if($name eq 'Peer_to_peer') {
+		# note this is throtting p2p even between GREEN/ORANGE etc.
+		# as not qualified to interface
+		# cannot know where a packet has come FROM in postrouting
+		iptables("-A trafficpostrouting -m ipp2p --ipp2p -j CONNMARK --set-mark $mark");
+	}
+	# other fancy rules can go here
+}
+	
 
 # MUST BE LAST! special rule for smallpkt - nothing to do with connections
 # will attach to any small packet that has not been associated with a connection already...
@@ -298,6 +316,7 @@ for my $if (@internal_interface) {
 
 # now get to assign connmarks into classes, and do connmark for default as last
 for my $cm (sort keys %connmark_to_class, 0) {
+	next if $cm == 0;
 	my $class = $classids{$connmark_to_class{$cm}} || $classids{$default_traffic} ;
 	push @rulenumbers, $cm;
 	iptables("-A ${external_interface}-up-traf-tot -m connmark --mark $cm -j CLASSIFY --set-class 1:$class -o $external_interface");
@@ -316,11 +335,13 @@ exit(0);
 sub tcqdisc {
 	my $args = shift;
 	system('/usr/sbin/tc qdisc add dev ' . $args);
+	print "/usr/sbin/tc qdisc add dev $args\n" if $? != 0;
 }
 
 sub tcclass {
 	my $args = shift;
 	system('/usr/sbin/tc class add dev ' . $args);
+	print "/usr/sbin/tc class add dev $args\n" if $? != 0;
 }
 
 sub stdclass {
@@ -335,12 +356,16 @@ sub stdclass {
 
 sub iptables {
 	my $args = shift;
-	print "iptables -t mangle $args\n";
+	# print "iptables -t mangle $args\n";
 	system('/usr/sbin/iptables -t mangle ' . $args);
+	print "iptables -t mangle $args\n" if $? != 0;
 }
 
 # clearing out traffic
 sub removetraffic {
+	for(qw/postrouting forward output/) {
+		iptables("-F traffic$_ 2>/dev/null");
+	}
 	for my $if ($external_interface) {
 		for my $dir (qw/up dn/) { 
 			iptables("-F ${if}-${dir}-traf-tot 2>/dev/null");
@@ -349,8 +374,8 @@ sub removetraffic {
 		# and axe the qdiscs
 		system("/usr/sbin/tc qdisc del root dev $if 2>/dev/null");
 	}
-	for(qw/postrouting forward output/) {
-		iptables("-F traffic$_ 2>/dev/null");
+	for my $if (@internal_interface) {
+		system("/usr/sbin/tc qdisc del root dev $if 2>/dev/null");
 	}
 }
 
