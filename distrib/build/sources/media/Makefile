@@ -73,6 +73,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		wget \
 		iptables \
 		libipt_ACCOUNT \
+		ipp2p \
 		ipbatch \
 		pciutils \
 		kernel-runtime \

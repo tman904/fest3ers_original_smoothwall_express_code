@@ -19,7 +19,7 @@ EAGLE_VER = 2.3.3
 
 COMPILER = /usr/bin/gcc
 
-PACKAGES = package-eagle
+PACKAGES = package-eagle package-ipp2p
 
 ifeq ($(TYPE), runtime)
 PACKAGES += package-iptableproc
@@ -36,6 +36,7 @@ download:
 	@$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
 	@$(DL_CMD) http://www.intra2net.com/de/produkte/opensource/ipt_account/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz
 	@$(DL_CMD) http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2
+	@$(DL_CMD) http://www.ipp2p.org/downloads/ipp2p-$(IPP2P_VER).tar.gz
 
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
@@ -43,6 +44,7 @@ prepare: download
 	(cd $(FREESWAN_TYPE)-$(FREESWAN_VER); \
 	patch -p1 <../../kernel-patches/openswan-procpermsfix.diff)
 	@tar -jxvf $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
+	@tar -zxvf $(DOWNLOADS_DIR)/ipp2p-$(IPP2P_VER).tar.gz
 	@tar -zxvf $(DOWNLOADS_DIR)/bast-$(UNICORN_VER).tgz
 	(cd unicorn; \
 	patch -p1 < ../../kernel-patches/unicorn.patch)
@@ -79,6 +81,9 @@ compile-kernel: apply-pom
 
 	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
 
+compile-ipp2p: compile-kernel
+	@(cd ipp2p-$(IPP2P_VER); make CC=$(COMPILER) KERNEL_SRC=$(KERNEL_DIR) KERNEL_SERIES=2.6 IPTABLES_VERSION=$(IPTABLES_VER) IPTABLES_SRC=$(SOURCES_DIR)/iptables/iptables-$(IPTABLES_VER) PREFIX=/$(PKG_DIR) modules)
+
 compile-unicorn: compile-kernel
 	@make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)
 	@(cd unicorn/unicorn_pci; make CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR))
@@ -99,6 +104,9 @@ package-kernel: compile-kernel
 	cp $(KERNEL_DIR)/System.map boot/System.map-$(KERNEL_VER); \
 	rm -f lib/modules/$(KERNEL_VER)/build; \
 	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config-$(TYPE)-$(ARCH).new)
+
+package-ipp2p: compile-ipp2p
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/ipp2p-$(IPP2P_VER)/ipt_ipp2p.ko $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/net/ipv4/netfilter/ipt_ipp2p.ko
 
 package-unicorn: compile-unicorn
 	@mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc
@@ -125,6 +133,7 @@ clean:
 	@rm -f linux
 	@rm -rf linux-$(KERNEL_VER)
 	@rm -rf $(FREESWAN_TYPE)-$(FREESWAN_VER)
+	@rm -rf ipp2p-$(IPP2P_VER)
 	@rm -rf patch-o-matic-ng-$(PATCH_O_MATIC_VER)
 	@rm -rf unicorn
 	@rm -rf usr-sureconnect
