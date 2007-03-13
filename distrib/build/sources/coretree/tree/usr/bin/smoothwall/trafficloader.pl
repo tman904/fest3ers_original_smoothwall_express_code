@@ -292,7 +292,7 @@ for my $rule (@rules) {
 	next unless $port eq 'special'; 
 	$connmarks{$name} = $mark;
 	$connmark_to_class{$mark} = $rule->{'class'};
-	if($name eq 'Peer_to_peer') {
+	if($name eq 'Peer_to_Peer') {
 		# note this is throtting p2p even between GREEN/ORANGE etc.
 		# as not qualified to interface
 		# cannot know where a packet has come FROM in postrouting
