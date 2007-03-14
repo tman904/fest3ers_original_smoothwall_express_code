@@ -125,8 +125,8 @@ foreach my $iface ('eth0', 'eth1', 'eth2', 'eth3', 'ppp0', 'ippp0')
 my %addrstats = ();
 foreach my $stat (keys %stats) {
 	if($stat =~ /_(\d+\.\d+\.\d+\.\d+)/) {
-		my $addr = $1;
-		my $field = "$`";
+		my $addr = $1 . $';
+		my $field = $`;
 		my $value = $stats{$stat};
 		my $units;
 		if ($field =~ /^cur/) {
@@ -164,7 +164,11 @@ foreach my $stat (keys %stats) {
 
 foreach my $addr (keys %addrstats) {
 	if($addrstats{$addr}->{'this_day_inc_total'} > 0) {
-		push @addr_details, {Address => $addr, %{$addrstats{$addr}}};
+		my $pretty = $addr;
+
+		$pretty =~ s/_/ /g;
+		$pretty =~ s/(RED|GREEN|ORANGE|PURPLE)/<br>/g;
+		push @addr_details, {Address => $pretty, %{$addrstats{$addr}}};
 	}
 }
 	
@@ -260,7 +264,7 @@ foreach my $row ( sort { $a->{'Address'} cmp $b->{'Address'} } @addr_details )
 {
 	print <<END
 <TR>
-<TD>$row->{ 'Address' }</TD>
+<TD valign='top' rowspan=4>$row->{ 'Address' }</TD>
 <TD>$tr{'traffic stats current'}</TD>
 <TD>$tr{'traffic stats in'}</TD>
 <TD>$row->{ 'cur_inc_rate' }</TD>
@@ -271,7 +275,6 @@ foreach my $row ( sort { $a->{'Address'} cmp $b->{'Address'} } @addr_details )
 </TR>
 <TR>
 <TD>&nbsp;</TD>
-<TD>&nbsp;</TD>
 <TD>$tr{'traffic stats out'}</TD>
 <TD>$row->{ 'cur_out_rate' }</TD>
 <TD>$row->{ 'this_hour_out_total' }</TD>
@@ -280,7 +283,6 @@ foreach my $row ( sort { $a->{'Address'} cmp $b->{'Address'} } @addr_details )
 <TD>$row->{ 'this_month_out_total' }</TD>
 </TR>
 <TR>
-<TD>&nbsp;</TD>
 <TD>$tr{'traffic stats previous'}</TD>
 <TD>$tr{'traffic stats in'}</TD>
 <TD>&nbsp;</TD>
@@ -290,7 +292,6 @@ foreach my $row ( sort { $a->{'Address'} cmp $b->{'Address'} } @addr_details )
 <TD>$row->{ 'prev_month_inc_total' }</TD>
 </TR>
 <TR>
-<TD>&nbsp;</TD>
 <TD>&nbsp;</TD>
 <TD>$tr{'traffic stats out'}</TD>
 <TD>&nbsp;</TD>
