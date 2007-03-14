@@ -118,19 +118,25 @@ my %connmarks = (
 # we start with total, other classes get added
 my @classsortorder = ('total');
 
+# the mangle tables we work with
+
+my $POSTR = 'trafficpostrouting';
+my $OUTPUT = 'trafficoutput';
+my $FORWARD = 'trafficforward';
 # list of rules to implement
 # protocol is alway an array as may need to iterate TCP and UDP
 # each rule needs a distinct connmark
 # they are in trafficsettings in the form
 # R_{connmark}=name,enabled,tcp?udp?,(in|out),portrange,class,comment
 
+
 my @rules = ();
 
 for(sort keys %trafficsettings) {
-	next unless /^R_(\d+)/;
+	next unless /^R_(\d+)/; # just looking for rules
 	my $cm = $1;
 	my($name, $tcp, $udp, $dir, $port, $class, $comment) = split(',', $trafficsettings{$_});
-	next if $class eq 'none';
+	next if $class eq 'none'; # this one is being ignorred
 	my $protocol = [];
 	push @{$protocol}, 'TCP' if $tcp eq 'on';
 	push @{$protocol}, 'UDP' if $udp eq 'on';
@@ -150,7 +156,7 @@ for(sort keys %trafficsettings) {
 # start with a clean slate always
 removetraffic();
 
-
+# maybe thats all we do...
 exit(0) unless defined $trafficsettings{'ENABLE'} && $trafficsettings{'ENABLE'} eq 'on';
 	
 # setting the root qdiscs
@@ -161,7 +167,10 @@ tcqdisc("$external_interface root handle 1: htb default $classids{$default_traff
 tcclass("$external_interface parent 1: classid 1:$classids{'all'} htb rate $urate{$external_interface}bps quantum 15000");
 
 # adding root qdisc for internal - specifying where default traffic goes
-
+# note that as download queueing is done at the internal interface
+# all internal interfaces have to have the same speed. i.e. have to
+# choose the speed of the lowest. This isnt so bad if we can assume
+# that all internals are at least as fast as the external.
 tcqdisc("$_ root handle 1: htb default $classids{$default_traffic}") for @internal_interface;
 
 # note that the download rate of the internal interface is its full speed (100mbit for example)
@@ -183,19 +192,18 @@ for my $tag (keys %classids) {
 	# note $extras{$tag} is usually undef
 	next if $tag =~ /^(all|none)$/;
 	stdclass($external_interface,$tag, $extras{$tag}); 
+	# note can only extablish QOS for an interface that is up at the time.
 	stdclass($_,$tag, $extras{$tag}) for up_interfaces(@internal_interface); 
 	push @classsortorder, $tag;
 }
 
-
-# traffic total tables
 
 for my $dir (qw/up dn/) {
 	iptables("-N ${external_interface}-${dir}-traf-tot");
 }
 
 
-# as we make rule keep a running tally of which class each connmark referrs to as finally have to turn connmarks into classes
+# as we make rule keep a running tally of which class each connmark refers to as finally have to turn connmarks into classes
 my %connmark_to_class = ();
 for(qw/smoothadmin webcache localtraffic/) {
 	$connmark_to_class{$connmarks{$_}} = 'high' if defined $connmarks{$_};
@@ -205,46 +213,42 @@ for(qw/smoothadmin webcache localtraffic/) {
 
 my @rulenumbers = ();
 
-# special smoothadmin rule
+# special smoothadmin rule - so can admin externally even when busy
 if(defined $classids{'smoothadmin'}) {
-	iptables("-A trafficoutput -m connmark --mark 0 -j CONNMARK --set-mark $connmarks{'smoothadmin'} " .
+	iptables("-A $OUTPUT -m connmark --mark 0 -j CONNMARK --set-mark $connmarks{'smoothadmin'} " .
 			 "--out-interface $external_interface --protocol TCP --match multiport --source-ports 81,441,222");
-# and set TOS
-	iptables("-A trafficoutput -m connmark --mark $connmarks{'smoothadmin'} -j TOS --set-tos Minimize-Delay");
 }
-# Webcache special rule
-iptables("-A trafficoutput -m connmark --mark 0 -j CONNMARK --set-mark $connmarks{'webcache'}  " .
+# Webcache special rule - give squid something.
+iptables("-A $OUTPUT -m connmark --mark 0 -j CONNMARK --set-mark $connmarks{'webcache'}  " .
 		 "--out-interface $external_interface  --protocol TCP --match multiport --destination-ports 80,8080,443,8443") if defined $classids{'webcache'};
 
 
 # Avoid mark localtraffic going output to external - because if its leaving to the outside it isnt local!
 if(defined $classids{'localtraffic'}) {
-	iptables("-A trafficoutput -j RETURN -o $external_interface");
+	iptables("-A $OUTPUT -j RETURN -o $external_interface");
 
-# Marking all other output destinations as localtraffic - beacuse if the traffic starts here e.g. from the web proxy and is going inwards
+# Marking all other output destinations as localtraffic - 
+# because if the traffic starts here e.g. from the web proxy and is going inwards
 # it should run at full line speed.
 
-	iptables("-A trafficoutput  -m connmark --mark 0 -j CONNMARK --set-mark $connmarks{'localtraffic'}");
+	iptables("-A $OUTPUT  -m connmark --mark 0 -j CONNMARK --set-mark $connmarks{'localtraffic'}");
 
 # Avoid mark localtraffic going forward from external - as if it has come from the outside we want to shape it. 
-	iptables("-A trafficforward  -j RETURN -i $external_interface");
+	iptables("-A $FORWARD  -j RETURN -i $external_interface");
 
 # Avoid mark localtraffic going forward to external - as if going to the outside want to shape it
-	iptables("-A trafficforward  -j RETURN -o $external_interface");
+	iptables("-A $FORWARD  -j RETURN -o $external_interface");
 
 # Marking everything else being forwarded as localtraffic - as is going internal - internal
-	iptables("-A trafficforward -j CONNMARK --set-mark $connmarks{'localtraffic'}");
+	iptables("-A $FORWARD -j CONNMARK --set-mark $connmarks{'localtraffic'}");
 }
 
 # now the defined rules - simple port based rules only unless 'special'.
 for my $rule (@rules) {
 	# we are doing this on
-	my $name = $rule->{'name'};
-	my $mark = $rule->{'connmark'};
-	my $port =  $rule->{'port'};
+	my ($name,$mark, $port, $class, $direction, $proto) = @{$rule}{qw/name connmark port class direction protocol/};
 	next if $port eq 'special'; # may do something with special rules later
-	my $sport = '';
-	my $dport = '';
+	my ($sport, $dport) = '' x 2;
 	
 	if($port =~ /;/) {
 		# multi port rule - semicolons as was in CSV file
@@ -257,46 +261,51 @@ for my $rule (@rules) {
 		$dport = "--destination-port $port";
 	}
 	$connmarks{$name} = $mark;
-	$connmark_to_class{$mark} = $rule->{'class'};
-	if($rule->{'direction'} eq 'in' || $rule->{'direction'} eq 'both') {
-		# for a service here
-		for my $p (@{$rule->{'protocol'}}) {
-			iptables("-A trafficpostrouting -m connmark --mark 0 -j CONNMARK --set-mark $mark --protocol $p $sport -o $external_interface");
-			iptables("-A trafficpostrouting -m connmark --mark 0 -j CONNMARK --set-mark $mark --protocol $p $dport -i $external_interface");
+	$connmark_to_class{$mark} = $class;
+	if($direction eq 'in' || $direction eq 'both') {
+		# for a service here i.e. HOSTING a website
+		for my $p (@{$proto}) {
+			# so things from e.g. port 80 leave by the external
+			iptables("-A $POSTR -m connmark --mark 0 -j CONNMARK --set-mark $mark --protocol $p $sport -o $external_interface");
+			# and traffic comming in from external are for e.g port 80
+			iptables("-A $POSTR -m connmark --mark 0 -j CONNMARK --set-mark $mark --protocol $p $dport -i $external_interface");
 		}
 	}	
-	if($rule->{'direction'} eq 'out' || $rule->{'direction'} eq 'both') {
-		# service is out on the net so reverse logic applies
-for my $p (@{$rule->{'protocol'}}) {
-			iptables("-A trafficpostrouting -m connmark --mark 0 -j CONNMARK --set-mark $mark --protocol $p $sport -i $external_interface");
-			iptables("-A trafficpostrouting -m connmark --mark 0 -j CONNMARK --set-mark $mark --protocol $p $dport -o $external_interface");
+	if($direction eq 'out' || $direction eq 'both') {
+		# service is out on the net so reverse logic applies i.e. browsing a website
+		for my $p (@{$proto}) {
+			# things comming from e.g. port 80 are going internal
+			iptables("-A $POSTR -m connmark --mark 0 -j CONNMARK --set-mark $mark --protocol $p $sport -i $external_interface");
+			# and requests to e.g. port 80 go out on external
+			iptables("-A $POSTR -m connmark --mark 0 -j CONNMARK --set-mark $mark --protocol $p $dport -o $external_interface");
 		}
 	}
-	# collect per rule stats if chosen
+	# collect per rule stats if chosen - so create named accounting tables for each directly connected
+	# internal network.
 	if(defined $trafficsettings{'PERIPSTATS'} && $trafficsettings{'PERIPSTATS'} eq 'on') {
 		for(keys %internal_netaddress) {
 			
-			iptables("-A trafficpostrouting -m connmark --mark $mark -j ACCOUNT --addr $internal_netaddress{$_}/$internal_netmask{$_} --tname ${_}_$name");
+			iptables("-A $POSTR -m connmark --mark $mark -j ACCOUNT --addr $internal_netaddress{$_}/$internal_netmask{$_} --tname ${_}_$name");
 		}
 	}
 }
-
+# going around again
 # could put in code to handle special rules - handling based on rule name
-# .... indication is the word 'special' instead of port
-# the name of the rule is used to trigger special treatement
 for my $rule (@rules) {
+	my ($name,$mark, $port, $class) = @{$rule}{qw/name connmark port class/};
 	# we are doing this on
-	my $name = $rule->{'name'};
-	my $mark = $rule->{'connmark'};
-	my $port =  $rule->{'port'};
-	next unless $port eq 'special'; 
 	$connmarks{$name} = $mark;
-	$connmark_to_class{$mark} = $rule->{'class'};
+	$connmark_to_class{$mark} = $class;
 	if($name eq 'Peer_to_Peer') {
-		# note this is throtting p2p even between GREEN/ORANGE etc.
-		# as not qualified to interface
-		# cannot know where a packet has come FROM in postrouting
-		iptables("-A trafficpostrouting -m ipp2p --ipp2p -j CONNMARK --set-mark $mark");
+		iptables("-A $FORWARD -m ipp2p --ipp2p -j CONNMARK --set-mark $mark -i $external_interface");
+		iptables("-A $FORWARD -m ipp2p --ipp2p -j CONNMARK --set-mark $mark -o $external_interface");
+	}
+	if($name eq 'Voice_Over_IP') {
+		# also assume EF diffserv mark set wants to
+		# be treated as if it were VOIP
+		system('/sbin/modprobe ipt_dscp');
+		iptables("-A $POSTR -m dscp --dscp-class EF -j CONNMARK --set-mark $mark");
+		
 	}
 	# other fancy rules can go here
 }
@@ -304,14 +313,14 @@ for my $rule (@rules) {
 
 # MUST BE LAST! special rule for smallpkt - nothing to do with connections
 # will attach to any small packet that has not been associated with a connection already...
-iptables("-A trafficpostrouting -m connmark --mark 0 -j CLASSIFY --set-class 1:$classids{'smallpkt'} --match length --length 1:110") if defined $classids{'smallpkt'};
+iptables("-A $POSTR -m connmark --mark 0 -j CLASSIFY --set-class 1:$classids{'smallpkt'} --match length --length 1:110") if defined $classids{'smallpkt'};
 
 # now jump to traf-tot table for connmark to class processing (and statistics gathering)
 # uploads qued on external interface
-iptables("-A trafficpostrouting -j ${external_interface}-up-traf-tot -o $external_interface");
+iptables("-A $POSTR -j ${external_interface}-up-traf-tot -o $external_interface");
 # downloads queued on each internal one
 for my $if (@internal_interface) {
-	iptables("-A trafficpostrouting -j ${external_interface}-dn-traf-tot -o $if");
+	iptables("-A $POSTR -j ${external_interface}-dn-traf-tot -o $if");
 }
 
 # now get to assign connmarks into classes, and do connmark for default as last
