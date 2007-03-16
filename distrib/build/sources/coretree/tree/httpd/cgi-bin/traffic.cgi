@@ -259,7 +259,7 @@ sub display_rules
 		push @rules, qq[<td style='width: 25%;'>$name:</td><td style='width: 25%;'><select name='${rule}_CLASS'>$class_block</select></td>\n];
 	}
 	# 2 colums
-	for(my $r = 0; $r < $#rules; $r += 2)
+	for(my $r = 0; $r <= $#rules; $r += 2)
 	{
 		$rules[$r+1] = '&nbsp;' unless defined $rules[$r+1];
 		print "<tr>" . $rules[$r] . $rules[$r+1] . "</tr>\n";

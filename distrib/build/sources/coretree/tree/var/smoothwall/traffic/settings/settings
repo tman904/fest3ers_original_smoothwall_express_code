@@ -21,3 +21,4 @@ R_206=Voice_Over_IP,on,on,both,1720;1503;5060:5070;3782,high,VOIP needs to be hi
 R_207=Peer_to_Peer,on,on,both,special,low,Peer to peer such as bittorrrent should generally be low priority
 R_208=Gaming,on,on,both,27910;7777;4000;6112:6119;27051;88;3074,high, Gaming should either be high priority if you need realtime response or low if you don't want game playing to impact other traffic.
 R_209=Multimedia,on,on,both,554;2001;7070:7071;1755;8000:8001,high,Streaming multimedia generally needs to be high priority.
+R_210=VPN,on,on,both,special,normal,Virtual Private Network

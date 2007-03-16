@@ -297,6 +297,7 @@ for my $rule (@rules) {
 	$connmarks{$name} = $mark;
 	$connmark_to_class{$mark} = $class;
 	if($name eq 'Peer_to_Peer') {
+		# leverage the ip2p iptables module, matches all p2p protocols known to ipp2p
 		iptables("-A $FORWARD -m ipp2p --ipp2p -j CONNMARK --set-mark $mark -i $external_interface");
 		iptables("-A $FORWARD -m ipp2p --ipp2p -j CONNMARK --set-mark $mark -o $external_interface");
 	}
@@ -306,6 +307,10 @@ for my $rule (@rules) {
 		system('/sbin/modprobe ipt_dscp');
 		iptables("-A $POSTR -m dscp --dscp-class EF -j CONNMARK --set-mark $mark");
 		
+	}
+	if($name eq 'VPN') {
+		# no ports involved - just shape protocols 50 and 51 (ipsec)
+		iptables("-A $POSTR -j CONNMARK --set-mark $mark --protocol $_") for 50..51;
 	}
 	# other fancy rules can go here
 }
