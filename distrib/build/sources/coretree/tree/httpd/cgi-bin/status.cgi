@@ -26,11 +26,11 @@ if (open(FILE, "${swroot}/red/iface"))
 my %servicenames;
 my %coreservices;
 
-opendir(DIR, "/var/smoothwall/services/");
+opendir(DIR, "/usr/lib/smoothwall/services/");
 my @files = grep {!/\./} readdir(DIR);
 
 foreach my $file ( sort @files ){
-	open ( my $line, "</var/smoothwall/services/$file" ) or next;
+	open ( my $line, "</usr/lib/smoothwall/services/$file" ) or next;
 	my ( $name, $rel ) = split /,/, <$line>;
 	close $line;
 	chomp $name;
