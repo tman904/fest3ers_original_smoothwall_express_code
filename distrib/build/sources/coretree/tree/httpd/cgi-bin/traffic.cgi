@@ -178,11 +178,11 @@ sub display_speeds
 	%selected = ($settings->{'UPLOAD_SPEED'} => ' selected');
 	$upload_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 1310720, 1572864, 2097152));
+			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 1310720, 1572864, 2097152, 13107200));
 	%selected = ($settings->{'DOWNLOAD_SPEED'} => ' selected');
 	$download_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 1310720, 1572864, 2097152));
+			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 1310720, 1572864, 2097152, 13107200));
 	%selected = ($settings->{'INTERNAL_SPEED'} => ' selected');
 	$internal_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
