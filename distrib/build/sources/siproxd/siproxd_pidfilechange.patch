@@ -1,0 +1,23 @@
+diff -Nurb siproxd-0.5.11/src/siproxd.c siproxd-0.5.11.new/src/siproxd.c
+--- siproxd-0.5.11/src/siproxd.c	2005-04-16 10:30:55.000000000 +0100
++++ siproxd-0.5.11.new/src/siproxd.c	2005-11-21 21:25:47.000000000 +0000
+@@ -201,9 +201,6 @@
+    log_set_pattern(configuration.debuglevel);
+    log_set_listen_port(configuration.debugport);
+ 
+-   /* change user and group IDs */
+-   secure_enviroment();
+-
+    /* daemonize if requested to */
+    if (configuration.daemonize) {
+       DEBUGC(DBCLASS_CONFIG,"daemonizing");
+@@ -233,6 +230,9 @@
+       }
+    }
+ 
++   /* change user and group IDs */
++   secure_enviroment();
++
+    /* initialize the RTP proxy */
+    sts=rtpproxy_init();
+    if (sts != STS_SUCCESS) {

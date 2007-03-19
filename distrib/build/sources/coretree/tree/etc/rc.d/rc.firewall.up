@@ -102,6 +102,14 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A block -i $RED_DEV -j ipsec
 fi
 
+# SIP RTP ports
+/sbin/iptables -N siprtpports
+/sbin/iptables -A block -i ppp0 -j siprtpports
+/sbin/iptables -A block -i ippp0 -j siprtpports
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A block -i $RED_DEV -j siprtpports
+fi
+
 # DHCP
 if [ "$RED_DEV" != "" -a "$RED_TYPE" = "DHCP" ]; then
 	/sbin/iptables -A block -p tcp --source-port 67 --destination-port 68 \
@@ -202,7 +210,7 @@ fi
 /sbin/iptables -t nat -F
 /sbin/iptables -t nat -X
 
-# squid
+# Web proxy
 /sbin/iptables -t nat -N squid
 /sbin/iptables -t nat -N jmpsquid
 /sbin/iptables -t nat -A jmpsquid -d 10.0.0.0/8 -j RETURN
@@ -215,7 +223,7 @@ if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpsquid
 fi
 
-# im
+# IMSpector
 /sbin/iptables -t nat -N im
 /sbin/iptables -t nat -N jmpim
 /sbin/iptables -t nat -A jmpim -d 10.0.0.0/8 -j RETURN
@@ -228,7 +236,7 @@ if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpim
 fi
 
-# p3scan
+# POP3 proxy
 /sbin/iptables -t nat -N p3scan
 /sbin/iptables -t nat -N jmpp3scan
 /sbin/iptables -t nat -A jmpp3scan -d 10.0.0.0/8 -j RETURN
@@ -239,6 +247,19 @@ fi
 /sbin/iptables -t nat -A PREROUTING -i $GREEN_DEV -j jmpp3scan
 if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpp3scan
+fi
+
+# SIP proxy
+/sbin/iptables -t nat -N sip
+/sbin/iptables -t nat -N jmpsip
+/sbin/iptables -t nat -A jmpsip -d 10.0.0.0/8 -j RETURN
+/sbin/iptables -t nat -A jmpsip -d 172.16.0.0/12 -j RETURN
+/sbin/iptables -t nat -A jmpsip -d 192.168.0.0/16 -j RETURN
+/sbin/iptables -t nat -A jmpsip -d 169.254.0.0/16 -j RETURN
+/sbin/iptables -t nat -A jmpsip -j sip
+/sbin/iptables -t nat -A PREROUTING -i $GREEN_DEV -j jmpsip
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpsip
 fi
 
 # Masqurade

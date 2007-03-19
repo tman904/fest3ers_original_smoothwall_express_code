@@ -13,7 +13,7 @@ require Exporter;
 our @_validation_items;
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items );
+@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo readvalue writevalue writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -459,6 +459,34 @@ END
 
 }
 
+sub readvalue
+{
+	my ( $filename, $value ) = @_;
+
+	unless ( open(FILE, $filename) ){
+		return undef;   
+	}
+
+	while (<FILE>)
+	{
+		chomp;
+		$value = $_;
+	}
+	close FILE;
+	return $value;
+}
+
+sub writevalue
+{
+	my ( $filename, $value ) = @_;
+
+	unless ( open( FILE, ">$filename" ) ){
+		return undef;
+	}
+	print FILE "$value\n";
+	close FILE;
+}
+
 sub writehash
 {
 	my $filename = $_[0];
@@ -488,7 +516,7 @@ sub readhash
 	
 	while (<FILE>)
 	{
-		chop;
+		chomp;
 		($var, $val) = split /=/, $_, 2;
 		if ($var)
 		{

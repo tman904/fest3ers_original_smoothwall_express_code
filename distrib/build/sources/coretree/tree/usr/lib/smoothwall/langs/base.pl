@@ -74,6 +74,7 @@
 'sshosts' => 'static dns',
 'sspreferences' => 'preferences',
 'sspop3 proxy' => 'pop3 proxy',
+'sssip' => 'sip',
 'preferences' => 'Preferences',
 'user interface' => 'User interface:',
 'powered by' => 'powered by',
@@ -828,5 +829,18 @@
 'traffic class' => 'Treat this traffic as:',
 'ssqos' => 'qos',
 'qos' => 'Quality of Service traffic shaping',
+
+# SIP
+'sip server' => 'SIP server',
+'logsec sip' => 'SIP service',
+'sip' => 'SIP',
+'session initiation protocol' => 'Session Initiation Protocol:',
+'sip logging level' => 'Logging level:',
+'sip normal' => 'Normal',
+'sip detailed' =>  'Detailed',
+'sip very detailed' => 'Very detailed',
+'log calls' => 'Log calls:',
+'maximum number of clients' => 'Maximum number of clients:',
+'sip transparent' => 'Transparent:',
 
 );

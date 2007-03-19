@@ -132,6 +132,8 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		clamav \
 		p3scan \
 		coretree \
+		libosip2 \
+		siproxd \
 		which \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
