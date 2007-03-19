@@ -170,7 +170,7 @@ sub display_interface
 			<td style='width: 25%;'><input type='text' name='${prefix}_ADDRESS' value='$settings{"${prefix}_ADDRESS"}' id='${prefix}address' @{[jsvalidip("${prefix}address",'true')]}></td>
 		</tr>
 		<tr>
-			<td>$tr{'nic type'}:</td>
+			<td>$tr{'nic type'}</td>
 			<td>$settings{"${prefix}_DISPLAYDRIVER"}</td>
 			<td>$tr{'netmaskc'}</td>
 			<td><input type='text'  name='${prefix}_NETMASK' value='$settings{"${prefix}_NETMASK"}' id='${prefix}mask' @{[jsvalidmask("${prefix}mask",'true')]}></td>
