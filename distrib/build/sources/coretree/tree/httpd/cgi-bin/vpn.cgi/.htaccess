@@ -1,7 +1,0 @@
-AuthName "Restricted"
-AuthType Basic
-AuthUserFile /var/smoothwall/auth/users
-
-<Files vpnconfig.dat>
-require user admin
-</Files>
