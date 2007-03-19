@@ -68,7 +68,6 @@ int stop_sip( std::vector<std::string> & parameters, std::string & response )
 	killprocess("/var/run/siproxd.pid");
 
 	ipbnat.push_back("iptables -t nat -F sip");
-
 	ipbfilter.push_back("iptables -t filter -F siprtpports");
 
 	error = ipbatch(ipbnat);
@@ -98,9 +97,10 @@ int start_sip( std::vector<std::string> & parameters, std::string & response )
 	response = "SIP Process started";
 	stop_sip( parameters, response );
 
+	ipbnat.push_back("iptables -t nat -F sip");
 	ipbfilter.push_back("iptables -t filter -F siprtpports");
 
-	ConfigVAR settings("/settings/sipproxy/settings");
+	ConfigVAR settings("/var/smoothwall/sipproxy/settings");
 	
 	int clients = atol(settings["CLIENTS"].c_str());
 	
@@ -112,7 +112,7 @@ int start_sip( std::vector<std::string> & parameters, std::string & response )
 	if (settings["ENABLE"] == "on")
 	{
 		syslog(LOG_ERR, "SIP enabled, starting accordingly");
-		simplesecuresysteml("/sbin/siproxd", NULL);
+		simplesecuresysteml("/usr/sbin/siproxd", NULL);
 
 		ipbfilter.push_back(stringprintf("iptables -t filter -A siprtpports -p udp --destination-port 7070:%d -j ACCEPT", highport));
 
