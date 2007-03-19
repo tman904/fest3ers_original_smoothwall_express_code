@@ -52,6 +52,7 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'outgoing.cgi' 		=> 'Add rules to control local machine\'s access to external services.',
 'traffic.cgi'		=> 'Set the speed at which you think your network interfaces run at. Increase the headroom (default 10% of speed) if you think that traffic shaping is having no effect. You may also be able to reduce headroom too. <b>NOTE:</b> this machine has to be the <b>slowest</b> point in the connection in order to be in control of traffic. You can choose what priority for all traffic and for different groups of services.',
 'sipproxy.cgi'		=> 'Configure the SIP proxy service. It can be used to transparently or non-transparently proxy SIP calls to and from the GREEN network.',
+'interfaces.cgi'	=> 'Configure the network interface IP addresses, as well as DNS and gateway settings.',
 
 );
 
