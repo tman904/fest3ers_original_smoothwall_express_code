@@ -231,7 +231,7 @@ if(defined $classids{'localtraffic'}) {
 # because if the traffic starts here e.g. from the web proxy and is going inwards
 # it should run at full line speed.
 
-	iptables("-A $OUTPUT  -m connmark --mark 0 -j CONNMARK --set-mark $connmarks{'localtraffic'}");
+	iptables("-A $OUTPUT  -j CONNMARK --set-mark $connmarks{'localtraffic'}");
 
 # Avoid mark localtraffic going forward from external - as if it has come from the outside we want to shape it. 
 	iptables("-A $FORWARD  -j RETURN -i $external_interface");
