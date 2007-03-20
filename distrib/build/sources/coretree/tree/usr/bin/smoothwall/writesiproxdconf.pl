@@ -18,9 +18,8 @@ flock(FILE, 2);
 
 print FILE <<END
 user = sip
-chrootjail = /var/lib/siproxd
 daemonize = 1
-registration_file = registrations/registrations
+registration_file = /var/lib/siproxd/registrations/registrations
 pid_file = /var/run/siproxd.pid
 rtp_proxy_enable = 1
 rtp_timeout = 300
