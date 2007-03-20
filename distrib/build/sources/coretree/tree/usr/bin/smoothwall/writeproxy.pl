@@ -67,6 +67,8 @@ $maxincomingsizebytes = $proxysettings{'MAX_INCOMING_SIZE'} * 1024;
 
 print FILE <<END
 
+umask 022
+
 maximum_object_size $proxysettings{'MAX_SIZE'} KB
 minimum_object_size $proxysettings{'MIN_SIZE'} KB
 

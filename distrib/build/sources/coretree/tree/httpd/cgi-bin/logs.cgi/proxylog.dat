@@ -332,9 +332,9 @@ foreach $_ (@slice)
 	else {
 		print "<TR BGCOLOR='$table2colour'>\n"; }
 	my ($time,$ip,$url) = split;
-	$url =~ /(^.{0,60})/;
+	$url =~ /(^.{0,80})/;
 	my $part = $1;
-	unless (length($part) < 60) { $part = "${part}..."; }  
+	unless (length($part) < 80) { $part = "${part}..."; }  
 	print <<END
 	<TD ALIGN='CENTER'>$time</TD>
 	<TD ALIGN='CENTER'>$ip</TD>
