@@ -465,7 +465,7 @@
 'status information' => 'Status information',
 'advanced status information' => 'Advanced status information',
 'services' => 'Services:',
-'core services' => 'Core Services:',
+'core services' => 'Core services:',
 'memory' => 'Memory:',
 'uptime and users' => 'Uptime and users:',
 'interfaces' => 'Interfaces:',
