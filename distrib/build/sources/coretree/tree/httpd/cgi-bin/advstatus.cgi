@@ -33,17 +33,18 @@ shift(@echo);
 # these really should be tr strings
 
 print qq|
-<table>
+<br/>
+<table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
 <tr>
-	<td>&nbsp;</td>
-	<td style='text-align: right; width: 50px'><tt>   $tr{ 'adv total' }</tt></td>
-	<td style='text-align: right; width: 50px'><tt>    $tr{ 'adv used' }</tt></td>
-	<td style='text-align: right; width: 50px'><tt>    $tr{ 'adv free' }</tt></td>
-	<td style='text-align: right;'><tt>&nbsp;</tt></td>
-	<td style='text-align: center; width: 150px;'><tt>$tr{ 'adv used%' }</tt></td>
-	<td style='text-align: right; width: 50px;' ><tt>  $tr{ 'adv shared' }</tt></td>
-	<td style='text-align: right; width: 50px;' ><tt> $tr{ 'adv buffers' }</tt></td>
-	<td style='text-align: right; width: 50px;' ><tt>  $tr{ 'adv cached' }</tt></td>
+	<th>&nbsp;</th>
+	<th style='text-align: right; width: 50px'>$tr{ 'adv total' }</th>
+	<th style='text-align: right; width: 50px'>$tr{ 'adv used' }</th>
+	<th style='text-align: right; width: 50px'>$tr{ 'adv free' }</th>
+	<th style='text-align: right;'>&nbsp;</th>
+	<th style='text-align: center; width: 150px;'>$tr{ 'adv used%' }</th>
+	<th style='text-align: right; width: 50px;' >$tr{ 'adv shared' }</th>
+	<th style='text-align: right; width: 50px;' >$tr{ 'adv buffers' }</th>
+	<th style='text-align: right; width: 50px;' >$tr{ 'adv cached' }</th>
 </tr>
 |;
 
@@ -95,7 +96,7 @@ foreach $mline (@echo) {
 }
 
 print qq|
-</table>|;
+</table><br/>|;
 &closebox();
 
 &openbox($tr{'disk usage'});
@@ -104,15 +105,16 @@ print qq|
 shift(@echo);
 
 print qq|
-<table>
+<br/>
+<table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
 <tr>
-<td style='width: 100px;'><tt>$tr{ 'adv filesystem' }</tt></td>
-<td style='width: 75px;'><tt>$tr{ 'adv mount point' }</tt></td>
-<td style='width: 40px; text-align: right;'><tt>$tr{ 'adv size'}</tt></td>
-<td style='width: 40px; text-align: right;'><tt>$tr{ 'adv used'}</tt></td>
-<td style='width: 65px; text-align: right;'><tt>$tr{ 'adv available'}</tt></td>
-<td style='width: 5px;' ><tt>&nbsp;</tt></td>
-<td style='width: 150px; text-align: center;'><tt>$tr{ 'adv used%' }</tt></td>
+<th style='width: 100px;'>$tr{ 'adv filesystem' }</th>
+<th style='width: 75px;'>$tr{ 'adv mount point' }</th>
+<th style='width: 40px; text-align: right;'>$tr{ 'adv size'}</th>
+<th style='width: 40px; text-align: right;'>$tr{ 'adv used'}</th>
+<th style='width: 65px; text-align: right;'>$tr{ 'adv available'}</th>
+<th style='width: 5px;' >&nbsp;</th>
+<th style='width: 150px; text-align: center;'>$tr{ 'adv used%' }</th>
 </tr>
 |;
 foreach $mount (@echo) {
@@ -150,22 +152,23 @@ foreach $mount (@echo) {
 }
 
 print qq|
-</table>|;
+</table><br/>|;
 &closebox();
 
 &openbox($tr{'inode usage'});
 @echo = `df -i`;
 shift(@echo);
 print qq|
-<table>
+<br/>
+<table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
 <tr>
-<td style='width: 100px;'><tt>$tr{ 'adv filesystem' }</tt></td>
-<td style='width: 75px;'><tt>$tr{ 'adv mount point' }</tt></td>
-<td style='width: 40; text-align: right;'><tt>$tr{ 'adv inodes' }</tt></td>
-<td style='width: 40; text-align: right;'><tt>$tr{ 'adv used' }</tt></td>
-<td style='width: 65; text-align: right;'><tt>$tr{ 'adv free' }</tt></td>
-<td style='width: 5px;'><tt>&nbsp;</tt></td>
-<td style='width: 150px; text-align: center;'><tt>$tr{ 'adv used%' }</tt></td>
+<th style='width: 100px;'>$tr{ 'adv filesystem' }</th>
+<th style='width: 75px;'>$tr{ 'adv mount point' }</th>
+<th style='width: 40; text-align: right;'>$tr{ 'adv inodes' }</th>
+<th style='width: 40; text-align: right;'>$tr{ 'adv used' }</th>
+<th style='width: 65; text-align: right;'>$tr{ 'adv free' }</th>
+<th style='width: 5px;'>&nbsp;</th>
+<th style='width: 150px; text-align: center;'>$tr{ 'adv used%' }</th>
 </tr>
 |;
 foreach $mount (@echo) {
@@ -202,65 +205,212 @@ foreach $mount (@echo) {
 |;
 }
 print qq|
-</table>|;
+</table><br/>|;
 &closebox();
 
 &openbox($tr{'uptime and users'});
-print "<PRE>";
-system '/usr/bin/w';
-print "</PRE>\n";
+
+my @who = split /\n/, &pipeopen( '/usr/bin/w' );
+
+my ( $time, $up, $users, $load ) = ( $who[0] =~/\s+([^\s]*)\s+up\s+([^,]*),\s+([^,]*),\s+(.*)/ );
+
+print "<div style='text-align: center;'>$time,  up $up,  $users,  $load</div>";
+
+print qq{
+	<br/>
+	<table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
+	<tr>
+		<th>$tr{'adv user'}</th>
+		<th>$tr{'adv tty'}</th>
+		<th>$tr{'adv login'}</th>
+		<th>$tr{'adv idle'}</th>
+		<th>$tr{'adv jcpu'}</th>
+		<th>$tr{'adv pcpu'}</th>
+		<th>$tr{'adv what'}</th>
+	</tr>
+};
+
+shift @who;  # remove the header information
+shift @who;  # remove the header information
+
+foreach my $whol (@who){
+	my ( $user, $tty, $login, $idle, $jcpu, $pcpu, $what ) = split /\s+/, $whol;
+	print qq{
+		<tr>
+			<td>$user</td>
+			<td>$tty</td>
+			<td>$login</td>
+			<td>$idle</td>
+			<td>$jcpu</td>
+			<td>$pcpu</td>
+			<td>$what</td>
+		</tr>
+	};
+}
+print "</table>\n";
+
 &closebox();
 
+my %ethersettings;
+&readhash(  "/var/smoothwall/ethernet/settings", \%ethersettings );
+my %devices;
+$devices{$ethersettings{'GREEN_DEV'}} = $tr{'green'};
+$devices{$ethersettings{'ORANGE_DEV'}} = $tr{'orange'};
+$devices{$ethersettings{'RED_DEV'}} = $tr{'red'};
+$devices{$ethersettings{'PURPLE_DEV'}} = $tr{'purple'};
+
 &openbox($tr{'interfaces'});
-print "<PRE>";
-system ('/sbin/ifconfig', '-a');
-print "</PRE>\n";
+
+my @interfaces = split /\n\n/, &pipeopen( '/sbin/ifconfig', '-a' );
+
+foreach my $interface ( @interfaces ){
+	my ( $devicename ) = ( $interface =~ /([^\s]+)/ );
+        my ( $macaddress ) = ( $interface =~ /HWaddr\s+([a-fA-F\d]+:[a-fA-F\d]+:[a-fA-F\d]+:[a-fA-F\d]+:[a-fA-F\d]+:[a-fA-F\d]+)/ );
+        my ( $ipaddress  ) = ( $interface =~ /inet addr:(\d+\.\d+\.\d+\.\d+)/ );
+        my ( $mtu )        = ( $interface =~ /MTU:(\d+)/ );
+        my ( $broadcast  ) = ( $interface =~ /Bcast:(\d+\.\d+\.\d+\.\d+)/ );
+        my ( $netmask    ) = ( $interface =~ /Mask:(\d+\.\d+\.\d+\.\d+)/ );
+        my ( $status     ) = ( $interface =~ /\s+(UP)\s+/ );
+        my ( $rx, $rxk   ) = ( $interface =~ /RX bytes:(\d+) \((\d+\.\d+ [KMG]*b)\)/ );
+        my ( $tx, $txk   ) = ( $interface =~ /TX bytes:(\d+) \((\d+\.\d+ [KMG]*b)\)/ );
+
+	if ( defined $devices{$devicename} ){
+		$devicename = "$devicename ($devices{$devicename})";
+	}
+
+	print qq{
+		<br/>
+		<table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
+		<tr>
+			<th colspan='5'>$devicename</th>
+		</tr>
+		<tr>
+			<th style='width: 4%;' rowspan='4'>&nbsp;</th>
+			<td style='width: 23%;'>IP Address:</td>
+			<td style='width: 25%;'>$ipaddress</td>
+			<td style='width: 23%;'>Broadcast</td>
+			<td style='width: 25%;'>$broadcast</td>
+		</tr>
+		<tr>
+			<td>Netmask</td>
+			<td>$netmask</td>
+			<td>MTU</td>
+			<td>$mtu</td>
+		</tr>
+		<tr>
+			<td>MAC Address</td>
+			<td>$macaddress</td>
+			<td>Status</td>
+			<td>$status</td>
+		</tr>
+		<tr>
+			<td>Sent</td>
+			<td>$tx ($txk)</td>
+			<td>Received</td>
+			<td>$rx ($rxk)</td>
+		</tr>
+		</table>
+	};
+}
+
 &closebox();
 
 &openbox($tr{'routing'});
-print "<PRE>";
-system ('/sbin/route', '-n');
-print "</PRE>\n";
+
+my @routes = split /\n/, &pipeopen( '/sbin/route', '-n' );
+
+print qq{
+	<br/>
+	<table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
+	<tr>
+		<th>$tr{'adv destination'}</th>
+		<th>$tr{'adv gateway'}</th>
+		<th>$tr{'adv genmask'}</th>
+		<th>$tr{'adv flags'}</th>
+		<th>$tr{'adv metric'}</th>
+		<th>$tr{'adv ref'}</th>
+		<th>$tr{'adv use'}</th>
+		<th>$tr{'adv iface'}</th>
+	</tr>
+};
+
+shift @routes;  # remove the header information
+shift @routes;  # remove the header information
+
+foreach my $routel (@routes){
+	my ( $destination, $gateway, $genmask, $flags, $metric, $ref, $use, $iface ) = split /\s+/, $routel;
+	print qq{
+		<tr>
+			<td>$destination</td>
+			<td>$gateway</td>
+			<td>$genmask</td>
+			<td>$flags</td>
+			<td>$metric</td>
+			<td>$ref</td>
+			<td>$use</td>
+			<td>$devices{$iface}</td>
+		</tr>
+	};
+}
+print "</table>\n";
+
+&closebox();
+&openbox($tr{'adv hardware'});
+
+my @lspci = split /\n/, &pipeopen( '/usr/sbin/lspci' );
+
+print qq{
+	<br/>
+	<table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
+	<tr>
+		<th>$tr{'adv address'}</th>
+		<th>$tr{'adv type'}</th>
+		<th>$tr{'adv device'}</th>
+	</tr>
+};
+
+foreach my $devl (@lspci){
+	my ( $address, $type, $device ) = ( $devl =~/([^\s]*)\s+([^:]*):\s+(.*)/ );
+	print qq{
+		<tr>
+			<td>$address</td>
+			<td>$type</td>
+			<td>$device</td>
+		</tr>
+	};
+}
+print "</table>\n";
+
 &closebox();
 
 &openbox($tr{'loaded modules'});
-my $modules;
-open(PIPE, '-|') || exec('/bin/lsmod');
-<PIPE>;
-while (<PIPE>) { 
-	$modules .= $_; 
-}
-close (PIPE);
 
-my @modules = split /\n/, $modules;
+my @lsmod = split /\n/, &pipeopen( '/bin/lsmod' );
 
-print <<END
-<style type="text/css">
-table.modules td {
-	font-family:monospace;
-}
-</style>
-<table class="modules">
+print qq{
+	<br/>
+	<table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
 	<tr>
-	<td>Module</td>
-	<td>Size</td>
-	<td>Used by</td>
+		<th>$tr{'adv module'}</th>
+		<th>$tr{'adv size'}</th>
+		<th>$tr{'adv used by'}</th>
 	</tr>
-END
-;
+};
 
-foreach my $module ( @modules )
-{
-	my ( $mod, $size, $used ) = ( $module =~ /([^\s]*)\s+(\d+)\s+(.*)/ );
-	$used =~ s/\,/\ /g;
-	print "<tr>\n";
-	print "<td style='vertical-align: top;'>$mod</td>\n";
-	print "<td style='vertical-align: top;'>$size</td>\n";
-	print "<td style='vertical-align: top;'>$used</td>\n";
-	print "</tr>\n";
+shift @lsmod;  # remove the header information
+
+foreach my $modl (@lsmod){
+	my ( $module, $size, $usedby ) = split /\s+/, $modl;
+	print qq{
+		<tr>
+			<td>$module</td>
+			<td>$size</td>
+			<td>$usedby</td>
+		</tr>
+	};
 }
-
 print "</table>\n";
+
 &closebox();
 
 &openbox($tr{'kernel version'});
