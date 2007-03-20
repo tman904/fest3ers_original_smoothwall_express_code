@@ -839,7 +839,7 @@
 
 # traffic.cgi
 'traffic configuration' => 'Traffic configuration',
-'traffic general options' => 'General Options:',
+'traffic general options' => 'General options:',
 'traffic enable' => 'Enable traffic shaping:',
 'traffic external up' => 'External upload speed:',
 'traffic external down' => 'Download speed:',
