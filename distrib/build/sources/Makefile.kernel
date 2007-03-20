@@ -11,7 +11,7 @@ PACKAGE = kernel-$(TYPE)
 VERSION = $(KERNEL_VERSION)
 
 PATCH_O_MATIC_VER = 20070117
-IPT_ACCOUNT_VER = 1.6
+IPT_ACCOUNT_VER = 1.8
 UNICORN_VER = 0.9.0
 IPTABLEPROC_VER = 0.1
 USR_VER = 1.08
@@ -65,8 +65,7 @@ prepare: download
 
 apply-pom: prepare
 	@(cd patch-o-matic-ng-$(PATCH_O_MATIC_VER)/patchlets; \
-	tar xvzf $(DOWNLOADS_DIR)/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz; \
-	rm ACCOUNT/iptables.patch;)
+	tar xvzf $(DOWNLOADS_DIR)/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz)
 
 	@(export KERNEL_DIR=$(KERNEL_DIR); \
 	export IPTABLES_DIR=$(IPTABLES_DIR); \

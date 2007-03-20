@@ -14,7 +14,7 @@ EXTENSION = .tar.bz2
 
 BASE_URL = ftp://ftp.netfilter.org/pub/iptables
 
-PATCH_FILE1 = ipt_ACCOUNT.patch
+# PATCH_FILE1 = ipt_ACCOUNT.patch
 
 CONFIGURE = yes
 COMPILE = yes
