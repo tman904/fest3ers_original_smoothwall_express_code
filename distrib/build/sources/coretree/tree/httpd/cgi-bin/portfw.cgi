@@ -184,14 +184,14 @@ print <<END
 		</select>
 	</td>
 	<td style='width: 25%;'>$tr{'sourcec'}</td>
-	<td style='width: 25%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}' id='extaddress' @{[jsvalidip('extaddress')]}></td>
+	<td style='width: 25%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}' id='extaddress' @{[jsvalidip('extaddress','true')]}></td>
 </tr>
 <tr>
 	@{[&portlist('SRC_PORT_SEL', $tr{'source port or rangec'}, 'SRC_PORT', $tr{'portc'}, $service, { 'ungrouped' => 'true' })]}
 </tr>
 <tr>
 	<td>$tr{'destination ipc'}</td>
-	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18' id='iaddress' @{[jsvalidip('iaddress','true')]}></td>
+	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18' id='iaddress' @{[jsvalidip('iaddress')]}></td>
 	<td></td>
 	<td></td>
 </tr>
