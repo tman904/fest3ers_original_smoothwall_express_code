@@ -60,7 +60,9 @@ int handledefaults(void)
 	
 	if (rc != 2)
 	{
-		if (strcmp(openness, newopenness) != 0)
+		/* Copy the config thingies if its changed OR its the inital
+		 * install run of the setup program. */
+		if (automode || strcmp(openness, newopenness) != 0)
 		{
 			snprintf(commandstring, STRING_SIZE - 1, "/usr/bin/smoothwall/installdefaults.pl %s",
 				newopenness);
