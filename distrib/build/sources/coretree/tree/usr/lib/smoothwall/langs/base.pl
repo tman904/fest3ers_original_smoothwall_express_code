@@ -74,7 +74,7 @@
 'sshosts' => 'static dns',
 'sspreferences' => 'preferences',
 'sspop3 proxy' => 'pop3 proxy',
-'sssip' => 'sip',
+'sssip' => 'sip proxy',
 'preferences' => 'Preferences',
 'user interface' => 'User interface:',
 'powered by' => 'powered by',

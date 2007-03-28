@@ -25,7 +25,7 @@ extern char *english_tr[];
 int main(int argc, char *argv[])
 {
 	int choice;
-	char *sections[11]; /* need to fill this out AFTER knowning lang */
+	char *sections[12]; /* need to fill this out AFTER knowning lang */
 	int rc;
 	struct keyvalue *kv;
 	char selectedshortlang[STRING_SIZE] = "en";
@@ -64,19 +64,6 @@ int main(int argc, char *argv[])
 	findkey(kv, "LANGUAGE", selectedshortlang);
 	
 	ctr = english_tr; 
-
-	sections[0] = ctr[TR_RESTORE_CONFIGURATION];
-	sections[1] = ctr[TR_KEYBOARD_MAPPING];
-	sections[2] = ctr[TR_HOSTNAME];
-	sections[3] = ctr[TR_WEB_PROXY];
-	sections[4] = ctr[TR_ISDN_CONFIGURATION];
-	sections[5] = ctr[TR_ADSL_CONFIGURATION];
-	sections[6] = ctr[TR_NETWORKING];	
-	sections[7] = ctr[TR_DHCP_SERVER_CONFIGURATION],
-	sections[8] = ctr[TR_ROOT_PASSWORD];
-	sections[9] = ctr[TR_SETUP_PASSWORD];
-	sections[10] = ctr[TR_ADMIN_PASSWORD];
-	sections[11] = NULL;
 	
 	newtInit();
 	newtCls();
@@ -90,14 +77,15 @@ int main(int argc, char *argv[])
 		sections[1] = ctr[TR_KEYBOARD_MAPPING];
 		sections[2] = ctr[TR_HOSTNAME];
 		sections[3] = ctr[TR_WEB_PROXY];
-		sections[4] = ctr[TR_ISDN_CONFIGURATION];
-		sections[5] = ctr[TR_ADSL_CONFIGURATION];
-		sections[6] = ctr[TR_NETWORKING];	
-		sections[7] = ctr[TR_DHCP_SERVER_CONFIGURATION],
-		sections[8] = ctr[TR_ROOT_PASSWORD];
-		sections[9] = ctr[TR_SETUP_PASSWORD];
-		sections[10] = ctr[TR_ADMIN_PASSWORD];
-		sections[11] = NULL;	
+		sections[4] = ctr[TR_DEFAULT_SECURITY_LEVEL];
+		sections[5] = ctr[TR_ISDN_CONFIGURATION];
+		sections[6] = ctr[TR_ADSL_CONFIGURATION];
+		sections[7] = ctr[TR_NETWORKING];	
+		sections[8] = ctr[TR_DHCP_SERVER_CONFIGURATION],
+		sections[9] = ctr[TR_ROOT_PASSWORD];
+		sections[10] = ctr[TR_SETUP_PASSWORD];
+		sections[11] = ctr[TR_ADMIN_PASSWORD];
+		sections[12] = NULL;	
 	
 		usbfail = 1;
 		if (!stat("/proc/bus/usb/devices", &statbuf))
@@ -129,7 +117,6 @@ int main(int argc, char *argv[])
 					break;
 				
 				case 2:
-				
 					handlehostname();
 					break;
 
@@ -137,32 +124,35 @@ int main(int argc, char *argv[])
 					handlewebproxy();
 					break;
 					
-
 				case 4:
-					handleisdn();
+					handledefaults();
 					break;
 
 				case 5:
+					handleisdn();
+					break;
+
+				case 6:
 					handleadsl();
 					break;
 				
-				case 6:
+				case 7:
 					handlenetworking();
 					break;
 					
-				case 7:
+				case 8:
 					handledhcp();
 					break;
 									
-				case 8:
+				case 9:
 					handlerootpassword();
 					break;
 
-				case 9:
+				case 10:
 					handlesetuppassword();
 					break;
 					
-				case 10:
+				case 11:
 					handleadminpassword();
 					break;
 		
@@ -189,6 +179,8 @@ int main(int argc, char *argv[])
 		if (!(handlekeymap()))
 			goto EXIT;
 		if (!(handlehostname()))
+			goto EXIT;
+		if (!(handledefaults()))
 			goto EXIT;
 		if (!(handlenetworking()))
 			goto EXIT;
@@ -255,7 +247,7 @@ EXIT:
 		else
 			newtWinMessage(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_SETUP_NOT_COMPLETE]);
 	}
-        else
+	else
 	{
 		if (rebootrequired)
 		{

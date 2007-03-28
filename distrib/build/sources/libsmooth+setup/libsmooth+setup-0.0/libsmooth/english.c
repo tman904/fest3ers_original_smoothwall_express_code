@@ -302,6 +302,8 @@ char *english_tr[] = {
 "Hostname",
 /* TR_WEB_PROXY */
 "Web proxy",
+/* TR_DEFAULT_SECURITY_LEVEL */
+"Default security level",
 /* TR_NETWORKING */
 "Networking",
 /* TR_DHCP_SERVER_CONFIGURATION */
@@ -652,5 +654,23 @@ char *english_tr[] = {
 "floppy disk drive before continuing.",
 /* TR_CLEANING_UP */
 "Cleaning up...",
+
+/* defaults.c */
+/* TR_OPENNESS_OPEN */
+"Open",
+/* TR_OPENNESS_HALFOPEN */
+"Half-open",
+/* TR_OPENNESS_CLOSED */
+"Closed",
+/* TR_DEFAULT_OPENNESS */
+"Default security policy",
+/* TR_DEFAULT_OPENNESS_LONG */
+"Select the default security policy for outgoing requests. This setting does NOT " \
+"affect incoming requests in any way, which are always blocked unless explicitily allowed.\n" \
+"\n" \
+"   'Open' : all outgoing requests are allowed (this is the same as previous versions of SmoothWall Express).\n" \
+"   'Half-open' : most outoing requests are allowed, except for potentionally harmful ones.\n" \
+"   'Closed' : all outgoing requests are blocked, and must be explicitly enabled on the " \
+"ports and services you require.\n" \
 
 };

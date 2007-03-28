@@ -41,3 +41,6 @@ int handlewebproxy(void);
 
 /* restore.c */
 int handlerestore(void);
+
+/* defaults.c */
+int handledefaults(void);

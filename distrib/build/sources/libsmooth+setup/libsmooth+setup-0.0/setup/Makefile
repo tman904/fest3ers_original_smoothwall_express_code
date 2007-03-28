@@ -26,7 +26,7 @@ clean :
 ######
 
 OBJS=main.o hostname.o passwords.o networking.o misc.o webproxy.o \
-	keymap.o restore.o isdn.o adsl.o dhcp.o
+	keymap.o restore.o isdn.o adsl.o dhcp.o defaults.o
 
 setup: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)
@@ -49,3 +49,4 @@ hardware.o : hardware.c
 isdn.o : isdn.c
 adsl.o : adsl.c
 dhcp.o : dhcp.c
+defaults.o : defaults.c
