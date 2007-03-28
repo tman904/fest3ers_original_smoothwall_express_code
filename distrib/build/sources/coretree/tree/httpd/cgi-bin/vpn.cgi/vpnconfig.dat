@@ -205,7 +205,7 @@ print <<END
 <INPUT TYPE='PASSWORD' NAME='SECRET2' VALUE='$cgiparams{'SECRET2'}' SIZE='40' id='secret2' @{[jsvalidregex('secret2','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 </TR>
 <tr>
-	<td>$tr{'comment'}</td>
+	<td>$tr{'commentc'}</td>
 	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
 </tr>
 </TABLE>

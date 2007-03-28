@@ -199,7 +199,7 @@ print <<END
 	@{[&portlist('DEST_PORT_SEL', $tr{'destination portc'}, 'DEST_PORT', $tr{'portc'}, $dst_service, { 'ungrouped' => 'true', 'blank' => 'true', 'blob' => 'true' } )]}
 </tr>
 <tr>
-	<td>$tr{'comment'}</td>
+	<td>$tr{'commentc'}</td>
 	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
 </tr>
 <tr>

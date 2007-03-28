@@ -303,7 +303,7 @@ print qq{
 	@{[&portlist('SERVICE', $tr{'application servicec'}, 'PORT', $tr{'portc'}, $service)]}
 </tr>
 <tr>
-	<td>$tr{'comment'}</td>
+	<td>$tr{'commentc'}</td>
 	<td colspan='3'><input type='text' style='width: 80%;' name='RULECOMMENT' value='$cgiparams{'RULECOMMENT'}' id='rulecomment' @{[jsvalidcomment('rulecomment')]}  ></td>
 </tr>
 <tr>
@@ -393,7 +393,7 @@ print qq{
 	<td style='width: 25%;'></td>	
 </tr>
 <tr>
-	<td>$tr{'comment'}</td>
+	<td>$tr{'commentc'}</td>
 	<td colspan='3'><input type='text' style='width: 80%;' name='MACHINECOMMENT' value='$cgiparams{'MACHINECOMMENT'}' id='machinecomment' @{[jsvalidcomment('machinecomment')]}  ></td>
 </tr>
 <tr>

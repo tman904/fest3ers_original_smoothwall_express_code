@@ -161,7 +161,7 @@ print <<END
 	@{[&portlist('SERVICE', $tr{'application servicec'}, 'DEST_PORT', $tr{'destination portc'}, $service, { blank => 'true'} )]}
 </tr>
 <tr>
-	<td>$tr{'comment'}</td>
+	<td>$tr{'commentc'}</td>
 	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
 </tr>
 </table>
