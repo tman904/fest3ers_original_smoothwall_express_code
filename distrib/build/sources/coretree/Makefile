@@ -40,6 +40,7 @@ distrib:
 	@(cd distrib/etc/ppp; ln -s /var/smoothwall/ppp/ibod.cf)
 	@(cd distrib/usr/etc; ln -s /var/smoothwall/time/ntpd.conf)
 	@(cd distrib/usr/etc; ln -s /var/smoothwall/sipproxy/siproxd.conf)
+	@(cd distrib/var/run; ln -s /var/clamav/clamd.pid)
 	
 	@(cd distrib/var/smoothwall/time; ln -s /usr/share/zoneinfo/posix/Europe/London localtime)
 

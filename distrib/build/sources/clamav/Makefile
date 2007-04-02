@@ -1,14 +1,13 @@
 include ../Makefile.conf
 
 PACKAGE = clamav
-VERSION = 0.88.7
+VERSION = 0.90.1
 
 BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/clamav/
 
-CONFIG_OPTS = -sysconfdir=/etc --with-dbdir=/var/clamav --disable-clamav
+CONFIG_OPTS = --sysconfdir=/etc --with-dbdir=/var/clamav --disable-clamav
 
-PATCH_FILE1 = openlog.patch
-PATCH_FILE2 = clamav-pidperms.patch
+PATCH_FILE1 = clamav-pidperms.patch
 
 INSTALL = yes
 

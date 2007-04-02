@@ -462,6 +462,7 @@
 'intrusion detection system' => 'Intrusion Detection System',
 'network time server' => 'Network time server',
 'im proxy' => 'IM proxy server',
+'clam antivirus server' => 'Clam Anti-virus server',
 'status information' => 'Status information',
 'advanced status information' => 'Advanced status information',
 'services' => 'Services:',
