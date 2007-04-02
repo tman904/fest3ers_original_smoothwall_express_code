@@ -268,9 +268,9 @@ int signalunknownprocess( const char * processname, int signal )
 	int trys = 0;
 	trys = 0;
 	char signal_text[ 255 ];
-	snprintf( signal_text, sizeof( signal_text ), "%d", signal );
+	snprintf( signal_text, sizeof( signal_text ), "-%d", signal );
 
-	return (simplesecuresysteml("/usr/bin/killall", processname, signal_text, NULL));
+	return (simplesecuresysteml("/usr/bin/killall", signal_text, processname, NULL));
 }
 
 int ipisrange(std::string ip)

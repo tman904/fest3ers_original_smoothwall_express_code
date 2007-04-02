@@ -26,6 +26,7 @@ extern "C" {
 	int restart_dnsproxy(std::vector<std::string> & parameters, std::string & response );
 	int start_dnsproxy(std::vector<std::string> & parameters, std::string & response );
 	int stop_dnsproxy(std::vector<std::string> & parameters, std::string & response );
+	int hup_dnsproxy(std::vector<std::string> & parameters, std::string & response );
 }
 
 int load(std::vector<CommandFunctionPair> & pairs )
@@ -34,10 +35,12 @@ int load(std::vector<CommandFunctionPair> & pairs )
 	CommandFunctionPair restart_dnsproxy_function("dnsproxyrestart", "restart_dnsproxy", 0, 0 );
 	CommandFunctionPair start_dnsproxy_function("dnsproxystart", "start_dnsproxy", 0, 0 );
 	CommandFunctionPair stop_dnsproxy_function("dnsproxystop", "stop_dnsproxy", 0, 0 );
+	CommandFunctionPair hup_dnsproxy_function("dnsproxyhup", "hup_dnsproxy", 0, 0 );
 
 	pairs.push_back(restart_dnsproxy_function );
 	pairs.push_back(start_dnsproxy_function );
 	pairs.push_back(stop_dnsproxy_function );
+	pairs.push_back(hup_dnsproxy_function );
 
 	return 0;
 }
@@ -80,19 +83,18 @@ int start_dnsproxy(std::vector<std::string> & parameters, std::string & response
 		error = 1;
 		goto EXIT;
 	}
-
+	
 	for (std::vector<std::string>::iterator i = parameters.begin();
 		i != parameters.end(); i++)
 	{
 		if ((*i).find_first_not_of(IP_NUMBERS) != std::string::npos)
 			syslog(LOG_ERR, "Invalid DNS server IP %s", (*i).c_str());
-
-		fputs("nameserver ", resolvfile);
+			fputs("nameserver ", resolvfile);
 		fputs((*i).c_str(), resolvfile);
 		fputs("\n", resolvfile);
 	}
 	fclose(resolvfile);
-	
+
 	error = simplesecuresysteml("/usr/bin/dnsmasq", "-r", "/etc/resolv.conf.dnsmasq", NULL);
 	
 	if (error)
@@ -101,5 +103,19 @@ int start_dnsproxy(std::vector<std::string> & parameters, std::string & response
 		response = "DNS Proxy Start Successful";
 
 EXIT:
+	return error;
+}
+
+int hup_dnsproxy(std::vector<std::string> & parameters, std::string & response)
+{
+	int error = 0;
+	
+	error = signalunknownprocess("dnsmasq", SIGHUP);
+
+	if (error)
+		response = "DNS Proxy HUP failure";
+	else
+		response = "DNS Proxy HUP successful";
+
 	return error;
 }
