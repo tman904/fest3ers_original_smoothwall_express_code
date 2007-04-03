@@ -296,12 +296,12 @@ sub countisdnchannels
 
 	open (FILE, "/dev/isdninfo");
 
-	$idmap = <FILE>; chop $idmap;
-	$chmap = <FILE>; chop $chmap;
-	$drmap = <FILE>; chop $drmap;
-	$usage = <FILE>; chop $usage;
-	$flags = <FILE>; chop $flags;
-	$phone = <FILE>; chop $phone;
+	$idmap = <FILE>; chomp $idmap;
+	$chmap = <FILE>; chomp $chmap;
+	$drmap = <FILE>; chomp $drmap;
+	$usage = <FILE>; chomp $usage;
+	$flags = <FILE>; chomp $flags;
+	$phone = <FILE>; chomp $phone;
 
 	$phone =~ s/^phone(\s*):(\s*)//;
 

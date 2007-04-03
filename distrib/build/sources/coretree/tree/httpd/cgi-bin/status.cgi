@@ -141,7 +141,7 @@ sub isrunning
 	}
 	elsif (open(FILE, "/var/run/${cmd}.pid"))
 	{
- 		$pid = <FILE>; chop $pid;
+ 		$pid = <FILE>; chomp $pid;
 		close FILE;
 		if (open(FILE, "/proc/${pid}/status"))
 		{
