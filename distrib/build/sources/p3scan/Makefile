@@ -20,7 +20,7 @@ compile: configure
 install: compile
 	-mkdir -p $(PKG_ROOT)/var/avirus/p3scan/children
 	-mkdir -p $(PKG_ROOT)/var/avirus/p3scan/notify
-	chown -R 108:108 $(PKG_ROOT)/var/avirus/
+	chown -R 105:105 $(PKG_ROOT)/var/avirus/
 	-mkdir -p $(PKG_ROOT)/usr/sbin/
 	@cp $(DIR)/p3scan $(PKG_ROOT)/usr/sbin
 
