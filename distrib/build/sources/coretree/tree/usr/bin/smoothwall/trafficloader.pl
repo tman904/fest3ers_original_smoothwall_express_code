@@ -47,16 +47,16 @@ my $default_traffic = $trafficsettings{'DEFAULT_TRAFFIC'} || 'normal';
 
 # this script is designed to produce a sane default even if there are no traffic settings.
 my %classids = (
-				'all' => 100, 'normal' => 109, 'high' => 110,	'low' => 111, 'slow' => 112,
-				'smoothadmin' => 113, 'webcache' => 114, 'localtraffic' => 115,	'smallpkt' => 116,
+	'all' => 100, 'normal' => 109, 'high' => 110,	'low' => 111, 'slow' => 112,
+	'smoothadmin' => 113, 'webcache' => 114, 'localtraffic' => 115,	'smallpkt' => 116,
 );
 # optional override - may want extra classes
 if(defined $trafficsettings{CLASSIDS} && $trafficsettings{CLASSIDS} ne '') {
 	%classids = split(',', $trafficsettings{CLASSIDS});
 }
 my %prio = (
-			'high' => 0, 'normal' => 1, 'low' => 2, 'slow' => 3,
-			'smoothadmin' => 0,	'webcache' => 1, 'localtraffic' => 0, 'smallpkt' => 0,
+	'high' => 0, 'normal' => 1, 'low' => 2, 'slow' => 3,
+	'smoothadmin' => 0,	'webcache' => 1, 'localtraffic' => 0, 'smallpkt' => 0,
 );
 # optional override - needed if want extra classes or to change the prorities of those already here
 if(defined $trafficsettings{PRIO} && $trafficsettings{PRIO} ne '') {
@@ -66,15 +66,15 @@ if(defined $trafficsettings{PRIO} && $trafficsettings{PRIO} ne '') {
 # read these in from UI sometime
 # initial data all appropriate for 512/256 ADSL
 my %drate = (
-			 'normal' => 26214, 'high' => 13107, 'low' => 9830, 'slow' => 655,
-			 'smoothadmin' => 3276, 'webcache' =>  3276, 'localtraffic' => 655360, 'smallpkt' => 3276,
-			 );
+	'normal' => 26214, 'high' => 13107, 'low' => 9830, 'slow' => 655,
+	'smoothadmin' => 3276, 'webcache' =>  3276, 'localtraffic' => 655360, 'smallpkt' => 3276,
+);
 
 
 my %dceil = (
-			 'normal' => 58982, 'high' => 58982, 'low' => 26214, 'slow' => 1310,
-			 'smoothadmin' => 62259, 'webcache' => 62259, 'localtraffic' => 12451840, 'smallpkt' => 6553,
-			 );
+	'normal' => 58982, 'high' => 58982, 'low' => 26214, 'slow' => 1310,
+	'smoothadmin' => 62259, 'webcache' => 62259, 'localtraffic' => 12451840, 'smallpkt' => 6553,
+);
 
 # optional override - (well not that optional unless you are happy with 512k adsl :)
 if(defined $trafficsettings{DRATE} && $trafficsettings{DRATE} ne '') {
@@ -90,14 +90,14 @@ $dceil{$_} = $internal_speed for @internal_interface;
 
 # max rate we can send data
 my %urate = (
-			 'normal' => 13107, 'high' => 6553, 'low' => 4915, 'slow' => 327,
-			 'smoothadmin' => 1638, 'webcache' => 1638, 'localtraffic' => 1638, 'smallpkt' => 1638,
-			 );
+	'normal' => 13107, 'high' => 6553, 'low' => 4915, 'slow' => 327,
+	'smoothadmin' => 1638, 'webcache' => 1638, 'localtraffic' => 1638, 'smallpkt' => 1638,
+);
 
 my %uceil = ( 
-			  'normal' => 29491, 'high' => 29491, 'low' => 13107, 'slow' => 655,
-			  'smoothadmin' => 31129, 'webcache' => 31129, 'localtraffic' => 31129, 'smallpkt' => 3276,
-			  );
+	'normal' => 29491, 'high' => 29491, 'low' => 13107, 'slow' => 655,
+	'smoothadmin' => 31129, 'webcache' => 31129, 'localtraffic' => 31129, 'smallpkt' => 3276,
+);
 
 # optional override
 if(defined $trafficsettings{URATE} && $trafficsettings{URATE} ne '') {
@@ -112,8 +112,8 @@ $uceil{$external_interface} = $upload_speed;
 
 # connection marks associated with 'special' classes
 my %connmarks = (
-				 'smoothadmin' => 103, 'webcache' => 104, 'localtraffic' => 105,
-				 );
+	'smoothadmin' => 103, 'webcache' => 104, 'localtraffic' => 105,
+);
 # first connmark useable by user defined rule is 200
 # we start with total, other classes get added
 my @classsortorder = ('total');
@@ -188,7 +188,7 @@ my %extras = (
 
 # as we are doing a 'flat' scheme - all qdiscs are direct children of whole interface
 # only extra options differ so can create things with a simple loop.			  
-for my $tag (keys %classids) {
+for my $tag (sort { $classids{$a} <=> $classids{$b} } keys %classids) {
 	# note $extras{$tag} is usually undef
 	next if $tag =~ /^(all|none)$/;
 	stdclass($external_interface,$tag, $extras{$tag}); 
@@ -206,7 +206,7 @@ for my $dir (qw/up dn/) {
 # as we make rule keep a running tally of which class each connmark refers to as finally have to turn connmarks into classes
 my %connmark_to_class = ();
 for(qw/smoothadmin webcache localtraffic/) {
-	$connmark_to_class{$connmarks{$_}} = 'high' if defined $connmarks{$_};
+	$connmark_to_class{$connmarks{$_}} = (/localtraffic/ ? $_ : 'high') if defined $connmarks{$_};
 }
 
 # so can remember the order in which connmarks are pushed onto the traf-tot tables
@@ -395,7 +395,7 @@ sub removetraffic {
 
 # this is needed to make trafficmon and trafficlogger pick up per rule info
 sub writesettings {
-	my $settingsdir = '/modules/traffic/settings';
+	my $settingsdir = '/var/smoothwall/traffic';
 	system("mkdir -p $settingsdir");	
     # chosen_speeds
 	if(open(FD, ">$settingsdir/chosen_speeds")) {
@@ -445,6 +445,7 @@ sub writesettings {
 		}
 		close(FD);
 	}
+	system("/bin/chown nobody:nobody /var/smoothwall/traffic/*")
 
 }
 # Tests that the given parameter is up by using the SIOCGIFFLAGS ioctl on a socket.
