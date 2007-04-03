@@ -11,7 +11,7 @@ include ../Makefile.versions # for IPTABLES version to use
 PACKAGE = trafficstats
 VERSION = 0.0
 
-MODSWROOT = /modules/traffic/settings
+MODSWROOT = /var/smoothwall/traffic
 
 compile:
 	@make -C $(COMPILE_DIR) CFLAGS="$(CFLAGS)" MODSWROOT=$(MODSWROOT) IPTABLES_VERSION=$(IPTABLES_VER) KERNEL_VER=$(KERNEL_VER) 
