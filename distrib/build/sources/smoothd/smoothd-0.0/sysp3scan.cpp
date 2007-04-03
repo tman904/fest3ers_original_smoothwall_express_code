@@ -63,7 +63,7 @@ int stop_p3scan(std::vector<std::string> & parameters, std::string & response)
 	std::vector<std::string>ipb;
 	response = "P3Scan Process Terminated";
 
-	killprocess("/var/run/imspector.pid");
+	killprocess("/var/run/p3scan.pid");
 	ipb.push_back("iptables -t nat -F p3scan");
 	ipbatch(ipb);
 
