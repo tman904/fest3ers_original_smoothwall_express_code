@@ -41,7 +41,7 @@ int set_traffic(std::vector<std::string> & parameters, std::string & response)
 	int error = 0;
 	struct stat sb;
 
-	if ((stat("/var/smoothwall/traffic/settings/settings", &sb) == 0) && sb.st_mode & S_IRUSR)
+	if ((stat("/var/smoothwall/traffic/settings", &sb) == 0) && sb.st_mode & S_IRUSR)
 	{
 		error = simplesecuresysteml("/usr/bin/smoothwall/trafficloader.pl", NULL);
 		response = "Traffic restarted";
