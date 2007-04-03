@@ -298,8 +298,8 @@ for my $rule (@rules) {
 	$connmark_to_class{$mark} = $class;
 	if($name eq 'Peer_to_Peer') {
 		# leverage the ip2p iptables module, matches all p2p protocols known to ipp2p
-		iptables("-A $FORWARD -m ipp2p --ipp2p -j CONNMARK --set-mark $mark -i $external_interface");
-		iptables("-A $FORWARD -m ipp2p --ipp2p -j CONNMARK --set-mark $mark -o $external_interface");
+		iptables("-A $POSTR -m ipp2p --ipp2p -j CONNMARK --set-mark $mark -i $external_interface");
+		iptables("-A $POSTR -m ipp2p --ipp2p -j CONNMARK --set-mark $mark -o $external_interface");
 	}
 	if($name eq 'Voice_Over_IP') {
 		# also assume EF diffserv mark set wants to
