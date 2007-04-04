@@ -4,6 +4,7 @@
 #
 # (c) The SmoothWall Team
 
+
 use strict;
 use warnings;
 use lib "/usr/lib/smoothwall";
@@ -12,8 +13,9 @@ use smoothtype qw( :standard );
 use Socket;
 
 my (%netsettings, %trafficsettings);
+
 readhash("${swroot}/ethernet/settings", \%netsettings);
-readhash("${swroot}/traffic/settings/settings", \%trafficsettings);
+readhash("${swroot}/traffic/settings", \%trafficsettings);
 
 
 my @internal_interface = ();
@@ -35,7 +37,7 @@ for(qw/GREEN_DEV ORANGE_DEV PURPLE_DEV/) {
 	}
 }
 
-my $external_interface = $netsettings{'RED_DEV'};
+my $external_interface = &readvalue('/var/smoothwall/red/iface');
 my $internal_speed = $trafficsettings{'INTERNAL_SPEED'} || 13107200; # 100mbit sanity default
 
 my $upload_speed = $trafficsettings{'UPLOAD_SPEED'} || 32768; # 256 kbit sanity default
@@ -157,7 +159,7 @@ for(sort keys %trafficsettings) {
 removetraffic();
 
 # maybe thats all we do...
-exit(0) unless defined $trafficsettings{'ENABLE'} && $trafficsettings{'ENABLE'} eq 'on';
+exit(0) unless defined $trafficsettings{'ENABLE'} && $trafficsettings{'ENABLE'} eq 'on' && -e '/var/smoothwall/red/active';
 	
 # setting the root qdiscs
 # adding root qdisc for external - specifying where default traffic goes
