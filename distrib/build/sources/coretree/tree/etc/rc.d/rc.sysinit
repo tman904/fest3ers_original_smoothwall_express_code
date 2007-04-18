@@ -160,6 +160,10 @@ echo "Starting squid (if enabled)"
 /usr/bin/smoothcom squidrestart
 echo "Starting IMSpector (if enabled)"
 /usr/bin/smoothcom imrestart
+echo "Starting Clam Anti-Virus (if enabled)"
+/usr/bin/smoothcom clamavrestart
+echo "Starting POP3 scanner (if enabled)"
+/usr/bin/smoothcom p3scanrestart
 
 echo "Silencing kernel, syslog output on tty12"
 echo >/proc/sys/kernel/printk "1 4 1 7"

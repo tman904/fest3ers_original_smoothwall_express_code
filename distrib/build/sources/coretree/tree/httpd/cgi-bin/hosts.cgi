@@ -200,11 +200,6 @@ print <<END
 <td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
 </tr>
 </table>
-<table class='blank'>
-<tr>
-<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'force update'}'></td>
-</tr>
-</table>
 END
 ;
 &closebox();

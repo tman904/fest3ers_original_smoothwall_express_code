@@ -41,6 +41,7 @@ install: compile
 	@install -D $(COMPILE_DIR)/sysiptables.so $(PKG_ROOT)/usr/lib/smoothd/sysiptables.so 
 	@install -D $(COMPILE_DIR)/systraffic.so $(PKG_ROOT)/usr/lib/smoothd/systraffic.so 
 	@install -D $(COMPILE_DIR)/syssip.so $(PKG_ROOT)/usr/lib/smoothd/syssip.so 
+	@install -D $(COMPILE_DIR)/sysclamav.so $(PKG_ROOT)/usr/lib/smoothd/sysclamav.so 
 
 all: install
 	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .

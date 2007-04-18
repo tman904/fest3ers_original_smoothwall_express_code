@@ -95,7 +95,7 @@ int start_p3scan(std::vector<std::string> & parameters, std::string & response)
 	if (settings["ENABLE"] == "on")
 	{
 		error = simplesecuresysteml("/usr/sbin/p3scan", "-f", 
-			"/usr/lib/smoothwall/p3scan.conf", NULL);
+			"/var/smoothwall/p3scan/p3scan.conf", NULL);
 
 		if (error)
 			response = "P3Scan Start Failed!";
