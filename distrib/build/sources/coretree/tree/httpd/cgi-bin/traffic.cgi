@@ -38,8 +38,7 @@ my %scale = (
 );
 
 &readhash("${swroot}/ethernet/settings", \%netsettings );
-# its setting/settings as trafficmon etc need traffic/settings as a directory to contain other stuff too.
-&readhash("${swroot}/traffic/settings/settings", \%settings );
+&readhash("${swroot}/traffic/settings", \%settings );
 
 # Action a "Save" request ...
 
@@ -111,7 +110,7 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 		
 	unless ($errormessage)
 	{
-		&writehash("${swroot}/traffic/settings/settings", \%settings);
+		&writehash("${swroot}/traffic/settings", \%settings);
 
 		my $success = message('restarttraffic');
 
