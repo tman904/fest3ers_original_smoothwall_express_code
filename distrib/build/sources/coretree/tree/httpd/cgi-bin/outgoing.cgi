@@ -20,8 +20,10 @@ my $errormessage = '';
 
 &showhttpheaders();
 
-$cgiparams{'COLUMN'} = 1;
-$cgiparams{'ORDER'} = $tr{'log ascending'};
+$cgiparams{'COLUMN_ONE'} = 1;
+$cgiparams{'ORDER_ONE'} = $tr{'log ascending'};
+$cgiparams{'COLUMN_TWO'} = 1;
+$cgiparams{'ORDER_TWO'} = $tr{'log ascending'};
 
 $cgiparams{'RULEENABLED'} = 'off';
 $cgiparams{'MACHINEENABLED'} = 'off';
@@ -34,8 +36,10 @@ $cgiparams{'MACHINEENABLED'} = 'on'  if ( not defined $cgiparams{'MACHINEACTION'
 if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
 {
 	my @temp = split(',',$ENV{'QUERY_STRING'});
-	$cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
-	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+	$cgiparams{'ORDER_ONE'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+	$cgiparams{'COLUMN_ONE'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+	$cgiparams{'ORDER_TWO'}  = $temp[3] if ( defined $temp[ 3 ] and $temp[ 1 ] ne "" );
+	$cgiparams{'COLUMN_TWO'} = $temp[2] if ( defined $temp[ 2 ] and $temp[ 0 ] ne "" );
 }
 
 # Load inbound interfaces into %interfaces (excluding RED)
@@ -326,7 +330,7 @@ my $portmap = &portmap();
 
 my %render_settings =
 (
-	'url'     => "/cgi-bin/outgoing.cgi?[%COL%],[%ORD%]",
+	'url'     => "/cgi-bin/outgoing.cgi?[%COL%],[%ORD%],$cgiparams{'COLUMN_TWO'},$cgiparams{'ORDER_TWO'}",
 	'columns' => 
 	[
 		{ 
@@ -367,7 +371,7 @@ my %render_settings =
 	]
 );
 
-&displaytable($config, \%render_settings, $cgiparams{'ORDER'}, $cgiparams{'COLUMN'} );
+&displaytable($config, \%render_settings, $cgiparams{'ORDER_ONE'}, $cgiparams{'COLUMN_ONE'} );
 
 print <<END
 <table class='blank'>
@@ -413,7 +417,7 @@ print "<form method='post'>\n";
 
 my %render_settings =
 (
-	'url'     => "/cgi-bin/outgoing.cgi?$cgiparams{'COLUMN'},$cgiparams{'ORDER'},[%COL%],[%ORD%]",
+	'url'     => "/cgi-bin/outgoing.cgi?$cgiparams{'COLUMN_ONE'},$cgiparams{'ORDER_ONE'},[%COL%],[%ORD%]",
 	'columns' => 
 	[
 		{ 
@@ -442,7 +446,7 @@ my %render_settings =
 	]
 );
 
-&displaytable($machineconfig, \%render_settings, $cgiparams{'MACHINEORDER'}, $cgiparams{'MACHINECOLUMN'} );
+&displaytable($machineconfig, \%render_settings, $cgiparams{'ORDER_TWO'}, $cgiparams{'COLUMN_TWO'} );
 
 print <<END
 <table class='blank'>
