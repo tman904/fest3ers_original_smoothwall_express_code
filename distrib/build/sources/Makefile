@@ -4,7 +4,7 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-BASENAME = express-3.0-koala
+BASENAME = express-3.0-degu
 
 PRODUCT_NAME = Express
 PRODUCT_VERSION = 3.0
@@ -13,4 +13,4 @@ PRODUCT_EXTRA =
 
 UI_VERSION = 3.0
 FIXES_NUMBER = 0
-REVISION = koala
+REVISION = degu
