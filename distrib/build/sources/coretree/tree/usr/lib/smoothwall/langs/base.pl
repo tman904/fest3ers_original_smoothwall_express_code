@@ -55,6 +55,7 @@
 'ssdynamic dns' => 'dynamic dns',
 'ssids' => 'ids',
 'ssim' => 'instant messages',
+'ssemail' => 'email',
 'sscontrol' => 'control',
 'ssconnections' => 'connections',
 'ssother' => 'other',
