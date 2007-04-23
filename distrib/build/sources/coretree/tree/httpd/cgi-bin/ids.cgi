@@ -9,6 +9,8 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use smoothtype qw( :standard );
+
 use Cwd;
 
 my (%snortsettings, %checked);
@@ -121,7 +123,7 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='25%'>$tr{'oink code'}</TD>
-	<TD WIDTH='75%'><INPUT TYPE='text' NAME='OINK' SIZE='42' MAXLENGTH='40' VALUE=$snortsettings{OINK}></TD>
+	<TD WIDTH='75%'><INPUT TYPE='text' NAME='OINK' SIZE='42' MAXLENGTH='40' VALUE='$snortsettings{OINK}' id='OINK' @{[jsvalidregex('OINK','^([0-9a-fA-F]){40}$')]}></TD>
 </TR>
 <TR>
 	<TD>$tr{'rule age'}</TD><TD>$ruleage</TD>
