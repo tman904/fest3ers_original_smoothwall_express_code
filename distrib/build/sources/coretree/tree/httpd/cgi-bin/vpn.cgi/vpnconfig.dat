@@ -197,12 +197,12 @@ print <<END
 <TR>
 <TD CLASS='base'>$tr{'secretc'}</TD>
 <TD COLSPAN='4'>
-<INPUT TYPE='PASSWORD' NAME='SECRET1' VALUE='$cgiparams{'SECRET1'}' SIZE='40' id='secret1' @{[jsvalidregex('secret1','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
+<INPUT TYPE='PASSWORD' NAME='SECRET1' VALUE='$cgiparams{'SECRET1'}' SIZE='40' id='secret1' @{[jsvalidpassword('secret1','secret2',,'^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
 </TR>
 <TR>
 <TD CLASS='base'>$tr{'again'}</TD>
 <TD COLSPAN='4'>
-<INPUT TYPE='PASSWORD' NAME='SECRET2' VALUE='$cgiparams{'SECRET2'}' SIZE='40' id='secret2' @{[jsvalidregex('secret2','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
+<INPUT TYPE='PASSWORD' NAME='SECRET2' VALUE='$cgiparams{'SECRET2'}' SIZE='40' id='secret2' @{[jsvalidpassword('secret2','secret1','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
 </TR>
 <tr>
 	<td>$tr{'commentc'}</td>

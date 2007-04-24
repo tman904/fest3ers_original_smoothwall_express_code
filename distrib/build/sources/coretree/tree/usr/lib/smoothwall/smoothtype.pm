@@ -17,7 +17,7 @@ use header qw(:standard);
 	ipcompare
 	portmap
 	tooltip portlist displaytable 
-	jsvalidip jsvalidmask jsvalidipormask jsvalidipandmask jsvalidport jsvalidportrange jsvalidmac jsvalidhostname jsvalidregex  jsvalidnumber jsvalidcomment
+	jsvalidip jsvalidmask jsvalidipormask jsvalidipandmask jsvalidport jsvalidportrange jsvalidmac jsvalidhostname jsvalidregex jsvalidpassword jsvalidnumber jsvalidcomment
 	);
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
@@ -496,6 +496,16 @@ sub jsvalidregex
 	push @_validation_items, "validregex('$id','$expr',$blank)" ;
 	return $ret;
 }
+
+sub jsvalidpassword
+{
+	my ( $id, $id2, $expr, $blank ) = @_;
+	$blank = 'false' if ( not defined $blank or $blank ne "true" );
+	my $ret = &script("validpassword('$id', '$id2', '$expr', $blank)");
+	push @_validation_items, "validpassword('$id', '$id2','$expr',$blank)" ;
+	return $ret;
+}
+
 
 sub jsvalidnumber
 {

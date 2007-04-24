@@ -349,8 +349,6 @@ function validregex(field,regex,blank)
 	var inputval = document.getElementById(field).value;
 	var valid = false;
 
-var dbg = document.getElementById('dbg');
-
 	if( inputval == undefined || inputval == ""){
 		valid = !blank;
 	} else {
@@ -371,6 +369,40 @@ var dbg = document.getElementById('dbg');
 	}
 	return valid;
 }
+
+function validpassword(field, field2, regex,blank)
+{
+	var inputval = document.getElementById(field).value;
+	var inputval2 = document.getElementById(field2).value;
+	var valid = false;
+
+	if( inputval == undefined || inputval == ""){
+		valid = !blank;
+	} else {
+		var re = new RegExp( regex );
+		var ma = re.exec( inputval );
+
+		if ( ma != null ){
+			valid = false;
+		} else {
+			valid = true;
+		}
+	}
+
+	if ( inputval != inputval2 ){
+		valid = true;
+	}
+	
+	if ( valid ){
+		_error(field);
+		_error(field2);
+	} else {
+		_ok(field);
+		_ok(field2);
+	}
+	return valid;
+}
+
 
 
 
