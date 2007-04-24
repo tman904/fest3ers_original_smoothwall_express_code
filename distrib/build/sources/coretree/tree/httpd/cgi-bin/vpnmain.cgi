@@ -71,33 +71,7 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 print "<FORM METHOD='POST'>\n";
 
-&openbox($tr{'global settingsc'});
-print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='25%' CLASS='base'>$tr{'local vpn ip'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
-<TD WIDTH='25%' ><INPUT TYPE='TEXT' NAME='VPN_IP' VALUE='$cgiparams{'VPN_IP'}' SIZE='15' id='vpn_ip' @{[jsvalidip('vpn_ip')]}></TD>
-<TD WIDTH='25%' CLASS='base'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
-<TD WIDTH='25%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'save'}'></TD>
-</TR>
-</TABLE>
-<BR>
-<IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
-<FONT CLASS='base'>$tr{'if blank the currently configured ethernet red address will be used'}</FONT>
-END
-;
-&closebox();
-
 &openbox($tr{'manual control and status'});
-print <<END
-<table class='blank'>
-<tr>
-<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'restart'}'></td>
-<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'stop'}'></td>
-</tr>
-</table>
-END
-;
 open (FILE, "$filename");
 my @current = <FILE>;
 close (FILE);
@@ -107,11 +81,8 @@ my @active = <ACTIVE>;
 close (ACTIVE);
 
 print <<END
-<table class='centered'>
-<tr>
-<th>$tr{'connection name'}</th>
-<th>$tr{'connection status'}</th>
-</tr>
+<br/>
+<table class='centered' style='width: 60%;'>
 END
 ;
 
@@ -130,9 +101,10 @@ foreach $line (@current)
 	$netmaskl =~ /\//; $netmaskl = $`;
 	my $netmaskr = $temp[4];
 	$netmaskr =~ /\//; $netmaskr = $`;
-	my $active = "<table class='blank'><tr><td><strong>$tr{'capsclosed'}</strong></td></tr></table>";
-	if ($temp[8] eq 'off') {
-		$active = "<table class='blank'><tr><td><strong>$tr{'capsdisabled'}</strong></td></tr></table>"; }
+	my $active = "<img src='/ui/img/closed.jpg' alt='$tr{'capsclosed'}'>";
+	if ($temp[6] eq 'off') {
+		$active = "<img src='/ui/img/disabled.jpg' alt='$tr{'capsdisabled'}'>";
+	}
 
 	foreach $line (@active)
 	{
@@ -146,19 +118,46 @@ foreach $line (@current)
 		if (($targetl eq $netmaskl && $targetr eq $netmaskr) ||
 			($targetl eq $netmaskr && $targetr eq $netmaskl))
 		 {
-			$active = "<table class='blank'><tr><td><strong>$tr{'capsopen'}</strong></td></tr></table>";
+			$active = "<img src='/ui/img/open.jpg' alt='$tr{'capsopen'}'>";
 		}
 	}
-	if ($id % 2) {
-		print "<tr class='dark'>\n"; }
-	else {
-		print "<tr class='light'>\n"; }
-	print "<td style='text-align: center;'>$name</td><td style='text-align: center;'>$active</td>\n";
-	print "</tr>\n";
+	print "<tr class='dark' style='border: 1px solid #c0c0c0;'>\n"; 
+	print "<td style='width: 65%; text-align: center;'><strong>$name</strong></td><td style='text-align: left;'>$active</td>\n";
+	print "</tr><tr><td>&nbsp;</td></tr>\n";
 }
 print "</table>\n";
+print <<END
+<table class='blank'>
+<tr>
+<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'restart'}'></td>
+<td style='width: 50%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'stop'}'></td>
+</tr>
+</table>
+<br/>
+END
+;
+
 
 &closebox();
+
+&openbox($tr{'global settingsc'});
+print <<END
+<TABLE WIDTH='100%'>
+<TR>
+<TD WIDTH='25%' CLASS='base'>$tr{'local vpn ip'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
+<TD WIDTH='25%' ><INPUT TYPE='TEXT' NAME='VPN_IP' VALUE='$cgiparams{'VPN_IP'}' SIZE='15' id='vpn_ip' @{[jsvalidip('vpn_ip')]}></TD>
+<TD WIDTH='25%' CLASS='base'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
+<TD WIDTH='25%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'save'}'></TD>
+</TR>
+</TABLE>
+<BR>
+<IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
+<FONT CLASS='base'>$tr{'if blank the currently configured ethernet red address will be used'}</FONT>
+END
+;
+&closebox();
+
+
 
 &alertbox('add','add');
 
