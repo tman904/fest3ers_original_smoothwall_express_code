@@ -31,6 +31,14 @@ ERROR:
 
 	&writehash("${swroot}/p3scan/settings", \%p3scansettings);
 
+	my %clamavsettings;
+
+	&readhash("${swroot}/clamav/settings", \%clamavsettings);
+	
+	$clamavsettings{'ENABLE_ZAP'} = $p3scansettings{'ENABLE'};
+	
+	&writehash("${swroot}/clamav/settings", \%clamavsettings);
+
 	if ($p3scansettings{'VALID'} eq 'yes')
 	{
 		system('/usr/bin/smoothwall/writep3scan.pl');
@@ -52,26 +60,6 @@ if ($p3scansettings{'ACTION'} eq '')
 &readhash("${swroot}/p3scan/settings", \%p3scansettings);
 
 my %checked;
-
-$checked{'MSN'}{'off'} = '';
-$checked{'MSN'}{'on'} = '';
-$checked{'MSN'}{$p3scansettings{'MSN'}} = 'CHECKED';
-
-$checked{'ICQ'}{'off'} = '';
-$checked{'ICQ'}{'on'} = '';
-$checked{'ICQ'}{$p3scansettings{'ICQ'}} = 'CHECKED';
-
-$checked{'YAHOO'}{'off'} = '';
-$checked{'YAHOO'}{'on'} = '';
-$checked{'YAHOO'}{$p3scansettings{'YAHOO'}} = 'CHECKED';
-
-$checked{'IRC'}{'off'} = '';
-$checked{'IRC'}{'on'} = '';
-$checked{'IRC'}{$p3scansettings{'IRC'}} = 'CHECKED';
-
-$checked{'FILTERING'}{'off'} = '';
-$checked{'FILTERING'}{'on'} = '';
-$checked{'FILTERING'}{$p3scansettings{'FILTERING'}} = 'CHECKED';
 
 $checked{'ENABLE'}{'off'} = '';
 $checked{'ENABLE'}{'on'} = '';
