@@ -82,7 +82,7 @@ echo "Module dependancies"
 echo "Clearing old files"
 chmod 660 /dev/ttyS*
 chmod 660 /dev/ttyI*
-rm -f /var/run/*.pid
+find /var/run -name '*.pid' -type f -exec rm -f '{}' \;
 rm -f /usr/etc/dhcpc/*.pid
 rm -f /var/smoothwall/red/*
 rm -f /var/lock/LCK..ttyS*
@@ -160,6 +160,8 @@ echo "Starting squid (if enabled)"
 /usr/bin/smoothcom squidrestart
 echo "Starting IMSpector (if enabled)"
 /usr/bin/smoothcom imrestart
+echo "Starting SIP proxy (if enabled)"
+/usr/bin/smoothcom siprestart
 echo "Starting Clam Anti-Virus (if enabled)"
 /usr/bin/smoothcom clamavrestart
 echo "Starting POP3 scanner (if enabled)"
