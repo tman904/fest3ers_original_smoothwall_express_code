@@ -39,6 +39,11 @@ ERROR:
 	
 	&writehash("${swroot}/clamav/settings", \%clamavsettings);
 
+	my $success = message('clamavrestart');
+	
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'}; }
+
 	if ($p3scansettings{'VALID'} eq 'yes')
 	{
 		system('/usr/bin/smoothwall/writep3scan.pl');
@@ -48,13 +53,6 @@ ERROR:
 		if (not defined $success) {
 			$errormessage = $tr{'smoothd failure'}; }
 	}
-}
-
-if ($p3scansettings{'ACTION'} eq '')
-{
-	$p3scansettings{'MSN'} = 'on';
-	$p3scansettings{'ICQ'} = 'on';
-	$p3scansettings{'YAHOO'} = 'on';
 }
 
 &readhash("${swroot}/p3scan/settings", \%p3scansettings);
