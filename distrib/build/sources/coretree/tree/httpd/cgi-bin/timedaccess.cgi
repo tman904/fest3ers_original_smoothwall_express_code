@@ -42,7 +42,8 @@ ERROR:
 		$cgiparams{'VALID'} = 'no'; }
 	else {
 		$cgiparams{'VALID'} = 'yes'; }
-
+		
+	delete $cgiparams{'MACHINES'};
 	&writehash("${swroot}/timedaccess/settings", \%cgiparams);
 	
 	open(FILE, ">${swroot}/timedaccess/machines") or die 'Unable to open machines for writing';
@@ -171,7 +172,7 @@ END
 for (my $day = 0; $day < 7; $day++)
 {
 	print <<END
-<td>$tr{"day $day"}</td>
+<td>$tr{"day $day"}:</td>
 <td><input type='checkbox' name='DAY_$day' $checked{"DAY_${day}"}{'on'}></td>
 END
 	;

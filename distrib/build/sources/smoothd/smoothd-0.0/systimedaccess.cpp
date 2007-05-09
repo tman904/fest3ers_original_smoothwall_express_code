@@ -51,7 +51,7 @@ int timed_access(std::vector<std::string> & parameters, std::string & response)
 	
 	std::string mode = settings["MODE"];
 
-	if (settings["ENABLED"] != "on")
+	if (settings["ENABLE"] != "on")
 	{
 		setallowed("ALLOW", true, false);
 		return error;
