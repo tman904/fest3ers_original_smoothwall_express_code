@@ -78,7 +78,14 @@ fi
 /sbin/iptables -A secout -i ipsec0 -j ACCEPT
 /sbin/iptables -A FORWARD -j secout
 
+# Setup timed access chains.
+/sbin/iptables -N timedaccess
+/sbin/iptables -N timedaction
+/sbin/iptables -A timedaction -j RETURN
+
+# block is an INPUT chain.
 /sbin/iptables -N block
+/sbin/iptables -A block -j timedaccess
 
 # Let em through.
 /sbin/iptables -A block -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -144,9 +151,11 @@ fi
 /sbin/iptables -N outpurple
 /sbin/iptables -N allows
 
+
 # Setup our outgoing filter stub chains.
 /sbin/iptables -N outbound
 /sbin/iptables -A outbound -p icmp -j ACCEPT
+/sbin/iptables -A outbound -j timedaccess
 /sbin/iptables -A outbound -j allows
 if [ "$GREEN_DEV" != "" ]; then
 	/sbin/iptables -A outbound -i $GREEN_DEV -j outgreen

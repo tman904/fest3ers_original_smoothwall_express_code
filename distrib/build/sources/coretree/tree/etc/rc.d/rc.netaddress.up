@@ -68,4 +68,6 @@ echo "Setting external access rules"
 /usr/bin/smoothcom setxtaccess
 echo "Setting up outgoing filter"
 /usr/bin/smoothcom setoutgoing
+echo "Setting up timed access rules"
+/usr/bin/smoothcom settimedaccess
 

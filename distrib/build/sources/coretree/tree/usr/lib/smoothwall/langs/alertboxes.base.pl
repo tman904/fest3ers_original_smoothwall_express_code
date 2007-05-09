@@ -54,6 +54,6 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'sipproxy.cgi'		=> 'Configure the SIP proxy service. It can be used to transparently or non-transparently proxy SIP calls to and from the GREEN network.',
 'interfaces.cgi'	=> 'Configure the network interface IP addresses, as well as DNS and gateway settings.',
 'hosts.cgi'		=> 'Add static DNS entries to SmoothWall\'s inbuilt DNS server.',
-
+'timedaccess.cgi'	=> 'Configure timed access rules to prevent or allow internal machines network access at certain times of the day.',
 );
 
