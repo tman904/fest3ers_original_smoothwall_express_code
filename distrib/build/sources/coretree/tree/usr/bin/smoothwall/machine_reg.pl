@@ -138,10 +138,25 @@ my $info = "cpu_vid=$vid&cpu_model=$model&cpu_mhz=$mhz&mem=$mem&hdd=$disk&inst_t
 $info =~ s/\s/%20/g;
 
 my $length = length($info);
+
+my %proxy;
+
+&readhash("${swroot}/main/proxy", \%proxy);
+
 my $xhost = 'my.smoothwall.org';
 
+my $host; my $port;
+unless ($proxy{'SERVER'})
+{
+	$host = $xhost;
+	$port = 80;
+} else {
+	$host = $proxy{'SERVER'};
+	$port = $proxy{'PORT'};
+}
+
 use IO::Socket;
-$sock = new IO::Socket::INET ( PeerAddr => $xhost, PeerPort => 80, Proto => 'tcp', Timeout => 5 ) or die "Could not connect to host\n\n";
+$sock = new IO::Socket::INET ( PeerAddr => $host, PeerPort => $port, Proto => 'tcp', Timeout => 5 ) or die "Could not connect to host\n\n";
 print $sock "GET http://$xhost/cgi-bin/system_register.cgi?$info HTTP/1.1\n";
 print $sock "Host: $xhost\n\n";
 undef $/;
