@@ -420,8 +420,8 @@ print <<END
 <TR>
 	<TD WIDTH='25%'>
 	<SELECT NAME='SUBNET'>
-	<OPTION VALUE='green' $selected{'SUBNET'}{'green'}>Green
-	<OPTION VALUE='purple' $selected{'SUBNET'}{'purple'}>Purple
+	<OPTION VALUE='green' $selected{'SUBNET'}{'green'}>GREEN
+	<OPTION VALUE='purple' $selected{'SUBNET'}{'purple'}>PURPLE
 	</SELECT>
 	</TD>
 	<TD WIDTH='10%'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'select'}'></TD>
