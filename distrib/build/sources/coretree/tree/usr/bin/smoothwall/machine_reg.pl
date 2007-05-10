@@ -138,12 +138,12 @@ my $info = "cpu_vid=$vid&cpu_model=$model&cpu_mhz=$mhz&mem=$mem&hdd=$disk&inst_t
 $info =~ s/\s/%20/g;
 
 my $length = length($info);
-my $xhost = "www.smoothwall.org";
+my $xhost = 'my.smoothwall.org';
 
 use IO::Socket;
 $sock = new IO::Socket::INET ( PeerAddr => $xhost, PeerPort => 80, Proto => 'tcp', Timeout => 5 ) or die "Could not connect to host\n\n";
-print $sock "GET http://www.smoothwall.org/cgi-bin/express3.cgi?$info HTTP/1.1\n";
-print $sock "Host: www.smoothwall.org\n\n";
+print $sock "GET http://$xhost/cgi-bin/system_register.cgi?$info HTTP/1.1\n";
+print $sock "Host: $xhost\n\n";
 undef $/;
 $retsrt = <$sock>;
 close $sock;
