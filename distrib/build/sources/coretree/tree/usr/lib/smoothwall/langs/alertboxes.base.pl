@@ -55,5 +55,6 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'interfaces.cgi'	=> 'Configure the network interface IP addresses, as well as DNS and gateway settings.',
 'hosts.cgi'		=> 'Add static DNS entries to SmoothWall\'s inbuilt DNS server.',
 'timedaccess.cgi'	=> 'Configure timed access rules to prevent or allow internal machines network access at certain times of the day.',
+'p3scan.cgi'		=> 'Configure the POP3 anti-virus proxy. This proxy will remove viruses from emails that are retrieved through using the POP3 protocol.',
 );
 
