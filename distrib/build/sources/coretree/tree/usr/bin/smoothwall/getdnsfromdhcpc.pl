@@ -19,7 +19,7 @@ if (!($settings{'CONFIG_TYPE'} == 2 || $settings{'CONFIG_TYPE'} == 3)) {
 	die "RED is not a nic"; }
 if ($settings{'RED_DHCP'} != 'on') {
 	die "RED is not on DHCP"; }
-if (!&readhash("/etc/dhcpc/dhcpcd-$settings{'RED_DEV'}.info", \%dhcpc)) {
+if (!&readhash("/var/lib/dhcpc/dhcpcd-$settings{'RED_DEV'}.info", \%dhcpc)) {
 	die "Could not open dhcpc info file"; }
 
 $dns = $dhcpc{'DNS'};
