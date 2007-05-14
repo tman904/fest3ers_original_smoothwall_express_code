@@ -3,7 +3,7 @@ The CDROM image is published by and is the Copyright of the SmoothWall
 Open Source Team, and of the original authors of its component parts.  
 It is distributed under the GNU GPL, which is in LICENSE.txt on the CD.
 
-  ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA ALPHA 
+  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  
 
                        SmoothWall Express 3.0 "Degu".
 
