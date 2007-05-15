@@ -75,6 +75,9 @@ int start_dhcpd(std::vector<std::string> & parameters, std::string & response)
 	int error = 0;
 	ConfigSTR green("/var/smoothwall/dhcp/green");
 	ConfigSTR purple("/var/smoothwall/dhcp/purple");
+	std::vector<std::string> args;
+	
+	args.push_back("/usr/sbin/dhcpd");
 
 	if (stat("/var/smoothwall/dhcp/enable", &sb) != 0) 
 	{
@@ -82,18 +85,12 @@ int start_dhcpd(std::vector<std::string> & parameters, std::string & response)
 		goto EXIT; // not enabled, not error though
 	}
 
-	if (green.str() == "")
-	{
-		response = "Couldn't read green file";
-		error = 1;
-		goto EXIT;
-	}
-	
-	// purple is optional
-	if (purple.str() == "")
-		error = simplesecuresysteml("/usr/sbin/dhcpd" , green.str().c_str() , NULL);
-	else
-		error = simplesecuresysteml("/usr/sbin/dhcpd" , green.str().c_str() , purple.str().c_str(), NULL);
+	if (green.str() != "")
+		args.push_back(green.str());
+	if (purple.str() != "")
+		args.push_back(purple.str());
+
+	error = simplesecuresystemvector(args);
 
 	if (error)
 		response = "DHCPD Start failed!";

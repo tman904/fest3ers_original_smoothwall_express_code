@@ -333,12 +333,13 @@ EXIT:
 int set_internal(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
-
 	ConfigCSV config("/var/smoothwall/dmzholes/config");
 	std::vector<std::string>ipb;
 	std::string::size_type n;
 	
-	ipb.push_back("iptables  -F dmzholes");
+	load_portlist();
+
+	ipb.push_back("iptables -F dmzholes");
 
 	for (int line = config.first(); line == 0; line = config.next())
 	{
