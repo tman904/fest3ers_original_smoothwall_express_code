@@ -42,23 +42,21 @@ echo "Loading MASQ helper modules"
 /sbin/modprobe ip_nat_irc
 /sbin/modprobe ip_conntrack_ftp
 /sbin/modprobe ip_nat_ftp
-#/sbin/modprobe ip_conntrack_mms
-#/sbin/modprobe ip_nat_mms
+/sbin/modprobe ip_conntrack_mms
+/sbin/modprobe ip_nat_mms
 #/sbin/modprobe ip_conntrack_h323
 #/sbin/modprobe ip_nat_h323
 #/sbin/modprobe ip_conntrack_sip
 #/sbin/modprobe ip_nat_sip
 #/sbin/modprobe ip_conntrack_quake3 
 #/sbin/modprobe ip_nat_quake3
-#/sbin/modprobe ip_conntrack_pptp
-#/sbin/modprobe ip_conntrack_proto_gre
-#/sbin/modprobe ip_nat_pptp
-#/sbin/modprobe ip_nat_proto_gre
+/sbin/modprobe ip_conntrack_pptp
+/sbin/modprobe ip_nat_pptp
 
 # Remove possible leftover files
 rm -f /var/smoothwall/red/*
 
-for NIC in 0 1 2; do
+for NIC in 0 1 2 3; do
 	ETHX="eth${NIC}"
 	if [ "$GREEN_DEV" = "$ETHX" ]; then
 		if [ "$GREEN_DRIVER" != "" ]; then
