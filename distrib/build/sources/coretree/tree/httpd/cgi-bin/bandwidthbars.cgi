@@ -109,11 +109,11 @@ sub realtime_graphs
 		print qq{
 		<table id='${interface}_container' style='width: 90%; border-collapse: collapse; border: 0px; margin-left: auto; margin-right: auto;'>
 		<tr style='background-color: #C3D1E5;'>
-			<td style="background-image: url('/themes/default/squaretopleft.jpg'); background-position: top left; background-repeat: no-repeat; text-align: left; vertical-align: middle;">&nbsp;<strong>$iftitle</strong></td>
-			<td style="width: 40%; background-image: url('/themes/default/squaretopright.jpg'); background-position: top right; background-repeat: no-repeat; text-align: left; vertical-align: middle;">&nbsp;</td>
+			<td style="background-position: top left; background-repeat: no-repeat; text-align: left; vertical-align: middle;">&nbsp;<strong>$iftitle</strong></td>
+			<td style="width: 40%; background-position: top right; background-repeat: no-repeat; text-align: left; vertical-align: middle;">&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan='2' style='background-image: url( "/themes/default/squarebackdrop.jpg" ); background-position: top left; background-repeat: no-repeat; vertical-align: top;' ><br/><table style='width: 95%; margin-left: auto; margin-right: auto; border: 0px; border-collapse: collapse;'>
+			<td colspan='2' style='background-position: top left; background-repeat: no-repeat; vertical-align: top;' ><br/><table style='width: 95%; margin-left: auto; margin-right: auto; border: 0px; border-collapse: collapse;'>
 		};
 
 		foreach my $section ( keys %{$interfaces{$interface}} ){
