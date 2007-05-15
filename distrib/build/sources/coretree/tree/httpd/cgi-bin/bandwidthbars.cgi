@@ -25,7 +25,7 @@ my @bar_names;
 my $oururl = "/cgi-bin/trafficstats.cgi";
 
 
-	my @devices = ( "eth0", "eth1", "eth2", "eth3" );#, "ippp0" , "ppp0" );
+	my @devices = ( "eth0", "eth1", "eth2", "eth3", "ippp0" , "ppp0" );
 
 
 &openbox('Bandwidth bars:');
