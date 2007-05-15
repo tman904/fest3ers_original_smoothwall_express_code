@@ -151,7 +151,6 @@ fi
 /sbin/iptables -N outpurple
 /sbin/iptables -N allows
 
-
 # Setup our outgoing filter stub chains.
 /sbin/iptables -N outbound
 /sbin/iptables -A outbound -p icmp -j ACCEPT
@@ -204,9 +203,21 @@ if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -i $GREEN_DEV -o $PURPLE_DEV -m state \
 		--state NEW,ESTABLISHED,RELATED -j ACCEPT
 	# dmz pinhole chain.  setdmzholes setuid prog adds rules here to allow
-	# ORANGE to talk to GREEN.
+	# PURPLE to talk to GREEN.
 	/sbin/iptables -A FORWARD -i $PURPLE_DEV -o $GREEN_DEV -j dmzholes
 fi
+
+# Allow PURPLE to talk to ORANGE.
+if [ "$PURPLE_DEV" != "" -a "$ORANGE_DEV" != "" ]; then
+	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $PURPLE_DEV -m state \
+		--state ESTABLISHED,RELATED -j ACCEPT
+	/sbin/iptables -A FORWARD -i $PURPLE_DEV -o $ORANGE_DEV -m state \
+		--state NEW,ESTABLISHED,RELATED -j ACCEPT
+	# dmz pinhole chain.  setdmzholes setuid prog adds rules here to allow
+	# ORANGE to talk to PURPLE.
+	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $PURPLE_DEV -j dmzholes
+fi
+
 
 # VPN
 /sbin/iptables -A FORWARD -i $GREEN_DEV -o ipsec0 -j ACCEPT
