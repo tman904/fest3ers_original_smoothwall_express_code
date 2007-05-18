@@ -228,9 +228,9 @@ extracontent: cdrom
 	@(cd cdrom; rm -rf `find -name .svn`)
 
 all: images cdrom/smoothwall.tgz extracontent
-	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(TYPE)-$(ARCH).iso -J -c boot.cat \
+	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(PRODUCT_EXTRA)$(TYPE)-$(ARCH).iso -J -c boot.cat \
 		-b images/$(BASENAME)-bootcdrom.img -V $(BASENAME) cdrom
-	@echo "smoothwall-$(BASENAME)$(TYPE)-$(ARCH).iso build complete"
+	@echo "smoothwall-$(BASENAME)$(PRODUCT_EXTRA)$(TYPE)-$(ARCH).iso build complete"
 
 clean:
 	@rm -rf cdrom distrib
