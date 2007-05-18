@@ -114,7 +114,6 @@ foreach $line (@current)
 		$targetl =~ /\//; $targetl = $`;
 		$targetr = $temp[3];
 		$targetr =~ /\//; $targetr = $`;
-		&log("TL $targetl NL $netmaskl TR $targetr NR $netmaskr");
 		if (($targetl eq $netmaskl && $targetr eq $netmaskr) ||
 			($targetl eq $netmaskr && $targetr eq $netmaskl))
 		 {
@@ -137,7 +136,6 @@ print <<END
 END
 ;
 
-
 &closebox();
 
 &openbox($tr{'global settingsc'});
@@ -156,8 +154,6 @@ print <<END
 END
 ;
 &closebox();
-
-
 
 &alertbox('add','add');
 
