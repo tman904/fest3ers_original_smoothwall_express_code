@@ -11,7 +11,7 @@ VERSION = 4.1.4
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gmp
 
-ifeq ($(ARCH), i686)
+ifeq ($(ARCH), i386)
 CONFIG_OPTS = --disable-nls --host=i386-pc-linux-gnu
 endif
 

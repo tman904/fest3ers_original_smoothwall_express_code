@@ -25,7 +25,7 @@ ifeq ($(TYPE), runtime)
 PACKAGES += package-iptableproc
 endif
 
-ifeq ($(ARCH), i686)
+ifeq ($(ARCH), i386)
 PACKAGES += package-unicorn
 endif
 

@@ -14,6 +14,6 @@ BASE_URL = ftp://ftp.ee.lbl.gov/
 PATCH_FILE1 = traceroute-1.4a12-fc2.patch
 PATCH_FILE2 = traceroute-1.4a12-install.patch
 
-CONFIG_OPTS = --host=i686-pc-linux-gnu
+CONFIG_OPTS = --host=i386-pc-linux-gnu
 
 include ../Makefile.rules

@@ -13,10 +13,12 @@ BASE_URL = ftp://ftp.gnu.org/gnu/bash/
 
 PATCH_FILE1 = bash-2.05b-2.patch
 
-CONFIG_OPTS = --build=i686-pc-linux-gnu
+ifeq ($(ARCH), i386)
+BUILD = --build=i386-pc-linux-gnu
+endif
 
 ifndef BUILDENV
-CONFIG_OPTS = --bindir=/bin
+CONFIG_OPTS = --bindir=/bin $(BUILD)
 endif
 
 ifeq ($(BUILDENV), 1)

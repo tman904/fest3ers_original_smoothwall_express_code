@@ -18,14 +18,18 @@ PATCH_FILE2 = debian-timezones.patch
 
 COMPILE_DIR = $(DIR)-compile
 
+ifeq ($(ARCH), i386)
+BUILD = --build=i386-pc-linux-gnu
+endif
+
 ifeq ($(BUILDENV), 1)
 CONFIG_OPTS = --disable-profile --enable-add-ons=linuxthreads \
     --with-binutils=/tools/bin --with-headers=/tools/include \
-    --without-gd --without-cvs
+    --without-gd --without-cvs $(BUILD)
 else
 CONFIG_OPTS = --disable-profile --enable-add-ons=linuxthreads \
     --libexecdir=/usr/lib --with-headers=/usr/include \
-    --without-cvs
+    --without-cvs $(BUILD)
 endif
 
 DOWNLOAD = yes
