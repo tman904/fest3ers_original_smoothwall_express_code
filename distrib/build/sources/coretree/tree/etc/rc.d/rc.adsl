@@ -7,7 +7,7 @@ if [ "$ENABLED" = "on" ]; then
 	sleep 5
 	echo "Device type is $DEVICE"
 	if [ "$DEVICE" = "ALCATEL" ]; then
-		/usr/bin/smoothcom alcateladslfw
+		/usr/bin/modem_run -f /var/smoothwall/adsl/mgmt.o -v 2 2>/dev/null
 	fi
 	if [ "$DEVICE" = "ECI" ]; then
 		/usr/bin/smoothwall/ecifw.sh
