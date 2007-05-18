@@ -29,7 +29,7 @@ extern "C" {
 int load(std::vector<CommandFunctionPair> & pairs)
 {
 	/* CommandFunctionPair name("command", "function"); */
-	CommandFunctionPair set_traffic_function("restarttraffic", "set_traffic", 0, 0);
+	CommandFunctionPair set_traffic_function("trafficrestart", "set_traffic", 0, 0);
 
 	pairs.push_back(set_traffic_function);
 

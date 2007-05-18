@@ -112,7 +112,7 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 	{
 		&writehash("${swroot}/traffic/settings", \%settings);
 
-		my $success = message('restarttraffic');
+		my $success = message('trafficrestart');
 
 		if (not defined $success) {
 			$errormessage = $tr{'smoothd failure'}; }

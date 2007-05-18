@@ -14,5 +14,5 @@ if [ "$VPN_IP" = "" ]; then
 fi
 
 if [ "$CURRENT_IP" = "$VPN_IP" ]; then
-	/usr/bin/smoothcom ipsecrestart	
+	/usr/bin/smoothcom ipsecrestart
 fi

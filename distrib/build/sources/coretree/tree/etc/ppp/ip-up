@@ -47,16 +47,17 @@ if (open(FILE, ">${swroot}/red/dns1")) { print FILE $primarydns; close FILE; }
 if (open(FILE, ">${swroot}/red/dns2")) { print FILE $secondarydns; close FILE; }
 
 system('/bin/touch', "${swroot}/red/active");
+
 system('/usr/bin/sounds/onlinesound');
+
+message('dnsproxyrestart', $primarydns, $secondarydns);
+message('setincoming');
+message('snortrestart');
+message('upnprestart');
+message('trafficrestart');
 
 system('/etc/rc.d/rc.machineregister');
 system('/etc/rc.d/rc.vpn.up');
 system('/etc/rc.d/rc.gettime');
 system('/usr/bin/smoothwall/updatelists.pl');
 system('/usr/bin/smoothwall/setddns.pl');
-
-message('dnsproxyrestart', $primarydns, $secondarydns);
-message('setincoming');
-message('restartsnort');
-message('restartupnp');
-message('restarttraffic');
