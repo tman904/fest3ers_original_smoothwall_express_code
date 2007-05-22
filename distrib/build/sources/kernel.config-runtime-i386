@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16.40
-# Tue Mar  6 12:25:37 2007
+# Linux kernel version: 2.6.16.51
+# Tue May 22 10:52:07 2007
 #
 CONFIG_X86_32=y
 CONFIG_SEMAPHORE_SLEEPERS=y
@@ -754,7 +754,7 @@ CONFIG_NETDEVICES=y
 # CONFIG_DUMMY is not set
 # CONFIG_BONDING is not set
 # CONFIG_EQUALIZER is not set
-# CONFIG_TUN is not set
+CONFIG_TUN=m
 
 #
 # ARCnet devices
@@ -1107,7 +1107,10 @@ CONFIG_KEYBOARD_ATKBD=y
 # CONFIG_INPUT_MOUSE is not set
 # CONFIG_INPUT_JOYSTICK is not set
 # CONFIG_INPUT_TOUCHSCREEN is not set
-# CONFIG_INPUT_MISC is not set
+CONFIG_INPUT_MISC=y
+CONFIG_INPUT_PCSPKR=y
+# CONFIG_INPUT_WISTRON_BTNS is not set
+# CONFIG_INPUT_UINPUT is not set
 
 #
 # Hardware I/O ports
@@ -1279,7 +1282,9 @@ CONFIG_USB_DEVICEFS=y
 #
 # USB Host Controller Drivers
 #
-# CONFIG_USB_EHCI_HCD is not set
+CONFIG_USB_EHCI_HCD=m
+# CONFIG_USB_EHCI_SPLIT_ISO is not set
+# CONFIG_USB_EHCI_ROOT_HUB_TT is not set
 # CONFIG_USB_ISP116X_HCD is not set
 CONFIG_USB_OHCI_HCD=m
 # CONFIG_USB_OHCI_BIG_ENDIAN is not set
@@ -1399,6 +1404,7 @@ CONFIG_USB_MON=y
 # CONFIG_USB_PHIDGETKIT is not set
 # CONFIG_USB_PHIDGETSERVO is not set
 # CONFIG_USB_IDMOUSE is not set
+# CONFIG_USB_SISUSBVGA is not set
 # CONFIG_USB_LD is not set
 # CONFIG_USB_TEST is not set
 
