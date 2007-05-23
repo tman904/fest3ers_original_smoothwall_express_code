@@ -123,19 +123,27 @@ if (open(USB, "/proc/bus/usb/devices"))
 	close(USB);
 }
 
+# construct the regular information
+my $nonextra = join('&', 
+	'cpu_vid=' . &_urlencode($vid),
+	'cpu_model=' . &_urlencode($model),
+	'cpu_mhz=' . &_urlencode($mhz),
+	'mem=' . &_urlencode($mem),
+	'hdd=' . &_urlencode($disk),
+	'inst_type=' . &_urlencode($eth{'CONFIG_TYPE'}),
+	'isdn=' . &_urlencode($pppsettings{'COMPORT'}),
+	'version=' . &_urlencode("$version-$revision"));
+
 # construct the additional information.
+my $extra = join('&', 
+	'ADSL_DEVICE=' . &_urlencode($adslsettings{'DEVICE'}),
+	'ADSL_ECITYPE=' . &_urlencode($adslsettings{'ECITYPE'}),
+	'ISDN_TYPE=' . &_urlencode($isdnsettings{'TYPE'}),
+	'LSMOD=' . &_urlencode($lsmod),
+	'LSPCI=' . &_urlencode($lspci),
+	'USBBUS=' . &_urlencode($usbbus));
 
-my $extra;
-
-$extra .= "ADSL_DEVICE=$adslsettings{'DEVICE'}&";
-$extra .= "ADSL_ECITYPE=$adslsettings{'ECITYPE'}&";
-$extra .= "ISDN_TYPE=$isdnsettings{'TYPE'}&";
-$extra .= "LSMOD=$lsmod&";
-$extra .= "LSPCI=$lspci&";
-$extra .= "USBBUS=$usbbus";
-
-my $info = "cpu_vid=$vid&cpu_model=$model&cpu_mhz=$mhz&mem=$mem&hdd=$disk&inst_type=$eth{'CONFIG_TYPE'}&isdn=$pppsettings{'COMPORT'}&version=$version-$revision&$extra";
-$info =~ s/\s/%20/g;
+my $info = join('&', $nonextra, $extra);
 
 my $length = length($info);
 
@@ -143,7 +151,7 @@ my %proxy;
 
 &readhash("${swroot}/main/proxy", \%proxy);
 
-my $xhost = 'my.smoothwall.org';
+my $xhost = 'x3.smoothwall.org';
 
 my $host; my $port;
 unless ($proxy{'SERVER'})
@@ -176,9 +184,9 @@ foreach(@page)
 		$found = 1;
 	}
 	if($_ =~ m/^id/)
-        {
-                ( $junk, $id ) = split(/\=/,$_,2);
-        }
+	{
+		( $junk, $id ) = split(/\=/,$_,2);
+	}
 }
 
 
@@ -198,4 +206,31 @@ if ($found == 1)
 	}
 } else {
 	exit 2; 
+}
+
+sub _urlencode
+{
+	my ($string) = @_;
+	$string =~ s/\%/%25/g;
+	$string =~ s/\s/%20/g;
+	$string =~ s/\#/%23/g;
+	$string =~ s/\!/%2a/g;
+	$string =~ s/\'/%27/g;
+	$string =~ s/\(/%28/g;
+	$string =~ s/\)/%29/g;
+	$string =~ s/\;/%3b/g;
+	$string =~ s/\:/%3a/g;
+	$string =~ s/\@/%40/g;
+	$string =~ s/\&/%26/g;
+	$string =~ s/\=/%3d/g;
+	$string =~ s/\+/%2b/g;
+	$string =~ s/\$/%24/g;
+	$string =~ s/\,/%2c/g;
+	$string =~ s/\//%2f/g;
+	$string =~ s/\?/%3f/g;
+	$string =~ s/\#/%23/g;
+	$string =~ s/\[/%5b/g;
+	$string =~ s/\]/%5d/g;
+
+	return $string;
 }
