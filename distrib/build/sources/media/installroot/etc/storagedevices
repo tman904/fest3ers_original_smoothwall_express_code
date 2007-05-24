@@ -8,7 +8,7 @@ Adaptec AIC79xx cards|scsi/aic7xxx|aic79xx
 Bus Logic cards|scsi|BusLogic
 Initio 9100U(W) cards|scsi|initio
 Initio A100U2W cards|scsi|a100u2w
-Symbios 53c8xx cards|scsi|sym53c8xx
+Symbios 53c8xx cards|scsi/sym53c8xx_2|sym53c8xx
 Future Domain cards|scsi|fdomain
 Compaq Tachyon TS Fibre Channel|scsi|cpqfc
 ATA Intel PIIX|scsi|ata_piix
