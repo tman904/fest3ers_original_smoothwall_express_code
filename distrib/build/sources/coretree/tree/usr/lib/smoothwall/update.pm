@@ -52,7 +52,6 @@ sub downloadlist
 		$errormessage = $tr{'could not connect to smoothwall org'};
 		return 0;
 	}
-	print STDERR "GET http://www.smoothwall.org/updates/$version/info HTTP/1.1\r\nHost: www.smoothwall.org\r\nConnection: close\r\n\r\n";
 	print $sock "GET http://www.smoothwall.org/updates/$version/info HTTP/1.1\r\nHost: www.smoothwall.org\r\nConnection: close\r\n\r\n";
 	my $ret = '';
 	while (<$sock>) {
