@@ -18,12 +18,14 @@
 #include <newt.h>
 #include <dirent.h>
 
+#include <sys/ioctl.h>
 #include <sys/socket.h>
+#include <sys/sysinfo.h>
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
 #include <linux/cdrom.h>
-#include <sys/ioctl.h>
 
 #include "langs.h"
 
@@ -62,7 +64,7 @@ struct nic
 	char *modulename;
 };
 
-/* libsmooth.c */
+/* main.c */
 void reboot(void);
 void stripnl(char *s);
 int mysystem(char *command);
@@ -75,6 +77,7 @@ int runcommandwithstatus(char *command, char *message);
 int runcommandwithstatusnolog(char *command, char *message);
 int checkformodule(char *module); 
 int touchfile(char *filename);
+int gettotalmemory(void);
 
 /* netstuff.c */
 int changeaddress(struct keyvalue *kv, char *colour, int typeflag,

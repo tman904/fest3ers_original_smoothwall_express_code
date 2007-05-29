@@ -230,3 +230,15 @@ int touchfile(char *filename)
 	else
 		return 1;
 }
+
+/* Returns total amount of system memory in MB. */
+int gettotalmemory(void)
+{
+	struct sysinfo s;
+	
+	if (!(sysinfo(&s)))
+		return (s.totalram / s.mem_unit) / (1024 * 1024);
+	else
+		return 0;
+}
+  

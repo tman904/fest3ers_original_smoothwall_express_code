@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
 	struct keyvalue *hwprofilekv = initkeyvalues();
 	FILE *hkernelcmdline;
 	char kernelcmdline[STRING_SIZE];
+	int ramsize;
 
 	setenv("TERM", "linux", 0);
 
@@ -144,6 +145,11 @@ int main(int argc, char *argv[])
 	if (rc != 1)
 		goto EXIT;
 
+	/* If this fails, ramsize will be set to 0.  We can still cope though as this
+	 * figure is only used as a guide to setting the swap size. */
+	ramsize = gettotalmemory();
+	fprintf(flog, "%d MB RAM detected.\n", ramsize);
+
 	/* Partition, mkswp, mkfs. */
 	/* before partitioning, first determine the sizes of each
 	 * partition.  In order to do that we need to know the size of
@@ -153,10 +159,10 @@ int main(int argc, char *argv[])
 	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition;
 
-	swap_partition = 32; /* in MB */
+	swap_partition = ramsize < 64 ? 64 : ramsize; /* in MB */
 	current_free = maximum_free - swap_partition;
 	
-	log_partition = (current_free / 5) > 20 ? current_free / 5 : 20;
+	log_partition = (current_free / 3) > 20 ? current_free / 3 : 20;
 	current_free = maximum_free - log_partition;
 
 	root_partition = current_free;
