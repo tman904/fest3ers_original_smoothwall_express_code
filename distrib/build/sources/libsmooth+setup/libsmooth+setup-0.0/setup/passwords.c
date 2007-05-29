@@ -98,7 +98,7 @@ int getpassword(char *password, char *text)
 	{
 		done = 1;
 		rc = newtWinEntries(TITLE, text,
-			50, 5, 5, 20, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
+			50, 5, 5, 25, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
 		
 		if (rc != 2)
 		{
