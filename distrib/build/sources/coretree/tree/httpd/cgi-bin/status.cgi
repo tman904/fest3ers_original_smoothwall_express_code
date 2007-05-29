@@ -36,6 +36,7 @@ foreach my $file ( sort @files ){
 	chomp $name;
 	my $servicename = $file;
 	$servicename =~s/\[RED\]/$iface/ig;
+	$servicename =~s/-/\//g;
 	chomp $rel;
 	if ( defined $rel and $rel eq "core" ){
 		$coreservices{ $tr{ $name } } = $servicename;
