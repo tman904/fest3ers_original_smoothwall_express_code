@@ -616,7 +616,10 @@ int addressesmenu(void)
 		c++;
 	}
 	if (CONFIG_TYPE_PURPLE(configtype))
-		sections[c++] = purple;
+	{
+		sections[c] = purple;
+		c++;
+	}
 	if (CONFIG_TYPE_RED(configtype))
 	{
 		sections[c] = red;
