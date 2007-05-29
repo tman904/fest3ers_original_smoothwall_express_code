@@ -162,30 +162,35 @@ sub display_speeds
 		1310720 => '10mbit',
 		1572864 => '12mbit',
 		2097152 => '16mbit',
+		3145728 => '24mbit',
 		7208960 => '55mbit',
 		13107200 => '100mbit',
 		52428800 => '400mbit',
 		1342107200 => '1gbit');
 	my %headroom_labels = ();
-	$headroom_labels{$_} = "$_ %" for(1..25);
+	$headroom_labels{$_} = "$_ %" for(1..35);
 	my %default_traffic_labels = ( 
 		high => $tr{'traffic high'}, 
 		low => $tr{'traffic low'}, 
 		slow => $tr{'traffic slow'}, 
 		normal => $tr{'traffic normal'});
+	my @ext_speeds = (4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 
+			  1310720, 1572864, 2097152, 3145728);
+	my @int_speeds = (1310720, 1572864, 2097152, 3145728,
+			  7208960, 13107200, 52428800, 1342107200);
 		
 	%selected = ($settings->{'UPLOAD_SPEED'} => ' selected');
 	$upload_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 1310720, 1572864, 2097152, 13107200));
+			@ext_speeds);
 	%selected = ($settings->{'DOWNLOAD_SPEED'} => ' selected');
 	$download_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-			(4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 1310720, 1572864, 2097152, 13107200));
+			@ext_speeds);
 	%selected = ($settings->{'INTERNAL_SPEED'} => ' selected');
 	$internal_speed_block = join('', 
 		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-		(1310720, 1572864, 2097152, 7208960, 13107200, 52428800, 1342107200));
+		@int_speeds);
 
 	%selected = ($settings->{'HEADROOM'} => ' selected');
 	$headroom_block = join('', 
