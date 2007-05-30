@@ -892,5 +892,6 @@
 'toc' => 'To:',
 'machinesc' => 'Machines:',
 'enter one ip address or network with netmask address per line' => 'Enter one IP address or network with netmask address per line.',
+'from time must be before to time' => 'From time must be before To time.',
 
 );

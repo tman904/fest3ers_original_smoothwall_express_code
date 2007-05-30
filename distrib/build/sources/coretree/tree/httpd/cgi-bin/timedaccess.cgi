@@ -23,6 +23,12 @@ my $errormessage = '';
 
 if ($cgiparams{'ACTION'} eq $tr{'save'})
 {
+	if (($cgiparams{'START_HOUR'} * 60) + $cgiparams{'START_MIN'} >
+		($cgiparams{'END_HOUR'} * 60) + $cgiparams{'END_MIN'})
+	{
+		$errormessage = $tr{'from time must be before to time'};
+	}
+
 	my @machines = split(/\n/, $cgiparams{'MACHINES'});
 	my $line = 1;
 	foreach (@machines)
