@@ -17,6 +17,7 @@ my %netsettings;
 my $history = 60;
 my $oururl = "/cgi-bin/trafficstats.cgi";
 my $ubermax = 40;
+my $maxgraphs = 5;   # Maximum number of graphs to show on the page;
 
 # calculate some name translations 
 
@@ -113,7 +114,7 @@ function updatepage(str){
 	
 	
 	var detail_finder = new RegExp( /cur_(.{3})_rate_([^=]*)=(.*)/ );
-	for ( var i = 0; i < rows.length ; i++ ){
+	for ( var i = 0; (i < rows.length) && ( i <= $maxgraphs ) ; i++ ){
 		if ( !rows[i] ){ continue; }
 		var matches = detail_finder.exec( rows[i] );
 		var tinterface = matches[2];
