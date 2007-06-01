@@ -12,6 +12,7 @@ VERSION = 0.3
 BASE_URL = http://www.imspector.org/downloads/
 
 PATCH_FILE1 = imspector.patch
+PATCH_FILE2 = msnfix.patch
 
 CONFIGURE = yes
 INSTALL = yes
