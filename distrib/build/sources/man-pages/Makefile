@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = man-pages
 VERSION = 2.43
 
-BASE_URL = ftp://ftp.win.tue.nl/pub/linux-local/manpages/
+BASE_URL = http://www.kernel.org/pub/linux/docs/manpages/
 
 INSTALL = yes
 
