@@ -421,7 +421,12 @@ print <<END
 	<TD WIDTH='25%'>
 	<SELECT NAME='SUBNET'>
 	<OPTION VALUE='green' $selected{'SUBNET'}{'green'}>GREEN
-	<OPTION VALUE='purple' $selected{'SUBNET'}{'purple'}>PURPLE
+END
+;
+if ($netsettings{'PURPLE_DEV'}) {
+	print "\t<OPTION VALUE='purple' $selected{'SUBNET'}{'purple'}>PURPLE\n"; }
+
+print <<END
 	</SELECT>
 	</TD>
 	<TD WIDTH='10%'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'select'}'></TD>
