@@ -16,6 +16,7 @@ UNICORN_VER = 0.9.0
 IPTABLEPROC_VER = 0.1
 USR_VER = 1.08
 EAGLE_VER = 2.3.3
+CNX_VER = 2.6-1.5
 
 COMPILER = /usr/bin/gcc
 
@@ -26,7 +27,7 @@ PACKAGES += package-iptableproc
 endif
 
 ifeq ($(ARCH), i386)
-PACKAGES += package-unicorn
+PACKAGES += package-unicorn package-cnx
 endif
 
 download:
@@ -37,6 +38,7 @@ download:
 	@$(DL_CMD) http://www.intra2net.com/de/produkte/opensource/ipt_account/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz
 	@$(DL_CMD) http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2
 	@$(DL_CMD) http://www.ipp2p.org/downloads/ipp2p-$(IPP2P_VER).tar.gz
+	@$(DL_CMD) http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
 
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
@@ -51,6 +53,7 @@ prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/eagle-usb-$(EAGLE_VER).tar.bz2
 	@(cd eagle-usb-$(EAGLE_VER); \
 	patch -p1 <../../kernel-patches/eagle-2.6-fix.patch)
+	@tar -jxvf $(DOWNLOADS_DIR)/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
 
 	@rm -f linux
 	@ln -s linux-$(KERNEL_VER) linux
@@ -94,6 +97,9 @@ compile-eagle: compile-kernel
 	@(cd eagle-usb-$(EAGLE_VER); ./configure --with-kernel-src=$(KERNEL_DIR))
 	@make -C eagle-usb-$(EAGLE_VER)/driver CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) driver
 
+compile-cnx: compile-kernel
+	@make -C CnxADSL-6.1.2.007-PIM-$(CNX_VER)/KernelModule KDIR=$(KERNEL_DIR)
+
 package-kernel: compile-kernel
 	@mkdir -p $(PKG_ROOT)
 	@(cd $(PKG_ROOT); \
@@ -123,6 +129,10 @@ package-eagle: compile-eagle
 	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/eagle-usb-$(EAGLE_VER)/driver/eagle-usb.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/usb/eagle-usb.ko
 
+package-cnx: compile-cnx
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/CnxADSL-6.1.2.007-PIM-$(CNX_VER)/KernelModule/CnxADSL.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc/CnxADSL.ko
+
 build-tarball: package-kernel $(PACKAGES)
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
@@ -136,6 +146,7 @@ clean:
 	@rm -rf patch-o-matic-ng-$(PATCH_O_MATIC_VER)
 	@rm -rf unicorn
 	@rm -rf usr-sureconnect
+	@rm -rf CnxADSL-6.1.2.007-PIM-$(CNX_VER)
 	@rm -rf $(PKG_ROOT)
 
 all: clean build-tarball

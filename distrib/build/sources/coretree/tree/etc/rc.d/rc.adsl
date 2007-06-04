@@ -24,6 +24,12 @@ if [ "$ENABLED" = "on" ]; then
 		/sbin/modprobe pppoatm
 		sleep 5
 	fi
+	if [ "$DEVICE" = "CNX" ]; then
+		/sbin/modprobe CnxADSL
+		/usr/bin/smoothwall/writecnxadslconfig.pl
+		/usr/sbin/cnxadslload /usr/etc/cnxadsl
+		sleep 5
+	fi		
 else
 	echo "No USB ADSL enabled"
 fi

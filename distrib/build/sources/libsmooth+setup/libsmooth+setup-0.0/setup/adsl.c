@@ -68,6 +68,7 @@ struct device devices[] = {
 	{ "Eagle (generic)", "EAGLE", "generic", "usb" },
 	{ "USR SureConnect USB", "EAGLE" , "usresureconnect", "usb" },
 	{ "BeWAN ADSL PCI", "UNICORN", "", "pci"},
+	{ "Conexant ADSL PCI", "CNX", "", "pci" },
 	{ NULL, NULL }
 };
 

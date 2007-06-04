@@ -57,7 +57,9 @@ if (! -e "${swroot}/red/active")
 		elsif ($adslsettings{'DEVICE'} eq 'EAGLE') {
 			&doadsldialeagle(); }
 		elsif ($adslsettings{'DEVICE'} eq 'UNICORN') {
-			&doadsldialunicorn(); }
+			&doadsldialatm(); }
+		elsif ($adslsettings{'DEVICE'} eq 'CNX') {
+			&doadsldialatm(); }
 	}
 
 	# stayup
@@ -315,7 +317,7 @@ sub doadsldialeagle
 	system (@pppcommand);
 }
 
-sub doadsldialunicorn
+sub doadsldialatm
 {
 	my @pppcommand = ('/usr/sbin/pppd', 'plugin', '/usr/lib/pppd/2.4.4/pppoatm.so');
 

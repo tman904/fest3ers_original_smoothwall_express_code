@@ -162,6 +162,7 @@ build dhcpcd
 build eciadsl-synch_bin
 build eciadsl-usermode
 build eagle-usb
+build cnxadsl
 
 build dhcp
 build snort
