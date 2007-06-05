@@ -28,7 +28,7 @@ if [ "$ENABLED" = "on" ]; then
 		/sbin/modprobe CnxADSL
 		/usr/bin/smoothwall/writecnxadslconfig.pl
 		/usr/sbin/cnxadslload /usr/etc/cnxadsl
-		sleep 5
+		sleep 30
 	fi		
 else
 	echo "No USB ADSL enabled"
