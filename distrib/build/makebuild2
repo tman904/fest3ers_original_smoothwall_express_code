@@ -192,5 +192,7 @@ build install
 build libosip2
 build siproxd
 
+build miniupnpd
+
 docommand "regular ISO" "make -C sources/media"
 docommand "devel ISO" "make -C sources/media TYPE=-devel"

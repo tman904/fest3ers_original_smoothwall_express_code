@@ -120,6 +120,9 @@ if [ ! -e /etc/httpd/server.key ]; then
 		/etc/httpd/server.crt
 fi	
 
+echo "Generating UPNP UUID"
+uuidgen >/etc/miniupnpd.uuid
+
 echo "Rotating logs"
 /usr/sbin/logrotate /etc/logrotate.conf
 

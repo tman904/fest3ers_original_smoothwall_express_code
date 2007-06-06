@@ -61,10 +61,9 @@ int stop_upnpd(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 	
-	killunknownprocess("upnpd");
-	simplesecuresysteml("/sbin/route", "del", "-net", "239.0.0.0", "netmask", "255.0.0.0", NULL);
+	killprocess("/var/run/miniupnpd.pid");
 
-	response = "Upnpd Process Terminated";
+	response = "Miniupnpd process terminated";
 
 	return error;
 }
@@ -73,35 +72,42 @@ int start_upnpd(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 	ConfigSTR iface("/var/smoothwall/red/iface");
-	struct stat sb;
-	std::string::size_type n;
-	int enabled = (stat("/var/smoothwall/advnet/upnp", &sb) == 0);
+	ConfigSTR uuid("/etc/miniupnpd.uuid");
+	std::vector<std::string> args;
+	ConfigVAR settings("/var/smoothwall/advnet/settings");
+	ConfigVAR netsettings("/var/smoothwall/ethernet/settings");
 
-	if (iface.str() == "")
+	args.push_back("/usr/sbin/miniupnpd");
+	args.push_back("-f");
+	args.push_back("/etc/miniupnpd.conf");
+	args.push_back("-i");
+	args.push_back(iface.str());
+	args.push_back("-u");
+	args.push_back(uuid.str());
+	args.push_back("-U");
+	
+	if (netsettings["GREEN_DEV"] != "")
 	{
-		response = "Couldn't open iface file";
-		goto EXIT;
+		args.push_back("-a");
+		args.push_back(netsettings["GREEN_ADDRESS"]);
 	}
-	if ((n = iface.str().find_first_not_of(LETTERS_NUMBERS)) != std::string::npos) 
+	if (netsettings["PURPLE_DEV"] != "")
 	{
-		response = "Bad iface: " + iface.str();
-		error = 1;
-		goto EXIT;
+		args.push_back("-a");
+		args.push_back(netsettings["PURPLE_ADDRESS"]);
 	}
 	
-	if (enabled)
+	/* Not an error really. */
+	if (iface.str() == "")
+		goto EXIT;
+
+	if (settings["ENABLE_UPNP"] == "on")
 	{
-		error = simplesecuresysteml("/sbin/route", "add", "-net", "239.0.0.0",  "netmask", "255.0.0.0", "eth0", NULL);
-		if (!error)
-		{
-			error = simplesecuresysteml("/usr/sbin/upnpd " , iface.str().c_str() , "eth0", NULL);
-			if (error)
-				response = "Can't start Upnpd";
-			else
-				response = "Upnpd Start Successful";
-		}
+		error = simplesecuresystemvector(args);
+		if (error)
+			response = "Can't start minipnpd";
 		else
-			response = "Can't add route";
+			response = "Miniupnpd start successful";
 	}
 	
 EXIT:

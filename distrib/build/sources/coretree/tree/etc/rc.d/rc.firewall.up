@@ -223,6 +223,14 @@ fi
 /sbin/iptables -A FORWARD -i $GREEN_DEV -o ipsec0 -j ACCEPT
 /sbin/iptables -A FORWARD -i ipsec0 -o $GREEN_DEV -j ACCEPT
 
+# UPNP
+/sbin/iptables -N MINIUPNPD
+/sbin/iptables -A FORWARD -i ppp0 -o ! ppp0 -j MINIUPNPD
+/sbin/iptables -A FORWARD -i ippp0 -o ! ippp0 -j MINIUPNPD
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -A FORWARD -i $RED_DEV -o ! $RED_DEV -j MINIUPNPD
+fi
+
 /sbin/iptables -A FORWARD -j LOG
 /sbin/iptables -A FORWARD -j REJECT
 
@@ -292,6 +300,14 @@ fi
 # Port forwarding
 /sbin/iptables -t nat -N portfw
 /sbin/iptables -t nat -A PREROUTING -j portfw
+
+# UPNP
+/sbin/iptables -t nat -N MINIUPNPD
+/sbin/iptables -t nat -A PREROUTING -i ppp0 -j MINIUPNPD
+/sbin/iptables -t nat -A PREROUTING -i ippp0 -j MINIUPNPD
+if [ "$RED_DEV" != "" ]; then
+	/sbin/iptables -t nat -A PREROUTING -i $RED_DEV -j MINIUPNPD
+fi
 
 # Stats
 /sbin/iptables -t mangle -N prerouting-1

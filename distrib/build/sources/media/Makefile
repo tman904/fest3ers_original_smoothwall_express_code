@@ -136,6 +136,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		libosip2 \
 		siproxd \
 		which \
+		miniupnpd \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
 		make -C ../$$I clean all; \

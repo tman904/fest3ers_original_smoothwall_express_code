@@ -466,6 +466,7 @@
 'im proxy' => 'IM proxy server',
 'clam antivirus server' => 'Clam Anti-virus server',
 'pop3 proxy server' => 'POP3 proxy server',
+'upnp' => 'UPnP',
 'status information' => 'Status information',
 'advanced status information' => 'Advanced status information',
 'services' => 'Services:',
