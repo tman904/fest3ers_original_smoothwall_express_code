@@ -85,6 +85,5 @@ int start_clamav(std::vector<std::string> & parameters, std::string & response)
 			response = "ClamAV Start Successful";
 	}
 
-EXIT:
 	return error;
 }
