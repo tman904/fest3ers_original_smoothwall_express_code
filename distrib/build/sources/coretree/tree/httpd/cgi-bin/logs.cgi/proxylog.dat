@@ -98,6 +98,7 @@ if ($@ ne '')
 }
 else
 {
+print STDERR "Starting -- $start_date - $end_date - $sourceip - $sourceall - $filter\n";
 	open (FILE, '/var/log/squid/access.log');
 	while (<FILE>)
 	{
@@ -231,7 +232,13 @@ my $next = $start + $viewsize;
 if ($prev < 0) { $prev = 0; }
 if ($next >= $lines) { $next = -1 }
 if ($start == 0) { $prev = -1; }
+
+print STDERR "Array is currently ".scalar(@log);
+
 my @slice = splice(@log, $start, $viewsize);
+
+
+print STDERR "Chopping with $start, $viewsize\n";
 
 print <<END
 <table class='centered'>
@@ -275,7 +282,7 @@ END
 
 if ( $number_of_pages >= 2 ){
 	if ($next != -1) {
-		print "<td style='vertical-align: top; text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>&lt; Sm</a></td>"; }
+		print "<td style='vertical-align: top; text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>&lt; Sm</a></td>"; }
 	else {
 		print "<td style='vertical-align: top;text-align: center'>&lt; Sm</td>"; 
 	}
@@ -286,16 +293,16 @@ for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
 	
 	if ( $page >= $start_page and $page <= $end_page ){
 		if ( $i == $start ){
-			print "<td style='vertical-align: top;text-align: center;'><a class='activemenu' href='/cgi-bin/logs.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}''>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+			print "<td style='vertical-align: top;text-align: center;'><a class='activemenu' href='/cgi-bin/logs.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
 		} else {
-			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}''>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
 		}
 	}
 }
 
 if ( $number_of_pages >= 2 ){
 	if ($tpage != $number_of_pages) {
-		print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>th &gt;</a></td>"; 
+		print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/proxylog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>th &gt;</a></td>"; 
 	} else {
 		print "<td style='vertical-align: top;text-align: center;'>th &gt;</td>"; 
 	}
