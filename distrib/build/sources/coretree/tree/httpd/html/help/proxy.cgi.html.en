@@ -1,8 +1,9 @@
 <P><FONT SIZE='3'><B><U>Web Proxy</U></B></FONT></P>
 
-<P>SmoothWall has the capability to run a caching web proxy. This caching
-mechanism naturally requires disk space, and as such, you should consider
-the available space to use for caching when configuring the proxy.</P>
+<P>SmoothWall has the capability to run a caching web proxy for both the
+GREEN and PURPLE networks. This caching mechanism naturally requires disk
+space, and as such, you should consider the available space to use for
+caching when configuring the proxy.</P>
 
 <P>The proxy supports http, https, and ftp proxy caching. For privacy reasons,
 it will not cache pages received via https, or other pages where a username

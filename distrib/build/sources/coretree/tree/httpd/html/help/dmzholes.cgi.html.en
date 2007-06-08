@@ -1,19 +1,25 @@
-<P><FONT SIZE='3'><B><U>DMZ Pinhole Configuration</U></B></FONT></P>
+<P><FONT SIZE='3'><B><U>Pinhole Configuration</U></B></FONT></P>
 
-<P>This page is for advanced users with DMZ setups.</P>
+<P>This page is for advanced users with multi-NIC setups without multiple
+internal networks.</P>
 
-<P>With this page, the administrator can configure "holes" between the DMZ
-and the local network.  The standard configuration, without any holes setup,
-blocks any host on the ORANGE network from connecting to a host on the GREEN
-network.  Often this is not totally desirable, however, and it can be
-useful, if slightly risky securitywise, to allow a host on the ORANGE
-network to connect to a host on the GREEN side in a very limited fashion.
-This page lets you do this.</P>
+<P>With this page, the administrator can configure "holes" between the various
+local networks.  The standard configuration, without any pinholes setup, is as
+follows:</P>
+
+<UL>
+<LI>GREEN can talk to PURPLE, ORANGE</LI>
+<LI>PURPLE can talk to ORANGE</LI>
+<LI>ORANGE can talk to nothing</LI>
+</UL>
+
+<P>In order to allow communcations in the reverse direction (for example
+ORANGE talking to GREEN) a pinhole most be created.</P>
 
 <P>The protocol can be set, although it is not recommended to use
-UDP for pinholing.  <B>Source IP</B> is a machine on the ORANGE network,
-<B>Destination IP</B> is the host on GREEN, and <B>Destination port</B> is
-the port on the GREEN machine that you want to allow the ORANGE machine to
+UDP for pinholing.  <B>Source IP</B> is a machine on the ORANGE or PURPLE networks,
+<B>Destination IP</B> is usually a host on the GREEN network,, and <B>Destination port</B> is
+the port on the Destination machine that you want to allow the Source machine to
 connect to.</P>
 
 <P>Typically this would be used to allow a webserver on ORANGE to connect to

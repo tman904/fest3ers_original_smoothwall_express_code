@@ -2,7 +2,7 @@
 <P><FONT SIZE='3'><STRONG><U>Static DNS</U></STRONG></FONT></P>
 
 <P>The Static DNS configuration page creates a local Hostname table that can be
-used by both Corporate Server and computers on the local (Green) and DMZ
+used by both the SmoothWall Express and computers on the GREEN and PURPLE
 networks.</P>
 
 <P>Type the IP Address you wish to be resolved into the <STRONG>IP address</STRONG> text

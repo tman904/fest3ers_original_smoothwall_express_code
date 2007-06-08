@@ -1,22 +1,20 @@
 <P><FONT SIZE='3'><B><U>Port Forwarding</U></B></FONT></P>
 
-<P>SmoothWall is able to forward incoming connection requests to machines that
-are behind it, on either the DMZ (ORANGE) network or on the local (GREEN) network.
-Those behind a dialup link probably do not require this feature, although it
-is still available to them.</P>
+<P>SmoothWall is able to forward incoming connection requests to machines
+that are behind it, on either the DMZ (ORANGE) network or on the local
+(GREEN or PURPLE) network. Those behind a dialup link probably do not
+require this feature, although it is still available to them.</P>
 
 <P>Securitywise, it is extremely risky to put your externally visible
-servers on your GREEN network because a cracker who manages to break into
-such a server will afterwards have access to your entire local network. It
-is therefore prudent to use an additional network (a DMZ or De-Militarized
-Zone on the ORANGE interface), just for the purpose of serving external
-requests.</P>
+servers on your GREEN or PURPLE network because a cracker who manages to
+break into such a server will afterwards have access to your entire local
+network. It is therefore prudent to use an additional network (a DMZ or
+De-Militarized Zone on the ORANGE interface), just for the purpose of
+serving external requests.</P>
 
 <P>Note that the connection is only forwarded if the <B>External source
 IP</B> matches.  If you leave this field blank, then any host on the outside
-will be able to utilise the forward. <B>Note:</B> This behavior differs from
-previous versions of SmoothWall, whereby the port to forward also had to be
-opened using the External service access page.</P>
+will be able to utilise the forward.</P>
 
 <P>When an Internet host connects to this port, the connection will be
 forwarded to a host behind SmoothWall. The connection can be directed to any
@@ -24,6 +22,9 @@ IP address and port. For example: suppose you wish to run a webserver behind
 your SmoothWall. The webserver is on your DMZ, at IP address 192.168.2.60.
 You would forward from port 80, connecting again to port 80 on the
 192.168.2.60.</P>
+
+<p>Ports may be specified either manually using a <strong>User defined</strong>
+port, or from a list in the <strong>Port or range</strong> drop-downs.</p>
 
 <P>To forward a range of ports, use the format A:B for the <B>Source
 port</B>. If a <B>Destination port</B> is not given, then the same port
@@ -35,7 +36,3 @@ port range would be on 7000. It is not possible to map a port range to
 another port range. Note that not specifying a destination
 port works equally well for a single Source port.</P>
 
-<P>Clients on the local network are able to make outgoing connections to
-hosts on the ORANGE network, but not the other way around. To
-enable hosts on the ORANGE network to make restricted connections to hosts
-on GREEN, use the <B>DMZ pinhole</B> feature.</P>

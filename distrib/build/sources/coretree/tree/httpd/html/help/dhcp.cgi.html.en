@@ -3,6 +3,15 @@
 <P>SmoothWall may optionally run a DHCP server, and this is where it is
 configured.</P>
 
+<P>Both the GREEN and PURPLE interfaces can have DHCP service.  Select
+the <B>Interface</B> you wish to configure and then press <B>Select</B>.
+
+<P>A feature that is applied globally is network booting.  This requires
+a compatible target PC or other device.  Configure the <B>Boot server</B> to
+the IP address of the server running TFTP.  Next choose the <B>Boot filename</B>
+and <B>Root path</B> of the file that the PC or other device should boot.  This
+feature is intended to be used by diskless workstations, and simular.</P>
+
 <P><STRONG>Start Address</STRONG> and <STRONG>End Address</STRONG> set the range over which you wish the DHCP
 server to supply dynamic addresses. This address range should not contain
 the IPs of other machines on your LAN with static IP assignments. Suppose
@@ -30,6 +39,14 @@ default values unless you have specific needs.</P>
 will give to the client.  There should not be a leading period in this
 box.</P>
 
+<P>The <STRONG>NIS domain</STRONG> sets the NIS domain that the server will
+give to the clients. This should not be confused with the <STRONG>
+Domain name suffix</STRONG>, described above.</P>
+
+<P>The two NIS servers' addresses likewise specify what NIS servers the
+SmoothWall DHCP server should tell its clients to use. This is useful
+in UNIX environments which are utilising NIS.</P>
+
 <P>The <STRONG>Add a new static assignment</STRONG> section is used to allocate a
 fixed IP addresses for nominated clients.  It does this by reference to the
 client NIC's (LAN Card) MAC (Media Access Control) address.  Use this
@@ -52,5 +69,6 @@ In the case of pressing Edit, change the MAC or IP address as required the
 press the Add button again to return the revised assignment to the Current
 static assignments section below.</P>
 
-<P>Enable the DHCP server by ticking the <STRONG>Enable</STRONG> checkbox. When you
+<P>Enable the DHCP server by ticking the <STRONG>Enable</STRONG> checkbox. 
+This will enable DHCP service for the selected interface. When you
 press <STRONG>Save</STRONG>, the change is acted upon.</P>

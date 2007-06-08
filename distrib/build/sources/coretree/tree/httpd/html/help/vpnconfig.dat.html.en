@@ -29,6 +29,9 @@ can enhance the performance of the link for certain kinds of traffic.  Note
 that both ends of the VPN tunnel must agree on wether to use compression or
 not.</P>
 
+<p><b>Comment:</b> Optionally you may enter description or comment for the
+tunnel.</p>
+
 <P>To add the connection, fill in all fields and click the <B>Add</B>
 button. If you wish to add the connection without enabling it, please
 uncheck the <B>Enabled</B> box.</P>
