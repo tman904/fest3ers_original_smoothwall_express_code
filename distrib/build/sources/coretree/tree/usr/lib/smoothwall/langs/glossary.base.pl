@@ -31,6 +31,7 @@
 	'FTP' => "<strong>File Transfer Protocol</strong> An antiquated protocol for use in file transfer between Internet hosts. It provides little in the way of authentication and encryption.",
 	'POP3' => "<strong>Post Office Protocol 3</strong> A simple protocol used in the downloading of Emails between a server and a client. Extensions exist for secure authentication and encryption.",
 	'NAT' => "<strong>Network Address Translation</strong> Any form of IP address munging, but in a SmoothWall context it is the mechanism by which an internal host on GREEN or any other interface access the Internet with only a single real external IP address.",
+	'NTP' => "<strong>Network Time Protocol</strong> A protocol for telling machines, acturally, what the time is on a network. It is used both on the Internet and on LANs.",
 );
 
 1;

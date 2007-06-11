@@ -1,8 +1,9 @@
 <P><FONT SIZE='3'><STRONG><U>Time</U></STRONG></FONT></P>
 
-<P>The time page has two functions, firstly to set the SmoothWall
+<P>The time page has three functions. Firstly to set the SmoothWall
 date and time, secondly to allow SmoothWall to synchronise its time
-with a network time server.</P>
+with a network time server, and finally to enable SmoothWall's inbuilt
+time server.</P>
 
 <P>The <STRONG>Timezone</STRONG> is now set in by the browser configuration
 facility rather than in the installation process.  Select the appropriate
@@ -35,3 +36,8 @@ The third radio button, <STRONG>User defined single public or local server</STRO
 for a user specified time server to be used.  Either an IP address can be
 entered or a name that can be resolved by SmoothWall (e.g. using its
 Static DNS/Hostnames table).</P>
+
+<p>The <strong>Time server</strong> section allows the user to enable or
+disable SmoothWall's built in time server.  This time server, when running, 
+can service the GREEN and PURPLE network with the time using the standard
+NTP protocol.</p>
