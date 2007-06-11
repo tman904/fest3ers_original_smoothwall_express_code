@@ -59,7 +59,7 @@
 'ssemail' => 'email',
 'sscontrol' => 'control',
 'ssconnections' => 'connections',
-'ssother' => 'other',
+'sssystem' => 'system',
 'ssfirewall' => 'firewall',
 'ssshutdown' => 'shutdown',
 'ssshell' => 'shell',
@@ -255,8 +255,10 @@
 'log viewer' => 'Log viewer',
 'section' => 'Section:',
 'kernel' => 'Kernel',
-'loginlogout' => 'Login/Logout',
 'update transcript' => 'Update transcript',
+'logsec sip' => 'SIP proxy',
+'logsec im' => 'IM proxy',
+'logsec web' => 'Web proxy',
 'log' => 'Log:',
 
 # logs.cgi/proxylog.dat
@@ -466,7 +468,7 @@
 'im proxy' => 'IM proxy server',
 'clam antivirus server' => 'Clam Anti-virus server',
 'pop3 proxy server' => 'POP3 proxy server',
-'upnp' => 'UPnP',
+'upnp' => 'UPNP',
 'status information' => 'Status information',
 'advanced status information' => 'Advanced status information',
 'services' => 'Services:',
@@ -864,7 +866,6 @@
 
 # SIP
 'sip server' => 'SIP server',
-'logsec sip' => 'SIP service',
 'sip' => 'SIP',
 'session initiation protocol' => 'Session Initiation Protocol:',
 'sip logging level' => 'Logging level:',
@@ -894,5 +895,9 @@
 'machinesc' => 'Machines:',
 'enter one ip address or network with netmask address per line' => 'Enter one IP address or network with netmask address per line.',
 'from time must be before to time' => 'From time must be before To time.',
+
+# upnp stuff
+'upnp service' => 'UPNP service',
+
 
 );
