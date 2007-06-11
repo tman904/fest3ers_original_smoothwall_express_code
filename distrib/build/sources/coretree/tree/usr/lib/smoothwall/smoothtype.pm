@@ -117,8 +117,6 @@ sub portlist
 
 		my $precursor = "";
 
-print STDERR "Checking $key against $chosen with $section\n";
-
 		if ( not defined $ungrouped ){
 			if ( $chosen eq $section ){
 				$response .= "<option selected value='$section'>$section</option>\n";
@@ -129,7 +127,7 @@ print STDERR "Checking $key against $chosen with $section\n";
 			$precursor = " - ";
 		}
 		foreach my $key ( keys %{$ports{$section}} ){
-			if ( $chosen eq $key ){
+			if ( $chosen eq $ports{$section}{$key} ){
 				$response .= "<option selected value='$ports{$section}{$key}'>$precursor$key</option>\n";
 				$found = "";
 			} else {
