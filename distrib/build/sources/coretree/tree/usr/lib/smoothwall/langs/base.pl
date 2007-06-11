@@ -899,5 +899,12 @@
 # upnp stuff
 'upnp service' => 'UPNP service',
 
+# email log viewer
+
+'message id'   => 'ID',
+'message from' => 'From',
+'message to'   => 'To',
+'message vir'  => 'Virus',
+
 
 );

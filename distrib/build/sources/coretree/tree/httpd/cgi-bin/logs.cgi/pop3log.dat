@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothtype qw( :standard );
 
 my %cgiparams;
 my $errormessage;
@@ -77,6 +78,9 @@ while (<FILE>)
 }	 
 close (FILE);
 
+use Data::Dumper;
+print STDERR Dumper %cgiparams;
+
 if ($cgiparams{'ACTION'} eq $tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
@@ -104,7 +108,7 @@ my %selected;
 &openbox($tr{'settingsc'});
 
 print <<END
-<FORM>
+<FORM method='post' action='/cgi-bin/logs.cgi/pop3log.dat'>
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='10%' CLASS='base'>$tr{'month'}</TD>
@@ -208,7 +212,7 @@ END
 
 if ( $number_of_pages >= 2 ){
 	if ($next != -1) {
-		print "<td style='vertical-align: top; text-align: center;'><a href='/cgi-bin/logs.cgi/log.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}'>&lt; Sm</a></td>"; 
+		print "<td style='vertical-align: top; text-align: center;'><a href='/cgi-bin/logs.cgi/pop3log.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}'>&lt; Sm</a></td>"; 
 	} else {
 		print "<td style='vertical-align: top;text-align: center'>&lt; Sm</td>"; 
 	}
@@ -219,16 +223,16 @@ for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
 	
 	if ( $page >= $start_page and $page <= $end_page ){
 		if ( $i == $start ){
-			print "<td style='vertical-align: top;text-align: center;'><a class='activemenu' href='/cgi-bin/logs.cgi/log.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}''>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+			print "<td style='vertical-align: top;text-align: center;'><a class='activemenu' href='/cgi-bin/logs.cgi/pop3log.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}''>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
 		} else {
-			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/log.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}''>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/pop3log.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}''>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
 		}
 	}
 }
 
 if ( $number_of_pages >= 2 ){
 	if ($tpage != $number_of_pages) {
-		print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/log.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}'>th &gt;</a></td>"; 
+		print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/pop3log.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SECTION'}'>th &gt;</a></td>"; 
 	} else {
 		print "<td style='vertical-align: top;text-align: center;'>th &gt;</td>"; 
 	}
@@ -248,7 +252,18 @@ print <<END
 END
 ;
 
-print "<TT>\n";
+print qq{
+	<table class='centered' >
+	<tr>
+		<th style='width: 10%;'>$tr{'time'}</th>
+<!--		<th>$tr{'message id'}</th> -->
+		<th>$tr{'message from'}</th>
+		<th>$tr{'message to'}</th>
+		<th>$tr{'message vir'}</th>
+	</tr>
+
+};
+
 foreach $_ (@slice)
 {
 	/^${monthstr} ${daystr} (..:..:..) [\w\-]+ p3scan\[\d+\]: (.*)/;
@@ -268,12 +283,46 @@ foreach $_ (@slice)
 	if ($line =~ /bytes: \((.*?)\)/) { $bytes = $1; }
 	if ($line =~ /messageid: \((.*?)\)/) { $messageid = $1; }
 	
-	$messageid =~ s/\</&lt;/g;
-	$messageid =~ s/\>/&gt;/g;
-	
-	print "$timestamp from: $fromaddy to: $toaddy virus: $vrius mid: $messageid<BR>\n";
+#	$messageid =~ s/\>|\<|'|"//g;
+	$fromaddy  =~ s/\>|\<|'|"//g;
+	$toaddy =~ s/\>|\<|'|"//g;
+
+#	if ( length $messageid > 36 ){
+#		my ( $ori ) = (	$messageid =~ /(.{0,36}).*/ );
+#		$messageid = qq{
+#			<span @{[tooltip("'$messageid'")]}>$ori...</span>
+#		};
+#	}
+
+	if ( length $fromaddy > 36 ){
+		my ( $ori ) = (	$fromaddy =~ /(.{0,36}).*/ );
+		$fromaddy = qq{
+			<span @{[tooltip("'$fromaddy'")]}>$ori...</span>
+		};
+	}
+
+	if ( length $toaddy > 36 ){
+		my ( $ori ) = (	$toaddy =~ /(.{0,36}).*/ );
+		$toaddy = qq{
+			<span @{[tooltip("'$toaddy'")]}>$ori...</span>
+		};
+	}
+
+	if ( $virus ne "-" ){
+		$virus = "<span style='color: red;'>$virus</span>";
+	}
+
+	print qq{
+	<tr>
+		<td>$timestamp</td>
+	<!--	<td>$messageid</td> -->
+		<td><strong>$fromaddy</strong></td>
+		<td><strong>$toaddy</strong></td>
+		<td>$virus</td>
+	</tr>
+	};
 }
-print "</TT>\n";
+print "</table>\n";
 close (FILE);
 print "&nbsp;\n";
 
