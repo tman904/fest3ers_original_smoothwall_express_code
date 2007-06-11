@@ -42,19 +42,20 @@ if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'} ||
 				$errormessage = $tr{'unable to create floppy image file'}; }
 			else
 			{
-				print "Content-type: application/octect-stream\n\n";
+				print "Content-type: application/octect-stream\n";
+				print "Content-length: " . 1440 * 1024 . "\n\n";
 
+				undef $/;
 				open (FILE, "${swroot}/tmp/backup.img");
-				$l = 0;
-				while (<FILE>)
-				{
-					print $_;
-					$l += length;
-				}
+				$_= <FILE>;
+				print $_;
+				$l = length;
+				
 				close (FILE);
+
+				print '\0' x ((1440 * 1024) - $l);
+
 				unlink "${swroot}/tmp/backup.img";
-				for (;$l < 1440 * 1024; $l++) {
-					print "\0"; }
 
 				exit;
 			}
