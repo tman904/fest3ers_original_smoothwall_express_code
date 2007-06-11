@@ -18,7 +18,7 @@
 	'TCP' => "<strong>Transmission Control Protocol</strong> A network protocol that guarantees reliable and in-order delivery of data between Internet hosts",
 	'UDP' => "<strong>User Datagram Protocol</strong> A network protocol that provides a connection-less data exchange. Delivery of data is not guaranteed.",
 	'MSN' => "<strong>Microsoft Messenger</strong> A program for talking to your mates and sending them pictures, videos and the like.",
-	'IRC' => "<strong>Internet Relay Chat</strong> A realtime communications network and protocol developed in 1992. The first widespread Internet chat system.",
+	'IRC' => "<strong>Internet Relay Chat</strong> A realtime communications network and protocol developed in 1988. The first widespread Internet chat system.",
 	'Snort' => "<strong>Snort</strong> 'grep for tcpdump'. A program for monitoring a network interface for suspicous traffic using a clever form of pattern matching. Can be used to identify suspicous activity on your Internet connection.",
 	'VOIP' => "<strong>Voice over Internet Protocol</strong> A catch-all term for any protocol or program that provides voice and/or data calls over the public Internet. VOIP calls are effectivly free, but can suffer from quality problems.",
 	'SYN cookie' => "<strong>SYN cookie</strong> A mechanism for avoiding DOS attacks.",
