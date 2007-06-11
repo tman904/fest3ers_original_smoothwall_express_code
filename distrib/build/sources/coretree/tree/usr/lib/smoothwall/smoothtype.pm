@@ -117,8 +117,10 @@ sub portlist
 
 		my $precursor = "";
 
+print STDERR "Checking $key against $chosen with $section\n";
+
 		if ( not defined $ungrouped ){
-			if ( $chosen eq $key ){
+			if ( $chosen eq $section ){
 				$response .= "<option selected value='$section'>$section</option>\n";
 				$found = "";
 			} else {
