@@ -207,12 +207,16 @@ ERROR:
 	delete $dhcpsettings{'STATIC_DESC'};
 	delete $dhcpsettings{'STATIC_MAC'};
 	delete $dhcpsettings{'STATIC_IP'};
+	delete $dhcpsettings{'DEFAULT_ENABLE_STATIC'};
 	
 	&writehash("${swroot}/dhcp/settings-$dhcpsettings{'SUBNET'}", \%dhcpsettings);
 
 	system('/usr/bin/smoothwall/writedhcp.pl');
 
-	if ( $errormessage eq "" ){
+	if ($dhcpsettings{'VALID'} eq 'yes')
+	{
+		unlink "${swroot}/dhcp/uptodate";
+	
 		my $success = message('dhcpdrestart');
 		
 		if (not defined $success) {
@@ -280,9 +284,6 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 		delete $dhcpsettings{'DEFAULT_ENABLE_STATIC'};
 		system ('/bin/touch', "${swroot}/dhcp/uptodate");
 	}
-	$refreshdynamic = 'off';	
-
-	system('/usr/bin/smoothwall/writedhcp.pl');
 }
 
 if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'edit'})
@@ -323,20 +324,11 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 				$dhcpsettings{'STATIC_IP'} = $temp[2];
 				$dhcpsettings{'STATIC_DESC'} = $temp[3];
 				$dhcpsettings{'DEFAULT_ENABLE_STATIC'} = $temp[4];
-				$checked{'DEFAULT_ENABLE_STATIC'}{'on'} = "checked" if ( $temp[4] eq "on" );
 			}
 		}
 		close(FILE);
 		system ('/bin/touch', "${swroot}/dhcp/uptodate");
 	}
-	$refreshdynamic = 'off';	
-
-	system('/usr/bin/smoothwall/writedhcp.pl');
-
-	my $success = message('dhcpdrestart');
-		
-	if (not defined $success) {
-		$errormessage = $tr{'smoothd failure'}; }
 }
 
 if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
@@ -353,6 +345,7 @@ if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
  	$dhcpsettings{'ENABLE'} = 'off';
 	$dhcpsettings{'DEFAULT_LEASE_TIME'} = '60';
 	$dhcpsettings{'MAX_LEASE_TIME'} = '120';
+	$dhcpsettings{'DEFAULT_ENABLE_STATIC'} = 'on';
 
 	$dhcpsettings{'COLUMN'} = $c;
 	$dhcpsettings{'ORDER'} = $o;
@@ -371,6 +364,9 @@ $checked{'NIS_ENABLE'}{$dhcpsettings{'NIS_ENABLE'}} = 'CHECKED';
 $checked{'BOOT_ENABLE'}{'on'} = '';
 $checked{'BOOT_ENABLE'}{'off'} = '';
 $checked{'BOOT_ENABLE'}{$dhcpsettings{'BOOT_ENABLE'}} = 'CHECKED';
+$checked{'DEFAULT_ENABLE_STATIC'}{'on'} = '';
+$checked{'DEFAULT_ENABLE_STATIC'}{'off'} = '';
+$checked{'DEFAULT_ENABLE_STATIC'}{$dhcpsettings{'DEFAULT_ENABLE_STATIC'}} = 'CHECKED';
 
 $selected{'SUBNET'}{'green'} = '';
 $selected{'SUBNET'}{'purple'} = '';
@@ -515,12 +511,11 @@ print <<END
 </tr>
 <tr>
 	<td>$tr{'enabled'}</td>
-	<td><input type='checkbox' name='DEFAULT_ENABLE_STATIC' $checked{'DEFAULT_ENABLE_STATIC'}{'on'}}></td>
+	<td><input type='checkbox' name='DEFAULT_ENABLE_STATIC' $checked{'DEFAULT_ENABLE_STATIC'}{'on'}></td>
 	<td style='text-align: right;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
 	<td></td>
 </tr>
 </table>
-</form>
 END
 ;
 &closebox();
@@ -604,15 +599,4 @@ sub ip2number
 		return 0; }
 	else {
 		return ($1*(256*256*256))+($2*(256*256))+($3*256)+($4); }
-}
-
-sub number2ip
-{
-	my $number = $_[0];
-	my $n1 = int($number/(256*256*256));
-	my $n2 = int(($number-($n1*256*256*256))/(256*256));
-	my $n3 = int(($number-($n1*256*256*256)-($n2*256*256))/256);
-	my $n4 = $number-($n1*256*256*256)-($n2*256*256)-($n3*256);
-	
-	return "$n1.$n2.$n3.$n4";
 }
