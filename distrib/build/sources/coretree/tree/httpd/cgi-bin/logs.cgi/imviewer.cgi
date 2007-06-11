@@ -312,7 +312,10 @@ function setsection( value )
 };
 
 &openpage('Instant Messenger proxy logs', 1, $script, 'logs');
+
 &openbigbox('100%', 'LEFT');
+
+&alertbox();
 
 my $options = qq{
 };
