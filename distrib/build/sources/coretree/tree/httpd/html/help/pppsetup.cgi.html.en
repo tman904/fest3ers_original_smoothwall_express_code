@@ -88,14 +88,5 @@ this file.</P>
 servers, or select <B>Automatic</B> if your ISP supports automatic DNS server
 configuration, which nearly all ISPs do.</P>
 
-<P>If either PPPoE or USB ADSL is enabled, additional configuration items
-will be available.</P>
-
-<P><B>PPPoE:</B></P> Here you can enter two additional parameters, a service
-name, and a concentrator name, which some ISPs require. If your ISP does not
-require them, or does not give you any, then you may leave these two fields
-blank.</P>
-
 <P>Click <B>Save</B> to save the settings. If there are errors, you will be
-informed in the Error messages box. Click <B>Restore</B> to reload the old
-saved settings.</P>
+informed in the Error messages box.</P>

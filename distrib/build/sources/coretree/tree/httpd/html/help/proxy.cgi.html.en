@@ -5,8 +5,8 @@ GREEN and PURPLE networks. This caching mechanism naturally requires disk
 space, and as such, you should consider the available space to use for
 caching when configuring the proxy.</P>
 
-<P>The proxy supports http, https, and ftp proxy caching. For privacy reasons,
-it will not cache pages received via https, or other pages where a username
+<P>The proxy supports HTTP, HTTPS, and FTP proxy caching. For privacy reasons,
+it will not cache pages received via HTTPS, or other pages where a username
 and password are submitted via the URL.</P>
 
 <P>The <B>Cache size</B> box sets the maximum size of the cache, in

@@ -38,6 +38,8 @@ $checked{'MENU'}{$cgiparams{'MENU'}} = " checked";
 
 &openbigbox('100%', 'LEFT');
 
+&alertbox($errormessage);
+
 print "<form method='post'>\n";
 
 &openbox($tr{'user interfacec'});

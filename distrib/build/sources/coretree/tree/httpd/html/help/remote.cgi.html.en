@@ -2,7 +2,7 @@
 
 <P>This page enables the user to enable the SSH (Secure Shell) service.
 This enables remote console access to the SmoothWall machine.  For various
-reasons, the SSH service listens on a non standard port: 222.</P>
+reasons, the SSH service listens on a non standard port 222.</P>
 
 <P>Enable or disable this service using the checkbox, and then click
 <B>Save</B>.</P>

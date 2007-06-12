@@ -9,7 +9,7 @@
 <P><B>Inode ussage:</B> This shows the Inode usage of the various filesystems. At least
 one inode is required for each file on the system.</P>
 
-<P><B>Uptime and users:</B> Shown here is the number of users logged in (via ssh or the console).</P>
+<P><B>Uptime and users:</B> Shown here is the number of users logged in (via SSH or the console).</P>
 
 <P><B>Interfaces:</B> This shows network interface information.</P>
 
@@ -19,6 +19,6 @@ one inode is required for each file on the system.</P>
 in the machine running SmoothWall Express.</P>
 
 <P><B>Loaded modules:</B> These are the modules being used by your Network
-Cards and the IP masquerading modules, etc.</P>
+Cards and the IP NAT helper modules, etc.</P>
 
 <P><B>Kernel version:</B> This shows the Linux kernel version in use.</P>

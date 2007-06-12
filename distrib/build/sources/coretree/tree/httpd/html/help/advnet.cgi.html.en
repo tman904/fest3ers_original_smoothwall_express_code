@@ -1,7 +1,7 @@
 <P><FONT SIZE='3'><STRONG><U>Advanced Networking Features</U></STRONG></FONT></P>
 
 <P><STRONG>Block ICMP Ping</STRONG> stops Express responding to PING messages,
-from either the Internet or from the  local (Green) network.  Like SYN attacks
+from either the Internet or from the  local (GREEN) network.  Like SYN attacks
 described below, it is possible to perform a Denial of Service attack by 
 flooding a box with PING messages.</P>
 

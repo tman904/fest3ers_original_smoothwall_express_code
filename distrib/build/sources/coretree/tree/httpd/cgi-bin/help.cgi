@@ -46,9 +46,10 @@ END
 ;
 
 foreach my $term ( keys %glossary ){
-	$line =~s/([\W])$term([\W])/$1\01$glossary{$term}\02$term\03$2/i;
+	$line =~s/([\W])($term)([^\w:])/$1\01$2\02$term\03$3/ig;
 }
-$line =~s/\01([^\02]*)\02([^\03]*)\03/<span style='color: #008b00;' onMouseOver="return escape('$1');">$2<\/span>/ig;
+
+$line =~s/\01([^\02]*)\02([^\03]*)\03/<span style='color: #008b00;' onMouseOver="return escape('$glossary{$2}');">$1<\/span>/ig;
 print $line;
 
 print <<END

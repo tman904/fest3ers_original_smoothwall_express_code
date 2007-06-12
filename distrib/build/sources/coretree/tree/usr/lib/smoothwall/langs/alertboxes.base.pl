@@ -48,7 +48,6 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'ipblock.cgi' 		=> 'Add blocking rules to prevent access from specified IP addresses or networks.',
 'backup.img' 		=> 'Use this page to create a backup floppy disk or floppy disk image file.',
 'im.cgi'		=> 'Configure the IM logging proxy.',
-'imviewer.cgi'		=> 'Check logs for the IM proxy service.',
 'outgoing.cgi' 		=> 'Add rules to control local machine\'s access to external services.',
 'traffic.cgi'		=> 'Set the speed at which you think your network interfaces run at. Increase the headroom (default 10% of speed) if you think that traffic shaping is having no effect. You may also be able to reduce headroom too. <b>NOTE:</b> this machine has to be the <b>slowest</b> point in the connection in order to be in control of traffic. You can choose what priority for all traffic and for different groups of services.',
 'sipproxy.cgi'		=> 'Configure the SIP proxy service. It can be used to transparently or non-transparently proxy SIP calls to and from the GREEN network.',
@@ -58,6 +57,6 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'p3scan.cgi'		=> 'Configure the POP3 anti-virus proxy. This proxy will remove viruses from emails that are retrieved through using the POP3 protocol.',
 'pop3log.dat'		=> 'Check log for the POP3 Anti-Virus service.',
 'imviewer.cgi'		=> 'View logged IM conversations in realtime.',
-
+'preferences.cgi'	=> 'Configure the SmoothWall Express\s User Interface.',
 );
 
