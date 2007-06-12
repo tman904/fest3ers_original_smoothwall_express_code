@@ -85,6 +85,8 @@ int start_upnpd(std::vector<std::string> & parameters, std::string & response)
 	args.push_back("-u");
 	args.push_back(uuid.str());
 	args.push_back("-U");
+	args.push_back("-w");
+	args.push_back(stringprintf("https://%s:441", netsettings["GREEN_ADDRESS"].c_str()));
 	
 	if (netsettings["GREEN_DEV"] != "")
 	{
