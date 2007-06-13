@@ -22,10 +22,15 @@ flock(FILE, 2);
 print FILE <<END
 visible_hostname $mainsettings{'HOSTNAME'}
 acl localnetgreen src $netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}
-acl localnetpurple src $netsettings{'PURPLE_NETADDRESS'}/$netsettings{'PURPLE_NETMASK'}
 END
 ;
-
+if ($netsettings{'PURPLE_DEV'})
+{
+	print <<END
+acl localnetpurple src $netsettings{'PURPLE_NETADDRESS'}/$netsettings{'PURPLE_NETMASK'}
+END
+	;
+}
 print FILE "http_port $netsettings{'GREEN_ADDRESS'}:800";
 if ($proxysettings{'TRANSPARENT'} eq 'on') {
 	print FILE " transparent"; }
@@ -88,14 +93,3 @@ if ($remotehost ne '')
 	print FILE "never_direct allow all\n";
 }
 close FILE;
-
-unlink "${swroot}/proxy/enable";
-unlink "${swroot}/proxy/transparent";
-
-if ($proxysettings{'ENABLE'} eq 'on') {
-	system ('/bin/touch', "${swroot}/proxy/enable"); }
-if ($proxysettings{'TRANSPARENT'} eq 'on') {
-	system ('/bin/touch', "${swroot}/proxy/transparent"); }
- 		
-if ($proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'}) {
-	system ('/bin/touch', "${swroot}/proxy/clearedcache"); }

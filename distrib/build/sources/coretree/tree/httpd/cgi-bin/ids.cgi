@@ -55,16 +55,11 @@ if ($snortsettings{'ACTION'} eq $tr{'save'} || $snortsettings{'ACTION'} eq $tr{'
 {
 	&writehash("${swroot}/snort/settings", \%snortsettings);
 
-	if ($snortsettings{'ENABLE_SNORT'} eq 'on')
-	{
-		&log($tr{'snort is enabled'});
-		system ('/bin/touch', "${swroot}/snort/enable");
-	}
-	else
-	{
-		&log($tr{'snort is disabled'});
-		unlink "${swroot}/snort/enable";
-	} 
+	if ($snortsettings{'ENABLE_SNORT'} eq 'on') {
+		&log($tr{'snort is enabled'}); }
+	else {
+		&log($tr{'snort is disabled'}); }
+
 	my $success = message('snortrestart');
 
 	if (not defined $success) {

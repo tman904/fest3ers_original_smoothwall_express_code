@@ -79,16 +79,16 @@ ERROR:
 	else {
               	$proxysettings{'VALID'} = 'yes'; }
 
-	my ($remotehost, $remoteport) = split(/:/, $proxysettings{'UPSTREAM_PROXY'});
-	if ($remoteport eq '') {
-		$remoteport = 80; }
-
 	&writehash("${swroot}/proxy/settings", \%proxysettings);
 	if ($proxysettings{'VALID'} eq 'yes')
 	{
-        	system('/usr/bin/smoothwall/writeproxy.pl');
-        		
-		my $success = message('squidrestart');
+		system('/usr/bin/smoothwall/writeproxy.pl');
+        	
+        	my @args = ('squidrestart');
+        	if ($proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'}) {
+			push(@args, '--clearcache'); }
+        	
+		my $success = message(@args);
 		
 		if (not defined $success) {
 			$errormessage = $tr{'smoothd failure'}; }

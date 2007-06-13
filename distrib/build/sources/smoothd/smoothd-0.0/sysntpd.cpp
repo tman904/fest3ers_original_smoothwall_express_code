@@ -71,23 +71,19 @@ int stop_ntpd( std::vector<std::string> & parameters, std::string & response )
 
 int start_ntpd( std::vector<std::string> & parameters, std::string & response )
 {
-	struct stat sb;
+	ConfigVAR settings("/var/smoothwall/time/settings");
 	int error = 0;
 
-	if (stat("/var/smoothwall/time/enablentpd", &sb) != 0) 
+	if (settings["NTPD"] == "on")
 	{
-		response = "attempt to start ntpd when not enabled";
-		goto EXIT; // not enabled
-	}
-
-	error = simplesecuresysteml("/usr/sbin/ntpd", NULL);
-
-	if (error)
-		response =  "NTPD Start failed!";
-	else
-		response = "NTPD Start Successful";
+		error = simplesecuresysteml("/usr/sbin/ntpd", NULL);
 		
-EXIT:
+		if (error)
+			response = "NTPD Start failed!";
+		else
+			response = "NTPD Start Successful";
+	}
+		
 	return error;
 }
 	

@@ -24,16 +24,10 @@ if ($remotesettings{'ACTION'} eq $tr{'save'})
 {
 	&writehash("${swroot}/remote/settings", \%remotesettings);
 
-	if ($remotesettings{'ENABLE_SSH'} eq 'on')
-	{
-		&log($tr{'ssh is enabled'});
-		system ('/bin/touch', "${swroot}/remote/enablessh");
-	}
-	else
-	{
-		&log($tr{'ssh is disabled'});
-		unlink "${swroot}/remote/enablessh";
-	} 
+	if ($remotesettings{'ENABLE_SSH'} eq 'on') {
+		&log($tr{'ssh is enabled'}); }
+	else {
+		&log($tr{'ssh is disabled'}); }
 
 	my $success = message('sshdrestart');
 	

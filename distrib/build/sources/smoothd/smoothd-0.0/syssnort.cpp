@@ -81,7 +81,7 @@ int start_snort(std::vector<std::string> & parameters, std::string & response)
 	FILE *varsfile;
 	int fd;
 	int trys;
-	struct stat sb;
+	ConfigVAR settings("/var/smoothwall/snort/settings");
 	
 	if (iface.str() == "")
 	{
@@ -141,35 +141,33 @@ int start_snort(std::vector<std::string> & parameters, std::string & response)
 		}
 	}
 	fclose(varsfile);
-	if (stat("/var/smoothwall/snort/enable", &sb) != 0)
-	{
-		response = "attempt to start snort when not enabled";
-		goto EXIT;
-	}
-
-	error = simplesecuresysteml("/usr/bin/snort","-c", "/etc/snort.conf", "-D",
-		"-u", "snort", "-g", "snort", "-d",  "-e", "-z", "-A", "Full",  "-i" , iface.str().c_str(), NULL);
-
-	if (error)
-	{
-		response = "Snort FAILED!";
-		error = 1;
-		goto EXIT;
-	}
 	
-	command = "/var/run/snort_" + iface.str() + ".pid";
-	for (trys = 0; trys < 5; trys++)
+	if (settings["ENABLE_SNORT"] == "on")
 	{
-		sleep(2);
-		fd =  open(command.c_str(), 0);
-		if (fd >= 0)
-			break;
-	}
+		error = simplesecuresysteml("/usr/bin/snort","-c", "/etc/snort.conf", "-D",
+			"-u", "snort", "-g", "snort", "-d",  "-e", "-z", "-A", "Full",  "-i" , iface.str().c_str(), NULL);
+
+		if (error)
+		{
+			response = "Snort FAILED!";
+			error = 1;
+			goto EXIT;
+		}
 	
-	if (fd != -1)
-	{
-		fchmod(fd, 00644);
-		close(fd);
+		command = "/var/run/snort_" + iface.str() + ".pid";
+		for (trys = 0; trys < 5; trys++)
+		{
+			sleep(2);
+			fd =  open(command.c_str(), 0);
+			if (fd >= 0)
+				break;
+		}
+	
+		if (fd != -1)
+		{
+			fchmod(fd, 00644);
+			close(fd);
+		}
 	}
 	
 EXIT:

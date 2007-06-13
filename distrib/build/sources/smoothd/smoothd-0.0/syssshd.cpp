@@ -72,10 +72,9 @@ int stop_sshd(std::vector<std::string> & parameters, std::string & response)
 int start_sshd(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
-	struct stat sb;
-	int enable = (stat("/var/smoothwall/remote/enablessh", &sb) == 0);
+	ConfigVAR settings("/var/smoothwall/remote/settings");
 	
-	if (enable) 
+	if (settings["ENABLE_SSH"] == "on")
 	{
 		error = simplesecuresysteml("/usr/sbin/sshd", NULL);
 

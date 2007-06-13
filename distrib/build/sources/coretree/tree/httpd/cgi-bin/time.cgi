@@ -119,21 +119,10 @@ ERROR:
 
 	&writehash("${swroot}/time/settings", \%tempsettings);
 	
-	open (FILE, ">${swroot}/time/ntpd.conf");
-	print FILE <<END
-listen on $netsettings{'GREEN_ADDRESS'}
-listen on 127.0.0.1
-server 127.0.0.1
-END
-	;
-	close (FILE);
+	if ($timesettings{'VALID'} eq 'yes')
+	{	
+		system('/usr/bin/smoothwall/writentpd.pl');
 	
-	if ($timesettings{'NTPD'} eq 'on') {
-		system('/bin/touch', "${swroot}/time/enablentpd"); }
-	else {
-		unlink "${swroot}/time/enablentpd"; }
-	
-	if ( $errormessage eq "" ){	
 		my $success = message('ntpdrestart');
 		
 		if (not defined $success) {

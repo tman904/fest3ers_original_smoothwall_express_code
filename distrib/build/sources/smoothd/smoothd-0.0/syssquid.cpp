@@ -72,32 +72,30 @@ int stop_squid(std::vector<std::string> & parameters, std::string & response)
 int start_squid(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
-	struct stat sb;
-	int clearedcache = (stat("/var/smoothwall/proxy/clearedcache", &sb) == 0);
-	int transparent = (stat("/var/smoothwall/proxy/transparent", &sb) == 0);
-	int enable = (stat("/var/smoothwall/proxy/enable", &sb) == 0);
+	ConfigVAR settings("/var/smoothwall/proxy/settings");	
 	std::vector<std::string>ipb;
 
-	response = "Sqyud Process started";
+	response = "Squid Process started";
 
 	ipb.push_back("iptables -t nat -F squid");
 	
-	if (clearedcache) 
+	for (unsigned int c = 0; c < parameters.size(); c++)
 	{
-		simplesecuresysteml("/bin/rm", "-rf",  "/var/spool/squid/cache", NULL);
-		simplesecuresysteml("/bin/mkdir", "-p",  "/var/spool/squid/cache", NULL);
-		simplesecuresysteml("/bin/chown", "squid:squid", "/var/spool/squid/cache", NULL);
+		if (parameters[c] == "--clearcache")
+		{
+			simplesecuresysteml("/bin/rm", "-rf",  "/var/spool/squid/cache", NULL);
+			simplesecuresysteml("/bin/mkdir", "-p",  "/var/spool/squid/cache", NULL);
+			simplesecuresysteml("/bin/chown", "squid:squid", "/var/spool/squid/cache", NULL);
+		}
 	}
 	
-	if (enable)
+	if (settings["ENABLE"] == "on")
 	{ 
 		simplesecuresysteml("/usr/sbin/squid", "-D", "-z", "-f", "/var/smoothwall/proxy/squid.conf", NULL);
 		simplesecuresysteml("/usr/sbin/squid", "-D", "-f", "/var/smoothwall/proxy/squid.conf", NULL);
-	}
-	
-	if (transparent && enable)
-	{
-		ipb.push_back("iptables -t nat -A squid -p tcp --dport 80 -j REDIRECT --to-ports 800");
+
+		if (settings["TRANSPARENT"] == "on")
+			ipb.push_back("iptables -t nat -A squid -p tcp --dport 80 -j REDIRECT --to-ports 800");
 	}	
 	
 	error = ipbatch(ipb);
@@ -109,9 +107,6 @@ int start_squid(std::vector<std::string> & parameters, std::string & response)
 	}	
 	
 	simplesecuresysteml("/bin/chown", "squid:squid", "/var/spool/squid/cache", NULL);
-	
-	if (clearedcache)
-		unlink("/var/smoothwall/proxy/clearedcache");
 	
 	if (!error)
 		response = "Squid Start Successful";
