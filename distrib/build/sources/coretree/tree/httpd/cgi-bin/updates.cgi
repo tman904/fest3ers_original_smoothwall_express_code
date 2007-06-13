@@ -121,7 +121,7 @@ if ($uploadsettings{'ACTION'} eq "upload")
 	}
 	chdir("/var/patches/$$");
 	print STDERR "Going for installation attempt\n";
-	unless (message( "install", "$$" ))
+	if (system( '/usr/bin/setuids/installpackage', $$))
 	{
 		$errormessage = $tr{'package failed to install'};
 		goto ERROR;
@@ -624,8 +624,7 @@ print STDERR "Checking status of installed updates\n";
 	}
 	chdir("/var/patches/$$");
 	
-	my $success = message('nstall', $$);
-	if (not defined $success)
+	if (system( '/usr/bin/setuids/installpackage', $$))
 	{
 		$errormessage = $tr{'smoothd failure'};
 		tidy();
