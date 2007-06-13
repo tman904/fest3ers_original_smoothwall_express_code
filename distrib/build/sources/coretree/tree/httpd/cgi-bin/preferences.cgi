@@ -42,7 +42,7 @@ $checked{'MENU'}{$cgiparams{'MENU'}} = " checked";
 
 print "<form method='post'>\n";
 
-&openbox($tr{'user interfacec'});
+&openbox($tr{'user interface'});
 
 print <<END
 <table style='width: 100%;'>
