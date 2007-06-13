@@ -21,10 +21,6 @@ my $hostname;
 
 &showhttpheaders();
 
-print STDERR "Called as";
-use Data::Dumper;
-print STDERR Dumper %cgiparams;
-
 if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '')
 {
 	@vars = split(/\&/, $ENV{'QUERY_STRING'});

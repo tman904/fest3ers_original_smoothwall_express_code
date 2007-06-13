@@ -61,7 +61,6 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 
 	# browse for the available protocols
 	unless ( opendir DIR, "/var/log/imspector/" ){
-		print STDERR "no logs\n";
 		exit;
 	}
 
@@ -69,20 +68,17 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 
 	foreach my $protocol ( @protocols ){
 		unless ( opendir LUSER, "/var/log/imspector/$protocol" ){
-			print STDERR "no localusers\n";
 			next;
 		}
 	
 		my @localusers = grep {!/^\./} readdir(LUSER);		
 		foreach my $localuser ( @localusers ){
 			unless ( opendir RUSER, "/var/log/imspector/$protocol/$localuser/" ){
-				print STDERR "no remote users ($protocol)\n";
 				next;
 			}
 			my @remoteusers = grep {!/^\./} readdir( RUSER );
 			foreach my $remoteuser ( @remoteusers ){
 				unless ( opendir CONVERSATIONS, "/var/log/imspector/$protocol/$localuser/$remoteuser/" ){
-					print STDERR "no dates\n";
 					next;
 				}
 				my @conversations = grep {!/^\./} readdir( CONVERSATIONS );
@@ -112,10 +108,8 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 		print "--END--\n";
 		
 		my $filename = "/var/log/imspector/$protocol/$localuser/$remoteuser/$conversation";
-		print STDERR "looking at $filename\n";
 		
 		unless ( open(FD, "$filename" ) ){
-			print STDERR "Unable to do that $!\n";
 			exit;
 		};
 

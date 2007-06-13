@@ -98,7 +98,6 @@ if ($@ ne '')
 }
 else
 {
-print STDERR "Starting -- $start_date - $end_date - $sourceip - $sourceall - $filter\n";
 	open (FILE, '/var/log/squid/access.log');
 	while (<FILE>)
 	{
@@ -233,12 +232,7 @@ if ($prev < 0) { $prev = 0; }
 if ($next >= $lines) { $next = -1 }
 if ($start == 0) { $prev = -1; }
 
-print STDERR "Array is currently ".scalar(@log);
-
 my @slice = splice(@log, $start, $viewsize);
-
-
-print STDERR "Chopping with $start, $viewsize\n";
 
 print <<END
 <table class='centered'>

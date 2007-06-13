@@ -154,7 +154,6 @@ if(open(LIST, "<${swroot}/banners/available")) {
 		my ( $url, $md5, $link, $alt ) = ( $input =~/([^,]*),([^,]*),([^,]*),(.*)/ );
 	
 		if ( -e "/httpd/html/ui/img/frontpage/$md5.jpg" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.jpg", $md5) == 1 )){
-	print STDERR "Whooopit $md5, ";
 			push @images, { md5 => $md5, href => $link, alt => $alt };
 		}
 	}
