@@ -70,8 +70,8 @@ sub migratedhcp
 		system('/bin/touch', "${swroot}/dhcp/$file");
 	}
 	
-	system('/bin/mv', '-fv', "${swroot}/dhcp/settings", "${swroot}/dhcp/settings-green");
-	system('/bin/mv', '-fv', "${swroot}/dhcp/staticconfig", "${swroot}/dhcp/staticconfig-green");
+	system('/bin/mv', '-f', "${swroot}/dhcp/settings", "${swroot}/dhcp/settings-green");
+	system('/bin/mv', '-f', "${swroot}/dhcp/staticconfig", "${swroot}/dhcp/staticconfig-green");
 	
 	unlink("${swroot}/dhcp/uptodate");
 	unlink("${swroot}/dhcp/enable");
