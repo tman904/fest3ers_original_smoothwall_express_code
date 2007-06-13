@@ -900,11 +900,9 @@
 'upnp service' => 'UPNP service',
 
 # email log viewer
-
-'message id'   => 'ID',
+'pop3 email log viewer' => 'POP3 email log viewer',
 'message from' => 'From',
 'message to'   => 'To',
 'message vir'  => 'Virus',
-
 
 );
