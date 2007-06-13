@@ -331,7 +331,8 @@ char *english_tr[] = {
 "Do you want to restore the configuration for this SmoothWall Express from a " \
 "previous installation using a backup floppy disk? If you select " \
 "'Yes', the areas which were restored from the backup will be " \
-"automatically configured and will not be displayed to you.",
+"automatically configured and will not be displayed to you. This can also " \
+"be used to restore settings from a previous version of SmoothWall Express.",
 /* TR_DO_YOU_WANT_TO_REBOOT */
 "A reboot is required to make changed settings active. Do you wish to " \
 "reboot now?",
