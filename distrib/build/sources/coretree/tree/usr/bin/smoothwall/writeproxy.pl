@@ -26,7 +26,7 @@ END
 ;
 if ($netsettings{'PURPLE_DEV'})
 {
-	print <<END
+	print FILE <<END
 acl localnetpurple src $netsettings{'PURPLE_NETADDRESS'}/$netsettings{'PURPLE_NETMASK'}
 END
 	;

@@ -57,6 +57,7 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'p3scan.cgi'		=> 'Configure the POP3 anti-virus proxy. This proxy will remove viruses from emails that are retrieved through using the POP3 protocol.',
 'pop3log.dat'		=> 'Check log for the POP3 Anti-Virus service.',
 'imviewer.cgi'		=> 'View logged IM conversations in realtime.',
-'preferences.cgi'	=> 'Configure the SmoothWall Express\s User Interface.',
+'preferences.cgi'	=> 'Configure the SmoothWall Express User Interface.',
+
 );
 
