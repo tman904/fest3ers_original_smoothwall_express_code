@@ -132,11 +132,13 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
 		traceroute \
 		clamav \
 		p3scan \
-		coretree \
 		libosip2 \
 		siproxd \
 		which \
 		miniupnpd \
+		ez-ipupdate \
+		noip \
+		coretree \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
 		make -C ../$$I clean all; \
