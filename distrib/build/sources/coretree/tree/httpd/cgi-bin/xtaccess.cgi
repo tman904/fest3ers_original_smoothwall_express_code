@@ -193,7 +193,7 @@ my %render_settings =
 		{ 
 			column => '1',
 			title  => "$tr{'protocol'}",
-			size   => 10,
+			size   => 20,
 			tr     => { 'udp' => 'UDP', 'tcp' => 'TCP' },
 			sort   => 'cmp',
 		},
@@ -201,12 +201,13 @@ my %render_settings =
 			column => '2',
 			title  => "$tr{'source'}",
 			size   => 40,
-			sort   => 'cmp'
+			sort   => 'cmp',
+			tr     => { '0.0.0.0/0' => 'ALL' },
 		},
 		{
 			column => '3',
 			title  => "$tr{'desination port'}",
-			size   => 30,
+			size   => 20,
 		},
 		{
 			column => '4',

@@ -51,8 +51,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	} else {
 		unless(&validportrange($cgiparams{'SRC_PORT'})) { $errormessage = $tr{'source port numbers'}; } }
 
-	if (defined $cgiparams{'DST_PORT_SEL'} and $cgiparams{'SRC_DST_SEL'} ne "user" ){
-		$cgiparams{'DEST_PORT'} = $cgiparams{'DST_PORT_SEL'}; } 
+	if (defined $cgiparams{'DEST_PORT_SEL'} and $cgiparams{'DEST_PORT_SEL'} ne "user" ){
+		$cgiparams{'DEST_PORT'} = $cgiparams{'DEST_PORT_SEL'}; } 
 	else 
 	{
 		if ($cgiparams{'DEST_PORT'}) {
@@ -235,6 +235,7 @@ my %render_settings =
 			title  => "External source IP",
 			size   => 15,
 			sort   => &ipcompare,
+			tr     => { '0.0.0.0/0' => 'ALL' },
 		},
 		{ 
 			column => '3',
@@ -254,7 +255,7 @@ my %render_settings =
 			title  => "$tr{'destination port'}",
 			size   => 15,
 			sort   => 'cmp',
-			tr     => \%{$portmap}
+			tr     => { %{$portmap}, '0' => 'N/A' },
 		},
 		{
 			column => '6',
