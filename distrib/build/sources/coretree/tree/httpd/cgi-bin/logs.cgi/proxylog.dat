@@ -232,14 +232,16 @@ if ($prev < 0) { $prev = 0; }
 if ($next >= $lines) { $next = -1 }
 if ($start == 0) { $prev = -1; }
 
-my @slice = splice(@log, $start, $viewsize);
-
 print <<END
 <table class='centered'>
 <tr>
 <td style='text-align: center;'>
 END
 ;
+
+print "Log has " . scalar( @log ) . " entries in it<br/>";
+
+my @slice = splice(@log, $start, $viewsize);
 
 my $number_of_pages = int( $lines / $viewsize );
 my $page = 0;
