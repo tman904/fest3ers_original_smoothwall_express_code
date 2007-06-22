@@ -239,8 +239,6 @@ print <<END
 END
 ;
 
-print "Log has " . scalar( @log ) . " entries in it<br/>";
-
 my @slice = splice(@log, $start, $viewsize);
 
 my $number_of_pages = int( $lines / $viewsize );
