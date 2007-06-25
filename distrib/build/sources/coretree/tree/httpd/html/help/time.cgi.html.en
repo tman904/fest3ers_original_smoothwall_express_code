@@ -16,7 +16,7 @@ boxes and check the <STRONG>Set</STRONG> checkbox.</P>
 <P>The <STRONG>Network time retrieval</STRONG> section provides controls to
 enable SmoothWall to synchronise its date and time with network time
 servers that are accessible on the Internet.  If the
-<STRONG>Enabled</STRONG> check box is checked then the time will be
+<STRONG>Enabled</STRONG> checkbox is checked then the time will be
 synchronised at the interval set in the Interval drop-down list box.  This
 defaults to once per day, which should be adequate for most users of
 SmoothWall.  Below the interval control is a display informing you

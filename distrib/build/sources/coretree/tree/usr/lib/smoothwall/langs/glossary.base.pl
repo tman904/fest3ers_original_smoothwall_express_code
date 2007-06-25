@@ -49,6 +49,7 @@
 	'JavaScript' => "<strong>JavaScript</strong> A programming language built into most web browsers enabling dynamic content and realtime input validation, amongst other things.",
 	'USB' => "<strong>Universal Serial Bus</strong> A sieral bus standard for interfacing devices, such as cameras, printers and modems to computers.",
 	'Java' => "<strong>Java</strong> A platform-independant programming language and engine for running such programs.",
+	'IGMP' => "<strong>Internet Group Management Protocol</strong> This is a communications protocol used to manage the membership of Internet Protocol multicast groups. It should generally be ignored unless a machine is part of such a group.",
 );
 
 1;

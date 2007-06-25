@@ -4,8 +4,8 @@
 to the Internet based on each internal interface. In addition, a list
 of IP address can be supplied which are not subject to any blocking.</p>
 
-<p>Each interface can be set to filter or not using the check boxes on the
-<strong>Outbound filtering</strong> page. The default filtering level is
+<p>Each interface can be set to filter or not using the checkboxes on the
+<strong>Outgoing filtering</strong> page. The default filtering level is
 determined when SmoothWall is installed and is either Open (all traffic is
 allowed onto the Internet), Half-open (some traffic is allowed, with the
 rest being blocked) or Closed (all traffic being blocked unless you
@@ -21,9 +21,9 @@ and sending email only:</strong></p>
 
 <p>
 <ol>
-<li>Check <strong>GREEEN</strong> under '<strong>Filtered Interfaces</strong>' and click on '<strong>Save</strong>'</li>
-<li>Select '<strong>GREEN</strong>' for <i>interface</i>, '<strong>TCP</strong>' for <i>protocol</i>, enter '<strong>80</strong>' for the <i>destination port</i>, check '<i>Enable</i>' and click on the '<strong>Add</strong>' button.</li>
-<li>Select '<strong>GREEN</strong>' for <i>interface</i>, '<strong>TCP</strong>' for <i>protocol</i>, enter '<strong>25</strong>' for the <i>destination port</i>, check '<i>Enable</i>' and click on the '<strong>Add</strong>' button.</li>
+<li>Select <strong>GREEEN</strong> under <strong>Interface defaults</strong> and select <strong>Allowed with exceptions</strong> and click on <strong>Save</strong></li>
+<li>Select <strong>GREEN</strong> for <i>Interface</i>, <strong>TCP</strong> for <i>protocol</i>, enter '80' for the <i>destination port</i> and click on the <strong>Add</strong> button.</li>
+<li>Select <strong>GREEN</strong> for <i>Interface</i>, <strong>TCP</strong> for <i>protocol</i>, enter '25' for the <i>destination port</i> and click on the <strong>Add</strong> button.</li>
 </ol>
 </p>
 

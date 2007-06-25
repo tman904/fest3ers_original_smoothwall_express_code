@@ -31,6 +31,7 @@
 'smoothd failure' => 'Unable to run command.',
 'log ascending' => 'ascending',
 'log descending' => 'descending',
+'upload' => 'Upload', # button
 
 # header.pl
 'sshome' => 'home',
@@ -496,10 +497,10 @@
 'forwarding rule removed' => 'Forwarding rule removed; restarting forwarder',
 'external access rule added' => 'External access rule added; restarting access controller',
 'external access rule removed' =>' External access rule removed; restarting access controller',
-'dmz pinhole rule added' => 'DMZ pinhole rule added; restarting DMZ pinhole',
-'dmz pinhole rule removed' => 'DMZ pinhole rule removed; restarting DMZ pinhole',
+'dmz pinhole rule added' => 'Internal pinhole rule added; restarting DMZ pinhole',
+'dmz pinhole rule removed' => 'Internal pinhole rule removed; restarting DMZ pinhole',
 'port forwarding configuration' => 'Port forwarding configuration',
-'dmz pinhole configuration' => 'DMZ pinhole configuration',
+'dmz pinhole configuration' => 'Internal pinhole configuration',
 'external access configuration' => 'External access configuration',
 'add a new rule' => 'Add a new rule:',
 'add exception' => 'Add exception:',
@@ -677,7 +678,6 @@
 # usbadsl.cgi
 'usb adsl setup' => 'Alcatel/Thompson SpeedTouch USB ADSL setup',
 'usb adsl help' => 'To utilise the Alcatel/Thompson SpeedTouch USB modem you must upload the firmware to your SmoothWall box. Please download the tarball and then upload the file, usually called <B>mgmt.o</B>, using the form below.',
-'upload' => 'Upload', # button
 'upload successful' => 'Upload successful.',
 'could not create file' => 'Could not create file.',
 'mgmt upload' => 'Alcatel/Thompson SpeedTouch USB ADSL driver upload:',
@@ -723,7 +723,7 @@
 'oink code must be 40 hex digits' => 'Oink code must be 40 hex digits.',
 'rules not available' => 'Rules not available.',
 'unable to fetch rules' => 'Unable to fetch rules.',
-'rule retreval' => 'Rule retreval:',
+'rule retreval' => 'Rule retrieval:',
 'oink code' => 'Oink code:',
 'rule age' => 'Rule age:',
 'save and update rules' => 'Save and update rules',

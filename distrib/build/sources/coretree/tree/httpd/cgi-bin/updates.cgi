@@ -37,7 +37,7 @@ function toggle( what )
 
 &openbigbox('100%', 'LEFT');
 
-if ($uploadsettings{'ACTION'} eq "upload")
+if ($uploadsettings{'ACTION'} eq $tr{'upload'})
 {
 	my @list;
 	my $return = &downloadlist();
@@ -318,7 +318,7 @@ $tr{'to install an update'}
 		$tr{'upload update file'}
 	</td>
 	<td>
-		<input type="file" name="FH"> <input type='submit' name='ACTION' value='upload'>
+		<input type="file" name="FH"> <input type='submit' name='ACTION' value='$tr{'upload'}'>
 	</td>
 	</form>
 	</tr>

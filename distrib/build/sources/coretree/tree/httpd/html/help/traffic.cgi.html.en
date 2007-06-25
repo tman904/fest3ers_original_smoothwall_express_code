@@ -55,7 +55,7 @@ or 'slow'.</p>
 'Traffic that does not match below'.</p>
 
 <p>QoS as a whole can be turned off with the 'Enable traffic shaping'
-check box. Traffic shaping will always cost a small amount of bandwidth so if you
+checkbox. Traffic shaping will always cost a small amount of bandwidth so if you
 are only doing one thing with your connection, e.g. a large file transfer,
 then you can turn traffic shaping off to get maximum speed for the single
 task.</p>

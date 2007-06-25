@@ -18,8 +18,8 @@ You are able to specify multiple Source IPs, so you can easily allow certain
 IPs and combinations of networks to connect to a single port on the
 SmoothWall.</P>
 
-<P><B>Note:</B> SmoothWall comes with one "built in" rule.  It will allow
-Auth (port 113) packets.  This is to stop Auth requests from being logged in
-the firewall only, there is no Auth service running on SmoothWall.  If you
+<P><B>Note:</B> SmoothWall comes with one "built in" rule. It will allow
+Auth (port 113) packets.  This is only to stop Auth requests from being logged in
+the firewall; there is no Auth service running on SmoothWall. If you
 have reason to log these requests, simply disable (or remove) the entry in
 the External access configuration.</P>

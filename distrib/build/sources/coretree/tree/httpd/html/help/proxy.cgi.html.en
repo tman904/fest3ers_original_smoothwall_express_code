@@ -45,7 +45,7 @@ proxy.</P>
 <P>If you are not using transparent proxying, then you should configure your
 browser to use port 800 on the SmoothWall as the web proxy.</P>
 
-<P>Enable or disable the proxy by clicking the <B>Enable</B> check box and pressing
+<P>Enable or disable the proxy by clicking the <B>Enable</B> checkbox and pressing
 <B>Save</B>.</P>
 
 <P>Alternatively, to save the current configuration and clear any log files

@@ -62,13 +62,13 @@ with a space, colon or other separator character between each pair, e.g.
 <code>12:34:56:78:9A:BC</code>.  Click the <STRONG>Add</STRONG> button and the MAC
 and IP Address pair will be displayed in the Current static assignments
 section below.  In order to edit an existing static IP address assignment,
-click or select the Mark check box alongside the required MAC and IP Address
+click or select the Mark checkbox alongside the required MAC and IP Address
 pair, then press Remove to delete the assignment or <STRONG>Edit</STRONG> to move the
 MAC and IP Address pairing back to the new static assignment section above. 
 In the case of pressing Edit, change the MAC or IP address as required then
 press the Add button again to return the revised assignment to the Current
 static assignments section below.</P>
 
-<P>Enable the DHCP server by ticking the <STRONG>Enable</STRONG> check box. 
+<P>Enable the DHCP server by checking the <STRONG>Enable</STRONG> checkbox. 
 This will enable DHCP service for the selected interface. When you
 press <STRONG>Save</STRONG>, the change is acted upon.</P>

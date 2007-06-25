@@ -1,11 +1,11 @@
+<P><FONT SIZE='3'><B><U>VPN Connections</U></B></FONT></P>
+
 <P>This page is used to do basic VPN configuration. To find out more about
 VPNs, please visit the FreeSWAN web site <A
 HREF='http://www.freeswan.org'>here</A>.</P> Although primarily intended to
 VPN multiple SmoothWalls together, it is possible for SmoothWall to
 inter-operate with any VPN product that supports IPSec and standard encryption
 techniques such as 3DES.</P>
-
-<P><FONT SIZE='3'><B><U>Connections</U></B></FONT></P>
 
 <P><B>Add a New Connection</B>: To add a new connection, you must fill out
 all the boxes in this form and the details filled into the form on the other
@@ -24,7 +24,7 @@ connection.</P>
 <P><B>Secret:</B> The password for the connection.
 Re-enter the secret into the <B>Again</B> box.</P>
 
-<P><B>Compression:</B> Tick this to enable compression on the link.  This
+<P><B>Compression:</B> Check this to enable compression on the link.  This
 can enhance the performance of the link for certain kinds of traffic.  Note
 that both ends of the VPN tunnel must agree on whether to use compression or
 not.</P>
@@ -37,9 +37,9 @@ button. If you wish to add the connection without enabling it, please
 uncheck the <B>Enabled</B> box.</P>
 
 <P><B>Current Connections:</B> This list displays current connections and
-their information. To remove a connection, check its tick box and click the
+their information. To remove a connection, check its checkbox and click the
 <B>Remove</B> button. To edit (including enable/disable functions), check the
-connections tick box and then click the <B>Edit</B> button.</P>
+connections checkbox and then click the <B>Edit</B> button.</P>
 
 <P><B>Import/Export:</B> To export settings, simply click the <B>Export</B> button.
 These can then be imported to SmoothWall by using the <B>Browse</B> button to find
