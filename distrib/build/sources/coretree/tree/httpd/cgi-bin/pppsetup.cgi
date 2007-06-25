@@ -94,11 +94,11 @@ elsif ($pppsettings{'ACTION'} eq $tr{'save'})
 		$errormessage = $tr{'invalid input'};
 		goto ERROR;
 	}
-	unless ($pppsettings{'USERNAME'} and ($pppsettings{'USERNAME'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
+	unless ($pppsettings{'USERNAME'} and ($pppsettings{'USERNAME'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+\/_ ]*$/ )) {
 		$errormessage = $tr{'invalid username'};
 		goto ERROR; 
 	}
-	unless ($pppsettings{'PASSWORD'} and ($pppsettings{'PASSWORD'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
+	unless ($pppsettings{'PASSWORD'} and ($pppsettings{'PASSWORD'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+\/_ ]*$/ )) {
 		$errormessage = $tr{'invalid password'};
 		goto ERROR; 
 	}
@@ -542,9 +542,9 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'username'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='USERNAME' VALUE='$pppsettings{'USERNAME'}' id='username' @{[jsvalidregex('username','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
+	<TD WIDTH='25%'><INPUT TYPE='text' NAME='USERNAME' VALUE='$pppsettings{'USERNAME'}' id='username' @{[jsvalidregex('username','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+\/_ ]*$')]}></TD>
 	<TD WIDTH='25%' CLASS='base'>$tr{'password'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='password' NAME='PASSWORD' VALUE='$pppsettings{'PASSWORD'}' id='password' @{[jsvalidregex('password','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
+	<TD WIDTH='25%'><INPUT TYPE='password' NAME='PASSWORD' VALUE='$pppsettings{'PASSWORD'}' id='password' @{[jsvalidregex('password','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+\/_ ]*$')]}></TD>
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'method'}</TD>
