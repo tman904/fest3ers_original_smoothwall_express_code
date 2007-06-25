@@ -7,9 +7,9 @@ Detection System logs, i.e. the source of possible hacking attempts.</P>
 
 <P>Enter the IP address or Hostname into IP addresses or hostnames text box
 and click the Run button.  The results of the Whois command are displayed in
-the panel below the user-input controls.  The output is dependant on the
-item being queried.  Typically it will show the owner of the IP block for
+the panel below the user-input controls.  The output is defendant on the
+item being queried.  Typically, it will show the owner of the IP block for
 the IP address in question, including such things as company names,
 addresses, etc. If you are looking up a domain name, it will show the
-owner of that name. It is of course generally far more convenient to run the
+owner of that name. It is, of course, generally far more convenient to run the
 command from this configuration and management procedure.</P>

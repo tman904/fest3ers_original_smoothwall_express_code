@@ -4,10 +4,10 @@
 machines to a given port on the SmoothWall, provided that the connection is
 made directly to the SmoothWall host.  Ports opened for forwarding are not
 affected by the settings on this page.  <B>Note:</B> This is a subtle change
-from previous versions of SmoothWall where a portforward was created on the
+from previous versions of SmoothWall where a port forward was created on the
 port forward page, and opened on the External access page.</P>
 
-<P>Set the protocol (TCP or UDP) using the dropdown box.</P>
+<P>Set the protocol (TCP or UDP) using the drop-down box.</P>
 
 <P><B>Source IP</B> sets the allowed IP that you want to be able to connect
 to the <B>Destination port</B>.  If this is empty, which is usually the

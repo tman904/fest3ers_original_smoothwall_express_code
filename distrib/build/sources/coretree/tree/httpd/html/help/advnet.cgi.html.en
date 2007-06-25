@@ -8,7 +8,7 @@ flooding a box with PING messages.</P>
 <P><STRONG>Block and ignore IGMP packets</STRONG> blocks and ignores IGMP packets. 
 If your log files contain lots of spurious  messages referring to IGMP packets,
 then enabling this option will cause these packets to be ignored and not to  be
-logged.  This problem is typically seen with cable modems.</P>
+logged. This problem is typically seen with cable modems.</P>
 
 <P><STRONG>Enable SYN cookies</STRONG> defends Express against SYN Flood
 attacks.  A SYN Flood attack is where  somebody sends a huge number of
@@ -33,6 +33,6 @@ In the <B>Reject</B> mode, traffic that is not forwarded on to a machine
 behind the SmoothWall will be replied to with a "port unreachable" ICMP
 message.  This will make it easier for an attacker to determine what ports
 the SmoothWall has open.  In <B>Drop</B> mode, this ICMP message is not sent
-so the attcker will have a harder time finding open ports on the
+so the attacker will have a harder time finding open ports on the
 SmoothWall. For maximum "stealth ability", combine <B>Drop</B> mode with
 <B>Block ICMP ping</B>.</P>

@@ -1,16 +1,16 @@
 <P><FONT SIZE='3'><B><U>Intrusion Detection System Log</U></B></FONT></P>
 
-<P>On this page you may view, if turned on, the logs from the IDS system (To
-turn on go to the IDS section). When first visited the date defaults to the
-current day. You may select a different date with the drop down boxes if you
+<P>On this page you may view, if turned on, the logs from the IDS system (to
+turn on go to the IDS section). When first visited, the date defaults to the
+current day. You may select a different date with the drop-down boxes if you
 require. An explanation of the fields displayed is given below:</P>
 
 <P>
 <B>Date:</B> the time and date of the incident.<BR>
-<B>Name:</B> the recognized name of the incident.<BR>
+<B>Name:</B> the recognised name of the incident.<BR>
 <B>Priority:</B> the seriousness of the incident (1 is high).<BR>
 <B>Type:</B> the general type of the incident.<BR>
-<B>IP Info:</B> the ipaddress and port the attack came from and to.<BR>
+<B>IP Info:</B> the IP address and port the attack came from and to.<BR>
 <B>References:</B> links to any references (URLs) found.<BR>
 </P>
 

@@ -1,7 +1,7 @@
 <P><FONT SIZE='3'><B><U>Control and Status</U></B></FONT></P>
 
 <p>Although primarily intended to VPN multiple SmoothWalls together, it is
-possible for SmoothWall to interoperate with any VPN product that supports
+possible for SmoothWall to inter-operate with any VPN product that supports
 IPSec and standard encryption techniques such as 3DES.</P>
 
 <P>The <B>Manual Control and Status</B> section will show the current status
@@ -18,6 +18,6 @@ Only if the dialup IP matches this IP will the VPN be brought up
 automatically.  This is you can use multiple ISP profiles, but control which
 one if them is to be associated with your VPN configuration.</P>
 
-<P>The <B>Enable</B> checkbox will tell SmoothWall to automatically bring up
+<P>The <B>Enable</B> check box will tell SmoothWall to automatically bring up
 the Enabled VPN tunnels when the RED interface comes up.  Even when
 disabled, it is still possible to manually bring up the tunnels.</P>

@@ -14,12 +14,12 @@ and model) as well as the MAC address is displayed.</p>
 
 <p>For the external interface, assuming it is configured for Ethernet, you can
 set what <strong>Connection method</strong> it should use.  You have a choice
-of Static, DHCP or PPPoE.  If you are using DHCP, you can also speciffy the
-DHCP hostname to send when obtaning an IP address from your ISP.</p>
+of Static, DHCP or PPPoE.  If you are using DHCP, you can also specify the
+DHCP hostname to send when obtaining an IP address from your ISP.</p>
 
 <p>Finally, when configuring RED you can also configure the <strong>Default
 gateway</strong>, <strong>Primary DNS</strong> and <strong>Secondary
 DNS</strong>.</p>
 
-<p><strong>Please note:</strong> This page suplements the functionality
+<p><strong>Please note:</strong> This page supplements the functionality
 provided by the Setup program.</p>

@@ -5,7 +5,7 @@ date and time, secondly to allow SmoothWall to synchronise its time
 with a network time server, and finally to enable SmoothWall's inbuilt
 time server.</P>
 
-<P>The <STRONG>Timezone</STRONG> is now set in by the browser configuration
+<P>The <STRONG>Timezone</STRONG> is now set in the browser configuration
 facility rather than in the installation process.  Select the appropriate
 time zone for your location from the Timezone drop-down list box.</P>
 
@@ -13,19 +13,19 @@ time zone for your location from the Timezone drop-down list box.</P>
 display/set the date and time.  Change as required using the drop-down list
 boxes and check the <STRONG>Set</STRONG> checkbox.</P>
 
-<P>The <STRONG>Network time</STRONG> retrieval section provides controls to
+<P>The <STRONG>Network time retrieval</STRONG> section provides controls to
 enable SmoothWall to synchronise its date and time with network time
 servers that are accessible on the Internet.  If the
-<STRONG>Enabled</STRONG> checkbox is checked then the time will be
+<STRONG>Enabled</STRONG> check box is checked then the time will be
 synchronised at the interval set in the Interval drop-down list box.  This
 defaults to once per day, which should be adequate for most users of
 SmoothWall.  Below the interval control is a display informing you
 when the next time retrieval will occur.  The final option in this panel,
-<STRONG>Save time to RTC</STRONG>, is to used to make SmoothWall
+<STRONG>Save time to RTC</STRONG>, is used to make SmoothWall
 update the Real-Time Clock (RTC) of the PC on which it is running with the
 time retrieved from the network time server.</P>
 
-<P>The <STRONG>Network time</STRONG> servers section allows the user to
+<P>The <STRONG>Network time servers</STRONG> section allows the user to
 chose which network time server(s) to use.  The first of three radio buttons
 sets SmoothWall to use Multiple random public servers, i.e. use a
 different server each time, which is the default and recommended option. 
@@ -33,7 +33,7 @@ The second radio button, <STRONG>Selected single public server</STRONG>, makes
 SmoothWall use a single time server each time.  The adjoining drop-down list
 box selects which of approximately 40 world-wide time servers that will be. 
 The third radio button, <STRONG>User defined single public or local server</STRONG>, allows
-for a user specified time server to be used.  Either an IP address can be
+for a user-specified time server to be used.  Either an IP address can be
 entered or a name that can be resolved by SmoothWall (e.g. using its
 Static DNS/Hostnames table).</P>
 

@@ -22,5 +22,5 @@ UDP for pinholing.  <B>Source IP</B> is a machine on the ORANGE or PURPLE networ
 the port on the Destination machine that you want to allow the Source machine to
 connect to.</P>
 
-<P>Typically this would be used to allow a webserver on ORANGE to connect to
-a mail server on GREEN for WebMail purposes.</P>
+<P>Typically this would be used to allow a web server on ORANGE to connect to
+a mail server on GREEN for web mail purposes.</P>

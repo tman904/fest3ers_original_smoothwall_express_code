@@ -5,12 +5,12 @@ understands multiple IM protocols and can log both conversations and file
 transfers. This proxy, like all of the proxies in SmoothWall, will operate
 on both the GREEN and PURPLE networks if it is enabled.</p>
 
-<p>Tick the <strong>Enabled</strong> tickbox to turn on this service.</p>
+<p>Tick the <strong>Enabled</strong> tick box to turn on this service.</p>
 
 <p><strong>MSN</strong>, <strong>ICQ and AIM</strong>, <strong>Yahoo</strong>
 and <strong>IRC</strong> can all be proxied and monitored using this service.
-In addition it is also possible to filter English swear words by ticking
-on the <strong>Swear-word filtering</strong> tickbox.</p>
+In addition, it is also possible to filter English swearwords by ticking
+on the <strong>Swear-word filtering</strong> tick box.</p>
 
 <p>Press the <strong>Save</strong> button after enabling or disabling this
 service.</p>

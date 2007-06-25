@@ -3,7 +3,7 @@
 <P>Here you can view the system logs for the different sub-systems
 including: PPP logs, DHCP logs, kernel logs, SSH logs, SIP proxy, IM proxy,
 web proxy, a general SmoothWall log and the IPSec logs.  The SmoothWall log
-shows general SmoothWall events like PPP profile saving. The dropdown boxes
+shows general SmoothWall events like PPP profile saving. The drop-down boxes
 at the top of the page select which day you wish to view.</P>
 
 <P>After choosing the log you wish to view, press <B>Update</B> to see the

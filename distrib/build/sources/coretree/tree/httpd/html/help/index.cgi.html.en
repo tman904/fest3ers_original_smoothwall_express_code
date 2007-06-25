@@ -10,8 +10,8 @@ Credits page.</P>
 the external connection method, buttons will be available to <B>Connect</B>
 or <B>Disconnect</B>. Upon successful connection, the SmoothWall machine
 will beep using its internal speaker. When the connection is severed, it
-will beep twice. The status of the link will be displayed as idle, dialing
-or connected. Alternativly, in Dial on Demand mode, the Dial on Demand
+will beep twice. The status of the link will be displayed as idle, dialling
+or connected. Alternatively, in Dial on Demand mode, the Dial on Demand
 status will be shown. Press refresh to refresh this status display. At the
 foot of the main box is the output of the 'uptime' command when ran at the
 command line. This includes the current time and the load averages.</P>

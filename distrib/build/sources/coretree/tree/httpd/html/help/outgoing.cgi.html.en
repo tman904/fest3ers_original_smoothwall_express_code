@@ -4,7 +4,7 @@
 to the Internet based on each internal interface. In addition, a list
 of IP address can be supplied which are not subject to any blocking.</p>
 
-<p>Each interface can be set to filter or not using the checkboxes on the
+<p>Each interface can be set to filter or not using the check boxes on the
 <strong>Outbound filtering</strong> page. The default filtering level is
 determined when SmoothWall is installed and is either Open (all traffic is
 allowed onto the Internet), Half-open (some traffic is allowed, with the
@@ -27,7 +27,7 @@ and sending email only:</strong></p>
 </ol>
 </p>
 
-<p>The <strong>Current always allowed machine</strong> list is usted to configure
+<p>The <strong>Current always allowed machine</strong> list is used to configure
 certain machines not have any filtering done on their Internet access.</p>
 
 <p>Enter the <strong>IP address</strong> an <strong>Add</strong> it to the list

@@ -1,12 +1,12 @@
 <P><FONT SIZE='3'><B><U>JAVA SSH Shell Client</U></B></FONT></P>
 
-<P>This page is used to give the user a Java based SSH Shell to the
+<P>This page is used to give the user a Java-based SSH Shell to the
 SmoothWall Firewall.  This allows for administration, maintenance, setup,
 and backup.</P>
 
 <P><B>SSH Shell:</B> This page is activated by checking the <B>SSH</B> box
 on the <B>Remote Access</B> page of your SmoothWall.  If <B>SSH</B> is
-enabled, this page can be used to remotely logon to the SmoothWall via a
+enabled, this page can be used to remotely log on to the SmoothWall via a
 secure Java based SSH (Secure Shell) client built directly into the
 SmoothWall platform.  Here, the administrator can perform routine duties
 such as maintenance, tweaking various system parameters, monitoring network and
@@ -32,7 +32,7 @@ and passwords.  This is an extremely important feature, as it allows you
 to reconfigure your SmoothWall without reinstalling.</P>
 
 <P>Note that it may take a moment for the SSH client to be downloaded and
-initialized, and that you <B><I>must have Java enabled</I></B> in your
+initialised, and that you <B><I>must have Java enabled</I></B> in your
 browser for the Java SSH Shell Client to operate.<P>
 
 <P><strong>WARNING:</strong> Accessing the SSH client and

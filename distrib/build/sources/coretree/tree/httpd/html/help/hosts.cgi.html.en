@@ -5,15 +5,15 @@
 used by both the SmoothWall Express and computers on the GREEN and PURPLE
 networks.</P>
 
-<P>Type the IP Address you wish to be resolved into the <STRONG>IP address</STRONG> text
+<P>Type the IP address you wish to be resolved into the <STRONG>IP address</STRONG> text
 box.  Alongside this control is the <STRONG>Hostname</STRONG> text box, which should
 contain the name by which you wish to access the IP address.</P>
 
 <P>Click the <STRONG>Add</STRONG> button and the information will be transferred to the
-Current hosts section below, with the Add a  host entry controls being cleared,
+Current hosts section below, with the Add a host entry controls being cleared,
 ready for the entry of the next host's details.  There is no Save button, all 
 changes take effect immediately the Add button is clicked, unless of course,
-there is a validation failure, which will  be reported in the Error messages
+there is a validation failure, which will be reported in the Error messages
 panel or a by a pop-up error message according to how the preferences have 
 been set.</P>
 

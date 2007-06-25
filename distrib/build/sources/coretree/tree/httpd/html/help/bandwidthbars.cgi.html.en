@@ -7,5 +7,5 @@ bandwidth network interfaces and network IP addresses are using.</p>
 change in size to show the amount of traffic. Inactive interfaces and IP
 addresses are automatically hidden from view.</p>
 
-<p><strong>Please note:</strong> For browser-performance reasons only the
+<p><strong>Please note:</strong> For browser-performance reasons, only the
 most busy network interfaces and IP addresses will be shown.</p>

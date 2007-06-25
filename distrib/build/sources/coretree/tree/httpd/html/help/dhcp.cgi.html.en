@@ -8,16 +8,16 @@ the <B>Interface</B> you wish to configure and then press <B>Select</B>.
 
 <P>A feature that is applied globally is network booting.  This requires
 a compatible target PC or other device.  Configure the <B>Boot server</B> to
-the IP address of the server running TFTP.  Next choose the <B>Boot filename</B>
+the IP address of the server running TFTP.  Next, choose the <B>Boot filename</B>
 and <B>Root path</B> of the file that the PC or other device should boot.  This
-feature is intended to be used by diskless workstations, and simular.</P>
+feature is intended to be used by diskless workstations, and similar.</P>
 
 <P><STRONG>Start Address</STRONG> and <STRONG>End Address</STRONG> set the range over which you wish the DHCP
 server to supply dynamic addresses. This address range should not contain
 the IPs of other machines on your LAN with static IP assignments. Suppose
 you had a network in the 192.168.0.0 range. Assuming all your statically
 assigned IP address were all lower then 192.168.0.100, you could use the
-upper portion of the address range for the dynamic addresses. In this case
+upper portion of the address range for the dynamic addresses. In this case,
 your start address would be 192.168.0.100 and the end address could be
 192.168.0.254.</P>
 
@@ -27,7 +27,7 @@ proxy, you will probably want to leave the default alone and set the Primary
 DNS server to the SmoothWall box's IP address. If you run a local DNS server
 and want your desktops to use it, set the Secondary DNS to its address.</P>
 
-<P>The two WINS servers' addresses likewise specify what WINS servers the
+<P>The two WINS servers' addresses, likewise, specify what WINS servers the
 SmoothWall DHCP server should tell its clients to use. This is often not
 required on very small Windows networks. You can assign primary and
 secondary servers.</P>
@@ -43,7 +43,7 @@ box.</P>
 give to the clients. This should not be confused with the <STRONG>
 Domain name suffix</STRONG>, described above.</P>
 
-<P>The two NIS servers' addresses likewise specify what NIS servers the
+<P>The two NIS servers' addresses, likewise, specify what NIS servers the
 SmoothWall DHCP server should tell its clients to use. This is useful
 in UNIX environments which are utilising NIS.</P>
 
@@ -62,13 +62,13 @@ with a space, colon or other separator character between each pair, e.g.
 <code>12:34:56:78:9A:BC</code>.  Click the <STRONG>Add</STRONG> button and the MAC
 and IP Address pair will be displayed in the Current static assignments
 section below.  In order to edit an existing static IP address assignment,
-click or select the Mark checkbox alongside the required MAC and IP Address
+click or select the Mark check box alongside the required MAC and IP Address
 pair, then press Remove to delete the assignment or <STRONG>Edit</STRONG> to move the
 MAC and IP Address pairing back to the new static assignment section above. 
-In the case of pressing Edit, change the MAC or IP address as required the
+In the case of pressing Edit, change the MAC or IP address as required then
 press the Add button again to return the revised assignment to the Current
 static assignments section below.</P>
 
-<P>Enable the DHCP server by ticking the <STRONG>Enable</STRONG> checkbox. 
+<P>Enable the DHCP server by ticking the <STRONG>Enable</STRONG> check box. 
 This will enable DHCP service for the selected interface. When you
 press <STRONG>Save</STRONG>, the change is acted upon.</P>

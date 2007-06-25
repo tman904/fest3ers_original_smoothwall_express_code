@@ -1,6 +1,6 @@
 <P><FONT SIZE='3'><B><U>PPP Settings</U></B></FONT></P>
 
-<P>This page is used to setup PPP for dialing to the Internet. Up to 5 profiles
+<P>This page is used to setup PPP for dialling to the Internet. Up to 5 profiles
 can be created to store dialup details.</P>
 
 <P><B>Profiles:</B> Profiles can either be 'Empty' or can contain dialup
@@ -8,32 +8,32 @@ details. Pressing the <B>Save</B> button stores the settings in the current
 profile. To create a profile, give it a name and after entering the details,
 click Save. You can create additional profiles by choosing an empty profile
 from the list and entering the new details, before pressing Save. Use
-<B>Select</B> to make a profile the current one for dialing from the main
-page. You cannot select an empty profile; instead simply choose it from the
-list and Save your new details to it. You can delete a profile with the
+<B>Select</B> to make a profile the current one for dialling from the main
+page. You cannot select an empty profile; instead, simply choose it from the
+list and save your new details to it. You can delete a profile with the
 <B>Delete</B> button; this will make the previously selected profile the new
 currently selected one.</P>
 
-<P><B>Telephony:</B> A dropdown box sets the modem COM port. COM1 through to
+<P><B>Telephony:</B> A drop-down box sets the modem COM port. COM1 through to
 COM4 are available. Depending on the computer and BIOS setup, you should set
-this to the COM port that is connected to the modem. Enter your ISPs dial-in
+this to the COM port that is connected to the modem. Enter your ISP's dial-in
 access modem number into the number box. It should contain only digits, no
 hyphens.</P>
 
-<P>If you are connecting by ISDN, PPPoE or USB ADSL you should choose the
+<P>If you are connecting by ISDN, PPPoE or USB ADSL, you should choose the
 relevant item from this mention as your connection <B>Interface</B>.</P>
 
-<P><B>The Computer/Modem rate</B> dropdown box sets the baud rate between the
-computer and the modem. Usually the second highest setting, 115200, will
+<P><B>The Computer to modem rate</B> drop-down box sets the baud rate between the
+computer and the modem. Usually, the second highest setting, 115200, will
 suffice and give the highest available download speed from your ISP, but on
 very old computers with old serial controllers, you may need to select a
 slower speed.  If you are using dual channel ISDN on an external ISDN TA,
 you may choose to use the highest setting, although you should be aware that
 this requires a powerful CPU in your SmoothWall.</P>
 
-<P>The <B>Persistent Connection</B> checkbox is used to instruct SmoothWall
-to try to redial the line if the link fails for some reason. Use this with
-caution.  If you have metered charges you probably not want to use this.
+<P>The <B>Persistent Connection</B> check box is used to instruct SmoothWall
+to try to re-dial the line if the link fails for some reason. Use this with
+caution.  If you have metered charges, you probably not want to use this.
 However, if you have unlimited service time with your ISP, you will probably
 want to use this in order to keep the link connected as much as
 possible.</P>
@@ -42,27 +42,27 @@ possible.</P>
 Retries</B> number of dial attempts fail in a row, SmoothWall will give up
 until you try to dial the link again by pressing the <B>Dial</B> button.</P>
 
-<P>You can choose Tone or Pulse dialing using the dropdown box. A checkbox
+<P>You can choose Tone or Pulse dialling using the drop-down box. A check box
 is also provided for enabling or disabling the modem's speaker during
-dialing.</P>
+dialling.</P>
 
 <P>The <B>Idle timeout</B> setting, when used in non-persistent connections,
 sets a time of inactivity, after which the line will automatically be
 dropped. Setting this to 0 disables this timeout.</P>
 
-<P><B>Dial on Demand</B> is available by clicking the relevant checkboxes. After
+<P><B>Dial on Demand</B> is available by clicking the relevant check boxes. After
 enabling Dial on Demand, you still have to click the <B>Connect</B> button
-on the homepage to start SmoothWall waiting for an outgoing request.  The
+on the home page to start SmoothWall waiting for an outgoing request.  The
 <B>Dial on Demand for DNS</B> option will make SmoothWall dial for DNS
 requests, which is usually what you want.</P>
 
-<P><B>Connect on Restart</B> will make SmoothWall connect after booting.
+<P><B>Connect on SmoothWall Restart</B> will make SmoothWall connect after booting.
 This is especially useful in Dial on Demand mode, because it will
 automatically put the system into Dial on Demand waiting mode each time the
 SmoothWall machine is switched on.</P>
 
 <P><B>ISP Requires Carriage Return:</B> Most ISP require that the modem send a carriage
-return to signal it is finished sending.  If your ISP requires this, then
+return to signal it has finished sending.  If your ISP requires this, then
 leave it checked, if it does not, then you can uncheck this box.  Default is
 checked.</P>
 

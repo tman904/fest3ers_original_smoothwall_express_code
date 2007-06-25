@@ -14,8 +14,8 @@ megabytes. The size of the cache may grow beyond this figure, however,
 because files are only removed from the cache every 15 minutes. You should
 set this figure so the cache will not fill the available disk space.</P>
 
-<P>The <B>Remote proxy</B> box allows SmoothWall to utilize your ISPs own
-webproxy.  Enter the machine name in the following format: hostname:port</P>
+<P>The <B>Remote proxy</B> box allows SmoothWall to utilize your ISP's own
+web proxy.  Enter the machine name in the following format: hostname:port</P>
 
 <P>The <B>Remote proxy username</B> and <B>Remote proxy password</B> boxes
 are used to enter the username and password required by the remote proxy for
@@ -45,7 +45,7 @@ proxy.</P>
 <P>If you are not using transparent proxying, then you should configure your
 browser to use port 800 on the SmoothWall as the web proxy.</P>
 
-<P>Enable or disable the proxy by clicking the <B>Enable</B> checkbox and pressing
+<P>Enable or disable the proxy by clicking the <B>Enable</B> check box and pressing
 <B>Save</B>.</P>
 
 <P>Alternatively, to save the current configuration and clear any log files

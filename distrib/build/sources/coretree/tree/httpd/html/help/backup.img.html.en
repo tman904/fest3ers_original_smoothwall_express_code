@@ -22,8 +22,8 @@ SmoothWall Express until the activity LED on the drive is no longer
 illuminated.</P>
 
 <P>It is also possible to create a floppy disk image file, and have it
-sent over the network to the webbrowser.  This is useful
-if the SmoothWall Express is not physically availbale, and you wish to
+sent over the network to the web browser.  This is useful
+if the SmoothWall Express is not physically available, and you wish to
 take a backup of the settings.  Press the <STRONG>Create backup floppy
 disk image</STRONG> to create a backup floppy disk image file.  This image
 can then be written to a floppy disk prior to reinstallation.</P>
