@@ -51,7 +51,7 @@ int changedrivers(void);
 int greenaddressmenu(void);
 int addressesmenu(void);
 int dnsgatewaymenu(void);
-void DisplayNicInfoWithMAC(char *dest, int size, char *color, char *dev, char *description);
+void displaynicinfowithmac(char *dest, int size, char *colour, char *dev, char *description);
 
 int handlenetworking(void)
 {
@@ -129,6 +129,21 @@ int oktoleave(char *errormessage)
 	if (configtype < 0 || configtype > 7)
 		configtype = 0;
 
+	if (CONFIG_TYPE_GREEN(configtype))
+	{
+		strcpy(temp, "");
+		findkey(kv, "GREEN_DEV", temp);
+		if (!(strlen(temp)))
+		{
+			strcpy(errormessage, ctr[TR_NO_GREEN_INTERFACE]);
+			goto EXIT;
+		}
+		if (!(interfacecheck(kv, "GREEN")))
+		{
+			strcpy(errormessage, ctr[TR_MISSING_GREEN_IP]);
+			goto EXIT;
+		}
+	}
 	if (CONFIG_TYPE_ORANGE(configtype))
 	{
 		strcpy(temp, "");
@@ -297,7 +312,7 @@ int drivermenu(void)
 	findnicdescription(driver, temp);
 	strcpy(dev, ctr[TR_UNSET]);
 	findkey(kv, "GREEN_DEV", dev);
-	DisplayNicInfoWithMAC(temp1, sizeof(temp1), "GREEN", dev, temp);
+	displaynicinfowithmac(temp1, sizeof(temp1), "GREEN", dev, temp);
 	strcat(message, temp1);
 
 	if (CONFIG_TYPE_ORANGE(configtype))
@@ -305,7 +320,7 @@ int drivermenu(void)
 		strcpy(driver, ""); findkey(kv, "ORANGE_DISPLAYDRIVER", driver);
 		findnicdescription(driver, temp);
 		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "ORANGE_DEV", dev);
-		DisplayNicInfoWithMAC(temp1, sizeof(temp1), "ORANGE", dev, temp);
+		displaynicinfowithmac(temp1, sizeof(temp1), "ORANGE", dev, temp);
 		strcat(message, temp1);
 	}
 	if (CONFIG_TYPE_PURPLE(configtype))
@@ -315,7 +330,7 @@ int drivermenu(void)
 		findnicdescription(driver, temp);
 		strcpy(dev, ctr[TR_UNSET]);
 		findkey(kv, "PURPLE_DEV", dev);
-		DisplayNicInfoWithMAC(temp1, sizeof(temp1), "PURPLE", dev, temp);
+		displaynicinfowithmac(temp1, sizeof(temp1), "PURPLE", dev, temp);
 		strcat(message, temp1);
 	}
 	if (CONFIG_TYPE_RED(configtype))
@@ -323,7 +338,7 @@ int drivermenu(void)
 		strcpy(driver, ""); findkey(kv, "RED_DISPLAYDRIVER", driver);
 		findnicdescription(driver, temp);
 		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "RED_DEV", dev);
-		DisplayNicInfoWithMAC(temp1, sizeof(temp1), "RED", dev, temp);
+		displaynicinfowithmac(temp1, sizeof(temp1), "RED", dev, temp);
 		strcat(message, temp1);
 	}
 	strcat(message, ctr[TR_DO_YOU_WISH_TO_CHANGE_THESE_SETTINGS]);
@@ -345,7 +360,6 @@ int changedrivers(void)
 	struct keyvalue *kv = initkeyvalues();
 	char message[1000];
 	char temp[STRING_SIZE];
-	char driver[STRING_SIZE];
 	int configtype;
 	int rc;
 	int c;
@@ -360,6 +374,9 @@ int changedrivers(void)
 	int abort;
 	char currentdriver[STRING_SIZE], currentdriveroptions[STRING_SIZE];
 	char displaydriver[STRING_SIZE];
+	char cardinfo[STRING_SIZE];
+	char mac[STRING_SIZE];
+	int driverc = 0;
 	
 	if (!(readkeyvalues(kv, CONFIG_ROOT "ethernet/settings")))
 	{
@@ -408,6 +425,7 @@ int changedrivers(void)
 	strcpy(currentdriver, "");
 		
 	abort = 0;
+	driverc = 0;
 	/* Keep going till all cards are got, or they give up. */
 	while (sofarallocated < needcards && !abort)
 	{
@@ -416,20 +434,17 @@ int changedrivers(void)
 		toallocate = countofcards - sofarallocated;
 		while (toallocate > 0 && sofarallocated < needcards)
 		{
-			char cardInfo[STRING_SIZE], mac[STRING_SIZE];
 			findnicdescription(displaydriver, temp);
-			// Get device name, eth%d is hard coded.
+			/* Get device name, eth%d is hard coded. */
 			sprintf(nexteth, "eth%d", sofarallocated);
-			// Get MAC address.
-			if (GetNicMAC(mac, sizeof(mac), nexteth))
-				// If MAC found put at the end of nic description.
-				snprintf(cardInfo, sizeof(cardInfo), "%s [%s]", temp, mac);
+			/* Get MAC address. */
+			if (getnicmac(mac, STRING_SIZE, nexteth))
+				/* If MAC found put at the end of NIC description. */
+				snprintf(cardinfo, STRING_SIZE, "%s [%s]", temp, mac);
 			else
-				// MAC lookup failed so just display nic description.
-				snprintf(cardInfo, sizeof(cardInfo), "%s", temp);
-			// Ensure that the cardinfo array is null terminated
-			cardInfo[sizeof(cardInfo)-1] = '\0';
-			sprintf(message, ctr[TR_UNCLAIMED_DRIVER], cardInfo);
+				/* MAC lookup failed so just display NIC description. */
+				snprintf(cardinfo, STRING_SIZE, "%s", temp);
+			sprintf(message, ctr[TR_UNCLAIMED_DRIVER], cardinfo);
 			c = 0; choice = 0;
 			strcpy(temp, ""); findkey(kv, "GREEN_DEV", temp);
 			if (CONFIG_TYPE_GREEN(configtype) &&!strlen(temp))
@@ -510,7 +525,7 @@ int changedrivers(void)
 				
 			if (rc == 0 || rc == 1)
 			{
-				probecards(currentdriver, currentdriveroptions);
+				probecards(currentdriver, currentdriveroptions, &driverc);
 				if (!strlen(currentdriver))
 					errorbox(ctr[TR_PROBE_FAILED]);
 			}				
@@ -712,19 +727,19 @@ int dnsgatewaymenu(void)
 	entries[DNS1].text = ctr[TR_PRIMARY_DNS];
 	strcpy(temp, ""); findkey(kv, "DNS1", temp);
 	values[DNS1] = strdup(temp);
-	entries[DNS1].value = &values[DNS1];
+	entries[DNS1].value = (const char **) &values[DNS1];
 	entries[DNS1].flags = 0;
 	
 	entries[DNS2].text = ctr[TR_SECONDARY_DNS];
 	strcpy(temp, ""); findkey(kv, "DNS2", temp);
 	values[DNS2] = strdup(temp);
-	entries[DNS2].value = &values[DNS2];
+	entries[DNS2].value = (const char **) &values[DNS2];
 	entries[DNS2].flags = 0;
 	
 	entries[DEFAULT_GATEWAY].text = ctr[TR_DEFAULT_GATEWAY];
 	strcpy(temp, ""); findkey(kv, "DEFAULT_GATEWAY", temp);
 	values[DEFAULT_GATEWAY] = strdup(temp);
-	entries[DEFAULT_GATEWAY].value = &values[DEFAULT_GATEWAY];
+	entries[DEFAULT_GATEWAY].value = (const char **)  &values[DEFAULT_GATEWAY];
 	entries[DEFAULT_GATEWAY].flags = 0;
 	
 	entries[DNSGATEWAY_TOTAL].text = NULL;
@@ -779,9 +794,9 @@ int dnsgatewaymenu(void)
 				replacekeyvalue(kv, "DNS2", values[DNS2]);
 				replacekeyvalue(kv, "DEFAULT_GATEWAY", values[DEFAULT_GATEWAY]);
 				netaddresschange = 1;
-				free(values[DNS1]);
-				free(values[DNS2]);
-				free(values[DEFAULT_GATEWAY]);
+				free((char *) values[DNS1]);
+				free((char *) values[DNS2]);
+				free((char *) values[DEFAULT_GATEWAY]);
 				writekeyvalues(kv, CONFIG_ROOT "ethernet/settings");
 			}
 		}
@@ -793,30 +808,23 @@ int dnsgatewaymenu(void)
 	return 1;
 }			
 
-// Display the NIC device with MAC address
-void DisplayNicInfoWithMAC(char *dest,
-                           int size,
-                           char *color,
-                           char *dev,
-                           char *description)
+/* Display the NIC device with MAC address. */
+void displaynicinfowithmac(char *dest, int size, char *colour, char *dev,
+	char *description)
 {
-  char mac[STRING_SIZE];
-  int found = 0;
+	char mac[STRING_SIZE];
+	int found = 0;
 
-  if ( !strlen(dev) )
-    // If device is not set then load TR_UNSET string.
-    strcpy(dev, ctr[TR_UNSET]);
-  else if ( GetNicMAC(mac, sizeof(mac), dev) )
-    {   // If MAC address found, print it.
-      snprintf(dest, size, "%s: %s (%s) [%s]\n",
-              color, description, dev, mac);
-      found = 1;
-    }
+	if (!strlen(dev))
+	    strcpy(dev, ctr[TR_UNSET]);
+	else if (getnicmac(mac, sizeof(mac), dev))
+	{
+		snprintf(dest, size, "%s: %s (%s) [%s]\n", colour,
+			description, dev, mac);
+		found = 1;
+	}
 
-  if ( !found )
-    // If device not set or MAC not found, print original value
-    snprintf(dest, size, "%s: %s (%s)\n", color, description, dev);
+	if (!found)
+		snprintf(dest, size, "%s: %s (%s)\n", colour, description, dev);
 
-  // Make sure dest string is null terminated
-  dest[size-1] = '\0';
 }

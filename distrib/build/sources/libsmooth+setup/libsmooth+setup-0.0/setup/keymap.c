@@ -25,7 +25,7 @@ static char *filenames[MAX_FILENAMES];
 static char *displaynames[MAX_FILENAMES];
 
 static int process(char *prefix, char *path);
-static int cmp(void *s1, void *s2);
+static int cmp(const void *s1, const void *s2);
 
 int handlekeymap(void)
 {
@@ -133,7 +133,7 @@ static int process(char *prefix, char *path)
 }
 
 /* Small wrapper for use with qsort() to sort filename part. */		
-static int cmp(void *s1, void *s2)
+static int cmp(const void *s1, const void *s2)
 {
 	/* c1 and c2 are copies. */
 	char *c1 = strdup(* (char **) s1);

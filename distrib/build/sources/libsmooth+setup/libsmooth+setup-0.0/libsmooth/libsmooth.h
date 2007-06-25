@@ -26,6 +26,7 @@
 #include <arpa/inet.h>
 
 #include <linux/cdrom.h>
+#include <linux/if.h>
 
 #include "langs.h"
 
@@ -86,11 +87,12 @@ int gettype(char *type);
 int setnetaddress(struct keyvalue *kv, char *colour);
 void networkdialogcallbacktype(newtComponent cm, void *data);
 int interfacecheck(struct keyvalue *kv, char *colour);
-int probecards(char *driver, char *driveroptions);
+int probecards(char *driver, char *driveroptions, int *pc);
 int choosecards(char *driver, char *driveroptions);
 int manualdriver(char *driver, char *driveroptions);
 int countcards(void);
 int findnicdescription(char *modulename, char *description);
+int getnicmac(char *dest, int size, char *dev);
 	  
 /* data.c */
 struct keyvalue *initkeyvalues(void);
@@ -100,5 +102,4 @@ int writekeyvalues(struct keyvalue *head, char *filename);
 int findkey(struct keyvalue *head, char *key, char *value);
 void appendkeyvalue(struct keyvalue *head, char *key, char *value);
 void replacekeyvalue(struct keyvalue *head, char *key, char *value);
-int GetNicMAC(char *dest, int size, char *dev);
 

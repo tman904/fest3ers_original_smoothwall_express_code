@@ -29,10 +29,7 @@ int main(int argc, char *argv[])
 	int rc;
 	struct keyvalue *kv;
 	char selectedshortlang[STRING_SIZE] = "en";
-	int langcounter;
 	int autook = 0;
-	int loadohciresult = 0;
-	int loaduhciresult = 0;
 	int doreboot = 0;
 	struct stat statbuf;
 	

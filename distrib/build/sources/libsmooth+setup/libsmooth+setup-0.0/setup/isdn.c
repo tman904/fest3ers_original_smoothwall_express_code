@@ -302,7 +302,7 @@ void handlemoduleparams(void)
 {
 	struct keyvalue *kv = initkeyvalues();
 	char moduleparams[STRING_SIZE] = "";
-	char *values[] = { moduleparams, NULL };	/* pointers for the values. */
+	const char *values[] = { moduleparams, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
 	int rc;
@@ -323,14 +323,16 @@ void handlemoduleparams(void)
 		
 		if (rc == 1)
 		{
-			replacekeyvalue(kv, "MODULE_PARAMS", values[0]);
+			strcpy(moduleparams, values[0]);
+			replacekeyvalue(kv, "MODULE_PARAMS", moduleparams);
 			writekeyvalues(kv, CONFIG_ROOT "isdn/settings");
-			free(values[0]);
 			break;
 		}
 		else
 			break;
 	}
+	free((char * ) values[0]);
+
 	freekeyvalues(kv);
 }
 
@@ -516,7 +518,7 @@ void handleisdnmsn(void)
 {
 	struct keyvalue *kv = initkeyvalues();
 	char msn[STRING_SIZE] = "";
-	char *values[] = { msn, NULL };	/* pointers for the values. */
+	const char *values[] = { msn, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
 	int rc;
@@ -539,10 +541,10 @@ void handleisdnmsn(void)
 			if (!(strlen(values[0])))
 				errorbox(ctr[TR_PHONENUMBER_CANNOT_BE_EMPTY]);
 			else
-			{			
-				replacekeyvalue(kv, "MSN", values[0]);
+			{
+				strcpy(msn, values[0]);
+				replacekeyvalue(kv, "MSN", msn);
 				writekeyvalues(kv, CONFIG_ROOT "isdn/settings");
-				free(values[0]);
 				break;
 			}
 		}
@@ -550,4 +552,6 @@ void handleisdnmsn(void)
 			break;
 	}
 	freekeyvalues(kv);
+	
+	free((char *) values[0]);
 }

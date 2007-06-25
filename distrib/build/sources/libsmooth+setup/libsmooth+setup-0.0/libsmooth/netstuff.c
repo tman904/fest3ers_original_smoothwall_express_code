@@ -11,7 +11,7 @@
 #include "libsmooth.h"
 
 extern FILE *flog;
-extern char *log;
+extern char *logname;
 
 extern char **ctr;
 
@@ -382,14 +382,15 @@ struct nic nics[] = {
 };
 
 /* Funky routine for loading all drivers (cept those are already loaded.). */
-int probecards(char *driver, char *driveroptions)
+int probecards(char *driver, char *driveroptions, int *pc)
 {
 	int c;
 	char message[1000];
 	char commandstring[STRING_SIZE];
 	int oldniccount = countcards();
 	
-	c = 0;
+	c = *pc;
+
 	while (nics[c].modulename)
 	{
 		if (!checkformodule(nics[c].modulename))
@@ -410,6 +411,10 @@ int probecards(char *driver, char *driveroptions)
 					{
 						strcpy(driver, nics[c].modulename);
 						strcpy(driveroptions, "");
+						
+						/* Next probe run puts us at the next NIC type. */ 
+						*pc = c + 1;
+						
 						return 1;
 					}
 				}
@@ -425,6 +430,8 @@ int probecards(char *driver, char *driveroptions)
 	}
 	strcpy(driver, "");
 	strcpy(driveroptions, "");
+	
+	*pc = c;
 	
 	return 0;
 }
@@ -522,7 +529,7 @@ int choosecards(char *driver, char *driveroptions)
 /* Manual entry for gurus. */
 int manualdriver(char *driver, char *driveroptions)
 {
-	char *values[] = { NULL, NULL };	/* pointers for the values. */
+	const char *values[] = { NULL, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0 }, { NULL, NULL, 0 } };
 	int rc;
@@ -569,7 +576,7 @@ int manualdriver(char *driver, char *driveroptions)
 		else
 			errorbox(ctr[TR_MODULE_NAME_CANNOT_BE_BLANK]);
 	}
-	free(values[0]);
+	free((char *) values[0]);
 
 	return 1;
 }
@@ -617,51 +624,41 @@ int findnicdescription(char *modulename, char *description)
 	}
 	
 	strcpy(description, "UNKNOWN");
+
 	return 0;
 }
 
-#include "linux/if.h"
-
-// Returns MAC address string given the device.
-int GetNicMAC(char *dest, int size, char *dev)
+/* Returns MAC address string given the device. */
+int getnicmac(char *dest, int size, char *dev)
 {
-  int fd;
-  int found = 0;
+	int fd = 0;
+	int found = 0;
+	struct ifreq req;
 
-  // Ensure that the dest array is null.
-  dest[0] = '\0';
+	strcpy(dest, "");
 
-  // Create socket to do ioctl.
-  if ( (fd = socket(PF_INET, SOCK_DGRAM, 0)) )
-    {
-      struct ifreq req;
-      
-      // Set ifrn_name to device name IE "eth0"
-      snprintf(req.ifr_ifrn.ifrn_name, IFNAMSIZ, dev);
+	/* Create socket to do ioctl. */
+	if ((fd = socket(PF_INET, SOCK_DGRAM, 0)))
+	{
+		/* Set ifrn_name to device name eg. "eth0" */
+		snprintf(req.ifr_ifrn.ifrn_name, IFNAMSIZ, dev);
 
-      // Do ioctl to get hardware address (MAC)
-      if ( !(ioctl(fd, SIOCGIFHWADDR, &req)) )
-        {
-          // Format MAC into colon seperated string format
-          snprintf(dest, size, 
-                   "%2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X",
-                   req.ifr_ifru.ifru_hwaddr.sa_data[0] & 0xff, 
-                   req.ifr_ifru.ifru_hwaddr.sa_data[1] & 0xff, 
-                   req.ifr_ifru.ifru_hwaddr.sa_data[2] & 0xff, 
-                   req.ifr_ifru.ifru_hwaddr.sa_data[3] & 0xff, 
-                   req.ifr_ifru.ifru_hwaddr.sa_data[4] & 0xff, 
-                   req.ifr_ifru.ifru_hwaddr.sa_data[5] & 0xff);
-          found = 1;
-        }
-    }
+		/* Do ioctl to get hardware address (MAC) */
+		if (!(ioctl(fd, SIOCGIFHWADDR, &req)))
+		{
+			/* Format MAC into colon seperated string format. */
+			snprintf(dest, size, "%2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X",
+			req.ifr_ifru.ifru_hwaddr.sa_data[0] & 0xff, 
+			req.ifr_ifru.ifru_hwaddr.sa_data[1] & 0xff, 
+			req.ifr_ifru.ifru_hwaddr.sa_data[2] & 0xff, 
+			req.ifr_ifru.ifru_hwaddr.sa_data[3] & 0xff, 
+			req.ifr_ifru.ifru_hwaddr.sa_data[4] & 0xff, 
+			req.ifr_ifru.ifru_hwaddr.sa_data[5] & 0xff);
+			found = 1;
+		}
+	}
 
-  // If socket fd is valid close the socket
-  if ( fd )
-    close(fd);
+	if (fd) close(fd);
 
-  // Ensure that the dest array is null terminated.
-  dest[size-1] = '\0';
-
-  // Return with found status, true if found
-  return(found);
+	return (found);
 }

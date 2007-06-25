@@ -553,6 +553,10 @@ char *english_tr[] = {
 "Secondary DNS specified without a Primary DNS",
 /* TR_UNKNOWN */
 "UNKNOWN",
+/* TR_NO_GREEN_INTERFACE */
+"No GREEN interface assigned.",
+/* TR_MISSING_GREEN_IP */
+"Missing IP information on the GREEN interface.",
 /* TR_NO_ORANGE_INTERFACE */
 "No ORANGE interface assigned.",
 /* TR_MISSING_ORANGE_IP */

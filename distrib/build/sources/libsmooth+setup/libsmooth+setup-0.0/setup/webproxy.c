@@ -19,10 +19,10 @@ extern int automode;
 
 int handlewebproxy(void)
 {
-	char server[STRING_SIZE];
-	char port[STRING_SIZE];
+	char server[STRING_SIZE] = "";
+	char port[STRING_SIZE] = "";
 	struct keyvalue *kv = initkeyvalues();
-	char *values[] = { server, port, NULL };	/* pointers for the values. */
+	const char *values[] = { server, port, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { ctr[TR_HOSTNAMEC], &values[0], 0,}, { ctr[TR_PORTC], &values[1], 0 }, { NULL, NULL, 0 } };
 	int rc = 0;
@@ -73,8 +73,8 @@ int handlewebproxy(void)
 			break;
 		}
 	}
-	free(values[0]);
-	free(values[1]);
+	free((char *) values[0]);
+	free((char *) values[1]);
 	freekeyvalues(kv);
 	
 	return result;

@@ -87,8 +87,8 @@ int getpassword(char *password, char *text)
 	char *values[] = {	NULL, NULL, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 	{ 
-		{ ctr[TR_PASSWORD_PROMPT], &values[0], NEWT_FLAG_PASSWORD },
-		{ ctr[TR_AGAIN_PROMPT], &values[1], NEWT_FLAG_PASSWORD },
+		{ ctr[TR_PASSWORD_PROMPT], (const char **) &values[0], NEWT_FLAG_PASSWORD },
+		{ ctr[TR_AGAIN_PROMPT], (const char **) &values[1], NEWT_FLAG_PASSWORD },
 		{ NULL, NULL, 0 }
 	};
 	int rc;
@@ -122,8 +122,8 @@ int getpassword(char *password, char *text)
 
 	strncpy(password, values[0], STRING_SIZE);
 
-	if (values[0]) free(values[0]);
-	if (values[1]) free(values[1]);
+	if (values[0]) free((char *) values[0]);
+	if (values[1]) free((char *) values[1]);
 
 	return rc;
 }

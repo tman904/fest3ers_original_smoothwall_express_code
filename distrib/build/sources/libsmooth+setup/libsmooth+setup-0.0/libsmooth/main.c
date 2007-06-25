@@ -241,4 +241,3 @@ int gettotalmemory(void)
 	else
 		return 0;
 }
-  

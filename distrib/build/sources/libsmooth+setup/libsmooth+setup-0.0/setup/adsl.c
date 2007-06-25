@@ -213,7 +213,6 @@ static int adslenabledpressed(void)
 	char ecitype[STRING_SIZE] = "";
 	char vpi[STRING_SIZE] = "";
 	char vci[STRING_SIZE] = "";
-	char commandstring[STRING_SIZE];
 	char ifacetype[STRING_SIZE];
 
 	int result = 0;
@@ -334,7 +333,7 @@ void handleothersettings(void)
 	char vpi[STRING_SIZE] = "";
 	char vci[STRING_SIZE] = "";
 	struct keyvalue *kv = initkeyvalues();
-	char *values[] = { vpi, vci, NULL };	/* pointers for the values. */
+	const char *values[] = { vpi, vci, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "VPI:", &values[0], 0,}, { "VCI:", &values[1], 0,}, { NULL, NULL, 0 } };
 	int rc;
@@ -379,7 +378,7 @@ void handleothersettings(void)
 			break;
 		}
 	}
-	free(values[0]);
-	free(values[1]);
+	free((char *) values[0]);
+	free((char *) values[1]);
 	freekeyvalues(kv);
 }	

@@ -21,7 +21,7 @@ int handlehostname(void)
 {
 	char hostname[STRING_SIZE] = "";
 	struct keyvalue *kv = initkeyvalues();
-	char *values[] = { hostname, NULL };	/* pointers for the values. */
+	const char *values[] = { hostname, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
 	int rc;
@@ -63,7 +63,8 @@ int handlehostname(void)
 			break;
 		}
 	}
-	free(values[0]);
+	free((char *) values[0]);
+	
 	freekeyvalues(kv);
 	
 	return result;

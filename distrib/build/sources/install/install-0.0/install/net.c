@@ -43,7 +43,7 @@ int downloadtarball(void)
 		
 static int gettarballurl(char *url)
 {
-	char *values[] = {	NULL, NULL };	/* pointers for the values. */
+	const char *values[] = {	NULL, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
 	int rc;
@@ -52,6 +52,8 @@ static int gettarballurl(char *url)
 		60, 5, 5, 50, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
 		
 	strncpy(url, values[0], STRING_SIZE);
+	
+	free((char *) values[0]);
 	
 	return rc;
 }

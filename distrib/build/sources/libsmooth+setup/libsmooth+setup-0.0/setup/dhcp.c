@@ -133,7 +133,7 @@ int handledhcp(void)
 		newtTextboxSetText(labels[c], labeltexts[c]);
 		newtFormAddComponent(dhcpform, labels[c]);				
 		strcpy(temp, defaults[c]); findkey(dhcpkv, varnames[c], temp);
-		entries[c] = newtEntry(34, TOP + 2 + c, temp, 18, &results[c], 0);
+		entries[c] = newtEntry(34, TOP + 2 + c, temp, 18, (const char **) &results[c], 0);
 		newtFormAddComponent(dhcpform, entries[c]);		
 		if (startenabled == ' ')
 			newtEntrySetFlags(entries[c], NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);			

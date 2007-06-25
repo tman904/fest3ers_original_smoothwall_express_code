@@ -34,8 +34,12 @@ int networkmenu(struct keyvalue *ethernetkv)
 	int done;
 	char description[1000];
 	char message[1000];
+	char cardinfo[STRING_SIZE];
+	char mac[STRING_SIZE];
+	int c = 0;
 
 	done = 0;
+	c = 0;
 	while (!done)
 	{
 		rc = newtWinTernary(ctr[TR_CONFIGURE_NETWORKING], ctr[TR_PROBE], 
@@ -43,24 +47,20 @@ int networkmenu(struct keyvalue *ethernetkv)
 		
 		if (rc == 0 || rc == 1)
 		{
-			probecards(driver, driveroptions);
+			probecards(driver, driveroptions, &c);
 			if (!strlen(driver))
 				errorbox(ctr[TR_PROBE_FAILED]);
 			else
 			{
-                char cardInfo[STRING_SIZE], mac[STRING_SIZE];
 				findnicdescription(driver, description);
-                // GREEN is hard coded at "eth0"
-                if ( (GetNicMAC(mac, sizeof(mac), "eth0")) )
-                  // If MAC found put it at the end of nic description.
-                  snprintf(cardInfo, sizeof(cardInfo), "%s [%s]",
-                           description, mac);
-                else
-                  // MAC lookup failed so just display nic description.
-                  snprintf(cardInfo, sizeof(cardInfo), "%s", description);
-                // Ensure that the cardinfo array is null terminated
-                cardInfo[sizeof(cardInfo)-1] = '\0';
-				sprintf(message, ctr[TR_FOUND_NIC], cardInfo);
+				if ((getnicmac(mac, sizeof(mac), "eth0")))
+					/* If MAC found put it at the end of nic description. */
+					snprintf(cardinfo, STRING_SIZE, "%s [%s]", description, mac);
+				else
+					/* MAC lookup failed so just display nic description. */
+					snprintf(cardinfo, STRING_SIZE, "%s", description);
+
+				sprintf(message, ctr[TR_FOUND_NIC], cardinfo);
 				newtWinMessage(TITLE, ctr[TR_OK], message);
 			}		
 		}			
