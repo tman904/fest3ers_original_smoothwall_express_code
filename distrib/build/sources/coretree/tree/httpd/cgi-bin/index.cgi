@@ -177,7 +177,7 @@ $currentconnection = &connectedstate();
 print <<END
 <table class='centered'>
 	<tr>
-		<td style='text-align: right;'><img src='/ui/img/netstatus.$currentconnection.gif' alt='$connpick' style='float: right;'></td>
+		<td style='text-align: right; vertical-align: top;'><img src='/ui/img/netstatus.$currentconnection.gif' alt='$connpick' style='float: right;'></td>
 		<td>&nbsp;</td>
 END
 ;
