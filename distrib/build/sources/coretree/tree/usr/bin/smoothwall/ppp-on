@@ -60,6 +60,8 @@ if (! -e "${swroot}/red/active")
 			&doadsldialatm(); }
 		elsif ($adslsettings{'DEVICE'} eq 'CNX') {
 			&doadsldialatm(); }
+		elsif ($adslsettings{'DEVICE'} eq 'PULSAR') {
+			&doadsldialatm(); }
 	}
 
 	# stayup

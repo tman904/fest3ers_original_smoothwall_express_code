@@ -22,14 +22,18 @@ if [ "$ENABLED" = "on" ]; then
 	if [ "$DEVICE" = "UNICORN" ]; then
 		/sbin/modprobe unicorn_pci_atm
 		/sbin/modprobe pppoatm
-		sleep 5
+		sleep 30
 	fi
 	if [ "$DEVICE" = "CNX" ]; then
 		/sbin/modprobe CnxADSL
 		/usr/bin/smoothwall/writecnxadslconfig.pl
 		/usr/sbin/cnxadslload /usr/etc/cnxadsl
 		sleep 30
-	fi		
+	fi
+	if [ "$DEVICE" = "PULSAR" ]; then
+		/sbin/modprobe pulsar_atm
+		sleep 30
+	fi
 else
 	echo "No USB ADSL enabled"
 fi
