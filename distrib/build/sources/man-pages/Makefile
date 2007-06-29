@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = man-pages
-VERSION = 2.43
+VERSION = 2.60
 
 BASE_URL = http://www.kernel.org/pub/linux/docs/manpages/
 
