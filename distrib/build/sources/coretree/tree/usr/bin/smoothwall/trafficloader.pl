@@ -193,9 +193,9 @@ my %extras = (
 for my $tag (sort { $classids{$a} <=> $classids{$b} } keys %classids) {
 	# note $extras{$tag} is usually undef
 	next if $tag =~ /^(all|none)$/;
-	stdclass($external_interface,$tag, $extras{$tag}); 
+	stdclass($external_interface,$tag, $extras{$tag},\%urate,\%uceil); 
 	# note can only extablish QOS for an interface that is up at the time.
-	stdclass($_,$tag, $extras{$tag}) for up_interfaces(@internal_interface); 
+	stdclass($_,$tag, $extras{$tag}, \%drate, \%dceil) for up_interfaces(@internal_interface); 
 	push @classsortorder, $tag;
 }
 
@@ -306,7 +306,6 @@ for my $rule (@rules) {
 	if($name eq 'Voice_Over_IP') {
 		# also assume EF diffserv mark set wants to
 		# be treated as if it were VOIP
-		system('/sbin/modprobe ipt_dscp');
 		iptables("-A $POSTR -m dscp --dscp-class EF -j CONNMARK --set-mark $mark");
 		
 	}
@@ -350,22 +349,22 @@ exit(0);
 # wrappers to eliminate repeated typing
 sub tcqdisc {
 	my $args = shift;
-	system('/usr/sbin/tc qdisc add dev ' . $args);
+	system(split(/\s+/,'/usr/sbin/tc qdisc add dev ' . $args));
 	print "/usr/sbin/tc qdisc add dev $args\n" if $? != 0;
 }
 
 sub tcclass {
 	my $args = shift;
-	system('/usr/sbin/tc class add dev ' . $args);
+	system(split(/\s+/,'/usr/sbin/tc class add dev ' . $args));
 	print "/usr/sbin/tc class add dev $args\n" if $? != 0;
 }
 
 sub stdclass {
-	my($iface, $tag, $extra) = @_;
+	my($iface, $tag, $extra, $ratehash, $ceilhash) = @_;
 	$extra = 'quantum 1500' unless defined $extra;
 	next if $tag eq 'none';
 
-    tcclass("$iface parent 1:$classids{'all'} classid 1:$classids{$tag} htb rate $urate{$tag}bps ceil $uceil{$tag}bps prio $prio{$tag} $extra");
+    tcclass("$iface parent 1:$classids{'all'} classid 1:$classids{$tag} htb rate " . $ratehash->{$tag} ."bps ceil " . $ceilhash->{$tag} ."bps prio $prio{$tag} $extra");
 	tcqdisc("$iface parent 1:$classids{$tag} handle $classids{$tag}: sfq perturb 10");
 }
 	
@@ -373,7 +372,7 @@ sub stdclass {
 sub iptables {
 	my $args = shift;
 	# print "iptables -t mangle $args\n";
-	system('/usr/sbin/iptables -t mangle ' . $args);
+	system(split(/\s+/,'/usr/sbin/iptables -t mangle ' . $args));
 	print "iptables -t mangle $args\n" if $? != 0;
 }
 
@@ -388,17 +387,16 @@ sub removetraffic {
 			iptables("-X ${if}-${dir}-traf-tot 2>/dev/null");
 		}
 		# and axe the qdiscs
-		system("/usr/sbin/tc qdisc del root dev $if 2>/dev/null");
+		system(split(/\s+/,"/usr/sbin/tc qdisc del root dev $if"));
 	}
 	for my $if (@internal_interface) {
-		system("/usr/sbin/tc qdisc del root dev $if 2>/dev/null");
+		system(split(/\s+/,"/usr/sbin/tc qdisc del root dev $if"));
 	}
 }
 
 # this is needed to make trafficmon and trafficlogger pick up per rule info
 sub writesettings {
 	my $settingsdir = '/var/smoothwall/traffic';
-	system("mkdir -p $settingsdir");	
     # chosen_speeds
 	if(open(FD, ">$settingsdir/chosen_speeds")) {
 		print FD "red_download=${download_speed}bps\n";
@@ -447,7 +445,7 @@ sub writesettings {
 		}
 		close(FD);
 	}
-	system("/bin/chown nobody:nobody /var/smoothwall/traffic/*")
+	system(split(/\s+/,"/bin/chown -R nobody:nobody $settingsdir"));
 
 }
 # Tests that the given parameter is up by using the SIOCGIFFLAGS ioctl on a socket.
