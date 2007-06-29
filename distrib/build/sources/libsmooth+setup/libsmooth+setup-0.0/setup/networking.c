@@ -527,7 +527,10 @@ int changedrivers(void)
 			{
 				probecards(currentdriver, currentdriveroptions, &driverc);
 				if (!strlen(currentdriver))
+				{
 					errorbox(ctr[TR_PROBE_FAILED]);
+					driverc = 0;
+				}
 			}				
 			else if (rc == 2)
 				choosecards(currentdriver, currentdriveroptions);
