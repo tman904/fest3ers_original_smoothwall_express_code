@@ -277,28 +277,13 @@ END
 	;
 
 	if ( $thissection ne "help" ) {
-		$currentconnection = &connectedstate();
 		$cellwidth = $pagewidth / 2;
 		print <<END
 <body>
 <table class='main'>
 <tr>
 	<td class='logo' rowspan='2'>
-<!--
-		<a href="/cgi-bin/credits.cgi"><img src="/ui/img/logo.gif" alt="SmoothWall Express $version" title="SmoothWall Express $version"></a> -->
 	</td><td class='header'>
-	<!--
-		<table>
-		<tr>
-			<td>
-				<img src="/ui/img/netstatus.label.gif" alt="current connection status" title="current connection status">
-			</td>
-			<td>
-				<a href="/cgi-bin/index.cgi"><img src="/ui/img/netstatus-wee.${currentconnection}.gif" alt="$currentconnection" title="$currentconnection"> 
-			</td>
-		</tr>
-		</table>
-		-->
 	</td> 
 </tr>
 END
