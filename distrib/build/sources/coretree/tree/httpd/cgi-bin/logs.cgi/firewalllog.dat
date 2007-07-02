@@ -64,7 +64,7 @@ open (FILE, '/etc/services');
 while (<FILE>)
 {
 	s/#.*$//;
-	($name, $protoport) = /^(\w+)\W+(\d+\/\w+)/;
+	($name, $protoport) = /^([\w-]+)\W+(\d+\/\w+)/;
 	if (defined $protoport) {
 		$services{$protoport} = uc($name); }
 }
@@ -376,27 +376,26 @@ END
 END
 ;
 
-	if ( $number_of_pages >= 2 ){
+	if ( $number_of_pages >= 2 )
+	{
 		if ($next != -1) {
-			print "<td style='vertical-align: top; text-align: center;'><a href='/cgi-bin/logs.cgi/firewalllog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>&lt; Sm</a></td>"; 	
+			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/firewalllog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>&lt; Sm</a></td>"; 	
 		} else {
 			print "<td style='vertical-align: top;text-align: center'>&lt; Sm</td>"; 
 		}
-	}
 
-	for ( my $i = ($total_lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
-		my $page = $number_of_pages - int( $i / $viewsize );
-		
-		if ( $page >= $start_page and $page <= $end_page ){
-			if ( $i == $start ){
-				print "<td style='vertical-align: top;text-align: center;'><a style='color: red; font-size: 12px;' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
-			} else {
-				print "<td style='vertical-align: top;text-align: center;'><a style='font-size: 12px;' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
-			}
-		}	
-	}
+		for ( my $i = ($total_lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
+			my $page = $number_of_pages - int( $i / $viewsize );
+			
+			if ( $page >= $start_page and $page <= $end_page ){
+				if ( $i == $start ){
+					print "<td style='vertical-align: top;text-align: center;'><a style='color: red;' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
+				} else {
+					print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
+				}
+			}	
+		}
 
-	if ( $number_of_pages >= 2 ){
 		if ($tpage != $number_of_pages) {
 			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/firewalllog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>th &gt;</a></td>"; 
 		} else {
@@ -410,15 +409,15 @@ END
 <form method='get'>
 <table style='border-collapse: collapse; border: 0px; width: 100%;'>
 <tr>
-	<th style='width: 15%;  border-right: solid 1px #909090;'>$tr{'time'}</th>
+	<th style='width: 10%;  border-right: solid 1px #909090;'>$tr{'time'}</th>
 	<th style='width: 10%;  border-right: solid 1px #909090;'>$tr{'in'} &raquo; $tr{'out'}</th>
 	<th style='width: 8%;  border-right: solid 1px #909090;'></th>
 	<th style='width: 1%;   '></th>
-	<th style='width: 18%; '>$tr{'source'}</th>
+	<th style='width: 15%; '>$tr{'source'}</th>
 	<th style='width: 2%;   border-right: solid 1px #909090;'></th>
 	<th style='width: 15%; border-right: solid 1px #909090;'>$tr{'src port'}</th>
 	<th style='width: 1%;   '></th>
-	<th style='width: 18%; '>$tr{'destination'}</th>
+	<th style='width: 15%; '>$tr{'destination'}</th>
 	<th style='width: 2%;   border-right: solid 1px #909090;'></th>
 	<th style=' '>$tr{'dst port'}</th>
 </tr>
@@ -449,7 +448,6 @@ END
 		if ($packet =~ /SPT\=(\d+)/) { $srcport = $1; }
 		if ($packet =~ /DPT\=(\d+)/) { $dstport = $1; }
 
-#		my $servi = uc(getservbyport($srcport, $protostrlc));
 		my $servi = $services{"$srcport/$protostrlc"};
 		my ($srcportstr,$dstportstr);
 
@@ -458,8 +456,7 @@ END
 		} else {
 			$srcportstr = $srcport; 
 		}
-
-#		$servi = uc(getservbyport($dstport, $protostrlc));
+		
 		$servi = $services{"$dstport/$protostrlc"};
 
 		if ($servi ne '' && $dstport < 1024) {    

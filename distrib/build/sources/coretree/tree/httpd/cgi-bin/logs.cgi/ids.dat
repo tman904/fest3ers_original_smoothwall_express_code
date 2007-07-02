@@ -233,27 +233,26 @@ print <<END
 END
 ;
 
-if ( $number_of_pages >= 2 ){
+if ( $number_of_pages >= 2 )
+{
 	if ($next != -1) {
 		print "<td style='vertical-align: top; text-align: center;'><a href='/cgi-bin/logs.cgi/ids.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>&lt; Sm</a></td>"; }
 	else {
 		print "<td style='vertical-align: top;text-align: center'>&lt; Sm</td>"; 
 	}
-}
 
-for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
-	my $page = $number_of_pages - int( $i / $viewsize );
-	
-	if ( $page >= $start_page and $page <= $end_page ){
-		if ( $i == $start ){
-			print "<td style='vertical-align: top;text-align: center;'><a class='activemenu' href='/cgi-bin/logs.cgi/ids.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
-		} else {
-			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/ids.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+	for ( my $i = ($lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
+		my $page = $number_of_pages - int( $i / $viewsize );
+		
+		if ( $page >= $start_page and $page <= $end_page ){
+			if ( $i == $start ){
+				print "<td style='vertical-align: top;text-align: center;'><a style='color: red;' href='/cgi-bin/logs.cgi/ids.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+			} else {
+				print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/ids.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>o<br/><span style='color: #c0c0c0;'>$page</span></a></td>"
+			}
 		}
 	}
-}
 
-if ( $number_of_pages >= 2 ){
 	if ($tpage != $number_of_pages) {
 		print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/ids.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{'SOURCE_IP'}'>th &gt;</a></td>"; 
 	} else {
