@@ -321,6 +321,8 @@ sub closepage
 	<br/>
 	</td>
 </tr>
+<tr><td colspan='2' style='background-color: #999999; height: 6px;'></td></tr>
+<tr><td colspan='2' style='background-color: #ffffff; height: 2px;'></td></tr>
 <tr>
 	<td class='footer' colspan='2'>
 	<table class='blank'>

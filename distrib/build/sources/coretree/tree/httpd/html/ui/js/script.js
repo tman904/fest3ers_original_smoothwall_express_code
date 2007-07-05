@@ -21,7 +21,7 @@ function MM_swapImage() {
 }
 
 function displayHelp(url) {
-	window.open("/cgi-bin/help.cgi?"+url,"disposableHelpWindow","resizable=yes,status=no,scrollbars=yes,width=300,height=400");
+	window.open("/cgi-bin/help.cgi?"+url,"disposableHelpWindow","resizable=yes,status=no,scrollbars=yes,width=400,height=500");
 }
 
 /* Validation functions and related options */

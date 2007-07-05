@@ -41,7 +41,7 @@ print <<END
 	</td>
 </tr>
 <tr>
-	<td style='text-align: justify;'>
+	<td style='text-align: justify; font-size: 11px;'>
 END
 ;
 
