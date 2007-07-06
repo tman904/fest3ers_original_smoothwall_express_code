@@ -26,9 +26,7 @@ print <<END
 <tr><td width="50%" align="left" valign="top">
 <center>
 SmoothWall Express $version<br>
-Copyright &copy; 2000 - 2003 the 
-<a href="http://smoothwall.org/team/"
- target="_breakoutWindow">SmoothWall Team</a>
+Copyright &copy; 2000 - 2007 the <a href="http://smoothwall.org/team/" target="_breakoutWindow">SmoothWall Team</a>
 </center>
 <p>
 A full team listing can be found <a href="http://smoothwall.org/team/"

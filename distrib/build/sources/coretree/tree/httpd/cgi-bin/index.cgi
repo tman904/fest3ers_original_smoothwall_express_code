@@ -234,7 +234,12 @@ else
 	my $control = qq {
 	<table style='width: 100%;'>
 	<tr>
-		<td style='text-align: right;'>
+		<td style='text-align: left;'>
+			
+		</td>
+	</tr>
+	<tr>
+		<td style='text-align: left;'>
 <form method='post'>
 	<input type='submit' name='ACTION' value='$tr{'refresh'}'>
 </form>

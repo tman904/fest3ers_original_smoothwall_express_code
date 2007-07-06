@@ -212,7 +212,7 @@ foreach (@machines)
 
 print <<END
 </textarea><br>
-<i>$tr{'enter one ip address or network with netmask address per line'}</i>
+$tr{'enter one ip address or network with netmask address per line'}
 </td>
 </tr>
 </table>

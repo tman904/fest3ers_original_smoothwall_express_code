@@ -775,7 +775,7 @@
 'unable to create backup floppy' => 'Unable to create backup floppy. Verify there is a write-enabled floppy disk in the drive.',
 'backup configuration' => 'Backup configuration',
 'backup floppy instructions' => 'Instructions on creating a backup disk or disk image:',
-'backup floppy instructions long' => 'Please insert a blank, formatted floppy disk in the SmoothWall computer\'s floppy disk drive before pressing the button to create the backup disk.  This disk should  be available when reinstalling or upgrading, in order for the saved configuration to be restored.  It may take up to a minute to write the information to the floppy disk. Alternatively, you may create a floppy disk image file, which you can later write to a floppy disk.',
+'backup floppy instructions long' => 'Please insert a blank, formatted floppy disk in the SmoothWall computer\'s floppy disk drive before pressing the button to create the backup disk.  This disk should  be available when reinstalling or upgrading, in order for the saved configuration to be restored.<br/><br/><strong>Note:</strong>It may take up to a minute to write the information to the floppy disk. Alternatively, you may create a floppy disk image file, which you can later write to a floppy disk.<br/><br/>',
 'backup disk created successfully' => 'Backup disk created successfully.',
 'create backup floppy image file' => 'Create backup floppy image file',
 'unable to create backup floppy image file' => 
