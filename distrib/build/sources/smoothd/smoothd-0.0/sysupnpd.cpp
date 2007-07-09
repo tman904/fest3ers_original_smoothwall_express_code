@@ -76,6 +76,8 @@ int start_upnpd(std::vector<std::string> & parameters, std::string & response)
 	std::vector<std::string> args;
 	ConfigVAR settings("/var/smoothwall/advnet/settings");
 	ConfigVAR netsettings("/var/smoothwall/ethernet/settings");
+	ConfigVAR ownershipsettings("/var/smoothwall/main/ownership");
+	ConfigVAR productdatasettings("/var/smoothwall/main/productdata");
 
 	args.push_back("/usr/sbin/miniupnpd");
 	args.push_back("-f");
@@ -87,6 +89,14 @@ int start_upnpd(std::vector<std::string> & parameters, std::string & response)
 	args.push_back("-U");
 	args.push_back("-w");
 	args.push_back(stringprintf("https://%s:441", netsettings["GREEN_ADDRESS"].c_str()));
+	args.push_back("-m");
+	args.push_back(stringprintf("%s-%s-%s", productdatasettings["VERSION"].c_str(),
+		productdatasettings["REVISION"].c_str(), productdatasettings["ARCH"].c_str()));
+	args.push_back("-s");
+	if (ownershipsettings["ID"] != "")
+		args.push_back(ownershipsettings["ID"]);
+	else
+		args.push_back("0");
 	
 	if (netsettings["GREEN_DEV"] != "")
 	{
@@ -98,11 +108,11 @@ int start_upnpd(std::vector<std::string> & parameters, std::string & response)
 		args.push_back("-a");
 		args.push_back(netsettings["PURPLE_ADDRESS"]);
 	}
-	
+		
 	/* Not an error really. */
 	if (iface.str() == "")
 		goto EXIT;
-
+	
 	if (settings["ENABLE_UPNP"] == "on")
 	{
 		error = simplesecuresystemvector(args);
