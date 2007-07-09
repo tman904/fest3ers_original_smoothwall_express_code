@@ -294,11 +294,13 @@ print qq{
 	<select name='INTERFACE'>
 };
 
-foreach my $colour (sort keys %interfaces) {
-	print "<option value='$colour'>$colour</option>\n"; }
+foreach my $interface (keys %interfaces) {
+	if ($interfaces{$interface} eq '') { next; }
+
+	print "<option value='$interface'>$interface</option>\n"; }
 
 print qq{
-		</select>
+	</select>
 	</td>
 	<td style='width: 25%;'></td>
 	<td style='width: 25%;'></td>
