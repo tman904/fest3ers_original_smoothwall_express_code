@@ -292,8 +292,9 @@
 # registration information
 
 'ssregister'    => 'register',
+'sssmoothwallexpress'    => 'smoothwall express',
 'reg thankyou'  => 'Thank you for registering this SmoothWall Express System.<br/>Your Registration ID is',
-'reg nevermind'  => 'If at any time you would like to register your SmoothWall Express System you can do so, in the meantime we thank you for using our product and hope that you enjoy it.',
+'reg nevermind'  => 'If at any time you would like to register your SmoothWall Express system in a my.SmoothWall account you can do so, in the meantime we thank you for using our product and hope that you enjoy it.',
 'reg title'     => 'Title:',
 'reg title title' => 'Mr, Mrs, Dr, Miss, Dark Overlord etc',
 'reg name'      => 'Name:',
@@ -326,6 +327,11 @@
 'reg about you'  => 'About you',
 'reg about network' => 'About your network',
 'reg please support' => "Please support the SmoothWall GPL project by <a href='/cgi-bin/register.cgi'>registering</a> this SmoothWall Express system.",
+
+# about smoothwall / x3
+'credits_and_legal'	=>	'Credits',
+'x3_reg'		=>	'my.SmoothWall',
+'x3_reg_info'		=>	'Register your SmoothWall Express with my.SmoothWall!<br/><br/>my.SmoothWall is an easy-to-use web-based account that lets you track your SmoothWall Express installations. Other cool stuff about my.SmoothWall:<ul><li>Sign-up for informative Newsletters containing valuable technical tips and the freshest news from the SmoothWall Express world.<li>Query the hardware profile of your SmoothWall Express systems.<li>Fun stuff like the "Top 10 Chart of the most popular CPUs for registered SmoothWall Express systems".</ul>Whats more, by registering before 1st August 2007 you will be automatically entered into a contest to win a unique new iPod Nano signed by the founder of the SmoothWall Express project - Lawrence Manning.',
 
 # index.cgi
 'main page' => 'Main page',
