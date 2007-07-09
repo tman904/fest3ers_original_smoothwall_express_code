@@ -378,6 +378,9 @@ struct nic nics[] = {
 	{ "VIA Networking Velocity Family Gigabit Ethernet", "via-velocity" },
 	{ "Packet Engines G-NIC Ethernet", "yellowfin" },
 	{ "Zenith Z-Note Ethernet", "znet" },
+	{ "Davicom DM9102/DM9102A/DM9102A+DM9801/DM9102A+DM9802 NIC", "dmfe" },
+	{ "DIGITAL DC21x4x DECchip and DE425/DE434/DE435/DE450/DE500", "de4x5" },
+	{ "Winbond W89c840 Ethernet", "winbond-840" },
 	{ NULL, NULL }
 };
 
