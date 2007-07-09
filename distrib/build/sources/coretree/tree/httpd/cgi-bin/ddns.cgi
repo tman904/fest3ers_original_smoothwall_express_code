@@ -41,7 +41,6 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	unless ($cgiparams{'LOGIN'} ne '') { $errormessage = $tr{'username not set'}; }
 	unless ($cgiparams{'PASSWORD'} ne '') { $errormessage = $tr{'password not set'}; }
 	unless ($cgiparams{'PASSWORD'} =~ /^[^\s\"\']*$/) { $errormessage = $tr{'invalid username'}; }
-	unless ($cgiparams{'HOSTNAME'} ne '') { $errormessage = $tr{'hostname not set'}; }
 	unless ($cgiparams{'HOSTNAME'} =~ /^[a-zA-Z_0-9-]+$/) { $errormessage = $tr{'invalid hostname'}; }
 	unless ($cgiparams{'DOMAIN'} ne '') { $errormessage = $tr{'domain not set'}; }
 	unless ($cgiparams{'DOMAIN'} =~ /^[a-zA-Z_0-9.-]+$/) { $errormessage = $tr{'invalid domain name'}; }
@@ -187,7 +186,7 @@ print <<END
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'hostnamec'}</TD>
-	<TD><INPUT TYPE='text' NAME='HOSTNAME' VALUE='$cgiparams{'HOSTNAME'}' id='hostname' @{[jsvalidregex('hostname','^[a-zA-Z_0-9-]+$')]}></TD>
+	<TD><INPUT TYPE='text' NAME='HOSTNAME' VALUE='$cgiparams{'HOSTNAME'}' id='hostname' @{[jsvalidregex('hostname','^[a-zA-Z_0-9-]+$','true')]}></TD>
 	<TD CLASS='base'>$tr{'domainc'}</TD>
 	<TD><INPUT TYPE='text' NAME='DOMAIN' VALUE='$cgiparams{'DOMAIN'}' id='domain' @{[jsvalidregex('domain','^[a-zA-Z_0-9-\.]+$')]}></TD>
 </TR>

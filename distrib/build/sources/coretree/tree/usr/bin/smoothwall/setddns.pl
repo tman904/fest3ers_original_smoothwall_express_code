@@ -91,7 +91,8 @@ if ($ip ne $ipcache)
 
 				my $result = system(@ddnscommand);
 
-				if ( $result != 0) { &log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: failure"); }
+				if ( $result != 0) {
+					&log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: failure"); }
 				else 
 				{
 					&log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: success");
@@ -100,15 +101,18 @@ if ($ip ne $ipcache)
 			}
 			else
 			{
-				if ($settings{'WILDCARDS'} eq 'on') {$settings{'WILDCARDS'} = '-w';}
-				else {$settings{'WILDCARDS'} = '';}
-				my @ddnscommand = ('/usr/bin/ez-ipupdate', '-a', "$ip", '-S', "$settings{'SERVICE'}", '-u', "$settings{'LOGIN'}:$settings{'PASSWORD'}", '-h', "$settings{'HOSTNAME'}.$settings{'DOMAIN'}", "$settings{'WILDCARDS'}", '-q');
-
+				my $host = $settings{'DOMAIN'};
+				if ($settings{'HOSTNAME'}) {
+					$host = "$settings{'HOSTNAME'}.$settings{'DOMAIN'}"; }
+						
+				my @ddnscommand = ('/usr/bin/ez-ipupdate', '-a', "$ip", '-S', "$settings{'SERVICE'}", '-u', "$settings{'LOGIN'}:$settings{'PASSWORD'}", '-h', $host,  '-q');
+				if ($settings{'WILDCARDS'} eq 'on') { push(@ddnscommand, '-w'); } 
 				my $result = system(@ddnscommand);
-				if ( $result != 0) { &log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: failure"); }
+				if ( $result != 0) {
+					&log("Dynamic DNS ip-update for $host: failure"); }
 				else
 				{
-					&log("Dynamic DNS ip-update for $settings{'HOSTNAME'}.$settings{'DOMAIN'}: success");
+					&log("Dynamic DNS ip-update for $host: success");
 					$success++;
 				}
 			}
