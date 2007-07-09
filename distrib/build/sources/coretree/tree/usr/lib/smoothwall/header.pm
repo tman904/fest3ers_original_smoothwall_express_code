@@ -13,7 +13,7 @@ require Exporter;
 our @_validation_items;
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo readvalue writevalue writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items );
+@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo readvalue writevalue writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items getsystemid );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -807,6 +807,13 @@ sub connectedstate {
 		$theconnstate = "idle";
 	}
 	return $theconnstate;
+}
+
+sub getsystemid
+{
+	my %ownership;
+	&readhash("${swroot}/main/ownership", \%ownership);
+	return $ownership{'ID'};
 }
 
 1;
