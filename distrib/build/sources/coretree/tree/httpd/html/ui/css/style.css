@@ -319,6 +319,8 @@ td.footer {
 	height: 28px;
 	font-size: 9px;
 	color: white;
+	background-image: url( '/ui/img/footer.jpg' );
+        background-position: bottom left;
 	background-color: #fed79c;
 }
 
