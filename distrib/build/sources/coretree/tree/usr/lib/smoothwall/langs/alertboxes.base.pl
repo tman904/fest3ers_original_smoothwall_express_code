@@ -58,6 +58,8 @@ other documentation from <a href=\'http://smoothwall.org/docs/\'
 'pop3log.dat'		=> 'Check log for the POP3 Anti-Virus service.',
 'imviewer.cgi'		=> 'View logged IM conversations in realtime.',
 'preferences.cgi'	=> 'Configure the SmoothWall Express User Interface.',
+'bandwidthbars.cgi'	=> 'Shows realtime network bandwidth usage bars.',
+'trafficmonitor.cgi'	=> 'Shows realtime network bandwidth usage graphs.',
 
 );
 

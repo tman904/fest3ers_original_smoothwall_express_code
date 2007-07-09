@@ -319,6 +319,9 @@ function create_graph(tinterface)
 
 &openpage($tr{'network traffic graphs'}, 1, $script, 'about your smoothie');
 &openbigbox('100%', 'LEFT');
+
+&alertbox();
+
 print qq{
 	<style>  
 		.ratet{ display: inline; float: right; position: absolute; border: 1px solid #c0c0c0; margin-left: 320px; width: 60px; font-size: 9px; text-align: right; }

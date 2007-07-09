@@ -17,16 +17,14 @@ my %netsettings;
 &openpage("Realtime bandwidth bars", 1, ' <META HTTP-EQUIV="Refresh" CONTENT="300"> <META HTTP-EQUIV="Cache-Control" content="no-cache"> <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> ', 'about your smoothie');
 &openbigbox('100%', 'LEFT');
 
-use Data::Dumper;
+&alertbox();
 
 my $initial_position = "10";
 my @bars;
 my @bar_names;
 my $oururl = "/cgi-bin/trafficstats.cgi";
 
-
-	my @devices = ( "eth0", "eth1", "eth2", "eth3", "ippp0" , "ppp0" );
-
+my @devices = ( "eth0", "eth1", "eth2", "eth3", "ippp0" , "ppp0" );
 
 &openbox('Bandwidth bars:');
 &realtime_graphs();
