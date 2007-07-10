@@ -56,10 +56,13 @@ foreach(@page)
 	}
 }
 
-$ownership{'NAME'} = $name;
-$ownership{'ADDED_TO_X3'} = $added;
-$ownership{'ADDED_TO_X3_ON'} = $timestamp;
-&writehash("${swroot}/main/ownership", \%ownership);
+if($added)
+{
+	$ownership{'NAME'} = $name;
+	$ownership{'ADDED_TO_X3'} = $added;
+	$ownership{'ADDED_TO_X3_ON'} = $timestamp;
+	&writehash("${swroot}/main/ownership", \%ownership);
+}
 
 if ($found == 1)
 {
