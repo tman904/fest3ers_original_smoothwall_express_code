@@ -3,8 +3,6 @@
 echo "=== BUILD START ==="
 date
 
-NOW=`date +%Y%m%d`
-
 cd /usr/src
 
 cd expresscore/distrib/build
