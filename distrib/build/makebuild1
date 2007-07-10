@@ -14,8 +14,6 @@ LC_ALL=POSIX
 PATH=/tools/bin:/bin:/usr/bin/:/sbin:/usr/sbin
 export PATH LC_ALL
 
-export DNS_SERVER1 DNS_SERVER2
-
 buildenv()
 {
 	docommand "$1" "make -C sources/$1 BUILDENV=$2 clean install"
@@ -23,11 +21,6 @@ buildenv()
 
 rm -f /tools
 (cd ../; ln -s $PWD/tools /)
-
-if [ "$DNS_SERVER1" = "" ]; then
-	echo "DNS servers not configured.  Script aborted."
-	exit
-fi
 
 if [ ! -e "build1done" ]; then
 
@@ -65,5 +58,8 @@ buildenv flex 1
 touch build1done
 
 fi
+
+mkdir -p ../etc
+cp -avR /etc/resolv.conf ../etc/resolv.conf
 
 chroot .. /build/makebuild2

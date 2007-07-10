@@ -6,9 +6,6 @@
 #
 # Top level Makefile for SmoothWall Build system.
 
-# Please set to working nameservers.  DNS_SERVER2 is optional
-DNS_SERVER1 = 192.168.72.1
-
 default:
 	@echo "Please use one of:"
 	@echo
@@ -32,7 +29,7 @@ default:
 	@echo "                  and tools directories."
 
 build:
-	@DNS_SERVER1=$(DNS_SERVER1) DNS_SERVER2=$(DNS_SERVER2) ./makebuild1
+	./makebuild1
 
 predownload:
 	@(cd sources; for I in `find  -type d -maxdepth 3 -mindepth 1`; do \
