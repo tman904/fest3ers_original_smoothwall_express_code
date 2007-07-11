@@ -148,24 +148,34 @@ END
 
 
 &openbox('');
-if(open(LIST, "<${swroot}/banners/available")) {
-	my @images;
-	while ( my $input = <LIST> ){
-		my ( $url, $md5, $link, $alt ) = ( $input =~/([^,]*),([^,]*),([^,]*),(.*)/ );
-	
-		if ( -e "/httpd/html/ui/img/frontpage/$md5.jpg" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.jpg", $md5) == 1 )){
-			push @images, { md5 => $md5, href => $link, alt => $alt };
-		}
-	}
 
-	if ( scalar( @images ) >= 1 ){
-		my $image = $images[rand(scalar(@images))];
-		print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/$image->{'md5'}.jpg' alt='$image->{'alt'}'/></div>";
+my %ownership;
+&readhash( "/var/smoothwall/main/ownership", \%ownership );
+
+if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" ){
+	print "<div style='width: 100%; text-align: center;'><a href='/cgi-bin/register.cgi'><img src='/ui/img/frontpage/frontpage.x3.jpg' alt='SmoothWall Express'/></a></div>";
+} else {
+	if(open(LIST, "<${swroot}/banners/available")) {
+		my @images;
+		while ( my $input = <LIST> ){
+			my ( $url, $md5, $link, $alt ) = ( $input =~/([^,]*),([^,]*),([^,]*),(.*)/ );
+	
+			if ( -e "/httpd/html/ui/img/frontpage/$md5.jpg" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.jpg", $md5) == 1 )){
+				push @images, { md5 => $md5, href => $link, alt => $alt };
+			}
+		}
+
+		if ( scalar( @images ) >= 1 ){
+			my $day = (localtime(time))[6];
+			my $r = ( $day % scalar(@images) );
+			my $image = $images[$r];
+			print "<div style='width: 100%; text-align: center;'><a href='$image->{'href'}'><img src='/ui/img/frontpage/$image->{'md5'}.jpg' alt='$image->{'alt'}'/></a></div>";
+		} else {
+			print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.jpg' alt='SmoothWall Express'/></div>";
+		}
 	} else {
 		print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.jpg' alt='SmoothWall Express'/></div>";
 	}
-} else {
-	print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.jpg' alt='SmoothWall Express'/></div>";
 }
 
 &closebox();

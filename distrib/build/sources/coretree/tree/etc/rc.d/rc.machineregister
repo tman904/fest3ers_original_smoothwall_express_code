@@ -12,3 +12,5 @@ if [ -e "/var/smoothwall/notregistered" ]; then
 else
 	echo "Register: Already registered"		
 fi
+
+/usr/bin/smoothwall/imagerotator.pl

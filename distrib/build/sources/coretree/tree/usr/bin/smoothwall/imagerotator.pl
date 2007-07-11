@@ -12,7 +12,7 @@ my %proxy;
 my $host; my $port;
 unless ($proxy{'SERVER'})
 {
-	$host = 'www.smoothwall.org';
+	$host = 'my.smoothwall.org';
         $port = 80;
 } else {
 	$host = $proxy{'SERVER'};
@@ -24,10 +24,10 @@ my $sock;
 unless ($sock = new IO::Socket::INET (PeerAddr => $host, PeerPort => $port, Proto => 'tcp', Timeout => 5)) {
 	print STDERR "unable to connect\n";
 	$errormessage = $tr{'could not connect to smoothwall org'};
-	return 0;
+	exit 0;
 }
 
-print $sock "GET http://www.smoothwall.org/updates/$version/banners HTTP/1.1\r\nHost: www.smoothwall.org\r\nConnection: close\r\n\r\n";
+print $sock "GET http://my.smoothwall.org/cgi-bin/banners.cgi?version=$version HTTP/1.1\r\nHost: my.smoothwall.org\r\nConnection: close\r\n\r\n";
 
 my $return = '';
 
@@ -54,7 +54,7 @@ unless(open(LIST, "<${swroot}/banners/available")) {
 	die "Could not open available lists database."; 
 }
 
-my %seen = ( 'frontpage' => 'true' );
+my %seen = ( 'frontpage' => 'true', 'frontpage.x3' => 'true' );
 
 while ( my $input = <LIST> ){
 	my ( $url, $md5, $link, $alt ) = ( $input =~/([^,]*),([^,]*),([^,]*),(.*)/ );
