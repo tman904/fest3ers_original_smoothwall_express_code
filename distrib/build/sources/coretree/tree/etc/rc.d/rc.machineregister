@@ -14,3 +14,4 @@ else
 fi
 
 /usr/bin/smoothwall/imagerotator.pl
+/usr/bin/smoothwall/getx3systeminfo.pl
