@@ -12,18 +12,14 @@ use IO::Socket;
 
 &showhttpheaders();
 
+my %ownership;
+&readhash( "/var/smoothwall/main/ownership", \%ownership );
+
 &openpage($tr{'register'}, 1, "", 'register');
 &openbigbox();
 
 my (%settings,$errormessage);
 &getcgihash(\%settings);
-
-my @temp = split('\&',$ENV{'QUERY_STRING'});
-
-foreach my $pair ( @temp ){
-	my ( $var, $val ) = split /=/, $pair;
-	$settings{ $var } = $val;
-}
 
 my ( $reg, $regval );
 if ( open ( $reg, "</var/smoothwall/registered" )){
@@ -41,6 +37,7 @@ if ( $regval ne "" ){
 	register( \%settings );
 } elsif ($settings{'ACTION'} eq $tr{'no thanks'} ){
 	&dont_register();
+	register_page();
 } else {
 	register_page();
 }
@@ -54,19 +51,23 @@ sub dont_register
 {
 	my ( $settings ) = @_;
 	
-	&openbox();
-	
-	print <<END
-	$tr{'reg nevermind'}
-END
-;
-
 	my $reg;
 	if( open ( $reg, ">/var/smoothwall/registered" )){
 		print $reg "";
 		close $reg;
 	}
 
+	$ownership{ 'ADDED_TO_X3' } = -1;
+	&writehash( "/var/smoothwall/main/ownership", \%ownership );
+
+	&openbox();
+	
+	print <<END
+	<span style='color: #00688B;'>
+	$tr{'reg nevermind'}
+	</span>
+END
+;
 	&closebox();
 }
 
@@ -130,17 +131,19 @@ print <<END
 END
 ;
 
-print <<END
-<table class='centered'>
-	<tr>
-		<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'register'}'></td>
-</form>
-<form method='post'>
-		<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'no thanks'}'></td>
-	</tr>
-</table>
+if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" ){
+	print <<END
+	<table class='centered'>
+		<tr>
+			<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'register'}'></td>
+	</form>
+	<form method='post'>
+			<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'no thanks'}'></td>
+		</tr>
+	</table>
 END
 ;
+}
 
 print "</form>\n";
 
