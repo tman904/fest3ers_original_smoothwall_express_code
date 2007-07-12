@@ -62,6 +62,14 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A INPUT -i $RED_DEV -j spoof
 fi
 
+# Setup timed access chains.
+/sbin/iptables -N timedaccess
+/sbin/iptables -N timedaction
+/sbin/iptables -A timedaction -j RETURN
+
+# Apply the time rules to deny the traffic.
+/sbin/iptables -A INPUT -j timedaccess
+
 # localhost and ethernet.
 /sbin/iptables -A INPUT -i lo -j ACCEPT
 /sbin/iptables -A INPUT -i $GREEN_DEV -j ACCEPT
@@ -78,14 +86,9 @@ fi
 /sbin/iptables -A secout -i ipsec0 -j ACCEPT
 /sbin/iptables -A FORWARD -j secout
 
-# Setup timed access chains.
-/sbin/iptables -N timedaccess
-/sbin/iptables -N timedaction
-/sbin/iptables -A timedaction -j RETURN
 
 # block is an INPUT chain.
 /sbin/iptables -N block
-/sbin/iptables -A block -j timedaccess
 
 # Let em through.
 /sbin/iptables -A block -m state --state ESTABLISHED,RELATED -j ACCEPT
