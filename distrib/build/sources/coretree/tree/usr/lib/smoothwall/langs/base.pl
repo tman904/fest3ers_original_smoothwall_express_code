@@ -19,9 +19,9 @@
 'primary dns' => 'Primary DNS:',
 'secondary dns' => 'Secondary DNS:',
 'invalid primary dns' => 'Invalid primary DNS.',
+'invalid secondary dns' => 'Invalid secondary DNS.',
 'invalid username' => 'Invalid username.',
 'invalid password' => 'Invalid password.',
-'invalid secondary dns' => 'Invalid secondary DNS.',
 'dhcp server' => 'DHCP server',
 'username' => 'Username:',
 'password' => 'Password:',
@@ -194,6 +194,11 @@
 'have tooltip' => 'Read the tool tip',
 'static enabledc' => 'Static enabled:',
 'dhcpleasesc' => 'DHCP leases:',
+'primary ntp' => 'Primary NTP:',
+'secondary ntp' => 'Secondary NTP:',
+'invalid primary ntp' => 'Invalid primary NTP.',
+'invalid secondary ntp' => 'Invalid secondary NTP.',
+'cannot specify secondary ntp without specifying primary' => 'Cannot specify secondary NTP without specifying primary.',
 
 # proxy.cgi
 'web proxy configuration' => 'Web proxy configuration',

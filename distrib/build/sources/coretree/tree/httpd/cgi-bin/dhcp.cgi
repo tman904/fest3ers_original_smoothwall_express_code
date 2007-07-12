@@ -127,6 +127,25 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 			goto ERROR;
 		}
 	}
+	if ($dhcpsettings{'NTP1'})
+	{
+		if (!(&validip($dhcpsettings{'NTP1'}))) {
+			$errormessage = $tr{'invalid primary ntp'};
+			goto ERROR;
+		}
+	}
+	if (!($dhcpsettings{'NTP1'}) && $dhcpsettings{'NTP2'})
+	{
+		$errormessage = $tr{'cannot specify secondary ntp without specifying primary'};
+		goto ERROR;
+	}
+	if ($dhcpsettings{'NTP2'})
+	{
+		if (!(&validip($dhcpsettings{'NTP2'}))) {
+			$errormessage = $tr{'invalid secondary ntp'};
+			goto ERROR;
+		}
+	}
 	if (!($dhcpsettings{'WINS1'}) && $dhcpsettings{'WINS2'})
 	{
 		$errormessage = $tr{'cannot specify secondary wins without specifying primary'}; 
@@ -446,9 +465,15 @@ print <<END
 </tr>
 <tr>
 	<td>$tr{'primary dns'}</td>
-	<td><input type='text' name='DNS1' value='$dhcpsettings{'DNS1'}'  id='dns1' @{[jsvalidip('dns1','true')]} ></td>
+	<td><input type='text' name='DNS1' value='$dhcpsettings{'DNS1'}' id='dns1' @{[jsvalidip('dns1','true')]} ></td>
 	<td>$tr{'secondary dns'}</TD>
 	<td><input type='text' name='DNS2' value='$dhcpsettings{'DNS2'}' id='dns2' @{[jsvalidip('dns2','true')]}  ></td>
+</tr>
+<tr>
+	<td>$tr{'primary ntp'}</td>
+	<td><input type='text' name='NTP1' value='$dhcpsettings{'NTP1'}' id='ntp1' @{[jsvalidip('ntp1','true')]} ></td>
+	<td>$tr{'secondary ntp'}</TD>
+	<td><input type='text' name='NTP2' value='$dhcpsettings{'NTP2'}' id='ntp2' @{[jsvalidip('ntp2','true')]}  ></td>
 </tr>
 <tr>
 	<td>$tr{'primary wins'}</td>

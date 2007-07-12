@@ -75,6 +75,14 @@ foreach $subnet ('green', 'purple')
 				print FILE ", $dhcpsettings{'DNS2'}"; }
 			print FILE ";\n";
 		}
+		if ($dhcpsettings{'NTP1'})
+		{
+			print FILE "\toption ntp-servers ";
+			print FILE "$dhcpsettings{'NTP1'}";
+			if ($dhcpsettings{'NTP2'}) {
+				print FILE ", $dhcpsettings{'NTP2'}"; }
+			print FILE ";\n";
+		}
 		if ($dhcpsettings{'WINS1'})
 		{
 			print FILE "\toption netbios-name-servers ";
