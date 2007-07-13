@@ -57,13 +57,12 @@ unless(open(LIST, "<${swroot}/banners/available")) {
 my %seen = ( 'frontpage' => 'true', 'frontpage.x3' => 'true' );
 
 while ( my $input = <LIST> ){
-	my ( $url, $md5, $link, $alt ) = ( $input =~/([^,]*),([^,]*),([^,]*),(.*)/ );
+	my ( $url, $md5, $link, $alt ) = ( $input =~/([^\|]*)\|([^\|]*)\|([^\|]*)\|(.*)/ );
 	
 	$seen{$md5} = 'true';
 
 	if ( !-e "/httpd/html/ui/img/frontpage/$md5.jpg" ){
 		# we need to download this file 
-		print STDERR "getting missing banner\n";
 		my @commands = ( "/usr/bin/wget", "-O", "/httpd/html/ui/img/frontpage/$md5.jpg", "$url" );
 		my ( $status, $pid_out );
 		open(PIPE, '-|') || exec( @commands );
@@ -71,7 +70,6 @@ while ( my $input = <LIST> ){
 			$status .= $_; 
 		}
 		close(PIPE);
-		print STDERR $status;
 	}
 }
 

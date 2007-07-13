@@ -132,20 +132,6 @@ else
 
 &alertbox($errormessage);
 
-my ( $reg, $regval );
-if ( open ( $reg, "</var/smoothwall/registered" )){
-	$regval = <$reg>;
-} else {
-	&openbox();
-	print <<END
-	<div style='width: 100%; text-align: center;'>
-$tr{'reg please support'}
-	</div>
-END
-;
-	&closebox();
-}
-
 
 &openbox('');
 
@@ -153,12 +139,22 @@ my %ownership;
 &readhash( "/var/smoothwall/main/ownership", \%ownership );
 
 if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" ){
+
+	print <<END
+	<div style='width: 100%; text-align: center;'>
+$tr{'reg please support'}
+	</div>
+END
+;
+	&closebox();
+	&openbox();
+
 	print "<div style='width: 100%; text-align: center;'><a href='/cgi-bin/register.cgi'><img src='/ui/img/frontpage/frontpage.x3.jpg' alt='SmoothWall Express'/></a></div>";
 } else {
 	if(open(LIST, "<${swroot}/banners/available")) {
 		my @images;
 		while ( my $input = <LIST> ){
-			my ( $url, $md5, $link, $alt ) = ( $input =~/([^,]*),([^,]*),([^,]*),(.*)/ );
+			my ( $url, $md5, $link, $alt ) = ( $input =~/([^\|]*)\|([^\|]*)\|([^\|]*)\|(.*)/ );
 	
 			if ( -e "/httpd/html/ui/img/frontpage/$md5.jpg" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.jpg", $md5) == 1 )){
 				push @images, { md5 => $md5, href => $link, alt => $alt };

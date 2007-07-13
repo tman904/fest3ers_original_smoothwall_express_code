@@ -332,7 +332,7 @@ sub closepage
 		</td>
 		<td style='text-align: right;'>
 		    	&copy; 2000 - 2007 <a href='http://smoothwall.org/team/'>The SmoothWall Team</a><br/>
-			<a href='/cgi-bin/credits.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://smoothwall.org/sources.html'>original authors</a>
+			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://smoothwall.org/sources.html'>original authors</a>
 		</td>
 	</tr>
 	</table>

@@ -10,36 +10,23 @@ use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use IO::Socket;
 
-&showhttpheaders();
-
 my %ownership;
 &readhash( "/var/smoothwall/main/ownership", \%ownership );
-
-&openpage($tr{'register'}, 1, "", 'register');
-&openbigbox();
 
 my (%settings,$errormessage);
 &getcgihash(\%settings);
 
-my ( $reg, $regval );
-if ( open ( $reg, "</var/smoothwall/registered" )){
-	$regval = <$reg>;
-}
-
 my $sysid = &getsystemid();
 
-if ( $regval ne "" ){
-	&openbox();
-	print $regval;
-	&closebox();
-	close $reg;
-} elsif ($settings{'ACTION'} eq $tr{'register'} ){
-	register( \%settings );
-} elsif ($settings{'ACTION'} eq $tr{'no thanks'} ){
+if ($settings{'ACTION'} eq $tr{'no thanks'} ){
 	&dont_register();
-	register_page();
+	print "Status: 302 Moved\nLocation: /cgi-bin/index.cgi\n\n";
+	exit(0);
 } else {
-	register_page();
+	&showhttpheaders();
+	&openpage($tr{'register title'}, 1, "", 'register');
+	&openbigbox();
+	&register_page();
 }
 
 &alertbox($errormessage);
@@ -51,52 +38,14 @@ sub dont_register
 {
 	my ( $settings ) = @_;
 	
-	my $reg;
-	if( open ( $reg, ">/var/smoothwall/registered" )){
-		print $reg "";
-		close $reg;
-	}
-
 	$ownership{ 'ADDED_TO_X3' } = -1;
 	&writehash( "/var/smoothwall/main/ownership", \%ownership );
-
-	&openbox();
-	
-	print <<END
-	<span style='color: #00688B;'>
-	$tr{'reg nevermind'}
-	</span>
-END
-;
-	&closebox();
 }
-
-sub register
-{
-	my ( $settings ) = @_;
-	
-	&openbox();
-	
-	print <<END
-	
-	$tr{'reg thankyou'}; <strong>$settings->{'id'}</strong>
-END
-;
-
-	my $reg;
-	if( open ( $reg, ">/var/smoothwall/registered" )){
-		print $reg "$tr{'reg thankyou'}; <strong>$settings->{'id'}</strong>\n";
-		close $reg;
-	}
-
-	&closebox();
-}
-
 
 sub register_page
 {
 
-&openbox('');
+	&openbox();
 
 print <<END
 <div align="center"><h2>SmoothWall Express $version</h2>
@@ -105,24 +54,18 @@ print <<END
 END
 ;
 
-&closebox();
+	&closebox();
 
 # START x3 add bit
 #print "<form method='post'>\n";
-print <<END
-<form method='post' action='https://my.smoothwall.org/cgi-bin/signin.cgi'>
-<input type="hidden" name=id value=$sysid>
-END
-;
-
-&openbox( $tr{'x3_reg'} );
+&openbox( $tr{'x3 reg'} );
 
 print <<END
 <table class='centered'>
 	<tr>
 		<td colspan='2'>
 			<br/>
-			$tr{'x3_reg_info'}
+			$tr{'x3 reg info'}
 			<br/>
 			<br/>
 		</td>
@@ -135,10 +78,23 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" )
 	print <<END
 	<table class='centered'>
 		<tr>
+	<form method='post' action='https://my.smoothwall.org/cgi-bin/signin.cgi' target='_new'>
+	<input type="hidden" name=id value=$sysid>
 			<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'register'}'></td>
 	</form>
+END
+;
+
+	if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "-1" ){
+		print <<END
 	<form method='post'>
 			<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'no thanks'}'></td>
+	</form>
+END
+;
+	}
+
+print <<END
 		</tr>
 	</table>
 END
@@ -150,7 +106,7 @@ print "</form>\n";
 &closebox();
 # END x3 add bit
 
-&openbox( $tr{'credits_and_legal'} );
+&openbox( $tr{'credits and legal'} );
 
 print <<END
 <div align="center">
