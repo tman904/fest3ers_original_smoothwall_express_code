@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = ethtool
-VERSION = 1.8
+VERSION = 5
 
 BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/gkernel/
 
