@@ -231,11 +231,13 @@ sub displaytable
 			$url =~s/\[%ORD%\]/$tr{'log ascending'}/;
 		}
 
-		print qq {
-			<th$span class='$class' style='$style'>
-				<a href="$url">$column->{'title'}$arrow</a>
-			</th>
-		};
+		if ( not defined $column->{'colour'} ){
+			print qq {
+				<th$span class='$class' style='$style'>
+					<a href="$url">$column->{'title'}$arrow</a>
+				</th>
+			};
+		}
 
 		$style = "";
 
