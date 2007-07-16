@@ -14,6 +14,6 @@
     notifempty
     missingok
     postrotate
-      /usr/local/squid/bin/squid -k rotate
+      /usr/sbin/squid -k rotate
     endscript
 }

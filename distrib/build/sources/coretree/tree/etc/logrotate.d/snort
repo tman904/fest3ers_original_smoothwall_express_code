@@ -16,6 +16,6 @@
 # hup snort
     postrotate
       /usr/bin/find /var/log/snort -name "[0-9]*" -mtime +7 | xargs /bin/rm -rf
-      /usr/local/bin/restartsnort
+      /usr/bin/smoothcom snortrestart
     endscript
 }
