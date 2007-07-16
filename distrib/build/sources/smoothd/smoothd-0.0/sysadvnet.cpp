@@ -67,7 +67,7 @@ int set_advnet(std::vector<std::string> & parameters, std::string & response)
 	if (settings["ENABLE_NOIGMP"] == "on")
 		ipb.push_back("iptables -A advnet -p igmp -j DROP");
 	
-	if (settings["EABLE_NOMULTICAST"] == "on")
+	if (settings["ENABLE_NOMULTICAST"] == "on")
 		ipb.push_back("iptables -A advnet -d 224.0.0.0/4 -j DROP");
 
 	ipb.push_back("iptables -F badtraffic");
