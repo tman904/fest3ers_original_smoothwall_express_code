@@ -25,6 +25,12 @@ echo 9000 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_established
 /sbin/iptables -P FORWARD DROP
 /sbin/iptables -P OUTPUT ACCEPT
 
+/sbin/iptables -t nat -F
+/sbin/iptables -t nat -X
+
+/sbin/iptables -t mangle -F
+/sbin/iptables -t mangle -X
+
 # IP blocker
 /sbin/iptables -N ipblock
 /sbin/iptables -A INPUT -i ppp0 -j ipblock
