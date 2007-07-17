@@ -21,6 +21,8 @@ unlink "${swroot}/dhcp/enable";
 open(FILE, ">/${swroot}/dhcp/dhcpd.conf") or die "Unable to write dhcpd.conf file";
 flock(FILE, 2);
 
+print FILE "authoritative;\n";
+
 &readhash("${swroot}/dhcp/global", \%dhcpsettings);
 
 if ($dhcpsettings{'BOOT_ENABLE'} eq 'on' && $dhcpsettings{'BOOT_SERVER'} &&

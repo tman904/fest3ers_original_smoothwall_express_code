@@ -27,6 +27,11 @@ proxy, you will probably want to leave the default alone and set the Primary
 DNS server to the SmoothWall box's IP address. If you run a local DNS server
 and want your desktops to use it, set the Secondary DNS to its address.</P>
 
+<P>The two NTP servers' addresses specify which NTP servers the
+SmoothWall DHCP server should tell its clients to use. This can be used
+to configure the network hosts to time-sync with the SmoothWall's (or other
+server's) system time.</P>
+
 <P>The two WINS servers' addresses, likewise, specify what WINS servers the
 SmoothWall DHCP server should tell its clients to use. This is often not
 required on very small Windows networks. You can assign primary and
