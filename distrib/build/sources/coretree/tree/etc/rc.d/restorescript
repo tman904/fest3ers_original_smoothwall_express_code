@@ -37,6 +37,7 @@ elsif ($backupversion =~ /^2.0/)
 	&migrateids();
 	&migrateproxy();
 	&migrateremote();
+	&fixpermissions();
 }
 else
 {
@@ -102,4 +103,12 @@ sub migrateremote
 {
 	unlink("${swroot}/remote/inetd.conf");
 	unlink("${swroot}/remote/enablessh");
+}
+
+# Fixes perms so files are owned by nobody.
+sub fixpermissions
+{
+	system('/bin/chown', 'nobody:nobody', '-R', "${swroot}/isdn",
+		"${swroot}/dhcp", "${swroot}/adsl", "${swroot}/ethernet",
+		"${swroot}/main");
 }
