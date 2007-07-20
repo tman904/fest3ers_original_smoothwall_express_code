@@ -46,7 +46,7 @@ int handlehostname(void)
 			strcpy(hostname, values[0]);
 			if (!(strlen(hostname)))
 				errorbox(ctr[TR_HOSTNAME_CANNOT_BE_EMPTY]);
-			else if (strchr(hostname, ' '))
+			else if (strspn(hostname, LETTERS_NUMBERS "-.") != strlen(hostname))
 				errorbox(ctr[TR_HOSTNAME_CANNOT_CONTAIN_SPACES]);
 			else
 			{			

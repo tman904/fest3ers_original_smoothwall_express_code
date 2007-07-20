@@ -373,7 +373,7 @@ char *english_tr[] = {
 /* TR_HOSTNAME_CANNOT_BE_EMPTY */
 "Hostname cannot be empty.",
 /* TR_HOSTNAME_CANNOT_CONTAIN_SPACES */
-"Hostname cannot contain spaces.",
+"Hostname cannot contain spaces or punctuation other then dots (.) and hyphens (-).",
 /* TR_UNABLE_TO_WRITE_ETC_HOSTNAME */
 "Unable to write /etc/hostname",
 
