@@ -235,7 +235,7 @@ int firstmenu(void)
 	snprintf(message, 1000, ctr[TR_CURRENT_CONFIG], configtypenames[x],
 		networkrestart);
 	rc = newtWinMenu(ctr[TR_NETWORK_CONFIGURATION_MENU], message, 50, 5, 5, 6,
-			sections, &choice, ctr[TR_OK], ctr[TR_DONE], NULL);
+		sections, &choice, ctr[TR_OK], ctr[TR_DONE], NULL);
 
 	if (rc == 0 || rc == 1)
 		result = choice + 1;
@@ -267,11 +267,12 @@ int configtypemenu(void)
 
 	if (rc == 0 || rc == 1)
 	{
-		runcommandwithstatus("/etc/rc.d/rc.netaddress.down NOTGREEN",
+		runcommandwithstatus("/etc/rc.d/rc.netaddress.down",
 			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
 	
 		sprintf(temp, "%d", choice);
 		replacekeyvalue(kv, "CONFIG_TYPE", temp);
+		replacekeyvalue(kv, "GREEN_DEV", "");
 		replacekeyvalue(kv, "ORANGE_DEV", "");
 		replacekeyvalue(kv, "PURPLE_DEV", "");
 		replacekeyvalue(kv, "RED_DEV", "");
@@ -306,7 +307,7 @@ int drivermenu(void)
 
 	strcpy(message, ctr[TR_CONFIGURE_NETWORK_DRIVERS]);
 	
-	/* This horrible big formats the heading :( */
+	/* This horrible bit formats the heading :( */
 	strcpy(driver, "");
 	findkey(kv, "GREEN_DISPLAYDRIVER", driver);
 	findnicdescription(driver, temp);
