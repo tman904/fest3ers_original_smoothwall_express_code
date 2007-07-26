@@ -3,9 +3,9 @@ The CDROM image is published by and is the Copyright of the SmoothWall
 Open Source Team, and of the original authors of its component parts.  
 It is distributed under the GNU GPL, which is in LICENSE.txt on the CD.
 
-  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  BETA  
-
-                     SmoothWall Express 3.0 "Degu" SP2
+RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1 RC1
+ 
+                       SmoothWall Express 3.0 "Sammy"
 
                               W A R N I N G !
  * The installation process will delete all existing partitions and data *

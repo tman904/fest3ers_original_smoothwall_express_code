@@ -4,13 +4,13 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-BASENAME = express-3.0-degu
+BASENAME = express-3.0-sammy
 
 PRODUCT_NAME = Express
 PRODUCT_VERSION = 3.0
 
-PRODUCT_EXTRA = -sp2
+PRODUCT_EXTRA =
 
 UI_VERSION = 3.0
 FIXES_NUMBER = 0
-REVISION = degu
+REVISION = sammy

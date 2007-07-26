@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	ctr = english_tr;
 	strcpy(shortlangname, "en");
 			
-	newtDrawRootText(0, 0, "BETA            SmoothWall Express 3.0 -- http://smoothwall.org/");
+	newtDrawRootText(0, 0, "RC1             SmoothWall Express 3.0 -- http://smoothwall.org/");
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 
 	newtWinMessage(TITLE, ctr[TR_OK], ctr[TR_WELCOME]);
