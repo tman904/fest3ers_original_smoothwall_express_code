@@ -32,7 +32,7 @@ build:
 	./makebuild1
 
 predownload:
-	@(cd sources; for I in `find  -type d -maxdepth 3 -mindepth 1`; do \
+	@(cd sources; for I in `find -maxdepth 3 -mindepth 1 -type d`; do \
 		if [ "$$I" != "./CVS" ]; then \
 			make -C $$I BUILDENV=1 -n download >/dev/null 2>/dev/null; \
 			if [ $$? -eq 0 ]; then \
@@ -47,7 +47,7 @@ predownload:
 
 packageinfos.html:
 	@echo "<ul>" >/tmp/packageinfo.html
-	-(cd sources; for I in `find -type d -maxdepth 1 -mindepth 1`; do \
+	-(cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d`; do \
 		if [ "$$I" != "CVS" ]; then \
 			make -C $$I packageinfo.html; \
 		fi \
@@ -62,7 +62,7 @@ clean-target:
 	@rm -rf target/*
 	
 clean-sources:
-	@(cd sources; for I in `find -type d -maxdepth 1 -mindepth 1`; do \
+	@(cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d`; do \
 		if [ "$$I" != "CVS" ]; then \
 			make -C $$I clean; \
 		fi \
