@@ -341,6 +341,8 @@
 'there are updates' => 'There are updates available for your system. Please go to the "Updates" section for more information.',
 'updates is old1' => 'Your update file is ',
 'updates is old2' => ' old. We recommend you update it on the "Updates" page.',
+'missing installation id' => 'Your system has not managed to retrieve an Installation ID yet,  SmoothWall systems usually receive a system ID after connecting to the internet for the first time.  This process is only done once and is completely anonymous.   To prompt your Smoothie into retrieving a system ID please press the following button.',
+'get system id' => 'Get SystemID',
 
 # pppsetup.cgi
 'profile name not given' => 'Profile name not given.',

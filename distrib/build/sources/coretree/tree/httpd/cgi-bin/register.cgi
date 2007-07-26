@@ -79,7 +79,7 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" )
 	<table class='centered'>
 		<tr>
 	<form method='post' action='https://my.smoothwall.org/cgi-bin/signin.cgi' target='_new'>
-	<input type="hidden" name=id value=$sysid>
+	<input type="hidden" name=id value='$sysid'>
 			<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'register'}'></td>
 	</form>
 END

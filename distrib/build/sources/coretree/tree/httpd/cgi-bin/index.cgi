@@ -16,13 +16,28 @@ my %netsettings;
 
 my $locks = scalar(glob("/var/run/ppp-*.pid"));
 
+my $cgiparams;
+
 &showhttpheaders();
+
+&getcgihash(\%cgiparams);
 
 $pppsettings{'VALID'} = '';
 $pppsettings{'PROFILENAME'} = 'None';
 &readhash("${swroot}/ppp/settings", \%pppsettings);
 &readhash("${swroot}/modem/settings", \%modemsettings);
 &readhash("${swroot}/ethernet/settings", \%netsettings);
+
+if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'get system id'} ){
+	if ( -e "/var/smoothwall/notregistered" ) {
+        	system( '/usr/bin/smoothwall/machine_reg.pl');
+		if ( $? eq 0 ){
+                	unlink "/var/smoothwall/notregistered";
+		} else {
+               		# Register: Failed :(
+               	}
+	}
+}
 
 if ($pppsettings{'COMPORT'} =~ /^tty/)
 {
@@ -132,21 +147,19 @@ else
 
 &alertbox($errormessage);
 
-
-&openbox('');
-
 my %ownership;
 &readhash( "/var/smoothwall/main/ownership", \%ownership );
 
-if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" ){
-
-	print <<END
-	<div style='width: 100%; text-align: center;'>
-$tr{'reg please support'}
-	</div>
-END
-;
+if ( (-e "/var/smoothwall/notregistered" or ( not defined $ownership{'ID'} or $ownership{'ID'} eq "" )) and -e "/var/smoothwall/red/active"){
+	&openbox('');
+	print qq{
+		<div style='width: 100%; text-align: justify;'>$tr{'missing installation id'}<br/><br/></div>
+		<div style='width: 100%; text-align: center;'><form method='post'><input type='submit' name='ACTION' value='$tr{'get system id'}'></form></div>
+	};
 	&closebox();
+}
+
+if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" ){
 	&openbox();
 
 	print "<div style='width: 100%; text-align: center;'><a href='/cgi-bin/register.cgi'><img src='/ui/img/frontpage/frontpage.x3.jpg' alt='SmoothWall Express'/></a></div>";
