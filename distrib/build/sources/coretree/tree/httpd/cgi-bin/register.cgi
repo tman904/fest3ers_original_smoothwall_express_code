@@ -58,13 +58,13 @@ END
 
 # START x3 add bit
 #print "<form method='post'>\n";
-&openbox( $tr{'x3 reg'} );
+&openbox();
 
 print <<END
 <table class='centered'>
 	<tr>
 		<td colspan='2'>
-			<br/>
+			<a href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.x3.jpg' title='my.SmoothWall'/></a>
 			$tr{'x3 reg info'}
 			<br/>
 			<br/>

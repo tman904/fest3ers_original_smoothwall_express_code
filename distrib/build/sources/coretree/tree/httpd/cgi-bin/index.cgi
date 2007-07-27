@@ -163,7 +163,10 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" )
 	&openbox();
 
 	print "<div style='width: 100%; text-align: center;'><a href='/cgi-bin/register.cgi'><img src='/ui/img/frontpage/frontpage.x3.jpg' alt='SmoothWall Express'/></a></div>";
+	&closebox();
 } else {
+
+	&openbox();
 	if(open(LIST, "<${swroot}/banners/available")) {
 		my @images;
 		while ( my $input = <LIST> ){
@@ -185,9 +188,9 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" )
 	} else {
 		print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.jpg' alt='SmoothWall Express'/></div>";
 	}
-}
 
-&closebox();
+	&closebox();
+}
 
 
 &openbox('');
