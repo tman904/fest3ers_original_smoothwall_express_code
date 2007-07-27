@@ -9,10 +9,8 @@
 'index.cgi' => '
 Welcome to <strong>SmoothWall Express</strong> ' . $version . '<br>
 This is your gateway to configuring and administering your SmoothWall
-firewall.  Please make sure you read the Administration Guide before
-reconfiguring your SmoothWall &mdash; the guide is available with our
-other documentation from <a href=\'http://smoothwall.org/docs/\'
- title=\'smoothwall.org - external link\'>our website</a>.
+firewall.  Further information on your SmoothWall Express is available from <a href=\'http://www.smoothwall.org/\'
+ title=\'www.smoothwall.org - external link\'>our website</a>.
 ',
 
 'credits.cgi' 		=> 'SmoothWall Express' . $tr{'version'} . ' ' . $version . '-' . $revision . ' ' . $webuirevision,

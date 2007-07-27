@@ -297,7 +297,7 @@
 # registration information
 
 'ssregister'    => 'register',
-'sssmoothwallexpress' => 'smoothwall express',
+'sssmoothwallexpress' => 'my smoothwall',
 'register title'      => 'Register and Credits',
 'no thanks'	      => 'No thanks',
 'register'            => 'Register',
@@ -305,7 +305,7 @@
 # about smoothwall / x3
 'credits and legal'	=>	'Credits:',
 'x3 reg'		=>	'Register:',
-'x3 reg info'		=>	'Register your copy of SmoothWall Express and create your own MySmoothWall profile.<br/><br/>A MySmoothWall profile gives you access to:<ul><li>Email notifications (updates & patches)</li><li>Express user manual (downloadable) </li><li>Express newsletters, competitions and other announcements</li><li>Fun stuff, themes and much more</li></ul><div style="width: 100%; text-align: center;">Visit <a target="_new" href="https://my.smoothwall.org">MySmoothWall</a> for more information.</div>',
+'x3 reg info'		=>	'Register your copy of SmoothWall Express and create your own my.SmoothWall profile.<br/><br/>A my.SmoothWall profile gives you access to:<ul><li>Email notifications (updates & patches)</li><li>Express user manual (downloadable) </li><li>Express newsletters, competitions and other announcements</li><li>Fun stuff, themes and much more</li></ul><div style="width: 100%; text-align: center;">Visit <a target="_new" href="https://my.smoothwall.org">my.SmoothWall</a> for more information.</div>',
 
 # index.cgi
 'main page' => 'Main page',

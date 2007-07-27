@@ -19,7 +19,7 @@ my (%settings,$errormessage);
 my $sysid = &getsystemid();
 
 if ($settings{'ACTION'} eq $tr{'no thanks'} ){
-	&dont_register();
+	#&dont_register();
 	print "Status: 302 Moved\nLocation: /cgi-bin/index.cgi\n\n";
 	exit(0);
 } else {
