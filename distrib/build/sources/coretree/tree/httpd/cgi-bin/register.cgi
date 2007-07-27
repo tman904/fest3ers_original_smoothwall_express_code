@@ -60,21 +60,21 @@ END
 #print "<form method='post'>\n";
 &openbox();
 
-print <<END
-<table class='centered'>
+if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" ){
+	print <<END
+	<table class='centered'>
 	<tr>
-		<td colspan='2'>
+		<td>
 			<a href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.x3.jpg' title='my.SmoothWall'/></a>
 			$tr{'x3 reg info'}
 			<br/>
 			<br/>
 		</td>
 	</tr>
-</table>
+	</table>
 END
 ;
 
-if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" ){
 	print <<END
 	<table class='centered'>
 		<tr>
@@ -99,7 +99,20 @@ print <<END
 	</table>
 END
 ;
+} else {
+	print <<END
+<table class='centered'>
+	<tr>
+		<td>
+			<a href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.jpg' title='my.SmoothWall'/></a>
+			<br/>
+		</td>
+	</tr>
+</table>
+END
+;
 }
+
 
 print "</form>\n";
 
