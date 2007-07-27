@@ -26,10 +26,10 @@ if ($settings{'ACTION'} eq $tr{'no thanks'} ){
 	&showhttpheaders();
 	&openpage($tr{'register title'}, 1, "", 'register');
 	&openbigbox();
+	&alertbox($errormessage);
 	&register_page();
 }
 
-&alertbox($errormessage);
 
 &closebigbox();
 &closepage();
@@ -66,6 +66,17 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" )
 	<tr>
 		<td>
 			<a href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.x3.jpg' title='my.SmoothWall'/></a>
+</td>
+</table>
+END
+;
+&closebox();
+
+&openbox();
+	print <<END
+	<table class='centered'>
+	<tr>
+		<td>
 			$tr{'x3 reg info'}
 			<br/>
 			<br/>
@@ -119,9 +130,10 @@ print "</form>\n";
 &closebox();
 # END x3 add bit
 
-&openbox( $tr{'credits and legal'} );
+&openbox();
 
 print <<END
+<br>
 <div align="center">
 <table border="0" cellpadding="3" cellspacing="0" width="90%">
 

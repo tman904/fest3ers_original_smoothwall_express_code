@@ -58,6 +58,7 @@ firewall.  Further information on your SmoothWall Express is available from <a h
 'preferences.cgi'	=> 'Configure the SmoothWall Express User Interface.',
 'bandwidthbars.cgi'	=> 'Shows realtime network bandwidth usage bars.',
 'trafficmonitor.cgi'	=> 'Shows realtime network bandwidth usage graphs.',
+'register.cgi'		=> 'Shows information about your SmoothWall Express system.',
 
 );
 
