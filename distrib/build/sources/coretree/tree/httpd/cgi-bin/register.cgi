@@ -18,6 +18,17 @@ my (%settings,$errormessage);
 
 my $sysid = &getsystemid();
 
+if ( defined $settings{'ACTION'} and $settings{'ACTION'} eq $tr{'get system id'} ){
+	if ( -e "/var/smoothwall/notregistered" ) {
+        	system( '/usr/bin/smoothwall/machine_reg.pl');
+		if ( $? eq 0 ){
+                	unlink "/var/smoothwall/notregistered";
+		} else {
+               		# Register: Failed :(
+               	}
+	}
+}
+
 if ($settings{'ACTION'} eq $tr{'no thanks'} ){
 	#&dont_register();
 	print "Status: 302 Moved\nLocation: /cgi-bin/index.cgi\n\n";
@@ -65,7 +76,7 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" )
 	<table class='centered'>
 	<tr>
 		<td>
-			<a href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.x3.jpg' title='my.SmoothWall'/></a>
+			<a target='_new' href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.x3.jpg' title='my.SmoothWall'/></a>
 </td>
 </table>
 END
@@ -86,7 +97,13 @@ END
 END
 ;
 
-	print <<END
+	if ( (-e "/var/smoothwall/notregistered" or ( not defined $ownership{'ID'} or $ownership{'ID'} eq "" )) and -e "/var/smoothwall/red/active"){
+		print qq{
+			<div style='width: 100%; text-align: justify;'>$tr{'missing installation id'}<br/><br/></div>
+			<div style='width: 100%; text-align: center;'><form method='post'><input type='submit' name='ACTION' value='$tr{'get system id'}'></form></div>
+		};
+	} else {
+		print <<END
 	<table class='centered'>
 		<tr>
 	<form method='post' action='https://my.smoothwall.org/cgi-bin/signin.cgi' target='_new'>
@@ -96,26 +113,27 @@ END
 END
 ;
 
-	if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "-1" ){
-		print <<END
+		if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "-1" ){
+			print <<END
 	<form method='post'>
 			<td style='text-align: center;'><input name="ACTION" type='submit' value='$tr{'no thanks'}'></td>
 	</form>
 END
 ;
-	}
+		}
 
-print <<END
+	print <<END
 		</tr>
 	</table>
 END
 ;
+	}
 } else {
 	print <<END
 <table class='centered'>
 	<tr>
 		<td>
-			<a href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.jpg' title='my.SmoothWall'/></a>
+			<a target='_new' href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.jpg' title='my.SmoothWall'/></a>
 			<br/>
 		</td>
 	</tr>

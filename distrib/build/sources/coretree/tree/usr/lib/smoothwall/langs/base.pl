@@ -305,7 +305,7 @@
 # about smoothwall / x3
 'credits and legal'	=>	'Credits:',
 'x3 reg'		=>	'Register:',
-'x3 reg info'		=>	'Register your copy of SmoothWall Express and create your own my.SmoothWall profile.<br/><br/>A my.SmoothWall profile gives you access to:<ul><li>Email notifications (updates & patches)</li><li>Express user manual (downloadable) </li><li>Express newsletters, competitions and other announcements</li><li>Fun stuff, themes and much more</li></ul><div style="width: 100%; text-align: center;">Visit <a target="_new" href="https://my.smoothwall.org">my.SmoothWall</a> for more information.</div>',
+'x3 reg info'		=>	'Register your copy of SmoothWall Express and create your own my.SmoothWall profile.<br/><br/>A my.SmoothWall profile gives you access to:<ul><li>Email notifications (updates & patches)</li><li>Express user manual (downloadable) </li><li>Express newsletters, competitions and other announcements</li><li>Fun stuff, themes and much more</li></ul><div style="width: 100%; text-align: center;">Visit <a target="_new" href="https://my.smoothwall.org">my.SmoothWall</a> for more information.</div><br/><br/>Note:  After registering your SmoothWall system it can take a while for the registration process to update the SmoothWall Express System.  To prompt the SmoothWall System to acknowledge the registration it may be neccesary to disconnect from and reconnect to the Internet.',
 
 # index.cgi
 'main page' => 'Main page',
@@ -341,7 +341,7 @@
 'there are updates' => 'There are updates available for your system. Please go to the "Updates" section for more information.',
 'updates is old1' => 'Your update file is ',
 'updates is old2' => ' old. We recommend you update it on the "Updates" page.',
-'missing installation id' => 'Your system has not managed to retrieve an Installation ID yet,  SmoothWall systems usually receive a system ID after connecting to the internet for the first time.  This process is only done once and is completely anonymous.   To prompt your Smoothie into retrieving a system ID please press the following button.',
+'missing installation id' => 'This SmoothWall system has as yet not managed to retrieve an Installation ID.  SmoothWall systems usually receive a system ID after connecting to the internet for the first time.  This process is done once and is completely anonymous.   To prompt the system into retrieving a system ID press the get SystemID button.',
 'get system id' => 'Get SystemID',
 
 # pppsetup.cgi
