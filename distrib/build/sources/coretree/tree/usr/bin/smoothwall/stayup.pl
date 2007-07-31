@@ -17,7 +17,7 @@ else
 	{
 		system('/usr/bin/logger', '-t', 'smoothwall', "Connection still not up; rebooting.");
 		&resetcount();
-		system('/usr/bin/smoothcom', 'systemrestart', 'now');
+		system('/usr/bin/smoothcom', 'systemrestart');
 	}
 }
 
