@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = pciutils
-VERSION = 2.1.11
+VERSION = 2.2.6
 
 BASE_URL = ftp://ftp.kernel.org/pub/software/utils/pciutils/
 
@@ -19,7 +19,7 @@ configure: $(DIR)/
 	@true
 
 compile: configure
-	@make -C $(COMPILE_DIR) PREFIX=/$(PKG_DIR)
+	@make -C $(COMPILE_DIR) PREFIX=/$(PKG_DIR) ZLIB=no
 
 install: compile
 	@make -C $(COMPILE_DIR) PREFIX=$(PKG_ROOT)/$(PKG_DIR) install
