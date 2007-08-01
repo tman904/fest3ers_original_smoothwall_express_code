@@ -112,6 +112,11 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'add'} )
 		unless (defined $success) {
 			$errormessage = $tr{'smoothd failure'}; }
 	}
+
+	$cgiparams{'INTERFACE'} = "GREEN";
+	$cgiparams{'RULEENABLED'} = "on";
+	$cgiparams{'RULECOMMENT'} = "";
+
 }
 
 my $service = 'user';
@@ -163,6 +168,9 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'edit'} or
 			$errormessage = $tr{'smoothd failure'}; }		
 	}
 }
+
+$selected{'EDIT'}{$cgiparams{'INTERFACE'}} = " selected";
+
 
 if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{'add'} )
 {
@@ -227,8 +235,7 @@ if ( defined $cgiparams{'MACHINEACTION'} and $cgiparams{'MACHINEACTION'} eq $tr{
 				my @temp = split(/\,/,$line);
 				$cgiparams{'MACHINE'} = $temp[0];
 				$cgiparams{'MACHINEENABLED'} = $temp[1];
-				$cgiparams{'MACHINECOMMENT'} = $temp[3];
-				$service = $temp[2];
+				$cgiparams{'MACHINECOMMENT'} = $temp[2];
 			}
 		}
 		close(FILE);
@@ -297,7 +304,8 @@ print qq{
 foreach my $interface (keys %interfaces) {
 	if ($interfaces{$interface} eq '') { next; }
 
-	print "<option value='$interface'>$interface</option>\n"; }
+	print "<option value='$interface' $selected{'EDIT'}{$interface}>$interface</option>\n"; 
+}
 
 print qq{
 	</select>
