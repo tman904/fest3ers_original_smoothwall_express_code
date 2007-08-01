@@ -379,12 +379,12 @@ sub iptables {
 # clearing out traffic
 sub removetraffic {
 	for(qw/postrouting forward output/) {
-		iptables("-F traffic$_ 2>/dev/null");
+		iptables("-F traffic$_");
 	}
 	for my $if ($external_interface) {
 		for my $dir (qw/up dn/) { 
-			iptables("-F ${if}-${dir}-traf-tot 2>/dev/null");
-			iptables("-X ${if}-${dir}-traf-tot 2>/dev/null");
+			iptables("-F ${if}-${dir}-traf-tot");
+			iptables("-X ${if}-${dir}-traf-tot");
 		}
 		# and axe the qdiscs
 		system(split(/\s+/,"/usr/sbin/tc qdisc del root dev $if"));
