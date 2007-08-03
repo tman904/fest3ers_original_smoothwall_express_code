@@ -45,7 +45,8 @@ download:
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
 	(cd linux-$(KERNEL_VER); \
-	patch -p1 <../../kernel-patches/sata_via-vt8237a.patch)
+	patch -p1 <../../kernel-patches/sata_via-vt8237a.patch; \
+	patch -p1 <../../kernel-patches/ahci-devices.patch)
 	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	(cd $(FREESWAN_TYPE)-$(FREESWAN_VER); \
 	patch -p1 <../../kernel-patches/openswan-procpermsfix.diff)
