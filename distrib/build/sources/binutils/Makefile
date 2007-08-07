@@ -14,6 +14,7 @@ BASE_URL = ftp://ftp.gnu.org/gnu/binutils/
 COMPILE_DIR = $(DIR)-compile
 
 PATCH_FILE1 = binutils_2.15-6.diff.gz
+PATCH_FILE2 = binutils-2.15-allow-gcc-4.0.patch
 
 SPEC=/tools/lib/gcc-lib/*/*/specs
 

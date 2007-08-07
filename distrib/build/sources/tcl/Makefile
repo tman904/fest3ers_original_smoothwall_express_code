@@ -11,6 +11,8 @@ VERSION = 8.4.6
 
 BASE_URL = http://aleron.dl.sourceforge.net/sourceforge/tcl/
 
+PATCH_FILE1 = configure-tcl-fixes-bash3.patch
+
 TARBALL = $(PACKAGE)$(VERSION)-src
 
 DIR = $(PACKAGE)$(VERSION)
@@ -23,7 +25,7 @@ CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
 
-configure: $(DIR)/
+configure: patch
 	@(cd $(DIR)/unix; ./configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
 
 compile: configure
