@@ -22,10 +22,13 @@ and sending email only:</strong></p>
 <p>
 <ol>
 <li>Select <strong>GREEEN</strong> under <strong>Interface defaults</strong> and select <strong>Allowed with exceptions</strong> and click on <strong>Save</strong></li>
-<li>Select <strong>GREEN</strong> for <i>Interface</i>, <strong>TCP</strong> for <i>protocol</i>, enter '80' for the <i>destination port</i> and click on the <strong>Add</strong> button.</li>
-<li>Select <strong>GREEN</strong> for <i>Interface</i>, <strong>TCP</strong> for <i>protocol</i>, enter '25' for the <i>destination port</i> and click on the <strong>Add</strong> button.</li>
+<li>Select <strong>GREEN</strong> for <i>Interface</i>, enter '80' for the <i>destination port</i> and click on the <strong>Add</strong> button.</li>
+<li>Select <strong>GREEN</strong> for <i>Interface</i>, enter '25' for the <i>destination port</i> and click on the <strong>Add</strong> button.</li>
 </ol>
 </p>
+
+<p>You can also use the predifened <strong>Application or service(s)</strong>
+drop down to choose what you want to allow or block.</p>
 
 <p>The <strong>Current always allowed machine</strong> list is used to configure
 certain machines not have any filtering done on their Internet access.</p>
