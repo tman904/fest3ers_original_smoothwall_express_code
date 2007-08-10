@@ -295,7 +295,6 @@
 'available extensions'    => 'Available:',
 
 # registration information
-
 'ssregister'    => 'register',
 'sssmoothwallexpress' => 'my smoothwall',
 'register title'      => 'Register and Credits',
@@ -886,5 +885,8 @@
 'message from' => 'From',
 'message to'   => 'To',
 'message vir'  => 'Virus',
+
+# hosts.cgi
+'static dns configuration' => 'Static DNS',
 
 );
