@@ -265,6 +265,7 @@
 'logsec sip' => 'SIP proxy',
 'logsec im' => 'IM proxy',
 'logsec web' => 'Web proxy',
+'logsec av' => 'Anti-Virus',
 'log' => 'Log:',
 
 # logs.cgi/proxylog.dat
