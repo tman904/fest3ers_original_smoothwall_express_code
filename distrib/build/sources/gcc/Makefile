@@ -18,6 +18,8 @@ PATCH_FILE2 = gcc-3.3_3.3.6-13.diff.gz
 PATCH_FILE3 = gcc-3.3.3-no_fixincludes-1.patch
 
 ifeq ($(BUILDENV), 1)
+PRE_CONFIGURE = CC="gcc -B/usr/bin"
+
 CONFIG_OPTS = --disable-nls --with-local-prefix=/tools \
     --disable-nls --enable-shared --enable-languages=c --disable-multilib
 

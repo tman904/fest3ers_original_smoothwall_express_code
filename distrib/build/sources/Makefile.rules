@@ -67,9 +67,9 @@ ifndef CONFIGURE
 configure: patch
 	@(if [ ! -e $(COMPILE_DIR) ]; then mkdir $(COMPILE_DIR); fi)
 ifneq ($(DIR), $(COMPILE_DIR))
-	@(cd $(COMPILE_DIR); ../$(DIR)/configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
+	@(cd $(COMPILE_DIR); $(PRE_CONFIGURE) ../$(DIR)/configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
 else
-	@(cd $(COMPILE_DIR); ./configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
+	@(cd $(COMPILE_DIR); $(PRE_CONFIGURE) ./configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
 endif
 endif
 

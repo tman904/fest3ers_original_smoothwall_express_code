@@ -15,6 +15,7 @@ BASE_URL = ftp://ftp.gnu.org/gnu/glibc
 
 PATCH_FILE1 = generic-sscanf.diff
 PATCH_FILE2 = debian-timezones.patch
+PATCH_FILE3 = dash-fix.patch
 
 COMPILE_DIR = $(DIR)-compile
 

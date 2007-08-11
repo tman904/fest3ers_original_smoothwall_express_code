@@ -7,18 +7,19 @@
 include ../Makefile.conf
 
 PACKAGE = binutils
-VERSION = 2.15
+VERSION = 2.17
 
 BASE_URL = ftp://ftp.gnu.org/gnu/binutils/
 
 COMPILE_DIR = $(DIR)-compile
 
 PATCH_FILE1 = binutils_2.15-6.diff.gz
-PATCH_FILE2 = binutils-2.15-allow-gcc-4.0.patch
 
 SPEC=/tools/lib/gcc-lib/*/*/specs
 
 ifeq ($(BUILDENV), 1)
+PRE_CONFIGURE = CC="gcc -B/usr/bin"
+
 CONFIG_OPTS = --disable-nls
 
 COMPILE = yes
@@ -52,6 +53,8 @@ endif
 endif
 
 ifeq ($(BUILDENV), 2)
+PRE_CONFIGURE = INSTALL=/tools/bin/install
+
 CONFIG_OPTS = --disable-nls --enable-shared --with-lib-path=/$(TOOLS_DIR)/lib
 
 INSTALL = yes

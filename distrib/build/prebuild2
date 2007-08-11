@@ -24,6 +24,7 @@ ln -sv /tools/bin/sh /bin/sh
 ln -sv /tools/bin/bash /bin/bash
 ln -sv /tools/bin/pwd /bin/pwd
 ln -sv /tools/bin/cat /bin/cat
+ln -sv /tools/bin/echo /bin/echo
 mknod /dev/null c 1 3
 
 # Fill out some vital files using the final coretree

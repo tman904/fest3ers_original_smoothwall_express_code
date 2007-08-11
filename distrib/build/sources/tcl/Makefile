@@ -12,6 +12,7 @@ VERSION = 8.4.6
 BASE_URL = http://aleron.dl.sourceforge.net/sourceforge/tcl/
 
 PATCH_FILE1 = configure-tcl-fixes-bash3.patch
+PATCH_FILE2 = dash-fix.patch
 
 TARBALL = $(PACKAGE)$(VERSION)-src
 

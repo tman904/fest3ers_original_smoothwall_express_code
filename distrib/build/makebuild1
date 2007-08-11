@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # SmoothWall Build system.
 #
@@ -33,10 +33,10 @@ buildenv tcl 1
 buildenv expect 1
 buildenv dejagnu 1
 buildenv gcc 2
+buildenv coreutils 1
 buildenv binutils 2
 docommand "adjusting 2" "make -C sources/binutils BUILDENV=2 adjust"
 buildenv gawk 1
-buildenv coreutils 1
 buildenv bzip2 1
 buildenv gzip 1
 buildenv diffutils 1

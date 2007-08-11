@@ -1,0 +1,58 @@
+--- glibc-2.3.2/csu/Makefile	2002-12-31 22:24:37.000000000 +0000
++++ glibc-2.3.2.new/csu/Makefile	2007-08-02 20:49:05.000000000 +0100
+@@ -178,7 +178,7 @@
+ # procedures, but we have nothing for them to do.  So compile empty files.
+ $(addprefix $(objpfx),$(filter-out $(start-installed-name),$(csu-dummies))):
+ 	@-rm -f $(@:.o=.c)
+-	echo > $(@:.o=.c)
++	/bin/echo > $(@:.o=.c)
+ 	$(COMPILE.c) $(@:.o=.c) $(OUTPUT_OPTION)
+ 	rm -f $(@:.o=.c)
+ 
+@@ -190,24 +190,24 @@
+ 	while read conf tagos tagver; do \
+ 	  test `expr '$(config-machine)-$(config-vendor)-$(config-os)' \
+ 		     : "$$conf"` != 0 || continue; \
+-	  ( echo "$$tagos" | \
++	  ( /bin/echo "$$tagos" | \
+ 	    sed -e 's/[^0-9xXa-fA-F 	]//' \
+ 		-e 's/^/#define __ABI_TAG_OS /'; \
+-	    echo "#ifndef __ABI_TAG_VERSION"; \
+-	    echo "$$tagver" | \
++	    /bin/echo "#ifndef __ABI_TAG_VERSION"; \
++	    /bin/echo "$$tagver" | \
+ 	    sed -e 's/[^0-9xXa-fA-F]/ /g' -e 's/ *$$//' \
+ 	      -e 's/ /,/g' -e 's/^/# define __ABI_TAG_VERSION /'; \
+-	    echo "#endif" ) > $@.new; \
++	    /bin/echo "#endif" ) > $@.new; \
+ 	done
+ 	if test -r $@.new; then mv -f $@.new $@; \
+-	else echo >&2 'This configuration not matched in $<'; exit 1; fi
++	else /bin/echo >&2 'This configuration not matched in $<'; exit 1; fi
+ 
+ all-Banner-files = $(wildcard $(addsuffix /Banner, \
+ 					$(addprefix $(..), $(subdirs))))
+ $(objpfx)version-info.h: $(common-objpfx)config.make $(all-Banner-files)
+ 	$(make-target-directory)
+ 	(case $(config-os) in \
+-	   linux*) version=`(echo -e "#include <linux/version.h>\nUTS_RELEASE"\
++	   linux*) version=`(/bin/echo -e "#include <linux/version.h>\nUTS_RELEASE"\
+ 			     | $(CC) -E -P - | \
+ 			     sed -e 's/"\([^"]*\)".*/\1/p' -e d) 2>/dev/null`;\
+ 		   if [ -z "$$version" ]; then \
+@@ -222,13 +222,13 @@
+ 		   if [ -z "$$os" ]; then \
+ 		     os=Linux; \
+ 		   fi; \
+-		   echo "\"Compiled on a $$os $$version system" \
++		   /bin/echo "\"Compiled on a $$os $$version system" \
+ 			"on `date +%Y-%m-%d`.\\n\"" ;; \
+ 	   *) ;; \
+ 	 esac; \
+ 	 files="$(all-Banner-files)";				\
+ 	 if test -n "$$files"; then				\
+-	   echo "\"Available extensions:\\n\"";			\
++	   /bin/echo "\"Available extensions:\\n\"";			\
+ 	   sed -e '/^#/d' -e 's/^[[:space:]]*/	/'		\
+ 	       -e 's/\(^.*$$\)/\"\1\\n\"/' $$files;		\
+ 	 fi) > $@T
