@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = binutils
 VERSION = 2.17
 
-BASE_URL = ftp://ftp.gnu.org/gnu/binutils/
+BASE_URL = http://ftp.gnu.org/gnu/binutils
 
 COMPILE_DIR = $(DIR)-compile
 
