@@ -6,6 +6,7 @@ if [ "$1" != "NOTGREEN" ]; then
 	ifconfig $GREEN_DEV down 2> /dev/null
 fi
 /sbin/ifconfig $ORANGE_DEV down 2> /dev/null
+/sbin/ifconfig $PURPLE_DEV down 2> /dev/null
 /sbin/ifconfig $RED_DEV down 2> /dev/null
 if [ -e "/usr/etc/dhcpc/dhcpcd-eth0.pid" ]; then
 	kill `cat /usr/etc/dhcpc/dhcpcd-eth0.pid`
