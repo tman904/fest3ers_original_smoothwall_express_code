@@ -416,7 +416,7 @@ a.activemenu:visited {
 
 div.menu {
 	display: none;
-	margin-top: 8px;
+	margin-top: 6px;
 	float: left;
 	position: absolute;
 	background-color: black;
@@ -438,7 +438,7 @@ a.menushade:hover {
 
 div.menushaddow {
 	display: none;
-	margin-top: 14px;
+	margin-top: 11px;
 	margin-left: 10px;
 	float: left;
 	position: absolute;
