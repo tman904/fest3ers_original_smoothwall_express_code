@@ -26,7 +26,7 @@
 // C++ side
 #include <string>
 #include <iostream>
-#define BATCHSTORE_SIZE 10240
+#define BATCHSTORE_SIZE 65536
 
 // this only actualy does something if one of the args is "commit"
 // in which case a non zero return code indicates some failure.
