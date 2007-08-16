@@ -12,7 +12,7 @@ my %proxy;
 my $host; my $port;
 unless ($proxy{'SERVER'})
 {
-	$host = 'my.smoothwall.org';
+	$host = 'x3.smoothwall.org';
         $port = 80;
 } else {
 	$host = $proxy{'SERVER'};
@@ -27,7 +27,7 @@ unless ($sock = new IO::Socket::INET (PeerAddr => $host, PeerPort => $port, Prot
 	exit 0;
 }
 
-print $sock "GET http://my.smoothwall.org/cgi-bin/banners.cgi?version=$version HTTP/1.1\r\nHost: my.smoothwall.org\r\nConnection: close\r\n\r\n";
+print $sock "GET http://x3.smoothwall.org/cgi-bin/banners.cgi?version=$version HTTP/1.1\r\nHost: x3.smoothwall.org\r\nConnection: close\r\n\r\n";
 
 my $return = '';
 
