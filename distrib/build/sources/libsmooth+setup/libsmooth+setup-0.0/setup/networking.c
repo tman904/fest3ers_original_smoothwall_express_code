@@ -268,7 +268,7 @@ int configtypemenu(void)
 	if (rc == 0 || rc == 1)
 	{
 		runcommandwithstatus("/etc/rc.d/rc.netaddress.down",
-			ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+			ctr[TR_PUSHING_NETWORK_DOWN]);
 	
 		sprintf(temp, "%d", choice);
 		replacekeyvalue(kv, "CONFIG_TYPE", temp);
@@ -390,7 +390,7 @@ int changedrivers(void)
 	configtype = atol(temp);
 	
 	runcommandwithstatus("/etc/rc.d/rc.netaddress.down",
-		ctr[TR_PUSHING_NON_LOCAL_NETWORK_DOWN]);
+		ctr[TR_PUSHING_NETWORK_DOWN]);
 	
 	/* Remove all modules not needed for green networking. */
 	c = 0;
