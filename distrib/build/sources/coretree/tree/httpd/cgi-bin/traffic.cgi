@@ -5,6 +5,7 @@
 # This code is distributed under the terms of the GPL
 #
 # (c) The SmoothWall Team
+# Martin Houston <martin.houston@smoothwall.net>
 
 use lib "/usr/lib/smoothwall";
 use header qw(:standard);
@@ -159,13 +160,17 @@ sub display_speeds
 		131072 => '1mbit',
 		196608 => '1.5mbit',
 		262144 => '2mbit',
+		393216 => '3mbit',
 		524288 => '4mbit',
+		655360 => '5mbit',
 		786432 => '6mbit',
 		1048576 => '8mbit',
 		1310720 => '10mbit',
 		1572864 => '12mbit',
 		2097152 => '16mbit',
+		2621440 => '20mbit',
 		3145728 => '24mbit',
+		3276800 => '25mbit',
 		7208960 => '55mbit',
 		13107200 => '100mbit',
 		52428800 => '400mbit',
@@ -178,12 +183,9 @@ sub display_speeds
 		low => $tr{'traffic low'}, 
 		slow => $tr{'traffic slow'}, 
 		normal => $tr{'traffic normal'});
-	my @ext_speeds = (4096, 8192, 16384, 32768, 49408, 65536, 
-			  131072, 196608, 262144, 524288, 786432, 1048576, 
-			  1310720, 1572864, 2097152, 3145728, 
-			  7208960, 13107200, 52428800, 78643200);
-	my @int_speeds = (1310720, 1572864, 2097152, 3145728,
-			  7208960, 13107200, 52428800, 78643200, 01342107200);
+	my @speeds = sort {$a <=> $b} keys %speed_labels; 
+	my @ext_speeds = grep {$_ <= 78643200} @speeds; # up to 600mbit (in your dreams!)
+	my @int_speeds = grep {$_ >= 1310720} @speeds; # from 10mbit
 		
 	%selected = ($settings->{'UPLOAD_SPEED'} => ' selected');
 	$upload_speed_block = join('', 
