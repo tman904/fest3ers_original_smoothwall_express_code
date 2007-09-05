@@ -54,11 +54,15 @@ foreach $line (@current)
 	$conn{'ENABLED'} = $temp[6];
 	$conn{'COMPRESSION'} = $temp[7];		
 	$conn{'COMMENT'} = $temp[8];
+	
+	my $connname = $conn{'NAME'};
+	$connname =~ s/\s+//g;
+	
 	if ($conn{'ENABLED'} eq 'on')
 	{
 		print SECRETS "$conn{'LEFT'} $conn{'RIGHT'} : PSK \"$conn{'SECRET'}\"\n";
 
-		print CONF "conn $conn{'NAME'}\n";
+		print CONF "conn $connname\n";
 		print CONF "\tike=3des-md5\n";
 		print CONF "\tesp=3des-md5\n";
 		print CONF "\tauthby=secret\n";
