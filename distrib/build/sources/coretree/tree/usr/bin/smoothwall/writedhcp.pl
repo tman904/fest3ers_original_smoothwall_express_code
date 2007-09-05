@@ -42,6 +42,8 @@ if ($dhcpsettings{'BOOT_ENABLE'} eq 'on' && $dhcpsettings{'BOOT_SERVER'} &&
 print FILE "ddns-update-style ad-hoc;\n\n";
 
 my $subnet;
+my $id = 0;
+
 foreach $subnet ('green', 'purple')
 {
 	%dhcpsettings = ();
@@ -109,7 +111,6 @@ foreach $subnet ('green', 'purple')
 		print FILE "\trange dynamic-bootp $dhcpsettings{'START_ADDR'} $dhcpsettings{'END_ADDR'};\n";
 		print FILE "\tdefault-lease-time $defaultleasetime;\n";
 		print FILE "\tmax-lease-time $maxleasetime;\n";
-		my $id = 0;
 		open(RULES, "${swroot}/dhcp/staticconfig-$subnet") or die 'Unable to open config file.';
 		while (<RULES>)
 		{
