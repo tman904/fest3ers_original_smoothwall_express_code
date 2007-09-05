@@ -35,14 +35,14 @@ my $service = "user";
 if ($cgiparams{'ACTION'} eq $tr{'add'})
 {
 	unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/) { $errormessage = $tr{'invalid input'}; }
-	unless(&validip($cgiparams{'SRC_IP'})) { $errormessage = $tr{'source ip bad'}; }
+	unless(&validipormask($cgiparams{'SRC_IP'})) { $errormessage = $tr{'source ip bad'}; }
 
 	if ( defined $cgiparams{'SERVICE'} and $cgiparams{'SERVICE'} ne "user" ){
 		$cgiparams{'DEST_PORT'} = $cgiparams{'SERVICE'};
 	} else {
 		unless(&validportrange($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; }
 	}
-	unless(&validip($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
+	unless(&validipormask($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
 	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'}; }	
 	
 	open(FILE, $filename) or die 'Unable to open config file.';
@@ -143,8 +143,8 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <table style='width: 100%;'>
 <tr>
-	<td>$tr{'source ipc'}</td>
-	<td><input type='text' name='SRC_IP' value='$cgiparams{'SRC_IP'}'id='iaddress' @{[jsvalidip('iaddress')]}></td>
+	<td>$tr{'source ip or networkc'}</td>
+	<td><input type='text' name='SRC_IP' value='$cgiparams{'SRC_IP'}'id='iaddress' @{[jsvalidipormask('iaddress')]}></td>
 	<td>$tr{'protocolc'}</td>
 	<td>
 		<SELECT NAME='PROTOCOL'>
@@ -154,8 +154,8 @@ print <<END
 	</td>
 </tr>
 <tr>
-	<td>$tr{'destination ipc'}</td>
-	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' id='dstiaddress' @{[jsvalidip('dstiaddress')]}></td>
+	<td>$tr{'destination ip or networkc'}</td>
+	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' id='dstiaddress' @{[jsvalidipormask('dstiaddress')]}></td>
 </tr>
 <tr>
 	@{[&portlist('SERVICE', $tr{'application servicec'}, 'DEST_PORT', $tr{'destination portc'}, $service, { blank => 'true'} )]}
