@@ -273,6 +273,10 @@ foreach my $interface ( @interfaces ){
         my ( $status     ) = ( $interface =~ /\s+(UP)\s+/ );
         my ( $rx, $rxk   ) = ( $interface =~ /RX bytes:(\d+) \((\d+\.\d+ [KMG]*b)\)/ );
         my ( $tx, $txk   ) = ( $interface =~ /TX bytes:(\d+) \((\d+\.\d+ [KMG]*b)\)/ );
+        my ( $rxp, $rxe, $rxd, $rxo, $rxf) =
+			     ( $interface =~ /RX packets:(\d+)\s+errors:(\d+)\s+dropped:(\d+)\s+overruns:(\d+)\s+frame:(\d+)/ );
+        my ( $txp, $txe, $txd, $txo, $txc) =
+			     ( $interface =~ /TX packets:(\d+)\s+errors:(\d+)\s+dropped:(\d+)\s+overruns:(\d+)\s+carrier:(\d+)/ );
 
 	if ( defined $devices{$devicename} ){
 		$devicename = "$devicename ($devices{$devicename})";
@@ -285,7 +289,7 @@ foreach my $interface ( @interfaces ){
 			<th colspan='5'>$devicename</th>
 		</tr>
 		<tr>
-			<th style='width: 4%;' rowspan='4'>&nbsp;</th>
+			<th style='width: 4%;' rowspan='8'>&nbsp;</th>
 			<td style='width: 23%;'>IP Address:</td>
 			<td style='width: 25%;'>$ipaddress</td>
 			<td style='width: 23%;'>Broadcast</td>
@@ -304,10 +308,34 @@ foreach my $interface ( @interfaces ){
 			<td>$status</td>
 		</tr>
 		<tr>
-			<td>Sent</td>
-			<td>$tx ($txk)</td>
-			<td>Received</td>
-			<td>$rx ($rxk)</td>
+			<td>Sent packets</td>
+			<td>$txp ($txk)</td>
+			<td>Received packets</td>
+			<td>$rxp ($rxk)</td>
+		</tr>
+		<tr>
+			<td>Errors (sent)</td>
+			<td>$txe</td>
+			<td>Errors (received)</td>
+			<td>$rxe</td>
+		</tr>
+		<tr>
+			<td>Dropped (sent)</td>
+			<td>$txd</td>
+			<td>Dropped (received)</td>
+			<td>$rxd</td>
+		</tr>
+		<tr>
+			<td>Overruns (sent)</td>
+			<td>$txo</td>
+			<td>Overruns (received)</td>
+			<td>$rxo</td>
+		</tr>
+		<tr>
+			<td>Carrier (sent)</td>
+			<td>$txc</td>
+			<td>Frame (received)</td>
+			<td>$rxf</td>
 		</tr>
 		</table>
 	};
