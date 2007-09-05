@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-my $baseurl = 'https://svn.sourceforge.net/svnroot/smoothwall/';
+my $baseurl = 'https://smoothwall.svn.sourceforge.net/svnroot/smoothwall/';
 my $differ = '/usr/src/expresscore/distrib/build/differ';
 
 my $rev = $ARGV[0];
