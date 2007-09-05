@@ -71,7 +71,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	foreach $line (@current)
 	{
 		my @temp = split(/\,/,$line);
-		if ($cgiparams{'SRC_PORT'} eq $temp[1] && 
+		if ($cgiparams{'SRC_PORT'} eq $temp[2] && 
 			$cgiparams{'PROTOCOL'} eq $temp[0])
 		{
 			$errormessage = "$tr{'source port in use'} $cgiparams{'SRC_PORT'}";
