@@ -84,6 +84,11 @@ reply_body_max_size $maxincomingsizebytes allow all
 
 END
 ;
+
+my ($remotehost, $remoteport) = split(/:/, $proxysettings{'UPSTREAM_PROXY'}); 
+if ($remoteport eq '') { 
+	$remoteport = 80; }
+
 if ($remotehost ne '')
 {
 	print FILE "cache_peer $remotehost parent $remoteport 3130 default no-query";
