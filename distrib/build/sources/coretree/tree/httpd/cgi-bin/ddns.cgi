@@ -41,7 +41,6 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	unless ($cgiparams{'LOGIN'} ne '') { $errormessage = $tr{'username not set'}; }
 	unless ($cgiparams{'PASSWORD'} ne '') { $errormessage = $tr{'password not set'}; }
 	unless ($cgiparams{'PASSWORD'} =~ /^[^\s\"\']*$/) { $errormessage = $tr{'invalid username'}; }
-	unless ($cgiparams{'HOSTNAME'} =~ /^[a-zA-Z_0-9-]+$/) { $errormessage = $tr{'invalid hostname'}; }
 	unless ($cgiparams{'DOMAIN'} ne '') { $errormessage = $tr{'domain not set'}; }
 	unless ($cgiparams{'DOMAIN'} =~ /^[a-zA-Z_0-9.-]+$/) { $errormessage = $tr{'invalid domain name'}; }
 	unless ($cgiparams{'DOMAIN'} =~ /[.]/) { $errormessage = $tr{'invalid domain name'}; }
