@@ -25,12 +25,22 @@
 
 #include <glob.h>
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#define GREEN_MARK 1
+#define ORANGE_MARK 2
+#define PURPLE_MARK 3
+
 extern "C" {
 	int load(std::vector<CommandFunctionPair> & );
 
 	int set_incoming(std::vector<std::string> & parameters, std::string & response);
 	int set_outgoing(std::vector<std::string> & parameters, std::string & response);
 	int set_internal(std::vector<std::string> & parameters, std::string & response);
+
+	int ipinsubnet(std::string netaddress, std::string netmask, std::string ip);
 }
 
 std::map<std::string, std::vector<std::string>, eqstr> portlist;
@@ -104,10 +114,12 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 	std::string::size_type n;
 	std::vector<std::string>ipbfilter;
 	std::vector<std::string>ipbnat;
+	std::vector<std::string>ipbmangle;
 
 	ConfigSTR localip("/var/smoothwall/red/local-ipaddress");
 	ConfigSTR iface("/var/smoothwall/red/iface");
 	ConfigCSV fwdfile("/var/smoothwall/portfw/config");
+	ConfigVAR ethernet("/var/smoothwall/ethernet/settings");
 
 	if ((error = (localip.str() == "")))
 	{
@@ -136,8 +148,9 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 		goto EXIT;
 	}
 
-	ipbfilter.push_back("iptables -F portfwf");
+	ipbfilter.push_back("iptables -t filter -F portfwf");
 	ipbnat.push_back("iptables -t nat -F portfw");
+	ipbmangle.push_back("iptables -t mangle -F portfwb");
 
 	// iterate the CSV
 	for (int line = fwdfile.first(); line == 0; line = fwdfile.next())
@@ -182,6 +195,25 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 			goto EXIT;
 		}
 
+		int mark = 0; std::string insideinterface;
+
+		// work out what interface the destination is on, for bounce forwards		
+		if (ipinsubnet(ethernet["GREEN_NETADDRESS"], ethernet["GREEN_NETMASK"], remip))
+		{
+			mark = GREEN_MARK;
+			insideinterface = ethernet["GREEN_DEV"];
+		}
+		if (ipinsubnet(ethernet["ORANGE_NETADDRESS"], ethernet["ORANGE_NETMASK"], remip))
+		{
+			mark = ORANGE_MARK;
+			insideinterface = ethernet["ORANGE_DEV"];
+		}
+		if (ipinsubnet(ethernet["PURPLE_NETADDRESS"], ethernet["PURPLE_NETMASK"], remip))
+		{
+			mark = PURPLE_MARK;
+			insideinterface = ethernet["PURPLE_DEV"];
+		}
+
 		if (enabled == "on")
 		{
 			if (remport == "0")
@@ -192,7 +224,7 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 			else 
 				remdouble = remip;
 
-			ipbfilter.push_back("iptables -A portfwf -m state --state NEW -i " + 
+			ipbfilter.push_back("iptables -t filter -A portfwf -m state --state NEW -i " + 
 				iface.str() + " -p " + protocol +  			
 				" -s " + extip +  			
 				" -d " + remip +  			
@@ -201,6 +233,12 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 				" -s " + extip +  
 				" -d " + localip.str() +  			
 				" --dport " + locport + " -j DNAT --to " + remdouble);
+			if (mark)
+			{
+				ipbmangle.push_back("iptables -t mangle -A portfwb -i " + insideinterface +
+					" -p " + protocol + " -d " + localip.str() + " --dport " + locport +
+					" -j MARK --set-mark " + stringprintf("%d", mark));
+			}
 		}
 	}
 
@@ -215,6 +253,13 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 	if (error)
 	{
 		response = "ipbatch failure (nat)";
+		goto EXIT;
+	}
+	
+	error = ipbatch(ipbmangle);
+	if (error)
+	{
+		response = "ipbatch failure (mangle)";
 		goto EXIT;
 	}
 	
@@ -410,3 +455,16 @@ EXIT:
 	return (error);
 }
 
+int ipinsubnet(std::string netaddress, std::string netmask, std::string ip)
+{
+	in_addr_t netaddressaddr = inet_addr(netaddress.c_str());
+	in_addr_t netmaskaddr = inet_addr(netmask.c_str());
+	in_addr_t ipaddr = inet_addr(ip.c_str());
+	
+	if (netaddressaddr == INADDR_NONE || netmaskaddr == INADDR_NONE) return 0;
+	
+	if ((ipaddr & netmaskaddr) == netaddressaddr)
+		return 1;
+	else
+		return 0;
+}

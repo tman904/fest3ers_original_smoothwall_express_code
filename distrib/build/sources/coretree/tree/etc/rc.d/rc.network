@@ -33,8 +33,10 @@ echo "Loading SPI modules"
 /sbin/modprobe ipt_connmark
 /sbin/modprobe ipt_ipp2p
 /sbin/modprobe ipt_dscp
+/sbin/modprobe xt_mark
 /sbin/modprobe xt_tcpudp
 /sbin/modprobe xt_length
+/sbin/modprobe xt_MARK
 /sbin/modprobe xt_CONNMARK
 
 echo "Loading MASQ helper modules"
@@ -44,12 +46,6 @@ echo "Loading MASQ helper modules"
 /sbin/modprobe ip_nat_ftp
 /sbin/modprobe ip_conntrack_mms
 /sbin/modprobe ip_nat_mms
-#/sbin/modprobe ip_conntrack_h323
-#/sbin/modprobe ip_nat_h323
-#/sbin/modprobe ip_conntrack_sip
-#/sbin/modprobe ip_nat_sip
-#/sbin/modprobe ip_conntrack_quake3 
-#/sbin/modprobe ip_nat_quake3
 /sbin/modprobe ip_conntrack_pptp
 /sbin/modprobe ip_nat_pptp
 

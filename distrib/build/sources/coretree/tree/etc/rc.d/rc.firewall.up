@@ -92,7 +92,6 @@ fi
 /sbin/iptables -A secout -i ipsec0 -j ACCEPT
 /sbin/iptables -A FORWARD -j secout
 
-
 # block is an INPUT chain.
 /sbin/iptables -N block
 
@@ -165,14 +164,21 @@ fi
 /sbin/iptables -A outbound -p icmp -j ACCEPT
 /sbin/iptables -A outbound -j timedaccess
 /sbin/iptables -A outbound -j allows
-if [ "$GREEN_DEV" != "" ]; then
-	/sbin/iptables -A outbound -i $GREEN_DEV -j outgreen
-fi
+/sbin/iptables -A outbound -i $GREEN_DEV -j outgreen
 if [ "$ORANGE_DEV" != "" ]; then
 	/sbin/iptables -A outbound -i $ORANGE_DEV -j outorange
 fi
 if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -A outbound -i $PURPLE_DEV -j outpurple
+fi
+
+# These strange rules are to make bouncing forwards work.
+/sbin/iptables -A FORWARD -i $GREEN_DEV -o $GREEN_DEV -j ACCEPT
+if [ "$ORANGE_DEV" != "" ]; then
+	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $ORANGE_DEV -j ACCEPT
+fi
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -A FORWARD -i $PURPLE_DEV -o $PURPLE_DEV -j ACCEPT
 fi
 
 # Allow packets that we know about through.
@@ -227,7 +233,6 @@ if [ "$PURPLE_DEV" != "" -a "$ORANGE_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $PURPLE_DEV -j dmzholes
 fi
 
-
 # VPN
 /sbin/iptables -A FORWARD -i $GREEN_DEV -o ipsec0 -j ACCEPT
 /sbin/iptables -A FORWARD -i ipsec0 -o $GREEN_DEV -j ACCEPT
@@ -243,9 +248,9 @@ fi
 /sbin/iptables -A FORWARD -j LOG
 /sbin/iptables -A FORWARD -j REJECT
 
-# NAT table
-/sbin/iptables -t nat -F
-/sbin/iptables -t nat -X
+# Port forwarding
+/sbin/iptables -t nat -N portfw
+/sbin/iptables -t nat -A PREROUTING -j portfw
 
 # Web proxy
 /sbin/iptables -t nat -N squid
@@ -306,9 +311,14 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -t nat -A POSTROUTING -o $RED_DEV -j MASQUERADE
 fi
 
-# Port forwarding
-/sbin/iptables -t nat -N portfw
-/sbin/iptables -t nat -A PREROUTING -j portfw
+# Bouncing port forwards
+/sbin/iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT --to-source $GREEN_ADDRESS
+if [ "$ORANGE_DEV" != "" ]; then
+	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 2 -j SNAT --to-source $ORANGE_ADDRESS
+fi
+if [ "$PURPLE_DEV" != "" ]; then
+	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 2 -j SNAT --to-source $PURPLE_ADDRESS
+fi
 
 # UPNP
 /sbin/iptables -t nat -N MINIUPNPD
@@ -317,6 +327,10 @@ fi
 if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -t nat -A PREROUTING -i $RED_DEV -j MINIUPNPD
 fi
+
+# Portforward bouncing
+/sbin/iptables -t mangle -N portfwb
+/sbin/iptables -t mangle -A PREROUTING -j portfwb
 
 # Stats
 /sbin/iptables -t mangle -N prerouting-1

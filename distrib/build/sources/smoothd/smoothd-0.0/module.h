@@ -10,7 +10,6 @@
 #include "config.h"
 
 #define NOBODY 99
-#define MAX_NICS 20
 
 typedef int (*MFunction)( std::vector<std::string> &, std::string & );
 

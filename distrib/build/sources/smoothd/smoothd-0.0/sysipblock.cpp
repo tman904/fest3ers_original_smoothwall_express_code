@@ -77,7 +77,12 @@ int set_ipblock(std::vector<std::string> & parameters, std::string & response)
 	error = ipbatch(ipb);
 	
 	if (error)
+	{
 		response = "ipbatch failure";
+		goto EXIT;
+	}
+	
+	response = "Block rules set";
 
 EXIT:
 	return error;
