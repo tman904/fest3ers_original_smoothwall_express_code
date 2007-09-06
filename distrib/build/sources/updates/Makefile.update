@@ -1,29 +1,28 @@
-include Makefile.versions
+include ../../Makefile
 
-TIME = `date +%s`
+include ../../Makefile.conf
 
 TARGET_DIR = /build/target
 
-OUTPUT_FILENAME = smoothwall-$(UPDATE_MODULE)-$(UPDATE_MODULEVERSION)-$(UPDATE_NAME).tar.gz
+OUTPUT_FILENAME = $(BASENAME)-$(UPDATE_SHORTNAME)-$(ARCH).tar.gz
 
-default: clean $(OUTPUT_FILENAME) updateinfo
+all: clean $(OUTPUT_FILENAME) updateinfo
 
 patch.tar.gz:
 	@mkdir distrib
-	@(PREFIX=""; if [ "$(UPDATE_MODULE)" != "main" ]; then PREFIX=modules/$(UPDATE_MODULE); fi; \
-	for I in \
+	@(for I in \
 		$(UPDATE_PACKAGES) \
 	; do \
-		make -C ../../$$PREFIX/$$I clean all; \
+		make -C ../../$$I clean all; \
 		if [ $$? -ne 0 ]; then \
 			echo "$$I FAILED"; \
 			exit 0; \
 		fi; \
  		echo "Unpacking $$I ..."; \
-		if [ "$$I" = "coretree" -o "$$I" = "$(UPDATE_MODULE)coretree" ]; then \
-			tar -zxvf /$(TARGET_DIR)/smoothwall-$$I-*.tar.gz -C distrib -T coretree.list; \
+		if [ "$$I" = "coretree" ]; then \
+			tar -zxvf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib -T coretree.list; \
 		else \
-			tar -zxf /$(TARGET_DIR)/smoothwall-$$I-*.tar.gz -C distrib; \
+			tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
 		fi; \
 	done; \
 	);
@@ -40,7 +39,7 @@ patch.tar.gz:
 
 updateinfo:
 	@echo "Building update information file ..."	
-	@echo "$(UPDATE_MODULE)|$(UPDATE_MODULEVERSION)|$(UPDATE_FULLNAME)||$(UPDATE_DESCRIPTION)|$(UPDATE_URL)||$(UPDATE_REBOOT)|$(UPDATE_SEVERITY)|$(UPDATE_ACTIVE)|$(UPDATE_HIDDEN)|$(UPDATE_DEPENDCY)||$(UPDATE_TIME)" >information
+	@echo "$(UPDATE_NAME)" >information
 
 $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 	@echo "Making update file ..."

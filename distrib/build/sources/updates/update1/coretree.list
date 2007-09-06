@@ -1,0 +1,12 @@
+./httpd/html/help/dmzholes.cgi.html.en
+./httpd/cgi-bin/advstatus.cgi
+./httpd/cgi-bin/traffic.cgi
+./httpd/cgi-bin/portfw.cgi
+./httpd/cgi-bin/dmzholes.cgi
+./httpd/cgi-bin/ddns.cgi
+./usr/lib/smoothwall/langs/base.pl
+./usr/bin/smoothwall/writeipsec.pl
+./usr/bin/smoothwall/writedhcp.pl
+./usr/bin/smoothwall/writeproxy.pl
+./etc/rc.d/rc.firewall.up
+./etc/rc.d/rc.network
