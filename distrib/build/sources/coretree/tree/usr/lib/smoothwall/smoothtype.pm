@@ -105,10 +105,10 @@ sub portlist
 
 	foreach my $key ( keys %{$ports{'main'}} ){
 		if ( $chosen eq $key ){
-			$response .= "<option value='$ports{'main'}{$key}' selected>$key</option>\n";
+			$response .= "<option value='$ports{'main'}{$key}' selected>$key ($ports{'main'}{$key})</option>\n";
 			$found = "";
 		} else {
-			$response .= "<option value='$ports{'main'}{$key}'>$key</option>\n";
+			$response .= "<option value='$ports{'main'}{$key}'>$key ($ports{'main'}{$key})</option>\n";
 		}
 	}
 
@@ -128,10 +128,10 @@ sub portlist
 		}
 		foreach my $key ( keys %{$ports{$section}} ){
 			if ( $chosen eq $ports{$section}{$key} ){
-				$response .= "<option selected value='$ports{$section}{$key}'>$precursor$key</option>\n";
+				$response .= "<option selected value='$ports{$section}{$key}'>$precursor$key ($ports{$section}{$key})</option>\n";
 				$found = "";
 			} else {
-				$response .= "<option value='$ports{$section}{$key}'>$precursor$key</option>\n";
+				$response .= "<option value='$ports{$section}{$key}'>$precursor$key ($ports{$section}{$key})</option>\n";
 			}
 		}
 	}
