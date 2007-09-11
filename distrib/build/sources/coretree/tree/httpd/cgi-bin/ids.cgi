@@ -35,7 +35,7 @@ EXIT:
 	my $url = 'http://www.snort.org/pub-bin/oinkmaster.cgi/' . $snortsettings{'OINK'} . '/snortrules-snapshot-CURRENT.tar.gz';
 	chdir "${swroot}/snort/";
 
-	if (open(FD, '-|') || exec('/usr/bin/oinkmaster.pl', '-C',
+	if (open(FD, '-|') || exec('/usr/bin/oinkmaster.pl', '-v', '-C',
 		'/usr/lib/smoothwall/oinkmaster.conf', '-o', 'rules', '-u', $url))
 	{
 		$errormessage = $tr{'rules not available'};
@@ -45,6 +45,13 @@ EXIT:
 			print STDERR $_;
 		}
 		close(FD);
+		if ($?) {
+			$errormessage = $tr{'unable to fetch rules'}; } 
+		else
+		{
+			open (FILE, ">${swroot}/snort/ruleage");
+			close (FILE);
+		}
 	}
 	else {
 		$errormessage = $tr{'unable to fetch rules'}; }
@@ -73,9 +80,9 @@ $checked{'ENABLE_SNORT'}{'on'} = '';
 $checked{'ENABLE_SNORT'}{$snortsettings{'ENABLE_SNORT'}} = 'CHECKED';
 
 my $ruleage = 'N/A';
-if (-e "${swroot}/snort/rules/VRT-License.txt")
+if (-e "${swroot}/snort/ruleage")
 {
-	my $days = int(-M "${swroot}/snort/rules/VRT-License.txt");
+	my $days = int(-M "${swroot}/snort/rules/ruleage");
 	$ruleage = "$days $tr{'days'}";
 }
 

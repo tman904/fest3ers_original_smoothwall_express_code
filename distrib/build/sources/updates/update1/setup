@@ -3,3 +3,7 @@
 echo "Update 1 installing."
 
 tar -zxvf patch.tar.gz -C /
+
+mkdir -p /var/smoothwall/snort/rules
+chown nobody:nobody /var/smoothwall/snort/rules
+chmod 755 /var/smoothwall/snort/rules
