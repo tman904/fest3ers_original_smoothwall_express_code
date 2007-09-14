@@ -28,12 +28,12 @@ patch.tar.gz:
 	);
 	
 	@echo "Cleaning tree ..."
-	@/build/striptree distrib/$(MOD_DIR)
+	@/build/striptree distrib/
 
 	@echo "Securing tree ..."
-	@/build/securetree distrib/$(MOD_DIR)
+	@/build/securetree distrib/
 	@(if [ "$(SETUIDS)" != "" ]; then \
-		cd distrib/$(MOD_DIR); \
+		cd distrib/; \
 		chmod u+s $(SETUIDS); \
 	fi)
 
