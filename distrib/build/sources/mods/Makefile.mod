@@ -2,7 +2,7 @@ include ../../Makefile.conf
 
 TARGET_DIR = /build/target
 
-OUTPUT_FILENAME = $(MOD_NAME)-$(ARCH)-module.tar.gz
+OUTPUT_FILENAME = $(MOD_NAME)-$(ARCH)-mod.tar.gz
 
 all: clean $(OUTPUT_FILENAME)
 
