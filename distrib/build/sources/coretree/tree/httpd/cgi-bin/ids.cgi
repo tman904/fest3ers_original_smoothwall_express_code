@@ -82,7 +82,7 @@ $checked{'ENABLE_SNORT'}{$snortsettings{'ENABLE_SNORT'}} = 'CHECKED';
 my $ruleage = 'N/A';
 if (-e "${swroot}/snort/ruleage")
 {
-	my $days = int(-M "${swroot}/snort/rules/ruleage");
+	my $days = int(-M "${swroot}/snort/ruleage");
 	$ruleage = "$days $tr{'days'}";
 }
 
