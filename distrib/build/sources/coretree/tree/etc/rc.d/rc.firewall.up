@@ -248,6 +248,10 @@ fi
 /sbin/iptables -A FORWARD -j LOG
 /sbin/iptables -A FORWARD -j REJECT
 
+# NAT table
+/sbin/iptables -t nat -F
+/sbin/iptables -t nat -X
+
 # Port forwarding
 /sbin/iptables -t nat -N portfw
 /sbin/iptables -t nat -A PREROUTING -j portfw
