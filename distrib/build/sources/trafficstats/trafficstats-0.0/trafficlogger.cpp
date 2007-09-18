@@ -582,7 +582,7 @@ bool livestats::refresh_stats(Vtraf_stat_samples &s, reltimes & times) {
 	// now update timestamp as being the most recent sample 
 	// before we update the timestamp 
 	
-	check_rollovers(last.collection_start,times);
+	check_rollovers(last.collection_end,times);
 	last_update = times.now;
 	
 	// populate our idea of what devs are present etc.
