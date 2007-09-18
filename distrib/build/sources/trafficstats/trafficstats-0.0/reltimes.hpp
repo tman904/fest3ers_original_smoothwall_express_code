@@ -136,15 +136,11 @@ public:
             tm_then.tm_mon = 11;
             tm_then.tm_year--;
             then.tv_sec = mktime(&tm_then);
-            tm_then.tm_year++;
-            tm_then.tm_mon = 0; 
         }
         else {           
             tm_then.tm_mon--;
             then.tv_sec = mktime(&tm_then);
-            tm_then.tm_mon++;
         }
-        then.tv_sec = mktime(&tm_then);
         then.tv_usec = 0;
         startof["prev_month"] = then;  
                
