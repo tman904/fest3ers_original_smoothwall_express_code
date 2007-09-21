@@ -5,6 +5,10 @@ use header qw( :standard );
 
 my (%eth,%isdn,%pppsettings);
 
+## url length limit is 8192
+## subtract the chars required for the URI, what we have left is
+my $url_limit = 8124;
+
 # detail connection details, this is how the smoothie connects to the
 # outside world.  We have no interest in passwords or anything of that
 # ilk of course, but knowing modem types and drivers is always good
@@ -92,20 +96,6 @@ while ( my $line = <PIPE>) {
 }
 close(PIPE);
 
-# discover various bits of information about the modules which are loaded
-# this will give some hint as to how well the driver discovery code is working
-# amongst other things.
-
-my $lsmod;
-
-open(PIPE, '-|') || exec( '/bin/lsmod' );
-while ( my $line = <PIPE>) { 
-	chomp $line;
-	my ( $driver, $size, $usedby ) = ( $line =~ /([^\s]+)\s+([^\s]+)\s+(.*)/ );
-	$lsmod .= "$driver|$size|$usedby||";
-}
-close(PIPE);
-
 # discover various interesting things about the USB Bus, this is in a 
 # perpetual state of flux and a widish range of details can only serve
 # to make sense of some of it.
@@ -132,20 +122,21 @@ my $nonextra = join('&',
 	'hdd=' . &_urlencode($disk),
 	'inst_type=' . &_urlencode($eth{'CONFIG_TYPE'}),
 	'isdn=' . &_urlencode($pppsettings{'COMPORT'}),
-	'version=' . &_urlencode("$version-$revision"));
+	'version=' . &_urlencode("$version"));
 
 # construct the additional information.
 my $extra = join('&', 
 	'ADSL_DEVICE=' . &_urlencode($adslsettings{'DEVICE'}),
 	'ADSL_ECITYPE=' . &_urlencode($adslsettings{'ECITYPE'}),
 	'ISDN_TYPE=' . &_urlencode($isdnsettings{'TYPE'}),
-	'LSMOD=' . &_urlencode($lsmod),
 	'LSPCI=' . &_urlencode($lspci),
 	'USBBUS=' . &_urlencode($usbbus));
 
 my $info = join('&', $nonextra, $extra);
-
 my $length = length($info);
+
+## truncate the info if needed
+if($length > $url_limit) { $info = substr($info, 0, $url_limit); }
 
 my %proxy;
 
@@ -213,8 +204,8 @@ sub _urlencode
 	my ($string) = @_;
 	$string =~ s/\%/%25/g;
 	$string =~ s/\s/%20/g;
-	$string =~ s/\#/%23/g;
-	$string =~ s/\!/%2a/g;
+	$string =~ s/\!/%21/g;
+	$string =~ s/\*/%2a/g;
 	$string =~ s/\'/%27/g;
 	$string =~ s/\(/%28/g;
 	$string =~ s/\)/%29/g;
@@ -231,6 +222,5 @@ sub _urlencode
 	$string =~ s/\#/%23/g;
 	$string =~ s/\[/%5b/g;
 	$string =~ s/\]/%5d/g;
-
 	return $string;
 }
