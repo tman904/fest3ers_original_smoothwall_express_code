@@ -82,6 +82,10 @@ cache_dir diskd /var/spool/squid/cache $proxysettings{'CACHE_SIZE'} 16 256
 request_body_max_size $proxysettings{'MAX_OUTGOING_SIZE'} KB
 reply_body_max_size $maxincomingsizebytes allow all
 
+logfile_rotate 0
+
+strip_query_terms off
+
 END
 ;
 
