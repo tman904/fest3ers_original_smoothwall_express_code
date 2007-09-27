@@ -9,3 +9,4 @@ chown nobody:nobody /var/smoothwall/snort/rules
 chmod 755 /var/smoothwall/snort/rules
 
 su -c /usr/bin/smoothwall/writeproxy.pl nobody
+su -c /usr/bin/smoothwall/writep3scan.pl nobody

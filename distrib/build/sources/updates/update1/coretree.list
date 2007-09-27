@@ -6,6 +6,7 @@
 ./httpd/cgi-bin/portfw.cgi
 ./httpd/cgi-bin/dmzholes.cgi
 ./httpd/cgi-bin/ddns.cgi
+./usr/lib/smoothwall/p3scan.conf.in
 ./usr/lib/smoothwall/langs/base.pl
 ./usr/lib/smoothwall/smoothtype.pm
 ./usr/bin/smoothwall/writeipsec.pl
