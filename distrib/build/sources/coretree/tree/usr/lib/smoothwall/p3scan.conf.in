@@ -12,3 +12,4 @@ viruscode = 2,1
 demime
 scannertype = basic
 scanner = /usr/bin/clamdscan --config-file /usr/lib/smoothwall/clamdscan.conf
+enabletop
