@@ -206,7 +206,7 @@ my %render_settings =
 		},
 		{
 			column => '3',
-			title  => "$tr{'desination port'}",
+			title  => "$tr{'destination port'}",
 			size   => 20,
 		},
 		{
