@@ -15,3 +15,4 @@ ca::ctrlaltdel:/sbin/shutdown -h now
 4:2345:respawn:/sbin/agetty 38400 tty4
 5:2345:respawn:/sbin/agetty 38400 tty5
 6:2345:respawn:/sbin/agetty 38400 tty6
+~:S:wait:/bin/bash
