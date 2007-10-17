@@ -4,7 +4,7 @@ include ../../Makefile.conf
 
 TARGET_DIR = /build/target
 
-OUTPUT_FILENAME = $(BASENAME)-$(UPDATE_SHORTNAME)-$(ARCH).tar.gz
+OUTPUT_FILENAME = $(BASENAME)-$(UPDATE_NAME)-$(ARCH).tar.gz
 
 all: clean $(OUTPUT_FILENAME) updateinfo
 
@@ -39,7 +39,7 @@ patch.tar.gz:
 
 updateinfo:
 	@echo "Building update information file ..."	
-	@echo "$(UPDATE_NAME)" >information
+	@echo "$(UPDATE_ID)|$(UPDATE_NAME)-$(ARCH)" >information
 
 $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 	@echo "Making update file ..."
