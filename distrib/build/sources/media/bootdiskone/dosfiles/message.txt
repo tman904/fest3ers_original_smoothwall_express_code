@@ -3,7 +3,7 @@ The CDROM image is published by and is the Copyright of the SmoothWall
 Open Source Team, and of the original authors of its component parts.  
 It is distributed under the GNU GPLv2, which is in GPL.txt on the CD.
 
-                       SmoothWall Express 3.0 "Polar"
+                    SmoothWall Express 3.0 "Polar" [SP1]
 
                               W A R N I N G !
  * The installation process will delete all existing partitions and data *

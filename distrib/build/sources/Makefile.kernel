@@ -18,13 +18,18 @@ USR_VER = 1.08
 EAGLE_VER = 2.3.3
 CNX_VER = 2.6-1.5
 PULSAR_VER = 4.0.24
+TG3_VER = 3.71b
+BNX2_VER = 1.5.10c
+E100_VER = 3.5.17
+E1000_VER = 7.6.5
+R8168_VER = 8.002.00
 
 COMPILER = /usr/bin/gcc
 
 PACKAGES = package-eagle package-ipp2p
 
 ifeq ($(TYPE), runtime)
-PACKAGES += package-iptableproc
+PACKAGES += package-iptableproc package-bnx2 package-e100 package-e1000 package-r8168
 endif
 
 ifeq ($(ARCH), i386)
@@ -41,6 +46,11 @@ download:
 	@$(DL_CMD) http://www.ipp2p.org/downloads/ipp2p-$(IPP2P_VER).tar.gz
 	@$(DL_CMD) http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
 	@$(DL_CMD) http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz
+	@$(DL_CMD) http://www.aslak.net/tg3-$(TG3_VER).tar.gz
+	@$(DL_CMD) http://www.aslak.net/bnx2-$(BNX2_VER).tar.gz
+	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e100-$(E100_VER).tar.gz
+	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz
+	@$(DL_CMD) ftp://210.51.181.211/cn/nic/r8168-$(R8168_VER).tar.bz2
 
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
@@ -61,6 +71,11 @@ prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
 	@tar -zxvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
 	@(cd pulsar-$(PULSAR_VER); ln -s makefile.2.6 Makefile)
+	@tar -zxvf $(DOWNLOADS_DIR)/tg3-$(TG3_VER).tar.gz
+	@tar -zxvf $(DOWNLOADS_DIR)/bnx2-$(BNX2_VER).tar.gz
+	@tar -zxvf $(DOWNLOADS_DIR)/e100-$(E100_VER).tar.gz
+	@tar -zxvf $(DOWNLOADS_DIR)/e1000-$(E1000_VER).tar.gz
+	@tar -jxvf $(DOWNLOADS_DIR)/r8168-$(R8168_VER).tar.bz2
 
 	@rm -f linux
 	@ln -s linux-$(KERNEL_VER) linux
@@ -110,6 +125,21 @@ compile-cnx: compile-kernel
 compile-pulsar: compile-kernel
 	@make -C pulsar-$(PULSAR_VER) KDIR=$(KERNEL_DIR)
 
+compile-tg3: compile-kernel
+	@make -C tg3-$(TG3_VER) LINUX=$(KERNEL_DIR) KVER=2.6.0
+
+compile-bnx2: compile-kernel
+	@make -C bnx2-$(BNX2_VER)/src LINUX=$(KERNEL_DIR) KVER=2.6.0
+
+compile-e100: compile-kernel
+	@make -C e100-$(E100_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
+
+compile-e1000: compile-kernel
+	@make -C e1000-$(E1000_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
+
+compile-r8168: compile-kernel
+	@(cd r8168-$(R8168_VER); make KDIR=$(KERNEL_DIR) KVER=2.6.0 modules)
+
 package-kernel: compile-kernel
 	@mkdir -p $(PKG_ROOT)
 	@(cd $(PKG_ROOT); \
@@ -147,6 +177,26 @@ package-pulsar: compile-pulsar
 	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/pulsar-$(PULSAR_VER)/pulsar_atm.ko \
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc/pulsar_atm.ko
 
+package-tg3: compile-tg3
+	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/tg3-$(TG3_VER)/tg3.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/tg3.ko
+
+package-bnx2: compile-bnx2
+	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/bnx2-$(BNX2_VER)/src/bnx2.ko \
+		@(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/bnx2.ko
+
+package-e100: compile-e100
+	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/e100-$(E100_VER)/src/e100.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/e100.ko
+
+package-e1000: compile-e1000
+	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/e1000-$(E1000_VER)/src/e1000.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/e1000/e1000.ko
+
+package-r8168: compile-r8168
+	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/r8168-$(R8168_VER)/src/r8168.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/r8168.ko
+
 build-tarball: package-kernel $(PACKAGES)
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
@@ -162,6 +212,11 @@ clean:
 	@rm -rf usr-sureconnect
 	@rm -rf CnxADSL-6.1.2.007-PIM-$(CNX_VER)
 	@rm -rf pulsar-$(PULSAR_VER)
+	@rm -rf tg3-$(TG3_VER)
+	@rm -rf bnx2-$(BNX2_VER)
+	@rm -rf e100-$(E100_VER)
+	@rm -rf e1000-$(E1000_VER)
+	@rm -rf r8168-$(R8168_VER)
 	@rm -rf $(PKG_ROOT)
 
 all: clean build-tarball

@@ -318,7 +318,6 @@ struct nic nics[] = {
 	{ "\"Corkscrew\" 3Com EtherLink PCI III/XL, etc.", "3c59x" },
 	{ "PCI NE2000 cards, RealTEk RTL-8029, etc", "ne2k-pci" },
 	{ "NE1000 / NE2000 (non-pci)", "ne" },
-	{ "Digital 21x4x Tulip PCI ethernet cards, etc.", "tulip" },
 	{ "Intel i82557/i82558 PCI EtherExpressPro", "eepro100" },
 	{ "Intel i82595 ISA EtherExpressPro10/10+ driver" ,"eepro" },
 	{ "Intel EtherExpress 16 (i82586)", "eexpress" },
@@ -381,6 +380,8 @@ struct nic nics[] = {
 	{ "Davicom DM9102/DM9102A/DM9102A+DM9801/DM9102A+DM9802 NIC", "dmfe" },
 	{ "DIGITAL DC21x4x DECchip and DE425/DE434/DE435/DE450/DE500", "de4x5" },
 	{ "Winbond W89c840 Ethernet", "winbond-840" },
+	{ "Digital 21x4x Tulip PCI ethernet cards, etc.", "tulip" },
+	{ "Realtek 8169 gigabit", "r8168" },
 	{ NULL, NULL }
 };
 

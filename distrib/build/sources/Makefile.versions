@@ -4,7 +4,7 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-KERNEL_VER = 2.6.16.53
+KERNEL_VER = 2.6.16.55
 
 FREESWAN_TYPE = openswan
 FREESWAN_VER = 2.4.7
