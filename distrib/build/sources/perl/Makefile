@@ -11,6 +11,8 @@ VERSION = 5.8.8
 
 BASE_URL = http://ftp.funet.fi/pub/CPAN/src/
 
+PATCH_FILE1 = regcomp-5.8.8.diff
+
 CONFIGURE = yes
 
 configure: patch
