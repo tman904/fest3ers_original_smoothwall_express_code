@@ -31,32 +31,17 @@ if ($snortsettings{'ACTION'} eq $tr{'save and update rules'})
 	}
 
 EXIT:
+
+	my $snortversion = &readvalue('/usr/lib/smoothwall/snortversion');
+	$snortversion =~ /^(\d+\.\d+)/;
+	$snortversion = $1;
+
 	my $curdir = getcwd;
-	my $url = 'http://www.snort.org/pub-bin/oinkmaster.cgi/' . $snortsettings{'OINK'} . '/snortrules-snapshot-CURRENT.tar.gz';
-	chdir "${swroot}/snort/";
 
-	if (open(FD, '-|') || exec('/usr/bin/oinkmaster.pl', '-v', '-C',
-		'/usr/lib/smoothwall/oinkmaster.conf', '-o', 'rules', '-u', $url))
-	{
-		$errormessage = $tr{'rules not available'};
-		while(<FD>)
-		{
-			$errormessage = '';
-			print STDERR $_;
-		}
-		close(FD);
-		if ($?) {
-			$errormessage = $tr{'unable to fetch rules'}; } 
-		else
-		{
-			open (FILE, ">${swroot}/snort/ruleage");
-			close (FILE);
-		}
-	}
-	else {
-		$errormessage = $tr{'unable to fetch rules'}; }
-
-	chdir $curdir;
+	&runoinkmaster($snortversion);
+	
+	if ($errormessage) {
+		&runoinkmaster('CURRENT'); }
 }
 if ($snortsettings{'ACTION'} eq $tr{'save'} || $snortsettings{'ACTION'} eq $tr{'save and update rules'})
 {
@@ -155,3 +140,33 @@ print "</FORM>\n";
 
 &closepage();
 
+sub runoinkmaster
+{
+	my $v = $_[0];
+	
+	my $url = 'http://www.snort.org/pub-bin/oinkmaster.cgi/' . $snortsettings{'OINK'} . "/snortrules-snapshot-$v.tar.gz";
+	chdir "${swroot}/snort/";
+
+	if (open(FD, '-|') || exec('/usr/bin/oinkmaster.pl', '-v', '-C',
+		'/usr/lib/smoothwall/oinkmaster.conf', '-o', 'rules', '-u', $url))
+	{
+		$errormessage = $tr{'rules not available'};
+		while(<FD>)
+		{
+			$errormessage = '';
+			print STDERR $_;
+		}
+		close(FD);
+		if ($?) {
+			$errormessage = $tr{'unable to fetch rules'}; } 
+		else
+		{
+			open (FILE, ">${swroot}/snort/ruleage");
+			close (FILE);
+		}
+	}
+	else {
+		$errormessage = $tr{'unable to fetch rules'}; }
+
+	chdir $curdir;
+}

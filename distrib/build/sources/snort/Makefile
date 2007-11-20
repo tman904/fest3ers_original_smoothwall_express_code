@@ -19,11 +19,11 @@ install: compile
 	-mkdir $(PKG_ROOT)
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/rules/
-	# @install -D $(COMPILE_DIR)/src/snort $(PKG_ROOT)/usr/bin/snort
-	# @install -D $(COMPILE_DIR)/rules/*.rules $(PKG_ROOT)/var/smoothwall/snort/rules/
 	@install -D $(COMPILE_DIR)/etc/unicode.map $(PKG_ROOT)/var/smoothwall/snort/unicode.map
 	@install -D $(COMPILE_DIR)/etc/classification.config $(PKG_ROOT)/var/smoothwall/snort/classification.config
 	@install -D $(COMPILE_DIR)/etc/reference.config $(PKG_ROOT)/var/smoothwall/snort/reference.config
 	@chown nobody:nobody -R $(PKG_ROOT)/var/smoothwall/
+	@mkdir -p $(PKG_ROOT)/$(MODULE_DIR)/usr/lib/smoothwall
+	@echo $(VERSION) > $(PKG_ROOT)/$(MODULE_DIR)/usr/lib/smoothwall/snortversion
 
 include ../Makefile.rules
