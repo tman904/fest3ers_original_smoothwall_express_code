@@ -36,8 +36,6 @@ EXIT:
 	$snortversion =~ /^(\d+\.\d+)/;
 	$snortversion = $1;
 
-	my $curdir = getcwd;
-
 	&runoinkmaster($snortversion);
 	
 	if ($errormessage) {
@@ -143,8 +141,9 @@ print "</FORM>\n";
 sub runoinkmaster
 {
 	my $v = $_[0];
-	
 	my $url = 'http://www.snort.org/pub-bin/oinkmaster.cgi/' . $snortsettings{'OINK'} . "/snortrules-snapshot-$v.tar.gz";
+
+	my $curdir = getcwd;
 	chdir "${swroot}/snort/";
 
 	if (open(FD, '-|') || exec('/usr/bin/oinkmaster.pl', '-v', '-C',
