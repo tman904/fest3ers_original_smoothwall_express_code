@@ -28,7 +28,7 @@ patch.tar.gz:
 	);
 
 	@(if [ "$(KERNEL)" != "" ]; then \
-		tar -zxf /$(TARGET_DIR)/smoothwall-coretree-*.tar.gz -C distrib ./settings/main/kernel; \
+		tar -zxf /$(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
 	fi;)
 
 	@echo "Cleaning tree ..."
