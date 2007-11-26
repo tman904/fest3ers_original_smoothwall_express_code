@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "Update 2 installing."
+
+tar -zxvf patch.tar.gz -C /
+
+echo >>/var/smoothwall/main/kernel "OLD=2.6.16.53"
+
+/usr/bin/installer/makeinitrd.pl
+/sbin/lilo

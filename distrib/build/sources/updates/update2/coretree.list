@@ -1,0 +1,3 @@
+./httpd/cgi-bin/ids.cgi
+./etc/inittab
+./etc/lilo.conf
