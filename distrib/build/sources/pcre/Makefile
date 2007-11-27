@@ -7,10 +7,8 @@
 include ../Makefile.conf
 
 PACKAGE = pcre
-VERSION = 7.0
+VERSION = 7.4
 
 BASE_URL = ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/
-
-# PATCH_FILE1 = REG_DOTALL.patch
 
 include ../Makefile.rules
