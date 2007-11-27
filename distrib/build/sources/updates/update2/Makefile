@@ -1,4 +1,4 @@
-UPDATE_PACKAGES = coretree kernel-runtime snort
+UPDATE_PACKAGES = coretree snort perl libsmooth+setup pcre kernel-runtime
 
 UPDATE_ID = 002
 UPDATE_NAME = update2
