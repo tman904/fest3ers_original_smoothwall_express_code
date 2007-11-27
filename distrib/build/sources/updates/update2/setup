@@ -6,5 +6,11 @@ tar -zxvf patch.tar.gz -C /
 
 echo >>/var/smoothwall/main/kernel "OLD=2.6.16.53"
 
-/usr/bin/installer/makeinitrd.pl
+cat <<END >>/etc/lilo.conf
+image=/boot/vmlinuz-2.6.16.53
+	initrd=/boot/initrd-2.6.16.53.gz
+	label=old
+END
+
+/usr/bin/installer/makeinitrd
 /sbin/lilo
