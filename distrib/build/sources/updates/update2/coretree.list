@@ -1,3 +1,4 @@
 ./httpd/cgi-bin/ids.cgi
+./httpd/cgi-bin/portfw.cgi
 ./etc/inittab
 ./etc/lilo.conf
