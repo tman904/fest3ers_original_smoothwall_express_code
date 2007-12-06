@@ -21,10 +21,9 @@ $cgiparams{'ORDER'} = $tr{'log ascending'};
 $cgiparams{'ENABLED'} = 'off';
 
 my $service = "user";
-my $dest_service = "user";
+my $dst_service = "user";
 
 &getcgihash(\%cgiparams);
-
 
 if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
 {
@@ -37,6 +36,7 @@ my $errormessage = '';
 
 if ($cgiparams{'ACTION'} eq $tr{'add'})
 {
+
 	unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/) { $errormessage = $tr{'invalid input'}; }
 	unless(&validipormask($cgiparams{'EXT'}))
 	{
@@ -72,11 +72,16 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	{
 		my @temp = split(/\,/,$line);
 		if ($cgiparams{'SRC_PORT'} eq $temp[2] && 
-			$cgiparams{'PROTOCOL'} eq $temp[0])
+			$cgiparams{'PROTOCOL'} eq $temp[0] &&
+			$cgiparams{'EXT'} eq $temp[1])
 		{
 			$errormessage = "$tr{'source port in use'} $cgiparams{'SRC_PORT'}";
 		}
 	}
+
+	$service = $cgiparams{'SRC_PORT'};
+	$dst_service = $cgiparams{'DEST_PORT'};
+
 	unless ($errormessage)
 	{
 		open(FILE,">>$filename") or die 'Unable to open config file.';
@@ -84,6 +89,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'SRC_PORT'},$cgiparams{'DEST_IP'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
 		undef %cgiparams;
+		$service = '';
+		$dst_service = '';
 
 		&log($tr{'forwarding rule added'});
 		
