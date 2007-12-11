@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = libpng
-VERSION = 1.2.12
+VERSION = 1.2.23
 
 BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/libpng/
 

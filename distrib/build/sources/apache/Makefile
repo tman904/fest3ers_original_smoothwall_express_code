@@ -6,8 +6,8 @@
 
 include ../Makefile.conf
 
-APACHE_VER = 1.3.37
-MODSSL_VER = 2.8.28
+APACHE_VER = 1.3.39
+MODSSL_VER = 2.8.30
 
 PACKAGE = apache
 VERSION = $(APACHE_VER)
@@ -23,7 +23,7 @@ CLEAN = yes
 PACKAGEINFO = yes
 
 download:
-	@$(DL_CMD) http://www.mirror.ac.uk/mirror/ftp.apache.org/httpd/$(DIR).tar.gz
+	@$(DL_CMD) http://www.mirrorservice.org/sites/ftp.apache.org/httpd/$(DIR).tar.gz
 	@$(DL_CMD) http://www.modssl.org/source/mod_ssl-$(MODSSL_VER)-$(APACHE_VER).tar.gz
 
 prepare: download
