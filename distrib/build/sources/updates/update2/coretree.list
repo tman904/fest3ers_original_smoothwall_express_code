@@ -2,3 +2,4 @@
 ./httpd/cgi-bin/portfw.cgi
 ./etc/inittab
 ./etc/lilo.conf
+./etc/cron.daily/runfreshclam
