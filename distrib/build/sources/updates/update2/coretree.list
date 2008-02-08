@@ -3,3 +3,4 @@
 ./etc/inittab
 ./etc/lilo.conf
 ./etc/cron.daily/runfreshclam
+./etc/rc.d/rc.network
