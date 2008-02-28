@@ -55,6 +55,7 @@ prepare: download
 	(cd linux-$(KERNEL_VER); \
 	patch -p1 <../../kernel-patches/sata_via-vt8237a.patch; \
 	patch -p1 <../../kernel-patches/ahci-devices.patch; \
+        patch -p1 <../../kernel-patches/linux-2.6.16-ich9.diff; \
 	patch -p1 <../../kernel-patches/ppp-bigfiles.patch)
 	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	(cd $(FREESWAN_TYPE)-$(FREESWAN_VER); \
