@@ -23,14 +23,11 @@ BNX2_VER = 1.5.10c
 E100_VER = 3.5.17
 E1000_VER = 7.6.5
 R8168_VER = 8.002.00
+R8169_VER = 6.005.00
 
 COMPILER = /usr/bin/gcc
 
-PACKAGES = package-eagle package-ipp2p
-
-ifeq ($(TYPE), runtime)
-PACKAGES += package-iptableproc package-bnx2 package-e100 package-e1000 package-r8168
-endif
+PACKAGES = package-eagle package-ipp2p package-bnx2 package-e100 package-e1000 package-r8168 package-r8169
 
 ifeq ($(ARCH), i386)
 PACKAGES += package-unicorn package-cnx package-pulsar
@@ -51,6 +48,7 @@ download:
 	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e100-$(E100_VER).tar.gz
 	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz
 	@$(DL_CMD) ftp://210.51.181.211/cn/nic/r8168-$(R8168_VER).tar.bz2
+	@$(DL_CMD) ftp://210.51.181.211/cn/nic/r8169-$(R8169_VER).tar.bz2
 
 prepare: download
 	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
@@ -76,6 +74,7 @@ prepare: download
 	@tar -zxvf $(DOWNLOADS_DIR)/e100-$(E100_VER).tar.gz
 	@tar -zxvf $(DOWNLOADS_DIR)/e1000-$(E1000_VER).tar.gz
 	@tar -jxvf $(DOWNLOADS_DIR)/r8168-$(R8168_VER).tar.bz2
+	@tar -jxvf $(DOWNLOADS_DIR)/r8169-$(R8169_VER).tar.bz2
 
 	@rm -f linux
 	@ln -s linux-$(KERNEL_VER) linux
@@ -140,6 +139,9 @@ compile-e1000: compile-kernel
 compile-r8168: compile-kernel
 	@(cd r8168-$(R8168_VER); make KDIR=$(KERNEL_DIR) KVER=2.6.0 modules)
 
+compile-r8169: compile-kernel
+	@(cd r8169-$(R8169_VER); make KDIR=$(KERNEL_DIR) KVER=2.6.0 modules)
+
 package-kernel: compile-kernel
 	@mkdir -p $(PKG_ROOT)
 	@(cd $(PKG_ROOT); \
@@ -178,24 +180,28 @@ package-pulsar: compile-pulsar
 		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/misc/pulsar_atm.ko
 
 package-tg3: compile-tg3
-	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/tg3-$(TG3_VER)/tg3.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/tg3.ko
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/tg3-$(TG3_VER)/tg3.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/net/tg3.ko
 
 package-bnx2: compile-bnx2
-	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/bnx2-$(BNX2_VER)/src/bnx2.ko \
-		@(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/bnx2.ko
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/bnx2-$(BNX2_VER)/src/bnx2.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/net/bnx2.ko
 
 package-e100: compile-e100
-	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/e100-$(E100_VER)/src/e100.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/e100.ko
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/e100-$(E100_VER)/src/e100.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/net/e100.ko
 
 package-e1000: compile-e1000
-	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/e1000-$(E1000_VER)/src/e1000.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/e1000/e1000.ko
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/e1000-$(E1000_VER)/src/e1000.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/net/e1000/e1000.ko
 
 package-r8168: compile-r8168
-	@install -D $(SOURCES_DIR)/kernel-$(PROC_TYPE)/r8168-$(R8168_VER)/src/r8168.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(PROC_TYPE)/kernel/drivers/net/r8168.ko
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/r8168-$(R8168_VER)/src/r8168.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/net/r8168.ko
+
+package-r8169: compile-r8169
+	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/r8169-$(R8169_VER)/src/r8169.ko \
+		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)/kernel/drivers/net/r8169.ko
 
 build-tarball: package-kernel $(PACKAGES)
 	@(cd $(PKG_ROOT); \
