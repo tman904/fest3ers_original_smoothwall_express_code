@@ -31,6 +31,10 @@ patch.tar.gz:
 		tar -zxf /$(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
 	fi;)
 
+	@(if [ "$(CLAMAV)" != "" ]; then \
+		rm -f distrib/var/clamav/* \
+	fi;)
+
 	@echo "Cleaning tree ..."
 	@/build/striptree distrib/$(UPDATE_DIR)
 

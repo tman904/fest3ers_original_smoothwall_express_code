@@ -4,5 +4,6 @@ UPDATE_ID = 002
 UPDATE_NAME = update2
 
 KERNEL = yes
+CLAMAV = yes
 
 include ../Makefile.update
