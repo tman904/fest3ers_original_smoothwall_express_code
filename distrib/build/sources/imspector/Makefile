@@ -7,12 +7,11 @@
 include ../Makefile.conf
 
 PACKAGE = imspector
-VERSION = 0.3
+VERSION = 0.4
 
 BASE_URL = http://www.imspector.org/downloads/
 
-PATCH_FILE1 = imspector.patch
-PATCH_FILE2 = msnfix.patch
+PATCH_FILE1 = imspector-0.4-icqfix.patch
 
 CONFIGURE = yes
 INSTALL = yes
