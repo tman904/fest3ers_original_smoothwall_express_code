@@ -32,7 +32,7 @@ patch.tar.gz:
 	fi;)
 
 	@(if [ "$(CLAMAV)" != "" ]; then \
-		rm -f distrib/var/clamav/* \
+		rm -f distrib/var/clamav/*; \
 	fi;)
 
 	@echo "Cleaning tree ..."
