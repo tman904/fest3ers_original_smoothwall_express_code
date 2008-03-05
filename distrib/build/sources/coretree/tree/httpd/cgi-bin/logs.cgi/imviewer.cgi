@@ -4,11 +4,15 @@ use lib "/usr/lib/smoothwall/";
 use header qw( :standard );
 use POSIX qw(strftime);
 
-my %cgiparams;
-&getcgihash(\%cgiparams);
-&showhttpheaders();
 
-# Configuration options  -----  Mostly colours and suchlike
+# Common configuration parameters.
+
+my $logbase = "/var/log/imspector/";
+my $webbase = "/httpd/html/ui/img/im/";
+my $webroot = "/ui/img/im/";
+my $oururl = '/cgi-bin/logs.cgi/imviewer.cgi';
+
+# Colours and smilies
 
 my $protocol_colour     = '#06264d';
 my $local_colour        = '#1d398b';
@@ -39,10 +43,12 @@ my %smilies = (
 	':twisted:' => 'icon_twisted.gif',
 );
 
+# Page declaration, The following code should parse the CGI headers, and render the page
+# accordingly... How you do this depends what environment you're in.
 
-# and now back with things that shouldn't be changed :)
-
-my $oururl = '/cgi-bin/logs.cgi/imviewer.cgi';
+my %cgiparams;
+&getcgihash(\%cgiparams);
+&showhttpheaders();
 
 if ($ENV{'QUERY_STRING'})
 {
@@ -57,23 +63,342 @@ if ($ENV{'QUERY_STRING'})
 # Act in Tail mode (as in just generate the raw logs and pass back to the other CGI
 
 if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
+	&parser( $cgiparams{'section'}, $cgiparams{'offset'}, $cgiparams{'conversation'}, $cgiparams{'skimhtml'} );
+	exit;
+}
+
+# Start rendering the Page using Express' rendering functions
+
+my $script = &scriptheader();
+
+&openpage('Instant Messenger proxy logs', 1, $script, 'logs');
+&openbigbox('100%', 'LEFT');
+&alertbox();
+
+print &pagebody();
+
+&closebigbox();
+&closepage();
+exit;
+
+
+# -----------------------------------------------------------------------------
+# ---------------------- IMSPector Log Viewer Code ----------------------------
+# -----------------------------------------------------------------------------
+#           ^"^                                                 ^"^
+
+
+# Scriptheader
+# ------------
+# Return the bulk of the page, which should reside in the pages <head> field
+
+sub scriptheader
+{
+
+				
+	my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday ) = localtime( time() );
+	$year += 1900; $mon++;
+	my $conversation = sprintf( "%.4d-%.2d-%.2d", $year, $mon, $mday );
+
+	my $script = qq {
+<script language="Javascript">
+var section	     ='none';
+var moveit   	     = 1;
+var skimhtml 	     = 1;
+var the_timeout;
+var offset   	     = 0;
+var fragment 	     = "";
+var conversationdate = "$conversation";
+
+function xmlhttpPost()
+{
+	var xmlHttpReq = false;
+    	var self = this;
+
+    	if (window.XMLHttpRequest) {
+		// Mozilla/Safari
+        	self.xmlHttpReq = new XMLHttpRequest();
+    	} else if (window.ActiveXObject) {
+    		// IE
+        	self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+    	}
+
+	var url = "$url" + "?mode=render&section=" + section + "&skimhtml=" + skimhtml + "&offset=" + offset + "&conversation=" + conversationdate;
+    	self.xmlHttpReq.open('POST', url, true);
+	self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    	self.xmlHttpReq.onreadystatechange = function() {
+	        if ( self.xmlHttpReq && self.xmlHttpReq.readyState == 4) {
+        		updatepage(self.xmlHttpReq.responseText);
+		}
+    	}
+
+	document.getElementById('status').style.display = "inline";
+
+    	self.xmlHttpReq.send();
+}
+
+function updatepage(str){
+	/* update the list of conversations ( if we need to ) */
+
+	var parts = str.split( "--END--\\n" );
+
+	var lines = parts[0].split( "\\n" );
+			
+	for ( var line = 0 ; line < lines.length ; line ++ ){
+		var a = lines[line].split("|");
+
+		if ( !a[1] || !a[2] || !a[3] ){
+			continue;
+		}
+
+		/* convert the modification stamp into something sensible */
+		a[5] = parseInt( a[5] * 24 * 60 * 60 );
+
+		/* create titling information if needed */
+		if ( !document.getElementById( a[1] ) ){
+			document.getElementById('conversations').innerHTML += "<div id='" + a[1] + "_t' style='width: 100%; background-color: #d9d9f3; color: $protocol_colour;'>" + a[1] + "</div><div id='" + a[1] + "' style='width: 100%; background-color: #e5e5f3;'></div>";
+		 }
+
+		if ( !document.getElementById( a[1] + "_" + a[2] ) ){
+			var imageref = "";
+			if ( a[0] ){
+				imageref = "<img src='" + a[0] + "' alt='" + a[1] + "'/>";
+			}
+			document.getElementById( a[1] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_t' style='width: 100%; color: $local_colour; padding-left: 5px;'>" + imageref + a[2] + "</div><div id='" + a[1] + "_" + a[2] + "' style='width: 100%; background-color: #efeffa; border-bottom: solid 1px #d9d9f3;'></div>";
+			delete imageref;
+		}
+
+		if ( !document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) ){
+			document.getElementById( a[1] + "_" + a[2] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_t' style='width: 100%; color: $remote_colour; padding-left: 10px; cursor: pointer;' onClick=" + '"' + "setsection('" + a[1] + "|" + a[2] + "|" + a[3] + "|" + a[4] + "');" + '"' + "' + >&raquo;&nbsp;" + a[3] + "</div><div id='" + a[1] + "_" + a[2] + "_" + a[3] + "' style='width: 100%;'></div>";
+		}
+
+		if ( document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) && a[5] <= 60 ){
+			/* modified within the last minute! */
+			document.getElementById( a[1] + "_" + a[2] + "_" + a[3] + "_t" ).style.fontWeight = "bold";
+		} else {
+			document.getElementById( a[1] + "_" + a[2] + "_" + a[3] + "_t" ).style.fontWeight = "normal";
+		}
+		delete a;
+	}
+
+	delete lines;
+
+	/* rework the list of active conversation dates ... */
+
+	var lines = parts[1].split( "\\n" );
+
+	var the_select = document.getElementById('conversationdates');
+	the_select.options.length = lines.length;
+		
+	for ( var line = 0 ; line < lines.length ; line ++ ){
+		the_select.options[ line ].text  = lines[line];
+		the_select.options[ line ].value = lines[line];
+		if ( lines[line] == conversationdate ){
+			the_select.selectedIndex = line;
+		}
+	}
+
+	delete the_select;
+	delete lines;
+
+	/* determine the title of this conversation */
+	if ( parts[2] ){
+		var details = parts[2].split(",");
+		var title = details[0] + " conversation between <span style='color: $local_user_colour;'>" + details[ 1 ] + "</span> and <span style='color: $remote_user_colour;'>" + details[2] + "</span>";
+		if ( !details[1] ){
+			title = "&nbsp;";
+		}
+
+		document.getElementById('status').style.display = "none";
+	
+		var bottom  = parseInt( document.getElementById('content').scrollTop );
+		var bottom2 = parseInt( document.getElementById('content').style.height );
+		var absheight = parseInt( bottom + bottom2 );
+
+		if ( absheight == document.getElementById('content').scrollHeight ){	
+			moveit = 1;
+		} else {
+//			moveit = 0;
+		}
+
+		fragment += parts[4];
+		document.getElementById('content').innerHTML = "<table style='width: 100%'>" + fragment + "</table>";
+		if (moveit == 1 ){
+			document.getElementById('content').scrollTop = 0;
+			document.getElementById('content').scrollTop = document.getElementById('content').scrollHeight;
+		}
+
+		document.getElementById('content_title').innerHTML = title;
+		delete details;
+		delete title;
+		delete bottom;
+		delete bottom2;
+		delete absheight;
+	}
+
+	/* set the file offset */
+	offset = parts[3];
+
+	if ( moveit == 1 ){
+		document.getElementById('scrlck').style.color = 'green';
+	} else {
+		document.getElementById('scrlck').style.color = '#202020';
+	}
+
+	if ( skimhtml == 1 ){
+		document.getElementById('skimhtml').style.color = 'green';
+	} else {
+		document.getElementById('skimhtml').style.color = '#202020';
+	}
+
+	delete parts;
+
+	the_timeout = setTimeout( "xmlhttpPost();", 5000 );
+}
+
+function setsection( value )
+{
+	section = value;
+	offset = 0;
+	fragment = "";
+	moveit = 1;
+	clearTimeout(the_timeout);
+	xmlhttpPost();
+	document.getElementById('content').scrollTop = 0;
+	document.getElementById('content').scrollTop = document.getElementById('content').scrollHeight;
+}
+
+function togglescrlck()
+{
+	if ( moveit == 1 ){
+		moveit = 0;
+		document.getElementById('scrlck').style.color = '#202020';
+	} else {
+		moveit = 1;
+		document.getElementById('scrlck').style.color = 'green';
+	}
+}
+
+function toggleskimhtml()
+{
+	if ( skimhtml == 1 ){
+		skimhtml = 0;
+		document.getElementById('skimhtml').style.color = '#202020';
+	} else {
+		skimhtml = 1;
+		document.getElementById('skimhtml').style.color = 'green';
+	}
+	clearTimeout(the_timeout);
+	xmlhttpPost();
+}
+
+function setDate()
+{
+	var the_select = document.getElementById('conversationdates');
+	conversationdate = the_select.options[ the_select.selectedIndex ].value;
+	document.getElementById('conversations').innerHTML = "";
+	fragment = "";
+	offset = 0;
+	section = "";
+	clearTimeout(the_timeout);
+	xmlhttpPost();
+}
+
+</script>
+	};
+
+	return $script;
+}
+
+# pagebody function 
+# -----------------
+# Return the HTML fragment which includes the page body.
+
+sub pagebody
+{
+	my $body = qq {
+	<div style='width: 100%; text-align: right;'><span id='status' style='background-color: #fef1b5; display: none;'>Updating</span>&nbsp;</div>
+	<style>
+.powerbutton {
+	color:  #202020;
+	font-size: 9pt;
+	cursor: pointer;
+}
+
+.remoteuser {
+	color: $remote_user_colour;
+	font-size: 9pt;
+}
+
+.localuser {
+	color: $local_user_colour;
+	font-size: 9pt;
+}
+
+
+	</style>
+	<table style='width: 100%;'>
+		<tr>
+			<td style='width: 170px; text-align: left; vertical-align: top; overflow: auto; font-size: 8pt; border: solid 1px #c0c0c0;'><div id='conversations' style='height: 400px; overflow: auto; font-size: 10px; overflow-x: hidden;'></div></td>
+			<td style='border: solid 1px #c0c0c0;'>
+				<div id='content_title' style='height: 20px; overflow: auto; vertical-align: top; background-color: #E6E8FA; border-bottom: solid 1px #c0c0c0;'></div>
+				<div id='content' style='height: 376px; overflow: auto; vertical-align: bottom; border-bottom: solid 1px #c0c0c0; overflow-x: hidden;'></div>
+				<div id='content_subtitle' style='height: 24px; overflow: auto; vertical-align: top; background-color: #E6E8FA; width: 100%; padding: 2px;'>
+					<div style='width: 60%; float: left;' id='statuswindow'>
+						For conversations on:&nbsp;
+						<select id='conversationdates' onChange='setDate()';>
+						</select>
+					</div>
+					<div style='width: 40%; text-align: right; float: right;'>
+						<span class='powerbutton' id='skimhtml' onClick='toggleskimhtml();'>&lt;html&gt;</span>
+						<span class='powerbutton' id='scrlck' onClick='togglescrlck();'>ScrLk</span>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<script>xmlhttpPost();</script>
+	};
+	return $body;
+}
+
+
+# Parser function ...
+# ---------------
+# Retrieves the IMspector logs from their nestling place and displays them accordingly.
+
+sub parser
+{
+	my ( $section, $offset, $conversationdate, $skimhtml ) = @_;
 	# render the user list ...
 
+	chomp $offset;	
+
+	unless (  $offset =~ /^([\d]*)$/ ){
+		print STDERR "Illegal offset ($offset $1) resetting...\n";
+		$offset = 0;
+	}
+
+	print STDERR "Have a set offset of $offset\n";
+
+
 	# browse for the available protocols
-	unless ( opendir DIR, "/var/log/imspector/" ){
+	unless ( opendir DIR, $logbase ){
 		exit;
 	}
 
+	my %conversationaldates;
 	my @protocols = grep {!/^\./} readdir(DIR);		
 
 	foreach my $protocol ( @protocols ){
-		unless ( opendir LUSER, "/var/log/imspector/$protocol" ){
+		unless ( opendir LUSER, "$logbase$protocol" ){
 			next;
 		}
 	
 		my @localusers = grep {!/^\./} readdir(LUSER);		
 		foreach my $localuser ( @localusers ){
-			unless ( opendir RUSER, "/var/log/imspector/$protocol/$localuser/" ){
+			unless ( opendir RUSER, "$logbase$protocol/$localuser/" ){
 				next;
 			}
 			my @remoteusers = grep {!/^\./} readdir( RUSER );
@@ -83,13 +408,26 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 				}
 				my @conversations = grep {!/^\./} readdir( CONVERSATIONS );
 				foreach my $conversation ( @conversations ){
-					my $protocol_img = "";
-					if ( -e "/httpd/html/ui/img/im/$protocol.png" ){
-						$protocol_img = "/ui/img/im/$protocol.png";
-					}
-					print "$protocol_img|$protocol|$localuser|$remoteuser|$conversation\n";
+					$conversationaldates{ $conversation } = $localuser;
 				}
+
 				closedir CONVERSATIONS;
+
+				my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday ) = localtime( time() );
+				$year += 1900; $mon++;
+				my $conversation = sprintf( "%.4d-%.2d-%.2d", $year, $mon, $mday );
+
+				$conversation = $conversationdate if ( defined $conversationdate and $conversationdate ne "" );
+
+				if ( -e "$logbase$protocol/$localuser/$remoteuser/$conversation" ){
+					my $protocol_img = "";
+					if ( -e "$webbase$protocol.png" ){
+						$protocol_img = "$webroot$protocol.png";
+					}
+
+					my $modi = -M "$logbase$protocol/$localuser/$remoteuser/$conversation";
+					print "$protocol_img|$protocol|$localuser|$remoteuser|$conversation|$modi\n";
+				}
 			}
 			closedir RUSER;
 		}
@@ -99,15 +437,23 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 
 	print "--END--\n";
 
+	# display a list of conversational dates .. i.e. the dates which we have conversations on.
+	foreach my $key ( sort keys %conversationaldates ){
+		print "$key\n";
+	}
+	
+	print "--END--\n";
+
+
 	# now check the log file ...
 	
-	if ( $cgiparams{'section'} ne "none" ){
-		my ( $protocol, $localuser, $remoteuser, $conversation ) = split /\|/, $cgiparams{'section'};
+	if ( $section ne "none" ){
+		my ( $protocol, $localuser, $remoteuser, $conversation ) = split /\|/, $section;
 		
 		print "$protocol, $localuser, $remoteuser, $conversation\n";
 		print "--END--\n";
 		
-		my $filename = "/var/log/imspector/$protocol/$localuser/$remoteuser/$conversation";
+		my $filename = "$logbase$protocol/$localuser/$remoteuser/$conversation";
 		
 		unless ( open(FD, "$filename" ) ){
 			exit;
@@ -140,9 +486,16 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 
 		do {
 			$end_position = $log_position;
-			$log_position -= $jumpback;
-	
-			$goneback += $jumpback;
+
+			if ( $offset != 0 ){
+				# we were given a hint as to where we should have been anyhow ..
+				# so we might as well use that to go back to.
+				$log_position = $offset;
+				$goneback = $end_position - $log_position;
+			} else {
+				$log_position -= $jumpback;
+				$goneback += $jumpback;
+			}
 
 			last if ( $goneback > $gonebacklimit );
 
@@ -159,176 +512,108 @@ if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
 				push @content, $line;
 			}
 			shift @content if $#content >= $TAILSIZE;
-		} while ( $#content < $TAILSIZE and $log_position > 0 );
+		} while ( $#content < $TAILSIZE and $log_position > 0 and $offset == 0 );
 
 		# trim the content down as we may have more entries than we should.
 	
 		while ( $#content > $TAILSIZE ){ shift @content; };
 		close FD;
 
-		print "<table style='width: 100%;'>";
+		print STDERR "Log was ".$#content." since last read\n";
+
+		print "$end_position\n--END--\n";
+
 		foreach my $line ( @content ){
-			my ( $address, $timestamp, $type, $data ) = ( $line =~ /([^,]*),([^,]*),([^,]*),(.*)/ );
-			my $user = "";
-			if ( $type eq "1" ){
-				# incoming message (from remote user)
-				my $u = $remoteuser;
-				$u =~ s/\@.*//g;
-				$user = "&lt;<span style='color: $remote_user_colour;'>$u</span>&gt;";
-			} elsif ( $type eq "2" ){
-				# outgoing message
-				my $u = $localuser;
-				$u =~ s/\@.*//g;
-				$user = "&lt;<span style='color: $local_user_colour;'>$u</span>&gt;";
+			my ( $address, $timestamp, $direction, $type, $filtered, $data );
+
+			( $address, $timestamp, $direction, $type, $filtered, $data ) = ( $line =~ /([^,]*),(\d+),(\d+),(\d+),(\d+),(.*)/ );
+
+			# are we using the oldstyle or new style logs ?
+			if ( not defined $address and not defined $timestamp ){
+				( $address, $timestamp, $type, $data ) = ( $line =~ /([^,]*),([^,]*),([^,]*),(.*)/ );
+				if ( $type eq "1" ){
+					$direction = 0;
+					$type      = 1;
+				} elsif ( $type eq "2" ){
+					$direction = 1;
+					$type      = 1;
+				} elsif ( $type eq "3" ){
+					$direction = 0;
+					$type      = 2;
+				} elsif ( $type eq "4" ){
+					$direction = 1;
+					$type      = 4;
+				}
 			}
+
+			# some protocols (ICQ, I'm looking in your direction) have a habit of starting 
+			# and ending each sentence with HTML (evil program)		
+
+			if ( defined $skimhtml and $skimhtml eq "1" ){	
+				$data =~ s/^<HTML><BODY[^>]*><FONT[^>]*>//ig;	
+				$data =~ s/<\/FONT><\/BODY><\/HTML>//ig;	
+			}
+
+			$data = &htmlescape($data);
+			$data =~ s/\r\\n/<br>\n/g;
+			my $user = "";
+
+			my $bstyle = "";
+			$bstyle = "style='background-color: #FFE4E1;'" if ( $filtered eq "1" );
+
+			if ( $type eq "1" ){
+				# a message message (from remote user)
+				if ( $direction eq "0" ){
+					# incoming
+					my $u = $remoteuser;
+					$u =~ s/\@.*//g;
+					$user = "&lt;<span class='remoteuser'>$u</span>&gt;";
+				} else { 
+					# outgoing message
+					my $u = $localuser;
+					$u =~ s/\@.*//g;
+					$user = "&lt;<span class='localuser'>$u</span>&gt;";
+				}
+			} elsif ($type eq "2") {
+				if ( $direction eq "0" ){
+					# incoming file
+					my $u = $remoteuser;
+					$u =~ s/\@.*//g;
+					$user = "&lt;<span class='remoteuser'><b><i>$u</i></b></span>&gt;";
+				} else {
+					# outgoing file
+					my $u = $localuser;
+					$u =~ s/\@.*//g;
+					$user = "&lt;<span class='localuser'><b><i>$u</i></b></span>&gt;";
+				}
+			}
+
 			foreach my $smiley ( keys %smilies ){
-				my $smile = quotemeta $smiley;
-				$data =~s/$smile/<img src='\/ui\/img\/im\/smiles\/$smilies{$smiley}' alt='$smiley'\/>/igm;
+				if ( -e "$webbase/smiles/$smilies{$smiley}" ){
+					my $smile = quotemeta $smiley;
+					$data =~s/$smile/<img src='${webroot}smiles\/$smilies{$smiley}' alt='$smiley'\/>/igm;
+				}
 			}
 
 			my $t = strftime "%H:%M:%S", localtime($timestamp);
-			print "<tr><td style='width: 30px; vertical-align: top;'>[$t]</td><td style=' width: 60px; vertical-align: top;'>$user</td><td style='vertical-align: top;'>$data</td></tr>";
-		}
-		print "</table>";
-	}
-
-	exit;
-}
-
-my $script = qq {
-<script language="Javascript">
-var section='none';
-var moveit = 1;
-var the_timeout;
-
-function xmlhttpPost()
-{
-	var xmlHttpReq = false;
-    	var self = this;
-
-    	if (window.XMLHttpRequest) {
-		// Mozilla/Safari
-        	self.xmlHttpReq = new XMLHttpRequest();
-    	} else if (window.ActiveXObject) {
-    		// IE
-        	self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
-    	}
-
-    	self.xmlHttpReq.open('POST', "$oururl", true);
-	self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-    	self.xmlHttpReq.onreadystatechange = function() {
-	        if ( self.xmlHttpReq && self.xmlHttpReq.readyState == 4) {
-        		updatepage(self.xmlHttpReq.responseText);
-		}
-    	}
-
-	document.getElementById('status').style.display = "inline";
-
-    	self.xmlHttpReq.send( "mode=render&section=" + section );
-}
-
-function updatepage(str){
-	/* update the list of conversations ( if we need to ) */
-
-	var parts = str.split( "--END--\\n" );
-
-	var lines = parts[0].split( "\\n" );
-			
-	for ( var line = 0 ; line < lines.length ; line ++ ){
-		var a = lines[line].split("|");
-
-		if ( !a[1] || !a[2] || !a[3] ){
-			continue;
-		}
-
-		/* create titling information if needed */
-		if ( !document.getElementById( a[1] ) ){
-			document.getElementById('conversations').innerHTML += "<div id='" + a[1] + "_t' style='width: 100%; background-color: #d9d9f3; color: $protocol_colour;'>" + a[1] + "</div><div id='" + a[1] + "' style='width: 100%; background-color: #e5e5f3;'></div>";
-		 }
-
-		if ( !document.getElementById( a[1] + "_" + a[2] ) ){
-			var imageref = "";
-			if ( a[0] ){
-				imageref = "<img src='" + a[0] + "' alt='" + a[1] + "'/>";
+			if ($type eq "3" or $type eq "4") {
+				$data = "<b><i>$data</i></b>";
 			}
-			document.getElementById( a[1] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_t' style='width: 100%; color: $local_colour; padding-left: 5px;'>" + imageref + a[2] + "</div><div id='" + a[1] + "_" + a[2] + "' style='width: 100%; background-color: #efeffa; border-bottom: solid 1px #d9d9f3;'></div>";
-		}
-
-		if ( !document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) ){
-			document.getElementById( a[1] + "_" + a[2] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_t' style='width: 100%; color: $remote_colour; padding-left: 10px;'>" + a[3] + "</div><div id='" + a[1] + "_" + a[2] + "_" + a[3] + "' style='width: 100%;'></div>";
-		}
-
-		if ( !document.getElementById( a[1] + "_" + a[2] + "_" + a[3] + "_" + a[4] ) ){
-			document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_" + a[4] + "' style='width: 100%; color: $conversation_colour; cursor: pointer; padding-left: 15px;' onClick=" + '"' + "setsection('" + a[1] + "|" + a[2] + "|" + a[3] + "|" + a[4] + "');" + '"' + "' + >&raquo;" + a[4] + "</div>";
+			print "<tr $bstyle><td style='width: 30px; vertical-align: top;'>[$t]</td><td style=' width: 60px; vertical-align: top;'>$user</td><td style='vertical-align: top;'>$data</td></tr>";
 		}
 	}
-
-	/* determine the title of this conversation */
-	var details = parts[1].split(",");
-	var title = details[0] + " conversation between <span style='color: $local_user_colour;'>" + details[ 1 ] + "</span> and <span style='color: $remote_user_colour;'>" + details[2] + "</span>";
-	if ( !details[1] ){
-		title = "&nbsp;";
-	}
-	if ( !parts[2] ){
-		parts[2] = "&nbsp;";
-	}
-
-	document.getElementById('status').style.display = "none";
-	
-	var bottom  = parseInt( document.getElementById('content').scrollTop );
-	var bottom2 = parseInt( document.getElementById('content').style.height );
-	var absheight = parseInt( bottom + bottom2 );
-	if ( absheight == document.getElementById('content').scrollHeight ){	
-		moveit = 1;
-	} else {
-		moveit = 0;
-	}
-	document.getElementById('content').innerHTML = parts[2];
-	if (moveit == 1 ){
-		document.getElementById('content').scrollTop = 0;
-		document.getElementById('content').scrollTop = document.getElementById('content').scrollHeight;
-	}
-	document.getElementById('content_title').innerHTML = title;
-	the_timeout = setTimeout( "xmlhttpPost();", 5000 );
+	return;
 }
 
-function setsection( value )
+sub htmlescape
 {
-	section = value;
-	clearTimeout(the_timeout);
-	xmlhttpPost();
-	document.getElementById('content').scrollTop = 0;
-	document.getElementById('content').scrollTop = document.getElementById('content').scrollHeight;
+	my ($value) = @_;
+	$value =~ s/&/\&amp;/g;
+	$value =~ s/</\&lt;/g;
+	$value =~ s/>/\&gt;/g;
+	$value =~ s/"/\&quot;/g;
+	$value =~ s/'/\&#39;/g;
+	return $value;
 }
 
-</script>
-};
-
-&openpage('Instant Messenger proxy logs', 1, $script, 'logs');
-
-&openbigbox('100%', 'LEFT');
-
-&alertbox();
-
-my $options = qq{
-};
-
-print qq{
-	<div style='width: 100%; text-align: right;'><span id='status' style='background-color: #fef1b5; display: none;'>Updating</span>&nbsp;</div>
-	<table style='width: 100%;'>
-		<tr>
-			<td style='width: 170px; text-align: left; vertical-align: top; overflow: auto; font-size: 8pt; border: solid 1px #c0c0c0;'><div id='conversations' style='height: 400px; overflow: auto; font-size: 9px; overflow-x: hidden;'></div></td>
-			<td style='border: solid 1px #c0c0c0;'>
-				<div id='content_title' style='height: 20px; overflow: auto; vertical-align: top; background-color: #E6E8FA; border-bottom: solid 1px #c0c0c0;'></div>
-				<div id='content' style='height: 380px; overflow: auto; vertical-align: bottom; border-bottom: solid 1px #c0c0c0; overflow-x: hidden;'></div>
-			</td>
-		</tr>
-	</table>
-	<script>xmlhttpPost();</script>
-};
-
-&closebigbox();
-
-&closepage();
 
