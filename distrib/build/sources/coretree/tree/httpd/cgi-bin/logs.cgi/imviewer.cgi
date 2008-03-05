@@ -189,9 +189,12 @@ function updatepage(str){
 	var lines = parts[1].split( "\\n" );
 
 	var the_select = document.getElementById('conversationdates');
-	the_select.options.length = lines.length;
+	the_select.options.length = lines.length - 1;
 		
 	for ( var line = 0 ; line < lines.length ; line ++ ){
+		if ( lines[ line ] == "" ){
+			continue;
+		}
 		the_select.options[ line ].text  = lines[line];
 		the_select.options[ line ].value = lines[line];
 		if ( lines[line] == conversationdate ){
