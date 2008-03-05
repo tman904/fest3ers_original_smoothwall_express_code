@@ -1,4 +1,5 @@
 ./httpd/cgi-bin/ids.cgi
+./httpd/cgi-bin/logs.cgi/imviewer.cgi
 ./httpd/cgi-bin/portfw.cgi
 ./etc/crontab
 ./etc/inittab
