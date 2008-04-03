@@ -3,7 +3,7 @@ include ../Makefile.conf
 PACKAGE = clamav
 VERSION = 0.92.1
 
-BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/clamav/
+BASE_URL = http://mesh.dl.sourceforge.net/sourceforge/clamav/
 
 CONFIG_OPTS = --sysconfdir=/etc --with-dbdir=/var/clamav --disable-clamav
 
