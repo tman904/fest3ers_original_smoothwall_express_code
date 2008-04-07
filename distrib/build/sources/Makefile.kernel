@@ -218,6 +218,7 @@ clean:
 	@rm -rf patch-o-matic-ng-$(PATCH_O_MATIC_VER)
 	@rm -rf unicorn
 	@rm -rf usr-sureconnect
+	@rm -rf eagle-usb-$(EAGLE_VER)
 	@rm -rf CnxADSL-6.1.2.007-PIM-$(CNX_VER)
 	@rm -rf pulsar-$(PULSAR_VER)
 	@rm -rf tg3-$(TG3_VER)
