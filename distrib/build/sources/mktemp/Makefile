@@ -9,8 +9,7 @@ include ../Makefile.conf
 PACKAGE = mktemp
 VERSION = 1.5
 
-#BASE_URL = ftp://ftp.mktemp.org/pub/mktemp
-BASE_URL = http://www.aslak.net/
+BASE_URL = http://www.aslak.net/smoothmirror/
 
 INSTALL = yes
 

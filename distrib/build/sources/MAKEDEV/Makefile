@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = MAKEDEV
 VERSION = 3.3.8
 
-BASE_URL = http://www.aslak.net
+BASE_URL = http://www.aslak.net/smoothmirror/
 
 TARBALL = $(PACKAGE)-$(VERSION)-2
 
