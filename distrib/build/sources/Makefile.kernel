@@ -27,10 +27,10 @@ R8169_VER = 6.005.00
 
 COMPILER = /usr/bin/gcc
 
-PACKAGES = package-eagle package-ipp2p package-bnx2 package-e100 package-e1000 package-r8168 package-r8169
+PACKAGES = package-eagle package-ipp2p
 
 ifeq ($(ARCH), i386)
-PACKAGES += package-unicorn package-cnx package-pulsar
+PACKAGES += package-unicorn package-cnx package-pulsar package-bnx2 package-e100 package-e1000 package-r8168 package-r8169
 endif
 
 download:
@@ -133,10 +133,10 @@ compile-bnx2: compile-kernel
 	@make -C bnx2-$(BNX2_VER)/src LINUX=$(KERNEL_DIR) KVER=2.6.0
 
 compile-e100: compile-kernel
-	@make -C e100-$(E100_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
+	@make -C e100-$(E100_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6.0 KVER=2.6.0
 
 compile-e1000: compile-kernel
-	@make -C e1000-$(E1000_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
+	@make -C e1000-$(E1000_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6.0 KVER=2.6.0
 
 compile-r8168: compile-kernel
 	@(cd r8168-$(R8168_VER); make KDIR=$(KERNEL_DIR) KVER=2.6.0 modules)
@@ -226,6 +226,7 @@ clean:
 	@rm -rf e100-$(E100_VER)
 	@rm -rf e1000-$(E1000_VER)
 	@rm -rf r8168-$(R8168_VER)
+	@rm -rf r8169-$(R8169_VER)
 	@rm -rf $(PKG_ROOT)
 
 all: clean build-tarball
