@@ -133,10 +133,10 @@ compile-bnx2: compile-kernel
 	@make -C bnx2-$(BNX2_VER)/src LINUX=$(KERNEL_DIR) KVER=2.6.0
 
 compile-e100: compile-kernel
-	@make -C e100-$(E100_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6.0 KVER=2.6.0
+	@make -C e100-$(E100_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
 
 compile-e1000: compile-kernel
-	@make -C e1000-$(E1000_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6.0 KVER=2.6.0
+	@make -C e1000-$(E1000_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
 
 compile-r8168: compile-kernel
 	@(cd r8168-$(R8168_VER); make KDIR=$(KERNEL_DIR) KVER=2.6.0 modules)
