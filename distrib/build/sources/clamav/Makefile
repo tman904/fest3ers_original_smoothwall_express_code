@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 PACKAGE = clamav
-VERSION = 0.92.1
+VERSION = 0.93.3
 
 BASE_URL = http://mesh.dl.sourceforge.net/sourceforge/clamav/
 

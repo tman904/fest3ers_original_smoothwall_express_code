@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = dhcp
-VERSION = 3.0.5
+VERSION = 3.0.7
 
 BASE_URL = ftp://ftp.isc.org/isc/dhcp/
 

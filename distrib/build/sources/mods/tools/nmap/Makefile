@@ -1,7 +1,7 @@
 include ../../../Makefile.conf
 
 PACKAGE = nmap
-VERSION = 4.20
+VERSION = 4.68
 
 BASE_URL = http://download.insecure.org/nmap/dist/
 

@@ -6,8 +6,8 @@
 
 include ../Makefile.conf
 
-APACHE_VER = 1.3.39
-MODSSL_VER = 2.8.30
+APACHE_VER = 1.3.41
+MODSSL_VER = 2.8.31
 
 PACKAGE = apache
 VERSION = $(APACHE_VER)
