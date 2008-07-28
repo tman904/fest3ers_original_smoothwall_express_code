@@ -135,7 +135,7 @@ function xmlhttpPost()
 
 	document.getElementById('status').style.display = "inline";
 
-    	self.xmlHttpReq.send();
+    	self.xmlHttpReq.send( url );
 }
 
 function updatepage(str){
