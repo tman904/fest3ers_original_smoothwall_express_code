@@ -97,7 +97,7 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'})
 		$errormessage = $tr{'this is not an authorised update'};
 		goto ERROR;
 	}
-	unless (system("cd /var/patches/$$ && /bin/tar xvfz patch.tar.gz > /dev/null") == 0)
+	unless (system("cd /var/patches/$$ && /usr/bin/tar xvfz patch.tar.gz > /dev/null") == 0)
 	{
 		$errormessage = $tr{'this is not a valid archive'};
 		goto ERROR;
