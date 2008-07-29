@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Update 3 installing."
+
+tar -zxvf patch.tar.gz -C /
