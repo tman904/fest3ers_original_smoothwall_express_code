@@ -1,4 +1,4 @@
-UPDATE_PACKAGES = coretree openssl openssh squid apache dnsmasq dhcp miniupnpd
+UPDATE_PACKAGES = coretree openssl openssh squid apache dnsmasq dhcp miniupnpd clamav
 
 UPDATE_ID = 003
 UPDATE_NAME = update3
