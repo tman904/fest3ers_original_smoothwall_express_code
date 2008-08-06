@@ -3,3 +3,6 @@
 echo "Update 3 installing."
 
 tar -zxvf patch.tar.gz -C /
+
+rm -rf /var/clamav/main.inc
+rm -rf /var/clamav/daily.inc
