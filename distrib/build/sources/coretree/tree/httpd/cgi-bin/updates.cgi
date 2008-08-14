@@ -75,7 +75,7 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'})
 		$errormessage = $tr{'could not open update for writing'};
 		goto ERROR;
 	}
-	flock fH, 2;
+	flock FH, 2;
 	print FH $uploadsettings{'FH'};
 	close(FH);
 	my $md5sum;
