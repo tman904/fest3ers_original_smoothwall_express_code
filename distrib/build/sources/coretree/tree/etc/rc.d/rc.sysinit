@@ -86,6 +86,7 @@ find /var/run -name '*.pid' -type f -exec rm -f '{}' \;
 rm -f /usr/etc/dhcpc/*.pid
 rm -f /var/smoothwall/red/*
 rm -f /var/lock/LCK..ttyS*
+rm -f /var/run/pppd*.tdb
 
 echo "Setting drive DMA settings"
 /sbin/hdparm -d 1 -c 1 -u 1 /dev/harddisk
