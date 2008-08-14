@@ -104,8 +104,10 @@ if ($ip ne $ipcache)
 				my $host = $settings{'DOMAIN'};
 				if ($settings{'HOSTNAME'}) {
 					$host = "$settings{'HOSTNAME'}.$settings{'DOMAIN'}"; }
-						
+				
 				my @ddnscommand = ('/usr/bin/ez-ipupdate', '-a', "$ip", '-S', "$settings{'SERVICE'}", '-u', "$settings{'LOGIN'}:$settings{'PASSWORD'}", '-h', $host,  '-q');
+				if ($settings{'SERVICE'} eq 'zoneedit') {
+					push @ddnscommand, ('-s', 'dynamic.zoneedit.com'); }
 				if ($settings{'WILDCARDS'} eq 'on') { push(@ddnscommand, '-w'); } 
 				my $result = system(@ddnscommand);
 				if ( $result != 0) {
