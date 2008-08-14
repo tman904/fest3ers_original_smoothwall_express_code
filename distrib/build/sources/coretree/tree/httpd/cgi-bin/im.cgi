@@ -28,6 +28,8 @@ $imsettings{'MSN'} = 'off';
 $imsettings{'ICQ'} = 'off';
 $imsettings{'YAHOO'} = 'off';
 $imsettings{'IRC'} = 'off';
+$imsettings{'GG'} = 'off';
+$imsettings{'XMPP'} = 'off';
 
 &getcgihash(\%imsettings);
 
@@ -81,6 +83,14 @@ $checked{'IRC'}{'off'} = '';
 $checked{'IRC'}{'on'} = '';
 $checked{'IRC'}{$imsettings{'IRC'}} = 'CHECKED';
 
+$checked{'GG'}{'off'} = '';
+$checked{'GG'}{'on'} = '';
+$checked{'GG'}{$imsettings{'GG'}} = 'CHECKED';
+
+$checked{'XMPP'}{'off'} = '';
+$checked{'XMPP'}{'on'} = '';
+$checked{'XMPP'}{$imsettings{'XMPP'}} = 'CHECKED';
+
 $checked{'FILTERING'}{'off'} = '';
 $checked{'FILTERING'}{'on'} = '';
 $checked{'FILTERING'}{$imsettings{'FILTERING'}} = 'CHECKED';
@@ -117,6 +127,13 @@ print <<END
 	<td><input type='checkbox' name='YAHOO' $checked{'YAHOO'}{'on'}></td>
 	<td class='base'>IRC:</td>
 	<td><input type='checkbox' name='IRC' $checked{'IRC'}{'on'}></td>
+</tr>
+<tr>
+	<td class='base'>Gadu-Gdu:</td>
+	<td><input type='checkbox' name='GG' $checked{'GG'}{'on'}></td>
+	<td class='base'>Jabber and Gtalk:</td>
+	<td><input type='checkbox' name='XMPP' $checked{'XMPP'}{'on'}></td>
+</tr>
 </table>
 END
 ;

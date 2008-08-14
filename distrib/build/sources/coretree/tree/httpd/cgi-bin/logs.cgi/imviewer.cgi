@@ -136,6 +136,7 @@ function xmlhttpPost()
 	document.getElementById('status').style.display = "inline";
 
     	self.xmlHttpReq.send( url );
+	delete self;
 }
 
 function updatepage(str){
@@ -170,7 +171,7 @@ function updatepage(str){
 		}
 
 		if ( !document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) ){
-			document.getElementById( a[1] + "_" + a[2] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_t' style='width: 100%; color: $remote_colour; padding-left: 10px; cursor: pointer;' onClick=" + '"' + "setsection('" + a[1] + "|" + a[2] + "|" + a[3] + "|" + a[4] + "');" + '"' + "' + >&raquo;&nbsp;" + a[3] + "</div><div id='" + a[1] + "_" + a[2] + "_" + a[3] + "' style='width: 100%;'></div>";
+			document.getElementById( a[1] + "_" + a[2] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_t' style='width: 100%; color: $remote_colour; padding-left: 10px; cursor: pointer;' onClick=" + '"' + "setsection('" + a[1] + "|" + a[2] + "|" + a[3] + "|" + a[4] + "');" + '"' + "' + >&raquo;&nbsp;" + a[3] + "</div><div id='" + a[1] + "_" + a[2] + "_" + a[3] + "' style='width: 1%; display: none;'></div>";
 		}
 
 		if ( document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) && a[5] <= 60 ){
@@ -189,16 +190,16 @@ function updatepage(str){
 	var lines = parts[1].split( "\\n" );
 
 	var the_select = document.getElementById('conversationdates');
-	the_select.options.length = lines.length - 1;
+	the_select.options.length = 0;
 		
 	for ( var line = 0 ; line < lines.length ; line ++ ){
-		if ( lines[ line ] == "" ){
-			continue;
-		}
-		the_select.options[ line ].text  = lines[line];
-		the_select.options[ line ].value = lines[line];
-		if ( lines[line] == conversationdate ){
-			the_select.selectedIndex = line;
+		if ( lines[ line ] != "" ){
+			the_select.options.length ++;
+			the_select.options[ line ].text  = lines[line];
+			the_select.options[ line ].value = lines[line];
+			if ( lines[line] == conversationdate ){
+				the_select.selectedIndex = line;
+			}
 		}
 	}
 
@@ -208,7 +209,7 @@ function updatepage(str){
 	/* determine the title of this conversation */
 	if ( parts[2] ){
 		var details = parts[2].split(",");
-		var title = details[0] + " conversation between <span style='color: $local_user_colour;'>" + details[ 1 ] + "</span> and <span style='color: $remote_user_colour;'>" + details[2] + "</span>";
+		var title = details[0] + " conversation between <span style='color: $local_user_colour;'>" + details[ 1 ] + "</span> and <span style='color: $remote_user_colour;'>" + details[2] + "</span>" + details[1];
 		if ( !details[1] ){
 			title = "&nbsp;";
 		}
@@ -527,9 +528,9 @@ sub parser
 		print "$end_position\n--END--\n";
 
 		foreach my $line ( @content ){
-			my ( $address, $timestamp, $direction, $type, $filtered, $data );
+			my ( $address, $timestamp, $direction, $type, $filtered, $cat, $data );
 
-			( $address, $timestamp, $direction, $type, $filtered, $data ) = ( $line =~ /([^,]*),(\d+),(\d+),(\d+),(\d+),(.*)/ );
+			( $address, $timestamp, $direction, $type, $filtered, $cat, $data ) = ( $line =~ /([^,]*),(\d+),(\d+),(\d+),(\d+),([^,]*),(.*)/ );
 
 			# are we using the oldstyle or new style logs ?
 			if ( not defined $address and not defined $timestamp ){
@@ -548,6 +549,27 @@ sub parser
 					$type      = 4;
 				}
 			}
+			
+			my ( $severity, $classification ) = '0', 'None';
+			if ($cat) {
+				( $severity, $classification) = split(/ /, $cat, 2); }
+			else {
+				$cat = 'N/A'; }
+
+			my $red = 255;
+			my $green = 255;
+			my $blue = 255;
+
+			if ($severity < 0 && $severity >= -5) {
+				$red = 0; $green = abs($severity) * (255 / 5); $blue = 0; }
+			elsif ($severity > 0 && $severity <= 5) {
+				$red = $severity * (255 / 5); $green = 0; $blue = 0; }
+			else {
+				$red = 0; $green = 0; $blue = 0; }
+			
+			my $severitycolour = '';
+			if ($cat ne 'N/A') {
+				$severitycolour = sprintf("background-color: #%02x%02x%02x;", $red, $green, $blue); }
 
 			# some protocols (ICQ, I'm looking in your direction) have a habit of starting 
 			# and ending each sentence with HTML (evil program)		
@@ -602,7 +624,7 @@ sub parser
 			if ($type eq "3" or $type eq "4") {
 				$data = "<b><i>$data</i></b>";
 			}
-			print "<tr $bstyle><td style='width: 30px; vertical-align: top;'>[$t]</td><td style=' width: 60px; vertical-align: top;'>$user</td><td style='vertical-align: top;'>$data</td></tr>";
+			print "<tr $bstyle><td style='width: 30px; vertical-align: top;'>[$t]</td><td style='width: 10px; $severitycolour' title='$cat'><td style=' width: 60px; vertical-align: top;'>$user</td><td style='vertical-align: top;'>$data</td></tr>";
 		}
 	}
 	return;

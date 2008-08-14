@@ -91,6 +91,12 @@ int start_im(std::vector<std::string> & parameters, std::string & response)
 			ipb.push_back("iptables -t nat -A im -p tcp --dport 5050 -j REDIRECT --to-ports 16667");
 		if (settings["IRC"] == "on")
 			ipb.push_back("iptables -t nat -A im -p tcp --dport 6667 -j REDIRECT --to-ports 16667");
+		if (settings["GG"] == "on")
+			ipb.push_back("iptables -t nat -A im -p tcp --dport 8074 -j REDIRECT --to-ports 16667");
+		if (settings["XMPP"] == "on")
+			ipb.push_back("iptables -t nat -A im -p tcp --dport 5222 -j REDIRECT --to-ports 16667");
+		if (settings["XMPP"] == "on")
+			ipb.push_back("iptables -t nat -A im -p tcp --dport 5223 -j REDIRECT --to-ports 16667");
 	}
 
 	error = ipbatch(ipb);

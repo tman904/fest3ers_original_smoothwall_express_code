@@ -7,20 +7,24 @@
 include ../Makefile.conf
 
 PACKAGE = imspector
-VERSION = 0.4
+VERSION = 0.7
 
 BASE_URL = http://www.imspector.org/downloads/
 
-PATCH_FILE1 = imspector-0.4-icqfix.patch
-
 CONFIGURE = yes
+COMPILE = yes
 INSTALL = yes
+
+OPTS = PREFIX=$(PKG_ROOT)/$(PKG_DIR) SSL_DIR=/usr/ssl
 
 configure: patch
 	@true
 
+compile: configure
+	@make -C $(DIR) $(OPTS)
+
 install: compile
-	@make -C $(DIR) install PREFIX=$(PKG_ROOT)/$(PKG_DIR)
+	@make -C $(DIR) $(OPTS) install
 	@rm -f $(PKG_ROOT)/$(PKG_DIR)/etc/imspector/imspector.conf
 
 include ../Makefile.rules

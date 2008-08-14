@@ -25,6 +25,10 @@ if ($imsettings{'ICQ'} eq 'on') {
 	print FILE "icq_protocol=on\n"; }
 if ($imsettings{'IRC'} eq 'on') {
 	print FILE "irc_protocol=on\n"; }
+if ($imsettings{'GG'} eq 'on') {
+	print FILE "gg_protocol=on\n"; }
+if ($imsettings{'XMPP'} eq 'on') {
+	print FILE "jabber_protocol=on\n"; }
 	
 if ($imsettings{'FILTERING'} eq 'on')
 {

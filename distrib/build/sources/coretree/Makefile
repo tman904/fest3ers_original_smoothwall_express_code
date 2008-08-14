@@ -27,6 +27,7 @@ distrib:
 	@chown -R 104:104 distrib/var/log/imspector
 	
 	@chown -R 106:106 distrib/var/lib/siproxd/registrations
+	@chown -R 104:104 distrib/var/lib/imspector
 	
 	@(cd distrib/etc/httpd/conf; ln -s /var/smoothwall/main/hostname.conf)
 	@(cd distrib/usr/etc ln -s /var/smoothwall/dhcp/dhcpd.conf)
