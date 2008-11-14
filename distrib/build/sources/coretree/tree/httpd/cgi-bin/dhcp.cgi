@@ -403,6 +403,11 @@ print <<END
 <INPUT TYPE='hidden' NAME='CHECKSUBNET' VALUE='$dhcpsettings{'SUBNET'}'>
 END
 ;
+if (-e "${swroot}/dhcp/uptodate") {
+	&openbox($tr{'note'});
+	print "<FONT CLASS='base'>$tr{'there are unsaved changes'}<FONT>\n";
+	&closebox();
+}
 
 &openbox('Global settings:');
 print <<END
@@ -604,11 +609,11 @@ END
 ;
 &closebox();
 
-&openbox($tr{'note'});
 if (-e "${swroot}/dhcp/uptodate") {
-	print "<FONT CLASS='base'>$tr{'there are unsaved changes'}<FONT>\n"; }
-print "&nbsp;\n";
-&closebox();
+	&openbox($tr{'note'});
+	print "<FONT CLASS='base'>$tr{'there are unsaved changes'}<FONT>\n";
+	&closebox();
+}
 
 &alertbox('add','add');
 

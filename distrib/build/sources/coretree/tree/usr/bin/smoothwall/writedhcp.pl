@@ -118,7 +118,7 @@ foreach $subnet ('green', 'purple')
 			chomp($_);
 			my @temp = split(/\,/,$_);
 			if ($temp[4] eq 'on') {			
-				print FILE "\thost $id { hardware ethernet $temp[1]; fixed-address $temp[2]; }\n"; }
+				print FILE "\thost $id { hardware ethernet $temp[1]; fixed-address $temp[2]; option host-name \"$temp[0]\"; }\n"; }
 		}
 		close(RULES);
 		print FILE "}\n";
