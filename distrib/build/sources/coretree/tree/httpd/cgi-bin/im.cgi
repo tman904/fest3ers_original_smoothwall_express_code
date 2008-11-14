@@ -17,7 +17,6 @@ my %mainsettings;
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 &readhash("${swroot}/main/settings", \%mainsettings);
 
-&showhttpheaders();
 
 $imsettings{'ACTION'} = '';
 $imsettings{'VALID'} = '';
@@ -30,6 +29,7 @@ $imsettings{'YAHOO'} = 'off';
 $imsettings{'IRC'} = 'off';
 $imsettings{'GG'} = 'off';
 $imsettings{'XMPP'} = 'off';
+$imsettings{'SSL'} = 'off';
 
 &getcgihash(\%imsettings);
 
@@ -56,11 +56,19 @@ ERROR:
 	}
 }
 
+if ($imsettings{'ACTION'} eq $tr{'download ca certificate'})
+{
+	&outputfile('/etc/httpd/server.crt', 'IM CA.pem');
+}
+
 if ($imsettings{'ACTION'} eq '')
 {
 	$imsettings{'MSN'} = 'on';
 	$imsettings{'ICQ'} = 'on';
 	$imsettings{'YAHOO'} = 'on';
+	$imsettings{'GG'} = 'on';
+	$imsettings{'JABBER'} = 'on';
+	$imsettings{'SSL'} = 'on';
 }
 
 &readhash("${swroot}/im/settings", \%imsettings);
@@ -91,6 +99,10 @@ $checked{'XMPP'}{'off'} = '';
 $checked{'XMPP'}{'on'} = '';
 $checked{'XMPP'}{$imsettings{'XMPP'}} = 'CHECKED';
 
+$checked{'SSL'}{'off'} = '';
+$checked{'SSL'}{'on'} = '';
+$checked{'SSL'}{$imsettings{'SSL'}} = 'CHECKED';
+
 $checked{'FILTERING'}{'off'} = '';
 $checked{'FILTERING'}{'on'} = '';
 $checked{'FILTERING'}{$imsettings{'FILTERING'}} = 'CHECKED';
@@ -98,6 +110,8 @@ $checked{'FILTERING'}{$imsettings{'FILTERING'}} = 'CHECKED';
 $checked{'ENABLE'}{'off'} = '';
 $checked{'ENABLE'}{'on'} = '';
 $checked{'ENABLE'}{$imsettings{'ENABLE'}} = 'CHECKED';
+
+&showhttpheaders();
 
 &openpage('IM proxy configuration', 1, '', 'services');
 
@@ -116,11 +130,20 @@ print <<END
 	<td width='25%' class='base'>Swear-word filtering:</TD>
 	<td width='25%'><input type='checkbox' name='FILTERING' $checked{'FILTERING'}{'on'}></TD>
 </tr>
+</table>
+END
+;
+
+&closebox();
+
+&openbox($tr{'im protocols'}, 1, '', 'services');
+print <<END
+<table width='100%'>
 <tr>
-	<td class='base'>MSN:</td>
-	<td><input type='checkbox' name='MSN' $checked{'MSN'}{'on'}></td>
-	<td class='base'>ICQ and AIM:</td>
-	<td><input type='checkbox' name='ICQ' $checked{'ICQ'}{'on'}></td>
+	<td width='25%' class='base'>MSN:</td>
+	<td width='25%'><input type='checkbox' name='MSN' $checked{'MSN'}{'on'}></td>
+	<td width='25%' class='base'>ICQ and AIM:</td>
+	<td width='25%'><input type='checkbox' name='ICQ' $checked{'ICQ'}{'on'}></td>
 </tr>
 <tr>
 	<td class='base'>Yahoo:</td>
@@ -133,6 +156,22 @@ print <<END
 	<td><input type='checkbox' name='GG' $checked{'GG'}{'on'}></td>
 	<td class='base'>Jabber and Gtalk:</td>
 	<td><input type='checkbox' name='XMPP' $checked{'XMPP'}{'on'}></td>
+</tr>
+</table>
+END
+;
+&closebox();
+
+&openbox($tr{'im ssl'}, 1, '', 'services');
+
+print <<END
+<table width='100%'>
+<tr>
+	<td width='25%' class='base'>$tr{'im ssl mitm'}</TD>
+	<td width='25%'><input type='checkbox' name='SSL' $checked{'SSL'}{'on'}></TD>
+	<td width='50%' align='center'>
+	<input type='submit' name='ACTION' value='$tr{'download ca certificate'}'>
+	</td>
 </tr>
 </table>
 END

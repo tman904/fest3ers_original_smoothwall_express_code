@@ -891,4 +891,10 @@
 # hosts.cgi
 'static dns configuration' => 'Static DNS',
 
+# im.cgi
+'im protocols' => 'Protocols:',
+'im ssl' => 'SSL:',
+'im ssl mitm' => 'SSL Man-In-The-Middle attack:',
+'download ca certificate' => 'Download CA certificate',
+
 );

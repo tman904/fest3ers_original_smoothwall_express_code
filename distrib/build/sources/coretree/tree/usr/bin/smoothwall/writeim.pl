@@ -36,4 +36,22 @@ if ($imsettings{'FILTERING'} eq 'on')
 	print FILE "badwords_replace_character=*\n";
 }
 
+
+if ($imsettings{'SSL'} eq 'on')
+{
+	print FILE <<END
+ssl=on
+ssl_key=/etc/httpd/server.key
+ssl_ca_key=/etc/httpd/server.key
+ssl_ca_cert=/etc/httpd/server.crt
+ssl_cert_dir=/var/lib/imspector
+
+ssl_verify_dir=/usr/ssl/certs
+ssl_verify=selfsigned
+
+icq_ssl=on
+END
+;
+}
+
 close(FILE);

@@ -11,14 +11,4 @@ group=imspector
 # Location where the file logging plugin will start from.
 file_logging_dir=/var/log/imspector
 
-# SSL support?
-ssl=on
-ssl_key=/etc/httpd/server.key
-ssl_ca_key=/etc/httpd/server.key
-ssl_ca_cert=/etc/httpd/server.crt
-ssl_cert_dir=/var/lib/imspector
-
-ssl_verify_dir=/usr/ssl/certs
-ssl_verify=selfsigned
-
 # Generated stuff from here

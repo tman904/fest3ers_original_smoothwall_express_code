@@ -13,7 +13,7 @@ require Exporter;
 our @_validation_items;
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo readvalue writevalue writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items getsystemid );
+@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo readvalue writevalue writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items getsystemid outputfile );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -814,6 +814,23 @@ sub getsystemid
 	my %ownership;
 	&readhash("${swroot}/main/ownership", \%ownership);
 	return $ownership{'ID'};
+}
+
+sub outputfile
+{
+	my $filename = $_[0];
+	my $outfilename = $_[1];
+
+	print "Content-type: application/octet-stream\n";
+	print "Content-disposition: attachment; filename=\"$outfilename\"\n\n";
+
+	open (FILE, $filename) or die "Unable to open $filename";
+	while (<FILE>) {
+		print $_;
+	}
+	close (FILE);
+	
+	exit;
 }
 
 1;
