@@ -56,6 +56,13 @@ unless(open(LIST, "<${swroot}/banners/available")) {
 
 my %seen = ( 'frontpage' => 'true', 'frontpage.x3' => 'true' );
 
+my @proxy_opt = ();
+if ($proxy{'SERVER'}) {
+	my $server = $proxy{'SERVER'};
+	my $port = $proxy{'PORT'} || 80;
+	@proxy_opt = ("-e", "http_proxy = http://$server:$port/");
+}
+
 while ( my $input = <LIST> ){
 	my ( $url, $md5, $link, $alt ) = ( $input =~/([^\|]*)\|([^\|]*)\|([^\|]*)\|(.*)/ );
 	
@@ -63,7 +70,7 @@ while ( my $input = <LIST> ){
 
 	if ( !-e "/httpd/html/ui/img/frontpage/$md5.jpg" ){
 		# we need to download this file 
-		my @commands = ( "/usr/bin/wget", "-O", "/httpd/html/ui/img/frontpage/$md5.jpg", "$url" );
+		my @commands = ( "/usr/bin/wget", @proxy_opt, "-O", "/httpd/html/ui/img/frontpage/$md5.jpg", "$url" );
 		my ( $status, $pid_out );
 		open(PIPE, '-|') || exec( @commands );
 	        while (<PIPE>) { 

@@ -1,6 +1,8 @@
 # (c) 2004-2005 SmoothWall Ltd
 
 package smoothnet;
+use lib "/usr/lib/smoothwall";
+use header qw(:standard);
 require Exporter;
 use File::Copy;
 @ISA = qw(Exporter);
@@ -49,14 +51,23 @@ sub download
 	my ( $base, $file ) = @_;
 	print STDERR "Going for download... ($file)\n";
 
+	my %proxy;
+	&readhash("${swroot}/main/proxy", \%proxy);
+	my @proxy_opt = ();
+	if ($proxy{'SERVER'}) {
+		my $server = $proxy{'SERVER'};
+		my $port = $proxy{'PORT'} || 80;
+		@proxy_opt = ("-e", "http_proxy = http://$server:$port/");
+	}
+
 	# invoke wget to download a file and store accordingly.
 
 	my $final = "$progress_store$file";
 	my $log   = "$progress_store$file.log";
 	my $pid   = "$progress_store$file.pid";
 
-	my @commands = ( "/usr/bin/wget", "-o", "$log", "-b", "--progress=bar", "-O", "$final", "$base$file" );
-	print STDERR "/usr/bin/wget -o $log -b --progress=bar -O $final $base$file\n";
+	my @commands = ( "/usr/bin/wget", @proxy_opt, "-o", "$log", "-b", "--progress=bar", "-O", "$final", "$base$file" );
+	print STDERR join(" ", @commands), "\n";
 
 	my ( $status, $pid_out );
 	open(PIPE, '-|') || exec( @commands );
