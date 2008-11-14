@@ -23,7 +23,7 @@ my $errormessage = '';
 my $extramessage = '';
 
 if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'} || 
-	$cgiparams{'ACTION'} eq 'Create backup floppy image file')
+	$cgiparams{'ACTION'} eq $tr{'create backup floppy image file'})
 { 
 	unless ($errormessage)
 	{
