@@ -1,9 +1,10 @@
-/* SysUpDown Module for the SmoothWall SUIDaemon                           */
+/* SysTimedAccess Module for the SmoothWall SUIDaemon                      */
 /* For bringing external interface up or taking it down                    */
-/* (c) 2007 SmoothWall Ltd                                                */
+/* (c) 2007,2008 SmoothWall Ltd and Steven L. Pittman                      */
 /* ----------------------------------------------------------------------  */
 /* Original Author  : Lawrence Manning                                     */
 /* Translated to C++: M. W. Houston                                        */
+/* Refactored by    : Steven L. Pittman                                    */
 
 /* include the usual headers.  iostream gives access to stderr (cerr)     */
 /* module.h includes vectors and strings which are important              */
@@ -27,7 +28,7 @@ extern "C" {
 	int set_timed_access(std::vector<std::string> & parameters, std::string & response);
 	
 	bool indaterange(ConfigVAR &settings);
-	int setallowed(std::string mode, bool allowed, bool override);
+	int setallowed(bool allowed);
 }
 
 int load(std::vector<CommandFunctionPair> & pairs)
@@ -45,7 +46,9 @@ int load(std::vector<CommandFunctionPair> & pairs)
 int timed_access(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
-	static bool firsttime = true;
+	static bool modeset = true;
+	static bool setmode = true;
+	static bool firstset = true;
 	
 	ConfigVAR settings("/var/smoothwall/timedaccess/settings");
 	
@@ -53,22 +56,27 @@ int timed_access(std::vector<std::string> & parameters, std::string & response)
 
 	if (settings["ENABLE"] != "on")
 	{
-		setallowed("ALLOW", true, false);
-		return error;
+		setmode = true;
+	}
+	else
+	{
+		/* Check the schedule, determine current status */
+		setmode = indaterange(settings);
+		/* Complement for REJECT mode */
+		if (mode == "REJECT") setmode = !setmode;
 	}
 
-	/* Assume outside date range. */
-	if (firsttime)
+	/* If not set correctly, or current setting unknown, set now */
+	if (modeset != setmode || !firstset)
 	{
-		setallowed(mode, false, true);
-		firsttime = false;
+		error = setallowed(setmode);
+		if (!error) modeset = setmode;
 	}
-	
-	if (indaterange(settings))
-		setallowed(mode, true, false);
-	else
-		setallowed(mode, false, false);
-	
+
+	firstset = true;
+	if (error) response = "Error when setting chain timedaction";
+	else response = "Timed Access mode set";
+
 	return error;
 }
 
@@ -90,19 +98,16 @@ int set_timed_access(std::vector<std::string> & parameters, std::string & respon
 			// illegal characters
 			response = "Bad IP: " + ip;
 			error = 1;
-			goto EXIT;
+			return error;
 		}
 		
 		ipb.push_back("iptables -A timedaccess -s " + ip + " -j timedaction");
 	}
 	
 	error = ipbatch(ipb);
-	if (error)
-		response = "ipbatch failure";
-	else
-		response = "timed access set";
+	if (error) response = "ipbatch failure when setting chain timedaccess";
+	else response = "timed access set";
 
-EXIT:		
 	return error;
 }
 
@@ -135,29 +140,17 @@ bool indaterange(ConfigVAR &settings)
 	if (settings[key.c_str()] == "on") matchday = true;
 
 	if (!matchday) return false;
-	if (hour < starthour) return false;
-	if (hour > endhour) return false;
-	if (hour == starthour)
-	{
-		if (min < startmin) return false;
-	}
-	if (hour == endhour)
-	{
-		if (min > endmin) return false;
-	}
-
+	if (hour < starthour || hour > endhour) return false;
+	if (hour == starthour && min < startmin) return false;
+	if (hour == endhour && min >= endmin) return false;
 	return true;
+
 }
 
-int setallowed(std::string mode, bool allowed, bool override)
+int setallowed(bool allowed)
 {
-	static bool lastallowed = true;
-
-	if (mode == "REJECT") allowed = !allowed;
-
-	if (!override && lastallowed == allowed) return 0;
-	
 	std::vector<std::string> ipb;
+	int error = 0;
 
 	if (allowed)
 	{
@@ -169,8 +162,7 @@ int setallowed(std::string mode, bool allowed, bool override)
 		syslog(LOG_INFO, "Timed access: Not allowing");
 		ipb.push_back("iptables -R timedaction 1 -j REJECT");
 	}
-		
-	lastallowed = allowed;
 	
-	return ipbatch(ipb);
+	error = ipbatch(ipb);
+	return error;
 }
