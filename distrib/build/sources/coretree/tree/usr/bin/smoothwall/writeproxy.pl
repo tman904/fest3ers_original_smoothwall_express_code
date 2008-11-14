@@ -86,6 +86,9 @@ logfile_rotate 0
 
 strip_query_terms off
 
+acl shoutcast rep_header X-HTTP09-First-Line ^ICY.[0-9]
+upgrade_http0.9 deny shoutcast
+
 END
 ;
 

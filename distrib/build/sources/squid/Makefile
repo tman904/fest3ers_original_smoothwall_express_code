@@ -8,9 +8,9 @@ include ../Makefile.conf
 include ../Makefile.versions
 
 PACKAGE = squid
-VERSION = 2.6.STABLE21
+VERSION = 2.7.STABLE5
 
-BASE_URL = http://www.squid-cache.org/Versions/v2/2.6/
+BASE_URL = http://www.squid-cache.org/Versions/v2/2.7/
 
 PATCH_FILE1 = ERR_ACCESS_DENIED.patch
 PATCH_FILE2 = ERR_CACHE_ACCESS_DENIED.patch 
