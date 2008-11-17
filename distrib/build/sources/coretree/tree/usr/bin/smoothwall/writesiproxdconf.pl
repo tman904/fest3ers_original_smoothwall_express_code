@@ -27,6 +27,7 @@ rtp_dscp = 46
 default_expires = 600
 hosts_allow_reg = 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,169.254.0.0/16
 debug_level = -1
+plugindir=/usr/lib/siproxd/
 END
 ;
 
@@ -43,7 +44,7 @@ if ($red) {
 
 if ($sipsettings{'LOG_CALLS'} eq 'on')
 {
-	print FILE "log_calls = 1\n";
+	print FILE "load_plugin = plugin_logcall.so\n";
 	if ($sipsettings{'LOGGING'} < 1) { $sipsettings{'LOGGING'} = 1; }
 }
 

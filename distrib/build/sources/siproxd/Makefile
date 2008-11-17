@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 PACKAGE = siproxd
-VERSION = 0.5.13
+VERSION = 0.7.1
 
 BASE_URL = http://kent.dl.sourceforge.net/sourceforge/siproxd/
 
