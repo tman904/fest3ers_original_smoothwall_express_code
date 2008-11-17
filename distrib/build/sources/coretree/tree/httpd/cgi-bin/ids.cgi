@@ -125,6 +125,9 @@ print <<END
 <TR>
 	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save and update rules'}'></TD> 
 </TR>
+<TR>
+	<TD ALIGN='CENTER'>$tr{'long download'}</TD> 
+</TR>
 </TABLE>
 </DIV>
 END

@@ -711,6 +711,7 @@
 'rule age' => 'Rule age:',
 'save and update rules' => 'Save and update rules',
 'days' => 'days',
+'long download' => 'This process can take a long time depending on the speed of your Internet connection. While downloading please do not close this browser window or navigate away from this page.',
 
 # time.cgi
 'time settings' => 'Time settings',              
