@@ -406,6 +406,13 @@ END
 if (-e "${swroot}/dhcp/uptodate") {
 	&openbox($tr{'note'});
 	print "<FONT CLASS='base'>$tr{'there are unsaved changes'}<FONT>\n";
+	print <<END;
+<table class='centered'>
+<tr>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
+END
 	&closebox();
 }
 
@@ -612,6 +619,13 @@ END
 if (-e "${swroot}/dhcp/uptodate") {
 	&openbox($tr{'note'});
 	print "<FONT CLASS='base'>$tr{'there are unsaved changes'}<FONT>\n";
+	print <<END;
+<table class='centered'>
+<tr>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
+END
 	&closebox();
 }
 
