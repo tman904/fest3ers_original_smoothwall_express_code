@@ -70,12 +70,18 @@ int timed_access(std::vector<std::string> & parameters, std::string & response)
 	if (modeset != setmode || !firstset)
 	{
 		error = setallowed(setmode);
-		if (!error) modeset = setmode;
+		if (!error) {
+			modeset = setmode;
+			firstset = true;
+		}
 	}
 
-	firstset = true;
-	if (error) response = "Error when setting chain timedaction";
-	else response = "Timed Access mode set";
+	if (error) {
+		response = "Error when setting chain timedaction";
+		syslog(LOG_INFO, "Timed access: %s", response.c_str());
+	} else {
+		response = "Timed Access mode set";
+	}
 
 	return error;
 }
@@ -102,6 +108,7 @@ int set_timed_access(std::vector<std::string> & parameters, std::string & respon
 		}
 		
 		ipb.push_back("iptables -A timedaccess -s " + ip + " -j timedaction");
+		ipb.push_back("iptables -A timedaccess -d " + ip + " -j timedaction");
 	}
 	
 	error = ipbatch(ipb);
