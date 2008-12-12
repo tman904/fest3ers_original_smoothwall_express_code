@@ -110,7 +110,7 @@ fi
 if [ ! -e /etc/httpd/server.key ]; then
 	echo "Generating https server key."
 	/usr/ssl/bin/openssl genrsa -rand \
-		/boot/vmlinuz-2.4.20:/var/smoothwall/ethernet/settings -out \
+		/boot/vmlinuz-`uname -r`:/var/smoothwall/ethernet/settings:/var/log/dmesg -out \
 		/etc/httpd/server.key 1024
 	echo "Generating CSR"
 	cat /etc/certparams | /usr/ssl/bin/openssl \
