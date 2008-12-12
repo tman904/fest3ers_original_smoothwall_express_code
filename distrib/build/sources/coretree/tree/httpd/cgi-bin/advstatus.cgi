@@ -66,6 +66,9 @@ foreach $mline (@echo) {
 	if ( $mdev eq "Total:" ) {
 		print qq|<tr><td colspan="9"><hr></td></tr>|;
 	}
+	if ($mdev eq 'Mem:') {
+		$graphbgcolour = $graphnominalcolour;
+	}
 	print qq|
 <tr>
 <td style='text-align: right;'><tt>$mdev</tt></td>
