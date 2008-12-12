@@ -14,8 +14,7 @@ EXTENSION = .tar.bz2
 BASE_URL = ftp://ftp.gnu.org/gnu/glibc
 
 PATCH_FILE1 = generic-sscanf.diff
-PATCH_FILE2 = debian-timezones.patch
-PATCH_FILE3 = dash-fix.patch
+PATCH_FILE2 = dash-fix.patch
 
 COMPILE_DIR = $(DIR)-compile
 
@@ -41,10 +40,12 @@ BUILDTARBALL = yes
 download:
 	$(DL_CMD) $(BASE_URL)/glibc-$(VERSION)$(EXTENSION)
 	$(DL_CMD) $(BASE_URL)/glibc-linuxthreads-$(VERSION)$(EXTENSION)
+	$(DL_CMD) ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz
 
 $(DIR)/: download
 	tar -jxvf $(DOWNLOADS_DIR)/$(DIR)$(EXTENSION)
 	tar -jxvf $(DOWNLOADS_DIR)/glibc-linuxthreads-$(VERSION)$(EXTENSION) -C $(DIR)
+	tar -zxvf `ls $(DOWNLOADS_DIR)/tzdata*.tar.gz` -C $(DIR)/timezone/
 
 install: compile
 ifndef BUILDENV
