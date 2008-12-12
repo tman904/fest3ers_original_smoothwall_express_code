@@ -11,3 +11,4 @@ PS1='\[\033[0;34m\]\h (\[\033[0;31m\]\u\[\033[0;34m\]) \[\033[0;32m\]\w $ \[\033
 VIM="/usr/share/vim"
 
 alias ls='ls --color=tty -F -b -T 0'
+locate () { su nobody -c "/usr/bin/locate $*"; }
