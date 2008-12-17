@@ -1,15 +1,15 @@
 include ../../../Makefile.conf
 
 PACKAGE = zip
-VERSION = 232
+VERSION = 30
 
-BASE_URL = http://www.mirrorservice.org/sites/ftp.info-zip.org/pub/infozip/src/
+BASE_URL = http://kent.dl.sourceforge.net/sourceforge/infozip
 
 TARBALL = $(PACKAGE)$(VERSION)
 
-DIR = $(PACKAGE)-2.32
+DIR = $(PACKAGE)$(VERSION)
 
-EXTENSION = .tgz
+EXTENSION = .tar.gz
 
 CONFIGURE = yes
 COMPILE = yes
