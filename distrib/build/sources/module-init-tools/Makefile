@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = module-init-tools
-VERSION = 3.1
+VERSION = 3.5
 
 BASE_URL = http://ftp.kernel.org/pub/linux/kernel/people/rusty/modules
 
