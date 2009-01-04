@@ -9,7 +9,9 @@ include ../Makefile.conf
 PACKAGE = newt
 VERSION = 0.51.6
 
-BASE_URL = http://devel.santafelinux.com/source/newt-0.51.6/
+BASE_URL = http://distro.ibiblio.org/pub/linux/distributions/amigolinux/download/Libs/newt-0.51.6
+
+EXTENSION = .tar.bz2
 
 INSTALL = yes
 
