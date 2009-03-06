@@ -48,11 +48,10 @@ predownload:
 packageinfos.html:
 	@echo "<ul>" >/tmp/packageinfo.html
 	-(cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d`; do \
-		if [ "$$I" != "CVS" ]; then \
+		if [ "$$I" != ".svn" ]; then \
 			make -C $$I packageinfo.html; \
 		fi \
 	done);
-	-make -C sources/modules packageinfos.html
 	@echo "</ul>" >>/tmp/packageinfo.html
 	
 clean-buildroot:

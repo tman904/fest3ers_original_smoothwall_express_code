@@ -108,9 +108,8 @@ endif
 ifndef PACKAGEINFO
 packageinfo.html:
 	@echo "<li><span style='font-size:large;'>$(PACKAGE) $(VERSION)</span><br>" >>/tmp/packageinfo.html
-	@cp -avR $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION) /tmp/downloads
-	@echo "Download: <a href='$(BASE_URL)$(TARBALL)$(EXTENSION)'>$(BASE_URL)$(TARBALL)$(EXTENSION)</a>" >>/tmp/packageinfo.html
-	@echo "(<a href='downloads/$(TARBALL)$(EXTENSION)'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
+	@echo "Download: <a href='$(BASE_URL)/$(TARBALL)$(EXTENSION)'>$(BASE_URL)/$(TARBALL)$(EXTENSION)</a><br>" >>/tmp/packageinfo.html
+ifdef PATCH_FILE1
 	@echo "Patches:" >>/tmp/packageinfo.html
 	@echo "<ul>" >>/tmp/packageinfo.html
 	@(for PATCH in $(PATCH_FILE1) $(PATCH_FILE2) $(PATCH_FILE3) $(PATCH_FILE4) $(PATCH_FILE5); do \
@@ -118,6 +117,7 @@ packageinfo.html:
 		cp -avR $$PATCH /tmp/downloads; \
 	done) 
 	@echo "</ul>" >>/tmp/packageinfo.html
+endif
 
 endif
 

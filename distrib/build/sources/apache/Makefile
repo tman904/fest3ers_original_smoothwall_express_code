@@ -52,12 +52,9 @@ clean:
 
 packageinfo.html:
 	@echo "<li><span style='font-size:large;'>$(PACKAGE) $(VERSION)</span><br>" >>/tmp/packageinfo.html
-	@cp -avR $(DOWNLOADS_DIR)/$(DIR).tar.gz /tmp/downloads
-	@cp -avR $(DOWNLOADS_DIR)/mod_ssl-$(MODSSL_VER)-$(APACHE_VER).tar.gz /tmp/downloads
-	@echo "Apache Download: <a href='http://www.mirror.ac.uk/mirror/ftp.apache.org/httpd/$(DIR).tar.gz'>http://www.mirror.ac.uk/mirror/ftp.apache.org/httpd/$(DIR).tar.gz</a>" >>/tmp/packageinfo.html
-	@echo "(<a href='downloads/$(DIR).tar.gz'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
-	@echo "Mod SSL Download: <a href='http://www.modssl.org/source/mod_ssl-$(MODSSL_VER)-$(APACHE_VER).tar.gz'>http://www.modssl.org/source/mod_ssl-$(MODSSL_VER)-$(APACHE_VER).tar.gz</a>" >>/tmp/packageinfo.html
-	@echo "(<a href='downloads/mod_ssl-$(MODSSL_VER)-$(APACHE_VER).tar.gz'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
+	@echo "Apache Download: <a href='http://www.mirror.ac.uk/mirror/ftp.apache.org/httpd/$(DIR).tar.gz'>http://www.mirror.ac.uk/mirror/ftp.apache.org/httpd/$(DIR).tar.gz</a><br>" >>/tmp/packageinfo.html
+	@echo "Mod SSL Download: <a href='http://www.modssl.org/source/mod_ssl-$(MODSSL_VER)-$(APACHE_VER).tar.gz'>http://www.modssl.org/source/mod_ssl-$(MODSSL_VER)-$(APACHE_VER).tar.gz</a><br>" >>/tmp/packageinfo.html
+ifdef ($(PATCH_FILE1))
 	@echo "Patches:" >>/tmp/packageinfo.html
 	@echo "<ul>" >>/tmp/packageinfo.html
 	@(for PATCH in $(PATCH_FILE1) $(PATCH_FILE2) $(PATCH_FILE3) $(PATCH_FILE4) $(PATCH_FILE5); do \
@@ -65,5 +62,6 @@ packageinfo.html:
 		cp -avR $$PATCH /tmp/downloads; \
 	done) 
 	@echo "</ul>" >>/tmp/packageinfo.html
+endif
 
 include ../Makefile.rules

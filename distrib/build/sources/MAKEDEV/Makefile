@@ -16,7 +16,6 @@ TARBALL = $(PACKAGE)-$(VERSION)-2
 DIR = $(PACKAGE)-$(VERSION)
 
 CONFIGURE = yes
-PACKAGEINFO = yes
 
 configure: patch
 	@true
@@ -27,10 +26,5 @@ devnodes:
 		ram raid tty console tty pty fd hd sd loop scd sg apm usb initctl ppp net isdn rtc);
 	@chmod 664 /dev/isdninfo
 	@tar -zcvf /$(TARGET_DIR)/smoothwall-devnodes.tar.gz -C / --exclude ./dev/MAKEDEV ./dev;
-
-packageinfo.html: 
-	@echo "<li><span style='font-size:large;'>$(PACKAGE) $(VERSION)</span><br>" >>/tmp/packageinfo.html
-	@cp -avR $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION) /tmp/downloads/
-	@echo "Download: <a href='downloads/$(TARBALL)$(EXTENSION)'>$(TARBALL)$(EXTENSION)</a><br>" >>/tmp/packageinfo.html
 
 include ../Makefile.rules
