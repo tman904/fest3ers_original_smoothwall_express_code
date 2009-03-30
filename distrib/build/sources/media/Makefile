@@ -240,7 +240,7 @@ clean:
 	@rm -rf cdrom distrib
 
 	@make -C bootdisktwo clean
-	@make -C bootdiskone MEIDA=cdrom clean
+	@make -C bootdiskone MEDIA=cdrom clean
 	
 download:
 	@true
