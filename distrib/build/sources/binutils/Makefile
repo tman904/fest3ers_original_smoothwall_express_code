@@ -20,7 +20,7 @@ SPEC=/tools/lib/gcc-lib/*/*/specs
 ifeq ($(BUILDENV), 1)
 PRE_CONFIGURE = CC="gcc -B/usr/bin"
 
-CONFIG_OPTS = --disable-nls
+CONFIG_OPTS = --disable-nls --disable-werror
 
 COMPILE = yes
 INSTALL = yes
