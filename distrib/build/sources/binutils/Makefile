@@ -1,25 +1,19 @@
-# SmoothWall Build system.
-#
-# (c) SmoothWall Ltd 2005
-#
-# This code is distributed under the terms of the GPL v2.
-
 include ../Makefile.conf
 
 PACKAGE = binutils
-VERSION = 2.17
+VERSION = 2.17.20070103cvs
 
-BASE_URL = http://ftp.gnu.org/gnu/binutils
+BASE_URL = http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/
+
+TARBALL = $(PACKAGE)_$(VERSION).orig
+
+DIR = $(PACKAGE)-$(VERSION).orig
 
 COMPILE_DIR = $(DIR)-compile
-
-PATCH_FILE1 = binutils_2.15-6.diff.gz
 
 SPEC=/tools/lib/gcc-lib/*/*/specs
 
 ifeq ($(BUILDENV), 1)
-PRE_CONFIGURE = CC="gcc -B/usr/bin"
-
 CONFIG_OPTS = --disable-nls --disable-werror
 
 COMPILE = yes
@@ -53,11 +47,18 @@ endif
 endif
 
 ifeq ($(BUILDENV), 2)
-PRE_CONFIGURE = INSTALL=/tools/bin/install
-
 CONFIG_OPTS = --disable-nls --enable-shared --with-lib-path=/$(TOOLS_DIR)/lib
 
+CONFIGURE = yes
 INSTALL = yes
+
+configure: patch
+	@(if [ ! -e $(COMPILE_DIR) ]; then mkdir $(COMPILE_DIR); fi)
+ifneq ($(DIR), $(COMPILE_DIR))
+	@(cd $(COMPILE_DIR); INSTALL=/tools/bin/install ../$(DIR)/configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
+else
+	@(cd $(COMPILE_DIR); INSTALL=/tools/bin/install ./configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
+endif
 
 install: compile
 	@make -C $(COMPILE_DIR) install
@@ -72,6 +73,16 @@ CONFIG_OPTS = --enable-shared
 
 COMPILE = yes
 INSTALL = yes
+CONFIGURE = yes
+
+configure: patch
+	@(if [ ! -e $(COMPILE_DIR) ]; then mkdir $(COMPILE_DIR); fi)
+ifneq ($(DIR), $(COMPILE_DIR))
+	@(cd $(COMPILE_DIR); INSTALL=/tools/bin/install ../$(DIR)/configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
+else
+	@(cd $(COMPILE_DIR); INSTALL=/tools/bin/install ./configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS))
+endif
+
 
 compile: configure
 	@make -C $(COMPILE_DIR) tooldir=$(PKG_ROOT)/$(PKG_DIR)
