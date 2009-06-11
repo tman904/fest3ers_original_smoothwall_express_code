@@ -118,6 +118,7 @@ fi
 # IPSEC
 /sbin/iptables -N ipsec
 /sbin/iptables -A ipsec -p udp --destination-port 500 -j ACCEPT
+/sbin/iptables -A ipsec -p udp --destination-port 4500 -j ACCEPT
 /sbin/iptables -A ipsec -p 50 -j ACCEPT
 /sbin/iptables -A ipsec -p 51 -j ACCEPT
 /sbin/iptables -A block -i ppp0 -j ipsec
