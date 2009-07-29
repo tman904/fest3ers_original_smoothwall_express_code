@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = snort
-VERSION = 2.8.3.1
+VERSION = 2.8.4.1
 
-BASE_URL = http://www.snort.org/dl
+BASE_URL = http://dl.snort.org/snort-current/
 
 PATCH_FILE1 = snort-pidfix.patch
 
