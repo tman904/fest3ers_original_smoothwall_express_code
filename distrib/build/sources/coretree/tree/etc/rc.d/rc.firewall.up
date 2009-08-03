@@ -53,6 +53,16 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -i $RED_DEV -j ipblock
 fi
 
+# Setup timed access chains.
+/sbin/iptables -N timedaccess
+/sbin/iptables -N timedaction
+/sbin/iptables -A timedaction -j LOG --log-prefix Denied-by-Timed-Access:-
+/sbin/iptables -A timedaction -j REJECT
+
+# Apply the time rules to deny the traffic.
+/sbin/iptables -A INPUT -j timedaccess
+/sbin/iptables -A FORWARD -j timedaccess
+
 # For IGMP and multicast
 /sbin/iptables -N advnet
 /sbin/iptables -A INPUT -i ppp0 -j advnet
@@ -76,14 +86,6 @@ fi
 if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A INPUT -i $RED_DEV -j spoof
 fi
-
-# Setup timed access chains.
-/sbin/iptables -N timedaccess
-/sbin/iptables -N timedaction
-/sbin/iptables -A timedaction -j RETURN
-
-# Apply the time rules to deny the traffic.
-/sbin/iptables -A INPUT -j timedaccess
 
 # localhost and ethernet.
 /sbin/iptables -A INPUT -i lo -j ACCEPT
@@ -172,7 +174,6 @@ fi
 # Setup our outgoing filter stub chains.
 /sbin/iptables -N outbound
 /sbin/iptables -A outbound -p icmp -j ACCEPT
-/sbin/iptables -A outbound -j timedaccess
 /sbin/iptables -A outbound -j allows
 /sbin/iptables -A outbound -i $GREEN_DEV -j outgreen
 if [ "$ORANGE_DEV" != "" ]; then
