@@ -327,12 +327,12 @@ if [ "$RED_DEV" != "" ]; then
 fi
 
 # Bouncing port forwards
-/sbin/iptables -t nat -A POSTROUTING -m mark --mark 1 -j SNAT --to-source $GREEN_ADDRESS
+/sbin/iptables -t nat -A POSTROUTING -o $GREEN_DEV -m mark --mark 1 -j SNAT --to-source $GREEN_ADDRESS
 if [ "$ORANGE_DEV" != "" ]; then
-	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 2 -j SNAT --to-source $ORANGE_ADDRESS
+	/sbin/iptables -t nat -A POSTROUTING -o $ORANGE_DEV -m mark --mark 2 -j SNAT --to-source $ORANGE_ADDRESS
 fi
 if [ "$PURPLE_DEV" != "" ]; then
-	/sbin/iptables -t nat -A POSTROUTING -m mark --mark 2 -j SNAT --to-source $PURPLE_ADDRESS
+	/sbin/iptables -t nat -A POSTROUTING -o $PURPLE_DEV -m mark --mark 3 -j SNAT --to-source $PURPLE_ADDRESS
 fi
 
 # UPNP
