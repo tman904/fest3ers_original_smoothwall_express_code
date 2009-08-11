@@ -205,8 +205,7 @@ int set_incoming(std::vector<std::string> & parameters, std::string & response)
 			else 
 				remdouble = remip;
 
-			ipbfilter.push_back("iptables -t filter -A portfwf -m state --state NEW" +
-				" -p " + protocol +
+			ipbfilter.push_back("iptables -t filter -A portfwf -m state --state NEW -p " + protocol +
 				" -s " + extip +
 				" -d " + remip +
 				" --dport " + remport + " -j ACCEPT");
