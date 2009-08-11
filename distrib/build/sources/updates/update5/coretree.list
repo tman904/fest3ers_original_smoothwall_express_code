@@ -1,0 +1,13 @@
+./httpd/cgi-bin/advstatus.cgi
+./httpd/cgi-bin/interfaces.cgi
+./httpd/cgi-bin/index.cgi
+./httpd/cgi-bin/xtaccess.cgi
+./usr/lib/smoothwall/langs/alertboxes.base.pl
+./etc/bashrc
+./etc/httpd/conf/httpd.conf
+./etc/inputrc
+./etc/rc.d/rc.netaddress.down
+./etc/rc.d/rc.sysinit
+./etc/rc.d/rc.firewall.up
+./etc/rc.d/rc.network
+./etc/snort.conf
