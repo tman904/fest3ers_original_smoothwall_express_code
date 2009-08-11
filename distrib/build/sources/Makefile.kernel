@@ -30,8 +30,7 @@ COMPILER = /usr/bin/gcc
 PACKAGES = package-eagle package-ipp2p
 
 ifeq ($(ARCH), i386)
-#PACKAGES += package-unicorn package-cnx package-pulsar package-bnx2 package-e100 package-e1000 package-r8168 package-r8169
-PACKAGES += package-r8168 package-r8169
+PACKAGES += package-unicorn package-cnx package-pulsar package-bnx2 package-e100 package-e1000 package-r8168 package-r8169
 endif
 
 download:
@@ -57,8 +56,6 @@ prepare: download
 	patch -p1 <../../kernel-patches/sata_via-vt8237a.patch; \
 	patch -p1 <../../kernel-patches/ahci-devices.patch; \
         patch -p1 <../../kernel-patches/linux-2.6.16-ich9.diff; \
-	patch -p1 <../../kernel-patches/linux-2.6.16-vmware.patch; \
-	patch -p1 <../../kernel-patches/linux-2.6.16-skge.patch; \
 	patch -p1 <../../kernel-patches/ppp-bigfiles.patch)
 	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
 	(cd $(FREESWAN_TYPE)-$(FREESWAN_VER); \
@@ -107,10 +104,7 @@ apply-pom: prepare
 compile-kernel: apply-pom
 	@cp ../kernel.config-$(TYPE)-$(ARCH) linux/.config
 
-	#@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
-	@make -C linux clean
-	@(yes "" | make -s -C linux oldconfig)
-	@make -C linux CC=$(COMPILER) dep bzImage modules
+	@make -C linux CC=$(COMPILER) clean oldconfig dep bzImage modules
 
 compile-ipp2p: compile-kernel
 	@(cd ipp2p-$(IPP2P_VER); make CC=$(COMPILER) KERNEL_SRC=$(KERNEL_DIR) KERNEL_SERIES=2.6 IPTABLES_VERSION=$(IPTABLES_VER) IPTABLES_SRC=$(SOURCES_DIR)/iptables/iptables-$(IPTABLES_VER) PREFIX=/$(PKG_DIR) modules)
@@ -239,21 +233,21 @@ all: clean build-tarball
 
 packageinfo.html:
 	@echo "<li><span style='font-size:large;'>$(PACKAGE) $(VERSION)</span><br>" >>/tmp/packageinfo.html
-	@cp -avR $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2 /tmp/downloads
-	@cp -avR $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz /tmp/downloads
-	@cp -avR $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2 /tmp/downloads
-	@cp -avR $(DOWNLOADS_DIR)/unicorn-$(UNICORN_VER).tar.gz /tmp/downloads
-	@cp -avR $(DOWNLOADS_DIR)/iptableproc-$(IPTABLEPROC_VER).tar.gz /tmp/downloads
-	@cp -avR $(DOWNLOADS_DIR)/usr-sureconnect.tar.gz /tmp/downloads
-	@echo "Kernel Download: <a href='http://www.uk.kernel.org/pub/linux/kernel/v2.4/linux-$(KERNEL_VER).tar.bz2'>http://www.uk.kernel.org/pub/linux/kernel/v2.4/linux-$(KERNEL_VER).tar.bz2</a>" >>/tmp/packageinfo.html
-	@echo "(<a href='downloads/linux-$(KERNEL_VER)'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
-	@echo "Openswan: <a href='http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz'>http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz</a>" >>/tmp/packageinfo.html
-	@echo "(<a href='downloads/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
-	@echo "Netfilter Download: <a href='http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2'>http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2</a>" >>/tmp/packageinfo.html
-	@echo "(<a href='downloads/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
-	@echo "Unicorn Local mirror: <a href='downloads/unicorn-$(UNICORN_VER).tar.gz'>unicorn-$(UNICORN_VER).tar.gz</a>" >>/tmp/packageinfo.html
-	@echo "Iptableproc Local mirror: <a href='downloads/iptableproc-$(IPTABLEPROC_VER).tar.gz'>iptableproc-$(IPTABLEPROC_VER).tar.gz</a>" >>/tmp/packageinfo.html
-	@echo "(<a href='downloads/usr-sureconnect.tar.gz'>Local mirror</a>)<br>" >>/tmp/packageinfo.html
+	@echo "Kernel: <a href='http://www.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2'>http://www.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html
+	@echo "Openswan: <a href='http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz'>http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz</a><br>" >>/tmp/packageinfo.html 
+	@echo "Patch-o-matic: <a href='ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2'>ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html 
+	@echo "Bewan: <a href='http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz'>http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz</a><br>" >>/tmp/packageinfo.html 
+	@echo "ipt_ACCOUNT: <a href='http://www.intra2net.com/de/produkte/opensource/ipt_account/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz'>http://www.intra2net.com/de/produkte/opensource/ipt_account/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz</a><br>" >>/tmp/packageinfo.html 
+	@echo "Eagle USB ADSL: <a href='http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2'>http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html 
+	@echo "IPP2TP: <a href='http://www.ipp2p.org/downloads/ipp2p-$(IPP2P_VER).tar.gz'>http://www.ipp2p.org/downloads/ipp2p-$(IPP2P_VER).tar.gz</a><br>" >>/tmp/packageinfo.html 
+	@echo "CnxADSL: <a href='http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2'>http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html 
+	@echo "Pulsar ADSL: <a href='http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz'>http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz</a><br>" >>/tmp/packageinfo.html 
+	@echo "TG3 (unoffical mirror): <a href='http://www.aslak.net/smoothmirror/tg3-$(TG3_VER).tar.gz'>http://www.aslak.net/smoothmirror/tg3-$(TG3_VER).tar.gz</a><br>" >>/tmp/packageinfo.html 
+	@echo "BNX2 (unoffical mirror): <a href='http://www.aslak.net/smoothmirror/bnx2-$(BNX2_VER).tar.gz'>http://www.aslak.net/smoothmirror/bnx2-$(BNX2_VER).tar.gz</a><br>" >>/tmp/packageinfo.html 
+	@echo "E1000: <a href='http://kent.dl.sourceforge.net/sourceforge/e1000/e100-$(E100_VER).tar.gz'>http://kent.dl.sourceforge.net/sourceforge/e1000/e100-$(E100_VER).tar.gz</a><br>" >>/tmp/packageinfo.html 
+	@echo "E100: <a href='http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz'>http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz</a><br>" >>/tmp/packageinfo.html 
+	@echo "R8168: <a href='ftp://210.51.181.211/cn/nic/r8168-$(R8168_VER).tar.bz2'>ftp://210.51.181.211/cn/nic/r8168-$(R8168_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html 
+	@echo "R8619: <a href='ftp://210.51.181.211/cn/nic/r8169-$(R8169_VER).tar.bz2'>ftp://210.51.181.211/cn/nic/r8169-$(R8169_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html 
 	@echo "Patches:<br>" >>/tmp/packageinfo.html
 	@echo "<ul>" >>/tmp/packageinfo.html
 	@(for PATCH in patch-o-matic-pptp-fix.patch; do \
@@ -261,3 +255,4 @@ packageinfo.html:
 		cp -avR ../kernel-patches/$$PATCH /tmp/downloads; \
 	done) 
 	@echo "</ul>" >>/tmp/packageinfo.html
+
