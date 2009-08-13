@@ -15,5 +15,7 @@ install: compile
 	-mkdir $(PKG_ROOT)
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	@chown -R 105:105 $(PKG_ROOT)/var/clamav
+	@rm -f $(PKG_ROOT)/usr/lib/smoothwall/clamd.conf
+	@rm -f $(PKG_ROOT)/usr/lib/smoothwall/freshclam.conf
 
 include ../Makefile.rules
