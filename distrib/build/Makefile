@@ -29,7 +29,7 @@ default:
 	@echo "                  and tools directories."
 
 build:
-	./makebuild1
+	@./makebuild1
 
 predownload:
 	@(cd sources; for I in `find -maxdepth 3 -mindepth 1 -type d`; do \
@@ -39,7 +39,7 @@ predownload:
 				make -C $$I BUILDENV=1 download; \
 				if [ $$? -ne 0 ]; then \
 					echo "Oops"; \
-					exit; \
+					exit 1; \
 				fi \
 			fi \
 		fi \

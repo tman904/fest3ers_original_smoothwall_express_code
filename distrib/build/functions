@@ -10,7 +10,7 @@ docommand()
 	$2;
 	if [ $? != 0 ]; then
 		echo "$1 failed"
-		exit
+		exit 1
 	else
 		echo "$1 succeeded"   
 	fi
