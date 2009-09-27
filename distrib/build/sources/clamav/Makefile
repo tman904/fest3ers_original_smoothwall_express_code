@@ -3,7 +3,7 @@ include ../Makefile.conf
 PACKAGE = clamav
 VERSION = 0.95.2
 
-BASE_URL = http://mesh.dl.sourceforge.net/sourceforge/clamav/
+BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/clamav/
 
 CONFIG_OPTS = --sysconfdir=/usr/lib/smoothwall --with-dbdir=/var/clamav --disable-clamav
 
