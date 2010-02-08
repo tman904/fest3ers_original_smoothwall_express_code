@@ -1,6 +1,6 @@
 include ../../Makefile.versions
 
-INITRD = initrd-$(KERNEL_VER)
+INITRD = initrd-$(KERNEL_VER)-$(KERNEL_PL)
 
 default: clean
 	@mkdir tmp

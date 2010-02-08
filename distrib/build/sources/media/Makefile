@@ -12,19 +12,18 @@ TARGET_DIR = /build/target/
 
 cdrom:
 	@mkdir cdrom
-	@mkdir cdrom/images
 
 images: cdrom
 	@make -C bootdisktwo
 	@make -C bootdiskone MEDIA=cdrom
 
-initrd/initrd-$(KERNEL_VER).gz:
+initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz:
 	@make -C initrd
 
-cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER).gz
+cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 	@mkdir distrib
 
-	@install -D initrd/initrd-$(KERNEL_VER).gz distrib/boot/initrd-$(KERNEL_VER).gz
+	@install -D initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz distrib/boot/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 
 	@(for I in \
 		glibc \
@@ -232,8 +231,9 @@ extracontent: cdrom
 	@(cd cdrom; rm -rf `find -name .svn`)
 
 all: images cdrom/smoothwall.tgz extracontent
+	@cp -avR bootdiskone/isolinux/ cdrom/
 	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(PRODUCT_EXTRA)$(TYPE)-$(ARCH).iso -J -c boot.cat \
-		-b images/$(BASENAME)-bootcdrom.img -V $(BASENAME) cdrom
+		-b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table -V $(BASENAME) cdrom
 	@echo "smoothwall-$(BASENAME)$(PRODUCT_EXTRA)$(TYPE)-$(ARCH).iso build complete"
 
 clean:
