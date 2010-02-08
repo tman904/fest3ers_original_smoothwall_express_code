@@ -88,7 +88,6 @@ build MAKEDEV
 docommand "making devnodes" "make -C sources/MAKEDEV devnodes"
 build gcc2
 docommand "unpacking iptables for kernel compile" "make -C sources/iptables patch"
-build kernel-install
 build kernel-runtime
 build strace
 build iptables
