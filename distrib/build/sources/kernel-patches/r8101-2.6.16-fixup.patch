@@ -1,0 +1,12 @@
+diff -Nurb r8101-1.011.00.old/src/r8101_n.c r8101-1.011.00/src/r8101_n.c
+--- r8101-1.011.00.old/src/r8101_n.c	2008-11-25 14:23:08.000000000 +0000
++++ r8101-1.011.00/src/r8101_n.c	2009-01-07 15:39:14.000000000 +0000
+@@ -3477,7 +3477,7 @@
+ {
+ #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,0)
+ 	if (dev->features & NETIF_F_TSO) {
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,16)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,17)
+ 		u32 mss = skb_shinfo(skb)->tso_size;
+ #else
+ 		u32 mss = skb_shinfo(skb)->gso_size;

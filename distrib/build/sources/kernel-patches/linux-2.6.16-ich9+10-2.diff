@@ -1,0 +1,18 @@
+--- linux-2.6.16.60.old/drivers/scsi/ata_piix.c	2010-02-01 15:37:48.000000000 +0000
++++ linux-2.6.16.60/drivers/scsi/ata_piix.c	2010-02-01 16:02:28.000000000 +0000
+@@ -193,6 +193,15 @@
+ 	{ 0x8086, 0x3b20, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_ahci },
+ 	/* SATA Controller IDE (PCH) */
+ 
++	{ 0x8086, 0x3b21, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_ahci },
++	/* SATA Controller IDE (PCH) */
++	{ 0x8086, 0x3b26, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_ahci },
++	/* SATA Controller IDE (PCH) */
++	{ 0x8086, 0x3b28, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_ahci },
++	/* SATA Controller IDE (PCH) */
++	{ 0x8086, 0x3b2d, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_ahci },
++	/* SATA Controller IDE (PCH) */
++	{ 0x8086, 0x3b2e, PCI_ANY_ID, PCI_ANY_ID, 0, 0, ich8_sata_ahci },
+ 	{ }	/* terminate list */
+ };
+ 

@@ -1,0 +1,350 @@
+--- linux-2.6.16.60/drivers/scsi/ahci.c	2008-07-09 12:04:02.000000000 +0100
++++ linux-2.6.16.60.new/drivers/scsi/ahci.c	2008-07-09 12:06:37.000000000 +0100
+@@ -70,6 +70,7 @@
+ 	RX_FIS_D2H_REG		= 0x40,	/* offset of D2H Register FIS data */
+ 
+ 	board_ahci		= 0,
++	board_via_ahci          = 1,
+ 
+ 	/* global controller registers */
+ 	HOST_CAP		= 0x00, /* host capabilities */
+@@ -138,6 +139,7 @@
+ 	PORT_CMD_LIST_ON	= (1 << 15), /* cmd list DMA engine running */
+ 	PORT_CMD_FIS_ON		= (1 << 14), /* FIS DMA engine running */
+ 	PORT_CMD_FIS_RX		= (1 << 4), /* Enable FIS receive DMA engine */
++	PORT_CMD_CLO            = (1 << 3), /* CLO */
+ 	PORT_CMD_POWER_ON	= (1 << 2), /* Power up device */
+ 	PORT_CMD_SPIN_UP	= (1 << 1), /* Spin up device */
+ 	PORT_CMD_START		= (1 << 0), /* Enable port DMA engine */
+@@ -195,6 +197,15 @@
+ static void ahci_qc_prep(struct ata_queued_cmd *qc);
+ static u8 ahci_check_status(struct ata_port *ap);
+ static inline int ahci_host_intr(struct ata_port *ap, struct ata_queued_cmd *qc);
++
++static int via_ahci_qc_issue(struct ata_queued_cmd *qc);
++static void via_ahci_phy_reset(struct ata_port *ap);
++static void via_ahci_port_stop(struct ata_port *ap);
++static int via_ahci_softreset(struct ata_port *ap);
++static unsigned int via_ata_busy_sleep (struct ata_port *ap,
++				    unsigned long tmout_pat,
++			    	    unsigned long tmout);
++
+ static void ahci_remove_one (struct pci_dev *pdev);
+ 
+ static struct scsi_host_template ahci_sht = {
+@@ -242,6 +253,34 @@
+ 	.port_stop		= ahci_port_stop,
+ };
+ 
++static struct ata_port_operations via_ahci_ops = {
++	.port_disable		= ata_port_disable,
++
++	.check_status		= ahci_check_status,
++	.check_altstatus	= ahci_check_status,
++	.dev_select		= ata_noop_dev_select,
++
++	.tf_read		= ahci_tf_read,
++
++
++	.qc_prep		= ahci_qc_prep,
++
++	.eng_timeout		= ahci_eng_timeout,
++
++	.irq_handler		= ahci_interrupt,
++	.irq_clear		= ahci_irq_clear,
++
++	.scr_read		= ahci_scr_read,
++	.scr_write		= ahci_scr_write,
++
++	.port_start		= ahci_port_start,
++	/*	.host_stop		= ahci_host_stop,*/
++
++	.phy_reset		= via_ahci_phy_reset,
++	.qc_issue		= via_ahci_qc_issue,
++	.port_stop		= via_ahci_port_stop,
++};
++
+ static const struct ata_port_info ahci_port_info[] = {
+ 	/* board_ahci */
+ 	{
+@@ -253,6 +292,16 @@
+ 		.udma_mask	= 0x7f, /* udma0-6 ; FIXME */
+ 		.port_ops	= &ahci_ops,
+ 	},
++	/* board_via_ahci */
++	{
++		.sht		= &ahci_sht,
++		.host_flags	= ATA_FLAG_SATA | ATA_FLAG_NO_LEGACY |
++				  ATA_FLAG_SRST | ATA_FLAG_MMIO |
++				  ATA_FLAG_PIO_DMA,
++		.pio_mask	= 0x03, /* pio3-4 */
++		.udma_mask	= 0x7f, /* udma0-6 ; FIXME */
++		.port_ops	= &via_ahci_ops,
++	},
+ };
+ 
+ static const struct pci_device_id ahci_pci_tbl[] = {
+@@ -274,6 +323,8 @@
+ 	  board_ahci }, /* ESB2 */
+ 	{ PCI_VENDOR_ID_INTEL, 0x2683, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	  board_ahci }, /* ESB2 */
++	{ PCI_VENDOR_ID_VIA, 0x3349, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++	  board_via_ahci }, /* VT8251*/
+ 	{ PCI_VENDOR_ID_INTEL, 0x27c6, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	  board_ahci }, /* ICH7-M DH */
+ 	{ PCI_VENDOR_ID_INTEL, 0x2821, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+@@ -1186,6 +1237,245 @@
+ 	dev_set_drvdata(dev, NULL);
+ }
+ 
++/* START: patch code for VIA VT8251 ahci controller */
++
++static int via_ahci_softreset(struct ata_port *ap)
++{
++	void __iomem *port_mmio = (void __iomem *) ap->ioaddr.cmd_addr;
++	struct ahci_port_priv *pp = ap->private_data;
++	u32 tmp,i;
++	u8 *fisbuf;
++
++	VPRINTK("ENTER\n");
++
++	writel(0x00000000, port_mmio + PORT_IRQ_MASK);  /*disable interrupt */
++	readl (port_mmio + PORT_IRQ_MASK);  /* flush */
++
++	/* prepare the software-reset commands */
++
++	/* prepare first command header */
++	memset(pp->cmd_slot, 0, 32);
++	pp->cmd_slot[0].opts = 0x00000505;
++	pp->cmd_slot[0].status = 0;
++	pp->cmd_slot[0].tbl_addr = cpu_to_le32(pp->cmd_tbl_dma & 0xffffffff);
++	pp->cmd_slot[0].tbl_addr_hi = cpu_to_le32((pp->cmd_tbl_dma >> 16) >> 16);
++
++	/* prepare CMDFIS struct */
++	fisbuf = pp->cmd_tbl;
++	memset(fisbuf, 0, 64);
++	fisbuf[0] = 0x27;
++	fisbuf[7] = 0xa0;
++	fisbuf[15] = 0x04;
++	
++	/* trigger the commands */
++	writel(0x1, port_mmio + PORT_CMD_ISSUE);
++	readl (port_mmio + PORT_CMD_ISSUE); /* flush */
++
++	udelay(20);
++    /* wait command complete */
++	for (i = 0; i < 2000; i++) {
++		tmp = readl(port_mmio + PORT_CMD_ISSUE);
++		if ((tmp & 1) == 0) break;
++		msleep(20);
++	}
++
++	if (i == 2000) {
++		printk(KERN_WARNING "TimeOut for Wait Command complete\n");
++		return 1;
++	}
++
++	/* prepare second command header */
++	pp->cmd_slot[0].opts = 0x00000005;
++	pp->cmd_slot[0].status = 0;
++	pp->cmd_slot[0].tbl_addr = cpu_to_le32(pp->cmd_tbl_dma & 0xffffffff);
++	pp->cmd_slot[0].tbl_addr_hi = cpu_to_le32((pp->cmd_tbl_dma >> 16) >> 16);
++
++	fisbuf = pp->cmd_tbl;
++	memset(fisbuf, 0, 64);
++	fisbuf[0] = 0x27;
++	fisbuf[7] = 0xa0;
++	fisbuf[15] = 0x00;
++
++	/* trigger the commands */
++	writel(0x1, port_mmio + PORT_CMD_ISSUE);
++	readl (port_mmio + PORT_CMD_ISSUE); /* flush */
++
++	udelay(20);
++    /* wait command complete */
++	for (i = 0; i < 2000; i++) {
++		tmp = readl(port_mmio + PORT_CMD_ISSUE);
++		if ((tmp & 1) == 0) break;
++		msleep(20);
++	}
++
++	if (i == 2000) {
++		printk(KERN_WARNING "TimeOut for Wait Command complete\n");
++		return 1;
++	}
++
++	// enable port interrupt
++	writel(0xffffffff, port_mmio + PORT_IRQ_MASK);
++	readl (port_mmio + PORT_IRQ_MASK);  /* flush */
++
++	return 0;
++}
++
++static unsigned int via_ata_busy_sleep (struct ata_port *ap,
++				    unsigned long tmout_pat,
++			    	    unsigned long tmout)
++{
++	unsigned long timer_start, timeout;
++	u8 status;
++
++	status = ata_busy_wait(ap, ATA_BUSY, 300);
++	timer_start = jiffies;
++	timeout = timer_start + tmout_pat;
++	while ((status & ATA_BUSY) && (time_before(jiffies, timeout))) {
++		msleep(50);
++		status = ata_busy_wait(ap, ATA_BUSY, 3);
++	}
++
++	if (status & ATA_BUSY)
++		printk(KERN_WARNING "ata%u is slow to respond, "
++		       "please be patient\n", ap->id);
++
++	timeout = timer_start + tmout;
++	while ((status & ATA_BUSY) && (time_before(jiffies, timeout))) {
++		msleep(50);
++		status = ata_chk_status(ap);
++	}
++
++	if (status & ATA_BUSY) {
++		printk(KERN_ERR "ata%u failed to respond (%lu secs)\n",
++		       ap->id, tmout / HZ);
++		return 1;
++	}
++
++	return 0;
++}
++
++static void via_ahci_phy_reset(struct ata_port *ap)
++{
++	void __iomem *port_mmio = (void __iomem *) ap->ioaddr.cmd_addr;
++	struct ata_taskfile tf;
++	struct ata_device *dev = &ap->device[0];
++	u32 tmp;
++
++	u32 sstatus,i;
++	unsigned long timeout = jiffies + (HZ * 5);
++	u8 tmp_status;
++	
++	if (ap->flags & ATA_FLAG_SATA_RESET) {
++		/* issue phy wake/reset */
++		scr_write_flush(ap, SCR_CONTROL, 0x301);
++		udelay(400);			/* FIXME: a guess */
++	}
++	scr_write_flush(ap, SCR_CONTROL, 0x300); /* phy wake/clear reset */
++
++	/* wait for phy to become ready, if necessary */
++	do {
++		msleep(200);
++		sstatus = scr_read(ap, SCR_STATUS);
++		if ((sstatus & 0xf) != 1)
++			break;
++	} while (time_before(jiffies, timeout));
++
++	/* TODO: phy layer with polling, timeouts, etc. */
++	if (sata_dev_present(ap))
++		ata_port_probe(ap);
++	else {
++		sstatus = scr_read(ap, SCR_STATUS);
++		printk(KERN_INFO "ata%u: no device found (phy stat %08x)\n",
++		       ap->id, sstatus);
++		ata_port_disable(ap);
++	}
++
++	if (ap->flags & ATA_FLAG_PORT_DISABLED)
++		return;
++
++	/*Fix the VIA busy bug by a software reset*/
++	for (i = 0; i < 100; i++) {
++		tmp_status = ap->ops->check_status(ap);
++		if ((tmp_status & ATA_BUSY) == 0) break;
++		msleep(10);
++	}
++
++	if ((tmp_status & ATA_BUSY)) {
++		DPRINTK("Busy after CommReset, do softreset...\n"); 
++		/*set the PxCMD.CLO bit to clear BUSY and DRQ, to make the reset command sent out*/
++		tmp = readl(port_mmio + PORT_CMD);
++		tmp |= PORT_CMD_CLO;
++		writel(tmp, port_mmio + PORT_CMD);
++		readl(port_mmio + PORT_CMD); /* flush */
++
++		if (via_ahci_softreset(ap)) {
++			printk(KERN_WARNING "softreset failed\n");
++			return;
++		}
++	}
++
++	if (via_ata_busy_sleep(ap, ATA_TMOUT_BOOT_QUICK, ATA_TMOUT_BOOT)) {
++		ata_port_disable(ap);
++		return;
++	}
++
++	ap->cbl = ATA_CBL_SATA;
++
++	if (ap->flags & ATA_FLAG_PORT_DISABLED)
++		return;
++
++	tmp = readl(port_mmio + PORT_SIG);
++	tf.lbah		= (tmp >> 24)	& 0xff;
++	tf.lbam		= (tmp >> 16)	& 0xff;
++	tf.lbal		= (tmp >> 8)	& 0xff;
++	tf.nsect	= (tmp)		& 0xff;
++
++	dev->class = ata_dev_classify(&tf);
++	if (!ata_dev_present(dev))
++		ata_port_disable(ap);
++
++}
++
++static int via_ahci_qc_issue(struct ata_queued_cmd *qc)
++{
++	struct ata_port *ap = qc->ap;
++	void *port_mmio = (void *) ap->ioaddr.cmd_addr;
++
++    if (qc &&
++        qc->tf.command == ATA_CMD_SET_FEATURES &&
++        qc->tf.feature == SETFEATURES_XFER) {
++        /* skip set xfer mode process */
++
++		ata_qc_complete(qc);
++		qc = NULL;
++        return 0;
++    }
++
++	writel(1, port_mmio + PORT_CMD_ISSUE);
++	readl(port_mmio + PORT_CMD_ISSUE);	/* flush */
++
++	return 0;
++}
++
++static void via_ahci_port_stop(struct ata_port *ap)
++{
++	struct device *dev = ap->host_set->dev;
++	struct ahci_port_priv *pp = ap->private_data;
++
++	/* spec says 500 msecs for each PORT_CMD_{START,FIS_RX} bit, so
++	 * this is slightly incorrect.
++	 */
++	msleep(500);
++
++	ap->private_data = NULL;
++	dma_free_coherent(dev, AHCI_PORT_PRIV_DMA_SZ,
++			  pp->cmd_slot, pp->cmd_slot_dma);
++	kfree(pp);
++	ata_port_stop(ap);
++}
++
++/* END: patch code for VIA VT8251 ahci controller */
++
+ static int __init ahci_init(void)
+ {
+ 	return pci_module_init(&ahci_pci_driver);
+@@ -1197,7 +1487,7 @@
+ }
+ 
+ 
+-MODULE_AUTHOR("Jeff Garzik");
++MODULE_AUTHOR("Jeff Garzik (patch VIA VT8251 adapted by Gavril Cristian Olar)");
+ MODULE_DESCRIPTION("AHCI SATA low-level driver");
+ MODULE_LICENSE("GPL");
+ MODULE_DEVICE_TABLE(pci, ahci_pci_tbl);

@@ -1,6 +1,7 @@
---- linux-2.6.16.53/drivers/scsi/ahci.c	2007-07-25 22:05:45.000000000 +0100
-+++ linux-2.6.16.53.new/drivers/scsi/ahci.c	2007-08-03 15:50:35.000000000 +0100
-@@ -286,10 +286,40 @@
+diff -Nurb linux-2.6.16.60/drivers/scsi/ahci.c linux-2.6.16.60.new/drivers/scsi/ahci.c
+--- linux-2.6.16.60/drivers/scsi/ahci.c	2008-01-27 16:58:41.000000000 +0000
++++ linux-2.6.16.60.new/drivers/scsi/ahci.c	2009-02-03 11:10:34.000000000 +0000
+@@ -286,10 +286,48 @@
  	  board_ahci }, /* ICH8M */
  	{ PCI_VENDOR_ID_INTEL, 0x282a, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
  	  board_ahci }, /* ICH8M */
@@ -26,6 +27,14 @@
 +	  board_ahci }, /* ICH9 */
 +	{ PCI_VENDOR_ID_INTEL, 0x294e, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
 +	  board_ahci }, /* ICH9M */
++	{ PCI_VENDOR_ID_INTEL, 0x3a02, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++	  board_ahci }, /* ICH10 */
++	{ PCI_VENDOR_ID_INTEL, 0x3a05, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++	  board_ahci }, /* ICH10 */
++	{ PCI_VENDOR_ID_INTEL, 0x3a25, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++	  board_ahci }, /* ICH10 */
++	{ PCI_VENDOR_ID_INTEL, 0x3a22, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++	  board_ahci }, /* ICH10 Gigabyte EG45M-DS2H */
  	{ 0x197b, 0x2360, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
  	  board_ahci }, /* JMicron JMB360 */
 +	{ 0x197b, 0x2361, PCI_ANY_ID, PCI_ANY_ID, 0, 0,
