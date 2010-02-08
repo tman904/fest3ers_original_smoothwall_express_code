@@ -5,9 +5,10 @@
 # This code is distributed under the terms of the GPL v2.
 
 KERNEL_VER = 2.6.16.60
+KERNEL_PL = 1
 
 FREESWAN_TYPE = openswan
-FREESWAN_VER = 2.4.7
+FREESWAN_VER = 2.4.15
 
 IPP2P_VER = 0.8.2
 
