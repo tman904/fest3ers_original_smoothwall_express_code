@@ -394,7 +394,7 @@ int changedrivers(void)
 	
 	/* Remove all modules not needed for green networking. */
 	c = 0;
-	while (nics[c].modulename)
+	while (strlen(nics[c].modulename))
 	{
 		if (checkformodule(nics[c].modulename))
 		{
