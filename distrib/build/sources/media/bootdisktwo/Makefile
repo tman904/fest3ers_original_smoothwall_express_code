@@ -25,10 +25,10 @@ bin:
 
 lib:
 	@(tar -cvf - -C /build/buildroot/kernel-runtime \
-	/lib/modules/$(KERNEL_VER)/kernel/drivers/scsi \
-	/lib/modules/$(KERNEL_VER)/kernel/drivers/usb \
-	/lib/modules/$(KERNEL_VER)/kernel/lib \
-	/lib/modules/$(KERNEL_VER)/modules.dep \
+	/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/scsi \
+	/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/usb \
+	/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/lib \
+	/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/modules.dep \
 	| \
 	tar -xvf -)
 
