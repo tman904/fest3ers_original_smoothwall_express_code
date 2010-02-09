@@ -49,7 +49,7 @@ int timed_access(std::vector<std::string> & parameters, std::string & response)
 	bool logging = false;
 	static bool modeset = true;
 	static bool setmode = true;
-	static bool firstset = true;
+	static bool firstset = false;
 	
 	ConfigVAR settings("/var/smoothwall/timedaccess/settings");
 	
