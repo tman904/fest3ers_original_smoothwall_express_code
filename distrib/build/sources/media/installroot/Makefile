@@ -41,7 +41,7 @@ all: clean
 	cp -aR ../etc/termcap etc; \
 	cp -aR ../etc/rc etc; chmod 755 etc/rc; \
 	cp -aR ../etc/halt etc; chmod 755 etc/halt; \
-	cp -aR ../etc/modules.conf etc; \
+	cp -aR ../etc/modprobe.conf etc; \
 	cp -aR ../etc/storagedevices etc; \
 	touch etc/ld.so.conf; \
 	/sbin/ldconfig -r .; \
