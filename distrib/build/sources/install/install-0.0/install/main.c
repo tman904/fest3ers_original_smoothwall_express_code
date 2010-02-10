@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 	mysystem("/sbin/modprobe usbcore");
 	mysystem("/sbin/modprobe ohci-hcd");
 	mysystem("/sbin/modprobe uhci-hcd");
+	mysystem("/sbin/modprobe ehci-hcd");
 	mysystem("/sbin/modprobe usbhid");
 
 	newtInit();

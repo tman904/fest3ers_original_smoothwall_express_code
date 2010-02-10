@@ -13,6 +13,13 @@ fi
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export PATH
 
+echo "Loading USB subsystem for keyboard"
+/sbin/modprobe usbcore 2> /dev/null
+/sbin/modprobe ohci-hcd 2> /dev/null
+/sbin/modprobe uhci-hcd 2> /dev/null
+/sbin/modprobe ehci-hcd 2> /dev/null
+/sbin/modprobe usbhid 2> /dev/null
+
 if [ -e /forcefsck ]; then FORCE=-f; fi
 
 echo -n "Checking root filesystem : "
@@ -135,11 +142,7 @@ echo "Starting syslogd"
 echo "Starting klogd"
 /usr/sbin/klogd
 
-echo "Loading USB subsystem"
-/sbin/modprobe usbcore 2> /dev/null
-/sbin/modprobe ohci-hcd 2> /dev/null
-/sbin/modprobe uhci-hcd 2> /dev/null
-/sbin/modprobe usbhid 2> /dev/null
+echo "Mounting usbfs"
 mount -t usbfs none /proc/bus/usb
 
 echo "Loading filesystems"
