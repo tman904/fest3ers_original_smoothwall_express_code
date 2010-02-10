@@ -161,10 +161,10 @@ int main(int argc, char *argv[])
 	current_free = maximum_free - boot_partition;
 
 	swap_partition = ramsize < 64 ? 64 : ramsize; /* in MB */
-	current_free = maximum_free - swap_partition;
+	current_free -= swap_partition;
 	
 	log_partition = (current_free / 3) > 20 ? current_free / 3 : 20;
-	current_free = maximum_free - log_partition;
+	current_free -= log_partition;
 
 	root_partition = current_free;
 	fprintf(flog, "boot = %d, swap = %d, log = %d, root = %d\n",
