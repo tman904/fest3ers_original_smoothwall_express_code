@@ -81,6 +81,7 @@ prepare: download
 	patch -p1 <../../kernel-patches/mptscsi-vmware-esx-fix.patch; \
 	patch -p1 <../../kernel-patches/apic-fix.diff; \
 	patch -p1 <../../kernel-patches/cciss-device-additions.patch; \
+	patch -p1 <../../kernel-patches/linux-2.6.16-skge.patch; \
 	)
 	@rm -f linux
 	@ln -s linux-$(KERNEL_VER) linux
