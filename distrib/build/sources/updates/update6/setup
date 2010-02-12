@@ -4,6 +4,8 @@ echo "Update 6 installing."
 
 tar -zxvf patch.tar.gz -C /
 
+rm -f /etc/modules.conf
+
 echo >>/var/smoothwall/main/kernel "OLD=2.6.16.60"
 
 cat <<END >>/etc/lilo.conf
