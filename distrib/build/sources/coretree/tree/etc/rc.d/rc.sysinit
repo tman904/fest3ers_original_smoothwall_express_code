@@ -95,6 +95,9 @@ rm -f /var/smoothwall/red/*
 rm -f /var/lock/LCK..ttyS*
 rm -f /var/run/pppd*.tdb
 
+echo "Silencing kernel, syslog output on tty12"
+echo >/proc/sys/kernel/printk "1 4 1 7"
+
 echo "Setting drive DMA settings"
 /sbin/hdparm -d 1 -c 1 -u 1 /dev/harddisk
 
@@ -177,8 +180,6 @@ echo "Starting Clam Anti-Virus (if enabled)"
 echo "Starting POP3 scanner (if enabled)"
 /usr/bin/smoothcom p3scanrestart
 
-echo "Silencing kernel, syslog output on tty12"
-echo >/proc/sys/kernel/printk "1 4 1 7"
 
 dmesg >/var/log/dmesg
 
