@@ -7,7 +7,6 @@
 PCI NE2000 cards, RealTEk RTL-8029, etc|ne2k-pci
 NE1000 / NE2000 (non-pci)|ne
 Intel i82557/i82558 PCI EtherExpressPro|eepro100
-Intel i82595 ISA EtherExpressPro10/10+ driver|eepro
 Intel EtherExpress 16 (i82586)|eexpress
 AMD LANCE/PCnetAllied Telesis AT1500, HP J2405A, etc|lance
 AMD PCnet32 and AMD PCnetPCI|pcnet32
@@ -80,3 +79,4 @@ RealTek R8101|r8101
 Broadcom NX2 10 Gb Ethernet|bnx2x
 Intel 10 Gigabit IXGB (82597)|ixgb
 Intel 10 Gigabit IXGBE (82598/9)|ixgbe
+Intel i82595 ISA EtherExpressPro10/10+ driver|eepro
