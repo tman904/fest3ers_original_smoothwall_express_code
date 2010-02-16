@@ -20,16 +20,7 @@ all: clean
 	mkdir bin bootdisktwo cdrom dev etc harddisk lib proc tmp usr; \
 	ln -s bin sbin; \
 	install -D /usr/share/terminfo/l/linux usr/share/terminfo/l/linux; \
-	cp -aR $(BB)/bin/busybox bin; \
-	cd bin; \
-	for FILE in \
-		ash cat chroot echo ifconfig init \
-		kill killall linuxrc mkswap mount reboot \
-		sh sleep swapoff swapon tar test umount wget; \
-	do \
-		ln -s busybox $$FILE; \
-	done; \
-	cd ..; \
+	cp -avR $(BB)/bin/* $(BB)/sbin/* bin; \
 	cp -aR ../$(PROGS)/loader  ../$(PROGS)/iowrap bin; \
 	cp -aR /lib/ld-*.so /lib/ld-*.so.* /lib/libc-*.so /lib/libc.so.* lib; \
 	cp -aR ../etc/fstab etc; \
@@ -70,7 +61,7 @@ endif
 	@mount /dev/loop1 $(INSTALL_ROOT)
 
 	@cp -aR tmp/* $(INSTALL_ROOT)
-	@rm -rf tmp/
+#	@rm -rf tmp/
 
 	@sync
 	@sleep 1
