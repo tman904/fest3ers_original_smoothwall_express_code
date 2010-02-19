@@ -5,3 +5,4 @@
 ./etc/modprobe.conf
 ./etc/lilo.conf
 ./etc/rc.d/rc.sysinit
+./etc/rc.d/rc.firewall.up
