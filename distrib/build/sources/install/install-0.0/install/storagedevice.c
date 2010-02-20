@@ -15,7 +15,7 @@ extern char *logname;
 
 extern char **ctr;
 
-#define MAX_STORAGE_DEVICES 50
+#define MAX_STORAGE_DEVICES 100
 #define STORAGE_DEVICES_FILENAME "/etc/storagedevices"
 
 struct storagedevicedriver sdds[MAX_STORAGE_DEVICES];
