@@ -16,7 +16,7 @@ and is chrooted into the working build environment.  Before building the
 "core" packages, such as the kernel etc, the build toolchain that will be
 used in the final build is compiled up with the /tools toolchain, thus the
 /tools structure is no longer needed.  Packages that are compiled and
-installed are placed into the build environment (ie. under distrib/).  Also,
+installed are placed into the build environment (i.e. under distrib/).  Also,
 each compiled package is tarred up into a tarball that is used in step 3.
 
 3. Create the last few tools needed to create the final bootable ISO (such
@@ -27,21 +27,21 @@ and the ISO itself.
 
 LAYOUT
 
-The main working directory is expresscore/distrib.  Once an inital build
+The main working directory is expresscore/distrib.  Once an initial build
 has been completed, this dir can be chrooted into and it will be possible to
 work on the tree, add new packages, etc, etc.  expresscore itself can be
 used to hold documentation and other files that wont be used in the build
-environement itself.
+environment itself.
 
-expresscore/distrib/tools is the location of the temporarly build
-environement.  Even after a completed build, you should leave this dir alone
+expresscore/distrib/tools is the location of the temporary build
+environment.  Even after a completed build, you should leave this dir alone
 because some build scripts have to reference files in it because they are
 normally called before step 2 is complete.  It shouldn't ever be necessary
 to change how this tools dir works, so just ignore it unless you are REALLY
 interested.
 
 expresscore/distrib/build is where the "action" is.  This dir contains
-the build top level makefile, sripts to build stage 1 and stage 2, and a
+the build top level makefile, scripts to build stage 1 and stage 2, and a
 couple of helper scripts.
 
 build/sources is the real heart of the build process.  Each dir is a
@@ -75,7 +75,7 @@ THE BUILD DIR
 Makefile - Top level makefile.  Really just a wrapper for makebuild1. 
 Modify this file to hold DNS server IP addresses.
 
-makebuild1 - Inital build script.  Makes the temporary build env (under
+makebuild1 - Initial build script.  Makes the temporary build env (under
 /tools) and then fires off makebuild2 chrooted.
 
 makebuild2 - Main build script, which runs chrooted in the directory above
@@ -90,22 +90,22 @@ level build, such as a working /dev/null.  Needed because build2 happens
 chrooted.
 
 build1done - This is a touch file created when stage 1 has been completed
-sucessfully.  The mailebuild1 script checks for the existance of this file
+successfully.  The makebuild1 script checks for the existence of this file
 before starting to build stage 1.  Therefore it is possible to restart "make
 build" without it going though stage 1 all over again.
 
 dlverify - "Download and verify".  This is a little helper script that wraps
 wget.  The purpose of the wrapper is two-fold: to stop wget being called on
-a completed download, thus causing unecessary network traffic, and also to
+a completed download, thus causing unnecessary network traffic, and also to
 verify a completed download by MD5.  The arguments are: <directory> <url>
-[md5].  Directory is usallly the standard d/l area.  The MD5 can be left
+[md5].  Directory is usually the standard d/l area.  The MD5 can be left
 off, in which case no download check is done.  To cope with partial
 downloads, once a d/l has completed, an additional touch file will be
 created with the same name as the download file, plus ".done".  Only if this
 file is present will the download be skipped over.  Note that the
 Makefile.conf (in sources) defines DL_CMD for you, and it includes the
 download destination dir.  So to do a download from within a makefile, you
-should usually just do: $(DL_CMD) http://...  This script also has tbe
+should usually just do: $(DL_CMD) http://...  This script also has the
 ability to use a local mirror.  The URL root for the mirror is set at the
 top of the script.  To create a local mirror for yourself, after doing a
 full build, copy the files in build/download (except the .done files) into
@@ -114,9 +114,9 @@ your mirror.
 sources - "Packages" are assigned a directory in here, with a Makefile for
 building.
 
-USING THE BULD SCRIPTS
+USING THE BUILD SCRIPTS
 
-Currnetly the environement is only tested under the root user, and when it
+Currently the environment is only tested under the root user, and when it
 is installed in /usr/src/expresscore.  More testing will be done, and
 perhaps eventually it will be possible to compile an ISO under a different
 user.  But not yet :)
@@ -135,14 +135,14 @@ of available targets.  Interesting ones are:
 
 predownload - Downloads all needed sources.
 
-packageinfo.html - Spits out some crudely formatted HTML containg packages
+packageinfo.html - Spits out some crudely formatted HTML containing packages
 and versions, download URLs and patch URLs.  Call with make -s to hide the
 make output.
 
 RESTATING THE BUILD
 
 Currently it is not easily possible to restart the build and have it
-continue where it left off.  This is a hard thing ot implement, but we are
+continue where it left off.  This is a hard thing to implement, but we are
 interested in doing so.
 
 TESTED HOST ENVIRONMENTS
