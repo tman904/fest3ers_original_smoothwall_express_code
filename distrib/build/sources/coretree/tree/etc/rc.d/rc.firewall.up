@@ -198,17 +198,17 @@ fi
 
 # Port forwarding & Bouncing portforwards
 /sbin/iptables -N portfwf
-/sbin/iptables -A FORWARD –i ppp0 -j portfwf
-/sbin/iptables –A FORWARD –i ippp0 –j portfwf
+/sbin/iptables -A FORWARD -i ppp0 -j portfwf
+/sbin/iptables -A FORWARD -i ippp0 -j portfwf
 if [ "$RED_DEV" != "" ]; then
-	/sbin/iptables –A FORWARD –i $RED_DEV –j portfwf
+	/sbin/iptables -A FORWARD -i $RED_DEV -j portfwf
 fi
-/sbin/iptables –A FORWARD –m mark --mark 1 –j portfwf
+/sbin/iptables -A FORWARD -m mark --mark 1 -j portfwf
 if [ "$ORANGE_DEV" != "" ]; then
-	/sbin/iptables –A FORWARD –m mark --mark 2 –j portfwf
+	/sbin/iptables -A FORWARD -m mark --mark 2 -j portfwf
 fi
 if [ "$PURPLE_DEV" != "" ]; then
-	/sbin/iptables –A FORWARD –m mark --mark 3 –j portfwf
+	/sbin/iptables -A FORWARD -m mark --mark 3 -j portfwf
 fi
 /sbin/iptables -N dmzholes
 
