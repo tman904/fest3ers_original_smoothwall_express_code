@@ -160,7 +160,11 @@ int main(int argc, char *argv[])
 	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition;
 
-	swap_partition = ramsize < 64 ? 64 : ramsize; /* in MB */
+	/* Trim swap to tiny if disk is small, like a CF. */
+	if (maximum_free < 3000)
+		swap_partition = 4;
+	else
+		swap_partition = ramsize < 64 ? 64 : ramsize; /* in MB */
 	current_free -= swap_partition;
 	
 	log_partition = (current_free / 3) > 20 ? current_free / 3 : 20;
