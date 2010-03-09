@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = imspector
-VERSION = 20090728
+VERSION = 20100309
 
 BASE_URL = http://www.imspector.org/downloads/snapshots/
 
