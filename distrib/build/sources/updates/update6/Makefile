@@ -1,4 +1,4 @@
-UPDATE_PACKAGES = coretree libsmooth+setup kernel-runtime openswan clamav smoothd
+UPDATE_PACKAGES = coretree libsmooth+setup kernel-runtime openswan clamav smoothd snort
 
 UPDATE_ID = 006
 UPDATE_NAME = update6
