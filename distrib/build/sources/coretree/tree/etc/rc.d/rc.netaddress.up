@@ -2,7 +2,7 @@
 
 . /var/smoothwall/ethernet/settings
 
-. /etc/rc.d/rc.firewall.down
+. /etc/rc.d/rc.stoptraffic
 
 echo "Restarting DNS proxy"
 /usr/bin/smoothcom dnsproxyrestart
