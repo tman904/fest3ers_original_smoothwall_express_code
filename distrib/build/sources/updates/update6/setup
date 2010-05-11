@@ -2,9 +2,10 @@
 
 echo "Update 6 installing."
 
-tar -zxvf patch.tar.gz -C /
-
+rm -rf /usr/lib/snort_*
 rm -f /etc/modules.conf
+
+tar -zxvf patch.tar.gz -C /
 
 echo >>/var/smoothwall/main/kernel "OLD=2.6.16.60"
 

@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = snort
-VERSION = 2.8.5.2
+VERSION = 2.8.6
 
 BASE_URL = http://dl.snort.org/snort-current/
 
