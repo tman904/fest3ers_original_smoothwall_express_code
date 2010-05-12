@@ -160,14 +160,29 @@ print "</FORM>\n";
 	
 if ($snortsettings{'ACTION'} eq $tr{'save and update rules'} and !$errormessage)
 {
-	my $snortversion = &readvalue('/usr/lib/smoothwall/snortversion');
-	$snortversion =~ /^(\d+\.\d+)/;
-	$snortversion = $1;
+	my $origsnortversion = &readvalue('/usr/lib/smoothwall/snortversion');
 
+	my $snortversion = $origsnortversion;
+	
+	$snortversion =~ s/\.//g;
+	
+	while (length $snortversion < 4) {
+		$snortversion = $snortversion.'0'; }
+	
 	&runoinkmaster($snortversion);
-
-	if (!$errormessage) {
-
+	
+	if ($errormessage)
+	{
+		$snortversion = $origsnortversion;
+		
+		$snortversion =~ /^(\d+\.\d+)/;
+		$snortversion = $1;
+		
+		&runoinkmaster($snortversion);
+	}
+	
+	if (!$errormessage)
+	{	
 		my $success = message('snortrestart');
 
 		if (not defined $success) {
@@ -223,6 +238,7 @@ document.getElementById('progress').style.background = "#a0a0ff";
 END
 		while(<FD>)
 		{
+			print STDERR $_;
 			$errormessage = '';
 			if (/(\d{1,3})%/) {
 				my $percent = $1;
