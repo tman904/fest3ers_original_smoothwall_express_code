@@ -6,3 +6,4 @@
 ./etc/lilo.conf
 ./etc/rc.d/rc.sysinit
 ./etc/rc.d/rc.firewall.up
+./httpd/cgi-bin/ids.cgi
