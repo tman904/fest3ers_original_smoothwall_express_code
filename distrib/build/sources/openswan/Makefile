@@ -31,6 +31,6 @@ compile: configure
 install: compile
 	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT)/ INC_USRLOCAL=/$(PKG_DIR) FINALCONFDIR=/$(PKG_DIR)/etc FINALRCDIR=/$(PKG_DIR)/bin install
-	@rm -rf $(PKG_ROOT)/$(PKG_DIR)/rc*
+	@rm -rf $(PKG_ROOT)/$(PKG_DIR)/rc* $(PKG_ROOT)/$(PKG_DIR)/etc/ipsec.conf
 
 include ../Makefile.rules
