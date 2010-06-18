@@ -72,7 +72,7 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-	<TD WIDTH='25%' CLASS='base'>Snort:</TD>
+	<TD WIDTH='25%' CLASS='base'>$tr{'enabled'}</TD>
 	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_SNORT' $checked{'ENABLE_SNORT'}{'on'}></TD>
 	<TD WIDTH='25%'>&nbsp;</TD>
 	<TD WIDTH='35%'>&nbsp;</TD>
