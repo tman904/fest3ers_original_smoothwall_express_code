@@ -13,6 +13,8 @@
 #define CDROM_INSTALL 0
 #define URL_INSTALL 1
 
+#define TRIM_DISK_SIZE 60000
+
 FILE *flog = NULL;
 char *logname;
 
@@ -42,6 +44,7 @@ int main(int argc, char *argv[])
 	FILE *hkernelcmdline;
 	char kernelcmdline[STRING_SIZE];
 	int ramsize;
+	int trimbigdisk = 0;
 
 	setenv("TERM", "linux", 0);
 
@@ -70,6 +73,9 @@ int main(int argc, char *argv[])
 		return 0;
 	fgets(kernelcmdline, STRING_SIZE - 1, hkernelcmdline);
 	fclose(hkernelcmdline);
+	
+	if (strstr(kernelcmdline, "trimbigdisk"))
+		trimbigdisk = 1;
 
 	/* Load USB keyboard modules so dialogs can respond to USB-keyboards */
 	fprintf(flog, "Loading USB-keyboard modules.\n");
@@ -156,6 +162,11 @@ int main(int argc, char *argv[])
 	 * partition.  In order to do that we need to know the size of
 	 * the disk. */
 	maximum_free = getdisksize(hd.devnode) / 1024;
+	
+	if (trimbigdisk)
+		maximum_free = maximum_free > TRIM_DISK_SIZE ? TRIM_DISK_SIZE : maximum_free;
+
+	fprintf(flog, "%d MB disk space (Trimming: %d)\n", maximum_free, trimbigdisk);
 	
 	boot_partition = 20; /* in MB */
 	current_free = maximum_free - boot_partition;
