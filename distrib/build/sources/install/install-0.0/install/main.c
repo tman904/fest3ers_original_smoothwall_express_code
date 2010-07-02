@@ -186,8 +186,18 @@ int main(int argc, char *argv[])
 		boot_partition, swap_partition, log_partition, root_partition);
 
 	handle = fopen("/tmp/partitiontable", "w");
-	fprintf(handle, ",%d,83,\n,%d,82,\n,%d,83,\n,,83,*\n",
-		boot_partition, swap_partition, log_partition);
+	if (trimbigdisk)
+	{
+		/* Disk usage is limited, so we must specify root's size in order
+		 * to leave the rest of the disk unused. */
+		fprintf(handle, ",%d,83,\n,%d,82,\n,%d,83,\n,%d,83,*\n",
+			boot_partition, swap_partition, log_partition, root_partition);
+	}
+	else
+	{
+		fprintf(handle, ",%d,83,\n,%d,82,\n,%d,83,\n,,83,*\n",
+			boot_partition, swap_partition, log_partition);
+	}
 	fclose(handle);		
 
 	snprintf(commandstring, STRING_SIZE, "/bin/sfdisk -uM %s < /tmp/partitiontable", hd.devnode);
