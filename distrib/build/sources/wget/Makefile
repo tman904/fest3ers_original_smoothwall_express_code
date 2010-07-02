@@ -11,6 +11,6 @@ VERSION = 1.10.2
 
 BASE_URL = ftp://ftp.gnu.org/gnu/wget
 
-CONFIG_OPTS = --without-ssl
+CONFIG_OPTS = --with-ssl --with-libssl-prefix=/usr/ssl
 
 include ../Makefile.rules
