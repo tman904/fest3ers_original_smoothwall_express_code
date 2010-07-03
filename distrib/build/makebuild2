@@ -83,10 +83,11 @@ build sysvinit
 build tar
 build util-linux
 build joe
-build wget
 build MAKEDEV
 docommand "making devnodes" "make -C sources/MAKEDEV devnodes"
 build gcc2
+build openssl
+build wget
 docommand "unpacking iptables for kernel compile" "make -C sources/iptables patch"
 build kernel-runtime
 build strace
@@ -113,7 +114,6 @@ build tcpdump
 
 build dosfstools
 build syslinux
-build openssl
 build openssh
 build apache
 build smoothd
