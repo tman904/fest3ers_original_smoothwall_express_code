@@ -28,6 +28,7 @@ install: compile
 	do \
 		mv $(PKG_ROOT)/$(PKG_DIR)/bin/$$FILE $(PKG_ROOT)/bin; \
 	done);
+	@(cd $(PKG_ROOT)/usr/bin; ln -s /bin/env)
 endif
 	         
 include ../Makefile.rules
