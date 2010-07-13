@@ -27,7 +27,6 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 
 	@(for I in \
 		glibc \
-		newt \
 		libsmooth+setup \
 		newt \
 		devnodes \
@@ -37,8 +36,6 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 		coreutils \
 		iana-etc \
 		mktemp \
-		findutils \
-		iana-etc \
 		findutils \
 		gawk \
 		ncurses \
@@ -158,7 +155,6 @@ ifeq ($(TYPE), -devel)
 		make \
 		autoconf \
 		automake \
-		binutils \
 		bison \
 		dejagnu \
 		gcc \
