@@ -7,9 +7,11 @@
 include ../Makefile.conf
 
 PACKAGE = oinkmaster
-VERSION = 1.2
+VERSION = 2.0
 
-BASE_URL = http://www.snort.org/dl/contrib/rule_management/oinkmaster
+BASE_URL = http://kent.dl.sourceforge.net/sourceforge/$(PACKAGE)/$(PACKAGE)/$(VERSION)/
+
+PATCH_FILE1 = wget-no-check-certificate.patch
 
 INSTALL = yes
 
