@@ -132,7 +132,7 @@ sub progress
 	my ( $down, $percent, $speed, $complete ) = ( 0, "0px", 0, "" );
 
 	while ( $status = <$status_file> ) { 
-		my ( $ddown, $dpercent, $dspeed ) = ( $status =~ /(\d+K|M)[^\d]*(\d+%)\s+(\d+\.\d+ ..\/s)/ );
+		my ( $ddown, $dpercent, $dspeed ) = ( $status =~ /(\d+K|M)[^\d]*(\d+%)\s+([^\s]*)/ );
 		if ( defined $ddown ){
 			$down = $ddown;
 			$percent = $dpercent;
