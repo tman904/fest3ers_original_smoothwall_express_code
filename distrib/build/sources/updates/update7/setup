@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "Update 7 installing."
+
+tar -zxvf patch.tar.gz -C /
+
+rm -f /usr/sbin/httpd
+rm -f /usr/bin/htpasswd
+rm -f /usr/bin/htdigest

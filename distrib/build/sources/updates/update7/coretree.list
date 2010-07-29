@@ -1,0 +1,9 @@
+./httpd/html/help/timedaccess.cgi.html.en
+./httpd/cgi-bin/ids.cgi
+./httpd/cgi-bin/changepw.cgi
+./usr/lib/smoothwall/langs/base.pl
+./usr/lib/smoothwall/langs/glossary.base.pl
+./usr/lib/smoothwall/smoothnet.pm
+./etc/httpd/conf/httpd.conf
+./etc/rc.d/rc.sysinit
+./etc/rc.d/rc.firewall.up
