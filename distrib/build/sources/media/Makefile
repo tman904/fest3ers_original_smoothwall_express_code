@@ -76,7 +76,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 		lilo \
 		openssl \
 		openssh \
-		apache \
+		httpd \
 		smoothd \
 		squid \
 		HTML-Parser \

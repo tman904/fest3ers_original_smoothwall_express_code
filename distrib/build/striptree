@@ -24,7 +24,7 @@ for I in \
 	share/doc \
 	examples \
 ; do \
-	rm -rf usr/$I usr/ssl/$I \ 
+	rm -rf usr/$I usr/ssl/$I usr/apache2/$I \ 
 done
 find \( -name "*.a" -or -name "*.la" \) -exec rm -f '{}' \;
 
@@ -32,7 +32,8 @@ echo "Stripping binaries ..."
 strip bin/* sbin/* 2>/dev/null
 strip usr/bin/* usr/sbin/* 2>/dev/null
 strip usr/ssl/bin/* usr/ssl/sbin/* 2> /dev/null
-strip lib/* usr/lib/* usr/ssl/lib/* 2>/dev/null
+strip usr/apache2/bin/* usr/apache2/sbin/* 2> /dev/null
+strip lib/* usr/lib/* usr/ssl/lib/* usr/apache2/lib/* 2>/dev/null
 strip usr/lib/smoothwall/* usr/lib/smoothwall/alerts/* 2>/dev/null
 
 exit 0;

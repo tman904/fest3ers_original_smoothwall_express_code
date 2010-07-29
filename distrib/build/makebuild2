@@ -115,7 +115,7 @@ build tcpdump
 build dosfstools
 build syslinux
 build openssh
-build apache
+build httpd
 build smoothd
 build cron
 build cgilib
