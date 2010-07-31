@@ -7,13 +7,11 @@
 include ../Makefile.conf
 
 PACKAGE = dhcpcd
-VERSION =  2.0.3
+VERSION =  2.0.8
 
-BASE_URL = http://ftp.debian.org/debian/pool/main/d/dhcpcd/
+BASE_URL = http://download.berlios.de/dhcpcd/
 
-TARBALL = $(PACKAGE)_$(VERSION).orig
-
-DIR =  $(PACKAGE)-$(VERSION).orig
+EXTENSION = .tar.bz2
 
 CONFIG_OPTS = --mandir=/$(PKG_DIR)/man
 
