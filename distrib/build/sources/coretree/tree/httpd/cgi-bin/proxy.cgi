@@ -127,7 +127,7 @@ print <<END
 <TR>
 	<TD CLASS='base'>$tr{'remote proxy username'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
 	<TD><INPUT TYPE='text' NAME='PEER_USERNAME' VALUE='$proxysettings{'PEER_USERNAME'}'></TD>
-	<TD CLASS='bae'>$tr{'remote proxy password'}</TD>
+	<TD CLASS='base'>$tr{'remote proxy password'}</TD>
 	<TD><INPUT TYPE='password' NAME='PEER_PASSWORD' VALUE='$proxysettings{'PEER_PASSWORD'}'></TD>
 </TR>
 <TR>
