@@ -13,6 +13,8 @@ BASE_URL = http://download.berlios.de/dhcpcd/
 
 EXTENSION = .tar.bz2
 
+PATCH_FILE1 = info-formatting.patch
+
 CONFIG_OPTS = --mandir=/$(PKG_DIR)/man
 
 include ../Makefile.rules

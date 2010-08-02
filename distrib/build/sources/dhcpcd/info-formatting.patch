@@ -1,0 +1,86 @@
+diff -Nurb dhcpcd-2.0.8.orig/src/dhcpconfig.c dhcpcd-2.0.8/src/dhcpconfig.c
+--- dhcpcd-2.0.8.orig/src/dhcpconfig.c	2006-07-12 14:47:38.000000000 +0100
++++ dhcpcd-2.0.8/src/dhcpconfig.c	2010-08-02 10:34:59.000000000 +0100
+@@ -621,11 +621,11 @@
+       int b,c;
+       memcpy(&b,DhcpOptions.val[subnetMask],4);
+       c = DhcpIface.ciaddr & b;
+-      fprintf(f,"\
+-	      IPADDR=%u.%u.%u.%u\n\
+-	      NETMASK=%u.%u.%u.%u\n\
+-	      NETWORK=%u.%u.%u.%u\n\
+-	      BROADCAST=%u.%u.%u.%u\n",
++      fprintf(f,
++	      "IPADDR=%u.%u.%u.%u\n" \
++	      "NETMASK=%u.%u.%u.%u\n" \
++	      "NETWORK=%u.%u.%u.%u\n" \
++	      "BROADCAST=%u.%u.%u.%u\n",
+ 	      ((unsigned char *)&DhcpIface.ciaddr)[0],
+ 	      ((unsigned char *)&DhcpIface.ciaddr)[1],
+ 	      ((unsigned char *)&DhcpIface.ciaddr)[2],
+@@ -644,8 +644,7 @@
+ 	      ((unsigned char *)DhcpOptions.val[broadcastAddr])[3]);
+       if ( DhcpOptions.len[routersOnSubnet] > 3 )
+ 	{
+-	  fprintf(f,"\
+-		  GATEWAY=%u.%u.%u.%u",
++	  fprintf(f, "GATEWAY=%u.%u.%u.%u",
+ 		  ((unsigned char *)DhcpOptions.val[routersOnSubnet])[0],
+ 		  ((unsigned char *)DhcpOptions.val[routersOnSubnet])[1],
+ 		  ((unsigned char *)DhcpOptions.val[routersOnSubnet])[2],
+@@ -687,8 +686,7 @@
+ 	fprintf(f,"\nNISDOMAIN=\'%s\'",cleanmetas((char *)DhcpOptions.val[nisDomainName]));
+       if ( DhcpOptions.len[rootPath] )
+ 	fprintf(f,"\nROOTPATH=\'%s\'",cleanmetas((char *)DhcpOptions.val[rootPath]));
+-      fprintf(f,"\n\
+-	      DNS=%u.%u.%u.%u",
++      fprintf(f,"\nDNS=%u.%u.%u.%u",
+ 	      ((unsigned char *)DhcpOptions.val[dns])[0],
+ 	      ((unsigned char *)DhcpOptions.val[dns])[1],
+ 	      ((unsigned char *)DhcpOptions.val[dns])[2],
+@@ -729,18 +727,18 @@
+ 		    ((unsigned char *)DhcpOptions.val[nisServers])[2+i],
+ 		    ((unsigned char *)DhcpOptions.val[nisServers])[3+i]);
+ 	}
+-      fprintf(f,"\n\
+-	      DHCPSID=%u.%u.%u.%u\n\
+-	      DHCPGIADDR=%u.%u.%u.%u\n\
+-	      DHCPSIADDR=%u.%u.%u.%u\n\
+-	      DHCPCHADDR=%02X:%02X:%02X:%02X:%02X:%02X\n\
+-	      DHCPSHADDR=%02X:%02X:%02X:%02X:%02X:%02X\n\
+-	      DHCPSNAME=\'%s\'\n\
+-	      LEASETIME=%u\n\
+-	      RENEWALTIME=%u\n\
+-	      REBINDTIME=%u\n\
+-	      INTERFACE=\'%s\'\n\
+-	      CLASSID=\'%s\'\n",
++      fprintf(f,
++	      "\nDHCPSID=%u.%u.%u.%u\n" \
++	      "DHCPGIADDR=%u.%u.%u.%u\n" \
++	      "DHCPSIADDR=%u.%u.%u.%u\n" \
++	      "DHCPCHADDR=%02X:%02X:%02X:%02X:%02X:%02X\n" \
++	      "DHCPSHADDR=%02X:%02X:%02X:%02X:%02X:%02X\n" \
++	      "DHCPSNAME=\'%s\'\n" \
++	      "LEASETIME=%u\n" \
++	      "RENEWALTIME=%u\n" \
++	      "REBINDTIME=%u\n" \
++	      "INTERFACE=\'%s\'\n" \
++	      "CLASSID=\'%s\'\n",
+ 	      ((unsigned char *)DhcpOptions.val[dhcpServerIdentifier])[0],
+ 	      ((unsigned char *)DhcpOptions.val[dhcpServerIdentifier])[1],
+ 	      ((unsigned char *)DhcpOptions.val[dhcpServerIdentifier])[2],
+@@ -781,10 +779,10 @@
+ 	{
+ 	  if ( DhcpOptions.len[dhcpFQDNHostName] )
+ 	    {
+-	      fprintf(f,"FQDNFLAGS=%u\n\
+-		      FQDNRCODE1=%u\n\
+-		      FQDNRCODE2=%u\n\
+-		      FQDNHOSTNAME='%s'\n",
++	      fprintf(f,"FQDNFLAGS=%u\n" \
++		      "FQDNRCODE1=%u\n" \
++		      "FQDNRCODE2=%u\n" \
++		      "FQDNHOSTNAME='%s'\n",
+ 		      ((unsigned char *)DhcpOptions.val[dhcpFQDNHostName])[0],
+ 		      ((unsigned char *)DhcpOptions.val[dhcpFQDNHostName])[1],
+ 		      ((unsigned char *)DhcpOptions.val[dhcpFQDNHostName])[2],
