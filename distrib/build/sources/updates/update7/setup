@@ -7,3 +7,6 @@ tar -zxvf patch.tar.gz -C /
 rm -f /usr/sbin/httpd
 rm -f /usr/bin/htpasswd
 rm -f /usr/bin/htdigest
+
+ln -t /usr/etc -sf /var/smoothwall/vpn/ipsec.conf
+chmod 755 /var/run/pluto
