@@ -9,3 +9,4 @@
 ./etc/httpd/conf/httpd.conf
 ./etc/rc.d/rc.sysinit
 ./etc/rc.d/rc.firewall.up
+./usr/etc/sshd_config
