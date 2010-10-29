@@ -123,6 +123,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 		oinkmaster \
 		openswan \
 		wireless_tools \
+		sqlite \
 		imspector \
 		diffutils \
 		traceroute \
