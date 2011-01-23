@@ -53,6 +53,7 @@ system('/usr/bin/sounds/onlinesound');
 message('dnsproxyrestart', $primarydns, $secondarydns);
 message('setincoming');
 message('snortrestart');
+message('squidrestart');
 message('upnpdrestart');
 message('trafficrestart');
 
