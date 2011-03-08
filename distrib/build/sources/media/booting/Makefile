@@ -15,13 +15,10 @@ all: clean
 	@cp -R syslinux.cfg isolinux/isolinux.cfg
 	@cp -R /build/buildroot/syslinux/usr/lib/syslinux/isolinux.bin isolinux/
 	@cp -R dosfiles/message.txt dosfiles/message.lss isolinux/
-	@cp -R /build/buildroot/kernel-runtime/boot/vmlinuz-$(KERNEL_VER)-$(KERNEL_PL) isolinux/vmlinuz
+	@cp -R /build/buildroot/kernel-runtime/boot/vmlinuz-$(KERNEL_VER)-$(KERNEL_PL)-runtime isolinux/vmlinuz
 
 	@make -C ../installroot MEDIA=$(MEDIA)
 	@cp -R ../$(INSTALL_ROOT)image.gz isolinux/initrd.img
-
-	@sleep 1
-	@sync
 
 clean:
 	@rm -rf isolinux/
