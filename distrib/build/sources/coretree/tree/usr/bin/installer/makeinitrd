@@ -1,42 +1,32 @@
 #!/bin/sh
+#
+# Copyright 2004-2010 SmoothWall Ltd
+
+cp -f /usr/lib/installer/basicrootfs.gz /root/
+/usr/bin/gzip -d /root/basicrootfs.gz
 
 . /var/smoothwall/main/kernel
-. /var/smoothwall/main/hwprofile
 
-echo "Module: $STORAGE_DRIVER Module options: $STORAGE_DRIVER_OPTIONS"
+for KERNEL_TYPE in runtime; do
 
-if [ "$OLD" == "" ]; then OLD=$CURRENT; fi
+(cd /mnt/initrd; cpio -H newc -iv < /root/basicrootfs)
 
-cp -f /boot/initrd-${OLD}.gz /root/initrd-${CURRENT}.gz
-/usr/bin/gzip -d /root/initrd-${CURRENT}.gz
+rm -rf /mnt/initrd/lib/modules
+cp --parents -aR /lib/modules/${CURRENT}-${KERNEL_TYPE}/modules.* /mnt/initrd
+cp --parents -aR /lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel /mnt/initrd
+cp --parents -aR /lib/firmware /mnt/initrd
+rm -rf /mnt/initrd/lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel/drivers/net
+cp -aR /usr/bin/installer/init /mnt/initrd/init
 
-/bin/mount -o loop /root/initrd-${CURRENT} /mnt/initrd
+(cd /mnt/initrd; find . -print | cpio -H newc -ov > /root/initrd-${CURRENT}-${KERNEL_TYPE})
 
-if [ "$STORAGE_DRIVER" != "" ]; then
-	tar -cf /storagedriver.tar -C /lib/modules/${CURRENT}/kernel/drivers/ scsi/libata.ko scsi/scsi_transport_spi.ko $STORAGE_DRIVER
+/usr/bin/gzip /root/initrd-${CURRENT}-${KERNEL_TYPE}
+mv -f /root/initrd-${CURRENT}-${KERNEL_TYPE}.gz /boot
 
-	tar -xf /storagedriver.tar -C /mnt/initrd/lib
-	rm -f /storagedriver.tar
+rm -rf /mnt/initrd/*
 
-	cat >/mnt/initrd/linuxrc <<END
-#!/bin/sash
+done
 
--echo "Loading $1 driver"
-/bin/insmod /lib/scsi/libata.ko atapi_enabled=1
-/bin/insmod /lib/scsi/scsi_transport_spi.ko
-/bin/insmod /lib/$STORAGE_DRIVER $STORAGE_DRIVER_OPTIONS
-END
-else
-	cat >/mnt/initrd/linuxrc <<END
-#!/bin/sash
-
--echo "No driver required"
-END
-fi
-
-/bin/umount /mnt/initrd
-	
-/usr/bin/gzip /root/initrd-${CURRENT}
-mv -f /root/initrd-${CURRENT}.gz /boot
+rm -f /root/basicrootfs
 
 exit 0;
