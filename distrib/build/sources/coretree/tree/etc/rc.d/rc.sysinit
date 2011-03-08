@@ -13,11 +13,10 @@ fi
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export PATH
 
+mount /proc
+mount /sys
+
 echo "Loading USB subsystem for keyboard"
-/sbin/modprobe usbcore 2> /dev/null
-/sbin/modprobe ohci-hcd 2> /dev/null
-/sbin/modprobe uhci-hcd 2> /dev/null
-/sbin/modprobe ehci-hcd 2> /dev/null
 /sbin/modprobe usbhid 2> /dev/null
 
 if [ -e /forcefsck ]; then FORCE=-f; fi
@@ -94,9 +93,6 @@ rm -f /usr/etc/dhcpc/*.pid
 rm -f /var/smoothwall/red/*
 rm -f /var/lock/LCK..ttyS*
 rm -f /var/run/pppd*.tdb
-
-echo "Setting drive DMA settings"
-/sbin/hdparm -d 1 -c 1 -u 1 /dev/harddisk
 
 echo "Setting the clock"
 /sbin/hwclock --hctosys
