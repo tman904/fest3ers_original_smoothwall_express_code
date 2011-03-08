@@ -16,7 +16,8 @@
 #include <sstream>
 #include <syslog.h>
 #include <smoothwall/config.h>
-#include <ipt_ACCOUNT_cl.h>
+#include <stdint.h>
+#include <libxt_ACCOUNT_cl.h>
 #include "traffic_config.hpp"
 #include "timestamp.hpp"
 
