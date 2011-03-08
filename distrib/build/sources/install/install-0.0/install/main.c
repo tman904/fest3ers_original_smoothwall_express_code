@@ -22,10 +22,11 @@ char **ctr;
 
 extern char *english_tr[];
 
+static int partitiondisk(char *diskdevnode, int *partitionsizes);
+
 int main(int argc, char *argv[])
 {
-	int sddneeded = 0;
-	struct storagedevicedriver sdd;
+	char fmtpartdevnode[STRING_SIZE];
 	struct blockdevice hd, cdrom;	/* Params for CDROM and HD */
 	int cdmounted;			/* Loop flag for inserting a cd. */ 
 	int rc;
@@ -37,7 +38,6 @@ int main(int argc, char *argv[])
 	int allok = 0;
 	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle;
-	char filename[STRING_SIZE];
 	int maximum_free, current_free;
 	int log_partition, boot_partition, root_partition, swap_partition;
 	struct keyvalue *hwprofilekv = initkeyvalues();
@@ -45,16 +45,18 @@ int main(int argc, char *argv[])
 	char kernelcmdline[STRING_SIZE];
 	int ramsize;
 	int trimbigdisk = 0;
+	int partitionsizes[5];
+	int c = 0;
 
 	setenv("TERM", "linux", 0);
 
 	sethostname("smoothwall", 10);
 
-	memset(&sdd, 0, sizeof(struct storagedevicedriver));
 	memset(&hd, 0, sizeof(struct blockdevice));
 	memset(&cdrom, 0, sizeof(struct blockdevice));
-
+	memset(fmtpartdevnode, 0, STRING_SIZE);
 	memset(kernelcmdline, 0, STRING_SIZE);
+	memset(partitionsizes, 0, 5 * sizeof(int));
 
 	/* Log file/terminal stuff. */
 	if (argc >= 2)
@@ -79,10 +81,7 @@ int main(int argc, char *argv[])
 
 	/* Load USB keyboard modules so dialogs can respond to USB-keyboards */
 	fprintf(flog, "Loading USB-keyboard modules.\n");
-	mysystem("/sbin/modprobe usbcore");
-	mysystem("/sbin/modprobe ohci-hcd");
-	mysystem("/sbin/modprobe uhci-hcd");
-	mysystem("/sbin/modprobe ehci-hcd");
+
 	mysystem("/sbin/modprobe usbhid");
 
 	newtInit();
@@ -98,10 +97,10 @@ int main(int argc, char *argv[])
 
 	/* Preapre storage drivers and load them, only if we haven't
 	 * got a IDE disk. */
-	initstoragedevices();
-	if (!(findharddiskorcdrom(&hd, DISK_HD)))
-		sddneeded = probestoragedevicedriver(&sdd);
-							
+	mysystem("/sbin/udevd --daemon");
+	mysystem("/sbin/udevadm trigger");
+	mysystem("/sbin/udevadm settle");		
+	
 	/* Get device letter for the IDE HD.  This has to succeed. */
 	if (!(findharddiskorcdrom(&hd, DISK_HD)))
 	{
@@ -161,14 +160,14 @@ int main(int argc, char *argv[])
 	/* before partitioning, first determine the sizes of each
 	 * partition.  In order to do that we need to know the size of
 	 * the disk. */
-	maximum_free = getdisksize(hd.devnode) / 1024;
+	maximum_free = getdisksize(hd.devnode);
 	
 	if (trimbigdisk)
 		maximum_free = maximum_free > TRIM_DISK_SIZE ? TRIM_DISK_SIZE : maximum_free;
 
 	fprintf(flog, "%d MB disk space (Trimming: %d)\n", maximum_free, trimbigdisk);
 	
-	boot_partition = 20; /* in MB */
+	boot_partition = 80; /* in MB */
 	current_free = maximum_free - boot_partition;
 
 	/* Trim swap to tiny if disk is small, like a CF. */
@@ -200,31 +199,38 @@ int main(int argc, char *argv[])
 	}
 	fclose(handle);		
 
-	snprintf(commandstring, STRING_SIZE, "/bin/sfdisk -uM %s < /tmp/partitiontable", hd.devnode);
-	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
+	c = 0;
+	partitionsizes[c++] = boot_partition;
+	partitionsizes[c++] = swap_partition;
+	partitionsizes[c++] = root_partition;
+	partitionsizes[c++] = log_partition;
+	partitionsizes[c++] = 0;
+	
+	if (partitiondisk(hd.devnode, partitionsizes))
 	{
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s1", hd.devnode);	
+
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L BOOT -t ext4 -j %s1", hd.devnode);	
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mkswap %s2", hd.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/mkswap -L SWAP %s2", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s3", hd.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L LOG -t ext4 -j %s3", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_LOG_FILESYSTEM]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -j %s4", hd.devnode);	
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L ROOT -t ext4 -j %s4", hd.devnode);	
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
@@ -306,12 +312,7 @@ int main(int argc, char *argv[])
 
 	replacekeyvalue(hwprofilekv, "STORAGE_DEVNODE", hd.devnode);
 	replacekeyvalue(hwprofilekv, "CDROM_DEVNODE", cdrom.devnode);
-	if (strlen(sdd.modulename))
-		snprintf(filename, STRING_SIZE - 1, "%s/%s.ko", sdd.path, sdd.modulename);
-	else
-		strncpy(filename, "", STRING_SIZE - 1);
-	replacekeyvalue(hwprofilekv, "STORAGE_DRIVER", filename);
-	replacekeyvalue(hwprofilekv, "STORAGE_DRIVER_OPTIONS", sdd.moduleoptions);
+	replacekeyvalue(hwprofilekv, "FS", "ext4");
 	writekeyvalues(hwprofilekv, "/harddisk/" CONFIG_ROOT "/main/hwprofile");
 
 	if (runcommandwithstatus("/bin/chroot /harddisk /sbin/depmod -a",
@@ -321,32 +322,36 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-
-	if (strlen(sdd.modulename))
-	{
-		snprintf(commandstring, STRING_SIZE - 1, "/bin/chroot /harddisk /usr/bin/installer/makeinitrd %s/%s.o \"%s\"", sdd.path, sdd.modulename, sdd.moduleoptions);
-		if (runcommandwithstatus(commandstring, ctr[TR_SETTING_UP_BOOT_DRIVERS]))
-		{
-			errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
-			goto EXIT;
-		}               
-	}
-	else
-	{
-		if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/installer/makeinitrd", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
-		{
-			errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
-			goto EXIT;
-		}
-	}
-
 	if (!(writeconfigs(&hd, ethernetkv, shortlangname)))
 	{
 		errorbox(ctr[TR_ERROR_WRITING_CONFIG]);
 		goto EXIT;
 	}
+	
+	mysystem("/sbin/mount proc -t proc /harddisk/proc");
 
-	if (runcommandwithstatus("/harddisk/sbin/lilo -r /harddisk",
+	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/installer/makeinitrd", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	{
+		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		goto EXIT;
+	}
+	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/updatestorageuuids.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	{
+		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		goto EXIT;
+	}
+	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/writefstab.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	{
+		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		goto EXIT;
+	}
+	
+	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/writegrubconf.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	{
+		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		goto EXIT;
+	}
+	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/installgrub.pl",
 		ctr[TR_INSTALLING_LILO]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_LILO]);
@@ -380,6 +385,9 @@ int main(int argc, char *argv[])
 	allok = 1;
 				
 EXIT:
+	/* We don't need udev anymore. */
+	mysystem("/bin/killall udevd");
+
 	fprintf(flog, "Install program ended.\n");	
 	fflush(flog);
 	fclose(flog);
@@ -393,20 +401,52 @@ EXIT:
 
 	if (allok)
 	{
-		/* /proc is needed by the module checker.  We have to mount it
-		 * so it can be seen by setup, which is run chrooted. */
-		if (system("/sbin/mount proc -t proc /harddisk/proc"))
-			printf("Unable to mount proc in /harddisk.");
-		else
-		{
-			if (system("/bin/chroot /harddisk /usr/sbin/setup /dev/tty2 INSTALL"))
-				printf("Unable to run setup.\n");
-			if (system("/sbin/umount /harddisk/proc"))
-				printf("Unable to umount /harddisk/proc.\n");
-		}
+		if (system("/bin/chroot /harddisk /usr/sbin/setup /dev/tty2 INSTALL"))
+			printf("Unable to run setup.\n");
 	}
+	
+	mysystem("/sbin/umount /harddisk/proc");
 	
 	reboot();
 
+	return 0;
+}
+
+static int partitiondisk(char *diskdevnode, int *partitionsizes)
+{
+	int c = 0;
+	int start = 1; int end = 0;
+	char commandstring[STRING_SIZE];
+	
+	memset(commandstring, 0, STRING_SIZE);
+	
+	snprintf(commandstring, STRING_SIZE - 1, "/bin/parted %s --script -- mklabel gpt", diskdevnode);
+	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
+	{
+		return 1;
+	}
+	
+	for (c = 0; partitionsizes[c]; c++)
+	{
+		end += partitionsizes[c];
+		snprintf(commandstring, STRING_SIZE - 1, "/bin/parted %s --script -- mkpart primary %d %d",
+			diskdevnode, start, end);
+		if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
+		{
+			return 1;
+		}
+		start += partitionsizes[c];
+	}
+	
+	end = -1;
+	snprintf(commandstring, STRING_SIZE - 1, "/bin/parted %s --script -- mkpart primary %d -1",
+		diskdevnode, start);
+	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
+	{
+		return 1;
+	}
+	
+	sleep(2);
+	
 	return 0;
 }

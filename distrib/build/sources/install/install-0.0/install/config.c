@@ -29,38 +29,6 @@ int writeconfigs(struct blockdevice *hd, struct keyvalue *ethernetkv, char *lang
 	replacekeyvalue(kv, "HOSTNAME", "smoothwall");
 	writekeyvalues(kv, "/harddisk" CONFIG_ROOT "main/settings");
 	freekeyvalues(kv);
-	
-	/* dev node links. */
-	snprintf(devnode, STRING_SIZE, "%s", hd->devnode);
-	if (symlink(devnode, "/harddisk/dev/harddisk"))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK]);
-		return 0;
-	}
-	snprintf(devnode, STRING_SIZE, "%s1", hd->devnode);
-	if (symlink(devnode, "/harddisk/dev/harddisk1"))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK1]);
-		return 0;
-	}
-	snprintf(devnode, STRING_SIZE, "%s2", hd->devnode);
-	if (symlink(devnode, "/harddisk/dev/harddisk2"))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK2]);
-		return 0;
-	}
-	snprintf(devnode, STRING_SIZE, "%s3", hd->devnode);
-	if (symlink(devnode, "/harddisk/dev/harddisk3"))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK3]);
-		return 0;
-	}
-	snprintf(devnode, STRING_SIZE, "%s4", hd->devnode);
-	if (symlink(devnode, "/harddisk/dev/harddisk4"))
-	{
-		errorbox(ctr[TR_UNABLE_TO_MAKE_SYMLINK_DEV_HARDDISK4]);
-		return 0;
-	}
-		
+
 	return 1;
 }
