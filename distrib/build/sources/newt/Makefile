@@ -1,17 +1,15 @@
-# SmoothWall Build system.
-#
-# (c) SmoothWall Ltd 2005
-#
-# This code is distributed under the terms of the GPL v2.
-
 include ../Makefile.conf
 
 PACKAGE = newt
-VERSION = 0.51.6
+VERSION = 0.52.12
 
-BASE_URL = http://distro.ibiblio.org/pub/linux/distributions/amigolinux/download/Libs/newt-0.51.6
+NO_PARA = yes
 
-EXTENSION = .tar.bz2
+LICENCE_FILE = $(DIR)/COPYING
+
+BASE_URL = http://www.mirrorservice.org/sites/www.ibiblio.org/gentoo/distfiles/
+
+PATCH_FILE1 = no-python.patch
 
 INSTALL = yes
 
