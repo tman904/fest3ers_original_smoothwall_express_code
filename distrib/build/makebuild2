@@ -92,8 +92,7 @@ build wget
 build pkg-config
 build iptables
 build ipbatch
-build kernel-up
-build kernel-smp
+build kernel-runtime
 build xtables-addons
 build ueagle-data
 build strace
