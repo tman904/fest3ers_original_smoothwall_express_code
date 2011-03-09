@@ -133,6 +133,7 @@ build ethtool
 build iftop
 build which
 build udev
+build mdadm
 
 build ntp
 build openntpd
