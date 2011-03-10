@@ -29,7 +29,7 @@ all: clean
 		$(GLIBC_DIR)/lib/libpthread-*.so $(GLIBC_DIR)/lib/libpthread.so.* \
 		$(GLIBC_DIR)/lib/libnss_files* $(GLIBC_DIR)/lib/libnss_compat* lib && \
 	cp -dvR $(CORETREE_DIR)/etc/nsswitch.conf etc && \
-	cp -dvR $(CORETREE_DIR)/sbin/hotplug sbin && \
+	cp -dvR $(CORETREE_DIR)/sbin/hotplug sbin/hotplug.dormant && \
 	cp -avR $(BB_DIR)/opt/busybox/bin/* bin && \
 	cp -dvR ../tools/iowrap ../tools/raidautorun bin && \
 	cp -dvR ../etc/* etc && \

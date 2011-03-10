@@ -7,6 +7,7 @@ echo "Mounting everything"
 
 echo "Preparing driver daemon"
 tar zxf /dev.tar.gz -C /
+mv /sbin/hotplug.dormant /sbin/hotplug
 
 echo "Starting driver daemon"
 /sbin/udevd --daemon
