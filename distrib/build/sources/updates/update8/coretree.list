@@ -20,3 +20,4 @@
 ./usr/lib/smoothwall/interface.pm
 ./usr/lib/smoothwall/menu.lst.in
 ./usr/lib/smoothwall/mergeparts
+./sys
