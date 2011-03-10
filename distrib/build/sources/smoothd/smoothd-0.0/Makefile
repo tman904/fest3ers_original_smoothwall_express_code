@@ -1,12 +1,8 @@
 
 CXXFLAGS = $(CFLAGS)
-# where to find it - relative path
-IPTABLES_SRC_DIR = ../../iptables/iptables-$(IPTABLES_VER)
-# where the IPT shared libs live
-IPT_LIB_DIR = /usr/lib/iptables
 
 OBJS=
-LIB_OBJS = module.o UDSocket.o pid.o setuid.o config.o ipbatch.o ipbatchc.o $(IPTABLES_SRC_DIR)/iptables.o $(IPTABLES_SRC_DIR)/libiptc/libiptc.a
+LIB_OBJS = module.o UDSocket.o pid.o setuid.o config.o ipbatch.o
 MAIN = main.cpp
 LIBS = -ldl /usr/lib/libsmoothd.so 
 BIN = smoothd
@@ -18,7 +14,7 @@ MODULES = sysshutdown sysinstall sysim sysp3scan sysalcatel sysdhcpd sysdnsproxy
 
 MODULEFLAGS = $(CXXFLAGS) -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
 
-all: libsmoothd smoothd $(MODULES) smoothcom ipbatchtest
+all: libsmoothd smoothd $(MODULES) smoothcom
 
 modules: $(MODULES)
 
@@ -28,9 +24,6 @@ libsmoothd : $(LIB_OBJS)
 
 smoothd: $(OBJS) 
 	$(CXX) -o $(BIN) $(DFLAGS) $(MAIN) $(OBJS) $(LIBS)
-
-ipbatchtest: $(OBJS) 
-	$(CXX) -g -o ipbatchtest $(DFLAGS) ipbatchtest.cpp $(OBJS) $(LIBS) 
 
 smoothcom:
 	$(CXX) -o smoothcom $(CXXFLAGS) smoothcom.cpp -ldl /usr/lib/libsmoothd.so 
@@ -86,6 +79,3 @@ sysclamav : $(OBJS)
 	$(CXX) $(MODULEFLAGS)
 systimedaccess : $(OBJS)
 	$(CXX) $(MODULEFLAGS)
-
-ipbatchc.o: ipbatch.h 
-	$(CC) -c $(CFLAGS) -DIPTABLES_VERSION=\"$(IPTABLES_VER)\" -Wall -Wunused -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I. -DIPT_LIB_DIR=\"$(IPT_LIB_DIR)\"  ipbatchc.c 

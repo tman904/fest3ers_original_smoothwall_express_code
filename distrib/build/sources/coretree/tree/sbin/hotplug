@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# Copyright 2009-2010 SmoothWall Ltd
+
+if [ "$ACTION" = "add" -a "$FIRMWARE" != "" ]; then
+	echo 1 > /sys/$DEVPATH/loading
+	cat /lib/firmware/$FIRMWARE > /sys/$DEVPATH/data
+	echo 0 > /sys/$DEVPATH/loading
+fi

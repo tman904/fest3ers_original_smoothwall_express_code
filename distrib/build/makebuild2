@@ -81,6 +81,7 @@ build shadow
 build sysklogd
 build sysvinit
 build tar
+build cpio
 build util-linux
 build joe
 build MAKEDEV
@@ -88,18 +89,18 @@ docommand "making devnodes" "make -C sources/MAKEDEV devnodes"
 build gcc2
 build openssl
 build wget
-docommand "unpacking iptables for kernel compile" "make -C sources/iptables patch"
-build kernel-runtime
-build strace
+build pkg-config
 build iptables
-build ipp2p
 build ipbatch
-build libipt_ACCOUNT
+build kernel-runtime
+build xtables-addons
+build ueagle-data
+build strace
 build listtables
 build pciutils
-build bin86
 build nasm
-build lilo
+build grub
+build parted
 build linux-atm
 build libcap
 build hdparm
@@ -131,6 +132,8 @@ build expat
 build ethtool
 build iftop
 build which
+build udev
+build mdadm
 
 build ntp
 build openntpd
@@ -189,6 +192,8 @@ build screen
 build gdb
 build lynx
 build install
+
+build basicrootfs
 
 build libosip2
 build siproxd

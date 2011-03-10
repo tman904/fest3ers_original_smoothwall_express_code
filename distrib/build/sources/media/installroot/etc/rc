@@ -1,13 +1,12 @@
 #!/bin/sh
+#
+# Copyright 2004-2010 SmoothWall Ltd
 
-echo "Mounting root read/write"
-mount -n -o remount,rw /
-echo "Clearing mtab"
->/etc/mtab
-echo "Marking root as mounted"
-mount -f /
+echo "Mounting everything"
+/bin/mount -a
 
-echo "Mounting proc" 
-mount /proc
+echo "Preparing driver daemon"
+tar zxf /dev.tar.gz -C /
+mv /sbin/hotplug.dormant /sbin/hotplug
 
 echo >/proc/sys/kernel/printk "1 4 1 7"

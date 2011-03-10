@@ -11,11 +11,11 @@ PACKAGE = kernel-headers
 VERSION = 0.0
 
 download:
-	-$(DL_CMD) http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2
+	-$(DL_CMD) http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_GLIBC_VER).tar.bz2
 
 install: download
-	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
-	@(cd linux-$(KERNEL_VER); \
+	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_GLIBC_VER).tar.bz2
+	@(cd linux-$(KERNEL_GLIBC_VER); \
 	make mrproper; \
 	make include/linux/version.h; \
 	make include/asm; \
@@ -32,7 +32,7 @@ build-tarball: install
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);
 
 clean:
-	rm -rf linux-$(KERNEL_VER)
+	rm -rf linux-$(KERNEL_GLIBC_VER)
 
 all: build-tarball
 	

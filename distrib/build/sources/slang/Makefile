@@ -1,15 +1,15 @@
-# SmoothWall Build system.
-#
-# (c) SmoothWall Ltd 2005
-#
-# This code is distributed under the terms of the GPL v2.
-
 include ../Makefile.conf
 
 PACKAGE = slang
-VERSION = 1.4.9
+VERSION = 2.2.3
 
-BASE_URL = ftp://space.mit.edu/pub/davis/slang/v1.4/
+LICENCE_FILE = $(DIR)/COPYING
+
+BASE_URL = ftp://space.mit.edu/pub/davis/slang/v2.2/
+
+NO_PARA = yes
+
+PATCH_FILE1 = WCONTINUED-fixup.patch
 
 INSTALL = yes
 
