@@ -166,6 +166,7 @@ ifeq ($(TYPE), -devel)
 		apr \
 		apr-util \
 		subversion \
+		git \
 		screen \
 		lynx \
 		groff \
