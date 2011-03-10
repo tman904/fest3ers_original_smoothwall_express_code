@@ -1,0 +1,15 @@
+#!/bin/sh
+
+rm -fv /boot/vmlinuz-*
+rm -fv /boot/System.map-*
+rm -fv /boot/initrd-*
+
+echo "Update 8 installing."
+
+tar -zxvf patch.tar.gz -C /
+/usr/bin/installer/makeinitrd
+
+/usr/bin/smoothwall/updatestorageuuids.pl
+/usr/bin/smoothwall/writefstab.pl
+/usr/bin/smoothwall/writegrubconf.pl
+/usr/bin/smoothwall/installgrub.pl
