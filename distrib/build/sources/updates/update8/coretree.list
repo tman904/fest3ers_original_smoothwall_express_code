@@ -17,7 +17,5 @@
 ./usr/lib/smoothwall/fstab.log
 ./usr/lib/smoothwall/fstab.root
 ./usr/lib/smoothwall/fstab.swap
-./usr/lib/smoothwall/interface.pm
 ./usr/lib/smoothwall/menu.lst.in
-./usr/lib/smoothwall/mergeparts
 ./sys
