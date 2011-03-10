@@ -184,10 +184,10 @@ char *english_tr[] = {
 "Unable to remove temporary downloaded files.",
 /* TR_ERROR_WRITING_CONFIG */
 "Error writing configuration information.",
-/* TR_INSTALLING_LILO */
-"Installing LILO...",
-/* TR_UNABLE_TO_INSTALL_LILO */
-"Unable to install LILO.",
+/* TR_INSTALLING_GRUB */
+"Installing Grub...",
+/* TR_UNABLE_TO_INSTALL_GRUB */
+"Unable to install Grub.",
 /* TR_SETTING_UP_BOOT_DRIVERS */
 "Setting up boot drivers...",
 /* TR_UNABLE_TO_SETUP_BOOT_DRIVERS */

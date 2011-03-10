@@ -352,9 +352,9 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/installgrub.pl",
-		ctr[TR_INSTALLING_LILO]))
+		ctr[TR_INSTALLING_GRUB]))
 	{
-		errorbox(ctr[TR_UNABLE_TO_INSTALL_LILO]);
+		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
 		goto EXIT;
 	}
 	
