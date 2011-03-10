@@ -50,6 +50,7 @@ distrib:
 
 	@(cd distrib; rm -rf `find -name CVS`)
 	@(cd distrib; rm -rf `find -name .svn`)
+	@(cd distrib; rm -rf `find -name .gitignore`)
 
 	@(cd distrib/var/smoothwall/patches; perl -i -pe "s/ARCH/$(ARCH)/g;" installed)
 
