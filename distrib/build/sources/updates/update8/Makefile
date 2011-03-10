@@ -3,4 +3,6 @@ UPDATE_PACKAGES = kernel-runtime basicrootfs busybox cpio e2fsprogs grub ipbatch
 UPDATE_ID = 008
 UPDATE_NAME = update8
 
+KERNEL = yes
+
 include ../Makefile.update
