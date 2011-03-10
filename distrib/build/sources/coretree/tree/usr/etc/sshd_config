@@ -13,7 +13,7 @@
 Port 222
 Protocol 2,1
 #ListenAddress 0.0.0.0
-#ListenAddress ::
+ListenAddress ::
 
 # HostKey for protocol version 1
 #HostKey /usr/etc/ssh_host_key
