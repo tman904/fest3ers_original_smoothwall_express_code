@@ -13,7 +13,7 @@ BASE_URL = http://ftp.kernel.org/pub/linux/kernel/people/rusty/modules
 
 PKG_DIR = 
 
-#CONFIG_OPTS = --mandir=/usr/man --enable-insmod-static
+CONFIG_OPTS = --mandir=/usr/man
 
 COMPILE = yes
 
