@@ -113,6 +113,7 @@ build beep2
 build libpcap
 build tcpdump
 
+build expat
 build dosfstools
 build syslinux
 build openssh
@@ -128,7 +129,6 @@ build dnsmasq
 build whois
 build popt
 build logrotate
-build expat
 build ethtool
 build iftop
 build which
