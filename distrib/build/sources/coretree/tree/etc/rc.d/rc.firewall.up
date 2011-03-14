@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Blanked disable for IPv6 (enable on a per interface basis as needed)
+for FILE in /proc/sys/net/ipv6/conf/*/disable_ipv6; do
+	echo 1 > $FILE
+done
+
 # Disable ICMP Redirect Acceptance
 for FILE in /proc/sys/net/ipv4/conf/*/accept_redirects; do
 	echo 0 > $FILE
