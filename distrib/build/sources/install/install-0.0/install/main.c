@@ -86,6 +86,12 @@ int main(int argc, char *argv[])
 
 	newtInit();
 	newtCls();
+
+	/* Preapre storage drivers and load them, only if we haven't
+	 * got a IDE disk. */
+	mysystem("/sbin/udevd --daemon");
+	mysystem("/sbin/udevadm trigger");
+	mysystem("/sbin/udevadm settle");		
 	
 	ctr = english_tr;
 	strcpy(shortlangname, "en");
@@ -94,12 +100,6 @@ int main(int argc, char *argv[])
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 
 	newtWinMessage(TITLE, ctr[TR_OK], ctr[TR_WELCOME]);
-
-	/* Preapre storage drivers and load them, only if we haven't
-	 * got a IDE disk. */
-	mysystem("/sbin/udevd --daemon");
-	mysystem("/sbin/udevadm trigger");
-	mysystem("/sbin/udevadm settle");		
 	
 	/* Get device letter for the IDE HD.  This has to succeed. */
 	if (!(findharddiskorcdrom(&hd, DISK_HD)))
