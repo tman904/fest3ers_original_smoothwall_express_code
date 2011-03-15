@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = rp-pppoe
-VERSION = 3.8
+VERSION = 3.10
 
 DIR = $(PACKAGE)-$(VERSION)/src
 
