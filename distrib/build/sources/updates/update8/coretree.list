@@ -11,6 +11,7 @@
 ./usr/bin/smoothwall/updatestorageuuids.pl
 ./usr/bin/smoothwall/writefstab.pl
 ./usr/bin/smoothwall/writegrubconf.pl
+./usr/bin/smoothwall/writeipsec.pl
 ./usr/etc/sshd_config
 ./usr/lib/smoothwall/fstab.boot
 ./usr/lib/smoothwall/fstab.in
