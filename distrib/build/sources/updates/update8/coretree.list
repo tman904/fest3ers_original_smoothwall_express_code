@@ -1,3 +1,4 @@
+./etc/modprobe.conf
 ./etc/cdromextradevnodes
 ./etc/diskextradevnodes
 ./etc/fstab
