@@ -63,12 +63,6 @@ struct device devices[] = {
 	{ "Virata ADSL USB WAN modem", "ECI", "virta", "usb" },
 	{ "Wisecom WS-AD80-USG", "ECI", "wisecom", "usb" },
 	{ "Wytek FMO28", "ECI", "wytek", "usb" },
-	{ "Sagem F@st 800", "EAGLE", "sagem800", "usb" },
-	{ "Sagem F@st 908", "EAGLE", "sagem908", "usb" },
-	{ "Eagle (generic)", "EAGLE", "generic", "usb" },
-	{ "USR SureConnect USB", "EAGLE" , "usresureconnect", "usb" },
-	{ "BeWAN ADSL PCI", "UNICORN", "", "pci"},
-	{ "Conexant ADSL PCI", "CNX", "", "pci" },
 	{ "Pulsar and Sangoma S518-C", "PULSAR", "", "pci" },
 	{ NULL, NULL }
 };
