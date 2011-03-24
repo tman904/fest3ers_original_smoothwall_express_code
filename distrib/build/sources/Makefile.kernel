@@ -11,7 +11,7 @@ FULL_VER = $(KERNEL_VER)-$(KERNEL_PL)-$(TYPE)
 
 #UNICORN_VER = 0.9.0
 #CNX_VER = 2.6-1.9
-#PULSAR_VER = 4.0.24
+PULSAR_VER = 4.0.24
 #TG3_VER = 3.92n
 #BNX2_VER = 1.5.10c
 E1000_VER = 8.0.25
@@ -22,7 +22,7 @@ VMXNET_VER = 8.4.2-261024
 
 COMPILER = /usr/bin/gcc
 
-PACKAGES = package-xtaddons package-e1000 package-igb package-ixgbe package-e1000e
+PACKAGES = package-xtaddons package-e1000 package-igb package-ixgbe package-e1000e package-pulsar
 
 ifeq ($(ARCH), i386)
 PACKAGES += package-vmxnet
@@ -40,7 +40,7 @@ download:
 	$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/xtables-addons/xtables-addons-$(XTADDONS_VER).tar.bz2
 #	$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
 #	$(DL_CMD) http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
-#	$(DL_CMD) http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz
+	$(DL_CMD) http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz
 #	$(DL_CMD) http://sotonfs/tg3-$(TG3_VER).tar.gz
 #	$(DL_CMD) http://sotonfs/bnx2-$(BNX2_VER).tar.gz
 	$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz
@@ -75,8 +75,10 @@ prepare: download
 
 #	tar -jxvf $(DOWNLOADS_DIR)/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
 
-#	tar -zxvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
-#	(cd pulsar-$(PULSAR_VER); ln -s makefile.2.6 Makefile)
+	tar -zxvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
+	(cd pulsar-$(PULSAR_VER); \
+	patch -p1 < $(SOURCES_DIR)/kernel-patches/pulsar.c-2.6.32.patch; \
+	ln -s makefile.2.6 Makefile)
 
 #	tar -zxvf $(DOWNLOADS_DIR)/tg3-$(TG3_VER).tar.gz
 
@@ -122,9 +124,8 @@ compile-xtaddons: compile-kernel
 #compile-cnx: compile-kernel
 #	make -C CnxADSL-6.1.2.007-PIM-$(CNX_VER)/KernelModule KDIR=$(KERNEL_DIR)
 
-# Should be possible to get this working
-#compile-pulsar: compile-kernel
-#	make -C pulsar-$(PULSAR_VER) KDIR=$(KERNEL_DIR)
+compile-pulsar: compile-kernel
+	make -C pulsar-$(PULSAR_VER) KDIR=$(KERNEL_DIR)
 
 compile-e1000: compile-kernel
 	make -C e1000-$(E1000_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=2.6
@@ -165,9 +166,9 @@ package-xtaddons: compile-xtaddons
 #	install -D $(TOP_DIR)/CnxADSL-6.1.2.007-PIM-$(CNX_VER)/KernelModule/CnxADSL.ko \
 #		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/misc/CnxADSL.ko
 
-#package-pulsar: compile-pulsar
-#	install -D $(TOP_DIR)/pulsar-$(PULSAR_VER)/pulsar_atm.ko \
-#		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/misc/pulsar_atm.ko
+package-pulsar: compile-pulsar
+	install -D $(TOP_DIR)/pulsar-$(PULSAR_VER)/pulsar_atm.ko \
+		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/misc/pulsar_atm.ko
 
 #package-tg3: compile-tg3
 #	install -D $(TOP_DIR)/tg3-$(TG3_VER)/tg3.ko \
@@ -200,8 +201,9 @@ package-vmxnet: compile-vmxnet
 depmod: package-kernel $(PACKAGES)
 	/sbin/depmod -b $(PKG_ROOT) -ae -F $(KERNEL_DIR)/System.map $(FULL_VER)
 
-build-tarball: depmod
-	(cd $(PKG_ROOT); \
+$(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: ../Makefile.kernel ../Makefile.versions
+	$(MAKE) depmod
+	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);
 
@@ -221,7 +223,7 @@ clean:
 	rm -rf open-vm-tools-$(VMXNET_VER)
 	rm -rf $(PKG_ROOT)
 
-all: clean build-tarball
+all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 
 packageinfo.html:
 	echo "<li><span style='font-size:large;'>$(PACKAGE) $(KERNEL_VER)</span><br>" >>/tmp/packageinfo.html
