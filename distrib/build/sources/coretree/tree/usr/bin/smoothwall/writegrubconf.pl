@@ -46,12 +46,13 @@ if ( not defined $hwprofilesettings{'BOOT_DEV'} ){
 	$kernelpath = '/boot';
 }
 
-foreach my $kerneltype ('runtime')
+foreach my $kerneltype ('runtime', 'runtimebig')
 {
 	print $file "title SmoothWall-$kerneltype\n";
 
 	print $file "kernel ${kernelpath}/vmlinuz-$kernelsettings{'CURRENT'}-${kerneltype} root=$rootdev $append\n";
 	print $file "initrd ${kernelpath}/initrd-$kernelsettings{'CURRENT'}-${kerneltype}.gz\n";
+	print $file "savedefault\n";
 
 	if ($kernelsettings{'OLD'})
 	{

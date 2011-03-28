@@ -69,6 +69,7 @@ cdrom/smoothwall.tgz:
 		ipbatch \
 		pciutils \
 		kernel-runtime \
+		kernel-runtimebig \
 		ueagle-data \
 		grub \
 		openssl \
