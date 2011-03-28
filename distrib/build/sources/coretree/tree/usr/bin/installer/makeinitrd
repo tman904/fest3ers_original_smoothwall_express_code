@@ -7,7 +7,7 @@ cp -f /usr/lib/installer/basicrootfs.gz /root/
 
 . /var/smoothwall/main/kernel
 
-for KERNEL_TYPE in runtime; do
+for KERNEL_TYPE in runtime runtimebig; do
 
 (cd /mnt/initrd; cpio -H newc -iv < /root/basicrootfs)
 
