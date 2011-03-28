@@ -214,7 +214,7 @@ clean:
 	rm -rf xtables-addons-$(XTADDONS_VER)
 #	rm -rf unicorn
 #	rm -rf CnxADSL-6.1.2.007-PIM-$(CNX_VER)
-#	rm -rf pulsar-$(PULSAR_VER)
+	rm -rf pulsar-$(PULSAR_VER)
 #	rm -rf tg3-$(TG3_VER)
 #	rm -rf bnx2-$(BNX2_VER)
 	rm -rf e1000-$(E1000_VER)
