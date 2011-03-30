@@ -25,6 +25,7 @@ install: compile
 	@make -C $(DIR) DESTDIR=$(PKG_ROOT) install
 	@mkdir -p $(PKG_ROOT)/boot/grub
 	@cp -av $(PKG_ROOT)/usr/lib/grub/*/* $(PKG_ROOT)/boot/grub
+	@touch $(PKG_ROOT)/boot/grub/default
 else
 BASE_URL = http://downloads.smoothwall.org/buildmirror/
 
