@@ -20,4 +20,5 @@
 ./usr/lib/smoothwall/fstab.root
 ./usr/lib/smoothwall/fstab.swap
 ./usr/lib/smoothwall/menu.lst.in
+./httpd/cgi-bin/advstatus.cgi
 ./sys
