@@ -33,8 +33,6 @@ foreach my $line ( @grub ){
 	print $file "$line";
 }
 
-print $file "default 0\n";
-
 foreach my $line ( @specialgrub ){
 	print $file "$line";
 }
@@ -73,6 +71,8 @@ foreach my $kerneltype ('runtime', 'runtimebig')
 }
 
 close($file);
+
+system('/usr/sbin/grub-set-default', '0');
 
 unless ( $kernels ){
 	print STDERR "Found no kernels!\n";
