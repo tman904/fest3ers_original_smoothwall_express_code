@@ -72,8 +72,6 @@ foreach my $kerneltype ('runtime', 'runtimebig')
 
 close($file);
 
-system('/usr/sbin/grub-set-default', '0');
-
 unless ( $kernels ){
 	print STDERR "Found no kernels!\n";
 	exit -1;
