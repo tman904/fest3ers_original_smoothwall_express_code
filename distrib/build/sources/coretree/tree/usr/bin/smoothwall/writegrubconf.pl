@@ -46,8 +46,15 @@ if ( not defined $hwprofilesettings{'BOOT_DEV'} ){
 	$kernelpath = '/boot';
 }
 
+my $kernels = 0;
 foreach my $kerneltype ('runtime', 'runtimebig')
 {
+	unless (-e "/boot/vmlinuz-$kernelsettings{'CURRENT'}-${kerneltype}") {
+		next;
+	}
+	
+	$kernels++;
+	
 	print $file "title SmoothWall-$kerneltype\n";
 
 	print $file "kernel ${kernelpath}/vmlinuz-$kernelsettings{'CURRENT'}-${kerneltype} root=$rootdev $append\n";
@@ -66,3 +73,10 @@ foreach my $kerneltype ('runtime', 'runtimebig')
 }
 
 close($file);
+
+unless ( $kernels ){
+	print STDERR "Found no kernels!\n";
+	exit -1;
+}
+
+exit 0;
