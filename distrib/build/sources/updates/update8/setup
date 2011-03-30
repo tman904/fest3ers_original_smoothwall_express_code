@@ -9,6 +9,9 @@ echo "Update 8 installing."
 tar -zxvf patch.tar.gz -C /
 /usr/bin/installer/makeinitrd
 
+/sbin/swapoff -a
+/sbin/mkswap /dev/harddisk2
+
 /usr/bin/smoothwall/updatestorageuuids.pl
 /usr/bin/smoothwall/writefstab.pl
 /usr/bin/smoothwall/writegrubconf.pl
