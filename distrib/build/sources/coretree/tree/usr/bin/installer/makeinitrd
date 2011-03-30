@@ -9,6 +9,8 @@ cp -f /usr/lib/installer/basicrootfs.gz /root/
 
 for KERNEL_TYPE in runtime runtimebig; do
 
+if [ -e /lib/modules/${CURRENT}-${KERNEL_TYPE} ]; then
+
 (cd /mnt/initrd; cpio -H newc -iv < /root/basicrootfs)
 
 rm -rf /mnt/initrd/lib/modules
@@ -24,6 +26,8 @@ cp -aR /usr/bin/installer/init /mnt/initrd/init
 mv -f /root/initrd-${CURRENT}-${KERNEL_TYPE}.gz /boot
 
 rm -rf /mnt/initrd/*
+
+fi
 
 done
 
