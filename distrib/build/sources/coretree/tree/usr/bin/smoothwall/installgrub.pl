@@ -24,3 +24,5 @@ END
 }
 
 close($pipe);
+
+system('/usr/sbin/grub-set-default', '0');
