@@ -11,6 +11,7 @@ tar -zxvf patch.tar.gz -C /
 
 /sbin/swapoff -a
 /sbin/mkswap /dev/harddisk2
+/sbin/swapon -a
 
 /usr/bin/smoothwall/updatestorageuuids.pl
 /usr/bin/smoothwall/writefstab.pl
