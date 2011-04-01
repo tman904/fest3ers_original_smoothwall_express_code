@@ -22,10 +22,10 @@ VMXNET_VER = 8.4.2-261024
 
 COMPILER = /usr/bin/gcc
 
-PACKAGES = package-xtaddons package-e1000 package-igb package-ixgbe package-e1000e package-pulsar
+PACKAGES = package-xtaddons package-e1000 package-igb package-ixgbe package-e1000e
 
 ifeq ($(ARCH), i386)
-PACKAGES += package-vmxnet
+PACKAGES += package-vmxnet package-pulsar
 endif
 
 ifeq ($(ARCH), x86_64)
