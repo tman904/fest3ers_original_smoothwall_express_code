@@ -146,9 +146,12 @@ package-kernel: compile-kernel
 	mkdir -p $(PKG_ROOT)
 	(cd $(PKG_ROOT); \
 	make -C $(KERNEL_DIR) CC=$(COMPILER) INSTALL_MOD_PATH=$(PKG_ROOT) modules_install; \
-	rm -f $(PKG_ROOT)/lib/modules/$(FULL_VER)/sources; \
+	rm -f $(PKG_ROOT)/lib/modules/$(FULL_VER)/source; \
+	rm -f $(PKG_ROOT)/lib/modules/$(FULL_VER)/build; \
 	mkdir -p boot; \
-	cp $(KERNEL_DIR)/System.map boot/System.map-$(FULL_VER);)
+	cp $(KERNEL_DIR)/System.map lib/modules/$(FULL_VER)/System.map; \
+	ln -s /lib/modules-$(FULL_VER)/System.map boot/System.map-$(FULL_VER); \
+	)
 	(cd $(PKG_ROOT); \
 	cp $(KERNEL_DIR)/arch/$(ARCH)/boot/bzImage boot/vmlinuz-$(FULL_VER))
 

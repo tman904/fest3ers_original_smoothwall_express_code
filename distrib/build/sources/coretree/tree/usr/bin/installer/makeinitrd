@@ -2,8 +2,8 @@
 #
 # Copyright 2004-2010 SmoothWall Ltd
 
-cp -f /usr/lib/installer/basicrootfs.gz /root/
-/usr/bin/gzip -d /root/basicrootfs.gz
+cp -f /usr/lib/installer/basicrootfs.bz2 /root/
+bzip2 -d /root/basicrootfs.bz2
 
 . /var/smoothwall/main/kernel
 
@@ -17,13 +17,16 @@ rm -rf /mnt/initrd/lib/modules
 cp --parents -aR /lib/modules/${CURRENT}-${KERNEL_TYPE}/modules.* /mnt/initrd
 cp --parents -aR /lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel /mnt/initrd
 cp --parents -aR /lib/firmware /mnt/initrd
-rm -rf /mnt/initrd/lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel/drivers/net
+rm -rf /mnt/initrd/lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel/{crypto,fs,net}
+rm -rf /mnt/initrd/lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel/drivers/{isdn,net,atm,char,leds}
+rm -rf /mnt/initrd/lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel/drivers/usb/atm
+
 cp -aR /usr/bin/installer/init /mnt/initrd/init
 
 (cd /mnt/initrd; find . -print | cpio -H newc -ov > /root/initrd-${CURRENT}-${KERNEL_TYPE})
 
-/usr/bin/gzip /root/initrd-${CURRENT}-${KERNEL_TYPE}
-mv -f /root/initrd-${CURRENT}-${KERNEL_TYPE}.gz /boot
+bzip2 /root/initrd-${CURRENT}-${KERNEL_TYPE}
+mv -f /root/initrd-${CURRENT}-${KERNEL_TYPE}.bz2 /boot
 
 rm -rf /mnt/initrd/*
 

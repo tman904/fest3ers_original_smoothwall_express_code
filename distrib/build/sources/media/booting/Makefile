@@ -18,7 +18,7 @@ all: clean
 	@cp -R /build/buildroot/kernel-runtime/boot/vmlinuz-$(KERNEL_VER)-$(KERNEL_PL)-runtime isolinux/vmlinuz
 
 	@make -C ../installroot MEDIA=$(MEDIA)
-	@cp -R ../$(INSTALL_ROOT)image.gz isolinux/initrd.img
+	@cp -R ../$(INSTALL_ROOT)image.bz2 isolinux/initrd.img
 
 clean:
 	@rm -rf isolinux/
