@@ -4,6 +4,13 @@ rm -fv /boot/vmlinuz-*
 rm -fv /boot/System.map-*
 rm -fv /boot/initrd-*
 
+rm -fv /boot/bitmap.b
+rm -fv /boot/boot.*
+rm -fv /boot/bootsect.b
+rm -fv /boot/diag1.img
+rm -fv /boot/image.bmp
+rm -fv /boot/map
+
 echo "Update 8 installing."
 
 tar -zxvf patch.tar.gz -C /
