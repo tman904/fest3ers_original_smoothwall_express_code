@@ -9,7 +9,6 @@ WORKING_DIR = /build/sources/basicrootfs/basicrootfs-0.0/tmp
 
 CORETREE_DIR = /build/sources/coretree/distrib/
 BB_DIR = /build/buildroot/busybox/
-UTIL_LINUX_DIR = /build/buildroot/util-linux/
 GLIBC_DIR = /build/buildroot/glibc/
 
 all: clean
@@ -21,7 +20,6 @@ all: clean
 	mkdir bin cdrom dev etc harddisk lib proc sys tmp usr && \
 	ln -s bin sbin && \
 	cp -dvR --parents /usr/share/terminfo/l/linux . && \
-	cp -dvR $(UTIL_LINUX_DIR)/sbin/mkswap $(UTIL_LINUX_DR)/sbin/blkid bin && \
 	cp -dvR $(GLIBC_DIR)/usr/share/zoneinfo/UTC etc/localtime && \
 	cp -dvR $(GLIBC_DIR)/lib/ld-*.so $(GLIBC_DIR)/lib/ld-*.so.* $(GLIBC_DIR)/lib/libc-*.so $(GLIBC_DIR)/lib/libc.so.* \
 		$(GLIBC_DIR)/lib/libdl-* $(GLIBC_DIR)/lib/libdl.* \
@@ -39,13 +37,19 @@ all: clean
 	mknod dev/md0 b 9 0 && \
 	for TTY in 1 2 3 4 5 6; do mknod dev/tty$$TTY c 4 $$TTY; done && \
 	tar zcvf dev.tar.gz dev && \
-	/sbin/ldconfig -r . )
-	set -e; for PACKAGE in slang newt e2fsprogs udev mdadm parted module-init-tools; do \
-		tar zxvf /build/target/smoothwall-$$PACKAGE.tar.gz -C tmp;  done
+	/sbin/ldconfig -r . \
+	)
+	(cd tmp && \
+	for PACKAGE in udev mdadm module-init-tools; do \
+		tar zxvf /build/target/smoothwall-$$PACKAGE.tar.gz ; \
+	done && \
+	rm -rfv usr/share/locale && \
+	rm -rfv sbin/insmod.static)
+
 	/build/striptree tmp
 
 	(cd tmp && \
-	find . -print | cpio -H newc -ov | gzip > ../basicrootfs.gz \
+	find . -print | cpio -H newc -ov | bzip2 > ../basicrootfs.bz2 \
 	)
 	
 
@@ -56,5 +60,6 @@ endif
 clean:
 	make -C tools clean
 	rm -rf $(BASIC_ROOT_FS) tmp/
-	rm -f $(BASIC_ROOT_FS).gz
+	rm -f $(BASIC_ROOT_FS).bz2
+
 
