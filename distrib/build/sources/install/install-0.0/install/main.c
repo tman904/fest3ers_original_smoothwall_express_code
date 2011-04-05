@@ -202,7 +202,6 @@ int main(int argc, char *argv[])
 	c = 0;
 	partitionsizes[c++] = boot_partition;
 	partitionsizes[c++] = swap_partition;
-	partitionsizes[c++] = root_partition;
 	partitionsizes[c++] = log_partition;
 	partitionsizes[c++] = 0;
 	
