@@ -48,15 +48,15 @@ all: clean
 
 	/build/striptree tmp
 
+ifdef BITS_64
+	(cd tmp; ln -s lib lib64)
+	(cd tmp/usr; ln -s lib lib64)
+endif
+
 	(cd tmp && \
 	find . -print | cpio -H newc -ov | bzip2 > ../basicrootfs.bz2 \
 	)
-	
 
-ifdef BITS_64
-	(cd tmp; ln -s lib lib64)
-endif
-	
 clean:
 	make -C tools clean
 	rm -rf $(BASIC_ROOT_FS) tmp/
