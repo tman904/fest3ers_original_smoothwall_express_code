@@ -121,7 +121,6 @@ cdrom/smoothwall.tgz:
 		oinkmaster \
 		openswan \
 		wireless_tools \
-		sqlite \
 		imspector \
 		diffutils \
 		traceroute \
