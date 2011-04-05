@@ -184,25 +184,12 @@ int main(int argc, char *argv[])
 	fprintf(flog, "boot = %d, swap = %d, log = %d, root = %d\n",
 		boot_partition, swap_partition, log_partition, root_partition);
 
-	handle = fopen("/tmp/partitiontable", "w");
-	if (trimbigdisk)
-	{
-		/* Disk usage is limited, so we must specify root's size in order
-		 * to leave the rest of the disk unused. */
-		fprintf(handle, ",%d,83,\n,%d,82,\n,%d,83,\n,%d,83,*\n",
-			boot_partition, swap_partition, log_partition, root_partition);
-	}
-	else
-	{
-		fprintf(handle, ",%d,83,\n,%d,82,\n,%d,83,\n,,83,*\n",
-			boot_partition, swap_partition, log_partition);
-	}
-	fclose(handle);		
-
 	c = 0;
 	partitionsizes[c++] = boot_partition;
 	partitionsizes[c++] = swap_partition;
 	partitionsizes[c++] = log_partition;
+	if (trimbigdisk)
+		partitionsizes[c++] = root_partition;
 	partitionsizes[c++] = 0;
 	
 	if (partitiondisk(hd.devnode, partitionsizes))
@@ -437,12 +424,14 @@ static int partitiondisk(char *diskdevnode, int *partitionsizes)
 		start += partitionsizes[c];
 	}
 	
-	end = -1;
-	snprintf(commandstring, STRING_SIZE - 1, "/bin/parted %s --script -- mkpart primary %d -1",
-		diskdevnode, start);
-	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
+	if (c < 4)
 	{
-		return 1;
+		snprintf(commandstring, STRING_SIZE - 1, "/bin/parted %s --script -- mkpart primary %d -1",
+			diskdevnode, start);
+		if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
+		{
+			return 1;
+		}
 	}
 	
 	sleep(2);
