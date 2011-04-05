@@ -177,7 +177,6 @@ build wireless_tools
 build noip
 build ez-ipupdate
 
-build sqlite
 build imspector
 
 build clamav
