@@ -1,81 +1,46 @@
-# SmoothWall Build system.
-#
-# (c) SmoothWall Ltd 2005
-#
-# This code is distributed under the terms of the GPL v2.
+# Copyright 2004-2010 SmoothWall Ltd
 
-include ../../Makefile
+include ../../Makefile.versions
 include ../../Makefile.conf
 
-PROGS = bootdiskprogs
 INSTALL_ROOT = installroot
 BB = /opt/busybox
 
+WORKING_DIR = /build/sources/media/installroot/$(INSTALL_ROOT)
+
+UTIL_LINUX_DIR = /build/buildroot/util-linux
+BASICROOTFS_DIR = /build/buildroot/basicrootfs
+
 all: clean
-	@make -C $(PROGS)
+	mkdir $(INSTALL_ROOT)
 
-	@mkdir tmp
+	touch $(INSTALL_ROOT)/cdrominstall
 
-	@(cd tmp; \
-	mkdir bin bootdisktwo cdrom dev etc harddisk lib proc tmp usr; \
-	ln -s bin sbin; \
-	install -D /usr/share/terminfo/l/linux usr/share/terminfo/l/linux; \
-	cp -avR $(BB)/bin/* $(BB)/sbin/* bin; \
-	cp -aR ../$(PROGS)/loader  ../$(PROGS)/iowrap bin; \
-	cp -aR /lib/ld-*.so /lib/ld-*.so.* /lib/libc-*.so /lib/libc.so.* lib; \
-	cp -aR ../etc/fstab etc; \
-	cp -aR ../etc/group etc; \
-	cp -aR ../etc/inittab etc; \
-	cp -aR ../etc/mtab etc; \
-	cp -aR ../etc/passwd etc; \
-	cp -aR ../etc/shells etc; \
-	cp -aR ../etc/termcap etc; \
-	cp -aR ../etc/rc etc; chmod 755 etc/rc; \
-	cp -aR ../etc/halt etc; chmod 755 etc/halt; \
-	cp -aR ../etc/modprobe.conf etc; \
-	cp -aR ../etc/storagedevices etc; \
-	touch etc/ld.so.conf; \
-	/sbin/ldconfig -r .; \
-	strip bin/busybox bin/loader bin/iowrap lib/*; \
-	mkdir dev/ida dev/rd; \
-	cp -aR --parents \
-		/dev/console /dev/fd0 /dev/fd0H1440 /dev/tty[1-6] \
-		/dev/hd[a-h] /dev/hd[a-h][1-4] /dev/sda /dev/sda[1-4] /dev/scd0 \
-		/dev/{ida,rd,cciss}/c0d0 /dev/{ida,rd,cciss}/c0d0p[1-4] \
-		/dev/kmem /dev/mem /dev/null \
-	.);
+	(cd $(INSTALL_ROOT); cat $(BASICROOTFS_DIR)/usr/lib/installer/basicrootfs.bz2 | bzip2 -d | cpio -H newc -iv)
+	
+	cp -dvR /build/target/install $(INSTALL_ROOT)/bin/installer
+	cp -dvR etc/* $(INSTALL_ROOT)/etc
+	cp -dvR init $(INSTALL_ROOT)/
 
-ifdef BITS_64
-	@(cd tmp; ln -s lib lib64)
-endif
+	cp -dvR $(UTIL_LINUX_DIR)/sbin/mkswap $(INSTALL_ROOT)/bin
 
-ifeq ($(MEDIA), cdrom)
-	@touch tmp/cdrominstall
-	@cp -aR ../bootdisktwo/tmp/* tmp/bootdisktwo
-endif
+	(cd /build/buildroot/kernel/; \
+	cp --parents -dvR /lib/modules/$(KERNEL_VER)-$(KERNEL_PL)-runtime/kernel/ $(WORKING_DIR); \
+	cp --parents -dvR /lib/modules/$(KERNEL_VER)-$(KERNEL_PL)-runtime/modules.* $(WORKING_DIR); \
+	cp --parents -dvR /lib/firmware $(WORKING_DIR); \
+	rm -rf $(WORKING_DIR)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)-runtime/kernel/drivers/net)
 
-	@dd if=/dev/zero of=../$(INSTALL_ROOT)image bs=1k count=8k
-	@/sbin/mke2fs -m 0 -F ../$(INSTALL_ROOT)image
-	@mkdir $(INSTALL_ROOT)
-	@/sbin/losetup /dev/loop1 ../$(INSTALL_ROOT)image
-	@mount /dev/loop1 $(INSTALL_ROOT)
+	(cd $(INSTALL_ROOT) && for PACKAGE in slang newt parted e2fsprogs; do \
+		tar zxvf /build/target/smoothwall-$$PACKAGE.tar.gz ; \
+	done)
 
-	@cp -aR tmp/* $(INSTALL_ROOT)
-#	@rm -rf tmp/
+	rm -rfv $(INSTALL_ROOT)/usr/share/locale
+	
+	(cd $(INSTALL_ROOT); find . -print | cpio -H newc -ov > ../../$(INSTALL_ROOT)image)
+	bzip2 ../$(INSTALL_ROOT)image
 
-	@sync
-	@sleep 1
-
-	@umount $(INSTALL_ROOT)
-	@/sbin/losetup -d /dev/loop1
-
-	@rm -f ../$(INSTALL_ROOT)image.gz
-	@gzip ../$(INSTALL_ROOT)image
-
-	@rm -rf installroot/
-	@echo "installroot build for $(MEDIA) complete"
+	echo "installroot build complete"
 	
 clean:
-	@make -C $(PROGS) clean
-	@rm -rf $(INSTALL_ROOT) tmp/
-	rm -f ../$(INSTALL_ROOT)image.gz
+	rm -rf $(INSTALL_ROOT)
+	rm -f ../$(INSTALL_ROOT)image.bz2

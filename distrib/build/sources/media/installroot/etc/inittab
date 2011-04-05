@@ -5,5 +5,5 @@
 ::ctrlaltdel:/etc/halt
 
 # Run gettys in standard runlevels
-::respawn:/bin/iowrap /dev/tty1 /bin/loader
+::respawn:/bin/iowrap /dev/tty1 /bin/installer /dev/tty2
 ::respawn:/bin/iowrap /dev/tty3 /bin/ash

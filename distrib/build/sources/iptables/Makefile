@@ -1,33 +1,27 @@
-# SmoothWall Build system.
-#
-# (c) SmoothWall Ltd 2005
-#
-# This code is distributed under the terms of the GPL v2.
+# Copyright 2004-2010 SmoothWall Ltd
 
 include ../Makefile.conf
 include ../Makefile.versions
 
 PACKAGE = iptables
-VERSION =  $(IPTABLES_VER)
+VERSION = $(IPTABLES_VER)
+
+LICENCE_FILE = $(DIR)/COPYING
 
 EXTENSION = .tar.bz2
 
-BASE_URL = ftp://ftp.netfilter.org/pub/iptables
+BASE_URL = http://www.netfilter.org/projects/iptables/files/
 
-PATCH_FILE1 = ipt_ACCOUNT.patch
+#PATCH_FILE1 = iptables-mod.diff
+PATCH_FILE2 = iptables-1.4.3.2-imq_xt.diff
+#PATCH_FILE3 = ipt_ACCOUNT.patch
 
-CONFIGURE = yes
-COMPILE = yes
+CONFIG_OPTS = --enable-libipq
+
 INSTALL = yes
 
-configure: $(DIR)/ patch
-	@true
-
-compile: configure
-	@make -C $(COMPILE_DIR) COPT_FLAGS='$(CFLAGS)' KERNEL_DIR=$(SOURCES_DIR)/kernel-runtime/linux PREFIX=/$(PKG_DIR)
-
 install: compile
-	@make -C $(DIR) KERNEL_DIR=$(SOURCES_DIR)/kernel-runtime/linux PREFIX=$(PKG_ROOT)/$(PKG_DIR) install
+	@make -C $(DIR) DESTDIR=$(PKG_ROOT)/ install
 	@mkdir $(PKG_ROOT)/sbin
 	@(cd $(PKG_ROOT)/sbin; ln -s /usr/sbin/iptables)
 

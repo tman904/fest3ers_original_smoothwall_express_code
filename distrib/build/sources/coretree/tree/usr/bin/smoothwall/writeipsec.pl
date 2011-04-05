@@ -24,6 +24,7 @@ flock SECRETS, 2;
 print CONF "version 2\n";
 print CONF "\n";
 print CONF "config setup\n";
+print CONF "\tprotostack=klips\n";
 print CONF "\tinterfaces=%defaultroute\n";
 print CONF "\tklipsdebug=none\n";
 print CONF "\tplutodebug=none\n";

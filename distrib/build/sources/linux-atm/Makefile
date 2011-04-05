@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = linux-atm
-VERSION = 2.4.1
+VERSION = 2.5.2
 
 BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/linux-atm/
 

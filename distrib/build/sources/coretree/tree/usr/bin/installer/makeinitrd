@@ -1,42 +1,39 @@
 #!/bin/sh
+#
+# Copyright 2004-2010 SmoothWall Ltd
+
+cp -f /usr/lib/installer/basicrootfs.bz2 /root/
+bzip2 -d /root/basicrootfs.bz2
 
 . /var/smoothwall/main/kernel
-. /var/smoothwall/main/hwprofile
 
-echo "Module: $STORAGE_DRIVER Module options: $STORAGE_DRIVER_OPTIONS"
+for KERNEL_TYPE in runtime runtimebig; do
 
-if [ "$OLD" == "" ]; then OLD=$CURRENT; fi
+if [ -e /lib/modules/${CURRENT}-${KERNEL_TYPE} ]; then
 
-cp -f /boot/initrd-${OLD}.gz /root/initrd-${CURRENT}.gz
-/usr/bin/gzip -d /root/initrd-${CURRENT}.gz
+(cd /mnt/initrd; cpio -H newc -iv < /root/basicrootfs)
 
-/bin/mount -o loop /root/initrd-${CURRENT} /mnt/initrd
+rm -rf /mnt/initrd/lib/modules
+cp --parents -aR /lib/modules/${CURRENT}-${KERNEL_TYPE}/modules.* /mnt/initrd
+cp --parents -aR /lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel /mnt/initrd
+cp --parents -aR /lib/firmware /mnt/initrd
+rm -rf /mnt/initrd/lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel/{crypto,fs,net}
+rm -rf /mnt/initrd/lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel/drivers/{isdn,net,atm,char,leds}
+rm -rf /mnt/initrd/lib/modules/${CURRENT}-${KERNEL_TYPE}/kernel/drivers/usb/atm
 
-if [ "$STORAGE_DRIVER" != "" ]; then
-	tar -cf /storagedriver.tar -C /lib/modules/${CURRENT}/kernel/drivers/ scsi/libata.ko scsi/scsi_transport_spi.ko $STORAGE_DRIVER
+cp -aR /usr/bin/installer/init /mnt/initrd/init
 
-	tar -xf /storagedriver.tar -C /mnt/initrd/lib
-	rm -f /storagedriver.tar
+(cd /mnt/initrd; find . -print | cpio -H newc -ov > /root/initrd-${CURRENT}-${KERNEL_TYPE})
 
-	cat >/mnt/initrd/linuxrc <<END
-#!/bin/sash
+bzip2 /root/initrd-${CURRENT}-${KERNEL_TYPE}
+mv -f /root/initrd-${CURRENT}-${KERNEL_TYPE}.bz2 /boot
 
--echo "Loading $1 driver"
-/bin/insmod /lib/scsi/libata.ko atapi_enabled=1
-/bin/insmod /lib/scsi/scsi_transport_spi.ko
-/bin/insmod /lib/$STORAGE_DRIVER $STORAGE_DRIVER_OPTIONS
-END
-else
-	cat >/mnt/initrd/linuxrc <<END
-#!/bin/sash
+rm -rf /mnt/initrd/*
 
--echo "No driver required"
-END
 fi
 
-/bin/umount /mnt/initrd
-	
-/usr/bin/gzip /root/initrd-${CURRENT}
-mv -f /root/initrd-${CURRENT}.gz /boot
+done
+
+rm -f /root/basicrootfs
 
 exit 0;

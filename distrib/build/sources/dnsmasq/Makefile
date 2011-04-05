@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = dnsmasq
-VERSION =  2.55
+VERSION =  2.57
 
 BASE_URL = http://www.thekelleys.org.uk/dnsmasq/
 

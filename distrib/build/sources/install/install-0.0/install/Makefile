@@ -12,7 +12,7 @@ CC=gcc
 
 LD=gcc
 LDFLAGS=-g 
-LIBS=-Wl,-Bstatic -lnewt -lslang -Wl,-Bdynamic
+LIBS=-lnewt -lslang
 
 COMPILE=$(CC) -c $(EXTRA_DEFINES) $(VERSION_DEFINES) $(CAP_DEFINES) $(INCLUDE) $(CFLAGS)
 

@@ -13,11 +13,10 @@ fi
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export PATH
 
+mount /proc
+mount /sys
+
 echo "Loading USB subsystem for keyboard"
-/sbin/modprobe usbcore 2> /dev/null
-/sbin/modprobe ohci-hcd 2> /dev/null
-/sbin/modprobe uhci-hcd 2> /dev/null
-/sbin/modprobe ehci-hcd 2> /dev/null
 /sbin/modprobe usbhid 2> /dev/null
 
 if [ -e /forcefsck ]; then FORCE=-f; fi
@@ -95,9 +94,6 @@ rm -f /var/smoothwall/red/*
 rm -f /var/lock/LCK..ttyS*
 rm -f /var/run/pppd*.tdb
 
-echo "Setting drive DMA settings"
-/sbin/hdparm -d 1 -c 1 -u 1 /dev/harddisk
-
 echo "Setting the clock"
 /sbin/hwclock --hctosys
 
@@ -112,6 +108,10 @@ fi
 if [ ! -e /usr/etc/ssh_host_dsa_key ]; then
 	echo "Generating SSH DSA key.  This may take several minutes."
 	/usr/bin/ssh-keygen -t dsa -f /usr/etc/ssh_host_dsa_key -N "" 
+fi
+if [ ! -e /usr/etc/ssh_host_ecdsa_key ]; then
+	echo "Generating SSH ECDSA key.  This may take several minutes."
+	/usr/bin/ssh-keygen -t ecdsa -f /usr/etc/ssh_host_ecdsa_key -N "" 
 fi
 
 if [ ! -e /etc/httpd/server.key ]; then
@@ -148,7 +148,6 @@ mount -t usbfs none /proc/bus/usb
 echo "Loading filesystems"
 /sbin/modprobe msdos
 /sbin/modprobe vfat
-/sbin/modprobe nls_cp437
 
 echo "Starting smoothd"
 /usr/sbin/smoothd

@@ -102,6 +102,7 @@ int getdisksize(char *device)
 	char *result = NULL;
 	int count = 0;
 	char *major = NULL, *minor = NULL, *blocks = NULL, *name = NULL;
+	long long sizekb = 0;
 	int size = 0;
 	char *newdevice = NULL;
 	
@@ -141,13 +142,15 @@ int getdisksize(char *device)
 		{
 			if (strcmp(name, newdevice) == 0)
 			{
-				size = atoi(blocks);
+				sizekb = atoll(blocks);
 				break;
 			}
 		}
 	}
 
 	fclose(f);
+	
+	size = (int)(sizekb / 1024);
 		
 	return size;
 }

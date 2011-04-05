@@ -1,415 +1,251 @@
-KERNEL_DIR = $(SOURCES_DIR)/kernel-$(TYPE)/linux
-IPTABLES_DIR = $(SOURCES_DIR)/iptables/iptables-$(IPTABLES_VER)
+# Copyright 2004-2010 SmoothWall Ltd
 
 PACKAGE = kernel-$(TYPE)
 VERSION = $(KERNEL_VERSION)
 
-PATCH_O_MATIC_VER = 20070117
-IPT_ACCOUNT_VER = 1.8
-WCCP_VER = 1.7
-UNICORN_VER = 0.9.0
-EAGLE_VER = 2.3.3
-CNX_VER = 2.6-1.5
+TOP_DIR = /build/sources/$(PACKAGE)
+
+KERNEL_DIR = $(TOP_DIR)/linux
+
+FULL_VER = $(KERNEL_VER)-$(KERNEL_PL)-$(TYPE)
+
+#UNICORN_VER = 0.9.0
+#CNX_VER = 2.6-1.9
 PULSAR_VER = 4.0.24
-ADP94XX_VER = 1.0.8-12
-TG3_VER = 3.92n
-BNX2_VER = 1.8.5b
-BNX2X_VER = 1.48.53
-E100_VER = 3.5.17
-E1000_VER = 7.6.5
-IGB_VER = 1.3.28.4
-E1000E_VER = 1.0.2.5
-IXGB_VER = 1.0.135
-IXGBE_VER = 2.0.44.14
-R8168_VER = 8.002.00
-R8169_VER = 6.005.00
-R8101_VER = 1.011.00
-ATL1_VER = 1.2.40.2
+#TG3_VER = 3.92n
+#BNX2_VER = 1.5.10c
+E1000_VER = 8.0.25
+IGB_VER = 2.4.12
+IXGBE_VER = 3.2.9
+E1000E_VER = 1.2.20
+VMXNET_VER = 8.4.2-261024
 
 COMPILER = /usr/bin/gcc
 
-PACKAGES = package-eagle package-ipp2p package-wccp \
-	package-tg3 package-bnx2 package-bnx2x package-e100 package-e1000 package-igb package-e1000e package-ixgb package-ixgbe package-r8168 package-r8169 package-r8101 package-atl1 package-sk98lin
+PACKAGES = package-xtaddons package-e1000 package-igb package-ixgbe package-e1000e
 
 ifeq ($(ARCH), i386)
-PACKAGES += package-unicorn package-pulsar package-cnx
+PACKAGES += package-vmxnet package-pulsar
 endif
 
 ifeq ($(ARCH), x86_64)
 export CFLAGS =
 endif
 
+PARA_JOBS = 2
+
 download:
-	@$(DL_CMD) http://www.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2
-	@$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
-	@$(DL_CMD) ftp://ftp.netfilter.org/pub/patch-o-matic-ng/snapshot/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
-	@$(DL_CMD) http://www.squid-cache.org/WCCP-support/Linux/ip_wccp-$(WCCP_VER).tgz
-	@$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
-	@$(DL_CMD) http://www.intra2net.com/de/produkte/opensource/ipt_account/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz
-	@$(DL_CMD) http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2
-	@$(DL_CMD) http://www.ipp2p.org/downloads/ipp2p-$(IPP2P_VER).tar.gz
-	@$(DL_CMD) http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
-	@$(DL_CMD) http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz
-	@$(DL_CMD) http://download.adaptec.com/sas/linux/adp94xx-$(ADP94XX_VER).src.tgz
-	@$(DL_CMD) http://www.aslak.net/smoothmirror/tg3-$(TG3_VER).tar.gz
-	@$(DL_CMD) http://www.aslak.net/smoothmirror/bnx2-$(BNX2_VER).tar.gz
-	@$(DL_CMD) http://www.aslak.net/smoothmirror/bnx2x-$(BNX2X_VER).tar.gz
-	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e100-$(E100_VER).tar.gz
-	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz
-	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/igb-$(IGB_VER).tar.gz
-	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000e-$(E1000E_VER).tar.gz
-	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/ixgb-$(IXGB_VER).tar.gz
-	@$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/ixgbe-$(IXGBE_VER).tar.gz
-	@$(DL_CMD) ftp://210.51.181.211/cn/nic/r8168-$(R8168_VER).tar.bz2
-	@$(DL_CMD) ftp://210.51.181.211/cn/nic/r8169-$(R8169_VER).tar.bz2
-	@$(DL_CMD) ftp://210.51.181.211/cn/nic/r8101-$(R8101_VER).tar.bz2
-	@$(DL_CMD) ftp://hogchain.net/pub/linux/attansic/vendor_driver/l1-linux-v$(ATL1_VER).tar.gz
-	@$(DL_CMD) http://www.aslak.net/smoothmirror/sk98lin.tar.bz2
+	$(DL_CMD) http://www.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_ORIG_VER).tar.bz2
+	$(DL_CMD) http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
+	$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/xtables-addons/xtables-addons-$(XTADDONS_VER).tar.bz2
+#	$(DL_CMD) http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz
+#	$(DL_CMD) http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
+	$(DL_CMD) http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz
+#	$(DL_CMD) http://sotonfs/tg3-$(TG3_VER).tar.gz
+#	$(DL_CMD) http://sotonfs/bnx2-$(BNX2_VER).tar.gz
+	$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz
+	$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/igb-$(IGB_VER).tar.gz
+	$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/ixgbe-$(IXGBE_VER).tar.gz
+	$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/e1000e-$(E1000E_VER).tar.gz
+	$(DL_CMD) http://downloads.sourceforge.net/project/open-vm-tools/open-vm-tools/stable-8.4.x/open-vm-tools-$(VMXNET_VER).tar.gz
 
 prepare: download
-	@tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.bz2
-	@(cd linux-$(KERNEL_VER); \
-	patch -p1 <../../kernel-patches/linux-2.6.16-imq2.diff; \
-	patch -p1 <../../kernel-patches/patch-2.6.16-nath323-1.3; \
-	patch -p1 <../../kernel-patches/linux-2.6.16-ich9+10.diff; \
-	patch -p1 <../../kernel-patches/linux-2.6.16-ich9+10-2.diff; \
-	patch -p1 <../../kernel-patches/sata_via-vt8237a.patch; \
-	patch -p1 <../../kernel-patches/ahci-devices.patch; \
-	patch -p1 <../../kernel-patches/ahci-devices-2.patch; \
-	patch -p1 <../../kernel-patches/ahci-devices-3.patch; \
-	patch -p1 <../../kernel-patches/ppp-bigfiles.patch; \
-	patch -p1 <../../kernel-patches/mptscsi-vmware-esx-fix.patch; \
-	patch -p1 <../../kernel-patches/apic-fix.diff; \
-	patch -p1 <../../kernel-patches/cciss-device-additions.patch; \
-	patch -p1 <../../kernel-patches/linux-2.6.16-skge.patch; \
-	)
-	@rm -f linux
-	@ln -s linux-$(KERNEL_VER) linux
+	$(MAKE) clean
 
-	@tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
-	@(cd $(FREESWAN_TYPE)-$(FREESWAN_VER); \
-	patch -p1 <../../kernel-patches/openswan-procpermsfix.diff; \
+	tar -jxvf $(DOWNLOADS_DIR)/linux-$(KERNEL_ORIG_VER).tar.bz2
+
+	(cd linux-$(KERNEL_ORIG_VER); patch -p1 <$(SOURCES_DIR)/kernel-patches/linux_2.6.32-27.49.diff)
+	(cd linux-$(KERNEL_ORIG_VER); patch -p1 <$(SOURCES_DIR)/kernel-patches/linux-2.6.32-imq-test2.diff)
+
+	rm -f linux
+	ln -s linux-$(KERNEL_ORIG_VER) linux
+
+	tar -zxvf $(DOWNLOADS_DIR)/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz
+	(cd $(FREESWAN_TYPE)-$(FREESWAN_VER); \
+	patch -p1 <$(SOURCES_DIR)/kernel-patches/openswan-2.6.32-procpermsfix.diff; \
 	rm -f cvs.datemark)
 
-	@tar -jxvf $(DOWNLOADS_DIR)/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2
+	tar -jxvf $(DOWNLOADS_DIR)/xtables-addons-$(XTADDONS_VER).tar.bz2
+	(cd xtables-addons-$(XTADDONS_VER); \
+	patch -p1 <$(SOURCES_DIR)/xtables-addons/mod-xtables-addon.patch)
 
-	@tar -zxvf $(DOWNLOADS_DIR)/ip_wccp-$(WCCP_VER).tgz
+#	tar -zxvf $(DOWNLOADS_DIR)/bast-$(UNICORN_VER).tgz
+#	(cd unicorn; \
+#	patch -p1 < $(SOURCES_DIR)/kernel-patches/unicorn.patch)
 
-	@tar -zxvf $(DOWNLOADS_DIR)/ipp2p-$(IPP2P_VER).tar.gz
+#	tar -jxvf $(DOWNLOADS_DIR)/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
 
-	@tar -zxvf $(DOWNLOADS_DIR)/bast-$(UNICORN_VER).tgz
-	(cd unicorn; \
-	patch -p1 < ../../kernel-patches/unicorn.patch)
+	tar -zxvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
+	(cd pulsar-$(PULSAR_VER); \
+	patch -p1 < $(SOURCES_DIR)/kernel-patches/pulsar.c-2.6.32.patch; \
+	ln -s makefile.2.6 Makefile)
 
-	@tar -jxvf $(DOWNLOADS_DIR)/eagle-usb-$(EAGLE_VER).tar.bz2
-	@(cd eagle-usb-$(EAGLE_VER); \
-	patch -p1 <../../kernel-patches/eagle-2.6-fix.patch; \
-        patch -p1 <../../kernel-patches/eagle-stats.patch)
+#	tar -zxvf $(DOWNLOADS_DIR)/tg3-$(TG3_VER).tar.gz
 
-	@tar -jxvf $(DOWNLOADS_DIR)/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2
+#	tar -zxvf $(DOWNLOADS_DIR)/bnx2-$(BNX2_VER).tar.gz
 
-	@tar -zxvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
-	@(cd pulsar-$(PULSAR_VER); ln -s makefile.2.6 Makefile)
+	tar -zxvf $(DOWNLOADS_DIR)/e1000-$(E1000_VER).tar.gz
 
-	@(mkdir adp94xx-$(ADP94XX_VER); cd adp94xx-$(ADP94XX_VER); \
-	tar -zxvf $(DOWNLOADS_DIR)/adp94xx-$(ADP94XX_VER).src.tgz; \
-	rm -f Makefile; \
-	ln -s Makefile.2_6 Makefile; \
-	patch -p1 <../../kernel-patches/adp94xx-raid-enable.patch)
+	tar -zxvf $(DOWNLOADS_DIR)/igb-$(IGB_VER).tar.gz
 
-	@tar -zxvf $(DOWNLOADS_DIR)/tg3-$(TG3_VER).tar.gz
+	tar -zxvf $(DOWNLOADS_DIR)/ixgbe-$(IXGBE_VER).tar.gz
 
-	@tar -zxvf $(DOWNLOADS_DIR)/bnx2-$(BNX2_VER).tar.gz
-	(cd bnx2-$(BNX2_VER); \
-	patch -p1 < ../../kernel-patches/bnx2-typedef-fixup.patch)
-	@ln -s bnx2-$(BNX2_VER) bnx2
-
-	@tar -zxvf $(DOWNLOADS_DIR)/bnx2x-$(BNX2X_VER).tar.gz
-
-	@tar -zxvf $(DOWNLOADS_DIR)/e100-$(E100_VER).tar.gz
-
-	@tar -zxvf $(DOWNLOADS_DIR)/e1000-$(E1000_VER).tar.gz
-
-	@tar -zxvf $(DOWNLOADS_DIR)/igb-$(IGB_VER).tar.gz
-
-	@tar -zxvf $(DOWNLOADS_DIR)/e1000e-$(E1000E_VER).tar.gz
-
-	@tar -zxvf $(DOWNLOADS_DIR)/ixgb-$(IXGB_VER).tar.gz
-
-	@tar -zxvf $(DOWNLOADS_DIR)/ixgbe-$(IXGBE_VER).tar.gz
+	tar -zxvf $(DOWNLOADS_DIR)/e1000e-$(E1000E_VER).tar.gz
 	
-	@tar -jxvf $(DOWNLOADS_DIR)/r8168-$(R8168_VER).tar.bz2
+	tar -xvf $(DOWNLOADS_DIR)/open-vm-tools-$(VMXNET_VER).tar.gz
 
-	@tar -jxvf $(DOWNLOADS_DIR)/r8169-$(R8169_VER).tar.bz2
+	sed 's/EXTRAVERSION =.*$$/&-$(KERNEL_PL)-$(TYPE)/g' linux/Makefile > linux/Makefile.tmp
+	mv -f linux/Makefile.tmp linux/Makefile
 
-	@tar -jxvf $(DOWNLOADS_DIR)/r8101-$(R8101_VER).tar.bz2
-	(cd r8101-$(R8101_VER); \
-	patch -p1 < ../../kernel-patches/r8101-2.6.16-fixup.patch)
+	make -C linux CC=$(COMPILER) mrproper 
 
-	@tar -zxvf $(DOWNLOADS_DIR)/l1-linux-v$(ATL1_VER).tar.gz
+	cp $(SOURCES_DIR)/kernel.config-$(TYPE)-$(ARCH) linux/.config
 
-	@(mkdir sk98lin; cd sk98lin;  \
-	tar -jxvf $(DOWNLOADS_DIR)/sk98lin.tar.bz2; \
-	patch -p1 <../../kernel-patches/sk98lin-makefile-fixup.patch; \
-	mkdir all; \
-	cp -avR 2.6/* common/* all;)
+	make -C linux CC=$(COMPILER) prepare oldconfig
 
-	@sed 's/EXTRAVERSION =.*$$/&-$(KERNEL_PL)/g' linux/Makefile > linux/Makefile.tmp
-	@mv -f linux/Makefile.tmp linux/Makefile
+	make -C $(FREESWAN_TYPE)-$(FREESWAN_VER) CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) precheck verset kpatch
 
-	@make -C linux mrproper
+compile-kernel: prepare
+	cp $(SOURCES_DIR)/kernel.config-$(TYPE)-$(ARCH) linux/.config
 
-	@cp ../kernel.config-$(TYPE)-$(ARCH) linux/.config
+	make -C linux CC=$(COMPILER) oldconfig
+	make -C linux CC=$(COMPILER) -j $(PARA_JOBS) bzImage modules
 
-	@make -C linux CC=$(COMPILER) clean prepare
+compile-xtaddons: compile-kernel
+	(cd xtables-addons-$(XTADDONS_VER); ./configure --with-kbuild=$(KERNEL_DIR))
+	make -C xtables-addons-$(XTADDONS_VER)/extensions -j $(PARA_JOBS) modules
 
-	@make -C $(FREESWAN_TYPE)-$(FREESWAN_VER) CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) precheck verset kpatch npatch
+# Probably a dead loss but may be possible to fixup
+#compile-unicorn: compile-kernel
+#	make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)
+#	(cd unicorn/unicorn_pci; make CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR))
 
-apply-pom: prepare
-	@(cd patch-o-matic-ng-$(PATCH_O_MATIC_VER)/patchlets; \
-	tar xvzf $(DOWNLOADS_DIR)/pom-ng-ipt_ACCOUNT-$(IPT_ACCOUNT_VER).tgz)
-
-	@(export KERNEL_DIR=$(KERNEL_DIR); \
-	export IPTABLES_DIR=$(IPTABLES_DIR); \
-	cd patch-o-matic-ng-$(PATCH_O_MATIC_VER); \
-	./runme --batch ACCOUNT; \
-	./runme --batch TARPIT; \
-	./runme --batch mms-conntrack-nat; \
-	./runme --batch directx8-conntrack-nat; \
-	./runme --batch msnp-conntrack-nat)
-
-compile-kernel: apply-pom
-	@cp ../kernel.config-$(TYPE)-$(ARCH) linux/.config
-
-	@make -C linux CC=$(COMPILER) clean oldconfig
-	@make -C linux CC=$(COMPILER) bzImage modules
-
-compile-ipp2p: compile-kernel
-	@(cd ipp2p-$(IPP2P_VER); make CC=$(COMPILER) KERNEL_SRC=$(KERNEL_DIR) KERNEL_SERIES=2.6 IPTABLES_VERSION=$(IPTABLES_VER) IPTABLES_SRC=$(SOURCES_DIR)/iptables/iptables-$(IPTABLES_VER) PREFIX=/$(PKG_DIR) modules)
-
-compile-wccp: compile-kernel
-	@make -C ip_wccp-$(WCCP_VER) KERNELSRC=$(KERNEL_DIR)
-
-compile-unicorn: compile-kernel
-	@make -C unicorn/libm CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR)
-	@(cd unicorn/unicorn_pci; make CC=$(COMPILER) KERNEL_SOURCES=$(KERNEL_DIR))
-
-compile-eagle: compile-kernel
-	@(cd eagle-usb-$(EAGLE_VER); ./configure -with-kernel-src=$(KERNEL_DIR))
-	@make -C eagle-usb-$(EAGLE_VER)/driver CC=$(COMPILER) KERNELSRC=$(KERNEL_DIR) driver
-
-compile-cnx: compile-kernel
-	@make -C CnxADSL-6.1.2.007-PIM-$(CNX_VER)/KernelModule KDIR=$(KERNEL_DIR)
+# Not possible to support
+#compile-cnx: compile-kernel
+#	make -C CnxADSL-6.1.2.007-PIM-$(CNX_VER)/KernelModule KDIR=$(KERNEL_DIR)
 
 compile-pulsar: compile-kernel
-	@make -C pulsar-$(PULSAR_VER) KDIR=$(KERNEL_DIR)
-
-compile-adp94xx: compile-kernel
-	@make -C $(KERNEL_DIR) M=$(SOURCES_DIR)/kernel-$(TYPE)/adp94xx-$(ADP94XX_VER)
-
-compile-tg3: compile-kernel
-	@make -C tg3-$(TG3_VER) BCMCFGDIR=$(KERNEL_DIR) KVER=2.6.0
-
-compile-bnx2: compile-kernel
-	@make -C bnx2-$(BNX2_VER)/src LINUX=$(KERNEL_DIR) KVER=2.6.0
-
-compile-bnx2x: compile-kernel
-	@make -C bnx2x-$(BNX2X_VER)/src KERNEL_DIR=$(KERNEL_DIR) KVER=2.6.0
-
-compile-e100: compile-kernel
-	@make -C e100-$(E100_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
+	make -C pulsar-$(PULSAR_VER) KDIR=$(KERNEL_DIR)
 
 compile-e1000: compile-kernel
-	@make -C e1000-$(E1000_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
+	make -C e1000-$(E1000_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=2.6
 
 compile-igb: compile-kernel
-	@make -C igb-$(IGB_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
-
-compile-e1000e: compile-kernel
-	@make -C e1000e-$(E1000E_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
-
-compile-ixgb: compile-kernel
-	@make -C ixgb-$(IXGB_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
+	make -C igb-$(IGB_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=2.6
 
 compile-ixgbe: compile-kernel
-	@make -C ixgbe-$(IXGBE_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
+	make -C ixgbe-$(IXGBE_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=2.6
 
-compile-r8168: compile-kernel
-	@(cd r8168-$(R8168_VER); make KDIR=$(KERNEL_DIR) KVER=2.6.0 modules)
+compile-e1000e: compile-kernel
+	make -C e1000e-$(E1000E_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=2.6
 
-compile-r8169: compile-kernel
-	@(cd r8169-$(R8169_VER); make KDIR=$(KERNEL_DIR) KVER=2.6.0 modules)
-
-compile-r8101: compile-kernel
-	@(cd r8101-$(R8101_VER); make KDIR=$(KERNEL_DIR) KVER=2.6.0 modules)
-
-compile-atl1: compile-kernel
-	@make -C l1-linux-v$(ATL1_VER)/src KSRC=$(KERNEL_DIR) K_VERSION=2.6
-
-compile-sk98lin: compile-kernel
-	@make -C linux SUBDIRS=$(SOURCES_DIR)/kernel-$(TYPE)/sk98lin/all modules
+compile-vmxnet: compile-kernel
+	make -C open-vm-tools-$(VMXNET_VER)/modules/linux/vmxnet -j $(PARA_JOBS) OVT_SOURCE_DIR=$(TOP_DIR)/open-vm-tools-$(VMXNET_VER) BUILD_DIR=$(KERNEL_DIR)
 
 package-kernel: compile-kernel
-	@mkdir -p $(PKG_ROOT)
-	@(cd $(PKG_ROOT); \
+	mkdir -p $(PKG_ROOT)
+	(cd $(PKG_ROOT); \
 	make -C $(KERNEL_DIR) CC=$(COMPILER) INSTALL_MOD_PATH=$(PKG_ROOT) modules_install; \
+	rm -f $(PKG_ROOT)/lib/modules/$(FULL_VER)/source; \
+	rm -f $(PKG_ROOT)/lib/modules/$(FULL_VER)/build; \
 	mkdir -p boot; \
-	cp $(KERNEL_DIR)/arch/*/boot/bzImage boot/vmlinuz-$(KERNEL_VER)-$(KERNEL_PL); \
-	cp $(KERNEL_DIR)/System.map boot/System.map-$(KERNEL_VER)-$(KERNEL_PL); \
-	rm -f lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/build; \
-	cp $(KERNEL_DIR)/.config $(SOURCES_DIR)/kernel.config-$(TYPE)-$(ARCH).new)
+	cp $(KERNEL_DIR)/System.map lib/modules/$(FULL_VER)/System.map; \
+	ln -s /lib/modules-$(FULL_VER)/System.map boot/System.map-$(FULL_VER); \
+	)
+	(cd $(PKG_ROOT); \
+	cp $(KERNEL_DIR)/arch/$(ARCH)/boot/bzImage boot/vmlinuz-$(FULL_VER))
 
-package-ipp2p: compile-ipp2p
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/ipp2p-$(IPP2P_VER)/ipt_ipp2p.ko $(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/net/ipv4/netfilter/ipt_ipp2p.ko
+package-xtaddons: compile-xtaddons
+	make -C xtables-addons-$(XTADDONS_VER)/extensions DESTDIR=$(PKG_ROOT) modules_install
 
-package-wccp: compile-wccp  
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/ip_wccp-$(WCCP_VER)/ip_wccp.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/net/extras/ip_wccp.ko
+#package-unicorn: compile-unicorn
+#	mkdir -p $(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/misc
+#	cp $(TOP_DIR)/unicorn/unicorn_pci/unicorn_pci_atm.ko \
+#		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/misc
+#	cp $(TOP_DIR)/unicorn/unicorn_pci/unicorn_pci_eth.ko \
+#		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/misc
 
-package-unicorn: compile-unicorn
-	@mkdir -p $(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/misc
-	@cp $(SOURCES_DIR)/kernel-$(TYPE)/unicorn/unicorn_pci/unicorn_pci_atm.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/misc
-	@cp $(SOURCES_DIR)/kernel-$(TYPE)/unicorn/unicorn_pci/unicorn_pci_eth.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/misc
-
-package-eagle: compile-eagle
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/eagle-usb-$(EAGLE_VER)/driver/eagle-usb.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/misc/eagle-usb.ko
-
-package-cnx: compile-cnx
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/CnxADSL-6.1.2.007-PIM-$(CNX_VER)/KernelModule/CnxADSL.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/misc/CnxADSL.ko
+#package-cnx: compile-cnx
+#	install -D $(TOP_DIR)/CnxADSL-6.1.2.007-PIM-$(CNX_VER)/KernelModule/CnxADSL.ko \
+#		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/misc/CnxADSL.ko
 
 package-pulsar: compile-pulsar
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/pulsar-$(PULSAR_VER)/pulsar_atm.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/misc/pulsar_atm.ko
+	install -D $(TOP_DIR)/pulsar-$(PULSAR_VER)/pulsar_atm.ko \
+		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/misc/pulsar_atm.ko
 
-package-adp94xx: compile-adp94xx
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/adp94xx-$(ADP94XX_VER)/adp94xx.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/scsi/adp94xx.ko
+#package-tg3: compile-tg3
+#	install -D $(TOP_DIR)/tg3-$(TG3_VER)/tg3.ko \
+#		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/net/tg3.ko
 
-package-tg3: compile-tg3
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/tg3-$(TG3_VER)/tg3.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/tg3.ko
-
-package-bnx2: compile-bnx2
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/bnx2-$(BNX2_VER)/src/bnx2.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/bnx2.ko
-
-package-bnx2x: compile-bnx2x
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/bnx2x-$(BNX2X_VER)/src/bnx2x.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/bnx2x.ko
-
-package-e100: compile-e100
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/e100-$(E100_VER)/src/e100.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/e100.ko
+#package-bnx2: compile-bnx2
+#	install -D $(TOP_DIR)/bnx2-$(BNX2_VER)/src/bnx2.ko \
+#		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/net/bnx2.ko
 
 package-e1000: compile-e1000
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/e1000-$(E1000_VER)/src/e1000.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/e1000/e1000.ko
+	install -D $(TOP_DIR)/e1000-$(E1000_VER)/src/e1000.ko \
+		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/net/e1000/e1000.ko
 
 package-igb: compile-igb
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/igb-$(IGB_VER)/src/igb.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/igb.ko
-
-package-e1000e: compile-e1000e
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/e1000e-$(E1000E_VER)/src/e1000e.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/e1000e.ko
-
-package-ixgb: compile-ixgb
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/ixgb-$(IXGB_VER)/src/ixgb.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/ixgb/ixgb.ko
+	install -D $(TOP_DIR)/igb-$(IGB_VER)/src/igb.ko \
+		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/net/igb/igb.ko
 
 package-ixgbe: compile-ixgbe
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/ixgbe-$(IXGBE_VER)/src/ixgbe.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/ixgbe.ko
+	install -D $(TOP_DIR)/ixgbe-$(IXGBE_VER)/src/ixgbe.ko \
+		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/net/ixgbe/ixgbe.ko
 
-package-r8168: compile-r8168
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/r8168-$(R8168_VER)/src/r8168.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/r8168.ko
+package-e1000e: compile-e1000e
+	install -D $(TOP_DIR)/e1000e-$(E1000E_VER)/src/e1000e.ko \
+		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/net/e1000e/e1000e.ko
 
-package-r8169: compile-r8169
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/r8169-$(R8169_VER)/src/r8169.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/r8169b.ko
-
-package-r8101: compile-r8101
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/r8101-$(R8101_VER)/src/r8101.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/r8101.ko
-
-package-atl1: compile-atl1
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/l1-linux-v$(ATL1_VER)/src/atl1.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/atl1.ko
-
-package-sk98lin: compile-sk98lin
-	@install -D $(SOURCES_DIR)/kernel-$(TYPE)/sk98lin/all/sk98lin.ko \
-		$(PKG_ROOT)/lib/modules/$(KERNEL_VER)-$(KERNEL_PL)/kernel/drivers/net/sk98lin/sk98lin.ko
+package-vmxnet: compile-vmxnet
+	install -D $(TOP_DIR)/open-vm-tools-$(VMXNET_VER)/modules/linux/vmxnet/vmxnet.ko \
+		$(PKG_ROOT)/lib/modules/$(FULL_VER)/kernel/drivers/net/vmxnet.ko
 
 depmod: package-kernel $(PACKAGES)
-	@/sbin/depmod -b $(PKG_ROOT) -ae -F $(KERNEL_DIR)/System.map $(KERNEL_VER)-$(KERNEL_PL)
+	/sbin/depmod -b $(PKG_ROOT) -ae -F $(KERNEL_DIR)/System.map $(FULL_VER)
 
-build-tarball: depmod
+$(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: ../Makefile.kernel ../Makefile.versions
+	$(MAKE) depmod
 	@(cd $(PKG_ROOT); \
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz .; \
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /);
 
 clean:
-	@rm -f linux
-	@rm -rf linux-$(KERNEL_VER)
-	@rm -rf $(FREESWAN_TYPE)-$(FREESWAN_VER)
-	@rm -rf ipp2p-$(IPP2P_VER)
-	@rm -rf patch-o-matic-ng-$(PATCH_O_MATIC_VER)
-	@rm -rf unicorn
-	@rm -rf usr-sureconnect
-	@rm -rf CnxADSL-6.1.2.007-PIM-$(CNX_VER)
-	@rm -rf pulsar-$(PULSAR_VER)
-	@rm -rf adp94xx-$(ADP94XX_VER)
-	@rm -rf eagle-usb-$(EAGLE_VER)
-	@rm -rf ip_wccp-$(WCCP_VER)
-	@rm -rf tg3-$(TG3_VER)
-	@rm -rf bnx2-$(BNX2_VER)
-	@rm -rf bnx2x-$(BNX2X_VER)
-	@rm -f bnx2x
-	@rm -f bnx2
-	@rm -rf e100-$(E100_VER)
-	@rm -rf e1000-$(E1000_VER)
-	@rm -rf igb-$(IGB_VER)
-	@rm -rf ixgb-$(IXGB_VER)
-	@rm -rf ixgbe-$(IXGBE_VER)
-	@rm -rf e1000e-$(E1000E_VER)
-	@rm -rf r8168-$(R8168_VER)
-	@rm -rf r8169-$(R8169_VER)
-	@rm -rf r8101-$(R8101_VER)
-	@rm -rf l1-linux-v$(ATL1_VER)
-	@rm -rf sk98lin
-	@rm -rf $(PKG_ROOT)
+	rm -f linux
+	rm -rf linux-$(KERNEL_ORIG_VER)
+	rm -rf $(FREESWAN_TYPE)-$(FREESWAN_VER)
+	rm -rf xtables-addons-$(XTADDONS_VER)
+#	rm -rf unicorn
+#	rm -rf CnxADSL-6.1.2.007-PIM-$(CNX_VER)
+	rm -rf pulsar-$(PULSAR_VER)
+#	rm -rf tg3-$(TG3_VER)
+#	rm -rf bnx2-$(BNX2_VER)
+	rm -rf e1000-$(E1000_VER)
+	rm -rf igb-$(IGB_VER)
+	rm -rf e1000e-$(E1000E_VER)
+	rm -rf open-vm-tools-$(VMXNET_VER)
+	rm -rf $(PKG_ROOT)
 
-all: clean build-tarball
+all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 
 packageinfo.html:
-	@echo "<li><span style='font-size:large;'>$(PACKAGE) $(KERNEL_VER)</span><br>" >>/tmp/packageinfo.html
-	@echo "Kernel download: <a href='http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2'>http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html
-	@echo "Openswan download: <a href='http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz'>http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz</a><br>" >>/tmp/packageinfo.html
-	@echo "Netfilter download: <a href='http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2'>http://www.netfilter.org/files/patch-o-matic-ng-$(PATCH_O_MATIC_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html
-	@echo "IPP2P download: <a href='http://rnvs.informatik.uni-leipzig.de/ipp2p/downloads/ipp2p-$(IPP2P_VER).tar.gz'>http://rnvs.informatik.uni-leipzig.de/ipp2p/downloads/ipp2p-$(IPP2P_VER).tar.gz</a><br>" >>/tmp/packageinfo.html
-	@echo "BeWAN download: <a href='http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz'>http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz</a><br> "  >>/tmp/packageinfo.html
-	@echo "WCCP download: <a href='http://www.squid-cache.org/WCCP-support/Linux/ip_wccp-$(WCCP_VER).tgz'>http://www.squid-cache.org/WCCP-support/Linux/ip_wccp-$(WCCP_VER).tgz</a><br> " >> /tmp/packageinfo.html
-	@echo "Eagle-USB download: <a href='http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2'>http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2</a><br> " >> /tmp/packageinfo.html
-	@echo "Cnx ADSL download: <a href='http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2'>http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2</a><br> " >> /tmp/packageinfo.html
-	@echo "Pulsar ADSL download: <a href='http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz'>http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz</a><br> " >> /tmp/packageinfo.html
-	@echo "ADP94XX download: <a href='http://download.adaptec.com/sas/linux/adp94xx-$(ADP94XX_VER).src.tgz'>http://download.adaptec.com/sas/linux/adp94xx-$(ADP94XX_VER).src.tgz</a><br> " >> /tmp/packageinfo.html
-	@cp -avR $(DOWNLOADS_DIR)/tg3-$(TG3_VER).tar.gz /tmp/downloads
-	@echo "TG3 local mirror: <a href='downloads/tg3-$(TG3_VER).tar.gz'>tg3-$(TG3_VER).tar.gz</a><br> " >>/tmp/packageinfo.html
-	@cp -avR $(DOWNLOADS_DIR)/bnx2-$(BNX2_VER).tar.gz /tmp/downloads
-	@echo "BNX2 local mirror: <a href='downloads/bnx2-$(BNX2_VER).tar.gz'>bnx2-$(BNX2_VER).tar.gz</a><br> " >> /tmp/packageinfo.html
-	@echo "E100 download: <a href='http://kent.dl.sourceforge.net/sourceforge/e1000/e100-$(E100_VER).tar.gz'>http://kent.dl.sourceforge.net/sourceforge/e1000/e100-$(E100_VER).tar.gz</a><br> " >> /tmp/packageinfo.html
-	@echo "E1000 download: <a href='http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz'>http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz</a><br> " >> /tmp/packageinfo.html
-	@echo "R8168 download: <a href='ftp://210.51.181.211/cn/nic/r8168-$(R8168_VER).tar.bz2'>ftp://210.51.181.211/cn/nic/r8168-$(R8168_VER).tar.bz2</a><br> " >> /tmp/packageinfo.html
+	echo "<li><span style='font-size:large;'>$(PACKAGE) $(KERNEL_VER)</span><br>" >>/tmp/packageinfo.html
+	echo "Kernel download: <a href='http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2'>http://www.uk.kernel.org/pub/linux/kernel/v2.6/linux-$(KERNEL_VER).tar.bz2</a><br>" >>/tmp/packageinfo.html
+	echo "Openswan download: <a href='http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz'>http://www.openswan.org/download/$(FREESWAN_TYPE)-$(FREESWAN_VER).tar.gz</a><br>" >>/tmp/packageinfo.html
+#	echo "BeWAN download: <a href='http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz'>http://www.bewan.com/bewan/drivers/bast-$(UNICORN_VER).tgz</a><br> "  >>/tmp/packageinfo.html
+#	echo "Eagle-USB download: <a href='http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2'>http://baud123.free.fr/eagle-usb/eagle-usb-2.3/eagle-usb-$(EAGLE_VER).tar.bz2</a><br> " >> /tmp/packageinfo.html
+#	echo "Cnx ADSL download: <a href='http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2'>http://patrick.spacesurfer.com/adsl/CnxADSL-6.1.2.007-PIM-$(CNX_VER).tar.bz2</a><br> " >> /tmp/packageinfo.html
+#	echo "Pulsar ADSL download: <a href='http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz'>http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz</a><br> " >> /tmp/packageinfo.html
+#	cp -avR $(DOWNLOADS_DIR)/tg3-$(TG3_VER).tar.gz /tmp/downloads
+#	echo "TG3 local mirror: <a href='downloads/tg3-$(TG3_VER).tar.gz'>tg3-$(TG3_VER).tar.gz</a><br> " >>/tmp/packageinfo.html
+#	cp -avR $(DOWNLOADS_DIR)/bnx2-$(BNX2_VER).tar.gz /tmp/downloads
+#	echo "BNX2 local mirror: <a href='downloads/bnx2-$(BNX2_VER).tar.gz'>bnx2-$(BNX2_VER).tar.gz</a><br> " >> /tmp/packageinfo.html
+	echo "E1000 download: <a href='http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz'>http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz</a><br> " >> /tmp/packageinfo.html
 	
-	@echo "Patches:<br>" >>/tmp/packageinfo.html
-	@echo "<ul>" >>/tmp/packageinfo.html
-	@(for PATCH in linux-2.6.16-imq2.diff route_fwmark_mask.patch patch-2.6.16-nath323-1.3 openswan-procpermsfix.diff strongswan-interfaces.diff unicorn.patch eagle-2.6-fix.patch eagle-stats.patch patch-o-matic-mod-addition.patch; do \
-		echo "<li><a href='downloads/$$PATCH'>$$PATCH</a><br>" >>/tmp/packageinfo.html; \
-		cp -avR ../kernel-patches/$$PATCH /tmp/downloads; \
-	done) 
-	@echo "</ul>" >>/tmp/packageinfo.html
+#	echo "Patches:<br>" >>/tmp/packageinfo.html
+#	echo "<ul>" >>/tmp/packageinfo.html
+#	(for PATCH in linux-2.6.16-imq2.diff route_fwmark_mask.patch patch-2.6.16-nath323-1.3 openswan-procpermsfix.diff strongswan-interfaces.diff unicorn.patch eagle-2.6-fix.patch eagle-stats.patch patch-o-matic-mod-addition.patch; do \
+#		echo "<li><a href='downloads/$$PATCH'>$$PATCH</a><br>" >>/tmp/packageinfo.html; \
+#		cp -avR ../kernel-patches/$$PATCH /tmp/downloads; \
+#	done) 
+#	echo "</ul>" >>/tmp/packageinfo.html

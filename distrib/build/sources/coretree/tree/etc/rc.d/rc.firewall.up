@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Blanked disable for IPv6 (enable on a per interface basis as needed)
+for FILE in /proc/sys/net/ipv6/conf/*/disable_ipv6; do
+	echo 1 > $FILE
+done
+
 # Disable ICMP Redirect Acceptance
 for FILE in /proc/sys/net/ipv4/conf/*/accept_redirects; do
 	echo 0 > $FILE
@@ -267,10 +272,10 @@ fi
 
 # UPNP
 /sbin/iptables -N MINIUPNPD
-/sbin/iptables -A FORWARD -i ppp0 -o ! ppp0 -j MINIUPNPD
-/sbin/iptables -A FORWARD -i ippp0 -o ! ippp0 -j MINIUPNPD
+/sbin/iptables -A FORWARD -i ppp0 ! -o ppp0 -j MINIUPNPD
+/sbin/iptables -A FORWARD -i ippp0 ! -o ippp0 -j MINIUPNPD
 if [ "$RED_DEV" != "" ]; then
-	/sbin/iptables -A FORWARD -i $RED_DEV -o ! $RED_DEV -j MINIUPNPD
+	/sbin/iptables -A FORWARD -i $RED_DEV ! -o $RED_DEV -j MINIUPNPD
 fi
 
 /sbin/iptables -A FORWARD -j LOG

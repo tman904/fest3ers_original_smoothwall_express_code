@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = imspector
-VERSION = 20100309
+VERSION = 20101029
 
 BASE_URL = http://www.imspector.org/downloads/snapshots/
 
@@ -17,6 +17,8 @@ INSTALL = yes
 
 OPTS = PREFIX=$(PKG_ROOT)/$(PKG_DIR) SSL_DIR=/usr/ssl
 DIR = imspector
+
+export ADD_PLUGINS = dbfilterplugin.so censordfilterplugin.so catsloggingplugin.so dbresponderplugin.so
 
 configure: patch
 	@true

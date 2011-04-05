@@ -10,7 +10,6 @@ compile:
 install: compile
 	@install -D $(COMPILE_DIR)/libsmoothd.so $(PKG_ROOT)/usr/lib/libsmoothd.so
 	@install -D $(COMPILE_DIR)/smoothd $(PKG_ROOT)/usr/sbin/smoothd 
-	@install -D $(COMPILE_DIR)/ipbatchtest $(PKG_ROOT)/usr/sbin/ipbatchtest
 	@install -D $(COMPILE_DIR)/default $(PKG_ROOT)/usr/lib/smoothd/sockets/default 
 
 	@install -D $(COMPILE_DIR)/module.h $(PKG_ROOT)/usr/include/smoothwall/module.h

@@ -14,21 +14,16 @@ cdrom:
 	@mkdir cdrom
 
 images: cdrom
-	@make -C bootdisktwo
-	@make -C bootdiskone MEDIA=cdrom
+	@make -C booting
 
-initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz:
-	@make -C initrd
-
-cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
+cdrom/smoothwall.tgz:
 	@mkdir distrib
-
-	@install -D initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz distrib/boot/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 
 	@(for I in \
 		glibc \
 		libsmooth+setup \
 		newt \
+		slang \
 		devnodes \
 		libstdc++ \
 		libgcc \
@@ -53,6 +48,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 		bzip2 \
 		kbd \
 		e2fsprogs \
+		parted \
 		grep \
 		gzip \
 		module-init-tools \
@@ -64,16 +60,18 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 		logrotate \
 		sysvinit \
 		tar \
+		cpio \
 		util-linux \
 		joe \
 		wget \
 		iptables \
-		libipt_ACCOUNT \
-		ipp2p \
+		xtables-addons \
 		ipbatch \
 		pciutils \
 		kernel-runtime \
-		lilo \
+		kernel-runtimebig \
+		ueagle-data \
+		grub \
 		openssl \
 		openssh \
 		httpd \
@@ -123,6 +121,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 		oinkmaster \
 		openswan \
 		wireless_tools \
+		sqlite \
 		imspector \
 		diffutils \
 		traceroute \
@@ -134,6 +133,7 @@ cdrom/smoothwall.tgz: initrd/initrd-$(KERNEL_VER)-$(KERNEL_PL).gz
 		miniupnpd \
 		ez-ipupdate \
 		noip \
+		basicrootfs \
 		coretree \
 	; do \
 		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
@@ -165,6 +165,7 @@ ifeq ($(TYPE), -devel)
 		apr \
 		apr-util \
 		subversion \
+		git \
 		screen \
 		lynx \
 		groff \
@@ -227,7 +228,7 @@ extracontent: cdrom
 	@(cd cdrom; rm -rf `find -name .svn`)
 
 all: images cdrom/smoothwall.tgz extracontent
-	@cp -avR bootdiskone/isolinux/ cdrom/
+	@cp -avR booting/isolinux/ cdrom/
 	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(PRODUCT_EXTRA)$(TYPE)-$(ARCH).iso -J -c boot.cat \
 		-b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table -V $(BASENAME) cdrom
 	@echo "smoothwall-$(BASENAME)$(PRODUCT_EXTRA)$(TYPE)-$(ARCH).iso build complete"
@@ -235,8 +236,7 @@ all: images cdrom/smoothwall.tgz extracontent
 clean:
 	@rm -rf cdrom distrib
 
-	@make -C bootdisktwo clean
-	@make -C bootdiskone MEDIA=cdrom clean
+	@make -C booting clean
 	
 download:
 	@true
