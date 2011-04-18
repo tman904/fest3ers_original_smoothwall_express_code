@@ -5,9 +5,9 @@ KS8851 MLL Network driver|ks8851_mll
 Packet Engines Yellowfin G-NIC Gigabit Ethernet driver|yellowfin
 Marvell Yukon 2 Gigabit Ethernet driver|sky2
 Tehuti Networks(R) Network Driver|tehuti
-Digital 21*4* Tulip ethernet driver|tulip/tulip
-Winbond W89c840 Ethernet driver|tulip/winbond-840
-Davicom DM910X fast ethernet driver|tulip/dmfe
+Digital 21*4* Tulip ethernet driver|tulip
+Winbond W89c840 Ethernet driver|winbond-840
+Davicom DM910X fast ethernet driver|dmfe
 Sun HappyMealEthernet(HME) 10/100baseT ethernet driver|sunhme
 Broadcom 44xx/47xx 10/100 PCI ethernet driver|b44
 AceNIC/3C985/GA620 Gigabit Ethernet driver|acenic
@@ -39,16 +39,16 @@ Intel(R) 82576 Virtual Function Network Driver|igbvf
 Intel(R) PRO/1000 Network Driver|e1000e
 Intel(R) PRO/1000 Network Driver|e1000
 Sun Cassini(+) ethernet driver|cassini
-Atheros L1 Gigabit Ethernet Driver|atlx/atl1
-Atheros Fast Ethernet Network Driver|atlx/atl2
-Myricom 10G driver (10GbE)|myri10ge/myri10ge
+Atheros L1 Gigabit Ethernet Driver|atl1
+Atheros Fast Ethernet Network Driver|atl2
+Myricom 10G driver (10GbE)|myri10ge
 OpenCores Ethernet MAC driver|ethoc
 VMware vmxnet virtual NIC driver|vmxnet
 VMware vmxnet3 virtual NIC driver|vmxnet3
 Intel(R) 10 Gigabit PCI Express Network Driver|ixgbe
 Mellanox ConnectX HCA low-level driver|mlx4_core
 Mellanox ConnectX HCA Ethernet driver|mlx4_en
-Chelsio 10Gb Ethernet Driver|chelsio/cxgb
+Chelsio 10Gb Ethernet Driver|cxgb
 National Semiconductor DP8381x series PCI Ethernet driver|natsemi
 VIA Networking Velocity Family Gigabit Ethernet Adapter Driver|via-velocity
 HP CASCADE Architecture Driver for 100VG-AnyLan Network Adapters|hp100
