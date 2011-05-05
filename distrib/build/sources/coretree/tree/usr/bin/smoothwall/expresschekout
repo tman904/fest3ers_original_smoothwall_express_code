@@ -1,5 +1,15 @@
 #!/bin/sh
 
+BRANCH=stable
+
+if [ "$1" != "" ]; then
+	BRANCH=$1
+fi
+
 cd /usr/src
 
-svn co https://smoothwall.svn.sourceforge.net/svnroot/smoothwall/trunk expresscore
+git clone git://smoothwall.git.sourceforge.net/gitroot/smoothwall/smoothwall smoothwall
+
+cd smoothwall
+
+git checkout -b $BRANCH origin/$BRANCH

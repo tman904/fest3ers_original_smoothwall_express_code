@@ -5,7 +5,7 @@ date
 
 cd /usr/src
 
-cd expresscore/distrib/build
+cd smoothwall/distrib/build
 
 make predownload
 make build
