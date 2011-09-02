@@ -7,14 +7,14 @@
 include ../Makefile.conf
 
 PACKAGE = dhcp
-VERSION = 3.0.7
+VERSION = 3.1-ESV-R3
 
 BASE_URL = ftp://ftp.isc.org/isc/dhcp/
 
 CONFIGURE = yes
 INSTALL = yes
 
-configure: $(DIR)/
+configure: patch
 	@(cd $(COMPILE_DIR); ./configure);
 	@echo >>$(COMPILE_DIR)/includes/site.h "#define _PATH_DHCPD_DB \"/usr/etc/dhcpd.leases\""
 	@echo >>$(COMPILE_DIR)/includes/site.h "#define _PATH_DHCPD_CONF \"/usr/etc/dhcpd.conf\""

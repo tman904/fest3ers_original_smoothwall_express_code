@@ -7,8 +7,10 @@
 include ../Makefile.conf
 
 PACKAGE = tar
-VERSION = 1.16.1
+VERSION = 1.26
 
 BASE_URL = ftp://ftp.gnu.org/gnu/tar
+
+export FORCE_UNSAFE_CONFIGURE = 1
 
 include ../Makefile.rules
