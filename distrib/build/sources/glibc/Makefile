@@ -40,7 +40,7 @@ BUILDTARBALL = yes
 download:
 	$(DL_CMD) $(BASE_URL)/glibc-$(VERSION)$(EXTENSION)
 	$(DL_CMD) $(BASE_URL)/glibc-linuxthreads-$(VERSION)$(EXTENSION)
-	$(DL_CMD) ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz
+	$(DL_CMD) ftp://munnari.oz.au/pub/tzdata*.tar.gz
 
 $(DIR)/: download
 	tar -jxvf $(DOWNLOADS_DIR)/$(DIR)$(EXTENSION)
