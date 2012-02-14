@@ -1,0 +1,2 @@
+./etc/ppp/ip-up
+./etc/logrotate.d/snort

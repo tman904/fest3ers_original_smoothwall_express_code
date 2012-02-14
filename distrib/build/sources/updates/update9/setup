@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo "Update 9 installing."
+
+tar -zxvf patch.tar.gz -C /
+
+chmod 600 /etc/shadow
