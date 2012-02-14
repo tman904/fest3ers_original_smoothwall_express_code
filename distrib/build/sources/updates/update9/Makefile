@@ -1,4 +1,4 @@
-UPDATE_PACKAGES = dhcp sqlite imspector gzip tar openssl wget httpd clamav
+UPDATE_PACKAGES = dhcp sqlite imspector gzip tar openssl wget httpd clamav dnsmasq snort
 
 UPDATE_ID = 009
 UPDATE_NAME = update9
