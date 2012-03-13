@@ -5,7 +5,7 @@ VERSION = 1.11
 
 LICENCE_FILE = $(DIR)/LICENSE
 
-BASE_URL = http://kent.dl.sourceforge.net/libdnet/
+BASE_URL = http://ignum.dl.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)/$(TARBALL)
 
 PREPARE = yes
 
