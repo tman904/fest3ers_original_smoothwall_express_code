@@ -7,13 +7,17 @@
 include ../Makefile.conf
 
 PACKAGE = snort
-VERSION = 2.9.1
+VERSION = 2.9.2.1
 
 BASE_URL = http://www.snort.org/dl/snort-current
 
 PATCH_FILE1 = snort-pidfix.patch
 
+DOWNLOAD = yes
 INSTALL = yes
+
+download:
+	wget $(BASE_URL)/$(TARBALL)$(EXTENSION) -O $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION)
 
 install: compile
 	-mkdir $(PKG_ROOT)
