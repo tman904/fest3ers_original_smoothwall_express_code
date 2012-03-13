@@ -168,6 +168,8 @@ build eagle-usb
 build cnxadsl
 
 build dhcp
+build libdnet
+build daq
 build snort
 build oinkmaster
 build openswan

@@ -117,6 +117,7 @@ cdrom/smoothwall.tgz:
 		eagle-usb \
 		cnxadsl \
 		dhcp \
+		libdnet \
 		daq \
 		snort \
 		oinkmaster \
