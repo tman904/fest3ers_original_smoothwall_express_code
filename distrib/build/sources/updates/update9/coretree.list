@@ -1,3 +1,4 @@
 ./etc/ppp/ip-up
 ./etc/logrotate.d/snort
 ./etc/rc.d/rc.firewall.up
+./etc/snort.conf
