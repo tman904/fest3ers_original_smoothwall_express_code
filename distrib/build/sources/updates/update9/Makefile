@@ -1,4 +1,4 @@
-UPDATE_PACKAGES = libpcap tcpdump libdnet daq snort dhcp sqlite imspector gzip tar openssl wget httpd clamav dnsmasq
+UPDATE_PACKAGES = libpcap tcpdump libdnet daq snort dhcp sqlite imspector gzip tar openssl wget httpd clamav dnsmasq coretree
 
 UPDATE_ID = 009
 UPDATE_NAME = update9
