@@ -2,6 +2,8 @@
 
 echo "Update 9 installing."
 
+rm -rf /usr/lib/snort
+
 tar -zxvf patch.tar.gz -C /
 
 chmod 600 /etc/shadow
