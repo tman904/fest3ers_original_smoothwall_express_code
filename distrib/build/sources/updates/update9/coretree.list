@@ -2,3 +2,4 @@
 ./etc/logrotate.d/snort
 ./etc/rc.d/rc.firewall.up
 ./etc/snort.conf
+./etc/threshold.conf
