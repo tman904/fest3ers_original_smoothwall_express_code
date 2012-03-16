@@ -2,7 +2,7 @@
 
 echo "Update 9 installing."
 
-rm -rf /usr/lib/snort
+rm -rf /usr/lib/snort_*
 
 tar -zxvf patch.tar.gz -C /
 
