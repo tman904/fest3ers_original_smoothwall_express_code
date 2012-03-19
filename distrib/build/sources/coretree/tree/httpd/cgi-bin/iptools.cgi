@@ -25,6 +25,29 @@ $selected{'TOOL'}{'PING'} = '';
 $selected{'TOOL'}{'TRACEROUTE'} = '';
 $selected{'TOOL'}{$cgiparams{'TOOL'}} = 'SELECTED';
 
+if ($cgiparams{'ACTION'} eq $tr{'run'})
+{
+	@inaddrs = split(/,/, $cgiparams{'IP'});
+
+	foreach $addr (@inaddrs)
+	{
+		if (&validip($addr)) {
+			push @addrs, $addr; }
+		else
+		{
+			if ($addr =~ /^[A-Za-z0-9\-\.]+$/) {
+				if ($address = gethostbyname($addr)) {
+					push @addrs, inet_ntoa($address); }
+				else {
+					$errormessage = "$tr{'could not resolve'} $addr"; }
+			}
+			else {
+				$errormessage = $tr{'invalid input'};
+			}
+		}
+	}
+}
+
 &openpage($tr{'network utilities'}, 1, '', 'tools');
 
 &openbigbox('100%', 'LEFT');
@@ -55,40 +78,24 @@ END
 
 &closebox();
 
-if ($cgiparams{'ACTION'} eq $tr{'run'})
+unless ($errormessage)
 {
-	@inaddrs = split(/,/, $cgiparams{'IP'});
-
-	foreach $addr (@inaddrs)
+	foreach $addr (@addrs)
 	{
-		if (&validip($addr)) {
-			push @addrs, $addr; }
-		else
-		{
-			if ($address = gethostbyname($addr)) {
-				push @addrs, inet_ntoa($address); }
-			else {
-				$errormessage = "$tr{'could not resolve'} $addr"; }
-		}		
-	}
+		$iaddr = inet_aton($addr);
+		$hostname = gethostbyaddr($iaddr, AF_INET);
+		if (!$hostname) { $hostname = $tr{'lookup failed'}; }
+	
+		&openbox("${addr} (${hostname})");
 
-	unless ($errormessage)
-	{
-		foreach $addr (@addrs)
-		{
-			$iaddr = inet_aton($addr);
-			$hostname = gethostbyaddr($iaddr, AF_INET);
-			if (!$hostname) { $hostname = $tr{'lookup failed'}; }
+		print "<PRE>\n";
+		if ($cgiparams{'TOOL'} eq 'PING') {
+			system('/usr/bin/ping', '-n', '-c', '5', $addr); }
+		elsif ($cgiparams{'TOOL'} eq 'TRACEROUTE') {
+			system('/bin/traceroute', '-n', $addr); }
+		print "</PRE>\n";
 
-			&openbox("${addr} (${hostname})");
-			print "<PRE>\n";
-			if ($cgiparams{'TOOL'} eq 'PING') {
-				system('/usr/bin/ping', '-n', '-c', '5', $addr); }
-			elsif ($cgiparams{'TOOL'} eq 'TRACEROUTE') {
-				system('/bin/traceroute', '-n', $addr); }
-			print "</PRE>\n";
-			&closebox();
-		}
+		&closebox();
 	}
 }
 

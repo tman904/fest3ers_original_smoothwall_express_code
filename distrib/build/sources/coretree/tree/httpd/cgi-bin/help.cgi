@@ -18,6 +18,10 @@ require "/usr/lib/smoothwall/langs/glossary.${language}.pl";
 
 my $needhelpwith = $ENV{'QUERY_STRING'};
 
+unless ($needhelpwith =~ /^[A-Za-z0-9\.]+$/) {
+	$needhelpwith = 'index.cgi';
+}
+
 &showhttpheaders();
 
 &openpage($tr{'help'}, 1, '', 'help');
