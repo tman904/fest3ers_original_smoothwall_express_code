@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <string>
+#include <cstring>
 #include <map>
 #include <dlfcn.h>
 #include "setuid.h"
