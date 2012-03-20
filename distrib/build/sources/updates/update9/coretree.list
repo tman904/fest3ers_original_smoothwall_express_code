@@ -5,3 +5,4 @@
 ./etc/threshold.conf
 ./httpd/cgi-bin/help.cgi
 ./httpd/cgi-bin/iptools.cgi
+./etc/logrotate.d/smoothd
