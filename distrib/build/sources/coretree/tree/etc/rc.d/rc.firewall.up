@@ -222,10 +222,8 @@ fi
 
 # Allow GREEN to talk to ORANGE.
 if [ "$ORANGE_DEV" != "" ]; then
-	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $GREEN_DEV -m state \
-		--state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -A FORWARD -i $GREEN_DEV -o $ORANGE_DEV -m state \
-		--state NEW,ESTABLISHED,RELATED -j ACCEPT
+		--state NEW -j ACCEPT
 	# dmz pinhole chain.  setdmzholes setuid prog adds rules here to allow
 	# ORANGE to talk to GREEN.
 	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $GREEN_DEV -j dmzholes
@@ -233,10 +231,8 @@ fi
 
 # Allow GREEN to talk to PURPLE.
 if [ "$PURPLE_DEV" != "" ]; then
-	/sbin/iptables -A FORWARD -i $PURPLE_DEV -o $GREEN_DEV -m state \
-		--state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -A FORWARD -i $GREEN_DEV -o $PURPLE_DEV -m state \
-		--state NEW,ESTABLISHED,RELATED -j ACCEPT
+		--state NEW -j ACCEPT
 	# dmz pinhole chain.  setdmzholes setuid prog adds rules here to allow
 	# PURPLE to talk to GREEN.
 	/sbin/iptables -A FORWARD -i $PURPLE_DEV -o $GREEN_DEV -j dmzholes
@@ -244,10 +240,8 @@ fi
 
 # Allow PURPLE to talk to ORANGE.
 if [ "$PURPLE_DEV" != "" -a "$ORANGE_DEV" != "" ]; then
-	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $PURPLE_DEV -m state \
-		--state ESTABLISHED,RELATED -j ACCEPT
 	/sbin/iptables -A FORWARD -i $PURPLE_DEV -o $ORANGE_DEV -m state \
-		--state NEW,ESTABLISHED,RELATED -j ACCEPT
+		--state NEW -j ACCEPT
 	# dmz pinhole chain.  setdmzholes setuid prog adds rules here to allow
 	# ORANGE to talk to PURPLE.
 	/sbin/iptables -A FORWARD -i $ORANGE_DEV -o $PURPLE_DEV -j dmzholes
