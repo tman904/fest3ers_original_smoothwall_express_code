@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <vector>
 #include <string>
+#include <cstring>
 
 #define STRING_SIZE 256
 #define LETTERS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

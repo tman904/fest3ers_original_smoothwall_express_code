@@ -7,14 +7,26 @@
 include ../Makefile.conf
 
 PACKAGE = libpcap
-VERSION = 1.2.1
+VERSION = 1.3.0
 
-BASE_URL = http://www.tcpdump.org//release/
+BASE_URL = http://www.tcpdump.org/release/
 
+CONFIGURE = yes
 INSTALL = yes
 
+configure: patch
+	(if [ ! -e $(COMPILE_DIR) ]; then mkdir $(COMPILE_DIR); fi)
+ifneq ($(DIR), $(COMPILE_DIR))
+	(cd $(COMPILE_DIR); $(PRE_CONFIGURE) ../$(DIR)/configure --prefix=$(PKG_DIR) $(CONFIG_OPTS))
+else
+	(cd $(COMPILE_DIR); $(PRE_CONFIGURE) ./configure --prefix=$(PKG_DIR) $(CONFIG_OPTS))
+endif
+	sed -i 's@INSTALL = /usr/bin/install -c@INSTALL = /usr/bin/install -c -D@' $(DIR)/Makefile
+
 install: compile
-	-mkdir $(PKG_ROOT)
+ifeq ($(BUILD_PHASE), Final)
+	@mkdir -p $(PKG_ROOT)
+endif
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	@mkdir -p $(PKG_ROOT)/usr/include/net
 	@(cd $(PKG_ROOT)/usr/include/net; ln -s ../pcap-bpf.h bpf.h)

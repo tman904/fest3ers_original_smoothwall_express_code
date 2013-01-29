@@ -7,17 +7,21 @@
 include ../Makefile.conf
 
 PACKAGE = wget
-VERSION = 1.13.3
+VERSION = 1.14
 
 BASE_URL = ftp://ftp.gnu.org/gnu/wget
+EXTENSION = .tar.xz
 
-ifndef BUILDENV
-export CFLAGS += -I/usr/ssl/include
-export LDFLAGS += -L/usr/ssl/lib
-
-CONFIG_OPTS = --with-ssl -with-ssl=openssl
-else
+ifeq ($(BUILD_PHASE), Stage_3)
 CONFIG_OPTS = --without-ssl
 endif
+
+ifeq ($(BUILD_PHASE), Final)
+CONFIG_OPTS = --with-ssl=openssl
+endif
+
+COMPILE = yes
+compile: configure
+	$(MAKE) $(JOBS) -C $(COMPILE_DIR)
 
 include ../Makefile.rules

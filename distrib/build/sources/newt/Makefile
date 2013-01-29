@@ -14,6 +14,7 @@ PATCH_FILE1 = no-python.patch
 INSTALL = yes
 
 install: compile
-	@make -C $(COMPILE_DIR) instroot=$(PKG_ROOT) install
+	@mkdir -p $(PKG_ROOT)
+	@$(MAKE) -C $(COMPILE_DIR) instroot=$(PKG_ROOT) install
 
 include ../Makefile.rules

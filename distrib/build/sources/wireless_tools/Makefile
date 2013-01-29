@@ -12,18 +12,21 @@ VERSION = 28
 BASE_URL = http://pcmcia-cs.sourceforge.net/ftp/contrib/
 
 TARBALL = $(PACKAGE).$(VERSION)
+DIR = $(TARBALL)
 
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
 
 configure: patch
+	@find $(DIR) -type d -exec chmod +rx {} \;
 	@true
 
 compile: configure
-	@make -C $(DIR) PREFIX=/usr
+	@$(MAKE) $(JOBS) -C $(DIR) PREFIX=/usr
 
 install: compile
-	@make -C $(DIR) PREFIX=$(PKG_ROOT)/usr install
+	@mkdir -p $(PKG_ROOT)
+	@$(MAKE) -C $(DIR) PREFIX=$(PKG_ROOT)$(PKG_DIR) install
 
 include ../Makefile.rules

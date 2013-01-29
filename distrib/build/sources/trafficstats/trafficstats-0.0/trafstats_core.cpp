@@ -16,13 +16,18 @@ extern "C" {
 #include <linux/pkt_sched.h>
 #include <resolv.h>
 #include <libnetlink.h>
+#include <unistd.h>
 #include <ll_map.h>
 #include <rtm_map.h>
 // has to be C linkage, as iptables stuff wont compile with C++
 #include "trafstats_iptables.h"
 }
 
+#include <algorithm>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
+#include <cmath>
 #include <iostream>
 #include <iterator>
 #include <ostream>
@@ -659,7 +664,7 @@ Vtraf_stat list_rules(std::string chain) {
 	std::string::size_type pos;
 	std::string dev;
 	Vtraf_stat stats;
-	struct iptable_data res[MAX_RULES] = {0};
+	struct iptable_data res[MAX_RULES] = {{0}};
 	int rn;
 	
 	stats.clear();
@@ -784,7 +789,7 @@ Vtraf_stat list_account() {
 			traf_stat outstat;
 
 			outstat.account_table = instat.account_table = table;
-			outstat.net_ip = instat.net_ip = entry->ip;
+			outstat.net_ip = instat.net_ip = ntohl(entry->ip);
 			outstat.direction = "up";
 			outstat.stats.bytes = (__u64)entry->src_bytes;
 			outstat.stats.packets = (__u32)entry->src_packets;

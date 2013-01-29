@@ -7,12 +7,13 @@
 include ../Makefile.conf
 
 PACKAGE = subversion
-VERSION = 1.4.3
+VERSION = 1.7.5
 
-BASE_URL = http://subversion.tigris.org/downloads/
+BASE_URL = http://archive.apache.org/dist/subversion
 
 EXTENSION = .tar.bz2
 
-CONFIG_OPTS = --with-ssl
+#CONFIG_OPTS = --with-neon --with-apr=/usr/apache2 --with-apr-util=/usr/apache2
+CONFIG_OPTS = --with-neon
 
 include ../Makefile.rules

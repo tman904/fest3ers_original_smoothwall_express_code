@@ -6,21 +6,23 @@
 # where to find the external stuff - you will probably have to change this
 IPTABLES_SRC_DIR=/build/sources/iptables/iptables-$(IPTABLES_VERSION)
 IPROUTE_INC_DIR=/build/sources/iproute2/iproute2/include
-IPT_LIB_DIR=/usr/lib/iptables
-KERNEL_DIR=/build/sources/kernel-runtime/linux-$(KERNEL_VER)
+ACCOUNT_INC_DIR=/build/sources/xtables-addons/xtables-addons-$(XTA_VER)/extensions/ACCOUNT
+IPT_LIB_DIR=$(LIB_IPT_DIR)
+KERNEL_DIR=/build/sources/kernel-roadster/linux-$(KERNEL_VER)
 IPROUTE_LIB_DIR=/build/sources/iproute2/iproute2/lib
-ACCOUNT_SRC_DIR=/build/sources/xtables-addons/xtables-addons-1.19/extensions/ACCOUNT
+IPTABLES_OBJS= $(IPTABLES_SRC_DIR)/iptables/xtables_multi-iptables.o
+
 
 # COPT_FLAGS=-O2
 # COPT_FLAGS:=-g
-MYCFLAGS=-DMODSWROOT=\"$(MODSWROOT)\" -DIPTABLES_VERSION=\"$(IPTABLES_VERSION)\" -Wall -Wunused -I/usr/include/smoothwall -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I$(ACCOUNT_SRC_DIR) -I$(IPROUTE_INC_DIR)  -I. 
+MYCFLAGS=-DMODSWROOT=\"$(MODSWROOT)\" -DIPTABLES_VERSION=\"$(IPTABLES_VERSION)\" -Wall -Wunused -I/usr/include/smoothwall -I$(KERNEL_DIR)/include -I$(IPTABLES_SRC_DIR)/include/ -I$(IPROUTE_INC_DIR)  -I$(ACCOUNT_INC_DIR) -I. 
 
 
 OBJS= trafstats_core.o trafstats_iptables.o traffic_config.o
 
 # LDFLAGS      = -lsmoothwall -L$(IPROUTE_LIB_DIR) -rdynamic
 LDFLAGS      = -lsmoothd -L$(IPROUTE_LIB_DIR) -rdynamic
-LDLIBS       = -lxt_ACCOUNT_cl -lcurses -lnetlink -ldl -lnsl -lxtables -liptc
+LDLIBS       = -lxt_ACCOUNT_cl -lncurses -ltinfo -lnetlink -ldl -lnsl -lxtables -lipq -lip4tc
 
 
 
@@ -36,8 +38,8 @@ reltimes_unittest: reltimes_unittest.cpp reltimes.hpp timestamp.hpp
 	mv gmon.out gmon.reltimes_unittest
 
 
-trafficmon:	trafficmon.o $(OBJS)
-	$(CXX) $(CFLAGS) $(MYCFLAGS) $(LDFLAGS) -o trafficmon trafficmon.o $(OBJS) $(LDLIBS)
+trafficmon:	trafficmon.o $(OBJS) $(IPTABLES_OBJS)
+	$(CXX) $(CFLAGS) $(MYCFLAGS) $(LDFLAGS) -o trafficmon trafficmon.o $(OBJS) $(IPTABLES_OBJS) $(LDLIBS)
 
 trafficmon.o: trafficmon.cpp trafstats_core.hpp timestamp.hpp
 	$(CXX) -c $(CFLAGS) $(MYCFLAGS) trafficmon.cpp
@@ -45,8 +47,8 @@ trafficmon.o: trafficmon.cpp trafstats_core.hpp timestamp.hpp
 trafstats_core.o: trafstats_core.cpp trafstats_core.hpp
 	$(CXX) -c $(CFLAGS) $(MYCFLAGS) trafstats_core.cpp
 
-trafficlogger:	trafficlogger.o $(OBJS)
-	$(CXX) $(CFLAGS) $(MYCFLAGS) $(LDFLAGS) -o trafficlogger trafficlogger.o $(OBJS) $(LDLIBS)
+trafficlogger:	trafficlogger.o $(OBJS) $(IPTABLES_OBJS)
+	$(CXX) $(CFLAGS) $(MYCFLAGS) $(LDFLAGS) -o trafficlogger trafficlogger.o $(OBJS) $(IPTABLES_OBJS) $(LDLIBS)
 
 trafficlogger.o: trafficlogger.cpp trafstats_core.hpp reltimes.hpp timestamp.hpp
 	$(CXX) -c $(CFLAGS) $(MYCFLAGS) trafficlogger.cpp

@@ -25,7 +25,7 @@ extern char *english_tr[];
 int main(int argc, char *argv[])
 {
 	int choice;
-	char *sections[13]; /* need to fill this out AFTER knowning lang */
+	char *sections[13]; /* need to fill this out AFTER knowing lang */
 	int rc;
 	struct keyvalue *kv;
 	char selectedshortlang[STRING_SIZE] = "en";
@@ -52,12 +52,6 @@ int main(int argc, char *argv[])
 	
 	fprintf(flog, "Setup program started.\n");
 
-	if (initnicdevices() < 0)
-	{
-		printf("Unable to initialize the NIC device driver list.");
-		goto EXIT;
-	}
-
 	kv = initkeyvalues();
 	if (!(readkeyvalues(kv, CONFIG_ROOT "main/settings")))
 	{
@@ -71,24 +65,25 @@ int main(int argc, char *argv[])
 	newtInit();
 	newtCls();
 
-	newtDrawRootText(0, 0, "                SmoothWall Express 3.0 -- http://smoothwall.org/");
+	newtDrawRootText(0, 0, "                SmoothWall Express 3.1 -- http://smoothwall.org/");
 	newtPushHelpLine(ctr[TR_HELPLINE]);		
 
 	if (automode == 0)
 	{
 		sections[0] = ctr[TR_RESTORE_CONFIGURATION];
 		sections[1] = ctr[TR_KEYBOARD_MAPPING];
-		sections[2] = ctr[TR_HOSTNAME];
-		sections[3] = ctr[TR_WEB_PROXY];
-		sections[4] = ctr[TR_DEFAULT_SECURITY_LEVEL];
-		sections[5] = ctr[TR_ISDN_CONFIGURATION];
-		sections[6] = ctr[TR_ADSL_CONFIGURATION];
-		sections[7] = ctr[TR_NETWORKING];	
-		sections[8] = ctr[TR_DHCP_SERVER_CONFIGURATION],
-		sections[9] = ctr[TR_ROOT_PASSWORD];
-		sections[10] = ctr[TR_SETUP_PASSWORD];
-		sections[11] = ctr[TR_ADMIN_PASSWORD];
-		sections[12] = NULL;	
+		sections[2] = ctr[TR_TIMEZONE];
+		sections[3] = ctr[TR_HOSTNAME];
+		sections[4] = ctr[TR_WEB_PROXY];
+		sections[5] = ctr[TR_DEFAULT_SECURITY_LEVEL];
+		sections[6] = ctr[TR_ISDN_CONFIGURATION];
+		sections[7] = ctr[TR_ADSL_CONFIGURATION];
+		sections[8] = ctr[TR_NETWORKING];	
+		sections[9] = ctr[TR_DHCP_SERVER_CONFIGURATION],
+		sections[10] = ctr[TR_ROOT_PASSWORD];
+		sections[11] = ctr[TR_SETUP_PASSWORD];
+		sections[12] = ctr[TR_ADMIN_PASSWORD];
+		sections[13] = NULL;	
 	
 		usbfail = 1;
 		if (!stat("/proc/bus/usb/devices", &statbuf))
@@ -120,42 +115,46 @@ int main(int argc, char *argv[])
 					break;
 				
 				case 2:
+					handletimezone();
+					break;
+				
+				case 3:
 					handlehostname();
 					break;
 
-				case 3:
+				case 4:
 					handlewebproxy();
 					break;
 					
-				case 4:
+				case 5:
 					handledefaults();
 					break;
 
-				case 5:
+				case 6:
 					handleisdn();
 					break;
 
-				case 6:
+				case 7:
 					handleadsl();
 					break;
 				
-				case 7:
+				case 8:
 					handlenetworking();
 					break;
 					
-				case 8:
+				case 9:
 					handledhcp();
 					break;
 									
-				case 9:
+				case 10:
 					handlerootpassword();
 					break;
 
-				case 10:
+				case 11:
 					handlesetuppassword();
 					break;
 					
-				case 11:
+				case 12:
 					handleadminpassword();
 					break;
 		
@@ -166,11 +165,8 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		mysystem("/bin/mount -t usbfs none /proc/bus/usb");
 		
 		usbfail = 1;
-		if (!stat("/proc/bus/usb/devices", &statbuf))
-			usbfail = 0;
 				
 		if (newtWinChoice(TITLE, ctr[TR_NO], ctr[TR_YES],
 			ctr[TR_RESTORE_LONG]) != 1)
@@ -180,6 +176,8 @@ int main(int argc, char *argv[])
 		}
 	
 		if (!(handlekeymap()))
+			goto EXIT;
+		if (!(handletimezone()))
 			goto EXIT;
 		if (!(handlehostname()))
 			goto EXIT;
@@ -236,9 +234,6 @@ int main(int argc, char *argv[])
 		if (!(handlerootpassword()))
 			goto EXIT;
 	
-		if (!usbfail)
-			mysystem("/bin/umount /proc/bus/usb");
-
 		autook = 1;
 	}
 

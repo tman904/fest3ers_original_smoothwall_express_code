@@ -1,5 +1,0 @@
-/dev/sda|/dev/sda%d
-/dev/sdb|/dev/sdb%d
-/dev/rd/c0d0|/dev/rd/c0d0p%d
-/dev/ida/c0d0|/dev/ida/c0d0p%d
-/dev/cciss/c0d0|/dev/cciss/c0d0p%d

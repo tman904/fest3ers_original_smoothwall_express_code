@@ -4,13 +4,13 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-BASENAME = express-3.0
+BASENAME = Express-3.1
 
 PRODUCT_NAME = Express
-PRODUCT_VERSION = 3.0
+PRODUCT_VERSION = 3.1
 
-PRODUCT_EXTRA = -sp3
+PRODUCT_EXTRA = -beth
 
-UI_VERSION = 3.0
+UI_VERSION = 3.1
 FIXES_NUMBER = 0
-REVISION = polar
+REVISION = orca

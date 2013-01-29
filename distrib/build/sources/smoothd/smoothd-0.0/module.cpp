@@ -4,6 +4,9 @@
 
 #include <vector>
 #include <string>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
 #include <map>
 #include <dlfcn.h>
 #include "module.h"
@@ -11,6 +14,7 @@
 #include <syslog.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 ModuleFunction::ModuleFunction()
 {

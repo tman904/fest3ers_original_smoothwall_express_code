@@ -8,13 +8,12 @@ include ../Makefile.conf
 include ../Makefile.versions
 
 PACKAGE = miniupnpd
-VERSION = 1.5
+VERSION = 1.7
 
 BASE_URL = http://miniupnp.free.fr/files/
 
 PATCH_FILE1 = umask.patch
-PATCH_FILE2 = miniupnpd-poison.diff
-PATCH_FILE3 = genconfig.patch
+PATCH_FILE2 = genconfig.patch
 
 CONFIGURE = yes
 COMPILE = yes
@@ -24,10 +23,13 @@ configure: patch
 	@true
 
 compile: configure
-	@make -C $(DIR) -f Makefile.linux \
-		CFLAGS="-DIPTABLES_143=1 -I/build/sources/kernel-runtime/linux/include -I/build/sources/iptables/iptables-$(IPTABLES_VER)/include"	
+	@make $(JOBS) -C $(DIR) -f Makefile.linux \
+	  CFLAGS="-DIPTABLES_143 -DUSE_NETFILTER \
+	    -I../../iptables/iptables-$(IPTABLES_VER)/include" \
+	  LDFLAGS="-L$(IPT_LIBEXEC) -lip4tc -lip6tc"
 
 install: compile
-	@install -D $(DIR)/miniupnpd $(PKG_ROOT)/$(PKG_DIR)/sbin/miniupnpd
+	@mkdir -p $(PKG_ROOT)
+	@install -D $(DIR)/miniupnpd $(PKG_ROOT)$(PKG_DIR)/sbin/miniupnpd
 
 include ../Makefile.rules

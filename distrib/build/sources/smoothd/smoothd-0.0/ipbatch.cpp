@@ -20,11 +20,11 @@
 
 static std::vector<std::string> mybatch;
 
-// work form char *
+// work from char *
 int ipbatch(const char *arg) 
 {
    int rval = 0;
-   if(!strcmp(arg,"commit")) {
+   if (strcmp(arg,"commit") == 0) {
       rval = ipbatch(mybatch);
       mybatch.clear();
    }
@@ -36,7 +36,7 @@ int ipbatch(const char *arg)
 int ipbatch(const std::string &arg) 
 {
    int rval = 0;
-   if(arg == "commit") 
+   if (arg == "commit") 
    {
       rval = ipbatch(mybatch);
       mybatch.clear();

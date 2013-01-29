@@ -5,30 +5,44 @@
 # This code is distributed under the terms of the GPL v2.
 
 include ../Makefile.conf
+include ../Makefile.versions
 
 PACKAGE = iproute2
-VERSION = 2.6.37
+VERSION = 2.6.39
 
-BASE_URL = http://developer.osdl.org/dev/iproute2/download/
+BASE_URL = http://devresources.linuxfoundation.org/dev/iproute2/download
+EXTENSION=.tar.gz
 
-PATCH_FILE1 = iproute2-2.4.7-nomisc.patch
-
-EXTENSION = .tar.bz2
+PATCH_FILE1 = m_xt.c.patch
 
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
+CLEAN = yes
 
 PATHS = SBINDIR=/usr/sbin CONFDIR=/etc/iproute2 DOCDIR=/usr/share/doc/iproute2 MANDIR=/usr/share/man LIBDIR=/usr/lib/
 
 configure: patch
-	@true
+	@sed -i '/^TARGETS/s@ arpd@@g' $(COMPILE_DIR)/misc/Makefile
 
 compile: configure
-	@make -C $(COMPILE_DIR) -j $(PARA_JOBS) KERNEL_INCLUDE=/usr/include $(PATHS)
+	@$(MAKE) $(JOBS) -C $(COMPILE_DIR) KERNEL_INCLUDE=/usr/include $(PATHS)
 	@ln -s $(DIR) $(PACKAGE)
 
 install: compile
-	@make -C $(COMPILE_DIR) $(PATHS) DESTDIR=$(PKG_ROOT) MODDESTDIR=$(PKG_ROOT)/usr/lib/tc install
+	@mkdir -p $(PKG_ROOT)
+	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) MODDESTDIR=$(PKG_ROOT)/usr/lib/tc install
+	@mkdir -p $(PKG_ROOT)/usr/sbin
+	@ln -s /sbin/tc $(PKG_ROOT)/usr/sbin
+
+clean:
+	@echo -n " $(PACKAGE)"
+	@rm -rf $(DIR)
+	@rm -rf $(COMPILE_DIR)
+	@rm -f $(PACKAGE)
+ifeq ($(BUILD_PHASE), Final)
+	@rm -rf $(PKG_ROOT)
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
+endif
 	
 include ../Makefile.rules

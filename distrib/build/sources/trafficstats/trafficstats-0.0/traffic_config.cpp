@@ -151,7 +151,7 @@ const std::string traffic_config::class_name(const std::string &res) {
       std::ostringstream log;
                 
       log << "cant stat  " <<  "classnames!" << std::endl;
-      syslog(LOG_DEBUG,log.str().c_str());
+      syslog(LOG_WARNING,log.str().c_str());
       return res;
     }
     if(st.st_mtime >  class_names_last_mod) {

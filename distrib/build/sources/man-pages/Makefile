@@ -7,13 +7,16 @@
 include ../Makefile.conf
 
 PACKAGE = man-pages
-VERSION = 2.60
+VERSION = 3.38
 
-BASE_URL = http://www.kernel.org/pub/linux/docs/manpages/
+EXTENSION = .tar.xz
+
+BASE_URL = http://www.kernel.org/pub/linux/docs/man-pages/
 
 INSTALL = yes
 
 install: patch
-	@make -C $(DIR) prefix=$(PKG_ROOT) install
+	@mkdir -p $(PKG_ROOT)
+	@$(MAKE) -C $(DIR) prefix=$(PKG_ROOT) install
 
 include ../Makefile.rules

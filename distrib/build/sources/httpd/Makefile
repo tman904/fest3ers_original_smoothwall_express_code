@@ -11,16 +11,16 @@ VERSION = 2.2.22
 
 LICENCE_FILE = $(DIR)/COPYING
 
-BASE_URL = http://mirrors.enquira.co.uk/apache//httpd/
+BASE_URL = http://archive.apache.org/dist/httpd/
 
-CONFIG_OPTS = --enable-ssl --with-ssl=/usr/ssl \
+CONFIG_OPTS = --enable-ssl --with-ssl=/usr \
 	--with-included-apr --enable-mods-shared=all --enable-layout=RedHat
 
 CONFIGURE = yes
 INSTALL = yes
 
 configure: patch
-	@(cd $(DIR); ./configure $(CONFIG_OPTS) --prefix=/usr/apache2)
+	@(cd $(DIR); ./configure $(CONFIG_OPTS) --prefix=$(PKG_DIR))
 
 install: compile
 	@mkdir -p $(PKG_ROOT)

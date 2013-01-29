@@ -1,29 +1,18 @@
 # Copyright 2004-2010 SmoothWall Ltd
 
+include ../Makefile
 include ../Makefile.conf
 include ../Makefile.versions
 
 PACKAGE = xtables-addons
-VERSION =  $(XTADDONS_VER)
+VERSION =  $(XTABLES_ADDONS_VER)
 
-LICENCE_FILE = $(DIR)/COPYING
+EXTENSION = .tar.xz
 
-EXTENSION = .tar.bz2
+BASE_URL = http://downloads.sourceforge.net/project/xtables-addons/Xtables-addons/$(VERSION)
 
-BASE_URL = http://$(SOURCEFORGE_MIRROR).dl.sourceforge.net/sourceforge/xtables-addons/
-
-PATCH_FILE1 = mod-xtables-addon.patch
-PATCH_FILE2 = no-kernel-ver-check.patch
-
-CONFIG_OPTS = --with-kbuild=/build/sources/kernel-runtime/linux
-
-COMPILE = yes
-INSTALL = yes
-
-compile: configure
-	@make -C $(DIR)/extensions AM_CFLAGS=-I/build/sources/kernel-runtime/linux/include user-all-local
-
-install: compile
-	@make -C $(DIR)/extensions DESTDIR=$(PKG_ROOT)/ user-install-local
+CONFIG_OPTS = --with-gnu-ld \
+	      --with-kbuild=/build/sources/linux$(KERNEL_TYPE)/linux/ \
+	      --with-ksource=/lib/modules/$(K_SWE_VERSION)$(KERNEL_TYPE)/source
 
 include ../Makefile.rules

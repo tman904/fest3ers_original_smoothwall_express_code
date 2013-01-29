@@ -1,6 +1,7 @@
 #include "config.h"
 #include "setuid.h"
 #include <vector>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <dirent.h>

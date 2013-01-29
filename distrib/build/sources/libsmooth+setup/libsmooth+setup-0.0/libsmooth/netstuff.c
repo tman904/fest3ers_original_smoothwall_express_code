@@ -329,7 +329,7 @@ int initnicdevices(void)
 	while (fgets(s, STRING_SIZE, hfile) != NULL && c < MAX_NIC_DEVICES - 1)
 	{
 		if (s[strlen(s) - 1] == '\n')
-			s[strlen(s) - 1] = '\0'; 
+			s[strlen(s) - 1] = '\0';
 		result = strtok(s, "|");
 		count = 0;
 		
@@ -348,233 +348,14 @@ int initnicdevices(void)
 	fclose(hfile);
 
 	return c;
-}    
-
-/* Funky routine for loading all drivers (cept those are already loaded.). */
-int probecards(char *driver, char *driveroptions, int *pc)
-{
-	int c;
-	char message[1000];
-	char commandstring[STRING_SIZE];
-	int oldniccount = countcards();
-	
-	c = *pc;
-
-	while (strlen(nics[c].modulename))
-	{
-		if (!checkformodule(nics[c].modulename))
-		{
-			sprintf(commandstring, "/sbin/modprobe %s", nics[c].modulename);
-			sprintf(message, ctr[TR_LOOKING_FOR_NIC], nics[c].description);
-			if (runcommandwithstatus(commandstring, message) == 0)
-			{
-				if (countcards() > oldniccount)
-				{
-					if (newtWinChoice(TITLE, ctr[TR_OK], ctr[TR_SKIP], 
-						ctr[TR_SKIP_LONG], nics[c].description) != 1)
-					{
-						sprintf(commandstring, "/sbin/rmmod %s", nics[c].modulename);
-	  					mysystem(commandstring);
-  					}
-  					else
-					{
-						strcpy(driver, nics[c].modulename);
-						strcpy(driveroptions, "");
-						
-						/* Next probe run puts us at the next NIC type. */ 
-						*pc = c + 1;
-						
-						return 1;
-					}
-				}
-				else
-				{
-					/* A "false positive". Remove it. */
-					snprintf(commandstring, STRING_SIZE - 1, "/sbin/rmmod %s", nics[c].modulename);
-  					mysystem(commandstring);
-				}
-			}
-		}
-		c++;
-	}
-	strcpy(driver, "");
-	strcpy(driveroptions, "");
-	
-	*pc = c;
-	
-	return 0;
-}
-
-/* A listbox for selected the card... with a * MANUAL * entry at top for
- * manual module names. */
-int choosecards(char *driver, char *driveroptions)
-{
-	int c;
-	char **sections;
-	int drivercount;
-	int rc;
-	int choice;
-	char commandstring[STRING_SIZE];
-	char message[STRING_SIZE];
-	int done = 0;
-	int oldniccount = countcards();
-	
-	/* Count 'em */
-	c = 0; drivercount = 0;
-	while (strlen(nics[c].modulename))
-	{
-		drivercount++;
-		c++;
-	}
-	drivercount++;
-	sections = malloc((drivercount + 1) * sizeof(char *));
-	
-	/* Copy 'em. */
-	c = 0;
-	sections[c] = ctr[TR_MANUAL];
-	c++;
-	while (strlen(nics[c - 1].modulename))
-	{
-		sections[c] = nics[c - 1].description;
-		c++;
-	}
-	sections[c] = NULL;
-	
-	strcpy(driver, "");
-	strcpy(driveroptions, "");
-	
-	done = 0; choice = 1;
-	while (!done)
-	{
-		rc = newtWinMenu(ctr[TR_SELECT_NETWORK_DRIVER],
-			ctr[TR_SELECT_NETWORK_DRIVER_LONG], 50, 5, 5, 6,
-			sections, &choice, ctr[TR_OK], ctr[TR_CANCEL], NULL);
-		if (rc == 0 || rc == 1)
-		{
-			if (choice > 0)
-			{
-				/* Find module number, load module. */
-				c = choice - 1;	
-				if (!checkformodule(nics[c].modulename))
-				{
-					sprintf(commandstring, "/sbin/modprobe %s", nics[c].modulename);
-					sprintf(message, ctr[TR_LOOKING_FOR_NIC], nics[c].description);
-					if (runcommandwithstatus(commandstring, message) == 0)
-					{
-						if (countcards() > oldniccount)
-						{
-							strcpy(driver, nics[c].modulename);
-							strcpy(driveroptions, "");
-							done = 1;
-						}
-						else
-						{
-							errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
-							/* A "false positive". Remove it. */
-							snprintf(commandstring, STRING_SIZE - 1, "/sbin/rmmod %s", nics[c].modulename);
-  							mysystem(commandstring);
-  						}
-					}
-					else
-						errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
-				}
-				else
-					errorbox(ctr[TR_THIS_DRIVER_MODULE_IS_ALREADY_LOADED]);
-			}
-			else
-			{
-				manualdriver(driver, driveroptions);
-				if (strlen(driver))
-					done = 1;
-			}
-		}
-		else
-			done = 1;	
-	}
-
-	return 1;
-}
-
-/* Manual entry for gurus. */
-int manualdriver(char *driver, char *driveroptions)
-{
-	const char *values[] = { NULL, NULL };	/* pointers for the values. */
-	struct newtWinEntry entries[] =
-		{ { "", &values[0], 0 }, { NULL, NULL, 0 } };
-	int rc;
-	char commandstring[STRING_SIZE];
-	char *driverend;
-	int oldniccount = countcards();
-
-	strcpy(driver, "");
-	strcpy(driveroptions, "");
-	
-	rc = newtWinEntries(ctr[TR_SELECT_NETWORK_DRIVER], 
-		ctr[TR_MODULE_PARAMETERS], 50, 5, 5, 40, entries, 
-		ctr[TR_OK], ctr[TR_CANCEL], NULL);	
-	if (rc == 0 || rc == 1)
-	{
-		if (strlen(values[0]))
-		{
-			sprintf(commandstring, "/sbin/modprobe %s", values[0]);
-			if (runcommandwithstatus(commandstring, ctr[TR_LOADING_MODULE]) == 0)
-			{
-				if (countcards() > oldniccount)
-				{
-					if ((driverend = strchr(values[0], ' ')))
-					{
-						*driverend = '\0';
-						strcpy(driver, values[0]);
-						strcpy(driveroptions, driverend + 1);
-					}				
-					else
-					{
-						strcpy(driver, values[0]);
-						strcpy(driveroptions, "");
-					}
-				}
-				else
-				{
-					errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
-					/* Should probably remove the module here. */
-				}
-			}
-			else
-				errorbox(ctr[TR_UNABLE_TO_LOAD_DRIVER_MODULE]);
-		}
-		else
-			errorbox(ctr[TR_MODULE_NAME_CANNOT_BE_BLANK]);
-	}
-	free((char *) values[0]);
-
-	return 1;
 }
 
 /* Returns the total number of nics current available as ethX devices. */
 int countcards(void)
 {
- 	FILE *file;
-	char buffer[STRING_SIZE];
-	char *start;
-	int niccount = 0;
-	
-	if (!(file = fopen("/proc/net/dev", "r")))
-	{
-		fprintf(flog, "Unable to open /proc/net/dev in countcards()\n");
-		return 0;
-	}
-	
-	while (fgets(buffer, STRING_SIZE, file))
-	{
-		start = buffer;
-		while (*start == ' ') start++;
-		if (strncmp(start, "eth", strlen("eth")) == 0)
-			niccount++;
-	}
-	
-	fclose(file);
-	
-	return niccount;
+	int rc;
+	rc = runcommandwithstatus("/bin/bash -c \"exit `ls -C1d /sys/class/net/eth*|wc -l`\"", "Count NICs");
+	return (rc>>8);
 }
 
 /* Finds the listed module name and copies the card description back. */
@@ -598,36 +379,23 @@ int findnicdescription(char *modulename, char *description)
 }
 
 /* Returns MAC address string given the device. */
+/* Now using SYSFS */
 int getnicmac(char *dest, int size, char *dev)
 {
 	int fd = 0;
 	int found = 0;
-	struct ifreq req;
+	char nicAddressFileName[50];
 
 	strcpy(dest, "");
+	sprintf(nicAddressFileName, "/sys/class/net/%s/address", dev);
 
-	/* Create socket to do ioctl. */
-	if ((fd = socket(PF_INET, SOCK_DGRAM, 0)))
-	{
-		/* Set ifrn_name to device name eg. "eth0" */
-		snprintf(req.ifr_ifrn.ifrn_name, IFNAMSIZ, dev);
 
-		/* Do ioctl to get hardware address (MAC) */
-		if (!(ioctl(fd, SIOCGIFHWADDR, &req)))
+	if ((fd = open(nicAddressFileName, O_RDONLY)))
 		{
-			/* Format MAC into colon seperated string format. */
-			snprintf(dest, size, "%2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X",
-			req.ifr_ifru.ifru_hwaddr.sa_data[0] & 0xff, 
-			req.ifr_ifru.ifru_hwaddr.sa_data[1] & 0xff, 
-			req.ifr_ifru.ifru_hwaddr.sa_data[2] & 0xff, 
-			req.ifr_ifru.ifru_hwaddr.sa_data[3] & 0xff, 
-			req.ifr_ifru.ifru_hwaddr.sa_data[4] & 0xff, 
-			req.ifr_ifru.ifru_hwaddr.sa_data[5] & 0xff);
+		read(fd, dest, 17);
+		close (fd);
+		dest[17] = 0;
 			found = 1;
 		}
-	}
-
-	if (fd) close(fd);
-
 	return (found);
 }

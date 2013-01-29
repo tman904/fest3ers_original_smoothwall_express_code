@@ -53,12 +53,13 @@ distrib:
 	@(cd distrib; rm -rf `find -name .svn`)
 	@(cd distrib; rm -rf `find -name .gitignore`)
 
-	@(cd distrib/var/smoothwall/patches; perl -i -pe "s/ARCH/$(ARCH)/g;" installed)
+	@(cd distrib/var/smoothwall/patches; perl -i -pe "s/ARCH/$(mARCH)/g;" installed)
 
 all: distrib
 	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C distrib .
 
 clean:
+	@echo -n " $(PACKAGE)"
 	@rm -rf distrib
 	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 

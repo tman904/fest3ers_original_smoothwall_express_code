@@ -1,9 +1,8 @@
 #!/bin/sh
 
-# Blanked disable for IPv6 (enable on a per interface basis as needed)
-for FILE in /proc/sys/net/ipv6/conf/*/disable_ipv6; do
-	echo 1 > $FILE
-done
+# Get connmark bits and flags. This file contains the bit field definitions
+#   for the various conn types.
+. /etc/rc.d/inc.bits-flags
 
 # Disable ICMP Redirect Acceptance
 for FILE in /proc/sys/net/ipv4/conf/*/accept_redirects; do
@@ -32,6 +31,18 @@ echo 360 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_last_ack
 echo 630 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_close_wait
 echo 360 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_close
 
+# IPV6: Set default policy to ACCEPT local stuff, but reject forwarding
+/usr/sbin/ip6tables -F
+/usr/sbin/ip6tables -X
+
+/usr/sbin/ip6tables -P INPUT ACCEPT
+/usr/sbin/ip6tables -P FORWARD DROP
+/usr/sbin/ip6tables -P OUTPUT ACCEPT
+
+# And reject DNS
+/usr/sbin/ip6tables -A FORWARD -p udp --destination-port 53 -j REJECT
+/usr/sbin/ip6tables -A INPUT -p udp --destination-port 53 -j REJECT
+
 /sbin/iptables -F
 /sbin/iptables -X
 
@@ -47,10 +58,24 @@ echo 360 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_close
 
 # Link Local routing blocker
 /sbin/iptables -N lldrop
-/sbin/iptables -A lldrop -j LOG
+/sbin/iptables -A lldrop -j LOG --log-prefix "Denied-by-filter:lldrop "
 /sbin/iptables -A lldrop -j DROP
-/sbin/iptables -A FORWARD -s 169.254.0.0/16 -j lldrop
-/sbin/iptables -A FORWARD -d 169.254.0.0/16 -j lldrop
+
+# TEST-NET routing blocker
+# From RFC5737, "The blocks 192.0.2.0/24 (TEST-NET-1), 198.51.100.0/24
+# (TEST-NET-2), and 203.0.113.0/24 (TEST-NET-3) are provided for use in
+# documentation." They should not appear on any network and are not for
+# private use. So treat them as Link-Local addresses.
+/sbin/iptables -N tndrop
+/sbin/iptables -A tndrop -j LOG --log-prefix "Denied-by-filter:tndrop "
+/sbin/iptables -A tndrop -j DROP
+for TEST_NET in 192.0.2.0/24 198.51.100.0/24 203.0.113.0/24; do
+  for CHAIN in INPUT FORWARD OUTPUT; do
+    for DIR in s d; do
+      /sbin/iptables -A ${CHAIN} -${DIR} ${TEST_NET} -j tndrop
+    done
+  done
+done
 
 # IP blocker
 /sbin/iptables -N ipblock
@@ -65,10 +90,13 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -i $RED_DEV -j ipblock
 fi
 
+# localhost
+/sbin/iptables -A INPUT -i lo -j ACCEPT
+
 # Setup timed access chains.
 /sbin/iptables -N timedaccess
 /sbin/iptables -N timedaction
-/sbin/iptables -A timedaction -j LOG --log-prefix Denied-by-Timed-Access:-
+/sbin/iptables -A timedaction -j LOG --log-prefix " Denied-by-filter:timed-access "
 /sbin/iptables -A timedaction -j REJECT
 
 # Apply the time rules to deny the traffic.
@@ -99,8 +127,7 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A INPUT -i $RED_DEV -j spoof
 fi
 
-# localhost and ethernet.
-/sbin/iptables -A INPUT -i lo -j ACCEPT
+# Ethernet
 /sbin/iptables -A INPUT -i $GREEN_DEV -j ACCEPT
 if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -A INPUT -i $PURPLE_DEV -j ACCEPT
@@ -174,7 +201,7 @@ fi
 /sbin/iptables -A INPUT -j block
 
 # last rule in INPUT chain is for logging.
-/sbin/iptables -A INPUT -j LOG
+/sbin/iptables -A INPUT -j LOG --log-prefix "Denied-by-filter:INPUT "
 /sbin/iptables -A INPUT -j REJECT
 
 # Green, Orange and Purple chains for outbound, and allows for always allowed.
@@ -218,6 +245,8 @@ fi
 if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -m mark --mark 3 -j portfwf
 fi
+
+# Setup dmzholes chains for internal pinholes
 /sbin/iptables -N dmzholes
 
 # Allow GREEN to talk to ORANGE.
@@ -259,7 +288,7 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A FORWARD -i $RED_DEV ! -o $RED_DEV -j MINIUPNPD
 fi
 
-/sbin/iptables -A FORWARD -j LOG
+/sbin/iptables -A FORWARD -j LOG --log-prefix "Denied-by-filter:FORWARD "
 /sbin/iptables -A FORWARD -j REJECT
 
 # NAT table
@@ -322,7 +351,7 @@ if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -t nat -A PREROUTING -i $PURPLE_DEV -j jmpsip
 fi
 
-# Masqurade
+# Masquerade
 /sbin/iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
 /sbin/iptables -t nat -A POSTROUTING -o ippp0 -j MASQUERADE
 if [ "$RED_DEV" != "" ]; then
@@ -413,3 +442,7 @@ done
 /sbin/iptables -t mangle -N trafficpostrouting
 /sbin/iptables -t mangle -A POSTROUTING -j trafficpostrouting
 
+# These are rules to set connmarks that identify the type of conn: INCOMING,
+#   OUTGOING, and INTERNAL, and identify a few other useful
+#   things.
+. /etc/rc.d/rc.zoneConnMarks

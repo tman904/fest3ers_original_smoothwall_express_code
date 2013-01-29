@@ -7,60 +7,130 @@
 include ../Makefile.conf
 
 PACKAGE = glibc
-VERSION = 2.3.2
+VERSION = 2.14.1
 
 EXTENSION = .tar.bz2
 
-BASE_URL = ftp://ftp.gnu.org/gnu/glibc
-
-PATCH_FILE1 = generic-sscanf.diff
-PATCH_FILE2 = dash-fix.patch
+BASE_URL =  ftp://ftp.gnu.org/gnu/glibc
 
 COMPILE_DIR = $(DIR)-compile
 
-ifeq ($(ARCH), i386)
-BUILD = --build=i386-pc-linux-gnu
-endif
+# Phase 1 compile
+#
+ifeq ($(BUILD_PHASE), Stage_1)
 
-ifeq ($(BUILDENV), 1)
-CONFIG_OPTS = --disable-profile --enable-add-ons=linuxthreads \
-    --with-binutils=/tools/bin --with-headers=/tools/include \
-    --without-gd --without-cvs $(BUILD)
-else
-CONFIG_OPTS = --disable-profile --enable-add-ons=linuxthreads \
-    --libexecdir=/usr/lib --with-headers=/usr/include \
-    --without-cvs $(BUILD)
-endif
+PATCH_FILE1 = glibc-2.14.1-gcc_fix-1.patch
+PATCH_FILE2 = glibc-2.14.1-cpuid-1.patch
 
-DOWNLOAD = yes
+CONFIG_OPTS = --prefix=$(TOOLS_DIR) \
+	      --host=$(SWE_TGT) \
+	      --build=$$(../$(PACKAGE)-$(VERSION)/scripts/config.guess) \
+	      --disable-profile \
+	      --enable-add-ons \
+	      --enable-kernel=2.6.25  \
+	      --with-headers=$(TOOLS_DIR)/include \
+	      libc_cv_forced_unwind=yes \
+	      libc_cv_ctors_header=yes \
+	      libc_cv_c_cleanup=yes
+
 PREPARE = yes
+# Prepare
+$(DIR)/: download
+	tar -xvf $(DOWNLOADS_DIR)/$(DIR)$(EXTENSION)
+	mkdir -p $(COMPILE_DIR)
+ifeq ($(mARCH), i686)
+	echo "-m32 -march=i586 -mtune=generic" > $(COMPILE_DIR)/configparms
+endif
+ifeq ($(mARCH), x86_64)
+	echo "-m64 -march=x86_64" > $(COMPILE_DIR)/configparms
+endif
+
+
+COMPILE = yes
 INSTALL = yes
 BUILDTARBALL = yes
 
-download:
-	$(DL_CMD) $(BASE_URL)/glibc-$(VERSION)$(EXTENSION)
-	$(DL_CMD) $(BASE_URL)/glibc-linuxthreads-$(VERSION)$(EXTENSION)
-	$(DL_CMD) ftp://munnari.oz.au/pub/tzdata*.tar.gz
-
-$(DIR)/: download
-	tar -jxvf $(DOWNLOADS_DIR)/$(DIR)$(EXTENSION)
-	tar -jxvf $(DOWNLOADS_DIR)/glibc-linuxthreads-$(VERSION)$(EXTENSION) -C $(DIR)
-	tar -zxvf `ls $(DOWNLOADS_DIR)/tzdata*.tar.gz` -C $(DIR)/timezone/
+compile: configure
+	cd $(DIR); sed -i 's/ -lgcc_s//' Makeconfig
+	$(MAKE) ${JOBS} -C $(COMPILE_DIR)
 
 install: compile
-ifndef BUILDENV
-	@mkdir -p $(PKG_ROOT)/lib
-	@mkdir -p $(PKG_ROOT)/usr/lib
-
-ifdef BITS_64
-	@(cd $(PKG_ROOT); ln -s lib lib64)
-	@(cd $(PKG_ROOT)/usr; ln -s lib lib64)
+	$(MAKE) -C $(COMPILE_DIR) install
 endif
-endif
-	make -C $(COMPILE_DIR) install_root=$(PKG_ROOT) install
 
+
+# Final compile
+#
+
+ifeq ($(BUILD_PHASE), Final)
+
+BUILD = --build=$(SWE_TGT)
+
+PATCH_FILE1 = glibc-2.14.1-fixes-1.patch
+PATCH_FILE2 = glibc-2.14.1-gcc_fix-1.patch
+PATCH_FILE3 = glibc-2.14-reexport-rpc-interface.patch
+PATCH_FILE4 = glibc-2.14-reinstall-nis-rpc-headers.patch
+
+
+CONFIG_OPTS = --prefix=/usr --disable-profile --enable-add-ons \
+	      --enable-kernel-2.6.25 --libexecdir=/usr/lib/glibc \
+	      --enable-obsolete-rpc
+
+DOWNLOAD = yes
+download:
+	$(DL_CMD) $(BASE_URL)/$(PACKAGE)-$(VERSION)$(EXTENSION)
+
+PREPARE = yes
+# Prepare
+$(DIR)/: download
+	tar -xvf $(DOWNLOADS_DIR)/$(DIR)$(EXTENSION)
+	cd $(DIR); \
+	  DL=$$(readelf -l /bin/sh | sed -n 's@.*interpret.*/tools\(.*\)]$$@\1@p') \
+	  sed -i "s|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=$$DL -o|" \
+	  scripts/test-installation.pl; \
+	  unset DL
+	cd $(DIR); \
+	  sed -i 's|@BASH@|/bin/bash|' elf/ldd.bash.in; \
+	  sed -i -e 's/"db1"/& \&\& $$name ne "nss_test1"/' \
+	    scripts/test-installation.pl; \
+	  sed -i '195,213 s/PRIVATE_FUTEX/FUTEX_CLOCK_REALTIME/' \
+	    nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timed{rd,wr}lock.S
+	mkdir -p $(COMPILE_DIR)
+	cd $(COMPILE_DIR); \
+	  echo "CFLAGS += $(CFLAGSPLUS) -O3 -pipe" > configparms;
+
+COMPILE = yes
+INSTALL = yes
+
+compile: configure
+	$(MAKE) ${JOBS} -C $(COMPILE_DIR)
+	cp -v $(DIR)/iconvdata/gconv-modules $(COMPILE_DIR)/iconvdata
+	mkdir -p $(PKG_ROOT)/etc && touch $(PKG_ROOT)/etc/ld.so.conf
+
+# post-compile is an 'orphan': a standalone target to run the tests
+post-compile: compile
+	+cd $(COMPILE_DIR); $(MAKE) $(JOBS) -k check 2>&1 | tee glibc-check-log
+	+cd $(COMPILE_DIR); grep Error glibc-check-log
+
+install: compile
+	mkdir -p $(PKG_ROOT)/lib
+	mkdir -p $(PKG_ROOT)/usr/lib
+
+ifeq ($(BITS_64), yes)
+	(cd $(PKG_ROOT); ln -s lib lib64)
+	(cd $(PKG_ROOT)/usr; ln -s lib lib64)
+endif
+
+	touch $(PKG_ROOT)/etc/ld.so.conf
+	$(MAKE) $(JOBS) -C $(COMPILE_DIR) install_root=$(PKG_ROOT) install
+	$(MAKE) $(JOBS) -C $(COMPILE_DIR) localedata/install-locales
+endif
+
+BUILDTARBALL = yes
+
+# buildtarball
 $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install
 	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
-	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C / --exclude ./etc/localtime
+	@tar -xvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C / --exclude ./etc/localtime
 
 include ../Makefile.rules

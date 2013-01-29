@@ -213,10 +213,10 @@ char *english_tr[] = {
 "Press Ok to reboot.",
 /* TR_ERROR */
 "Error",
-/* TR_CALCULATING_MODULE_DEPENDANCIES */
-"Calculating module dependancies...",
-/* TR_UNABLE_TO_CALCULATE_MODULE_DEPENDANCIES */
-"Unable to calculate module dependancies.",
+/* TR_CALCULATING_MODULE_DEPENDENCIES */
+"Calculating module dependencies...",
+/* TR_UNABLE_TO_CALCULATE_MODULE_DEPENDENCIES */
+"Unable to calculate module dependencies.",
 
 /* cdrom.c */
 /* TR_SELECT_CDROM_TYPE */
@@ -268,7 +268,7 @@ char *english_tr[] = {
 "the GREEN interface. You can do this by either auto-probing for a network " \
 "card, or by choosing the correct driver from a list. Note that if you have " \
 "more then one network card installed, you will be able to configure the " \
-"others later on in the installation. Also note that if you have more then one " \
+"others later on in the installation. Also note that if you have more than one " \
 "card which is the same type as GREEN and each card requires special module " \
 "parameters, you should enter parameters for all cards of this type such "  \
 "that all cards can become active when you configure the GREEN interface.",
@@ -323,7 +323,7 @@ char *english_tr[] = {
 /* TR_SETUP_FINISHED */
 "Setup is complete.  Press Ok to reboot.",
 /* TR_SETUP_NOT_COMPLETE */
-"Inital setup was not entiraly complete.  You must ensure that Setup is " \
+"Inital setup was not entirely complete.  You must ensure that Setup is " \
 "properly fininshed by running setup again at the shell.",
 /* TR_RESTORE_CONFIGURATION */
 "Restore configuration",
@@ -456,7 +456,7 @@ char *english_tr[] = {
 /* TR_NETWORK_CONFIGURATION_TYPE */
 "Network configuration type",
 /* TR_DRIVERS_AND_CARD_ASSIGNMENTS */
-"Drivers and card assignments",
+"Card assignments",
 /* TR_ADDRESS_SETTINGS */
 "Address settings",
 /* TR_DNS_AND_GATEWAY_SETTINGS */
@@ -599,6 +599,12 @@ char *english_tr[] = {
 "Keyboard mapping",
 /* TR_KEYBOARD_MAPPING_LONG */
 "Choose the type of keyboard you are using from the list below.",
+
+/* timezone.c */
+/* TR_TIMEZONE */
+"Timezone",
+/* TR_TIMEZONE_LONG */
+"Choose the timezone you are in from the list below.",
 
 /* webproxy.c */
 /* TR_HOSTNAMEC */

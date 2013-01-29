@@ -7,14 +7,16 @@
  * filename: ipbatch.h
  */
  
+#ifndef __IPBATCH_H
+#define __IPBATCH_H
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 // C++ side
 #include <string>
+#include <cstring>
 #include <iostream>
-
-#include "setuid.h" // For STRING_SIZE
+#define BATCHSTORE_SIZE 65536
 
 // this only actualy does something if one of the args is "commit"
 // in which case a non zero return code indicates some failure.
@@ -26,12 +28,13 @@ int ipbatch(std::vector<std::string> &arg);
 inline std::string stringprintf(const char *fmt, ...) 
 {
 	va_list argp;
-	char buffer[STRING_SIZE]; // should be enough for most cases - if no
+	char buffer[BATCHSTORE_SIZE]; // should be enough for most cases - if not malloc
 	std::string retstr = "";
 	va_start(argp, fmt);
 	
-	vsnprintf(buffer, STRING_SIZE - 1, fmt, argp);
+	vsnprintf(buffer, BATCHSTORE_SIZE - 1, fmt, argp);
 	retstr = buffer;
 
 	return retstr;
 }
+#endif

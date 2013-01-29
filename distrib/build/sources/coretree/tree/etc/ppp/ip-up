@@ -52,13 +52,15 @@ system('/usr/bin/sounds/onlinesound');
 
 message('dnsproxyrestart', $primarydns, $secondarydns);
 message('setincoming');
+message('setoutgoing');
 message('snortrestart');
 message('squidrestart');
 message('upnpdrestart');
 message('trafficrestart');
-
-system('/etc/rc.d/rc.machineregister');
-system('/etc/rc.d/rc.vpn.up');
-system('/etc/rc.d/rc.gettime');
-system('/usr/bin/smoothwall/updatelists.pl');
+message('dnsproxyrestart', $primarydns, $secondarydns);
 system('/usr/bin/smoothwall/setddns.pl');
+
+system('/etc/rc.d/rc.vpn.up');
+system('/usr/bin/smoothwall/updatelists.pl');
+system('/etc/rc.d/rc.machineregister');
+system('/etc/rc.d/rc.gettime');

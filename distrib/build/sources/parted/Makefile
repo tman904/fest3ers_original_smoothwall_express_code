@@ -3,13 +3,11 @@
 include ../Makefile.conf
 
 PACKAGE = parted
-VERSION = 2.2
-
-LICENCE_FILE = $(DIR)/COPYING
+VERSION = 3.1
+EXTENSION = .tar.xz
 
 BASE_URL = http://ftp.gnu.org/gnu/parted/
 
-CONFIG_OPTS = --exec-prefix=/ --disable-device-mapper --without-readline \
-	--disable-fs --disable-shared --disable-dynamic-loading
+CONFIG_OPTS = --disable-nls --disable-device-mapper
 
 include ../Makefile.rules

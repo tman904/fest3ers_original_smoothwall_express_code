@@ -7,29 +7,37 @@
 include ../Makefile.conf
 
 PACKAGE = util-linux
-VERSION = 2.12p
+VER_MM = 2.21
+VERSION = $(VER_MM).2
 
-BASE_URL = ftp://ftp.win.tue.nl/pub/linux-local/utils/util-linux/
+BASE_URL = http://www.kernel.org/pub/linux/utils/util-linux/v$(VER_MM)/
 
-ifeq ($(BUILDENV), 1)
+ifeq ($(BUILD_PHASE), Stage_3)
+
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
 
 configure: $(DIR)/
-	@(cd $(DIR); \
-	cp configure configure.backup; \
-	sed "s@/usr/include@/tools/include@g" configure.backup > configure; \
-	./configure --prefix=/$(PKG_DIR) $(CONFIG_OPTS));
+	cd $(DIR); ./configure --prefix=$(TOOLS_DIR)
 
 compile: configure
-	@make -C $(COMPILE_DIR)/lib
-	@make -C $(COMPILE_DIR)/mount mount umount
-	@make -C $(COMPILE_DIR)/text-utils more
+	$(MAKE) $(JOBS) -C $(COMPILE_DIR)/mount BLKID_LIBS="-lblkid -luuid" mount umount
+	$(MAKE) $(JOBS) -C $(COMPILE_DIR)/text-utils more
 
 install: compile
-	@cp $(DIR)/mount/umount $(DIR)/mount/mount \
-		$(DIR)/text-utils/more $(PKG_ROOT)/$(PKG_DIR)/bin
+	cd $(COMPILE_DIR); cp mount/.libs/umount mount/.libs/mount text-utils/more $(TOOLS_DIR)/bin
+	cd $(COMPILE_DIR); cp libblkid/src/.libs/libblk*.so*  $(TOOLS_DIR)/lib
+	cd $(COMPILE_DIR); cp libuuid/src/.libs/libuuid*.so*  $(TOOLS_DIR)/lib
 endif
+
+
+ifeq ($(BUILD_PHASE), Final)
+
+PRE_CONFIGURE = LDFLAGS=-ltinfo
+CONFIG_OPTS = --enable-arch --enable-partx --enable-write --with-ncurses
+
+endif
+
 
 include ../Makefile.rules

@@ -1,16 +1,32 @@
-#!/bin/sh
+#!/bin/bash
+
+# crEcho: print stuff with <CR><NL> at EOL
+function crEcho {
+  if [ "$1" == "-n" ]; then
+    crOpts="-e -n"
+    shift
+  else
+    crOpts="-e"
+  fi
+  echo $crOpts "$*\r"
+}
 
 . /var/smoothwall/ethernet/settings
 
 if [ "$RED_TYPE" = "DHCP" ]; then
 	DNSMASQ_DNS1=`/usr/bin/smoothwall/getdnsfromdhcpc.pl 1`
 	DNSMASQ_DNS2=`/usr/bin/smoothwall/getdnsfromdhcpc.pl 2`
-	. /var/lib/dhcpc/dhcpcd-${RED_DEV}.info
+	. /var/lib/dhcpcd/dhcpcd-${RED_DEV}.info
 	echo "$IPADDR" >/var/smoothwall/red/local-ipaddress
 	echo "$GATEWAY" >/var/smoothwall/red/remote-ipaddress
 elif [ "$RED_TYPE" = "STATIC" ]; then
-	DNSMASQ_DNS1=$DNS1
-	DNSMASQ_DNS2=$DNS2
+	if [ "$DNS1_OVERRIDE" != "" -o "$DNS2_OVERRIDE" != "" ]; then
+	  DNSMASQ_DNS1=$DNS1_OVERRIDE
+	  DNSMASQ_DNS2=$DNS2_OVERRIDE
+        else
+	  DNSMASQ_DNS1=$DNS1
+	  DNSMASQ_DNS2=$DNS2
+        fi
 	echo "$RED_ADDRESS" >/var/smoothwall/red/local-ipaddress
 	echo "$DEFAULT_GATEWAY" >/var/smoothwall/red/remote-ipaddress
 fi
@@ -20,16 +36,35 @@ touch /var/smoothwall/red/active
 echo "$DNSMASQ_DNS1" >/var/smoothwall/red/dns1
 echo "$DNSMASQ_DNS2" >/var/smoothwall/red/dns2
 
+crEcho "Updating RED"
+
+crEcho "..DNSMasq"
 /usr/bin/smoothcom dnsproxyrestart $DNSMASQ_DNS1 $DNSMASQ_DNS2
 
-/usr/bin/smoothcom setxtaccess
+crEcho "..incoming filtering"
 /usr/bin/smoothcom setincoming
+crEcho "..outgoing filtering"
+/usr/bin/smoothcom setoutgoing
+
+# Part of Roadster's integrated TOFC
+#if [ -f /var/smoothwall/outgoing/configErrors.log ]; then
+#  tput smso;
+#  sed -e 's/^/..  /' /var/smoothwall/outgoing/configErrors.log
+#  tput rmso
+#fi
+
+crEcho "..external access rules"
+/usr/bin/smoothcom setxtaccess
+crEcho "..snort, upnpd, TC, DDNS, VPN (as enabled)"
 /usr/bin/smoothcom snortrestart
 /usr/bin/smoothcom upnpdrestart
 /usr/bin/smoothcom trafficrestart
 
 /usr/bin/smoothwall/setddns.pl
-/usr/bin/smoothwall/updatelists.pl
 
 /etc/rc.d/rc.vpn.up
+
+#crEcho "Looking for system updates and registering your system."
+crEcho "Registering your system."
+#/usr/bin/smoothwall/updatelists.pl
 /etc/rc.d/rc.machineregister

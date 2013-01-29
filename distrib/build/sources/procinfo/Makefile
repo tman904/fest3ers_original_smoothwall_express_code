@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = procinfo
 VERSION = 18
 
-BASE_URL = ftp://ftp.cistron.nl/pub/people/00-OLD/svm/
+BASE_URL = http://www.kozmix.org/src/
 
 CONFIGURE = yes
 COMPILE = yes
@@ -19,9 +19,10 @@ configure: $(DIR)/
 	@true
 	
 compile: configure
-	@make -C $(COMPILE_DIR) LDLIBS=-lncurses
+	@$(MAKE) $(JOBS) -C $(COMPILE_DIR) LDLIBS=-ltinfo
 
 install: compile
-	@make -C $(COMPILE_DIR) prefix=$(PKG_ROOT)/$(PKG_DIR) install
+	@mkdir -p $(PKG_ROOT)
+	@$(MAKE) -C $(COMPILE_DIR) prefix=$(PKG_ROOT)$(PKG_DIR) install
 	
 include ../Makefile.rules

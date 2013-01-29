@@ -41,34 +41,34 @@ if ($proxysettings{'ACTION'} eq $tr{'save'} ||
 	if (!($proxysettings{'CACHE_SIZE'} =~ /^\d+/) ||
 		($proxysettings{'CACHE_SIZE'} < 10))
 	{
-		$errormessage = $tr{'invalid cache size'};
+		$errormessage .= $tr{'invalid cache size'}."<br />";
 		goto ERROR;
 	}		
 	if (!($proxysettings{'MAX_SIZE'} =~ /^\d+/))
 	{
-		$errormessage = $tr{'invalid maximum object size'};
+		$errormessage .= $tr{'invalid maximum object size'}."<br />";
 		goto ERROR;
 	}
 	if (!($proxysettings{'MIN_SIZE'} =~ /^\d+/))
 	{
-		$errormessage = $tr{'invalid minimum object size'};
+		$errormessage .= $tr{'invalid minimum object size'}."<br />";
 		goto ERROR;
 	}
 	if (!($proxysettings{'MAX_OUTGOING_SIZE'} =~ /^\d+/))
 	{
-		$errormessage = $tr{'invalid maximum outgoing size'};
+		$errormessage .= $tr{'invalid maximum outgoing size'}."<br />";
 		goto ERROR;
 	}
 	if (!($proxysettings{'MAX_INCOMING_SIZE'} =~ /^\d+/))
 	{
-		$errormessage = $tr{'invalid maximum incoming size'};
+		$errormessage .= $tr{'invalid maximum incoming size'}."<br />";
 		goto ERROR;
 	}
 	if ($proxysettings{'PEER_USERNAME'})
 	{
 		unless ($proxysettings{'PEER_PASSWORD'})
 		{
-			$errormessage = $tr{'password cant be blank'};
+			$errormessage .= $tr{'password cant be blank'}."<br />";
 			goto ERROR;
 		}
 	}
@@ -121,11 +121,11 @@ print <<END
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'cache size'}</TD>
 	<TD WIDTH='25%'><INPUT TYPE='text' NAME='CACHE_SIZE' VALUE='$proxysettings{'CACHE_SIZE'}' SIZE='5'></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'remote proxy'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
+	<TD WIDTH='25%' CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'remote proxy'}</TD>
 	<TD WIDTH='25%'><INPUT TYPE='text' NAME='UPSTREAM_PROXY' VALUE='$proxysettings{'UPSTREAM_PROXY'}'></TD>
 </TR>
 <TR>
-	<TD CLASS='base'>$tr{'remote proxy username'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
+	<TD CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'remote proxy username'}</TD>
 	<TD><INPUT TYPE='text' NAME='PEER_USERNAME' VALUE='$proxysettings{'PEER_USERNAME'}'></TD>
 	<TD CLASS='base'>$tr{'remote proxy password'}</TD>
 	<TD><INPUT TYPE='password' NAME='PEER_PASSWORD' VALUE='$proxysettings{'PEER_PASSWORD'}'></TD>

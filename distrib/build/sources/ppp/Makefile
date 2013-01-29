@@ -11,16 +11,19 @@ VERSION = 2.4.4
 
 BASE_URL = http://samba.org/ftp/ppp/
 
+PATCH_FILE1 = pppstats-Makefile.patch
+
 COMPILE = yes
 INSTALL = yes
 
 COMPILE_FLAGS = -DHAVE_PATHS_H -DIPX_CHANGE -DHAVE_MMAP -D_PATH_VARRUN=\\\"/var/run\\\"
 
 compile: configure
-	@make -C $(DIR) COMPILE_FLAGS="$(COMPILE_FLAGS)"
+	cat $(DIR)/pppstats/Makefile.linux
+	@make $(JOBS) -C $(DIR) COMPILE_FLAGS="$(COMPILE_FLAGS)"
 
 install: compile
-	-mkdir $(PKG_ROOT)
-	@make -C $(DIR) DESTDIR=$(PKG_ROOT)/$(PKG_DIR) install
+	@mkdir -p $(PKG_ROOT)
+	@make -C $(DIR) DESTDIR=$(PKG_ROOT)$(PKG_DIR) install
 	
 include ../Makefile.rules

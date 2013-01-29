@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = man
-VERSION = 1.6e
+VERSION = 1.6f
 
 BASE_URL = http://primates.ximian.com/~flucifredi/man/
 

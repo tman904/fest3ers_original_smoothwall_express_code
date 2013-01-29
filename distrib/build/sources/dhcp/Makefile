@@ -7,22 +7,25 @@
 include ../Makefile.conf
 
 PACKAGE = dhcp
-VERSION = 3.1-ESV-R3
+VERSION = 4.1.2
 
 BASE_URL = ftp://ftp.isc.org/isc/dhcp/
+
+PRE_CONFIGURE = CFLAGS="-Wno-error"
 
 CONFIGURE = yes
 INSTALL = yes
 
 configure: patch
-	@(cd $(COMPILE_DIR); ./configure);
+	@(cd $(COMPILE_DIR); $(PRE_CONFIGURE) ./configure);
 	@echo >>$(COMPILE_DIR)/includes/site.h "#define _PATH_DHCPD_DB \"/usr/etc/dhcpd.leases\""
 	@echo >>$(COMPILE_DIR)/includes/site.h "#define _PATH_DHCPD_CONF \"/usr/etc/dhcpd.conf\""
 
 install: compile
-	-mkdir -p $(PKG_ROOT)/$(PKG_DIR)/etc
-	@touch $(PKG_ROOT)/$(PKG_DIR)/etc/dhcpd.leases
-	@install -D $(COMPILE_DIR)/work.linux-2.2/server/dhcpd $(PKG_ROOT)/$(PKG_DIR)/sbin/dhcpd
-	@install -D $(COMPILE_DIR)/work.linux-2.2/relay/dhcrelay $(PKG_ROOT)/$(PKG_DIR)/sbin/dhcrelay
+	@mkdir -p $(PKG_ROOT)$(PKG_DIR)/etc
+	@touch $(PKG_ROOT)$(PKG_DIR)/etc/dhcpd.leases
+	@install -D $(COMPILE_DIR)/server/dhcpd $(PKG_ROOT)$(PKG_DIR)/sbin/dhcpd
+	@install -D $(COMPILE_DIR)/relay/dhcrelay $(PKG_ROOT)$(PKG_DIR)/sbin/dhcrelay
+
 	
 include ../Makefile.rules

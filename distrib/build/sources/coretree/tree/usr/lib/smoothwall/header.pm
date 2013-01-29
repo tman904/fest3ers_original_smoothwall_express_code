@@ -41,6 +41,9 @@ my $span = 0;
 
 $swroot = '/var/smoothwall';
 $thisscript = basename($ENV{'SCRIPT_NAME'});
+use Net::Domain qw(hostname hostfqdn hostdomain);
+my $hostname = hostname();
+
 
 # customised settings (such as languages)
 
@@ -49,11 +52,33 @@ $thisscript = basename($ENV{'SCRIPT_NAME'});
 $language = $settings{'LANGUAGE'};
 
 if ($language =~ /^(\w+)$/) {$language = $1;}
+require "/usr/lib/smoothwall/langs/en.pl";
+if (${language} ne "en")
+{
+  foreach $key (sort keys %basetr)
+  {
+    $basetr{$key} = "[$basetr{$key}]"
+  }
+  if (-f "/usr/lib/smoothwall/langs/${language}.pl")
+  {
+    require "/usr/lib/smoothwall/langs/${language}.pl";
+  }
+}
 require "/usr/lib/smoothwall/langs/base.pl";
-require "/usr/lib/smoothwall/langs/${language}.pl";
 
+require "/usr/lib/smoothwall/langs/alertboxes.en.pl";
+if (${language} ne "en")
+{
+  foreach $key (sort keys %baseabouttext)
+  {
+    $baseabouttext{$key} = "[$baseabouttext{$key}]"
+  }
+  if (-f "/usr/lib/smoothwall/langs/alertboxes.${language}.pl")
+  {
+    require "/usr/lib/smoothwall/langs/alertboxes.${language}.pl";
+  }
+}
 require "/usr/lib/smoothwall/langs/alertboxes.base.pl";
-require "/usr/lib/smoothwall/langs/alertboxes.${language}.pl";
 
 # Display the page HTTP header
 
@@ -193,7 +218,7 @@ END
 
 <tr>
 	<td colspan='2'>
-	<br/>
+	<p style="margin: 0 0 2pt 9pt; font-weight:bold; font-size:8pt; font-family:Arial,sans-serif">($hostname)</p>
 END
 	;
 
@@ -257,24 +282,30 @@ END
 
 sub openpage
 {
-	$title = $_[0];
-	$menu = $_[1];
-	$extrahead = $_[2];
-	$thissection = $_[3];
+	($title,$menu,$extrahead,$thissection,$overrideStyle,$unused) = @_;
 
 	if ($menu == 1) { $colspan = 2; } else { $colspan = 1; }
 
-	print <<END
+	print <<END;
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 	$extrahead
-	<title>$title - SmoothWall Express</title>
+	<title>($hostname) $title - SmoothWall Express</title>
 	<script language='javascript' SRC='/ui/js/script.js'></script>
 	<link href='/ui/css/style.css' rel='stylesheet' type='text/css'>
+END
+
+	# Override the default style, if specified
+	if (defined($overrideStyle)) {
+	  print <<END;
+	<link href='/ui/css/$overrideStyle.css' rel='stylesheet' type='text/css'>
+END
+	}
+
+	print <<END;
 </head>
 END
-	;
 
 	if ( $thissection ne "help" ) {
 		$cellwidth = $pagewidth / 2;
@@ -331,7 +362,7 @@ sub closepage
 			SmoothWall&trade; is a trademark of <a href='http://www.smoothwall.net/'>SmoothWall Limited</a>.
 		</td>
 		<td style='text-align: right;'>
-		    	&copy; 2000 - 2007 <a href='http://smoothwall.org/about/team/'>The SmoothWall Team</a><br/>
+		    	&copy; 2000 - 2013 <a href='http://smoothwall.org/about/team/'>The SmoothWall Team</a><br/>
 			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://smoothwall.org/get/sources/'>original authors</a>
 		</td>
 	</tr>

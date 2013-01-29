@@ -13,6 +13,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <fcntl.h>

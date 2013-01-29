@@ -7,13 +7,19 @@
 include ../Makefile.conf
 
 PACKAGE = m4
-VERSION = 1.4
+VERSION = 1.4.16
 
 BASE_URL = ftp://ftp.gnu.org/gnu/m4
 
+CONFIGURE = yes
 INSTALL = yes
 
+configure: patch
+	cd $(DIR); sed -i -e '/gets is a/d' lib/stdio.in.h
+	cd $(DIR); ./configure --prefix=$(PKG_DIR)
+
 install: compile
-	@make -C $(COMPILE_DIR) prefix=$(PKG_ROOT)/$(PKG_DIR) install
+	@mkdir -p $(PKG_ROOT)
+	@$(MAKE) -C $(COMPILE_DIR) prefix=$(PKG_ROOT)$(PKG_DIR) install
 
 include ../Makefile.rules

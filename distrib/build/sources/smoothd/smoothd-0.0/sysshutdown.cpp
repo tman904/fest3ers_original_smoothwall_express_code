@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include <fcntl.h>
 #include <syslog.h>
 #include <signal.h>

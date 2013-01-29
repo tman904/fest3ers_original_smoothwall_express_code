@@ -7,13 +7,14 @@
 include ../Makefile.conf
 
 PACKAGE = expat
-VERSION = 2.0.0
-SFMIRROR = heanet
-BASE_URL = http://$(SFMIRROR).dl.sourceforge.net/sourceforge/$(PACKAGE)/
+VERSION = 2.1.0
+
+BASE_URL = http://hivelocity.dl.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)/$(VERSION)/
 
 INSTALL = yes
 
 install: compile
-	@make -C $(COMPILE_DIR) install prefix=$(PKG_ROOT)/$(PKG_DIR)
+	@mkdir -p $(PKG_ROOT)
+	@make -C $(COMPILE_DIR) install prefix=$(PKG_ROOT)$(PKG_DIR)
 
 include ../Makefile.rules

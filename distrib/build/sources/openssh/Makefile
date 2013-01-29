@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = openssh
-VERSION = 5.8p1
+VERSION = 6.0p1
 
 BASE_URL = ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/
 
@@ -16,8 +16,8 @@ CONFIG_OPTS = --with-ssl-dir=/usr/ssl --with-md5-passwords --with-pid-dir=/var/r
 INSTALL = yes
 
 install: compile
-	-mkdir $(PKG_ROOT)
+	@mkdir -p $(PKG_ROOT)
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
-	@rm -f $(PKG_ROOT)/$(PKG_DIR)/etc/sshd_config
+	@rm -f $(PKG_ROOT)$(PKG_DIR)/etc/sshd_config
 
 include ../Makefile.rules

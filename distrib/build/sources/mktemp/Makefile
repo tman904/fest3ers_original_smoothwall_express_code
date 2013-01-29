@@ -7,13 +7,14 @@
 include ../Makefile.conf
 
 PACKAGE = mktemp
-VERSION = 1.5
+VERSION = 1.7
 
-BASE_URL = http://www.aslak.net/smoothmirror/
+BASE_URL = http://www.mktemp.org/mktemp/dist/
 
 INSTALL = yes
 
 install: compile
-	@make -C $(COMPILE_DIR) prefix=$(PKG_ROOT)/$(PKG_DIR) install
+	@mkdir -p $(PKG_ROOT)
+	@$(MAKE) -C $(COMPILE_DIR) prefix=$(PKG_ROOT)$(PKG_DIR) install
 
 include ../Makefile.rules

@@ -7,17 +7,18 @@
 include ../Makefile.conf
 
 PACKAGE = module-init-tools
-VERSION = 3.5
+VERSION = 3.15
+EXTENSION = .tar.xz
 
-BASE_URL = http://ftp.kernel.org/pub/linux/kernel/people/rusty/modules
+BASE_URL = http://www.kernel.org/pub/linux/utils/kernel/module-init-tools
 
 PKG_DIR = 
 
-CONFIG_OPTS = --mandir=/usr/man
+#CONFIG_OPTS = --mandir=/usr/man --enable-insmod-static
 
 COMPILE = yes
 
 compile: configure
-	@make -C $(DIR) DOCBOOKTOMAN=/bin/true
+	@$(MAKE) $(JOBS) -C $(DIR) DOCBOOKTOMAN=/bin/true
 
 include ../Makefile.rules

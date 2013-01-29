@@ -13,6 +13,7 @@ VERSION = 0.0
 BASE_URL = http://eciadsl.flashtux.org/download/
 
 TARBALL = $(PACKAGE)
+DIR = $(PACKAGE)
 
 EXTENSION = .tar.bz2
 
@@ -29,7 +30,7 @@ compile: configure
 	@true
 
 install: compile
-	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)/etc/eciadsl
-	@install -D $(DIR)/*.bin $(PKG_ROOT)/$(PKG_DIR)/etc/eciadsl/
+	@mkdir -p $(PKG_ROOT)$(PKG_DIR)/etc/eciadsl
+	@install -D $(DIR)/*.bin $(PKG_ROOT)$(PKG_DIR)/etc/eciadsl/
 
 include ../Makefile.rules

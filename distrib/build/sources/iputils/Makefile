@@ -7,14 +7,12 @@
 include ../Makefile.conf
 
 PACKAGE = iputils
-VERSION = 20020927
+VERSION = s20100214
 
-BASE_URL = http://ftp.debian.org/debian/pool/main/i/iputils/
+BASE_URL = http://www.skbuff.net/iputils
 
-DIR = $(PACKAGE)
-TARBALL = $(PACKAGE)_$(VERSION).orig
+EXTENSION=.tar.bz2
 
-PATCH_FILE1 = iputils_20020927-6.diff.gz
 
 CONFIGURE = yes
 INSTALL = yes
@@ -23,7 +21,7 @@ configure: patch
 	@true;
 
 install: compile
-	-mkdir $(PKG_ROOT)
-	@install -m 4755 -D $(DIR)/ping $(PKG_ROOT)/$(PKG_DIR)/bin/ping
+	@mkdir -p $(PKG_ROOT)
+	@install -m 4755 -D $(DIR)/ping $(PKG_ROOT)$(PKG_DIR)/bin/ping
 
 include ../Makefile.rules

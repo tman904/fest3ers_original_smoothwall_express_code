@@ -1,25 +1,27 @@
---- miniupnpd-1.5.orig/genconfig.sh	2010-09-21 16:36:12.000000000 +0100
-+++ miniupnpd-1.5/genconfig.sh	2011-03-10 11:10:41.000000000 +0000
-@@ -17,8 +17,8 @@
+--- miniupnpd-20070605.new/genconfig.sh	2007-03-18 10:31:48.000000000 +0000
++++ miniupnpd-20070605/genconfig.sh	2007-06-12 15:54:39.000000000 +0100
+@@ -42,8 +24,8 @@
  LOG_MINIUPNPD="LOG_DAEMON"
  
  # detecting the OS name and version
 -OS_NAME=`uname -s`
 -OS_VERSION=`uname -r`
 +OS_NAME="SmoothWall Express"
-+OS_VERSION=3.0
++OS_VERSION=3.1
  
  # pfSense special case
  if [ -f /etc/platform ]; then
-@@ -179,6 +179,11 @@
+@@ -243,8 +243,12 @@
+ 	Darwin)
+ 		echo "#define USE_IFACEWATCHER 1" >> ${CONFIGFILE}
  		FW=ipfw
  		OS_URL=http://developer.apple.com/macosx
  		;;
 +	"SmoothWall Express")
-+		OS_URL=http://www.smoothwall.org/
-+		echo "#define USE_NETFILTER 1" >> ${CONFIGFILE}
 +		FW=netfilter
++		OS_URL=http://community.smoothwall.org/
 +		;;
  	*)
  		echo "Unknown OS : $OS_NAME"
  		echo "Please contact the author at http://miniupnp.free.fr/ or http://miniupnp.tuxfamily.org/."
+

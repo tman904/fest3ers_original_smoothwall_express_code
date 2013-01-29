@@ -7,8 +7,10 @@
 include ../Makefile.conf
 
 PACKAGE = kbd
-VERSION = 1.12
+VERSION = 1.15.2
 
-BASE_URL = ftp://ftp.win.tue.nl/pub/linux-local/utils/kbd/
+EXTENSION = .tar.bz2
+
+BASE_URL = http://slackware.cs.utah.edu/pub/slackware/slackware_source/a/kbd/sources/
 
 include ../Makefile.rules

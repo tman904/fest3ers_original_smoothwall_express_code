@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = cdrtools
-VERSION = 2.01
+VERSION = 3.00
 
 BASE_URL = ftp://ftp.berlios.de/pub/cdrecord/
 
@@ -19,9 +19,11 @@ configure: $(DIR)/
 	@true
 
 compile: configure
-	@make -C $(COMPILE_DIR)
+	@$(MAKE) $(JOBS) -C $(COMPILE_DIR)
 
 install: compile
+	@mkdir -p $(PKG_ROOT)
 	@install -D $(COMPILE_DIR)/mkisofs/OBJ/*/mkisofs $(PKG_ROOT)/sbin/mkisofs
+	@install -D $(COMPILE_DIR)/cdrecord/OBJ/*/cdrecord $(PKG_ROOT)/sbin/cdrecord
 
 include ../Makefile.rules

@@ -382,7 +382,7 @@ END
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-	<TD CLASS='base' WIDTH='25%'>$tr{'interface'}</TD>
+	<TD CLASS='base' WIDTH='25%'>$tr{'interfacec'}</TD>
 	<TD WIDTH='25%'>
 	<SELECT NAME='COMPORT'>
 	<OPTION VALUE='ttyS0' $selected{'COMPORT'}{'ttyS0'}>$tr{'modem on com1'}
@@ -586,9 +586,9 @@ function checkdns(option,field1, field2)
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'type'}</TD>
-	<TD WIDTH='25%' CLASS='base'>
+	<TD WIDTH='25%' CLASS='base' style='text-align:left'>
 	<INPUT TYPE='radio' NAME='DNS' VALUE='Manual' $checked{'DNS'}{'Manual'} id='r1' onClick="checkdns('r1','dns1', 'dns2')">$tr{'manual'}
-	<INPUT TYPE='radio' NAME='DNS' VALUE='Automatic' $checked{'DNS'}{'Automatic'} id='r2' onClick="checkdns('r2','dns1', 'dns2')" >$tr{'automatic'}
+	<INPUT TYPE='radio' NAME='DNS' VALUE='Automatic' $checked{'DNS'}{'Automatic'} id='r2' onClick="checkdns('r2','dns1', 'dns2')" style='margin-left:1em'>$tr{'automatic'}
 	</TD>
 	<TD WIDTH='25%'>&nbsp;</TD>
 	<TD WIDTH='25%'>&nbsp;</TD>

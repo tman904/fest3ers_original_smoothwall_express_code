@@ -7,16 +7,42 @@
 include ../Makefile.conf
 
 PACKAGE = perl
-VERSION = 5.8.8
+VERSION = 5.14.2
 
-BASE_URL = http://ftp.funet.fi/pub/CPAN/src/
+BASE_URL = ftp://ftp.cpan.org/pub/CPAN/src/5.0/
 
-PATCH_FILE1 = regcomp-5.8.8.diff
+# Toolchain, Stage 3 build
+#
+ifeq ($(BUILD_PHASE), Stage_3)
+PATCH_FILE1 = perl-5.14.2-libc-1.patch
+
+CONFIG_OPTS = -des -Dprefix=/tools
 
 CONFIGURE = yes
+configure: patch
+	@cd $(COMPILE_DIR); sh Configure $(CONFIG_OPTS)
 
+COMPILE = yes
+compile: configure
+	make $(JOBS) -C $(COMPILE_DIR) # perl utilities ext/Errno/pm_to_blib
+
+INSTALL = yes
+install: compile
+	cd $(COMPILE_DIR); \
+	  cp -v perl pod/pod2man $(TOOLS_DIR)/bin; \
+	  mkdir -pv $(TOOLS_DIR)/lib/perl5/$(VERSION); \
+	  cp -Rv lib/* $(TOOLS_DIR)/lib/perl5/$(VERSION)
+endif
+
+
+# Final build
+#
+ifeq ($(BUILD_PHASE),Final)
+CONFIGURE = yes
 configure: patch
 	@(cd $(COMPILE_DIR); \
-	./configure.gnu --prefix=/$(PKG_DIR) -Dpager="/bin/less -isR");
+	./configure.gnu --prefix=/$(PKG_DIR) -Dpager="/bin/less -isR" -Dusethreads);
+endif
+
 
 include ../Makefile.rules

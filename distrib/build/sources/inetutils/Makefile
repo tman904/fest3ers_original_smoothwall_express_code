@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = inetutils
-VERSION = 1.5
+VERSION = 1.7
 
 BASE_URL = ftp://ftp.gnu.org/gnu/inetutils/
 
@@ -15,5 +15,10 @@ CONFIG_OPTS = -sysconfdir=/etc --localstatedir=/var --disable-logger \
 	--disable-syslogd --disable-whois --disable-servers  --disable-talk \
 	--disable-rcp --disable-rlogin --disable-rsh --disable-ping \
 	--disable-ifconfig
+
+PATCH = yes
+patch: $(DIR)/
+	cd $(DIR); sed -i 's@<sys/types.h>@<sys/types.h>\n#include <stdlib.h>@' \
+	    libicmp/icmp_timestamp.c
 
 include ../Makefile.rules

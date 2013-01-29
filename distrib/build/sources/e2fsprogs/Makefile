@@ -3,23 +3,41 @@
 include ../Makefile.conf
 
 PACKAGE = e2fsprogs
-VERSION = 1.41.12
+VERSION = 1.42.2
 
-LICENCE_FILE = $(DIR)/COPYING
-
-BASE_URL = http://kent.dl.sourceforge.net/sourceforge/e2fsprogs/
+BASE_URL = http://hivelocity.dl.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)/v$(VERSION)/
 
 COMPILE_DIR = $(DIR)-compile
 
-#CONFIG_OPTS = --with-root-prefix="" --disable-libuuid --disable-uuidd --disable-libblkid
-CONFIG_OPTS = --with-root-prefix="" --enable-elf-shlibs --disable-tls
+
+ifeq ($(BUILD_PHASE), Stage_3)
+
+CONFIG_OPTS = --prefix=$(TOOLS_DIR)
 
 INSTALL = yes
+install: compile
+	@make -C $(COMPILE_DIR) install-libs
+	chmod -v u+w $(TOOLS_DIR)/lib/{libblkid,libuuid,libcom_err,libe2p,libext2fs,libss}.a
 
+endif
+
+
+ifeq ($(BUILD_PHASE), Final)
+
+CONFIG_OPTS = --prefix=$(PKG_DIR) --with-root-prefix="" --enable-elf-shlibs
+
+PATCH = yes
+
+patch: $(DIR)/
+	sed -i 's@/bin/rm@$(TOOLS_DIR)&@' $(DIR)/lib/blkid/test_probe.in
+#	sed -i -e "s/July/Jul/" $(DIR)/version.h
+
+INSTALL = yes
 install: compile
 	@mkdir -p $(PKG_ROOT)
-	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
-	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install-libs
-#	@rm -rf $(PKG_ROOT)/sbin/
+	make -C $(COMPILE_DIR) prefix=$(PKG_ROOT)$(PKG_DIR) root_prefix=$(PKG_ROOT) install
+	make -C $(COMPILE_DIR) prefix=$(PKG_ROOT)$(PKG_DIR) root_prefix=$(PKG_ROOT) install-libs
+	chmod -v u+w $(PKG_ROOT)$(PKG_DIR)/lib/{libblkid,libcom_err,libe2p,libext2fs,libss,libuuid}.a
+endif
 	
 include ../Makefile.rules

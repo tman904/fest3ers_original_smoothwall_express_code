@@ -1,5 +1,0 @@
-#!/bin/sh
-
-FILE=`echo $3 | cut -d " " -f 1`
-
-echo "FILE:$FILE"

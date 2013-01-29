@@ -22,6 +22,9 @@ configure: patch
 	@true
 
 install: compile
+ifeq ($(BUILD_PHASE), Final)
+	@mkdir -p $(PKG_ROOT)
 	@make -C $(COMPILE_DIR) PREFIX=$(PKG_ROOT) install
+endif
 
 include ../Makefile.rules

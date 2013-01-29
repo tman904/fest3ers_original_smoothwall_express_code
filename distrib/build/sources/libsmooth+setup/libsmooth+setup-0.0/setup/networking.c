@@ -28,8 +28,6 @@ extern char **ctr;
 
 extern int automode;
 
-extern struct nic nics[];
-
 char *configtypenames[] = {
 /*0*/	"GREEN (RED is modem/ISDN)", 
 /*1*/	"GREEN + ORANGE (RED is modem/ISDN)",
@@ -364,7 +362,7 @@ int changedrivers(void)
 	int configtype;
 	int rc;
 	int c;
-	int needcards, sofarallocated, countofcards, toallocate;
+	int needcards, sofarallocated, nictocheck, countofcards, toallocate;
 	char *green = "GREEN";
 	char *orange = "ORANGE";
 	char *purple = "PURPLE";
@@ -392,18 +390,6 @@ int changedrivers(void)
 	runcommandwithstatus("/etc/rc.d/rc.netaddress.down",
 		ctr[TR_PUSHING_NETWORK_DOWN]);
 	
-	/* Remove all modules not needed for green networking. */
-	c = 0;
-	while (strlen(nics[c].modulename))
-	{
-		if (checkformodule(nics[c].modulename))
-		{
-			sprintf(temp, "/sbin/rmmod %s", nics[c].modulename);
-			mysystem(temp);
-		}
-		c++;
-	}
-	
 	/* Blank them so the rc.netaddress.up dosnt get confused. */
 	replacekeyvalue(kv, "GREEN_DEV", "");
 	replacekeyvalue(kv, "ORANGE_DEV", "");
@@ -421,23 +407,25 @@ int changedrivers(void)
 
 	/* This is the green card. */		
 	sofarallocated = 0;
+	nictocheck = 0;
+	countofcards = countcards();
 
 	strcpy(displaydriver, "");
 	strcpy(currentdriver, "");
+	strcpy(currentdriveroptions, "");
 		
 	abort = 0;
 	driverc = 0;
 	/* Keep going till all cards are got, or they give up. */
 	while (sofarallocated < needcards && !abort)
 	{
-		countofcards = countcards();
 		/* This is how many cards were added by the last module. */
-		toallocate = countofcards - sofarallocated;
-		while (toallocate > 0 && sofarallocated < needcards)
+		toallocate = countofcards - nictocheck;
+		while (!abort && toallocate > 0 && nictocheck < countofcards && sofarallocated < needcards)
 		{
 			findnicdescription(displaydriver, temp);
 			/* Get device name, eth%d is hard coded. */
-			sprintf(nexteth, "eth%d", sofarallocated);
+			sprintf(nexteth, "eth%d", nictocheck);
 			/* Get MAC address. */
 			if (getnicmac(mac, STRING_SIZE, nexteth))
 				/* If MAC found put at the end of NIC description. */
@@ -462,11 +450,10 @@ int changedrivers(void)
 			sections[c] = NULL;
 			rc = newtWinMenu(ctr[TR_CARD_ASSIGNMENT],
 				message, 50, 5,	5, 6, sections, &choice, ctr[TR_OK],
-				ctr[TR_CANCEL], NULL);	
+				ctr[TR_SKIP], ctr[TR_CANCEL], NULL);	
 			if (rc == 0 || rc == 1)
 			{
 				/* Now we see which iface needs its settings changed. */
-				sprintf(nexteth, "eth%d", sofarallocated);
 				if (strcmp(sections[choice], green) == 0)
 				{
 					replacekeyvalue(kv, "GREEN_DEV", nexteth);
@@ -474,6 +461,7 @@ int changedrivers(void)
 					replacekeyvalue(kv, "GREEN_DRIVER_OPTIONS", currentdriveroptions);
 					replacekeyvalue(kv, "GREEN_DISPLAYDRIVER", displaydriver);
 					sofarallocated++;
+					nictocheck++;
 					toallocate--;
 					strcpy(currentdriver, "");
 					strcpy(currentdriveroptions, "");
@@ -485,6 +473,7 @@ int changedrivers(void)
 					replacekeyvalue(kv, "ORANGE_DRIVER_OPTIONS", currentdriveroptions);
 					replacekeyvalue(kv, "ORANGE_DISPLAYDRIVER", displaydriver);
 					sofarallocated++;
+					nictocheck++;
 					toallocate--;
 					strcpy(currentdriver, "");
 					strcpy(currentdriveroptions, "");
@@ -496,6 +485,7 @@ int changedrivers(void)
 					replacekeyvalue(kv, "PURPLE_DRIVER_OPTIONS", currentdriveroptions);
 					replacekeyvalue(kv, "PURPLE_DISPLAYDRIVER", displaydriver);
 					sofarallocated++;
+					nictocheck++;
 					toallocate--;
 					strcpy(currentdriver, "");
 					strcpy(currentdriveroptions, "");
@@ -507,43 +497,34 @@ int changedrivers(void)
 					replacekeyvalue(kv, "RED_DRIVER_OPTIONS", currentdriveroptions);
 					replacekeyvalue(kv, "RED_DISPLAYDRIVER", displaydriver);
 					sofarallocated++;
+					nictocheck++;
 					toallocate--;
 					strcpy(currentdriver, "");
 					strcpy(currentdriveroptions, "");
 				}
 			}
-			else
-			{
-				break;
-			}
-		}
-		
-		/* Need another module!  The nitty gritty code is in libsmooth. */
-		if (sofarallocated < needcards)
-		{
-			rc = newtWinTernary(ctr[TR_CARD_ASSIGNMENT], ctr[TR_PROBE], 
-				ctr[TR_SELECT], ctr[TR_CANCEL], ctr[TR_NO_UNALLOCATED_CARDS]);
-				
-			if (rc == 0 || rc == 1)
-			{
-				probecards(currentdriver, currentdriveroptions, &driverc);
-				if (!strlen(currentdriver))
-				{
-					errorbox(ctr[TR_PROBE_FAILED]);
-					driverc = 0;
-				}
-			}				
 			else if (rc == 2)
-				choosecards(currentdriver, currentdriveroptions);
-			else
+			{
+				nictocheck++;
+			}
+			else if (rc == 3)
+			{
+				// Cancelled? Then abort
 				abort = 1;
-				
-			strcpy(displaydriver, currentdriver);
+			}
+
+			// Reached the end of the cards? Abort
+			if (nictocheck >= countofcards) abort=1;
+
+			// Run out of cards to allocate? Abort
+			if (toallocate == 0) abort=1;
+
+			// Got enough cards? Break and finish
+			if (sofarallocated == needcards) break;
 		}
 	}
 	
-	countofcards = countcards();
-	if (countofcards >= needcards)
+	if (sofarallocated >= needcards)
 	{
 		newtWinMessage(ctr[TR_CARD_ASSIGNMENT], ctr[TR_OK],
 			ctr[TR_ALL_CARDS_SUCCESSFULLY_ALLOCATED]);
@@ -705,7 +686,7 @@ int dnsgatewaymenu(void)
 	struct keyvalue *kv = initkeyvalues();
 	char message[1000];
 	char temp[STRING_SIZE] = "0";
-	struct newtWinEntry entries[DNSGATEWAY_TOTAL + 1];
+	struct newtWinEntry entries[DNSGATEWAY_TOTAL+1];
 	char *values[DNSGATEWAY_TOTAL];         /* pointers for the values. */
 	int error;
 	int configtype;

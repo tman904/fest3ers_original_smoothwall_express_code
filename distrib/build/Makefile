@@ -1,80 +1,361 @@
 # SmoothWall Build system.
 #
-# (c) SmoothWall Ltd 2005
+# Parts (c) SmoothWall Ltd 2005
+# Parts (c) Neal P. Murphy 2009-2012
 #
 # This code is distributed under the terms of the GPL v2.
 #
 # Top level Makefile for SmoothWall Build system.
 
+# A few notes:
+#   - This build system is re-entrant and uses multiple CPUs (when available).
+#   - The toolchain is built and installed as the starting user. Root is
+#     invoked as needed, such as to adjust the host's /tool symlink.
+#   - The final stage and the ISO are built as user root in the chroot jail;
+#     thus root owns all files created in the final phase.
+#   - The flash drive is prepared as user root. The drive is determined using
+#     inotifywait; it's plug-n-play.
+#
+#   - This build system is far more robust than the original. If you
+#     build as a non-root user, there is almost no chance of damaging
+#     your host system.
+#   - If a package build fails, a minor tweak will almost always let it
+#     proceed without trouble.
+#   - If one of the 'adjusting' steps fails, it will back out its
+#     adjustments so you can try again.
+#
+#   - After completing the full build, you can rebuild bits and pieces by
+#     using the 'redo' function ala 'redo daq snort'.
+
+export SHELL = bash
+export SRC_TGZ = ../../smoothsrc.tar.gz
+export PATH := $(PATH):$(PWD)/toolcrib
+export CTNG_PATHS = /tools/ctng/bin:/tools/ctng/x86_64-swe-linux-gnu/bin
+
+include sources/Makefile.flags-arch
+
+CUSTOM_ENV = SHELL=BASH mARCH="$(mARCH)" SWE_TGT="$(SWE_TGT)" \
+	     HOME="$${HOME}" TERM="$${TERM}" PS1='\u:\w\$$ ' \
+	     FORCE_UNSAFE_CONFIGURE=1 \
+	     BITS_64="$(BITS_64)" BITS_32="$(BITS_32)"
+
+ifndef ktype
+ktype = kvm
+CUSTOM_ENV += KERNEL_TYPE=-kvm
+else
+CUSTOM_ENV += KERNEL_TYPE=-$(ktype)
+endif
+export finalENV := $(CUSTOM_ENV)
+
+# Default target, display help
+#
 default:
-	@echo "Please use one of:"
 	@echo
-	@echo "build:            Primary build target.  You must know what you are doing!"
+	@echo "When building on a host GNU/Linux distrib, build as a non-root user. The"
+	@echo "system will become root as needed via 'sudo'."
 	@echo
-	@echo "predownload:      Downloads sourcecode packages in advance."
+	@echo "The SWE3.1 build system is very robust, and very unlikely to"
+	@echo "hose your host system. But you must still know what you are doing!"
 	@echo
-	@echo "packageinfos.html:Outputs HTML describing package names and URLs.  Please"
-	@echo "                  call with -s switch to make."
+	@echo "Useful commands:"
+	@echo "  make build"
+	@echo "  make rebuild"
+	@echo "  make media"
+	@echo "  make package"
 	@echo
-	@echo "clean-buildroot:  Empties the buildroot temp dir.  Generally harmless."
+	@echo "Useful targets:"
+	@echo "  build             Build SWE3.1 or continue building from an error."
+	@echo "  media             Make ISO and prepare bootable flash drive."
+	@echo "  rebuild           Build SWE3.1 from scratch."
+	@echo "  package           Clean, archive sources, pre-fetch tarballs, build,"
+	@echo "                    and make media with matching source tarball."
 	@echo
-	@echo "clean-target:     Removes all built package tarfiles."
+	@echo "  predownload       Download sourcecode packages in advance."
+	@echo "  savesources       Make a tarball of the sources used to build."
+	@echo "  reprep-final      Prepare to rebuild final stage *only*."
+	@echo "  clean:            Clean everything in preparation to build from scratch."
 	@echo
-	@echo "clean-sources:    Does a 'make clean' in each source package dir."
+	@echo "Please view Makefile for other targets."
 	@echo
-	@echo "clean-tools:      Removes everything in /tools.  Do not do this as the build"
-	@echo "                  scripts use this for the shell."
+	@echo "Predownload/download helpers"
+	@echo "  Options to control downloads:"
+	@echo "    CONTINUE_DL=    if you have a slow conection, this will continue"
+	@echo "                    a previous, interrupted download instead of creating"
+	@echo "                    tarball.[1-n]"
+	@echo "    NO_CERT_CHECK=  do not check the veracity of SSL certs"
+	@echo "    PASV=           use 'passive' FTP"
+	@echo "    MIRROR_UNO=hostA and/or MIRROR_DOS=hostB"
+	@echo "                    use hostA and/or hostB as sources for source packages."
+	@echo "                    hostA defaults to \"\", and hostB defaults to"
+	@echo "                    \"roadster.agcl.us/downloads\". This helps when you"
+	@echo "                    have a local web site containing the source tarballs"
+	@echo "                    or want to verify the URLs in the pkg makefiles."
+	@echo "  Example showing all four options:"
+	@echo "    CONTINUE_DL= NO_CHECK_CERT= PASV= MIRROR_UNO=downloads \\"
+	@echo "      MIRROR_DOS=\"\" make build"
+	@echo "    Continue a previously started DL, don't check SSL certs, use FTP's"
+	@echo "    PASSIVE facility, use the local 'downloads' web host, and do not"
+	@echo "    use the roadster.agcl.us collection (skip right to internet sources)."
 	@echo
-	@echo "clean-distrib:    Removes everything in the above dir, except the build"
-	@echo "                  and tools directories."
+	@echo "There are useful functions in .../build/toolcrib/handy_utils:"
+	@echo "  - monbuild: monitor the progress of a package's build"
+	@echo "  - monloop: monbuild in a shell-like loop"
+	@echo "  - redo: rebuild one or more packages in the final build stage"
+	@echo "To use them: '. .../build/toolcrib/handy_utils' or read the file"
+	@echo "into your ~/.bashrc so they're always ready."
+	@echo
+	@echo "This is the basic environment to be used to build:"
+	@for i in $(finalENV); do echo "  $$i"; done
 
-build:
-	@./makebuild1
+# Host check
+#
+crumbs/host.checked:
+	@bash host_check.sh
+	@echo; echo
+	@touch crumbs/host.checked
 
+# build preparation
+#
+crumbs/tc_prep.built:
+	+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain PREP
+	@touch crumbs/tc_prep.built
+
+# build stage 1
+#
+crumbs/tc_stage_1.built: crumbs/tc_prep.built
+	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain 1
+	@+env -i $(CUSTOM_ENV) PATH=/tools/bin:$(CTNG_PATHS):$$PATH /bin/bash -x toolcrib/tc_check 1
+	#exit 101
+	@rm -f dummy.c a.out
+	@touch crumbs/tc_stage_1.built
+
+# build stage 2
+#
+crumbs/tc_stage_2.built: crumbs/tc_stage_1.built
+	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain 2
+	@+env -i $(CUSTOM_ENV) PATH=/tools/bin:$(CTNG_PATHS):$$PATH /bin/bash toolcrib/tc_check 2
+	@rm -f dummy.c a.out
+	#exit 102
+	@touch crumbs/tc_stage_2.built
+
+# build stage 3
+#
+crumbs/tc_stage_3.built: crumbs/tc_stage_2.built
+	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain 3
+	#exit 103
+	@touch crumbs/tc_stage_3.built
+
+
+# prepare final build environment
+#
+crumbs/Final.prep.built: crumbs/tc_stage_3.built
+	@tput smso; echo -e "\nPreparing Final Build tree"; tput rmso
+	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/as_chroot "/tools/bin/bash -l -c 'source /build/toolcrib/functions; prepare_final_tree >/build/crumbs/Final-prep.out 2>&1'"
+	@touch crumbs/Final.prep.built
+
+# must have resolv.conf in chroot jail
+#
+crumbs/resolv.conf:
+	@if [ -f /etc/resolv.conf ]; then cp -v /etc/resolv.conf ./crumbs/; fi
+	@if [ -f /etc/resolv.conf.dnsmasq ]; then cp -v /etc/resolv.conf.dnsmasq ./crumbs/resolv.conf; fi
+
+# build all software
+#
+crumbs/Final.built: crumbs/resolv.conf crumbs/Final.prep.built
+	@tput smso; echo -e "\nFinal Build"; tput rmso
+	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/as_chroot "$(CUSTOM_ENV) /tools/bin/bash -l -c /build/toolcrib/make_final"
+	@touch crumbs/Final.built
+
+build: crumbs/host.checked crumbs/Final.built
+
+rebuild: clean predownload build
+
+# prepare the installation media
+#
+media:
+	@echo -e "\nMaking ISO image with linux-$(ktype)..."; sleep 1
+	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/as_chroot "$(CUSTOM_ENV) /bin/bash -l -c /build/toolcrib/make_media"
+	@echo -e "\nMaking FLASH content..."; sleep 1
+	@+sudo su -c "toolcrib/make_flash"
+
+# after a successful build, this will do everything
+#
+package: clean savesources predownload build media
+	@if [ `id -u` -eq 0 ]; then CMD="bash"; else CMD="sudo su"; fi \
+	   $$CMD -c "rm -f $(SRC_TGZ)"
+
+# Get tossed in the pokey with the proper environment
+#
+chroot:
+	@env -i HOME=$$HOME TERM=$$TERM PS1='\u:\w\$$ ' /bin/bash --noprofile --norc toolcrib/as_chroot
+
+# Pre-fetch source tarballs from internet
+#
 predownload:
-	@(cd sources; for I in `find -maxdepth 3 -mindepth 1 -type d`; do \
-		if [ "$$I" != "./CVS" ]; then \
-			make -C $$I BUILDENV=1 -n download >/dev/null 2>/dev/null; \
-			if [ $$? -eq 0 ]; then \
-				make -C $$I BUILDENV=1 download; \
-				if [ $$? -ne 0 ]; then \
-					echo "Oops"; \
-					exit 1; \
-				fi \
-			fi \
-		fi \
-	done);
+	@echo -e "\nPre-downloading source tarballs..."; sleep 1
+	@( \
+	  export BUILD_PHASE="PreDownload"; \
+	  . toolcrib/environment; \
+	  set_build_environment; \
+	  cd sources; \
+	  for I in `find -maxdepth 3 -mindepth 1 -type d | sort`; do \
+	    if [ "$$I" != "\./\.git" ]; then \
+	      if echo $$I | egrep "^./mtools/mtools-4.0.15/scripts" >/dev/null 2>&1; then \
+	        continue; \
+	      elif echo $$I | egrep "^./cdrtools" >/dev/null 2>&1; then \
+	        NW="GMAKE_NOWARN=true "; \
+	      else \
+	        unset NW; \
+	      fi; \
+	      $(MAKE) $$NW -C $$I -n download >/dev/null 2>/dev/null; \
+	      if [ $$? -eq 0 ]; then \
+	        echo -n " `basename $$I`"; \
+	        $(MAKE) --no-print-directory -C $$I download; \
+	        if [ $$? -ne 0 ]; then \
+	          echo -e "\n$$I predownload failed.\n"; \
+	          exit 1; \
+	        fi \
+	      fi \
+	    fi; \
+	  done \
+	); \
+	echo
+
+# Save a copy of the build directory, sans downloads, for future replication
+#
+savesources:
+	@echo -e "\nArchiving sources..."; sleep 1
+	@tar cfz $(SRC_TGZ) -C .. --exclude build/downloads .
 
 packageinfos.html:
-	@echo "<ul>" >/tmp/packageinfo.html
-	-(cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d`; do \
-		if [ "$$I" != ".svn" ]; then \
-			make -C $$I packageinfo.html; \
-		fi \
-	done);
-	@echo "</ul>" >>/tmp/packageinfo.html
-	
-clean-buildroot:
-	@rm -rf buildroot/*
-
-clean-target:
-	@rm -rf target/*
-	
-clean-sources:
-	@(cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d`; do \
+	@+if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) packageinfos.html"; \
+	else \
+	  rm -rf /tmp/downloads; mkdir /tmp/downloads; \
+	  echo "<ul>" >/tmp/packageinfo.html; \
+	  (cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d`; do \
 		if [ "$$I" != "CVS" ]; then \
-			make -C $$I clean; \
+			ROOT=$$PWD/../.. $(MAKE) --no-print-directory -C $$I packageinfo.html; \
 		fi \
-	done);
+	  done); \
+	fi
+	-$(MAKE) -C sources/modules packageinfos.html
+	@echo "</ul>" >>/tmp/packageinfo.html
 
-clean-tools:
-	@rm -rf ../tools/*
+# Prepare to rebuild the final stage
+reprep-final:
+	@+env -i HOME=$$HOME TERM=$$TERM PS1='\u:\w\$$ ' /bin/bash --noprofile --norc toolcrib/as_chroot "/tools/bin/bash -l -c 'cd /build; bash toolcrib/make_final --unwind'"
+	@+if [ `id -u` -eq 0 ]; then CMD="bash"; else CMD="sudo su"; fi; \
+	   $$CMD -c "$(MAKE) clean-distrib clean-final-crumbs clean-media-crumbs clean-buildroot clean-target"
+	@echo "You must run this twice in a row to complete the 'unwind' back"
+	@echo "  to the toolchain. If this is the first time through, please"
+	@echo "  run it again now!"
 
-clean-distrib:
-	@(cd ..; \
-	umount proc; \
-	rm -rf bin etc lib lib64 proc sbin var boot dev home opt root tmp usr);
-
+# Clean the entire directory back to pristine plus downloaded tarballs
 clean:
-	@echo "No general 'clean' target. Type 'make' with no target for info."
-	
+	@if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) clean"; \
+	else \
+	  $(MAKE) --no-print-directory clean-distrib; \
+	  $(MAKE) --no-print-directory clean-buildroot; \
+	  $(MAKE) --no-print-directory clean-target; \
+	  $(MAKE) --no-print-directory clean-sources; \
+	  $(MAKE) --no-print-directory clean-tools; \
+	  $(MAKE) --no-print-directory clean-crumbs; \
+	  rm -f $(SRC_TGZ); \
+	fi
+
+# Empty the buildroot directory
+#
+clean-buildroot:
+	@+if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) --no-print-directory clean-buildroot"; \
+	else \
+	  tput smso; echo "cleaning buildroot"; tput rmso; \
+	  rm -rf buildroot/*; \
+	fi
+
+# Delete the ISOs and the package tarballs
+#
+clean-target:
+	@+if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) --no-print-directory clean-target"; \
+	else \
+	  tput smso; echo "cleaning target"; tput rmso; \
+	  rm -rf target/*; \
+	fi
+
+# Clean the sources dir to 'pristine'
+# NOTE: if you've bumped versions, the old version build dirs won't be removed
+#   because the buid system is now blind to them.
+#
+clean-sources:
+	@+if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) --no-print-directory clean-sources"; \
+	else \
+	  tput smso; echo -n "cleaning sources"; tput rmso; \
+	  (cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d | sort`; do \
+	     if [ "$$I" != "CVS" ]; then \
+	       export BUILDDIR=`pwd`; $(MAKE) --no-print-directory -C $$I clean; \
+	     fi \
+	  done); \
+	  echo; \
+	fi
+
+# Delete the toolchain
+#
+clean-tools:
+	@+if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) --no-print-directory clean-tools"; \
+	else \
+	  tput smso; echo "cleaning tools"; tput rmso; \
+	  rm -rf ../tools/*; \
+	fi
+
+# Delete the packages installed for the chroot environment
+#
+clean-distrib:
+	@+if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) --no-print-directory clean-distrib"; \
+	else \
+	  tput smso; echo "cleaning distrib"; tput rmso; \
+	  cd ..; rm -rf `ls -C1 . | egrep -v "build|tools"` ; \
+	  echo "Only build and tools should print:"; \
+	  ls -dC * | sed -e 's/^/  /'; \
+	fi
+
+# Vacuum up the trail of bread crumbs
+#
+clean-crumbs: clean-prep-crumbs clean-stage1-crumbs clean-stage2-crumbs clean-stage3-crumbs clean-final-crumbs clean-media-crumbs
+
+clean-prep-crumbs:
+	@tput smso; echo "cleaning prep crumbs"; tput rmso
+	@rm -f crumbs/host.checked crumbs/tc_prep.built crumbs/tc-Stage_PREP.debug
+
+clean-stage1-crumbs:
+	@tput smso; echo "cleaning stage1 crumbs"; tput rmso
+	@rm -f sources/*/Stage_1*.{out,built} crumbs/*tage_1*
+
+clean-stage2-crumbs:
+	@tput smso; echo "cleaning stage2 crumbs"; tput rmso
+	@rm -f sources/*/Stage_2*.{out,built} crumbs/*tage_2*
+
+clean-stage3-crumbs:
+	@tput smso; echo "cleaning stage3 crumbs"; tput rmso
+	@rm -f sources/*/Stage_3*.{out,built} crumbs/*tage_3*
+
+clean-final-crumbs:
+	@+if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) clean-final-crumbs"; \
+	else \
+	  tput smso; echo "cleaning final crumbs"; tput rmso; \
+	  rm -f sources/*/Final*.{out,built} crumbs/Final* crumbs/resolv.conf; \
+	fi
+
+clean-media-crumbs:
+	@+if [ `id -u` -ne 0 ]; then \
+	  sudo su -c "$(MAKE) clean-media-crumbs"; \
+	else \
+	  tput smso; echo "cleaning media crumbs"; tput rmso; \
+	  rm -f sources/*/Media*.{out,built} crumbs/Media*; \
+	fi

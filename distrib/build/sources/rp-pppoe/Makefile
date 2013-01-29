@@ -17,11 +17,15 @@ INSTALL = yes
 CLEAN = yes
 
 install: compile
-	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)/sbin
-	@install -D $(DIR)/pppoe $(PKG_ROOT)/$(PKG_DIR)/sbin/pppoe
+	@mkdir -p $(PKG_ROOT)$(PKG_DIR)/sbin
+	@install -D $(DIR)/pppoe $(PKG_ROOT)$(PKG_DIR)/sbin/pppoe
 
 clean:
+	@echo -n " $(PACKAGE)"
 	@rm -rf $(PACKAGE)-$(VERSION)
+ifeq ($(BUILD_PHASE), Final)
 	@rm -rf $(PKG_ROOT)
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
+endif
 	
 include ../Makefile.rules

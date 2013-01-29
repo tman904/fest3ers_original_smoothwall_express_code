@@ -4,25 +4,36 @@ include ../Makefile.conf
 include ../Makefile.versions
 
 PACKAGE = iptables
-VERSION = $(IPTABLES_VER)
-
-LICENCE_FILE = $(DIR)/COPYING
+VERSION =  $(IPTABLES_VER)
 
 EXTENSION = .tar.bz2
+BASE_URL = http://www.netfilter.org/projects/iptables/files
 
-BASE_URL = http://www.netfilter.org/projects/iptables/files/
+CONFIG_OPTS = --prefix=/usr --mandir=/usr/man --docdir=/usr/doc \
+	        --enable-devel --enable-libipq
 
-#PATCH_FILE1 = iptables-mod.diff
-PATCH_FILE2 = iptables-1.4.3.2-imq_xt.diff
-#PATCH_FILE3 = ipt_ACCOUNT.patch
+CONFIGURE = yes
+COMPILE = yes
+INSTALL = yes
 
 CONFIG_OPTS = --enable-libipq
 
-INSTALL = yes
+configure: $(DIR)/ patch
+	(if [ ! -e $(COMPILE_DIR) ]; then mkdir $(COMPILE_DIR); fi)
+ifneq ($(DIR), $(COMPILE_DIR))
+	(cd $(COMPILE_DIR); ../$(DIR)/configure --prefix=$(PKG_DIR) $(CONFIG_OPTS))
+else
+	(cd $(COMPILE_DIR); ./configure --prefix=$(PKG_DIR) $(CONFIG_OPTS))
+endif
+
+compile: configure
+	make $(JOBS) -C $(COMPILE_DIR) COPT_FLAGS='$(CFLAGS)' PREFIX=$(PKG_DIR)
+
 
 install: compile
-	@make -C $(DIR) DESTDIR=$(PKG_ROOT)/ install
-	@mkdir $(PKG_ROOT)/sbin
-	@(cd $(PKG_ROOT)/sbin; ln -s /usr/sbin/iptables)
+	@mkdir -p $(PKG_ROOT)
+	make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
+	@mkdir -p $(PKG_ROOT)/sbin
+	@(cd $(PKG_ROOT)/sbin; rm -f iptables; ln -s /usr/sbin/iptables)
 
 include ../Makefile.rules

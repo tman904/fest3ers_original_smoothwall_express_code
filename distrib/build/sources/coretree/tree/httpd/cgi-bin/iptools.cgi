@@ -25,29 +25,6 @@ $selected{'TOOL'}{'PING'} = '';
 $selected{'TOOL'}{'TRACEROUTE'} = '';
 $selected{'TOOL'}{$cgiparams{'TOOL'}} = 'SELECTED';
 
-if ($cgiparams{'ACTION'} eq $tr{'run'})
-{
-	@inaddrs = split(/,/, $cgiparams{'IP'});
-
-	foreach $addr (@inaddrs)
-	{
-		if (&validip($addr)) {
-			push @addrs, $addr; }
-		else
-		{
-			if ($addr =~ /^[A-Za-z0-9\-\.]+$/) {
-				if ($address = gethostbyname($addr)) {
-					push @addrs, inet_ntoa($address); }
-				else {
-					$errormessage = "$tr{'could not resolve'} $addr"; }
-			}
-			else {
-				$errormessage = $tr{'invalid input'};
-			}
-		}
-	}
-}
-
 &openpage($tr{'network utilities'}, 1, '', 'tools');
 
 &openbigbox('100%', 'LEFT');
@@ -78,6 +55,23 @@ END
 
 &closebox();
 
+if ($cgiparams{'ACTION'} eq $tr{'run'})
+{
+	@inaddrs = split(/,/, $cgiparams{'IP'});
+
+	foreach $addr (@inaddrs)
+	{
+		if (&validip($addr)) {
+			push @addrs, $addr; }
+		else
+		{
+			if ($address = gethostbyname($addr)) {
+				push @addrs, inet_ntoa($address); }
+			else {
+				$errormessage = "$tr{'could not resolve'} $addr"; }
+		}		
+	}
+
 unless ($errormessage)
 {
 	foreach $addr (@addrs)
@@ -87,15 +81,14 @@ unless ($errormessage)
 		if (!$hostname) { $hostname = $tr{'lookup failed'}; }
 	
 		&openbox("${addr} (${hostname})");
-
 		print "<PRE>\n";
 		if ($cgiparams{'TOOL'} eq 'PING') {
 			system('/usr/bin/ping', '-n', '-c', '5', $addr); }
 		elsif ($cgiparams{'TOOL'} eq 'TRACEROUTE') {
 			system('/bin/traceroute', '-n', $addr); }
 		print "</PRE>\n";
-
 		&closebox();
+		}
 	}
 }
 

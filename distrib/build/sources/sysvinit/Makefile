@@ -7,9 +7,11 @@
 include ../Makefile.conf
 
 PACKAGE = sysvinit
-VERSION = 2.86
+VERSION = 2.88dsf
 
-BASE_URL = ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/
+
+BASE_URL = http://download-mirror.savannah.gnu.org/releases/sysvinit/
+EXTENSION = .tar.bz2
 
 CONFIGURE = yes
 COMPILE = yes
@@ -19,7 +21,7 @@ configure: $(DIR)/
 	@true
 
 compile: configure
-	@make -C $(DIR)/src CFLAGS="$(CFLAGS) -D_GNU_SOURCE"
+	@make $(JOBS) -C $(DIR)/src CFLAGS="$(CFLAGS) -D_GNU_SOURCE"
 
 install: compile
 	@mkdir -p $(PKG_ROOT)/{sbin,/bin,/usr/bin,/usr/include}

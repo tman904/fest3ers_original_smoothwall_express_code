@@ -1,17 +1,17 @@
+# SmoothWall Build system.
+#
+# (c) SmoothWall Ltd 2005
+#
+# This code is distributed under the terms of the GPL v2.
+
 include ../Makefile.conf
 
 PACKAGE = libdnet
-VERSION = 1.11
+VERSION = 1.12
 
-LICENCE_FILE = $(DIR)/LICENSE
+DIR = $(PACKAGE)-$(VERSION)
 
-BASE_URL = http://ignum.dl.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)/$(TARBALL)
-
-PREPARE = yes
-
-$(DIR)/: download
-	@tar -zxvf $(DOWNLOADS_DIR)/$(PACKAGE)-$(VERSION)$(EXTENSION)
-	@(cd $(DIR); autoconf)
+BASE_URL = http://$(PACKAGE).googlecode.com/files/
 
 include ../Makefile.rules
 

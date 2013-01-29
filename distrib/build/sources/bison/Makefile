@@ -7,8 +7,14 @@
 include ../Makefile.conf
 
 PACKAGE = bison
-VERSION = 1.875
+VERSION = 2.4.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/bison/
+
+CONFIG_OPTS = --prefix=${PKG_DIR}
+
+PATCH = yes
+patch: $(DIR)/
+	cd $(DIR); echo '#define YYENABLE_NLS 1' >> config.h
 
 include ../Makefile.rules

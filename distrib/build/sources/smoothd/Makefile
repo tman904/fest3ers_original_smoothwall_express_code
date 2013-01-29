@@ -5,7 +5,7 @@ PACKAGE = smoothd
 VERSION = 0.0
 
 compile:
-	@(IPTABLES_VER=$(IPTABLES_VER) make -C $(COMPILE_DIR))
+	@(IPTABLES_VER=$(IPTABLES_VER) make $(JOBS) -C $(COMPILE_DIR))
 
 install: compile
 	@install -D $(COMPILE_DIR)/libsmoothd.so $(PKG_ROOT)/usr/lib/libsmoothd.so
@@ -34,6 +34,7 @@ install: compile
 	@install -D $(COMPILE_DIR)/sysadvnet.so $(PKG_ROOT)/usr/lib/smoothd/sysadvnet.so 
 	@install -D $(COMPILE_DIR)/sysipblock.so $(PKG_ROOT)/usr/lib/smoothd/sysipblock.so 
 	@install -D $(COMPILE_DIR)/sysxtaccess.so $(PKG_ROOT)/usr/lib/smoothd/sysxtaccess.so 
+	@install -D $(COMPILE_DIR)/syssmoothinfo.so $(PKG_ROOT)/usr/lib/smoothd/syssmoothinfo.so 
 	@install -D $(COMPILE_DIR)/sysupdown.so $(PKG_ROOT)/usr/lib/smoothd/sysupdown.so 
 	@install -D $(COMPILE_DIR)/sysipsec.so $(PKG_ROOT)/usr/lib/smoothd/sysipsec.so 
 	@install -D $(COMPILE_DIR)/systimeset.so $(PKG_ROOT)/usr/lib/smoothd/systimeset.so 
@@ -48,9 +49,12 @@ all: install
 	@tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /
 
 clean:
-	@make -C $(COMPILE_DIR) clean
+	@echo -n " $(PACKAGE)"
+	@make --no-print-directory -C $(COMPILE_DIR) clean >/dev/null 2>&1
+ifeq ($(BUILD_PHASE), Final)
 	@rm -rf $(PKG_ROOT)
 	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
+endif
 
 download:
 	@true

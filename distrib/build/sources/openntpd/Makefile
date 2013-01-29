@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = openntpd
-VERSION = 20040824p
+VERSION = 3.9p1
 
-BASE_URL = http://www.openntpd.org/dist/portable
+BASE_URL = ftp://ftp.openbsd.org/pub/OpenBSD/OpenNTPD/
 
 CONFIG_OPTS = --with-ssl-dir=/usr/ssl
 
@@ -19,6 +19,7 @@ PATCH_FILE2 = openntpd-pidfile.patch
 INSTALL = yes
 
 install: compile
-	@install -D $(COMPILE_DIR)/ntpd $(PKG_ROOT)/$(PKG_DIR)/sbin/ntpd
+	@mkdir -p $(PKG_ROOT)
+	@install -D $(COMPILE_DIR)/ntpd $(PKG_ROOT)$(PKG_DIR)/sbin/ntpd
 
 include ../Makefile.rules

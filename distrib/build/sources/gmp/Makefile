@@ -5,14 +5,19 @@
 # This code is distributed under the terms of the GPL v2.
 
 include ../Makefile.conf
+include ../Makefile.versions
 
 PACKAGE = gmp
-VERSION = 4.1.4
+VERSION = $(GMP_VER)
 
-BASE_URL = ftp://ftp.gnu.org/gnu/gmp
+BASE_URL = http://www.gnu.org/software/gmp/
 
-ifeq ($(ARCH), i386)
-CONFIG_OPTS = --disable-nls --host=i386-pc-linux-gnu
+ifeq ($(BITS_32), yes)
+PRE_CONFIGURE = ABI=32
 endif
+
+EXTENSION = .tar.bz2
+
+CONFIG_OPTS = --prefix=$(PKG_DIR) --enable-cxx --enable-mpbsd
 
 include ../Makefile.rules

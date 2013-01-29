@@ -8,237 +8,250 @@ include ../Makefile.conf
 include ../Makefile.versions
 include ../Makefile
 
+PACKAGE = media-isoinstall
+
+# Make it easy to switch between the two
+export UDEV = udev
+export UDEVunused = eudev
+
+# Document these pkgs, don't install
+TOOLCHAIN_PKGS = expect
+OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config libart_lgpl 
+
 TARGET_DIR = /build/target/
+INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
+	    daq libnet libnetfilter_queue libnfnetlink attr libcap-ng \
+	    libcap fontconfig glib cairo libffi readline libmnl libpcap \
+	    libosip2 libpcap pango zlib slang pixman libxml2 libusb \
+	    kmod gmp popt yaml perl-mods \
+	    newt binutils coreutils iana-etc mktemp file findutils gawk \
+	    ncurses vim less sed flex gettext net-tools inetutils iputils \
+	    whois perl bash bzip2 kbd e2fsprogs grep gzip module-init-tools \
+	    procinfo procps psmisc shadow sysklogd logrotate sysvinit tar \
+	    util-linux joe wget iptables ipset ipbatch pciutils usbutils \
+	    linux$(KERNEL_TYPE) openssl openssh httpd smoothd squid freefont \
+	    strace rrdtool cron tcpdump dnsmasq ntp openntpd hdparm hddtemp \
+	    iproute2 gd expat ethtool listtables inotify-tools bridge-utils \
+	    beep2 pcre trafficstats iftop setuids ppp isdn4k-utils rp-pppoe \
+	    ibod dhcpcd eciadsl-synch_bin eciadsl-usermode cnxadsl dhcp snort \
+	    oinkmaster openswan wireless_tools imspector diffutils clamav \
+	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
+	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
+	    mtools nano reiserfsprogs parted xtables-addons cpio Python \
+	    $(UDEV) lm_sensors xz pcmciautils qemu-kvm sysfsutils \
+	    coretree
+# 'coretree' *MUST* be last
+
+DEV_PKGS = kernel-headers patch make autoconf automake bison dejagnu gcc \
+	   gdb tcl m4 neon git screen lynx groff man man-pages \
+	   klibc pkg-config sudo texinfo dev86 busybox \
+	   libtool nasm acpica
 
 cdrom:
-	@mkdir cdrom
-
-images: cdrom
-	@make -C booting
+	mkdir cdrom
+	echo "      runtimeroot" >/proc/self/fd/0
+	make -C runtimeroot KERNEL_TYPE=$(KERNEL_TYPE) 
+	echo "      installroot" >/proc/self/fd/0
+	make -C installroot KERNEL_TYPE=$(KERNEL_TYPE) 
+	echo "      cdromboot" >/proc/self/fd/0
+	make -C cdromboot KERNEL_TYPE=$(KERNEL_TYPE) 
 
 cdrom/smoothwall.tgz:
-	@mkdir distrib
-
-	@(for I in \
-		glibc \
-		libsmooth+setup \
-		newt \
-		slang \
-		devnodes \
-		libstdc++ \
-		libgcc \
-		binutils \
-		coreutils \
-		iana-etc \
-		mktemp \
-		findutils \
-		gawk \
-		ncurses \
-		vim \
-		less \
-		sed \
-		flex \
-		gettext \
-		net-tools \
-		inetutils \
-		iputils \
-		whois \
-		perl \
-		bash \
-		bzip2 \
-		kbd \
-		e2fsprogs \
-		parted \
-		grep \
-		gzip \
-		module-init-tools \
-		procinfo \
-		procps \
-		psmisc \
-		shadow \
-		sysklogd \
-		logrotate \
-		sysvinit \
-		tar \
-		cpio \
-		util-linux \
-		joe \
-		wget \
-		iptables \
-		xtables-addons \
-		ipbatch \
-		pciutils \
-		kernel-runtime \
-		kernel-runtimebig \
-		ueagle-data \
-		grub \
-		openssl \
-		openssh \
-		httpd \
-		smoothd \
-		squid \
-		HTML-Parser \
-		HTML-Tagset \
-		URI \
-		libwww-perl \
-		strace \
-		libart_lgpl \
-		freetype \
-		rrdtool \
-		cron \
-		tcpdump \
-		dnsmasq \
-		libcap \
-		ntp \
-		openntpd \
-		hdparm \
-		hddtemp \
-		iproute2 \
-		libpng \
-		gd \
-		gmp \
-		expat \
-		ethtool \
-		popt \
-		listtables \
-		beep2 \
-		pcre \
-		trafficstats \
-		iftop \
-		setuids \
-		ppp \
-		isdn4k-utils \
-		speedtouch \
-		rp-pppoe \
-		ibod \
-		dhcpcd \
-		eciadsl-synch_bin \
-		eciadsl-usermode \
-		eagle-usb \
-		cnxadsl \
-		dhcp \
-		libdnet \
-		daq \
-		snort \
-		oinkmaster \
-		openswan \
-		wireless_tools \
-		sqlite \
-		imspector \
-		diffutils \
-		traceroute \
-		clamav \
-		p3scan \
-		libosip2 \
-		siproxd \
-		which \
-		miniupnpd \
-		ez-ipupdate \
-		noip \
-		basicrootfs \
-		coretree \
-	; do \
-		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
-		make -C ../$$I clean all; \
-			if [ $$? -ne 0 ]; then \
-				echo "$$I FAILED"; \
-				exit 0; \
-			fi; \
-		fi; \
-		echo "Unpacking $$I ..."; \
-		tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
-	done; \
+	echo "      prepare cdrom tree" >/proc/self/fd/0
+	mkdir -p distrib distrib/sys distrib-dev distrib-doc/usr/share/
+	
+	install -D runtimerootimage.gz distrib/boot/initrd-$(K_SWE_VERSION).gz
+	
+	echo "        unpack dev packages" >/proc/self/fd/0
+	echo "Unpacking dev packages:"
+	(for I in $(DEV_PKGS); do \
+	    if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
+	      make -C ../$$I clean all; retCode=$$?; \
+	      if [ $$retCode -ne 0 ]; then \
+	        echo "$$I FAILED"; \
+	        exit $$retCode; \
+	      fi; \
+	    fi; \
+	    echo -n "    $$I"; \
+	    tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib-dev || (echo; exit 69); \
+	    echo; \
+	  done; \
 	);
-
-ifeq ($(TYPE), -devel)
-	@(for I in \
-		kernel-headers \
-		patch \
-		make \
-		autoconf \
-		automake \
-		bison \
-		dejagnu \
-		gcc \
-		gdb \
-		tcl \
-		m4 \
-		neon \
-		apr \
-		apr-util \
-		subversion \
-		git \
-		screen \
-		lynx \
-		groff \
-		man \
-		man-pages \
-	; do \
-		if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
-		make -C ../$$I clean all; \
-			if [ $$? -ne 0 ]; then \
-				echo "$$I FAILED"; \
-				exit 0; \
-			fi; \
-		fi; \
-		echo "Unpacking $$I ..."; \
-		tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
-	done; \
+	
+	@echo "        copy dev shared libs to distrib" >/proc/self/fd/0
+	@echo "Copying dev shared libs to distrib:"
+	(cd distrib-dev; \
+	  find . -name \*.so\* -print | cpio -pd ../distrib \
+	)
+	
+	@echo "        unpack main packages" >/proc/self/fd/0
+	@echo "Unpacking main packages:"
+	(for I in $(INST_PKGS); do \
+	    if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
+	      make -C ../$$I clean all; retCode=$$?; \
+	      if [ $$retCode -ne 0 ]; then \
+	        echo "$$I FAILED"; \
+	        exit $$retCode; \
+	      fi; \
+	    fi; \
+	    echo -n "    $$I"; \
+	    tar xf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib || (echo; exit 68); \
+	    echo; \
+	  done; \
 	);
-endif
-
-ifneq ($(TYPE), -devel)
-	@/build/striptree distrib
-endif
-
-	@echo "PRODUCT='$(PRODUCT_NAME)'" > distrib/var/smoothwall/main/productdata
-	@echo "VERSION='$(PRODUCT_VERSION)'" >> distrib/var/smoothwall/main/productdata
-	@echo "REVISION='$(REVISION)'" >> distrib/var/smoothwall/main/productdata
-	@echo "UI_VERSION='$(UI_VERSION)'" >> distrib/var/smoothwall/main/productdata
-	@echo "FIXES='$(FIXES_NUMBER)'" >> distrib/var/smoothwall/main/productdata
-	@echo "ARCH='$(ARCH)'" >> distrib/var/smoothwall/main/productdata
-
+	@echo "        move includes to distrib-dev" >/proc/self/fd/0
+	@echo "Moving includes to distrib-dev:"
+	if [ -d distrib/usr/include ]; then \
+	  mkdir -p distrib-dev/usr/include; \
+	  cp -a distrib/usr/include distrib-dev/usr/; \
+	  rm -rf distrib/usr/include/*; fi
+	
+	@echo "        move static libs to distrib-dev" >/proc/self/fd/0
+	@echo "Moving static libs to distrib-dev:"
+	cd distrib; find . -name \*.a -o -name \*.la | while read a; do \
+	  mkdir -p ../distrib-dev/`dirname $$a`; \
+	  mv $$a ../distrib-dev/$$a; \
+	done
+	
+	@echo "        move docs to distrib-doc" >/proc/self/fd/0
+	@echo "Moving docs to distrib-doc:"
+	for I in man info share/man share/info share/doc examples; do \
+	  if [ -d distrib/usr/$$I ]; then \
+	    mkdir -p distrib-doc/usr/$$I; \
+	    mv distrib/usr/$$I/* distrib-doc/usr/$$I/; fi; \
+	done
+	
+	@echo "        strip symbols" >/proc/self/fd/0
+	/build/toolcrib/striptree distrib
+	/build/toolcrib/striptree distrib-dev
+	/build/toolcrib/striptree distrib-doc
+	
+	@echo -e "\nProduct info:"
+	@( \
+	echo "  PRODUCT='$(PRODUCT_NAME)$(PRODUCT_EXTRA)'"; \
+	echo "  VERSION='$(PRODUCT_VERSION)'"; \
+	echo "  REVISION='$(REVISION)'"; \
+	echo "  UI_VERSION='$(UI_VERSION)'"; \
+	echo "  FIXES='$(FIXES_NUMBER)'"; \
+	echo "  ARCH='$(mARCH)'"; \
+	) | sed -u -e 's/^/  /'
+	
+	@mkdir -p distrib/var/smoothwall/main
+	@( \
+	  echo "PRODUCT='$(PRODUCT_NAME)$(PRODUCT_EXTRA)'" ; \
+	  echo "VERSION='$(PRODUCT_VERSION)'" ; \
+	  echo "REVISION='$(REVISION)'" ; \
+	  echo "UI_VERSION='$(UI_VERSION)'" ; \
+	  echo "FIXES='$(FIXES_NUMBER)'" ; \
+	  echo "ARCH='$(mARCH)'" ; \
+	) > distrib/var/smoothwall/main/productdata
+	
 	@chown nobody:nobody distrib/var/smoothwall/main/productdata
-
-	@echo "Securing tree ..."
-	@/build/securetree distrib
-	@chmod u+s distrib/bin/traceroute
-	@chmod u+s distrib/usr/bin/ping
-	@chmod u+s distrib/usr/sbin/listtables
-	@chown root:nobody distrib/usr/bin/setuids/*
-	@chmod 4750 distrib/usr/bin/setuids/*
 	
-	@echo "Converting to shadow passwords ..."
-	@/usr/bin/chroot distrib /usr/sbin/pwconv
-	@/usr/bin/chroot distrib /usr/sbin/grpconv
+	@echo "        secure tree ..." >/proc/self/fd/0
+	@echo -e "\nSecuring tree ..."
+	@( \
+	  mkdir -p distrib/tmp; \
+	  /build/toolcrib/securetree distrib; \
+	  /build/toolcrib/securetree distrib-dev; \
+	  /build/toolcrib/securetree distrib-doc; \
+	  chmod u+s distrib/usr/bin/ping; \
+	  chmod u+s distrib/usr/sbin/listtables; \
+	  chown root:nobody distrib/usr/bin/setuids/*; \
+	  chmod 4750 distrib/usr/bin/setuids/*; \
+	  chmod 1777 distrib/tmp; \
+	) | sed -u -e 's/^/  /'
 	
-	@echo "Updating library cache ..."
-	@/sbin/ldconfig -r distrib
-
-	@echo "Building smoothwall.tgz, stand by ..."
+	@echo "        convert to shadow passwords ..." >/proc/self/fd/0
+	@echo -e "\nConverting to shadow passwords ..."
+	@( \
+	/usr/bin/chroot distrib /usr/sbin/pwconv; \
+	/usr/bin/chroot distrib /usr/sbin/grpconv; \
+	) | sed -u -e 's/^/  /'
+	
+	@echo "        update library cache ..." >/proc/self/fd/0
+	@echo -e "\nUpdating library cache ..."
+	@( \
+	/sbin/ldconfig -r distrib; \
+	) | sed -u -e 's/^/  /'
+	
+	@echo "        tidy ..." >/proc/self/fd/0
+	@echo -e "\nTidying ..."
+	@#rm -f distrib/etc/resolv.conf
+	@find distrib -name .gitignore -exec rm -f {} \;
+	@ln -s /var/smoothwall/vpn/ipsec.conf distrib/etc/ipsec.conf
+	
+	@echo "      copy to OffRoad ..." >/proc/self/fd/0
+	@echo -e "\nCopying to OffRoad ..."
+	@mkdir -p offroad
+	@cd cdrom; cp -av . ../offroad
+	@sed -i \
+	     -e '/Install SmoothWall/,+4d' \
+             -e '/Convert ISO/,+9d' \
+	     -e '$d' \
+	     offroad/boot/grub/grub.conf
+	
+	@echo "      build final tarballs ..." >/proc/self/fd/0
+	@echo "        main ..." >/proc/self/fd/0
+	@echo -e "\nBuilding smoothwall.tgz, stand by ..."
 	@tar -zcf cdrom/smoothwall.tgz -C distrib .
+	
+	@echo "        dev ..." >/proc/self/fd/0
+	@echo -e "\nBuilding smoothdev.tgz, stand by ..."
+	@tar -zcf cdrom/smoothdev.tgz -C distrib-dev .
+	
+	@echo "        doc ..." >/proc/self/fd/0
+	@echo -e "\nBuilding smoothdoc.tgz, stand by ..."
+	@tar -zcf cdrom/smoothdoc.tgz -C distrib-doc .
+	
+	@( \
+	  src_tgz=../../../../smoothsrc.tar.gz; \
+	  if [ -e "$src_tgz" ]; then \
+	    echo -e "\nCopying smoothsrc.tgz, stand by ..."; \
+	    cp $src_tgz  cdrom/smoothsrc.tgz; \
+	  fi \
+	)
 
-extracontent: cdrom
-	@cp extracontent/* cdrom -avR
-	@(for I in README.txt README.html; do \
+extracontent:
+	cp extracontent/* cdrom -avR
+	(for I in README.txt README.html; do \
 		cat templates/$$I | \
 			sed "s@\%PRODUCT_NAME\%@$(PRODUCT_NAME)@g" | \
 			sed "s@\%BASENAME\%@$(BASENAME)@g" \
 		> cdrom/$$I; \
 	done);
-	@(cd cdrom; rm -rf `find -name CVS`)
-	@(cd cdrom; rm -rf `find -name .svn`)
+	find cdrom -name CVS -exec rm -rf {} \;
+	find cdrom -name .svn -exec rm -rf {} \;
 
-all: images cdrom/smoothwall.tgz extracontent
-	@cp -avR booting/isolinux/ cdrom/
-	@/sbin/mkisofs -o $(TARGET_DIR)/isos/smoothwall-$(BASENAME)$(PRODUCT_EXTRA)$(TYPE)-$(ARCH).iso -J -c boot.cat \
-		-b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table -V $(BASENAME) cdrom
-	@echo "smoothwall-$(BASENAME)$(PRODUCT_EXTRA)$(TYPE)-$(ARCH).iso build complete"
+all: cdrom cdrom/smoothwall.tgz extracontent
+	@echo "      build full ISO ..." >/proc/self/fd/0
+	@( \
+	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH); \
+	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}.iso; \
+	  /sbin/mkisofs -o $${ISONAME} \
+	    -b boot/grub/stage2_eltorito -J -R \
+	    -no-emul-boot -boot-load-size 4 -boot-info-table \
+	    -V $(BASENAME) --publisher "Smoothwall Express" cdrom; \
+	  echo "$${ISONAME} build complete"; \
+	)
+	@echo "      build offRoad ISO ..." >/proc/self/fd/0
+	@( \
+	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH); \
+	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-offroad.iso; \
+	  /sbin/mkisofs -o $${ISONAME} \
+	    -b boot/grub/stage2_eltorito -J -R \
+	    -no-emul-boot -boot-load-size 4 -boot-info-table \
+	    -V $(BASENAME) --publisher "Smoothwall Express (OffRoad)" offroad; \
+	  echo "$${ISONAME} build complete"; \
+	)
 
 clean:
-	@rm -rf cdrom distrib
-
-	@make -C booting clean
+	@echo -n " $(PACKAGE)"
+	@rm -f Media.agclISO.built
+	@rm -rf cdrom offroad distrib distrib-dev distrib-doc klibc temp
+	@make --no-print-directory -C cdromboot clean >/dev/null 2>&1
+	@make --no-print-directory -C installroot clean >/dev/null 2>&1
+	@make --no-print-directory -C runtimeroot clean >/dev/null 2>&1
 	
 download:
 	@true
