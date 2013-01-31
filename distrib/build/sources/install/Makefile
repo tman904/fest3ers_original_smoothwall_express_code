@@ -14,13 +14,19 @@ compile:
 	@make -C $(COMPILE_DIR)
 
 install: compile
-	@install -D $(COMPILE_DIR)/install/install $(TARGET_DIR)/$(PACKAGE)
+	@install -D $(COMPILE_DIR)/install/install $(TARGET_DIR)$(PACKAGE)
 
 all: install
 	@true
 
 clean:
+	@echo -n " $(PACKAGE)"
 	@make -C $(COMPILE_DIR) clean
+ifeq ($(BUILD_PHASE), Final)
+	@rm -rf $(PKG_ROOT); mkdir $(PKG_ROOT)
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
+endif
+
 
 download:
 	@true

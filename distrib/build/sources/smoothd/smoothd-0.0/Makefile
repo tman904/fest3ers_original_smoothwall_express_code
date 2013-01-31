@@ -10,7 +10,7 @@ IPTABLES_SRC_DIR = ../../iptables/iptables-$(IPTABLES_VER)
 export IPT_LIB_DIR = $(IPT_LIBEXEC)
 
 OBJS=
-LIB_OBJS = module.o UDSocket.o pid.o setuid.o config.o ipbatch.o ipbatchc.o \
+LIB_OBJS = module.o UDSocket.o pid.o setuid.o config.o ipbatch.o \
         $(IPTABLES_SRC_DIR)/iptables/xtables_multi-iptables.o \
         $(IPTABLES_SRC_DIR)/iptables/xshared.o
 

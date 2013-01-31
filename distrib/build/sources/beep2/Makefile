@@ -27,6 +27,11 @@ install: compile
 	@make -C $(DIR) PREFIX=$(PKG_ROOT)/usr/ install
 
 clean:
+	@echo -n " $(PACKAGE)"
 	@make -C $(DIR) clean >/dev/null 2>&1
+ifeq ($(BUILD_PHASE), Final)
+	@rm -rf $(PKG_ROOT); mkdir $(PKG_ROOT)
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
+endif
 
 include ../Makefile.rules

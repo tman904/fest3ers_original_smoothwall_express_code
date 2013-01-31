@@ -7,6 +7,7 @@ BASE_URL = http://www.ramereth.net/openwrt/src/distfiles/
 
 EXTENSION = .tbz2
 
+PREPARE = yes
 INSTALL = yes
 CONFIGURE = yes
 

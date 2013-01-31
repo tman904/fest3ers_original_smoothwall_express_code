@@ -205,7 +205,7 @@ fi
       build kmod
       build gperf
       build udev
-      build eudev
+      #build eudev
       build linux-atm
       touch crumbs/Final.grp3.compiled
     fi
@@ -261,6 +261,7 @@ fi
 
       build rrdtool
       build perl-mods
+      build sqlite
 
       touch crumbs/Final.grp4.compiled
     fi
@@ -351,7 +352,6 @@ fi
       build yaml
       build suricata
       build smartmontools
-      build sqlite
       build squidguard
       build subversion
       build qemu-kvm

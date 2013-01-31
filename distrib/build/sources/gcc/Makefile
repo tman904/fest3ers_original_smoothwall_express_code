@@ -82,8 +82,12 @@ compile: configure
 INSTALL = yes
 install: compile
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
-	@(cd $(PKG_ROOT)/$(PKG_DIR)/bin; ln -s gcc cc);
-	@(cd $(PKG_ROOT)/$(PKG_DIR)/lib; ln -s /$(PKG_DIR)/bin/cpp);
+	@(cd $(PKG_ROOT)/$(PKG_DIR)/bin; ln -svf gcc cc);
+	@(cd $(PKG_ROOT)/$(PKG_DIR)/lib; ln -svf /$(PKG_DIR)/bin/cpp);
+	cd $(COMPILE_DIR); \
+	  ln -vs libgcc.a `$(SWE_TGT)-gcc -print-libgcc-file-name \
+	                     | sed -e 's/libgcc/&_eh/'`
+
 endif
 
 # Tool Chain Build Stage 2
@@ -143,7 +147,7 @@ compile: configure
 
 install:  compile
 	$(MAKE) -C $(COMPILE_DIR) install
-	ln -vs gcc $(TOOLS_DIR)/bin/cc
+	ln -svf gcc $(TOOLS_DIR)/bin/cc
 endif
 
 
@@ -192,8 +196,8 @@ INSTALL = yes
 install: compile
 	mkdir -p $(PKG_ROOT)
 	make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
-	cd $(PKG_ROOT)$(PKG_DIR)/bin; ln -s gcc cc;
-	cd $(PKG_ROOT)$(PKG_DIR)/lib; ln -s $(PKG_DIR)/bin/cpp;
+	cd $(PKG_ROOT)$(PKG_DIR)/bin; ln -svf gcc cc;
+	cd $(PKG_ROOT)$(PKG_DIR)/lib; ln -svf $(PKG_DIR)/bin/cpp;
 	ln -svf /usr/bin/cpp /lib
 	ln -svf gcc /usr/bin/cc
 endif

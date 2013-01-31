@@ -4,7 +4,7 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-include ../Makefile.conf
+include ../../Makefile.conf
 
 PACKAGE = vlan
 VERSION = 1.8
@@ -24,4 +24,4 @@ configure: patch
 install: compile
 	@install -D $(COMPILE_DIR)/vconfig $(PKG_ROOT)/sbin/vconfig
 
-include ../Makefile.rules
+include ../../Makefile.rules

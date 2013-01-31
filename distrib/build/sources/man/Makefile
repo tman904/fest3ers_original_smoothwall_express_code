@@ -16,6 +16,10 @@ PATCH_FILE1 = man-utf8-nroff-fix.patch
 CONFIGURE = yes
 
 configure: patch
-	@(cd $(DIR); ./configure -d)
+	@cd $(DIR); ./configure -d
+
+install: compile
+	mkdir -p $(PKG_ROOT)
+	+$(MAKE) -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 
 include ../Makefile.rules

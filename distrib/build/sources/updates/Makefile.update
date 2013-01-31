@@ -51,7 +51,6 @@ $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 
 clean:
 	@rm -rf distrib
-
 	@rm -f patch.tar.gz
 	@rm -f $(OUTPUT_FILENAME)
 	@rm -f updateinfo

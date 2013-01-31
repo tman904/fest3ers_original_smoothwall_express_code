@@ -10,7 +10,7 @@ PROGS=raidautorun iowrap
 all : $(PROGS)
 
 clean : 
-	-rm -f $(PROGS) *.o core
+	@rm -f $(PROGS) *.o core
 
 ######
 

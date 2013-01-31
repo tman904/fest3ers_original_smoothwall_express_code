@@ -58,8 +58,8 @@ endif
 	)
 
 clean:
-	make -C tools clean
-	rm -rf $(BASIC_ROOT_FS) tmp/
-	rm -f $(BASIC_ROOT_FS).bz2
+	@make -C tools clean
+	@rm -rf $(BASIC_ROOT_FS) tmp/
+	@rm -f $(BASIC_ROOT_FS).bz2
 
 

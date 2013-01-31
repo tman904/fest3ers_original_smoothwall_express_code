@@ -12,18 +12,7 @@ EXTENSION = .tar.bz2
 
 BASE_URL = http://www.kernel.org/pub/linux/kernel/people/gregkh/usbutils/
 
-#CONFIGURE = yes
-#COMPILE = yes
-#INSTALL = yes
-#
-#configure: patch
-#	@true
-#
-#compile: configure
-#	@make $(JOBS) -C $(DIR) CC="gcc $(CFLAGS)"
-#
-#install: compile
-#	@make -C $(DIR) PREFIX=$(PKG_ROOT)$(PKG_DIR) install
+CONFIG_OPTS = --disable-zlib
 
 include ../Makefile.rules
 

@@ -8,4 +8,4 @@ $(PLUGINS):
 	$(CXX) $(MODFLAGS)
 
 clean:
-	rm -f *.o *.so
+	@rm -f *.o *.so

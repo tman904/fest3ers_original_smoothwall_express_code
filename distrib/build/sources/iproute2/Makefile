@@ -26,14 +26,12 @@ configure: patch
 	@sed -i '/^TARGETS/s@ arpd@@g' $(COMPILE_DIR)/misc/Makefile
 
 compile: configure
-	@$(MAKE) $(JOBS) -C $(COMPILE_DIR) KERNEL_INCLUDE=/usr/include $(PATHS)
-	@ln -s $(DIR) $(PACKAGE)
+	$(MAKE) $(JOBS) -C $(COMPILE_DIR) KERNEL_INCLUDE=/usr/include $(PATHS)
+	ln -s $(DIR) $(PACKAGE)
 
 install: compile
-	@mkdir -p $(PKG_ROOT)
-	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) MODDESTDIR=$(PKG_ROOT)/usr/lib/tc install
-	@mkdir -p $(PKG_ROOT)/usr/sbin
-	@ln -s /sbin/tc $(PKG_ROOT)/usr/sbin
+	@mkdir -p $(PKG_ROOT)$(PKG_DIR)
+	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) MODDESTDIR=$(PKG_ROOT)/lib/tc $(PATHS) install
 
 clean:
 	@echo -n " $(PACKAGE)"

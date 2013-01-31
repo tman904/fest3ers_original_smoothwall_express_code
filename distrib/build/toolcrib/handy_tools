@@ -1,5 +1,7 @@
 #! /bin/bash
 
+alias gitstat='git status|egrep -v -- "\.built|\.out|\-compile/$|\.so$|\.o$"|more'
+
 function monbuild ()
 {
   if [ $# -eq 0 -o `basename "$PWD"` != "build" ]; then
@@ -22,6 +24,11 @@ function monbuild ()
   esac
   (
     trap "echo; exit" INT
+    if [ ! -d sources/$1 ]; then
+      echo "Pkg '$1' not found."
+      return
+    fi
+    [ -f sources/$1/$stage.out ] || touch sources/$1/$stage.out
     tail -f -s .1 sources/$1/$stage.out
   )
 }
@@ -73,7 +80,7 @@ function redo ()
     pkg=${1/+/\\+}
     # Remove the package crumb
     rm -f sources/${1}/Final.built
-    egrep -i "build ${pkg} |build ${pkg}$|-e.*grp" make_final | while read a b c d e; do
+    egrep -i "build ${pkg} |build ${pkg}$|-e.*grp" toolcrib/make_final | while read a b c d e; do
       if [ "$a" == "if" ]; then
         GRP=`echo $d | sed -e 's/.*grp//' -e 's/\.compiled.*//'`
       else

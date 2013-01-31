@@ -12,13 +12,10 @@ EXTENSION = .tar.xz
 
 BASE_URL = http://www.kernel.org/pub/linux/utils/kernel/module-init-tools
 
-PKG_DIR = 
+PKG_DIR =
 
-#CONFIG_OPTS = --mandir=/usr/man --enable-insmod-static
+PRE_CONFIGURE = DOCBOOKTOMAN=/bin/true
 
-COMPILE = yes
-
-compile: configure
-	@$(MAKE) $(JOBS) -C $(DIR) DOCBOOKTOMAN=/bin/true
+CONFIG_OPTS = --datarootdir=/usr/share
 
 include ../Makefile.rules
