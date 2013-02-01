@@ -39,8 +39,10 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio Python \
 	    $(UDEV) lm_sensors xz pcmciautils qemu-kvm sysfsutils \
-	    coretree
-# 'coretree' *MUST* be last
+	    coretree device-ids
+# 'coretree' *MUST* be second-last.
+# 'device-ids' *MUST* be last in order to overwrite any existing version of usb.ids
+#   and pci.ids in usr/share.
 
 DEV_PKGS = kernel-headers patch make autoconf automake bison dejagnu gcc \
 	   gdb tcl m4 neon git screen lynx groff man man-pages \

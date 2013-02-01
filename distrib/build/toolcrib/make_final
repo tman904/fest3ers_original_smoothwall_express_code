@@ -114,6 +114,7 @@ fi
       build coreutils
       build gdbm
       build mktemp
+      build device-ids
       build iana-etc
       build findutils
       build gawk
@@ -196,7 +197,7 @@ fi
       build openldap
       build wget
       build sudo
-      build linux-kvm
+      build linux
       build iptables
       build ipset
       build xtables-addons
@@ -289,6 +290,7 @@ fi
       build libsmooth+setup
       build trafficstats
       build setuids
+      build install
       build coretree
 
       build openssh

@@ -5,7 +5,7 @@ CFLAGS=-O2 -Wall
 
 COMPILE=$(CC) $(VERSION_DEFINES) $(CFLAGS)
 
-PROGS=raidautorun iowrap
+PROGS=raidautorun
 
 all : $(PROGS)
 
@@ -17,7 +17,5 @@ clean :
 %.o : %.c
 	$(COMPILE) -c $< -o $@
 
-iowrap: iowrap.o
-	$(COMPILE) $< -o $@
 raidautorun: raidautorun.o
 	$(COMPILE) $< -o $@

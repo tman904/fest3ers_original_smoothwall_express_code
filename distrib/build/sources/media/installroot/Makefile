@@ -32,7 +32,7 @@ EXCLUDE_DRIVERS = bluetooth connector gpu infiniband mfd misc mtd parport \
 
 SBINPROGS = /sbin/mke2fs /sbin/sfdisk /sbin/depmod
 SWE_PKGS = $(UDEV) kmod grub pciutils bash reiserfsprogs util-linux pcmciautils \
-	   sysfsutils parted readline inotify-tools mtools
+	   sysfsutils parted readline inotify-tools mtools device-ids
 ROOTDIRS = cdrom dev etc harddisk proc sys tmp usr run
 GZIP_PKGS = gunzip
 
@@ -106,6 +106,7 @@ all: clean bin lib klibc
 	  rm -rf /etc/udev/rules.d/*; \
 	  ln -s /bin/init init; \
 	)
+	@# May need to do this for usb.ids, too.
 	(cd tmp/etc; \
 	  gawk -f ../../etc/fill-pci-ids.awk < /usr/share/pci.ids > filled.pci.ids;\
 	) > /dev/null 2>&1

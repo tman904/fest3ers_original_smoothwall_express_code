@@ -18,7 +18,7 @@ clean:
 	@echo -n " $(PACKAGE)"
 	@$(MAKE) -C $(DIR) clean
 ifeq ($(BUILD_PHASE), Final)
-	@rm -rf $(PKG_ROOT)
+	@rm -rf $(PKG_ROOT); mkdir -p $(PKG_ROOT)
 	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 endif
 

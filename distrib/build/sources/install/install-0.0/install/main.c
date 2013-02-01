@@ -80,9 +80,10 @@ int main(int argc, char *argv[])
 		trimbigdisk = 1;
 
 	/* Load USB keyboard modules so dialogs can respond to USB-keyboards */
-	fprintf(flog, "Loading USB-keyboard modules.\n");
-
-	mysystem("/sbin/modprobe usbhid");
+// Shouldn't be needed with full udev
+//	fprintf(flog, "Loading USB-keyboard modules.\n");
+//
+//	mysystem("/sbin/modprobe usbhid");
 
 	newtInit();
 	newtCls();
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
 	ctr = english_tr;
 	strcpy(shortlangname, "en");
 			
-	newtDrawRootText(0, 0, "                SmoothWall Express 3.0 -- http://smoothwall.org/");
+	newtDrawRootText(0, 0, "                SmoothWall Express 3.1 -- http://smoothwall.org/");
 	newtPushHelpLine(ctr[TR_HELPLINE]);
 
 	newtWinMessage(TITLE, ctr[TR_OK], ctr[TR_WELCOME]);
@@ -302,9 +303,9 @@ int main(int argc, char *argv[])
 	writekeyvalues(hwprofilekv, "/harddisk/" CONFIG_ROOT "/main/hwprofile");
 
 	if (runcommandwithstatus("/bin/chroot /harddisk /sbin/depmod -a",
-		ctr[TR_CALCULATING_MODULE_DEPENDANCIES]))
+		ctr[TR_CALCULATING_MODULE_DEPENDENCIES]))
 	{
-		errorbox(ctr[TR_UNABLE_TO_CALCULATE_MODULE_DEPENDANCIES]);
+		errorbox(ctr[TR_UNABLE_TO_CALCULATE_MODULE_DEPENDENCIES]);
 		goto EXIT;
 	}
 

@@ -30,7 +30,6 @@
 export SHELL = bash
 export SRC_TGZ = ../../smoothsrc.tar.gz
 export PATH := $(PATH):$(PWD)/toolcrib
-export CTNG_PATHS = /tools/ctng/bin:/tools/ctng/x86_64-swe-linux-gnu/bin
 
 include sources/Makefile.flags-arch
 
@@ -40,8 +39,8 @@ CUSTOM_ENV = SHELL=BASH mARCH="$(mARCH)" SWE_TGT="$(SWE_TGT)" \
 	     BITS_64="$(BITS_64)" BITS_32="$(BITS_32)"
 
 ifndef ktype
-ktype = kvm
-CUSTOM_ENV += KERNEL_TYPE=-kvm
+ktype = 
+CUSTOM_ENV += KERNEL_TYPE=
 else
 CUSTOM_ENV += KERNEL_TYPE=-$(ktype)
 endif
@@ -124,7 +123,7 @@ crumbs/tc_prep.built:
 #
 crumbs/tc_stage_1.built: crumbs/tc_prep.built
 	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain 1
-	@+env -i $(CUSTOM_ENV) PATH=/tools/bin:$(CTNG_PATHS):$$PATH /bin/bash -x toolcrib/tc_check 1
+	@+env -i $(CUSTOM_ENV) PATH=/tools/bin:$$PATH /bin/bash -x toolcrib/tc_check 1
 	#exit 101
 	@rm -f dummy.c a.out
 	@touch crumbs/tc_stage_1.built
@@ -133,7 +132,7 @@ crumbs/tc_stage_1.built: crumbs/tc_prep.built
 #
 crumbs/tc_stage_2.built: crumbs/tc_stage_1.built
 	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain 2
-	@+env -i $(CUSTOM_ENV) PATH=/tools/bin:$(CTNG_PATHS):$$PATH /bin/bash toolcrib/tc_check 2
+	@+env -i $(CUSTOM_ENV) PATH=/tools/bin:$$PATH /bin/bash toolcrib/tc_check 2
 	@rm -f dummy.c a.out
 	#exit 102
 	@touch crumbs/tc_stage_2.built

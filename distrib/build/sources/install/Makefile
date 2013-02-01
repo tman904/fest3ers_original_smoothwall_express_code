@@ -27,7 +27,6 @@ ifeq ($(BUILD_PHASE), Final)
 	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 endif
 
-
 download:
 	@true
 

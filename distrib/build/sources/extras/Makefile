@@ -1,4 +1,4 @@
-# Keep 'make clean' tidy
+# Keep 'make clean' tidy.
 
 clean:
 	@true

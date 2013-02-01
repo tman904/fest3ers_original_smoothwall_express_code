@@ -14,10 +14,10 @@ BASE_URL = http://primates.ximian.com/~flucifredi/man/
 PATCH_FILE1 = man-utf8-nroff-fix.patch
 
 CONFIGURE = yes
-
 configure: patch
 	@cd $(DIR); ./configure -d
 
+INSTALL = yes
 install: compile
 	mkdir -p $(PKG_ROOT)
 	+$(MAKE) -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install

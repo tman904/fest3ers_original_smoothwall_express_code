@@ -87,7 +87,6 @@ install: compile
 	cd $(COMPILE_DIR); \
 	  ln -vs libgcc.a `$(SWE_TGT)-gcc -print-libgcc-file-name \
 	                     | sed -e 's/libgcc/&_eh/'`
-
 endif
 
 # Tool Chain Build Stage 2
