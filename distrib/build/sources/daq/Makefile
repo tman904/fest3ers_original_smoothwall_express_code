@@ -17,8 +17,6 @@ BASE_URL = http://www.snort.org
 
 DIR = $(PACKAGE)-$(VERSION)
 
-PATCH_FILE1 = snort-pidfix.patch
-
 # You're looking in here because the build system failed to find
 # the snort source package or it failed to build.
 #
