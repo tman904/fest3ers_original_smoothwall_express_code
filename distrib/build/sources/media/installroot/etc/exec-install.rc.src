@@ -336,7 +336,7 @@ END
 
   cat <<END >/harddisk/$CONFIG_ROOT/main/settings
 LANGUAGE=en
-HOSTNAME=agcl-fw
+HOSTNAME=express
 KEYMAP=/usr/share/keymaps/i386/qwerty/us.map.gz
 OPENNESS=halfopen
 END
@@ -428,25 +428,25 @@ timeout 10
 color 0x06 0x0e
 
 # Boot using VESA console
-title AGCL/Roadster (VESA Console)
+title Smoothwall Express (VESA Console)
 root (hd0,0)
 kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet
 initrd /initrd-${KERNEL_VER}${KERNEL_TYPE}.gz
 
 # Boot using serial console
-title AGCL/Roadster (Serial Console)
+title Smoothwall Express (Serial Console)
 root (hd0,0)
 kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet console=ttyS0,$BAUD
 initrd /initrd-${KERNEL_VER}${KERNEL_TYPE}.gz
 
 # Single-user using VESA console
-title AGCL/Roadster (VESA Console, Single-User)
+title Smoothwall Express (VESA Console, Single-User)
 root (hd0,0)
 kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet single
 initrd /initrd-${KERNEL_VER}${KERNEL_TYPE}.gz
 
 # Single-user using serial console
-title AGCL/Roadster (Serial Console, Single-User)
+title Smoothwall Express (Serial Console, Single-User)
 root (hd0,0)
 kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet console=ttyS0,$BAUD single
 initrd /initrd-${KERNEL_VER}${KERNEL_TYPE}.gz

@@ -8,7 +8,5 @@ include ../Makefile
 include ../Makefile.conf
 include ../Makefile.versions
 
-KERNEL_TYPE = -kvm
-
 include ../Makefile.kernel
 

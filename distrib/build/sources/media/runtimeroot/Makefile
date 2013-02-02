@@ -23,7 +23,7 @@ BBPROGS = [ [[ ar ash awk basename bbconfig blkid bunzip2 bzcat bzip2 cat \
 	  true tty umount uname uniq unzip usleep vi wc wget which yes zcat
 
 SBINPROGS = /sbin/mke2fs /sbin/sfdisk /sbin/depmod
-AGCL_PKGS = $(UDEV) kmod grub pciutils bash reiserfsprogs
+SWE_PKGS = $(UDEV) kmod grub pciutils bash reiserfsprogs
 ROOTDIRS = cdrom dev etc harddisk proc sys tmp usr run
 
 bin:
@@ -73,7 +73,7 @@ all: clean bin lib klibc
 	  gawk -f ../../etc/fill-pci-ids.awk < /usr/share/pci.ids > filled.pci.ids;\
 	) > /dev/null 2>&1
 	@(cd tmp; \
-	  for i in $(AGCL_PKGS); do \
+	  for i in $(SWE_PKGS); do \
 	    tar xfz /build/target/smoothwall-$$i.tar.gz; \
 	  done; \
 	  touch etc/ld.so.conf; \

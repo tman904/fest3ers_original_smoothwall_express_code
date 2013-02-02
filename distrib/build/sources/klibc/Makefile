@@ -27,12 +27,12 @@ configure: patch
 COMPILE = yes
 
 compile: configure
-	cd ../linux-kvm/linux-$(KERNEL_VER); if [ ! -h include/asm ]; then \
+	cd ../linux$(KERNEL_TYPE)/linux-$(KERNEL_VER); if [ ! -h include/asm ]; then \
 	  ln -s ../arch/x86/include/asm include/asm; fi; \
 	  cp arch/x86/include/generated/asm/* arch/x86/include/asm/
 	cd $(DIR); \
 	  make mrproper; \
-	  ln -sf ../../linux-kvm/linux-$(KERNEL_VER) linux; \
+	  ln -sf ../../linux$(KERNEL_TYPE)/linux-$(KERNEL_VER) linux; \
 	  make $(JOBS)
 
 INSTALL = yes

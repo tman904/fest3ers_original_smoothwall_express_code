@@ -18,13 +18,13 @@ for i in $nicsToUp; do
 
     [0-9]*.[0-9]*.[0-9]*.[0-9])
       # The default gateway
-      /sbin/ip route add default via $i
+      /usr/sbin/ip route add default via $i
       /etc/rc.d/rc.updatered&
       ;;
 
     *)
       # A network interface (usually a NIC)
-      /sbin/ip link set dev $i up
+      /usr/sbin/ip link set dev $i up
       ;;
   esac
 done

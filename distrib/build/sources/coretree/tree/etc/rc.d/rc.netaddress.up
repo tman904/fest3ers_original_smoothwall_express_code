@@ -25,7 +25,7 @@ nicsToUp=""
 # GREEN
 if [ "$1" != "NOTGREEN" ]; then
 	if [ "$GREEN_DEV" != "" ]; then
-    /sbin/ip addr add $GREEN_ADDRESS/$GREEN_NETMASK dev $GREEN_DEV
+    /usr/sbin/ip addr add $GREEN_ADDRESS/$GREEN_NETMASK dev $GREEN_DEV
     nicsToUp="$nicsToUp $GREEN_DEV"
 	else
 		echo "WARNING: No driver set for GREEN"
@@ -35,7 +35,7 @@ fi
 # ORANGE
 if [ "$CONFIG_TYPE" == "1" -o "$CONFIG_TYPE" == "3" -o "$CONFIG_TYPE" == "5" -o "$CONFIG_TYPE" == "7" ]; then
 	if [ "$ORANGE_DEV" != "" ]; then
-    /sbin/ip addr add $ORANGE_ADDRESS/$ORANGE_NETMASK dev $ORANGE_DEV
+    /usr/sbin/ip addr add $ORANGE_ADDRESS/$ORANGE_NETMASK dev $ORANGE_DEV
     nicsToUp="$nicsToUp $ORANGE_DEV"
 	else
 		echo "WARNING: No driver set for ORANGE"
@@ -45,7 +45,7 @@ fi
 # PURPLE
 if [ "$CONFIG_TYPE" == "4" -o "$CONFIG_TYPE" == "5" -o "$CONFIG_TYPE" == "6" -o "$CONFIG_TYPE" == "7" ]; then
 	if [ "$PURPLE_DEV" != "" ]; then
-    /sbin/ip addr add $PURPLE_ADDRESS/$PURPLE_NETMASK dev $PURPLE_DEV
+    /usr/sbin/ip addr add $PURPLE_ADDRESS/$PURPLE_NETMASK dev $PURPLE_DEV
     nicsToUp="$nicsToUp $PURPLE_DEV"
 	else
 		echo "WARNING: No driver set for PURPLE"
@@ -68,7 +68,7 @@ if [ "$CONFIG_TYPE" == "2" -o "$CONFIG_TYPE" == "3" -o "$CONFIG_TYPE" == "6" -o 
 
     elif [ "$RED_TYPE" == "STATIC" ]; then
       # We do it when static
-      /sbin/ip addr add $RED_ADDRESS/$RED_NETMASK dev $RED_DEV
+      /usr/sbin/ip addr add $RED_ADDRESS/$RED_NETMASK dev $RED_DEV
       nicsToUp="$nicsToUp $RED_DEV"
       if [ "$DEFAULT_GATEWAY" != "" ]; then
         nicsToUp="$nicsToUp $DEFAULT_GATEWAY"

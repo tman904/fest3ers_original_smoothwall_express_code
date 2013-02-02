@@ -11,8 +11,8 @@
 if [ "$1" != "NOTGREEN" ]; then
   (
     # Down the link and give it to Thomas
-    /sbin/ip link set dev $GREEN_DEV down
-    /sbin/ip addr flush dev $GREEN_DEV
+    /usr/sbin/ip link set dev $GREEN_DEV down
+    /usr/sbin/ip addr flush dev $GREEN_DEV
   ) >/dev/null 2>&1
 fi
 
@@ -20,8 +20,8 @@ fi
 for i in $ORANGE_DEV $PURPLE_DEV $RED_DEV; do
   (
     # Down the link and give it to Thomas
-    /sbin/ip link set dev $i down
-    /sbin/ip addr flush dev $i
+    /usr/sbin/ip link set dev $i down
+    /usr/sbin/ip addr flush dev $i
   ) >/dev/null 2>&1
 done
 

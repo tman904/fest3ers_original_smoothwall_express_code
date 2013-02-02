@@ -195,11 +195,12 @@ function docommand() {
   $2;
   status=$?
   if [ $status != 0 ]; then
+    a=$1; pkg=`IFS=":";set $a;echo $1`; unset a
     echo "Failed:">/proc/self/fd/0
     echo "Failed:"
-    if [ -f "sources/$1/$BUILD_PHASE.out" ]; then
+    if [ -f "sources/$pkg/$BUILD_PHASE$TGT.out" ]; then
       (
-        tail sources/$1/$BUILD_PHASE.out | sed -e 's/^/      /'
+        tail sources/$pkg/$BUILD_PHASE$TGT.out | sed -e 's/^/      /'
       ) >/proc/self/fd/0
     fi
     echo "$1 FAILED" >/proc/self/fd/0
