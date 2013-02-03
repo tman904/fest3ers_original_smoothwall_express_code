@@ -277,7 +277,6 @@ fi
       JOBS=$JOBS_UP
       build at
       JOBS=$JOBS_MP
-      build which
       build lm_sensors
       build dnsmasq
       build whois

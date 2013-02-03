@@ -19,11 +19,15 @@ TOOLCHAIN_PKGS = expect
 OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config libart_lgpl 
 
 TARGET_DIR = /build/target/
+
+ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr sqlite \
+	   samba subversion ntop iperf squidguard
+
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    daq libnet libnetfilter_queue libnfnetlink attr libcap-ng \
-	    libcap fontconfig glib cairo libffi readline libmnl libpcap \
+	    libcap fontconfig glib cairo libffi readline libpcap \
 	    libosip2 libpcap pango zlib slang pixman libxml2 libusb \
-	    kmod gmp popt yaml perl-mods \
+	    kmod gmp mpfr mpc popt yaml perl-mods libcap-ng rsync \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \
 	    ncurses vim less sed flex gettext net-tools inetutils iputils \
 	    whois perl bash bzip2 kbd e2fsprogs grep gzip module-init-tools \
@@ -37,10 +41,14 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    oinkmaster openswan wireless_tools imspector diffutils clamav \
 	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
-	    mtools nano reiserfsprogs parted xtables-addons cpio Python \
+	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
 	    $(UDEV) lm_sensors xz pcmciautils qemu-kvm sysfsutils \
 	    coretree device-ids
-# 'coretree' *MUST* be second-last.
+
+# INST_PKGS notes.
+# 'coretree' *MUST* be third-last.
+# If the 'advanced' mechanism is added, ADV_PKGS must be second-last; they'll
+#   override what's in coretree.
 # 'device-ids' *MUST* be last in order to overwrite any existing version of usb.ids
 #   and pci.ids in usr/share.
 
