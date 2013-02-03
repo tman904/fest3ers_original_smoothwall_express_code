@@ -23,4 +23,4 @@ ifeq ($(BUILD_PHASE), Final)
 endif
 
 download:
-	true
+	@true
