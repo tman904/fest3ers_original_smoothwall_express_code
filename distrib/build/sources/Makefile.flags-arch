@@ -8,7 +8,7 @@ endif
 #   environment is correctly set and passed to all subprocedures.
 
 export mARCH = i686
-export mARCH = $(shell uname -m | sed -e 's/i.86/i686/')
+export mARCH = $(shell uname -m | sed -e 's/i[56]86/i686/')
 
 # Only 586, 686 and 64-bit hosts are supported
 # 32-bit is i686
