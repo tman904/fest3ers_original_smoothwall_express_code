@@ -47,7 +47,7 @@ int networkmenu(struct keyvalue *ethernetkv)
 		
 		if (rc == 0 || rc == 1)
 		{
-			probecards(driver, driveroptions, &c);
+//			probecards(driver, driveroptions, &c);
 			if (!strlen(driver))
 				errorbox(ctr[TR_PROBE_FAILED]);
 			else
@@ -65,7 +65,8 @@ int networkmenu(struct keyvalue *ethernetkv)
 			}		
 		}			
 		else if (rc == 2)
-			choosecards(driver, driveroptions);
+//			choosecards(driver, driveroptions);
+			;
 		else
 			done = 1;	
 			
