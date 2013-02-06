@@ -1,0 +1,191 @@
+#! /bin/false
+
+
+# AGCL/FS Backup
+#
+# Copyright 2011, Neal P. Murphy
+#
+# This program is licensed under the terms of the GNU Public License, version 2.
+
+# backup_functions
+#   Functions used by the backup scripts
+
+
+####################
+# Global functions #
+####################
+
+
+# Provide audible feedback, if the stuff exists
+callAudible () {
+  if [ -e "$1" ]; then $1; fi
+}
+
+
+# Provide user feedback, to the flag file for the daemon
+#   or to STDOUT if started manually
+feedback () {
+  if [ "$1" == "AUTO" ]; then
+    echo -e $2 > ${BACK_FLAG}
+  else
+    if [ "$3" == "same" ]; then
+      echo -e "\033[A$2\033[K"
+    else
+      echo $2
+    fi
+  fi
+}
+
+
+# Set the files to save based on the type of backup
+setFiles () {
+  case ${BACKUP_TYPE} in
+    var)
+      # These should never change
+      FILES_TO_SAVE="${HNAME}.tarhead"
+      FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ./var ./usr/etc ./etc/shadow ./etc/passwd ./etc/group)
+      FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ./etc/httpd/server.* ./etc/udev/rules.d/*)
+      FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ./root)
+      FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ${HNAME}.tarheel)
+      ;;
+
+    total)
+      # 'var/total' ALWAYS save everything
+      FILES_TO_SAVE=(./${HNAME}.tarhead . ./${HNAME}.tarheel)
+      ;;
+
+    full|incremental)
+      # Full and incremental can be limited to a subset of '/'
+      # Files-n-dirs may contain embedded spaces
+      # If toSAVE hasn't been set in ./settings, make it "."
+      if [ -z "${toSAVE}" ]; then toSAVE=(''); fi
+      FILES_TO_SAVE=(./${HNAME}.tarhead ".${toSAVE[@]}" ./${HNAME}.tarheel)
+      ;;
+  esac
+}
+
+
+# Remove the medium
+removeMedium () {
+  callAudible /usr/bin/sounds/ring.bpf
+
+  /sbin/hdparm -y /dev/$NODE >/dev/null 2>&1
+
+  feedback $AUTOBACK "Remove the backup medium."
+
+  # Watch for the node removal
+  $INOTIFY_CMD -e DELETE /dev/$NODE 2>&-
+
+  callAudible /usr/bin/sounds/removed
+}
+
+
+# Re-write the settings file
+writeSettings () {
+  local i
+  typeset -i i
+  (
+    echo "declare -A INCREMENTAL FULL VARTOTAL"
+    # Files-n-dirs may contain embedded spaces
+    if [ -z ${toSAVE[0]} ]; then
+      echo "toSAVE=()"
+    else
+      echo -n "toSAVE=('${toSAVE[0]}'"
+      i=1
+      while [ $i -lt ${#toSAVE[@]} ]; do
+        echo -n " '${toSAVE[$i]}'"
+        i=i+1
+      done
+      echo ")"
+    fi
+
+    if [ -z ${toSKIP[0]} ]; then
+      echo "toSKIP=()"
+    else
+      echo -n "toSKIP=('${toSKIP[0]}'"
+      i=1
+      while [ $i -lt ${#toSKIP[@]} ]; do
+        echo -n " '${toSKIP[$i]}'"
+        i=i+1
+      done
+      echo ")"
+    fi
+
+    # Media IDs
+    i=0
+    echo -n "INCREMENTAL=("
+    for idx in "${!INCREMENTAL[@]}"; do
+      if [ $i -eq 0 ]; then
+        i=1
+      else
+        echo -n " "
+      fi
+      echo -n "['$idx']='${INCREMENTAL[$idx]}'"
+    done
+    echo ")"
+
+    i=0
+    echo -n "FULL=("
+    for idx in "${!FULL[@]}"; do
+      if [ $i -eq 0 ]; then
+        i=1
+      else
+        echo -n " "
+      fi
+      echo -n "['$idx']='${FULL[$idx]}'"
+    done
+    echo ")"
+
+    i=0
+    echo -n "VARTOTAL=("
+    for idx in "${!VARTOTAL[@]}"; do
+      if [ $i -eq 0 ]; then
+        i=1
+      else
+        echo -n " "
+      fi
+      echo -n "['$idx']='${VARTOTAL[$idx]}'"
+    done
+    echo ")"
+
+    echo "timeINCREMENTAL=\"${timeINCREMENTAL}\""
+    echo "timeFULL=\"${timeFULL}\""
+    echo "timeVARTOTAL=\"${timeVARTOTAL}\""
+    echo "delayUntil=\"${delayUntil}\""
+  ) >${BACK_SETTINGS}
+}
+
+
+# Determine backup type
+function backupType () {
+  local i
+  BTYPE=""
+  # Is it weekly?
+  for i in "${!INCREMENTAL[@]}"; do
+    if [ "${INCREMENTAL[$i]}" == "$devID" ]; then
+      BTYPE="incremental"
+      mediumName=$i
+      return;
+    fi
+  done
+  # Is it monthly?
+  if [ -z "$BTYPE" ]; then
+    for i in "${!FULL[@]}"; do
+      if [ "${FULL[$i]}" == "$devID" ]; then
+        BTYPE="full"
+        mediumName=$i
+        return;
+      fi
+    done
+  fi
+  # Is it var &total?
+  if [ -z "$BTYPE" ]; then
+    for i in "${!VARTOTAL[@]}"; do
+      if [ "${VARTOTAL[$i]}" == "$devID" ]; then
+        BTYPE="var total"
+        mediumName=$i
+        return;
+      fi
+    done
+  fi
+}

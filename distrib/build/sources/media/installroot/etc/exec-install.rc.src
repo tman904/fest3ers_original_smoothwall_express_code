@@ -347,9 +347,16 @@ END
 
   if grep ${cd_dev[$CD]} /tmp/hd.list >/dev/null 2>&1; then
     # Installing from USB flash or other 'hard drive' (*not* a CD)?
-    #   Assume this same device will be used for backups.
-    eval `/sbin/udevadm info --path=/sys/block/${cd_dev[$CD]} --query=all | egrep "ID_BUS=|ID_SERIAL=" | sed -e 's/^E: //'`
-    echo BACKUP_ID="$ID_BUS-$ID_SERIAL" >/harddisk/$CONFIG_ROOT/backup/settings
+    #   Assume this same device will be used for PnP backups.
+    (
+      BACK_SETTINGS=/harddisk/$CONFIG_ROOT/backup/settings
+      eval `/sbin/udevadm info --path=/sys/block/${cd_dev[$CD]} --query=all \
+        | egrep "ID_BUS=|ID_SERIAL=" | sed -e 's/^E: //'`
+      . /harddisk/usr/lib/smoothwall/backup_functions
+      . ${BACK_SETTINGS}
+      VARTOTAL['install']="$ID_BUS-$ID_SERIAL"
+      writeSettings
+    )
   fi
 
   echo "  prepping module dependencies"

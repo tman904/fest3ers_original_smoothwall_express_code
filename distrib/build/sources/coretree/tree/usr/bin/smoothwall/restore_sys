@@ -1,0 +1,49 @@
+#! /bin/bash
+
+
+# AGCL/FS Backup
+#
+# Copyright 2011, Neal P. Murphy
+#
+# This program is licensed under the terms of the GNU Public License, version 2.
+#
+# restore_sys
+#   This script disables the daemon so you can plug in a backup medium,
+#   mount it, extract files from an archive, then unmount and unplug the
+#   medium. Upon exit, it re-enables the daemon.
+
+
+#############
+# Main code #
+#############
+
+# Prepare a bunch of shorthand vars
+ROOTDIR=/var/smoothwall
+
+# Set PATH for security
+PATH=/usr/smoothwall/bin:/bin:/usr/bin
+
+relROOTDIR=${ROOTDIR/\//}
+BACK_DIR=${ROOTDIR}/backup
+DISABLE_FILE="${BACK_DIR}/DISABLE_DAEMON"
+
+REST_DIR="/tmp/RESTORE/`date +%Y%m%d-%H%M`"
+mkdir -p $REST_DIR
+
+# Be sure the daemon is re-enabled
+trap "tput rmcup; rmdir $REST_DIR; rm -f ${ROOTDIR}/backup/DISABLE_DAEMON" 0
+
+PS1="Smoothwall Restore> "
+tput smcup
+cat<<END
+Plug in the backup medium and mount it. Locate the archive you wish to restore
+from. Use:
+
+  tar xvf archiveFile -C $REST_DIR files-n-folders-to-restore
+
+to extract files and/or folders from the archive.
+When finished, unmount the drive and unplug it. Then enter 'exit' or <CTRL/D>
+to exit this shell. The backup daemon will be re-enabled automatically.
+END
+
+bash
