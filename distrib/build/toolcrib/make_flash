@@ -55,7 +55,7 @@ case `basename $0` in
     echo "     default is 115200; 19200 and 9600 are available."
     echo
     echo -n "Enter 'yes' to continue or press <ENTER> to skip this step: "
-    read ans </dev/tty
+    read ans
     if [ "$ans" != "yes" ]; then exit 0; fi
     ;;
   *)
