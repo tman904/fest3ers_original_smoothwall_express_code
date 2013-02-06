@@ -10,4 +10,4 @@
   fi
 
   if [ `id -u` -eq 0 ]; then BCMD="bash"; else BCMD="sudo su"; fi
-  ${BCMD} -c "chroot \"..\" /tools/bin/env -i $finalENV  ${CMD}"
+  linux32 ${BCMD} -c "chroot \"..\" /tools/bin/env -i $finalENV  ${CMD}"
