@@ -136,7 +136,7 @@ print <<END
 <FORM ACTION='/cgi-bin/logs.cgi/log.dat' METHOD='POST'>
 <TABLE WIDTH='100%'>
 <TR>
-	<TD WIDTH='10%'>$tr{'section'}</TD>
+	<TD class='base' WIDTH='10%'>$tr{'section'}</TD>
 	<TD WIDTH='20%'><SELECT NAME='SECTION'>
 	<OPTION $selected{'SECTION'}{'smoothwall'} VALUE='smoothwall'>SmoothWall
 	<OPTION $selected{'SECTION'}{'ppp'} VALUE='ppp'>PPP

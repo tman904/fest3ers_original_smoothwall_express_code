@@ -166,7 +166,7 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'servicec'}</TD>
+	<TD WIDTH='20%' CLASS='base'>$tr{'servicec'}</TD>
 	<TD WIDTH='25%'>
 	<SELECT SIZE='1' NAME='SERVICE'>
 	<OPTION VALUE='dhs' $selected{'SERVICE'}{'dhs'}>dhs.org
@@ -180,8 +180,10 @@ print <<END
 	<OPTION VALUE='ods' $selected{'SERVICE'}{'ods'}>ods.org
 	</SELECT>
 	</TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'behind a proxy'} <INPUT TYPE='checkbox' NAME='PROXY' VALUE='on' $checked{'PROXY'}{'on'}></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'enable wildcards'} <INPUT TYPE='checkbox' NAME='WILDCARDS' VALUE='on' $checked{'WILDCARDS'}{'on'}></TD>
+	<TD WIDTH='20%' CLASS='base'>$tr{'behind a proxy'}</td>
+        <td style='width:5%'><INPUT TYPE='checkbox' NAME='PROXY' VALUE='on' $checked{'PROXY'}{'on'}></TD>
+	<TD WIDTH='20%'CLASS='base'>$tr{'enable wildcards'}</td>
+        <td> <INPUT TYPE='checkbox' NAME='WILDCARDS' VALUE='on' $checked{'WILDCARDS'}{'on'}></TD>
 </TR>
 <TR>
 	<TD CLASS='base'>$tr{'hostnamec'}</TD>
@@ -202,7 +204,8 @@ print <<END
 </TABLE>
 <TABLE WIDTH='100%'>
 <TR>
-	<TD CLASS='base' WIDTH='50%' ALIGN='CENTER'>$tr{'enabled'}<INPUT TYPE='checkbox' NAME='ENABLED' VALUE='on' $checked{'ENABLED'}{'on'}></TD>
+	<TD CLASS='base' WIDTH='40%'>$tr{'enabled'}</td>
+        <td><INPUT TYPE='checkbox' NAME='ENABLED' VALUE='on' $checked{'ENABLED'}{'on'}></TD>
 	<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
 </TR>
 </TABLE>

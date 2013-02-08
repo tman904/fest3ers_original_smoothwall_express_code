@@ -16,6 +16,9 @@ my $filename = "${swroot}/vpn/config";
 
 $cgiparams{'ENABLED'} = 'off';
 &getcgihash(\%cgiparams);
+my %netsettings = "";
+&readhash("${swroot}/ethernet/settings", \%netsettings);
+
 
 my $errormessage = '';
 
@@ -94,31 +97,49 @@ my $line;
 foreach $line (@current)
 {
 	$id++;
-	chomp($line);
-	my @temp = split(/\,/,$line);
-	my $name = $temp[0];
-	my $netmaskl = $temp[2];
-	$netmaskl =~ /\//; $netmaskl = $`;
-	my $netmaskr = $temp[4];
-	$netmaskr =~ /\//; $netmaskr = $`;
-	my $active = "<img src='/ui/img/closed.jpg' alt='$tr{'capsclosed'}'>";
-	if ($temp[6] eq 'off') {
-		$active = "<img src='/ui/img/disabled.jpg' alt='$tr{'capsdisabled'}'>";
-	}
+        chomp($line);
+        my @temp = split(/\,/,$line);
+        my $name = $temp[0];
+        my $left = $temp[1];
+        my $left_subnet = $temp[2];
+        $left_subnet =~ /\//; $left_subnet = $`;
+        my $right = $temp[3];
+        my $right_subnet = $temp[4];
+        $right_subnet =~ /\//; $right_subnet = $`;
+        my $status = $temp[6];
+        my $active = "<img src='/ui/img/closed.jpg' alt='$tr{'capsclosed'}'>";
+        if ($status eq 'off') {
+                $active = "<img src='/ui/img/disabled.jpg' alt='$tr{'capsdisabled'}'>";
+        }
+        my $left_private = $temp[9];
+        $left_private =~ /\//; $left_private = $` unless $left_private eq '';
+        my $right_private = $temp[10];
+        $right_private =~ /\//; $right_private = $` unless $right_private eq '';
 
-	foreach $line (@active)
-	{
-		@temp = split(/[\t ]+/,$line);
-		$d = 0;
-		$targetl = $temp[1];
-		$targetl =~ /\//; $targetl = $`;
-		$targetr = $temp[3];
-		$targetr =~ /\//; $targetr = $`;
-		if (($targetl eq $netmaskl && $targetr eq $netmaskr) ||
-			($targetl eq $netmaskr && $targetr eq $netmaskl))
-		 {
-			$active = "<img src='/ui/img/open.jpg' alt='$tr{'capsopen'}'>";
-		}
+        foreach $line (@active)
+        {
+                chomp($line);
+                @temp = split(/[\t ]+/,$line);
+                $d = 0;
+                $left_vpnnet = $temp[1];
+                $left_vpnnet =~ /\//; $left_vpnnet = $`;
+                $right_vpnnet = $temp[3];
+                $right_vpnnet =~ /\//; $right_vpnnet = $`;
+                my $remote = $temp[5];
+                $remote =~ /\@/; $remote = $';
+                if ($status eq 'on' &&
+                    (($left_vpnnet eq $left_subnet &&
+                      $right_vpnnet eq $right_subnet &&
+                      (($right_private eq '' && $right eq $remote) ||
+                       ($right_private ne '' && $right eq '%any')))
+                     or
+                     ($left_vpnnet eq $right_subnet &&
+                      $right_vpnnet eq $left_subnet &&
+                      (($left_private eq '' && $left eq $remote) ||
+                       ($left_private ne '' && $left eq '%any')))))
+                {
+                        $active = "<img src='/ui/img/open.jpg' alt='$tr{'capsopen'}'>";
+                }
 	}
 	print "<tr class='dark' style='border: 1px solid #c0c0c0;'>\n"; 
 	print "<td style='width: 65%; text-align: center;'><strong>$name</strong></td><td style='text-align: left;'>$active</td>\n";
@@ -142,9 +163,10 @@ END
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-<TD WIDTH='25%' CLASS='base'>$tr{'local vpn ip'}&nbsp;<IMG SRC='/ui/img/blob.gif'></TD>
+<TD WIDTH='25%' CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'local vpn ip'}</TD>
 <TD WIDTH='25%' ><INPUT TYPE='TEXT' NAME='VPN_IP' VALUE='$cgiparams{'VPN_IP'}' SIZE='15' id='vpn_ip' @{[jsvalidip('vpn_ip')]}></TD>
-<TD WIDTH='25%' CLASS='base'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
+<TD WIDTH='15%' CLASS='base'>$tr{'enabled'}</td>
+<td><INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
 <TD WIDTH='25%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'save'}'></TD>
 </TR>
 </TABLE>

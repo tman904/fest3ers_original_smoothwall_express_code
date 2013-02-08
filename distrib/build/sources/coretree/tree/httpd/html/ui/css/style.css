@@ -3,7 +3,13 @@ input,select {
 	font-weight: bold;
 }
 
+input[type=checkbox] {
+         vertical-align: middle;
+	 margin-right: .3em;
+}
+
 input[type=radio] {
+         vertical-align: middle;
 	 margin-right: .3em;
 }
 

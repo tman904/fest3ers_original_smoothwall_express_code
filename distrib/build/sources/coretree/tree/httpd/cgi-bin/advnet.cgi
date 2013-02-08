@@ -83,19 +83,19 @@ print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'block icmp ping'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_NOPING' $checked{'ENABLE_NOPING'}{'on'}></TD>
+	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOPING' $checked{'ENABLE_NOPING'}{'on'}></TD>
 	<TD WIDTH='25%' CLASS='base'>$tr{'enable syn cookies'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_COOKIES' $checked{'ENABLE_COOKIES'}{'on'}></TD>
+	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_COOKIES' $checked{'ENABLE_COOKIES'}{'on'}></TD>
 </TR>
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'block and ignore igmp packets'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_NOIGMP' $checked{'ENABLE_NOIGMP'}{'on'}></TD>
+	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOIGMP' $checked{'ENABLE_NOIGMP'}{'on'}></TD>
 	<TD WIDTH='25%' CLASS='base'>$tr{'block and ignore multicast traffic'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_NOMULTICAST' $checked{'ENABLE_NOMULTICAST'}{'on'}></TD>
+	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOMULTICAST' $checked{'ENABLE_NOMULTICAST'}{'on'}></TD>
 </TR>
 <TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'upnp support'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_UPNP' $checked{'ENABLE_UPNP'}{'on'}></TD>
+	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_UPNP' $checked{'ENABLE_UPNP'}{'on'}></TD>
 	<TD WIDTH='25%' CLASS='base'>$tr{'action to perform on bad external traffic'}</TD>
 	<TD WIDTH='25%'>
 	<SELECT NAME='BAD_TRAFFIC'>

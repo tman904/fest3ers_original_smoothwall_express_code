@@ -175,7 +175,7 @@ print <<END
 </TABLE>
 <TABLE WIDTH='100%'>
 <TR>
-<TD CLASS='base' WIDTH='50%' ALIGN='CENTER'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
+<TD CLASS='base' style='width:50%' >$tr{'enabled'}</td><td><INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
 <TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
 </TR>
 </TABLE>

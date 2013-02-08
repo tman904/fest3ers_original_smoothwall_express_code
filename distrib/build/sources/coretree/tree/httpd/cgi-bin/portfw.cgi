@@ -183,34 +183,34 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <table style='width: 100%;'>
 <tr>
-	<td style='width: 25%;'>$tr{'protocolc'}</td>
+	<td class='base' style='width: 25%;'>$tr{'protocolc'}</td>
 	<td style='width: 25%;'>
 		<select name='PROTOCOL'>
 			<option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP
 			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP
 		</select>
 	</td>
-	<td style='width: 25%;'>$tr{'sourcec'}</td>
+	<td class='base' style='width: 25%;'>$tr{'sourcec'}</td>
 	<td style='width: 25%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}' id='extaddress' @{[jsvalidipormask('extaddress','true')]}></td>
 </tr>
 <tr>
 	@{[&portlist('SRC_PORT_SEL', $tr{'source port or rangec'}, 'SRC_PORT', $tr{'portc'}, $service, { 'ungrouped' => 'true' })]}
 </tr>
 <tr>
-	<td>$tr{'destination ipc'}</td>
+	<td class='base'>$tr{'new destination ipc'}</td>
 	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18' id='iaddress' @{[jsvalidip('iaddress')]}></td>
 	<td></td>
 	<td></td>
 </tr>
 <tr>
-	@{[&portlist('DEST_PORT_SEL', $tr{'destination portc'}, 'DEST_PORT', $tr{'portc'}, $dst_service, { 'ungrouped' => 'true', 'blank' => 'true', 'blob' => 'true' } )]}
+	@{[&portlist('DEST_PORT_SEL', $tr{'new destination portc'}, 'DEST_PORT', $tr{'portc'}, $dst_service, { 'ungrouped' => 'true', 'blank' => 'true', 'blob' => 'true' } )]}
 </tr>
 <tr>
-	<td>$tr{'commentc'}</td>
+	<td class='base'>$tr{'commentc'}</td>
 	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
 </tr>
 <tr>
-	<td>$tr{'enabled'}</td>
+	<td class='base'>$tr{'enabled'}</td>
 	<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
 	<td colspan='2' style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
 </tr>
@@ -246,20 +246,20 @@ my %render_settings =
 		},
 		{ 
 			column => '3',
-			title  => "$tr{'source port'}",
+			title  => "$tr{'source port or range'}",
 			size   => 20,
 			sort   => 'cmp',
 			tr     => \%{$portmap}
 		},
 		{ 
 			column => '4',
-			title  => "$tr{'destination ip'}",
+			title  => "$tr{'new destination ip'}",
 			size   => 20,
 			sort   => &ipcompare,
 		},
 		{ 
 			column => '5',
-			title  => "$tr{'destination port'}",
+			title  => "$tr{'destination port or range'}",
 			size   => 15,
 			sort   => 'cmp',
 			tr     => { %{$portmap}, '0' => 'N/A' },

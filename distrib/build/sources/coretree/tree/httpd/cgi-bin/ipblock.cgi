@@ -181,14 +181,12 @@ print <<END
 <TR>
 <TD WIDTH='20%' CLASS='base'><FONT COLOR='$colourred'>$tr{'source ip or networkc'}</FONT></TD>
 <TD WIDTH='20%'><INPUT TYPE='TEXT' NAME='SRC_IP' VALUE='$cgiparams{'SRC_IP'}' SIZE='15' id='src_ip' @{[jsvalidipormask('src_ip')]}></TD>
-<TD WIDTH='20%' CLASS='base' style='text-align:left'>
-<INPUT TYPE='radio' NAME='TARGET' VALUE='DROP' $checked{'TARGET'}{'DROP'}>$tr{'drop packet'}
+<TD WIDTH='10%' CLASS='base'><INPUT TYPE='radio' NAME='TARGET' VALUE='DROP' $checked{'TARGET'}{'DROP'}></td><td>$tr{'drop packet'}
 </TD>
-<TD WIDTH='20%' CLASS='base' style='text-align:left'>
-<INPUT TYPE='radio' NAME='TARGET' VALUE='REJECT' $checked{'TARGET'}{'REJECT'}>$tr{'reject packet'}
+<TD WIDTH='5%' CLASS='base'><INPUT TYPE='radio' NAME='TARGET' VALUE='REJECT' $checked{'TARGET'}{'REJECT'}></td><td>$tr{'reject packet'}
 </TD>
-<TD WIDTH='20%' CLASS='base' style='text-align:left'>
-$tr{'logc'}<INPUT TYPE='checkbox' NAME='LOG' $checked{'LOG'}{'on'}>
+<TD CLASS='base'>$tr{'logc'}</td>
+<td WIDTH='15%' ><INPUT TYPE='checkbox' NAME='LOG' $checked{'LOG'}{'on'}>
 </TD>
 </TR>
 <tr>
@@ -198,7 +196,7 @@ $tr{'logc'}<INPUT TYPE='checkbox' NAME='LOG' $checked{'LOG'}{'on'}>
 </TABLE>
 <TABLE WIDTH='100%'>
 <TR>
-<TD WIDTH='50%' CLASS='base' ALIGN='CENTER'>$tr{'enabled'}<INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
+<TD WIDTH='50%' CLASS='base'>$tr{'enabled'}</td><td><INPUT TYPE='CHECKBOX' NAME='ENABLED' style='vertical-align:middle' $checked{'ENABLED'}{'on'}></TD>
 <TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
 </TR>
 </TABLE>
