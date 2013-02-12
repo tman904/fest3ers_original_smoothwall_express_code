@@ -20,7 +20,7 @@ include ../Makefile.conf
 PACKAGE = grub
 VERSION = 0.97
 
-ifeq ($(BITS-32), yes)
+ifeq ($(BITS_32), yes)
 
 TARBALL = grub-$(VERSION)
 BASE_URL = ftp://alpha.gnu.org/gnu/grub/
