@@ -16,7 +16,7 @@ export UDEVunused = eudev
 
 # Document these pkgs, don't install
 TOOLCHAIN_PKGS = expect
-OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config libart_lgpl 
+OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config cnxadsl libart_lgpl 
 
 TARGET_DIR = /build/target/
 
@@ -37,7 +37,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    strace rrdtool cron tcpdump dnsmasq ntp openntpd hdparm hddtemp \
 	    iproute2 gd expat ethtool listtables inotify-tools bridge-utils \
 	    beep2 pcre trafficstats iftop setuids ppp isdn4k-utils rp-pppoe \
-	    ibod dhcpcd eciadsl-synch_bin eciadsl-usermode cnxadsl dhcp snort \
+	    ibod dhcpcd eciadsl-synch_bin eciadsl-usermode dhcp snort \
 	    oinkmaster openswan wireless_tools imspector diffutils clamav \
 	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \

@@ -3,7 +3,7 @@
 include ../Makefile.conf
 
 PACKAGE = git
-VERSION = 1.7.9.6
+VERSION = 1.8.1.3
 
 EXTENSION = .tar.gz
 

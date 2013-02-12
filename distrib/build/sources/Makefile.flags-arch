@@ -7,34 +7,44 @@ endif
 # There are some contortions here. But the ARCH must be set early so the build
 #   environment is correctly set and passed to all subprocedures.
 
-export mARCH = i686
+ifndef mARCH
 export mARCH = $(shell uname -m | sed -e 's/i[56]86/i686/')
-
-# Only 586, 686 and 64-bit hosts are supported
-# 32-bit is i686
-ifeq ($(mARCH), i686)
-export mARCH = i686
 endif
+
+# See what we can build; that is, see if the chosen mARCH is possible.
+# If building on a multilib host, both will be zero. If building on pure i686
+# CANx86_64 will be non-zero. If building on pure 64-bit, CANi686
+# should be non-zero.
+export ARCHset =
+CANx86_64 = $(shell setarch x86_64 sh -c "exit" 2>/dev/null; echo $$?)
+CANi686 = $(shell setarch i686 sh -c "exit" 2>/dev/null; echo $$?)
+
+# Only i686 and x86_64 targets are supported, but only on hosts that can
+#   build them.
 
 ifeq ($(mARCH), x86_64)
-export ARCH_OK = yes
-export BITS_64 = yes
-export mINST = 64
-export SWE_TGT = $(mARCH)-swe-linux-gnu
-#export CFLAGS = $(OPT_FLAGS) -m$(mINST) -Wall -fPIC
-export CFLAGS = $(OPT_FLAGS) -fPIC
+  export ARCH_OK = yes
+  export BITS_64 = yes
+  export SWE_TGT = $(mARCH)-swe-linux-gnu
+  export CFLAGS = $(OPT_FLAGS) -fPIC
+  ifeq ($(CANx86_64), 0)
+    export ARCHset = linux64
+  endif
+  # This is for building 32-bit grub with a cross-compiler
+  export SWE32_TGT = i686-pc-linux-gnu
 endif
 
 ifeq ($(mARCH), i686)
-export ARCH_OK = yes
-export BITS_32 = yes
-export mINST = 32
-export SWE_TGT = $(mARCH)-swe-linux-gnu
-#export CFLAGS = $(OPT_FLAGS) -m$(mINST) -march=$(mARCH) -Wall
-export CFLAGS = $(OPT_FLAGS)
+  export ARCH_OK = yes
+  export BITS_32 = yes
+  export SWE_TGT = $(mARCH)-swe-linux-gnu
+  export CFLAGS = $(OPT_FLAGS) -march=$(mARCH) -mtune=pentium-mmx
+  ifeq ($(CANi686), 0)
+    export ARCHset = linux32
+  endif
 endif
 
-ifndef ARCH_OK
-# SWE3 no longer builds on i386 or i486.
-$(error Unsupported architecture $(ARCH))
+ifeq ($(ARCHset),)
+  $(info Cannot build for architecture $(mARCH) on this host!)
+  $(error FAIL)
 endif

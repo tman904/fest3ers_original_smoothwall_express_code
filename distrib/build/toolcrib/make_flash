@@ -55,7 +55,7 @@ case `basename $0` in
     echo "     default is 115200; 19200 and 9600 are available."
     echo
     echo -n "Enter 'yes' to continue or press <ENTER> to skip this step: "
-    read ans </dev/tty
+    read ans
     if [ "$ans" != "yes" ]; then exit 0; fi
     ;;
   *)
@@ -130,7 +130,7 @@ while [ 1 -eq 1 ]; do
   echo
 
   echo -n "[1]        Selection: "
-  read serialbaud #</dev/tty
+  read serialbaud
   if [ x$serialbaud == x ]; then serialbaud="1"; fi
   if [ $serialbaud -lt 4 ]; then break; fi
 done

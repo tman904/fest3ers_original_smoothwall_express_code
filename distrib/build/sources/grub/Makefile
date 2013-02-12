@@ -20,6 +20,8 @@ include ../Makefile.conf
 PACKAGE = grub
 VERSION = 0.97
 
+ifeq ($(BITS-32), yes)
+
 TARBALL = grub-$(VERSION)
 BASE_URL = ftp://alpha.gnu.org/gnu/grub/
 
@@ -53,5 +55,27 @@ BUILDTARBALL = yes
 $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install
 	@tar cvfz $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
 	@tar xvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /
+
+endif
+
+ifeq ($(BITS_64), yes)
+BASE_URL = http://downloads
+
+TARBALL = smoothwall-$(PACKAGE)-i686
+
+INSTALL = yes
+CLEAN = yes
+
+install: download
+	$(MAKE) clean
+	@mkdir $(PKG_ROOT)
+	@tar -xvf $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION) -C $(PKG_ROOT)
+
+clean:
+	@echo -n "$(PACKAGE) "
+	@rm -rf $(PACKAGE)-$(VERSION)
+	@rm -rf $(PKG_ROOT)
+        
+endif
 
 include ../Makefile.rules

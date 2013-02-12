@@ -29,26 +29,21 @@
 
 export SHELL = bash
 export SRC_TGZ = ../../smoothsrc.tar.gz
-export PATH := $(PATH):$(PWD)/toolcrib
 
 include sources/Makefile.flags-arch
 
-CUSTOM_ENV = SHELL=BASH mARCH="$(mARCH)" SWE_TGT="$(SWE_TGT)" \
-	     HOME="$${HOME}" TERM="$${TERM}" PS1='\u:\w\$$ ' \
-	     FORCE_UNSAFE_CONFIGURE=1 \
-	     BITS_64="$(BITS_64)" BITS_32="$(BITS_32)"
-
 ifndef ktype
 ktype = 
-CUSTOM_ENV += KERNEL_TYPE=
+KERNEL_TYPE=
 else
-CUSTOM_ENV += KERNEL_TYPE=-$(ktype)
+KERNEL_TYPE=-$(ktype)
 endif
-export finalENV := $(CUSTOM_ENV)
+
+$(shell rm -f crumbs/build_environment)
 
 # Default target, display help
 #
-default:
+default: crumbs/build_environment
 	@echo
 	@echo "When building on a host GNU/Linux distrib, build as a non-root user. The"
 	@echo "system will become root as needed via 'sudo'."
@@ -61,6 +56,14 @@ default:
 	@echo "  make rebuild"
 	@echo "  make media"
 	@echo "  make package"
+	@echo
+	@echo "To build 32-bit on x86_64:"
+	@echo "  mARCH=i686 make build"
+	@echo "or"
+	@echo "  export mARCH=i686   # Needed only to change mARCH"
+	@echo "  make build"
+	@echo "or"
+	@echo "  linux32 make build"
 	@echo
 	@echo "Useful targets:"
 	@echo "  build             Build SWE3.1 or continue building from an error."
@@ -104,26 +107,40 @@ default:
 	@echo "into your ~/.bashrc so they're always ready."
 	@echo
 	@echo "This is the basic environment to be used to build:"
-	@for i in $(finalENV); do echo "  $$i"; done
+	@sed -e 's/^/  /' crumbs/build_environment
+
+# Build environment
+#
+crumbs/build_environment:
+	@( \
+	  echo -e "export SHELL=\"BASH\"\nexport mARCH=\"$(mARCH)\"\nexport SWE_TGT=\"$(SWE_TGT)\""; \
+	  echo -e "export CFLAGS=\"$(CFLAGS)\"\nexport SWE32_TGT=\"$(SWE32_TGT)\""; \
+	  echo -e "export HOME=\"$${HOME}\"\nexport TERM=\"$${TERM}\"\nexport PS1=\"\\u:\\w\$$ \""; \
+	  echo -e "export FORCE_UNSAFE_CONFIGURE=\"1\"\nexport ARCHset=\"$(ARCHset)\""; \
+	  echo -e "export BITS_64=\"$(BITS_64)\"\nexport BITS_32=\"$(BITS_32)\""; \
+	  echo -e "export PATH=\"/bin:/usr/bin:/sbin:/usr/sbin:./toolcrib\"\nexport ROOT=\"\""; \
+	  echo -e "export KERNEL_TYPE=\"$(KERNEL_TYPE)\""; \
+	) > crumbs/build_environment
+	
 
 # Host check
 #
 crumbs/host.checked:
-	@bash host_check.sh
+	@bash toolcrib/host_check.sh
 	@echo; echo
 	@touch crumbs/host.checked
 
 # build preparation
 #
 crumbs/tc_prep.built:
-	+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain PREP
+	+env -i toolcrib/make_toolchain PREP
 	@touch crumbs/tc_prep.built
 
 # build stage 1
 #
 crumbs/tc_stage_1.built: crumbs/tc_prep.built
-	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain 1
-	@+env -i $(CUSTOM_ENV) PATH=/tools/bin:$$PATH /bin/bash -x toolcrib/tc_check 1
+	@+env -i toolcrib/make_toolchain 1
+	@+env -i toolcrib/tc_check 1
 	#exit 101
 	@rm -f dummy.c a.out
 	@touch crumbs/tc_stage_1.built
@@ -131,8 +148,8 @@ crumbs/tc_stage_1.built: crumbs/tc_prep.built
 # build stage 2
 #
 crumbs/tc_stage_2.built: crumbs/tc_stage_1.built
-	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain 2
-	@+env -i $(CUSTOM_ENV) PATH=/tools/bin:$$PATH /bin/bash toolcrib/tc_check 2
+	@+$(ARCHset) env -i toolcrib/make_toolchain 2
+	@+$(ARCHset) env -i toolcrib/tc_check 2
 	@rm -f dummy.c a.out
 	#exit 102
 	@touch crumbs/tc_stage_2.built
@@ -140,7 +157,7 @@ crumbs/tc_stage_2.built: crumbs/tc_stage_1.built
 # build stage 3
 #
 crumbs/tc_stage_3.built: crumbs/tc_stage_2.built
-	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/make_toolchain 3
+	@+$(ARCHset) env -i toolcrib/make_toolchain 3
 	#exit 103
 	@touch crumbs/tc_stage_3.built
 
@@ -149,7 +166,8 @@ crumbs/tc_stage_3.built: crumbs/tc_stage_2.built
 #
 crumbs/Final.prep.built: crumbs/tc_stage_3.built
 	@tput smso; echo -e "\nPreparing Final Build tree"; tput rmso
-	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/as_chroot "/tools/bin/bash -l -c 'source /build/toolcrib/functions; prepare_final_tree >/build/crumbs/Final-prep.out 2>&1'"
+	@+$(ARCHset) toolcrib/as_chroot \
+	    "env -i /build/toolcrib/prepare_final_tree >crumbs/Final-prep.out 2>&1"
 	@touch crumbs/Final.prep.built
 
 # must have resolv.conf in chroot jail
@@ -162,18 +180,18 @@ crumbs/resolv.conf:
 #
 crumbs/Final.built: crumbs/resolv.conf crumbs/Final.prep.built
 	@tput smso; echo -e "\nFinal Build"; tput rmso
-	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/as_chroot "$(CUSTOM_ENV) /tools/bin/bash -l -c /build/toolcrib/make_final"
+	@+$(ARCHset) toolcrib/as_chroot "env -i /build/toolcrib/make_final"
 	@touch crumbs/Final.built
 
-build: crumbs/host.checked crumbs/Final.built
+build: crumbs/build_environment crumbs/host.checked crumbs/Final.built
 
 rebuild: clean predownload build
 
 # prepare the installation media
 #
-media:
+media: crumbs/build_environment
 	@echo -e "\nMaking ISO image with linux$(KERNEL_TYPE)..."; sleep 1
-	@+env -i $(CUSTOM_ENV) /bin/bash --noprofile --norc toolcrib/as_chroot "$(CUSTOM_ENV) /bin/bash -l -c /build/toolcrib/make_media"
+	@+$(ARCHset) toolcrib/as_chroot "env -i /build/toolcrib/make_media"
 	@echo -e "\nMaking FLASH content..."; sleep 1
 	@+sudo su -c "toolcrib/make_flash"
 
@@ -185,12 +203,12 @@ package: clean savesources predownload build media
 
 # Get tossed in the pokey with the proper environment
 #
-chroot:
-	@env -i HOME=$$HOME TERM=$$TERM PS1='\u:\w\$$ ' /bin/bash --noprofile --norc toolcrib/as_chroot
+chroot: crumbs/build_environment
+	@env -i /tools/bin/bash --rcfile crumbs/build_environment --noprofile toolcrib/as_chroot
 
 # Pre-fetch source tarballs from internet
 #
-predownload:
+predownload: crumbs/build_environment
 	@echo -e "\nPre-downloading source tarballs..."; sleep 1
 	@( \
 	  export BUILD_PHASE="PreDownload"; \
@@ -243,7 +261,7 @@ packageinfos.html:
 
 # Prepare to rebuild the final stage
 reprep-final:
-	@+env -i HOME=$$HOME TERM=$$TERM PS1='\u:\w\$$ ' /bin/bash --noprofile --norc toolcrib/as_chroot "/tools/bin/bash -l -c 'cd /build; bash toolcrib/make_final --unwind'"
+	@+$(ARCHset) toolcrib/as_chroot "env -i /build/toolcrib/make_final --unwind"
 	@+if [ `id -u` -eq 0 ]; then CMD="bash"; else CMD="sudo su"; fi; \
 	   $$CMD -c "$(MAKE) clean-distrib clean-final-crumbs clean-media-crumbs clean-buildroot clean-target"
 	@echo "You must run this twice in a row to complete the 'unwind' back"

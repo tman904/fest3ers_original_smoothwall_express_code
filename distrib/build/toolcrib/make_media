@@ -7,7 +7,6 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-
 # First, look for /build. If it ain't found, this probably is not a chroot
 #   jail, it was probably run manually, so die.
 #
@@ -16,8 +15,6 @@ if [ ! -d "/build" ]; then
 fi
 
 # At this point, we must assume we are in a chroot jail.
-finalENV=`env | egrep -v "^PWD|^_" |while read a; do echo -n "$a "; done`
-finalENV="${finalENV}PATH=/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin:/build ROOT=\"\""
 
 # Now trap on exit, to be sure proc is unmounted. Note that this does not change
 #   the exit status of the shell (only an explicit exit would do that).

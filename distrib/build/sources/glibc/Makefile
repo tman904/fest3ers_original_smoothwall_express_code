@@ -39,10 +39,7 @@ $(DIR)/: download
 	tar -xvf $(DOWNLOADS_DIR)/$(DIR)$(EXTENSION)
 	mkdir -p $(COMPILE_DIR)
 ifeq ($(mARCH), i686)
-	echo "-m32 -march=i586 -mtune=generic" > $(COMPILE_DIR)/configparms
-endif
-ifeq ($(mARCH), x86_64)
-	echo "-m64 -march=x86_64" > $(COMPILE_DIR)/configparms
+	echo "CFLAGS += -march=i486 -mtune=native" > $(COMPILE_DIR)/configparms
 endif
 
 

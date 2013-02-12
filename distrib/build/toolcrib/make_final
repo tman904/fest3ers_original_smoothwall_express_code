@@ -306,7 +306,7 @@ fi
       build dhcpcd
       build eciadsl-synch_bin
       build eciadsl-usermode
-      build cnxadsl
+      #build cnxadsl
       touch crumbs/Final.grp5.compiled
     fi
 

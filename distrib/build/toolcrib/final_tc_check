@@ -64,12 +64,23 @@ done
 # GCC searching for correct header files?
 #
 grep -B3 '^ /usr/include' dummy.log >/tmp/a.a
-cat >/tmp/b.b <<END
+case $mARCH in
+  i686) cat >/tmp/b.b <<END
 #include <...> search starts here:
  /usr/lib/gcc/i686-pc-linux-gnu/${VERSION}/include
  /usr/lib/gcc/i686-pc-linux-gnu/${VERSION}/include-fixed
  /usr/include
 END
+    ;;
+  x86_64) cat >/tmp/b.b <<END
+#include <...> search starts here:
+ /usr/lib/gcc/x86_64-unknown-linux-gnu/${VERSION}/include
+ /usr/lib/gcc/x86_64-unknown-linux-gnu/${VERSION}/include-fixed
+ /usr/include
+END
+    ;;
+  *) touch /tmp/b.b ;;
+esac
 diff /tmp/a.a /tmp/b.b >/dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "gcc is searching for the wrong header files!"
@@ -81,12 +92,27 @@ rm /tmp/a.a /tmp/b.b
 # Loader using correct search paths?
 #
 grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g' >/tmp/a.a
-cat >/tmp/b.b <<END
+case $mARCH in
+  i686) cat >/tmp/b.b <<END
 SEARCH_DIR("/usr/i686-pc-linux-gnu/lib")
 SEARCH_DIR("/usr/local/lib")
 SEARCH_DIR("/lib")
 SEARCH_DIR("/usr/lib");
 END
+    ;;
+  x86_64) cat >/tmp/b.b <<END
+SEARCH_DIR("/usr/x86_64-unknown-linux-gnu/lib64")
+SEARCH_DIR("/usr/local/lib64")
+SEARCH_DIR("/lib64")
+SEARCH_DIR("/usr/lib64")
+SEARCH_DIR("/usr/x86_64-unknown-linux-gnu/lib")
+SEARCH_DIR("/usr/local/lib")
+SEARCH_DIR("/lib")
+SEARCH_DIR("/usr/lib");
+END
+    ;;
+  *) touch /tmp/b.b ;;
+esac
 diff /tmp/a.a /tmp/b.b >/dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "Loader is using incorrect search paths:"
@@ -98,6 +124,13 @@ rm /tmp/a.a /tmp/b.b
 # Using correct libc?
 #
 grep "attempt to open /lib/libc.so.6" dummy.log >/dev/null 2>&1
+case $mARCH in
+  i686) grep "attempt to open /lib/libc.so.6" dummy.log >/dev/null 2>&1
+    ;;
+  x86_64) grep "attempt to open /lib64/libc.so.6" dummy.log >/dev/null 2>&1
+    ;;
+  *) false ;;
+esac
 if [ $? -ne 0 ]; then
   echo "Loader is using incorrect libc:"
   egrep "attempt to open.*/libc\.so\." dummy.log | sed -e 's/^/    /'
@@ -106,7 +139,13 @@ fi
 
 # Using correct dynamic linker?
 #
-grep "found ld-linux.so.2 at /lib/ld-linux.so.2" dummy.log >/dev/null 2>&1
+case $mARCH in
+  i686) grep "found ld-linux.so.2 at /lib/ld-linux.so.2" dummy.log >/dev/null 2>&1
+    ;;
+  x86_64) grep "found ld-linux-x86-64.so.2 at /lib64/ld-linux-x86-64.so.2" dummy.log >/dev/null 2>&1
+    ;;
+  *) false ;;
+esac
 if [ $? -ne 0 ]; then
   echo "Wrong or no dynamic linker found!"
   grep "found" dummy.log | sed -e 's/^/    /'

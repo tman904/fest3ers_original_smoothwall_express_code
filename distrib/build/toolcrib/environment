@@ -14,6 +14,9 @@ function set_build_environment() {
   export JOBS
   export LC_ALL=POSIX
 
+  # Get the common, explicit environment prepared by top make
+  . crumbs/build_environment
+
   # prefix of where the tool chain is installed.
   export TOOLS_DIR="/tools"
 

@@ -47,8 +47,8 @@ compile: configure
 
 INSTALL = yes
 install: compile
-	mkdir -pv $(TOOLS_DIR)/lib
 ifeq ($(BITS_64), yes)
+	mkdir -pv $(TOOLS_DIR)/lib
 	ln -sv lib $(TOOLS_DIR)/lib64
 endif
 	$(MAKE) -C $(COMPILE_DIR) install

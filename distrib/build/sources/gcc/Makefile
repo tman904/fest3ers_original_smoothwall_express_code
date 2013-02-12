@@ -46,6 +46,7 @@ CONFIG_OPTS = --target=$(SWE_TGT) \
 	      --with-native-system-header-dir=$(TOOLS_DIR)/include \
 	      --disable-nls \
 	      --disable-shared \
+	      --disable-multilib \
 	      --disable-decimal-float \
 	      --disable-threads \
 	      --disable-libmudflap \
@@ -99,11 +100,9 @@ INSTALL = yes
 patch: $(DIR)/
 	cd $(DIR); cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
 	  `dirname $$($$SWE_TGT-gcc -print-libgcc-file-name)`/include-fixed/limits.h
-ifeq ($(BITS_32), yes)
 	cd $(DIR); cp -v gcc/Makefile.in{,.tmp}; \
 	  sed -e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/' gcc/Makefile.in.tmp \
 	    > gcc/Makefile.in
-endif
 	cd $(DIR); \
 	for file in `find gcc/config -name linux64.h \
 	                          -o -name linux.h \
@@ -135,11 +134,11 @@ CONFIG_OPTS = \
 	      --enable-__cxa_atexit       \
 	      --enable-languages=c,c++    \
 	      --disable-libstdcxx-pch     \
+	      --disable-multilib          \
 	      --disable-bootstrap         \
 	      --disable-libgomp           \
 	      --with-mpfr-include=$(SOURCES_DIR)/$(PACKAGE)/$(DIR)/mpfr/src \
 	      --with-mpfr-lib=$(SOURCES_DIR)/$(PACKAGE)/$(COMPILE_DIR)/mpfr/src/.libs
-#	      --disable-multilib
 
 compile: configure
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR)
@@ -173,10 +172,10 @@ CONFIG_OPTS =  \
 		--enable-threads=posix   \
 		--enable-__cxa_atexit    \
 		--enable-clocale=gnu     \
+		--disable-multilib       \
 		--enable-languages=c,c++ \
 		--disable-bootstrap      \
 		--with-system-zlib
-#		--disable-multilib
 
 configure: patch
 	@sed -i 's/install_to_$(INSTALL_DEST) //' $(DIR)/libiberty/Makefile.in
