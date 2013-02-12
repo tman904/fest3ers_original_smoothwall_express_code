@@ -3,7 +3,7 @@
 include sources/Makefile.flags-arch
 
 all:
-	@( set -x \
+	@( \
 	  echo -e "export SHELL=\"BASH\"\nexport mARCH=\"$(mARCH)\"\nexport SWE_TGT=\"$(SWE_TGT)\""; \
 	  echo -e "export CFLAGS=\"$(CFLAGS)\"\nexport SWE32_TGT=\"$(SWE32_TGT)\""; \
 	  echo -e "export HOME=\"$${HOME}\"\nexport TERM=\"$(TERM)\"\nexport PS1=\"\\u:\\w\$$ \""; \
