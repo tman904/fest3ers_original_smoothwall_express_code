@@ -111,7 +111,7 @@ default:
 	@echo
 	@echo "This is the basic environment to be used to build:"
 	@sed -e 's/^/  /'
-	
+
 
 # Host check
 #
