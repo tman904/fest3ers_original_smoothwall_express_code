@@ -98,8 +98,6 @@ fi
                 "final toolchain adjustment" \
                 "bash -x toolcrib/final_tc_adjustment" \
                 "crumbs/$BUILD_PHASE.adjusting.out"
-#echo "Stopping after final TC adjustment"
-#exit 1
       build binutils
       build gmp
       build mpfr

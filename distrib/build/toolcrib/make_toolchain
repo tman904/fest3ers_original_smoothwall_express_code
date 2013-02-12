@@ -22,6 +22,8 @@ if [ "$0" != "toolcrib/$ME" -a "$0" != "./toolcrib/$ME" ]; then
 fi
 unset ME
 
+. crumbs/build_environment
+
 # For debugging
 (
   echo -e "\nInitial environment:"

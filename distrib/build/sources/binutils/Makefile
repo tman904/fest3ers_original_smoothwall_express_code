@@ -71,7 +71,6 @@ CONFIG_OPTS = \
 
 COMPILE = yes
 compile: configure
-	set
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR)
 
 INSTALL = yes

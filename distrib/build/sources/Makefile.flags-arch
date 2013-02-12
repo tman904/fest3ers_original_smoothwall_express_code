@@ -26,7 +26,7 @@ ifeq ($(mARCH), x86_64)
   export ARCH_OK = yes
   export BITS_64 = yes
   export SWE_TGT = $(mARCH)-swe-linux-gnu
-  export CFLAGS = $(OPT_FLAGS) -fPIC
+  export CFLAGS = $(OPT_FLAGS) -m64 -fPIC
   ifeq ($(CANx86_64), 0)
     export ARCHset = linux64
   endif
@@ -38,7 +38,7 @@ ifeq ($(mARCH), i686)
   export ARCH_OK = yes
   export BITS_32 = yes
   export SWE_TGT = $(mARCH)-swe-linux-gnu
-  export CFLAGS = $(OPT_FLAGS) -march=$(mARCH) -mtune=pentium-mmx
+  export CFLAGS = $(OPT_FLAGS) -m32 -march=$(mARCH) -mtune=pentium-mmx
   ifeq ($(CANi686), 0)
     export ARCHset = linux32
   endif

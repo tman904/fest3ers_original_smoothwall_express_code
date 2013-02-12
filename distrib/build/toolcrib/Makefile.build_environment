@@ -1,0 +1,14 @@
+# Build environment
+#
+include sources/Makefile.flags-arch
+
+all:
+	@( set -x \
+	  echo -e "export SHELL=\"BASH\"\nexport mARCH=\"$(mARCH)\"\nexport SWE_TGT=\"$(SWE_TGT)\""; \
+	  echo -e "export CFLAGS=\"$(CFLAGS)\"\nexport SWE32_TGT=\"$(SWE32_TGT)\""; \
+	  echo -e "export HOME=\"$${HOME}\"\nexport TERM=\"$(TERM)\"\nexport PS1=\"\\u:\\w\$$ \""; \
+	  echo -e "export FORCE_UNSAFE_CONFIGURE=\"1\"\nexport ARCHset=\"$(ARCHset)\""; \
+	  echo -e "export BITS_64=\"$(BITS_64)\"\nexport BITS_32=\"$(BITS_32)\""; \
+	  echo -e "export PATH=\"/bin:/usr/bin:/sbin:/usr/sbin:./toolcrib:/tools/bin\""; \
+	  echo -e "export ROOT=\"\"\nexport KERNEL_TYPE=\"$(KERNEL_TYPE)\""; \
+	) | sort > crumbs/build_environment

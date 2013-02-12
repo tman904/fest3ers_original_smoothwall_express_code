@@ -1,5 +1,6 @@
 #! /bin/bash
 
+  . crumbs/build_environment
 
   if [ "$1" == "" ]; then
     CMD="/tools/bin/bash --rcfile /build/crumbs/build_environment +h"

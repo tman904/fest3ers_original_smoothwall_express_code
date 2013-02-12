@@ -67,7 +67,7 @@ function set_build_environment() {
       # ROOT is equivalent to LFS' $LFS
       export ROOT="$DISTRIB_PATH"
       # We'll try using TOOLS_DIR for the tool dir path. It might need
-      #   to be /tools/bin in the end. Put the CT bin dir in there, too.
+      #   to be /tools/bin in the end.
       export PATH="${TOOLS_DIR}/bin"
       PATH="$PATH:/bin:/usr/bin/:/sbin:/usr/sbin:${ROOT}/build/toolcrib"
       # PKG_ROOT is what the package considers to be root for installation.

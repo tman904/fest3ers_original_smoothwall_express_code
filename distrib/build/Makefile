@@ -33,17 +33,20 @@ export SRC_TGZ = ../../smoothsrc.tar.gz
 include sources/Makefile.flags-arch
 
 ifndef ktype
-ktype = 
-KERNEL_TYPE=
+export ktype = 
+export KERNEL_TYPE=
 else
-KERNEL_TYPE=-$(ktype)
+export KERNEL_TYPE=-$(ktype)
 endif
 
+ifneq ($(no_be), 1)
 $(shell rm -f crumbs/build_environment)
+$(shell make -f toolcrib/Makefile.build_environment)
+endif
 
 # Default target, display help
 #
-default: crumbs/build_environment
+default:
 	@echo
 	@echo "When building on a host GNU/Linux distrib, build as a non-root user. The"
 	@echo "system will become root as needed via 'sudo'."
@@ -107,20 +110,7 @@ default: crumbs/build_environment
 	@echo "into your ~/.bashrc so they're always ready."
 	@echo
 	@echo "This is the basic environment to be used to build:"
-	@sed -e 's/^/  /' crumbs/build_environment
-
-# Build environment
-#
-crumbs/build_environment:
-	@( \
-	  echo -e "export SHELL=\"BASH\"\nexport mARCH=\"$(mARCH)\"\nexport SWE_TGT=\"$(SWE_TGT)\""; \
-	  echo -e "export CFLAGS=\"$(CFLAGS)\"\nexport SWE32_TGT=\"$(SWE32_TGT)\""; \
-	  echo -e "export HOME=\"$${HOME}\"\nexport TERM=\"$${TERM}\"\nexport PS1=\"\\u:\\w\$$ \""; \
-	  echo -e "export FORCE_UNSAFE_CONFIGURE=\"1\"\nexport ARCHset=\"$(ARCHset)\""; \
-	  echo -e "export BITS_64=\"$(BITS_64)\"\nexport BITS_32=\"$(BITS_32)\""; \
-	  echo -e "export PATH=\"/bin:/usr/bin:/sbin:/usr/sbin:./toolcrib\"\nexport ROOT=\"\""; \
-	  echo -e "export KERNEL_TYPE=\"$(KERNEL_TYPE)\""; \
-	) > crumbs/build_environment
+	@sed -e 's/^/  /'
 	
 
 # Host check
@@ -133,15 +123,15 @@ crumbs/host.checked:
 # build preparation
 #
 crumbs/tc_prep.built:
-	+env -i toolcrib/make_toolchain PREP
+	@+env -i toolcrib/make_toolchain PREP
 	@touch crumbs/tc_prep.built
 
 # build stage 1
 #
 crumbs/tc_stage_1.built: crumbs/tc_prep.built
-	@+env -i toolcrib/make_toolchain 1
-	@+env -i toolcrib/tc_check 1
-	#exit 101
+	@+$(ARCHset) env -i toolcrib/make_toolchain 1
+	@+$(ARCHset) env -i toolcrib/tc_check 1
+	@#exit 101
 	@rm -f dummy.c a.out
 	@touch crumbs/tc_stage_1.built
 
@@ -151,14 +141,14 @@ crumbs/tc_stage_2.built: crumbs/tc_stage_1.built
 	@+$(ARCHset) env -i toolcrib/make_toolchain 2
 	@+$(ARCHset) env -i toolcrib/tc_check 2
 	@rm -f dummy.c a.out
-	#exit 102
+	@#exit 102
 	@touch crumbs/tc_stage_2.built
 
 # build stage 3
 #
 crumbs/tc_stage_3.built: crumbs/tc_stage_2.built
 	@+$(ARCHset) env -i toolcrib/make_toolchain 3
-	#exit 103
+	@#exit 103
 	@touch crumbs/tc_stage_3.built
 
 
@@ -167,31 +157,31 @@ crumbs/tc_stage_3.built: crumbs/tc_stage_2.built
 crumbs/Final.prep.built: crumbs/tc_stage_3.built
 	@tput smso; echo -e "\nPreparing Final Build tree"; tput rmso
 	@+$(ARCHset) toolcrib/as_chroot \
-	    "env -i /build/toolcrib/prepare_final_tree >crumbs/Final-prep.out 2>&1"
+	    "/build/toolcrib/prepare_final_tree >crumbs/Final-prep.out 2>&1"
 	@touch crumbs/Final.prep.built
 
 # must have resolv.conf in chroot jail
 #
 crumbs/resolv.conf:
-	@if [ -f /etc/resolv.conf ]; then cp -v /etc/resolv.conf ./crumbs/; fi
-	@if [ -f /etc/resolv.conf.dnsmasq ]; then cp -v /etc/resolv.conf.dnsmasq ./crumbs/resolv.conf; fi
+	@if [ -f /etc/resolv.conf ]; then cp /etc/resolv.conf ./crumbs/; fi
+	@if [ -f /etc/resolv.conf.dnsmasq ]; then cp /etc/resolv.conf.dnsmasq ./crumbs/resolv.conf; fi
 
 # build all software
 #
 crumbs/Final.built: crumbs/resolv.conf crumbs/Final.prep.built
 	@tput smso; echo -e "\nFinal Build"; tput rmso
-	@+$(ARCHset) toolcrib/as_chroot "env -i /build/toolcrib/make_final"
+	@+$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_final"
 	@touch crumbs/Final.built
 
-build: crumbs/build_environment crumbs/host.checked crumbs/Final.built
+build: crumbs/host.checked crumbs/Final.built
 
 rebuild: clean predownload build
 
 # prepare the installation media
 #
-media: crumbs/build_environment
+media:
 	@echo -e "\nMaking ISO image with linux$(KERNEL_TYPE)..."; sleep 1
-	@+$(ARCHset) toolcrib/as_chroot "env -i /build/toolcrib/make_media"
+	@+$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media"
 	@echo -e "\nMaking FLASH content..."; sleep 1
 	@+sudo su -c "toolcrib/make_flash"
 
@@ -203,12 +193,12 @@ package: clean savesources predownload build media
 
 # Get tossed in the pokey with the proper environment
 #
-chroot: crumbs/build_environment
+chroot:
 	@env -i /tools/bin/bash --rcfile crumbs/build_environment --noprofile toolcrib/as_chroot
 
 # Pre-fetch source tarballs from internet
 #
-predownload: crumbs/build_environment
+predownload:
 	@echo -e "\nPre-downloading source tarballs..."; sleep 1
 	@( \
 	  export BUILD_PHASE="PreDownload"; \
@@ -246,7 +236,7 @@ savesources:
 
 packageinfos.html:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) packageinfos.html"; \
+	  sudo su -c "no_be=1 $(MAKE) packageinfos.html"; \
 	else \
 	  rm -rf /tmp/downloads; mkdir /tmp/downloads; \
 	  echo "<ul>" >/tmp/packageinfo.html; \
@@ -261,9 +251,9 @@ packageinfos.html:
 
 # Prepare to rebuild the final stage
 reprep-final:
-	@+$(ARCHset) toolcrib/as_chroot "env -i /build/toolcrib/make_final --unwind"
+	@+$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_final --unwind"
 	@+if [ `id -u` -eq 0 ]; then CMD="bash"; else CMD="sudo su"; fi; \
-	   $$CMD -c "$(MAKE) clean-distrib clean-final-crumbs clean-media-crumbs clean-buildroot clean-target"
+	   $$CMD -c "no_be=1 $(MAKE) clean-distrib clean-final-crumbs clean-media-crumbs clean-buildroot clean-target"
 	@echo "You must run this twice in a row to complete the 'unwind' back"
 	@echo "  to the toolchain. If this is the first time through, please"
 	@echo "  run it again now!"
@@ -271,14 +261,14 @@ reprep-final:
 # Clean the entire directory back to pristine plus downloaded tarballs
 clean:
 	@if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) clean"; \
+	  sudo su -c "no_be=1 $(MAKE) clean"; \
 	else \
-	  $(MAKE) --no-print-directory clean-distrib; \
-	  $(MAKE) --no-print-directory clean-buildroot; \
-	  $(MAKE) --no-print-directory clean-target; \
-	  $(MAKE) --no-print-directory clean-sources; \
-	  $(MAKE) --no-print-directory clean-tools; \
-	  $(MAKE) --no-print-directory clean-crumbs; \
+	  no_be=1 $(MAKE) --no-print-directory clean-distrib; \
+	  no_be=1 $(MAKE) --no-print-directory clean-buildroot; \
+	  no_be=1 $(MAKE) --no-print-directory clean-target; \
+	  no_be=1 $(MAKE) --no-print-directory clean-sources; \
+	  no_be=1 $(MAKE) --no-print-directory clean-tools; \
+	  no_be=1 $(MAKE) --no-print-directory clean-crumbs; \
 	  rm -f $(SRC_TGZ); \
 	fi
 
@@ -286,7 +276,7 @@ clean:
 #
 clean-buildroot:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) --no-print-directory clean-buildroot"; \
+	  sudo su -c "no_be=1 $(MAKE) --no-print-directory clean-buildroot"; \
 	else \
 	  tput smso; echo "cleaning buildroot"; tput rmso; \
 	  rm -rf buildroot/*; \
@@ -296,7 +286,7 @@ clean-buildroot:
 #
 clean-target:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) --no-print-directory clean-target"; \
+	  sudo su -c "no_be=1 $(MAKE) --no-print-directory clean-target"; \
 	else \
 	  tput smso; echo "cleaning target"; tput rmso; \
 	  rm -rf target/*; \
@@ -308,7 +298,7 @@ clean-target:
 #
 clean-sources:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) --no-print-directory clean-sources"; \
+	  sudo su -c "no_be=1 $(MAKE) --no-print-directory clean-sources"; \
 	else \
 	  tput smso; echo -n "cleaning sources"; tput rmso; \
 	  (cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d | sort`; do \
@@ -323,7 +313,7 @@ clean-sources:
 #
 clean-tools:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) --no-print-directory clean-tools"; \
+	  sudo su -c "no_be=1 $(MAKE) --no-print-directory clean-tools"; \
 	else \
 	  tput smso; echo "cleaning tools"; tput rmso; \
 	  rm -rf ../tools/*; \
@@ -333,7 +323,7 @@ clean-tools:
 #
 clean-distrib:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) --no-print-directory clean-distrib"; \
+	  sudo su -c "no_be=1 $(MAKE) --no-print-directory clean-distrib"; \
 	else \
 	  tput smso; echo "cleaning distrib"; tput rmso; \
 	  cd ..; rm -rf `ls -C1 . | egrep -v "build|tools"` ; \
@@ -344,6 +334,7 @@ clean-distrib:
 # Vacuum up the trail of bread crumbs
 #
 clean-crumbs: clean-prep-crumbs clean-stage1-crumbs clean-stage2-crumbs clean-stage3-crumbs clean-final-crumbs clean-media-crumbs
+	@rm -f crumbs/*
 
 clean-prep-crumbs:
 	@tput smso; echo "cleaning prep crumbs"; tput rmso
@@ -363,7 +354,7 @@ clean-stage3-crumbs:
 
 clean-final-crumbs:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) clean-final-crumbs"; \
+	  sudo su -c "no_be=1 $(MAKE) clean-final-crumbs"; \
 	else \
 	  tput smso; echo "cleaning final crumbs"; tput rmso; \
 	  rm -f sources/*/Final*.{out,built} crumbs/Final* crumbs/resolv.conf; \
@@ -371,7 +362,7 @@ clean-final-crumbs:
 
 clean-media-crumbs:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "$(MAKE) clean-media-crumbs"; \
+	  sudo su -c "no_be=1 $(MAKE) clean-media-crumbs"; \
 	else \
 	  tput smso; echo "cleaning media crumbs"; tput rmso; \
 	  rm -f sources/*/Media*.{out,built} crumbs/Media*; \

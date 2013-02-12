@@ -74,7 +74,7 @@ else
   JOBS=$JOBS_UP
   other_cmd "sources/media/$BUILD_PHASE.mediaISO.built" \
             "Smoothwall Express ISO" \
-            "env -i ${finalENV} make -C sources/media TYPE=-devel" \
+            "make -C sources/media TYPE=-devel" \
             "sources/media/$BUILD_PHASE.mediaISO.out" \
             ""
 fi

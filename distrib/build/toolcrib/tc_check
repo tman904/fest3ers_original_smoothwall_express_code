@@ -6,6 +6,10 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
+# Get the environment
+. crumbs/build_environment
+PATH=/tools/bin:$PATH
+
 # Compile an empty program and see if it uses the right loader
 echo 'main(){}' > dummy.c && \
   # Must look for correct ld_linux....
