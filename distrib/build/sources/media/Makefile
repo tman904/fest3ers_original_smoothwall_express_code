@@ -8,7 +8,7 @@ include ../Makefile.conf
 include ../Makefile.versions
 include ../Makefile
 
-PACKAGE = media-isoinstall
+PACKAGE = media
 
 # Make it easy to switch between the two
 export UDEV = udev
@@ -257,7 +257,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 
 clean:
 	@echo -n " $(PACKAGE)"
-	@rm -f Media.agclISO.built
+	@rm -f Media.mediaISO.built
 	@rm -rf cdrom offroad distrib distrib-dev distrib-doc klibc temp
 	@make --no-print-directory -C cdromboot clean >/dev/null 2>&1
 	@make --no-print-directory -C installroot clean >/dev/null 2>&1

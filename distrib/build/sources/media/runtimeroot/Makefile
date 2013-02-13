@@ -27,27 +27,27 @@ SWE_PKGS = $(UDEV) kmod grub pciutils bash reiserfsprogs
 ROOTDIRS = cdrom dev etc harddisk proc sys tmp usr run
 
 bin:
-	@(mkdir -p tmp/bin tmp/lib tmp/usr/lib/klibc/bin; \
-	cp -aR /sbin/* tmp/bin)
+	mkdir -p tmp/bin tmp/lib tmp/usr/lib/klibc/bin
+	cp -aR /sbin/* tmp/bin
 	#cp -aRv /build/target/install tmp/bin/install
 	#strip tmp/bin/*
 
 lib:
-	@(mkdir -p tmp/lib tmp/usr/lib/klibc/lib; \
-	cp -aR /lib/* tmp/lib; \
-	cp -aR /lib/lib* tmp/lib; \
-	cp -aR /usr/lib/libncurses.so* tmp/lib/; \
-	cp -aR /usr/lib/libtinfo.so* tmp/lib/; \
-	tar xfz /build/target/smoothwall-linux$(KERNEL_TYPE).tar.gz -C tmp ./lib/modules > /dev/null 2>&1)
+	mkdir -p tmp/lib tmp/usr/lib/klibc/lib
+	cp -aR /lib/* tmp/lib
+	cp -aR /lib/lib* tmp/lib
+	cp -aR /usr/lib/libncurses.so* tmp/lib/
+	cp -aR /usr/lib/libtinfo.so* tmp/lib/
+	tar xfz /build/target/smoothwall-linux$(KERNEL_TYPE).tar.gz -C tmp ./lib/modules > /dev/null 2>&1
 
 klibc:
-	@cp -aR /build/buildroot/klibc/usr/lib/klibc/lib/klibc-*.so tmp/lib
-	@cp -aR /build/buildroot/klibc/usr/lib/klibc/bin tmp/usr/lib/klibc/
-	@cp -aR /build/buildroot/klibc/usr/lib/klibc/lib tmp/usr/lib/klibc/
+	cp -aR /build/buildroot/klibc/usr/lib/klibc/lib/klibc-*.so tmp/lib
+	cp -aR /build/buildroot/klibc/usr/lib/klibc/bin tmp/usr/lib/klibc/
+	cp -aR /build/buildroot/klibc/usr/lib/klibc/lib tmp/usr/lib/klibc/
 
 
 all: clean bin lib klibc
-	@mkdir -p tmp/sys
+	@mkdir -p tmp/sys tmp/run
 	@for i in $(ROOTDIRS); do mkdir -p tmp/$$i; done
 	@ln -s bin tmp/sbin
 	@cp -aR $(BB)/bin/busybox tmp/bin
@@ -88,10 +88,11 @@ all: clean bin lib klibc
 	  #ln -sf proc/self/fd/0 /lib/udev/devices/stdin; \
 	  #ln -sf proc/self/fd/1 /lib/udev/devices/stdout; \
 	  #ln -sf proc/self/fd/2 /lib/udev/devices/stderr; \
+	#
 	
-
-ifdef BITS_64
-	@(cd tmp; ln -s lib lib64)
+ifeq ($(BITS_64), yes)
+	cd tmp; ln -s lib lib64
+	cd tmp/usr; ln -s lib lib64
 endif
 
 	@touch tmp/cdrominstall

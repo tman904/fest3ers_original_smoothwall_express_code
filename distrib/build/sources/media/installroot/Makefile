@@ -38,18 +38,18 @@ GZIP_PKGS = gunzip
 
 bin:
 	mkdir -pv tmp/bin tmp/lib tmp/usr/lib/klibc/bin
-	cp -av ../../../buildroot/dialog/usr/bin/dialog tmp/bin
+	cp -a ../../../buildroot/dialog/usr/bin/dialog tmp/bin
 	ln -sv /bin tmp/sbin
-	cp -avR /sbin/* tmp/bin
-	cp -avR /build/buildroot/$(UDEV)/sbin/* tmp/bin/
+	cp -aR /sbin/* tmp/bin
+	cp -aR /build/buildroot/$(UDEV)/sbin/* tmp/bin/
 	#cp -aR /build/target/install tmp/bin/install
 
 lib:
 	mkdir -pv tmp/lib tmp/usr/lib tmp/usr/lib/klibc/lib
-	cp -avR /lib/* tmp/lib
-	cp -avR /lib/lib* tmp/lib
-	cp -avR /usr/lib/libncurses.so* tmp/lib/
-	cp -avR /usr/lib/libtinfo.so* tmp/lib/
+	cp -aR /lib/* tmp/lib
+	cp -aR /lib/lib* tmp/lib
+	cp -aR /usr/lib/libncurses.so* tmp/lib/
+	cp -aR /usr/lib/libtinfo.so* tmp/lib/
 	tar xfz /build/target/smoothwall-linux$(KERNEL_TYPE).tar.gz -C tmp ./lib/modules > /dev/null 2>&1
 	#cd tmp/lib/modules/$(K_SWE_VERSION)/kernel; rm -rf sound
 	#cd tmp/lib/modules/$(K_SWE_VERSION)/kernel/drivers; \
@@ -67,7 +67,7 @@ all: clean bin lib klibc
 	cp -aR $(BB)/bin/busybox tmp/bin
 	cd tmp/bin; for FILE in $(BBPROGS); do ln -s busybox $$FILE; done
 	for i in cpio gzip; do \
-	  tar xvfz /build/target/smoothwall-$$i.tar.gz -C tmp/; \
+	  tar xfz /build/target/smoothwall-$$i.tar.gz -C tmp/; \
 	done
 
 	(cd tmp; \
@@ -129,8 +129,9 @@ all: clean bin lib klibc
 	(cd tmp; mkdir -p local; cd local; \
 	  tar xfz /build/target/smoothwall-gzip.tar.gz)
 
-ifdef BITS_64
+ifeq ($(BITS_64), yes)
 	(cd tmp; ln -s lib lib64)
+	(cd tmp/usr; ln -s lib lib64)
 endif
 
 	touch tmp/cdrominstall
