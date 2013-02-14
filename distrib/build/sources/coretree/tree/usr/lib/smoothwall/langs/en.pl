@@ -76,7 +76,7 @@
 'ssip info' => 'ip information',
 'sstime' => 'time',
 'ssip tools' => 'ip tools',
-'ssfiltering' => 'outgoing and timed access',
+'ssfiltering' => 'outgoing',
 'ssadvanced' => 'advanced',
 'ssip block' => 'ip block',
 'ssbackup' => 'backup',
