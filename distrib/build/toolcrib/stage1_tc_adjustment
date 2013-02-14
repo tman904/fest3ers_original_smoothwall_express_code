@@ -24,6 +24,13 @@ if [ "${GCC_LIBNAMDIR}" == "" ]; then
   exit -10
 fi
 
+# Tweak gcc specs
+#
+${SWE_TGT}-gcc -dumpspecs | sed \
+        -e 's@/lib\(64\)\?/ld@'${TOOLS_DIR}'&@g' \
+        -e "/^\*cpp:$/{n;s,$, -isystem ${TOOLS_DIR}/include,}" \
+        > `dirname $(${SWE_TGT}-gcc -print-libgcc-file-name)`/specs
+
 #################
 
 # Now check for gcc environs problems. These must all be correct
