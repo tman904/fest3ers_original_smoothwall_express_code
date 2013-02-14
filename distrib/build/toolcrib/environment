@@ -124,7 +124,7 @@ function set_build_environment() {
       export ROOT="$DISTRIB_PATH"
       echo "    Environment:"
       echo "      Build Phase: $BUILD_PHASE; mARCH=$mARCH"
-      echo "      ROOT=$ROOT;
+      echo "      ROOT=$ROOT; "
       ;;
 
     *)
