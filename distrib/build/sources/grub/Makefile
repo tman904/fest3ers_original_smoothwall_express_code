@@ -52,6 +52,8 @@ install: compile
 BUILDTARBALL = yes
 $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install
 	@tar cvfz $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .
+	@cp $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz \
+	    $(DOWNLOADS_DIR)/smoothwall-$(PACKAGE)-$(mARCH).tar.gz \
 	@tar xvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C /
 
 endif
