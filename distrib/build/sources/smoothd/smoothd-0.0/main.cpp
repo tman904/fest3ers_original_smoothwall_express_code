@@ -36,11 +36,12 @@
 
 // configuration details
 
-#define SOCKET       "/dev/smoothd"	/*FIXME*/
-#define IDENT        "smoothd"
-#define BINARY       "smoothd"
-#define PID          "/var/run/smoothd.pid"
-#define MODULESUBDIR "/usr/lib/smoothd/"
+#define SOCKET           "/dev/smoothd"	/*FIXME*/
+#define IDENT            "smoothd"
+#define BINARY           "smoothd"
+#define PID              "/var/run/smoothd.pid"
+#define MODULESUBDIR     "/usr/lib/smoothd/"
+#define MODULESUBDIRMODS "/var/smoothwall/mods/usr/lib/smoothd/"
 
 volatile int abort_now = 0;
 int master_pid;
@@ -461,7 +462,10 @@ void load_modules( std::vector<ModuleReg> & modules, ModuleMap & functions, std:
 {
 	/* parse the system modules */
 	std::string moduleName = MODULESUBDIR;
+	parse_directory( modules, functions, timedfunctions, moduleName );
 
+	/* parse the mod modules; 'no-op' if it doesn't exist */
+	moduleName = MODULESUBDIRMODS;
 	parse_directory( modules, functions, timedfunctions, moduleName );
 }
 
