@@ -16,9 +16,7 @@ COMPILE = yes
 INSTALL = yes
 
 OPTS = PREFIX=$(PKG_ROOT)$(PKG_DIR)
-DIR = imspector-$(VERSION)
-
-PATCH_FILE1 = ssl_method.patch
+DIR = imspector
 
 export ADD_PLUGINS = dbfilterplugin.so censordfilterplugin.so catsloggingplugin.so dbresponderplugin.so
 
