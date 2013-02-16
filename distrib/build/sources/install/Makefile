@@ -14,7 +14,7 @@ compile:
 	@make -C $(COMPILE_DIR)
 
 install: compile
-	@install -D $(COMPILE_DIR)/install/install $(TARGET_DIR)$(PACKAGE)
+	@install -D $(COMPILE_DIR)/install/install $(TARGET_DIR)/$(PACKAGE)-0.0-$(mARCH)
 
 all: install
 	@true
