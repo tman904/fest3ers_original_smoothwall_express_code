@@ -41,7 +41,9 @@
 #define BINARY           "smoothd"
 #define PID              "/var/run/smoothd.pid"
 #define MODULESUBDIR     "/usr/lib/smoothd/"
-#define MODULESUBDIRMODS "/var/smoothwall/mods/usr/lib/smoothd/"
+#define MODULESUBDIRMODS "/var/smoothwall/mods/"
+#define PLUGIN_FAIL       0
+#define PLUGIN_NOFAIL     1
 
 volatile int abort_now = 0;
 int master_pid;
@@ -411,7 +413,7 @@ Client::~Client()
 	return ;
 }
 
-int parse_directory( std::vector<ModuleReg> & modules, ModuleMap & functions, std::vector<ModuleFunction> & timedfunctions, std::string & moduleName )
+int parse_directory( std::vector<ModuleReg> & modules, ModuleMap & functions, std::vector<ModuleFunction> & timedfunctions, std::string & moduleName, int syslogCtl )
 {
 	struct stat buffer;
 	
@@ -422,7 +424,9 @@ int parse_directory( std::vector<ModuleReg> & modules, ModuleMap & functions, st
 		DIR * module_directory = opendir( moduleName.c_str() );
 
 		if ( module_directory == NULL ){
-			syslog( LOG_CRIT, "Unable to open modules directory, aborting" );
+			if ( syslogCtl == PLUGIN_FAIL ) {
+				syslog( LOG_CRIT, "Unable to open system modules directory, aborting" );
+			}
 			return 1;
 		}
 
@@ -430,7 +434,15 @@ int parse_directory( std::vector<ModuleReg> & modules, ModuleMap & functions, st
 	
 		while ( currentd = readdir( module_directory ) ){
 
+			// Skip anything starting with '.' (including ".so")
 			if ( currentd->d_name[ 0 ] == '.' ){
+				continue;
+			}
+
+			// Skip everything that cannot contain ".so" or doesn't end with ".so"
+			std::string work;
+			work = currentd->d_name;
+			if ( work.size()<4 || work.substr(work.size()-3, work.size()-1) != ".so") {
 				continue;
 			}
 		
@@ -460,13 +472,38 @@ int parse_directory( std::vector<ModuleReg> & modules, ModuleMap & functions, st
 
 void load_modules( std::vector<ModuleReg> & modules, ModuleMap & functions, std::vector<ModuleFunction> & timedfunctions )
 {
-	/* parse the system modules */
+	/* First parse the system modules */
 	std::string moduleName = MODULESUBDIR;
-	parse_directory( modules, functions, timedfunctions, moduleName );
+	/* Syslog if the system plugins dir is not found. */
+	parse_directory( modules, functions, timedfunctions, moduleName, PLUGIN_FAIL );
 
-	/* parse the mod modules; 'no-op' if it doesn't exist */
-	moduleName = MODULESUBDIRMODS;
-	parse_directory( modules, functions, timedfunctions, moduleName );
+	/* Now parse the mods modules */
+	std::string moduleNameMods = MODULESUBDIRMODS;
+	/* First open the mods dir */
+	DIR * module_directoryMods = opendir( moduleNameMods.c_str() );
+	if ( module_directoryMods == NULL ){
+		/* No error if /var/smoothwall/mods doesn't exist. */
+		return;
+	}
+	/* Now check every entry in turn */
+	struct dirent * currentModd = NULL;
+
+	while ( currentModd = readdir( module_directoryMods ) ){
+		struct stat statBuffer;
+		if ( currentModd->d_name[ 0 ] == '.' ){
+			continue;
+		}
+		moduleName = moduleNameMods + currentModd->d_name;
+		if (! stat( moduleName.c_str(), &statBuffer )) {
+			if ( S_ISDIR(statBuffer.st_mode) ){
+				/* Only if currentModd is a dir */
+				moduleName += MODULESUBDIR;
+				/* Don't syslog if the mod's plugins dir is not found. */
+				parse_directory( modules, functions, timedfunctions,
+						 moduleName, PLUGIN_NOFAIL );
+			}
+		}
+	}
 }
 
 
