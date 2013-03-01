@@ -247,6 +247,7 @@ fi
       build popt
       build dialog
       build newt
+      build gd
 
       build usbutils
       build pciutils
@@ -295,7 +296,6 @@ fi
       build openntpd
 
       build squid
-      build gd
 
       build ppp
       build isdn4k-utils

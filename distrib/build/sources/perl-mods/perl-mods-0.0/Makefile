@@ -6,15 +6,14 @@
 
 all:
 	@+for i in $(PERL_MODS); do \
-	  make -C $$i install; \
+	  make -C $$i install || exit 1; \
 	done
 
 download:
 	@+for i in $(PERL_MODS); do \
 	  echo; \
 	  echo "$$i"; \
-	  make 
-	      -C $$i download; \
+	  make -C $$i download || exit 1; \
 	done
 
 clean:
