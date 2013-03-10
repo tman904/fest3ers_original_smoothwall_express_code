@@ -1,8 +1,9 @@
 # Build environment
 #
+
 include sources/Makefile.flags-arch
 
-all:
+prep_env:
 	@( \
 	  echo -e "export SHELL=\"BASH\"\nexport mARCH=\"$(mARCH)\"\nexport SWE_TGT=\"$(SWE_TGT)\""; \
 	  echo -e "export CFLAGS=\"$(CFLAGS)\"\nexport SWE32_TGT=\"$(SWE32_TGT)\""; \
@@ -11,4 +12,7 @@ all:
 	  echo -e "export BITS_64=\"$(BITS_64)\"\nexport BITS_32=\"$(BITS_32)\""; \
 	  echo -e "export PATH=\"/bin:/usr/bin:/sbin:/usr/sbin:./toolcrib:/tools/bin\""; \
 	  echo -e "export ROOT=\"\"\nexport KERNEL_TYPE=\"$(KERNEL_TYPE)\""; \
+	  echo -e "export BUILD_IN=\"$(BUILD_IN)\"\nexport BUILD_OUT=\"$(BUILD_OUT)\""; \
 	) | sort > crumbs/build_environment
+	@ # Also truncate the progress log (no-op if it's a tty)
+	@ exec > $(BUILD_OUT)

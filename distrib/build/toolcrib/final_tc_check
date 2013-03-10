@@ -1,13 +1,17 @@
 #! /bin/bash
 
+# Get environs
+#
+#   Save STDOUT; it's the .out dest and quite needed.
+exec 4>&1
+. toolcrib/environment
+set_build_environment NO_REDIRECT
+#   Restore STDOUT
+exec 1>&4 2>&1
+
 echo
 echo "Final toolchain check"
 echo
-
-# Get environs
-#
-. toolcrib/environment
-set_build_environment
 
 # Initialize STATUS
 #

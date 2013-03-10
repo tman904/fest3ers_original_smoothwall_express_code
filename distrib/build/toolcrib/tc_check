@@ -10,6 +10,9 @@ fi
 . crumbs/build_environment
 PATH=/tools/bin:$PATH
 
+# Handle redirection
+exec <${BUILD_IN} >>${BUILD_OUT} 2>&1
+
 # Compile an empty program and see if it uses the right loader
 echo 'main(){}' > dummy.c && \
   # Must look for correct ld_linux....

@@ -97,7 +97,7 @@ fi
       other_cmd "crumbs/$BUILD_PHASE.toolchain.adjusted" \
                 "final toolchain adjustment" \
                 "bash -x toolcrib/final_tc_adjustment" \
-                "crumbs/$BUILD_PHASE.adjusting.out"
+                "crumbs/$BUILD_PHASE.adjustment.out"
       build binutils
       build gmp
       build mpfr

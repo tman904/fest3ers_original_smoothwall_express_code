@@ -1,5 +1,14 @@
 #! /bin/bash
 
+# Get environs
+#
+#   Save STDOUT; it's the .out dest and quite needed.
+exec 4>&1
+. toolcrib/environment
+set_build_environment NO_REDIRECT
+#   Restore STDOUT
+exec 1>&4
+
 echo
 if [ "$1" == "--unwind" ]; then
   echo "Unwinding final toolchain adjustment to rebuild the final stage"
@@ -13,11 +22,6 @@ else
   STATUS=0
 fi
 echo
-
-# Get environs
-#
-. toolcrib/environment
-set_build_environment
 
 # Are we making the final adjustment, or unwinding?
 #
@@ -111,7 +115,6 @@ END
     FIN_TGT="i686-pc-linux-gnu"
     touch /tmp/b.b
   fi
-  set
   cat >>/tmp/b.b <<END
 SEARCH_DIR("${TOOLS_DIR}/${FIN_TGT}/lib")
 SEARCH_DIR("/usr/lib")

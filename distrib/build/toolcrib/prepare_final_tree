@@ -9,6 +9,8 @@
 
 # Creates files needed to start the building of the tree.
 
+cd /build
+
 . crumbs/build_environment
 PATH=$PATH:/tools/bin
 

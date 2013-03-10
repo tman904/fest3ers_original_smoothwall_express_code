@@ -24,6 +24,9 @@ unset ME
 
 . crumbs/build_environment
 
+# Handle redirection
+exec <${BUILD_IN} >>${BUILD_OUT} 2>&1
+
 # For debugging
 (
   echo -e "\nInitial environment:"

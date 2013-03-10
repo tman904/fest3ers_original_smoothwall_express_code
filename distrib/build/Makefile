@@ -41,7 +41,7 @@ endif
 
 ifneq ($(no_be), 1)
 $(shell rm -f crumbs/build_environment)
-$(shell make -f toolcrib/Makefile.build_environment)
+$(shell make -f toolcrib/Makefile.build_environment prep_env >crumbs/redirectstdio.out 2>&1)
 endif
 
 # Default target, display help
@@ -117,7 +117,6 @@ default:
 #
 crumbs/host.checked:
 	@bash toolcrib/host_check.sh
-	@echo; echo
 	@touch crumbs/host.checked
 
 # build preparation
@@ -155,8 +154,9 @@ crumbs/tc_stage_3.built: crumbs/tc_stage_2.built
 # prepare final build environment
 #
 crumbs/Final.prep.built: crumbs/tc_stage_3.built
-	@tput smso; echo -e "\nPreparing Final Build tree"; tput rmso
-	@+$(ARCHset) toolcrib/as_chroot \
+	@(tput smso; echo -e "\nPreparing Final Build tree"; tput rmso) \
+	    <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
+	+@$(ARCHset) toolcrib/as_chroot \
 	    "/build/toolcrib/prepare_final_tree >crumbs/Final-prep.out 2>&1"
 	@touch crumbs/Final.prep.built
 
@@ -169,8 +169,9 @@ crumbs/resolv.conf:
 # build all software
 #
 crumbs/Final.built: crumbs/resolv.conf crumbs/Final.prep.built
-	@tput smso; echo -e "\nFinal Build"; tput rmso
-	@+$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_final"
+	@(tput smso; echo -e "\nFinal Build"; tput rmso) \
+	    <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
+	+@$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_final"
 	@touch crumbs/Final.built
 
 build: crumbs/host.checked crumbs/Final.built
@@ -180,8 +181,12 @@ rebuild: clean predownload build
 # prepare the installation media
 #
 media:
-	@echo -e "\nMaking ISO image with linux$(KERNEL_TYPE)..."; sleep 1
-	@+$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media"
+	@+(echo -e "\nMaking ISO image with linux$(KERNEL_TYPE)..."; sleep 1; \
+	    $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media") <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
+
+# prepare a bootable flash drive
+#
+mediaflash:
 	@echo -e "\nMaking FLASH content..."; sleep 1
 	@+sudo su -c "toolcrib/make_flash"
 

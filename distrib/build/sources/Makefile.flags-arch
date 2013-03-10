@@ -1,3 +1,8 @@
+# Handle I/O redirection sanely.
+export BUILD_IN := $(shell if test -t 0; then echo "/proc/self/fd/0"; else echo "/dev/null"; fi)
+export BUILD_OUT := $(shell if test -t 0; then echo "/proc/self/fd/0"; else echo "crumbs/build-progress.out"; fi)
+
+# If desired, build with db in mind; else just optimize.
 ifeq ($(GLOBALDEBUG), ON)
 export OPT_FLAGS = -g -O0
 else

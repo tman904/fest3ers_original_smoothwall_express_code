@@ -14,9 +14,9 @@
 function adjust()
 {
   if [ -e "crumbs/${BUILD_PHASE}.adjusted" ]; then
-    echo "    (${BUILD_PHASE}) adjustment already made"
+    echo "    (${BUILD_PHASE}) adjustment already made" >>${BUILD_OUT}
   else
-    echo "    adjusting tool chain, ${BUILD_PHASE}"
+    echo "    adjusting tool chain, ${BUILD_PHASE}" >>${BUILD_OUT}
     ( docommand "adjusting stage $1" "bash toolcrib/stage$1_tc_adjustment") \
           > crumbs/${BUILD_PHASE}.adjusting.out 2>&1
     status=$?
@@ -44,9 +44,9 @@ function build()
     TGTP=""
   fi
   if [ -e "sources/$1/$BUILD_PHASE$TGT.built" ]; then
-    echo "    $1$TGTP already built"
+    echo "    $1$TGTP already built" >>${BUILD_OUT}
   else
-    echo "    $1$TGTP: PKG_ROOT:$PKG_ROOT"
+    echo "    $1$TGTP: PKG_ROOT:$PKG_ROOT" >>${BUILD_OUT}
     ( docommand "$1::$2" "make -C sources/$1 $2") > sources/$1/$BUILD_PHASE$TGT.out 2>&1
     status=$?
     if [ $status -eq 0 ]; then
@@ -64,7 +64,7 @@ function build()
 function buildenv()
 {
   if [ -e "sources/$1/$BUILD_PHASE.built" ]; then
-    echo "    $1 already built"
+    echo "    $1 already built" >>${BUILD_OUT}
   else
     echo "    $1"
     ( docommand "$1" "make -C sources/$1 BUILDENV=$2 clean install") > sources/$1/$BUILD_PHASE.out 2>&1
@@ -152,9 +152,9 @@ function build_tc_stage_3() {
 function check()
 {
   if [ -e "crumbs/${BUILD_PHASE}_${2}.checked" ]; then
-    echo "    ${BUILD_PHASE} $2 already checked"
+    echo "    ${BUILD_PHASE} $2 already checked" >>${BUILD_OUT}
   else
-      echo "    checking tool chain, ${BUILD_PHASE}"
+      echo "    checking tool chain, ${BUILD_PHASE}" >>${BUILD_OUT}
       ( docommand "checking ${BUILD_PHASE} ${2}" "bash toolcrib/stage${1}_${2}_check") \
             > crumbs/${BUILD_PHASE}_${2}_check.out 2>&1
     status=$?
@@ -188,24 +188,23 @@ function cpu_count() {
 }
 
 
-# function do_command()
+# function docommand()
 
 function docommand() {
   echo "= Running: $1 ======================================"
-  $2;
+  $2
   status=$?
   if [ $status != 0 ]; then
     a=$1; pkg=`IFS=":";set $a;echo $1`; unset a
-    echo "Failed:">/proc/self/fd/0
-    echo "Failed:"
-    if [ -f "sources/$pkg/$BUILD_PHASE$TGT.out" ]; then
-      (
+    (
+      if [ -f "sources/$pkg/$BUILD_PHASE$TGT.out" ]; then
+        echo "Failed:"
         tail sources/$pkg/$BUILD_PHASE$TGT.out | sed -e 's/^/      /'
-      ) >/proc/self/fd/0
-    fi
-    echo "$1 FAILED" >/proc/self/fd/0
-    echo "$1 FAILED"
+      fi
+      echo "$1 FAILED"
+    ) >>${BUILD_OUT}
     exit $status
+    echo "$1 FAILED"
   else
     echo "$1 success"
   fi
@@ -242,11 +241,7 @@ other_cmd()
     else
       echo "    $2"
     fi
-    if [ "$5" == "tee" ]; then
-      ( docommand "$2" "$3") 2>&1 | /usr/bin/tee "$4"
-    else
-      ( docommand "$2" "$3") > "$4" 2>&1
-    fi
+    ( docommand "$2" "$3") > "$4" 2>&1
     
     status=$?
     if [ $status -eq 0 ]; then

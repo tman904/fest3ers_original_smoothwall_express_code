@@ -7,7 +7,10 @@
 # The rest of the build system should use these vars instead of hard-coding paths.
 
 function set_build_environment() {
-  # First, we define vars and settings common to both tool chain and final builds
+  # Maybe don't redirect I/O?
+  NO_REDIRECT="$1"
+
+  # Define vars and settings common to both tool chain and final builds
   #
   set +h
   umask 022
@@ -16,6 +19,11 @@ function set_build_environment() {
 
   # Get the common, explicit environment prepared by top make
   . crumbs/build_environment
+
+  # Prepare redirection
+  if [ "$NO_REDIRECT" == "" ]; then
+    exec <${BUILD_IN} >>${BUILD_OUT}
+  fi
 
   # prefix of where the tool chain is installed.
   export TOOLS_DIR="/tools"

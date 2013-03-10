@@ -37,12 +37,20 @@
 #   and the required version.
 
 
+. crumbs/build_environment
+
+# Handle I/O redirection
+exec <${BUILD_IN} >>${BUILD_OUT} 2>&1
+
 echo
 echo "Checking host for required packages. Failures must be addressed"
 echo "before proceeding with building Smoothwall".
 echo
 
 export LC_ALL=C
+
+# Always two NLs on exit
+trap "echo;echo" EXIT
 
 # First set the required package versions
 CSUDO=010500
@@ -52,9 +60,9 @@ CBASH=02050a
 VBASH=2.5.a #(/bin/sh should be a symbolic or hard link to bash) 
 
 CBINUTILS=021200
-CBINUTILSM=022200
+CBINUTILSM=022301
 VBINUTILS=2.12
-VBINUTILSM=2.22.00
+VBINUTILSM=2.23.01
 
 CFLEX=020500
 VFLEX=2.5
@@ -148,6 +156,8 @@ else
   # check /bin/sh
   if [ `readlink -f /bin/sh` == "/bin/bash" ]; then
     echo "    OK: /bin/sh -> /bin/bash"
+  elif [ `readlink -f /bin/sh` == "/usr/bin/bash" ]; then
+    echo "    OK: /bin/sh -> /usr/bin/bash"
   else
     echo "  FAIL: /bin/sh -> `readlink -f /bin/sh`"
     OK=1
