@@ -11,6 +11,7 @@
 #   jail, it was probably run manually, so die.
 #
 if [ ! -d "/build" ]; then
+  echo "/build not found; go to jail."
   exit 1
 fi
 
@@ -43,10 +44,14 @@ export BUILD_PHASE="Media"
 
 # Get our functions
 #
+#   Save STDOUT; it's the .out dest and quite needed.
+exec 4>&1
 source toolcrib/environment
 source toolcrib/functions
+set_build_environment NO_REDIRECT
+#   Restore STDOUT
+exec 1>&4 2>&1
 
-set_build_environment
 
 # Be sure /proc is mounted
 #
@@ -77,4 +82,10 @@ else
             "make -C sources/media TYPE=-devel" \
             "sources/media/$BUILD_PHASE.mediaISO.out" \
             ""
+  # Indicate success/failure here, too.
+  if [ $? -eq 0 ]; then
+    echo "Smoothwall Express ISO media success"
+  else
+    echo "Smoothwall Express ISO media FAILED"
+  fi
 fi

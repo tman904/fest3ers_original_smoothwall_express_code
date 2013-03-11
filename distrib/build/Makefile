@@ -181,8 +181,9 @@ rebuild: clean predownload build
 # prepare the installation media
 #
 media:
-	@+(echo -e "\nMaking ISO image with linux$(KERNEL_TYPE)..."; sleep 1; \
-	    $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media") <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
+	+@(echo -e "\nMaking ISO image with linux$(KERNEL_TYPE)..."; sleep 1; \
+	    $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media") \
+	    <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
 
 # prepare a bootable flash drive
 #
@@ -275,6 +276,7 @@ clean:
 	  no_be=1 $(MAKE) --no-print-directory clean-tools; \
 	  no_be=1 $(MAKE) --no-print-directory clean-crumbs; \
 	  rm -f $(SRC_TGZ); \
+	  rm -f nohup.out; \
 	fi
 
 # Empty the buildroot directory

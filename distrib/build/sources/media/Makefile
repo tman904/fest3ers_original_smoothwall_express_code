@@ -10,6 +10,13 @@ include ../Makefile
 
 PACKAGE = media
 
+# Two dirs down, one cross each.
+ifeq ($(BUILD_OUT), crumbs/build-progress.out)
+  MEDIA_BUILD_OUT := ../../$(BUILD_OUT)
+else
+  MEDIA_BUILD_OUT := $(BUILD_OUT)
+endif
+
 # Make it easy to switch between the two
 export UDEV = udev
 export UDEVunused = eudev
@@ -18,7 +25,7 @@ export UDEVunused = eudev
 TOOLCHAIN_PKGS = expect
 OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config cnxadsl libart_lgpl 
 
-TARGET_DIR = /build/target/
+TARGET_DIR = /build/target
 
 ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr sqlite \
 	   samba subversion ntop iperf squidguard
@@ -59,23 +66,23 @@ DEV_PKGS = kernel-headers patch make autoconf automake bison dejagnu gcc \
 
 cdrom:
 	mkdir cdrom
-	echo "      runtimeroot" >/proc/self/fd/0
+	echo "      runtimeroot" >>$(MEDIA_BUILD_OUT)
 	make -C runtimeroot KERNEL_TYPE=$(KERNEL_TYPE) 
-	echo "      installroot" >/proc/self/fd/0
+	echo "      installroot" >>$(MEDIA_BUILD_OUT)
 	make -C installroot KERNEL_TYPE=$(KERNEL_TYPE) 
-	echo "      cdromboot" >/proc/self/fd/0
+	echo "      cdromboot" >>$(MEDIA_BUILD_OUT)
 	make -C cdromboot KERNEL_TYPE=$(KERNEL_TYPE) 
 
 cdrom/smoothwall.tgz:
-	echo "      prepare cdrom tree" >/proc/self/fd/0
+	echo "      prepare cdrom tree" >>$(MEDIA_BUILD_OUT)
 	mkdir -p distrib distrib/sys distrib-dev distrib-doc/usr/share/
 	
 	install -D runtimerootimage.gz distrib/boot/initrd-$(K_SWE_VERSION).gz
 	
-	echo "        unpack dev packages" >/proc/self/fd/0
+	echo "        unpack dev packages" >>$(MEDIA_BUILD_OUT)
 	echo "Unpacking dev packages:"
 	(for I in $(DEV_PKGS); do \
-	    if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
+	    if [ ! -e $(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
 	      make -C ../$$I clean all; retCode=$$?; \
 	      if [ $$retCode -ne 0 ]; then \
 	        echo "$$I FAILED"; \
@@ -83,21 +90,22 @@ cdrom/smoothwall.tgz:
 	      fi; \
 	    fi; \
 	    echo -n "    $$I"; \
-	    tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib-dev || (echo; exit 69); \
+	    tar -zxf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib-dev || (echo; exit 69); \
 	    echo; \
 	  done; \
 	);
 	
-	@echo "        copy dev shared libs to distrib" >/proc/self/fd/0
+	@echo "        copy dev shared libs to distrib" >>$(MEDIA_BUILD_OUT)
 	@echo "Copying dev shared libs to distrib:"
+	@cd distrib; mkdir -p usr; cd usr; ln -s lib lib64
 	(cd distrib-dev; \
 	  find . -name \*.so\* -print | cpio -pd ../distrib \
 	)
 	
-	@echo "        unpack main packages" >/proc/self/fd/0
+	@echo "        unpack main packages" >>$(MEDIA_BUILD_OUT)
 	@echo "Unpacking main packages:"
 	(for I in $(INST_PKGS); do \
-	    if [ ! -e /$(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
+	    if [ ! -e $(TARGET_DIR)/smoothwall-$$I.tar.gz ]; then \
 	      make -C ../$$I clean all; retCode=$$?; \
 	      if [ $$retCode -ne 0 ]; then \
 	        echo "$$I FAILED"; \
@@ -105,25 +113,25 @@ cdrom/smoothwall.tgz:
 	      fi; \
 	    fi; \
 	    echo -n "    $$I"; \
-	    tar xf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib || (echo; exit 68); \
+	    tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib || (echo; exit 68); \
 	    echo; \
 	  done; \
 	);
-	@echo "        move includes to distrib-dev" >/proc/self/fd/0
+	@echo "        move includes to distrib-dev" >>$(MEDIA_BUILD_OUT)
 	@echo "Moving includes to distrib-dev:"
 	if [ -d distrib/usr/include ]; then \
 	  mkdir -p distrib-dev/usr/include; \
 	  cp -a distrib/usr/include distrib-dev/usr/; \
 	  rm -rf distrib/usr/include/*; fi
 	
-	@echo "        move static libs to distrib-dev" >/proc/self/fd/0
+	@echo "        move static libs to distrib-dev" >>$(MEDIA_BUILD_OUT)
 	@echo "Moving static libs to distrib-dev:"
 	cd distrib; find . -name \*.a -o -name \*.la | while read a; do \
 	  mkdir -p ../distrib-dev/`dirname $$a`; \
 	  mv $$a ../distrib-dev/$$a; \
 	done
 	
-	@echo "        move docs to distrib-doc" >/proc/self/fd/0
+	@echo "        move docs to distrib-doc" >>$(MEDIA_BUILD_OUT)
 	@echo "Moving docs to distrib-doc:"
 	for I in man info share/man share/info share/doc examples; do \
 	  if [ -d distrib/usr/$$I ]; then \
@@ -131,7 +139,7 @@ cdrom/smoothwall.tgz:
 	    mv distrib/usr/$$I/* distrib-doc/usr/$$I/; fi; \
 	done
 	
-	@echo "        strip symbols" >/proc/self/fd/0
+	@echo "        strip symbols" >>$(MEDIA_BUILD_OUT)
 	/build/toolcrib/striptree distrib
 	/build/toolcrib/striptree distrib-dev
 	/build/toolcrib/striptree distrib-doc
@@ -158,7 +166,7 @@ cdrom/smoothwall.tgz:
 	
 	@chown nobody:nobody distrib/var/smoothwall/main/productdata
 	
-	@echo "        secure tree ..." >/proc/self/fd/0
+	@echo "        secure tree ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nSecuring tree ..."
 	@( \
 	  mkdir -p distrib/tmp; \
@@ -172,26 +180,26 @@ cdrom/smoothwall.tgz:
 	  chmod 1777 distrib/tmp; \
 	) | sed -u -e 's/^/  /'
 	
-	@echo "        convert to shadow passwords ..." >/proc/self/fd/0
+	@echo "        convert to shadow passwords ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nConverting to shadow passwords ..."
 	@( \
 	/usr/bin/chroot distrib /usr/sbin/pwconv; \
 	/usr/bin/chroot distrib /usr/sbin/grpconv; \
 	) | sed -u -e 's/^/  /'
 	
-	@echo "        update library cache ..." >/proc/self/fd/0
+	@echo "        update library cache ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nUpdating library cache ..."
 	@( \
 	/sbin/ldconfig -r distrib; \
 	) | sed -u -e 's/^/  /'
 	
-	@echo "        tidy ..." >/proc/self/fd/0
+	@echo "        tidy ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nTidying ..."
 	@#rm -f distrib/etc/resolv.conf
 	@find distrib -name .gitignore -exec rm -f {} \;
 	@ln -s /var/smoothwall/vpn/ipsec.conf distrib/etc/ipsec.conf
 	
-	@echo "      copy to OffRoad ..." >/proc/self/fd/0
+	@echo "      copy to OffRoad ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nCopying to OffRoad ..."
 	@mkdir -p offroad
 	@cd cdrom; cp -av . ../offroad
@@ -201,16 +209,16 @@ cdrom/smoothwall.tgz:
 	     -e '$d' \
 	     offroad/boot/grub/grub.conf
 	
-	@echo "      build final tarballs ..." >/proc/self/fd/0
-	@echo "        main ..." >/proc/self/fd/0
+	@echo "      build final tarballs ..." >>$(MEDIA_BUILD_OUT)
+	@echo "        main ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nBuilding smoothwall.tgz, stand by ..."
 	@tar -zcf cdrom/smoothwall.tgz -C distrib .
 	
-	@echo "        dev ..." >/proc/self/fd/0
+	@echo "        dev ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nBuilding smoothdev.tgz, stand by ..."
 	@tar -zcf cdrom/smoothdev.tgz -C distrib-dev .
 	
-	@echo "        doc ..." >/proc/self/fd/0
+	@echo "        doc ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nBuilding smoothdoc.tgz, stand by ..."
 	@tar -zcf cdrom/smoothdoc.tgz -C distrib-doc .
 	
@@ -234,7 +242,7 @@ extracontent:
 	find cdrom -name .svn -exec rm -rf {} \;
 
 all: cdrom cdrom/smoothwall.tgz extracontent
-	@echo "      build full ISO ..." >/proc/self/fd/0
+	@echo "      assemble full ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
 	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH); \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}.iso; \
@@ -242,9 +250,9 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	    -b boot/grub/stage2_eltorito -J -R \
 	    -no-emul-boot -boot-load-size 4 -boot-info-table \
 	    -V $(BASENAME) --publisher "Smoothwall Express" cdrom; \
-	  echo "$${ISONAME} build complete"; \
+	  echo -e "$${ISONAME} assembly complete\n\n"; \
 	)
-	@echo "      build offRoad ISO ..." >/proc/self/fd/0
+	@echo "      assemble offRoad ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
 	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH); \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-offroad.iso; \
@@ -252,7 +260,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	    -b boot/grub/stage2_eltorito -J -R \
 	    -no-emul-boot -boot-load-size 4 -boot-info-table \
 	    -V $(BASENAME) --publisher "Smoothwall Express (OffRoad)" offroad; \
-	  echo "$${ISONAME} build complete"; \
+	  echo -e "$${ISONAME} assembly complete\n\n"; \
 	)
 
 clean:
