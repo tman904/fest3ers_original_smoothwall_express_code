@@ -290,7 +290,7 @@ std::string getsrcfragment(std::string ip)
 	std::string ret;
 
 	if (ipisrange(ip))
-		ret = "--src-range " + ip;
+		ret = "-m iprange --src-range " + ip;
 	else
 		ret = "-s " + ip;
 
@@ -302,7 +302,7 @@ std::string getdstfragment(std::string ip)
 	std::string ret;
 
 	if (ipisrange(ip))
-		ret = "--dst-range " + ip;
+		ret = "-m iprange --dst-range " + ip;
 	else
 		ret = "-d " + ip;
 
