@@ -184,7 +184,7 @@ if [ $STATUS -eq 1 -o $STATUS -eq 2 ]; then
     mv -v ${TOOLS_DIR}/bin/{ld-old,ld}
   fi
   # Delete specs file
-    rm -vf `dirname $(gcc --print-libgcc-file-name)`/specs
+    rm -vf `dirname $(/tools/bin/gcc --print-libgcc-file-name)`/specs
 fi
 
 # If unwinding, exit with success

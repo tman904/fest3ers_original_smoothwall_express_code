@@ -260,9 +260,6 @@ reprep-final:
 	@+$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_final --unwind"
 	@+if [ `id -u` -eq 0 ]; then CMD="bash"; else CMD="sudo su"; fi; \
 	   $$CMD -c "no_be=1 $(MAKE) clean-distrib clean-final-crumbs clean-media-crumbs clean-buildroot clean-target"
-	@echo "You must run this twice in a row to complete the 'unwind' back"
-	@echo "  to the toolchain. If this is the first time through, please"
-	@echo "  run it again now!"
 
 # Clean the entire directory back to pristine plus downloaded tarballs
 clean:
