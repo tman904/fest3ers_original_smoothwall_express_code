@@ -133,8 +133,71 @@ trap EXITTRAP EXIT
 
 [ -t 0 ] || (echo "STDIN not a tty"; exit)
 
-echo "Running installer"
-/bin/install /dev/tty2
+echo "Configuring installer"
+. /etc/config-install.rc
 
-echo "Reboot..."
-/sbin/reboot -f
+# Prepare in case of restore: if the NICs have changed, setup must be run
+#   at least to re-assign the NICs. In the case of dev testing, much may
+#   need changing to avoid conflicting with another active system.
+mustRunSetup=0
+autoSetup=" INSTALL"
+
+echo "Executing installer"
+. /etc/exec-install.rc
+
+if [ $mustRunSetup -eq 1 ]; then
+  # NICs changed, so force setup, but not auto mode
+  restore=1
+  autoSetup=""
+  echo "    network devices have changed"
+  echo "      press <ENTER> to run setup and update NIC assignments"
+  read ans
+fi
+
+case $restore in
+  1)
+    echo -e "$TITLE"
+    echo
+    echo "Preparing Setup"
+    echo
+      echo "  cleaning up"
+        trap - EXIT
+        export TERM=linux
+        udevadm control --log-priority="none"
+
+      echo "  run setup"
+        mount -n -o move /dev /harddisk/dev
+        mount -n -o move /dev/pts /harddisk/dev/pts
+        mount -n -o move /sys /harddisk/sys
+        mount -n -o move /proc /harddisk/proc
+
+        cd /harddisk
+        echo $(getarg console) | \
+            awk '{if ($1 ~ /ttyS0,[0-9]+$/) { exit 0 } else { exit 1 }}'
+        if [ $? -eq 0 ]; then
+          # Use VT101 on serial port
+          chroot . /bin/bash -c "TERM=vt101 /usr/sbin/setup /dev/tty2${autoSetup}"
+        else
+          # VESA console behaves better
+          chroot . /usr/sbin/setup /dev/tty2${autoSetup}
+        fi
+
+      echo -ne $CLS
+      echo; echo;
+      echo "  setup complete"
+    ;;
+  2)
+    echo -ne $CLS
+    echo; echo;
+    echo "  install and restore complete"
+    ;;
+  3)
+    echo -ne $CLS
+    echo; echo;
+    echo "  total restore complete"
+    ;;
+esac
+
+echo "  clean up and reboot"
+  undo_alot
+  /sbin/reboot -f

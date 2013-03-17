@@ -47,7 +47,12 @@ distrib:
 	
 	@(cd distrib/var/smoothwall/time; ln -s /usr/share/zoneinfo/posix/Europe/London localtime)
 
-	@(cd distrib; echo "CURRENT=$(KERNEL_VER)-$(KERNEL_PL)" > var/smoothwall/main/kernel)
+	@(cd distrib; \
+	  ( echo "CURRENT=$(KERNEL_VER)"; \
+	    echo "KERNEL_VER=$(KERNEL_VER)"; \
+	    echo "KERNEL_TYPE=$(KERNEL_TYPE)"; \
+	  ) > var/smoothwall/main/kernel; \
+	)
 
 	@(cd distrib; rm -rf `find -name CVS`)
 	@(cd distrib; rm -rf `find -name .svn`)

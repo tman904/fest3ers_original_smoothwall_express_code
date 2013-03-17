@@ -22,7 +22,7 @@ char **ctr;
 
 extern char *english_tr[];
 
-static int partitiondisk(char *diskdevnode, int *partitionsizes);
+static int partitiondisk(char *diskdevnode);
 
 int main(int argc, char *argv[])
 {
@@ -38,7 +38,8 @@ int main(int argc, char *argv[])
 	int allok = 0;
 	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle;
-	int maximum_free, current_free;
+	FILE *Fpartitions, *openShut;
+	int maximum_free, current_free, partStart;
 	int log_partition, boot_partition, root_partition, swap_partition;
 	struct keyvalue *hwprofilekv = initkeyvalues();
 	FILE *hkernelcmdline;
@@ -90,9 +91,9 @@ int main(int argc, char *argv[])
 
 	/* Preapre storage drivers and load them, only if we haven't
 	 * got a IDE disk. */
-	mysystem("/sbin/udevd --daemon");
-	mysystem("/sbin/udevadm trigger");
-	mysystem("/sbin/udevadm settle");		
+//	mysystem("/sbin/udevd --daemon");
+//	mysystem("/sbin/udevadm trigger");
+//	mysystem("/sbin/udevadm settle");		
 	
 	ctr = english_tr;
 	strcpy(shortlangname, "en");
@@ -111,13 +112,16 @@ int main(int argc, char *argv[])
 
 	if (!(findharddiskorcdrom(&cdrom, DISK_CDROM)))
 	{
-		mysystem("/sbin/modprobe usb-storage");
-		sleep(10);
-		if (!(findharddiskorcdrom(&cdrom, DISK_CDROM)))
-			installtype = URL_INSTALL;
-		else
-			installtype = CDROM_INSTALL;
+		errorbox(ctr[TR_NO_CDROM]);
+		goto EXIT;
 	}
+//		mysystem("/sbin/modprobe usb-storage");
+//		sleep(10);
+//		if (!(findharddiskorcdrom(&cdrom, DISK_CDROM)))
+//			installtype = URL_INSTALL;
+//		else
+//			installtype = CDROM_INSTALL;
+//	}
 	else
 		installtype = CDROM_INSTALL;
 	
@@ -131,15 +135,27 @@ int main(int argc, char *argv[])
 		snprintf(commandstring, STRING_SIZE, "/bin/mount %s /cdrom", insertdevnode);
 		while (!cdmounted)
 		{
-			rc = newtWinChoice(TITLE, ctr[TR_OK], ctr[TR_CANCEL], insertmessage);
-			if (rc != 1)
-			{
-				errorbox(ctr[TR_INSTALLATION_CANCELED]);
-				goto EXIT;
-			}
-			if (!(mysystem(commandstring)))
+			if (!(mysystem(commandstring))) {
 				cdmounted = 1;
+			} else {
+				rc = newtWinChoice(TITLE, ctr[TR_OK], ctr[TR_CANCEL], insertmessage);
+				if (rc != 1)
+				{
+					errorbox(ctr[TR_INSTALLATION_CANCELED]);
+					goto EXIT;
+				}
+			}
 		}
+	}
+
+	// Prepare the udev rules, including the persistent HD rules.
+	snprintf(commandstring,
+		 STRING_SIZE,
+		 "/bin/installer/prepudevrules %s", hd.devnode);
+	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_LOG_FILESYSTEM]))
+	{
+		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		goto EXIT;
 	}
 
 	rc = newtWinChoice(TITLE, ctr[TR_OK], ctr[TR_CANCEL],
@@ -155,7 +171,19 @@ int main(int argc, char *argv[])
 	/* If this fails, ramsize will be set to 0.  We can still cope though as this
 	 * figure is only used as a guide to setting the swap size. */
 	ramsize = gettotalmemory();
-	fprintf(flog, "%d MB RAM detected.\n", ramsize);
+	fprintf(flog, "%d MiB RAM detected.\n", ramsize);
+
+	// 2013/02/18 - Neal Murphy
+	//   It's time to adjust partition sizes; hard drives have become immense in
+	// 13 years. The boot partition grows to 200MiB. Swap is limited to at least
+	// 256MiB and up to 1/8 of the total disk space; if you have 16GiB RAM, you
+	// *surely* don't need 16GiB swap. Logs probably shouldn't grow larger than
+	// 20GiB unless you are logging all packets on a saturated gigE link. The root
+	// FS can have the rest of the disk.
+	//   SWE3 has grown in size. It can be made to install on a 1GB drive, but
+	// that's rather tight. 2GiB is OK for a plain, simple firewall. 16GiB is
+	// probably more than most systems will need. Building SWE3.1 now requires
+	// around 12GiB disk.
 
 	/* Partition, mkswp, mkfs. */
 	/* before partitioning, first determine the sizes of each
@@ -166,58 +194,76 @@ int main(int argc, char *argv[])
 	if (trimbigdisk)
 		maximum_free = maximum_free > TRIM_DISK_SIZE ? TRIM_DISK_SIZE : maximum_free;
 
-	fprintf(flog, "%d MB disk space (Trimming: %d)\n", maximum_free, trimbigdisk);
+	fprintf(flog, "%d MiB disk space (Trimming: %d)\n", maximum_free, trimbigdisk);
 	
-	boot_partition = 80; /* in MB */
-	current_free = maximum_free - boot_partition;
+	boot_partition = 200; /* in MiB */
 
-	/* Trim swap to tiny if disk is small, like a CF. */
-	if (maximum_free < 3000)
-		swap_partition = 4;
+	// '-4' for 1 MiB at each and and 2MiB bios_grub partition (for Grub2 someday).
+	current_free = maximum_free - boot_partition - 4;
+
+	// Swap size should never need to be larger than 1/8 of the disk. It could probably
+	// be fixed at 512MiB.
+	if (ramsize > maximum_free/8)
+		swap_partition = maximum_free/8;
 	else
-		swap_partition = ramsize < 64 ? 64 : ramsize; /* in MB */
+		swap_partition = ramsize < 256 ? 256 : ramsize; /* in MiB */
 	current_free -= swap_partition;
 	
+	// Set log partition to 1/3 free, but crowbar between 20MiB and 20000MiB.
 	log_partition = (current_free / 3) > 20 ? current_free / 3 : 20;
+	if (log_partition > 20000) { log_partition = 20000; }
 	current_free -= log_partition;
 
 	root_partition = current_free;
 	fprintf(flog, "boot = %d, swap = %d, log = %d, root = %d\n",
 		boot_partition, swap_partition, log_partition, root_partition);
+	Fpartitions = fopen("/tmp/partitions", "w");
+	fprintf(Fpartitions, "unit MiB\n");
+	fprintf(Fpartitions, "select %s\n", hd.devnode);
+	fprintf(Fpartitions, "mklabel gpt\n");
+	partStart = 3;
+	fprintf(Fpartitions, "mkpart boot ext3 %d %d\n", partStart, partStart+boot_partition-1);
+	fprintf(Fpartitions, "name 1 \"/boot\"\n");
+	partStart += boot_partition;
+	fprintf(Fpartitions, "mkpart swap linux-swap %d %d\n", partStart, partStart+swap_partition-1);
+	fprintf(Fpartitions, "name 2 swap\n");
+	partStart += swap_partition;
+	fprintf(Fpartitions, "mkpart log ext3 %d %d\n", partStart, partStart+log_partition-1);
+	fprintf(Fpartitions, "name 3 \"/var/log\"\n");
+	partStart += log_partition;
+	fprintf(Fpartitions, "mkpart root ext3 %d %d\n", partStart, partStart+root_partition-1);
+	fprintf(Fpartitions, "name 4 \"/\"\n");
+	fprintf(Fpartitions, "mkpart bios_grub 1 2\n");
+	fprintf(Fpartitions, "name 5 \"bios_grub\"\n");
+	fprintf(Fpartitions, "print\n");
+	fprintf(Fpartitions, "quit\n");
+	fclose (Fpartitions);
 
-	c = 0;
-	partitionsizes[c++] = boot_partition;
-	partitionsizes[c++] = swap_partition;
-	partitionsizes[c++] = log_partition;
-	if (trimbigdisk)
-		partitionsizes[c++] = root_partition;
-	partitionsizes[c++] = 0;
-	
-	if (partitiondisk(hd.devnode, partitionsizes))
+	if (partitiondisk(hd.devnode))
 	{
 		errorbox(ctr[TR_UNABLE_TO_PARTITION]);
 		goto EXIT;
 	}
 
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L BOOT -t ext4 -j %s1", hd.devnode);	
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L boot -t ext4 -FFj %s1", hd.devnode);	
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_BOOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_BOOT_FILESYSTEM]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mkswap -L SWAP %s2", hd.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/mkswap -L linux-swap %s2", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_SWAPSPACE]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_SWAPSPACE]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L LOG -t ext4 -j %s3", hd.devnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L log -t ext4 -FFj %s3", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_LOG_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_LOG_FILESYSTEM]);
 		goto EXIT;
 	}
-	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L ROOT -t ext4 -j %s4", hd.devnode);	
+	snprintf(commandstring, STRING_SIZE, "/bin/mke2fs -L root -t ext4 -FFj %s4", hd.devnode);	
 	if (runcommandwithstatus(commandstring, ctr[TR_MAKING_ROOT_FILESYSTEM]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_MAKE_ROOT_FILESYSTEM]);
@@ -230,9 +276,11 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_UNABLE_TO_MOUNT_ROOT_FILESYSTEM]);
 		goto EXIT;
 	}
-	mkdir("/harddisk/boot", S_IRWXU|S_IRWXG|S_IRWXO);
-	mkdir("/harddisk/var", S_IRWXU|S_IRWXG|S_IRWXO);
-	mkdir("/harddisk/var/log", S_IRWXU|S_IRWXG|S_IRWXO);
+
+	// Ensure the mount points exist and have limited access
+	mkdir("/harddisk/boot", S_IRWXU|S_IRGRP|S_IXGRP|S_IRUSR|S_IXUSR);
+	mkdir("/harddisk/var", S_IRWXU|S_IRGRP|S_IXGRP|S_IRUSR|S_IXUSR);
+	mkdir("/harddisk/var/log", S_IRWXU|S_IRGRP|S_IXGRP|S_IRUSR|S_IXUSR);
 	
 	snprintf(commandstring, STRING_SIZE, "/sbin/mount %s1 /harddisk/boot", hd.devnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_BOOT_FILESYSTEM]))
@@ -263,7 +311,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Either use traball from cdrom or download. */
+	/* Either use tarball from cdrom or download. */
 	if (installtype == CDROM_INSTALL)
 		strncpy(tarballfilename, "/cdrom/smoothwall.tgz", STRING_SIZE);
 	else
@@ -297,11 +345,32 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	// Ensure the udev rules dir exists
+	mkdir("/harddisk/etc", S_IRWXU|S_IRGRP|S_IXGRP|S_IRUSR|S_IXUSR);
+	mkdir("/harddisk/etc/udev", S_IRWXU|S_IRGRP|S_IXGRP|S_IRUSR|S_IXUSR);
+	mkdir("/harddisk/etc/udev/rules.d", S_IRWXU|S_IRGRP|S_IXGRP|S_IRUSR|S_IXUSR);
+	// Copy the persistent rules from rootfs to HD
+	mysystem("/bin/cp /etc/udev/rules.d/*Smoothwall* /harddisk/etc/udev/rules.d");
+
+	// Create the new system's fstab
+	if (runcommandwithstatus("/harddisk/usr/bin/installer/writefstab", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	{
+		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		goto EXIT;
+	}
+
+	// Save the hardware profile
 	replacekeyvalue(hwprofilekv, "STORAGE_DEVNODE", hd.devnode);
 	replacekeyvalue(hwprofilekv, "CDROM_DEVNODE", cdrom.devnode);
 	replacekeyvalue(hwprofilekv, "FS", "ext4");
 	writekeyvalues(hwprofilekv, "/harddisk/" CONFIG_ROOT "/main/hwprofile");
 
+	// Set the default timezone
+	openShut = fopen("/harddisk/" CONFIG_ROOT "/time/settings", "w");
+	fprintf(openShut, "TIMEZONE=UTC\n");
+	fclose(openShut);
+
+	// Prepare module dependencies
 	if (runcommandwithstatus("/bin/chroot /harddisk /sbin/depmod -a",
 		ctr[TR_CALCULATING_MODULE_DEPENDENCIES]))
 	{
@@ -315,30 +384,34 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 	
-	mysystem("/sbin/mount proc -t proc /harddisk/proc");
+	if (runcommandwithstatus("/harddisk/usr/bin/installer/adjustinitrd", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	{
+		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		goto EXIT;
+	}
 
-	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/installer/makeinitrd", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
-		goto EXIT;
-	}
-	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/updatestorageuuids.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
-		goto EXIT;
-	}
-	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/writefstab.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
-	{
-		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
-		goto EXIT;
-	}
+	//if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/updatestorageuuids.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	//{
+	//	errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+	//	goto EXIT;
+	//}
+	//if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/writefstab.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	//{
+	//	errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+	//	goto EXIT;
+	//}
 	
-	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/writegrubconf.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	// Write the grub config, bind-mount sys stuff, install grub
+	if (runcommandwithstatus("/harddisk/usr/bin/installer/writegrubconf", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
 		goto EXIT;
 	}
-	if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/installgrub.pl",
+	mysystem("/sbin/mount --rbind /proc /harddisk/proc");
+	mysystem("/sbin/mount --rbind /sys /harddisk/sys");
+	mysystem("/sbin/mount --rbind /dev /harddisk/dev");
+
+	if (runcommandwithstatus("/harddisk/usr/bin/installer/installgrub",
 		ctr[TR_INSTALLING_GRUB]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
@@ -356,7 +429,7 @@ int main(int argc, char *argv[])
 		if (!(ejectcdrom(cdrom.devnode)))
 		{
 			errorbox(ctr[TR_UNABLE_TO_EJECT_CDROM]);
-			goto EXIT;
+			//goto EXIT;
 		}
 	}
 
@@ -373,7 +446,7 @@ int main(int argc, char *argv[])
 				
 EXIT:
 	/* We don't need udev anymore. */
-	mysystem("/bin/killall udevd");
+	//mysystem("/bin/killall udevd");
 
 	fprintf(flog, "Install program ended.\n");	
 	fflush(flog);
@@ -392,47 +465,30 @@ EXIT:
 			printf("Unable to run setup.\n");
 	}
 	
-	mysystem("/sbin/umount /harddisk/proc");
+	mysystem("/bin/chroot /harddisk /sbin/umount -a");
 	
 	reboot();
 
 	return 0;
 }
 
-static int partitiondisk(char *diskdevnode, int *partitionsizes)
+static int partitiondisk(char *diskdevnode)
 {
 	int c = 0;
 	int start = 1; int end = 0;
 	char commandstring[STRING_SIZE];
 	
 	memset(commandstring, 0, STRING_SIZE);
+	// Be sure the partition table is cleared.
+	snprintf(commandstring, STRING_SIZE - 1, "/bin/dd if=/dev/zero of=%s bs=512 count=34", diskdevnode);
+	mysystem(commandstring);
 	
-	snprintf(commandstring, STRING_SIZE - 1, "/bin/parted %s --script -- mklabel gpt", diskdevnode);
+	// Now partition in one swell foop.
+	memset(commandstring, 0, STRING_SIZE);
+	snprintf(commandstring, STRING_SIZE - 1, "/usr/sbin/parted %s </tmp/partitions", diskdevnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
 	{
 		return 1;
-	}
-	
-	for (c = 0; partitionsizes[c]; c++)
-	{
-		end += partitionsizes[c];
-		snprintf(commandstring, STRING_SIZE - 1, "/bin/parted %s --script -- mkpart primary %d %d",
-			diskdevnode, start, end);
-		if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
-		{
-			return 1;
-		}
-		start += partitionsizes[c];
-	}
-	
-	if (c < 4)
-	{
-		snprintf(commandstring, STRING_SIZE - 1, "/bin/parted %s --script -- mkpart primary %d -1",
-			diskdevnode, start);
-		if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
-		{
-			return 1;
-		}
 	}
 	
 	sleep(2);

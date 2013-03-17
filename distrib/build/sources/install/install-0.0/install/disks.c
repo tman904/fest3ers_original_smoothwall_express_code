@@ -73,10 +73,10 @@ int findharddiskorcdrom(struct blockdevice *bd, int type)
 	
 	if (type == DISK_CDROM)
 	{
-		if ((fd = open("/dev/scd0", O_RDONLY|O_NONBLOCK)) != -1)
+		if ((fd = open("/dev/sr0", O_RDONLY|O_NONBLOCK)) != -1)
 		{
 			close(fd);
-			strncpy(bd->devnode, "/dev/scd0", STRING_SIZE - 1);
+			strncpy(bd->devnode, "/dev/sr0", STRING_SIZE - 1);
 			bd->present = 1;
 			result = 1;
 		}

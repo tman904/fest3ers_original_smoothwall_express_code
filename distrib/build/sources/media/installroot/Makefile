@@ -42,12 +42,15 @@ bin:
 	ln -sv /bin tmp/sbin
 	cp -aR /sbin/* tmp/bin
 	cp -aR /build/buildroot/$(UDEV)/sbin/* tmp/bin/
-	#cp -aR /build/target/install tmp/bin/install
+	cp -aR /build/target/install-0.0-$(mARCH) tmp/bin/install
+	cp -aR /build/sources/coretree/tree/usr/bin/installer tmp/bin/
 
 lib:
 	mkdir -pv tmp/lib tmp/usr/lib tmp/usr/lib/klibc/lib
 	cp -aR /lib/* tmp/lib
 	cp -aR /lib/lib* tmp/lib
+	cp -aR /usr/lib/libnewt.so* tmp/lib/
+	cp -aR /usr/lib/libslang.so* tmp/lib/
 	cp -aR /usr/lib/libncurses.so* tmp/lib/
 	cp -aR /usr/lib/libtinfo.so* tmp/lib/
 	tar xfz /build/target/smoothwall-linux$(KERNEL_TYPE).tar.gz -C tmp ./lib/modules > /dev/null 2>&1
@@ -82,6 +85,7 @@ all: clean bin lib klibc
 	  cp -aR ../etc/termcap etc; \
 	  cp -aR ../etc/rc etc; chmod 755 etc/rc; \
 	  cp -aR ../etc/install.rc etc; chmod 755 etc/install.rc; \
+	  cp -aR ../etc/install-rs.rc etc; chmod 755 etc/install-rs.rc; \
 	  cp -aR ../etc/flash.rc etc; chmod 755 etc/flash.rc; \
 	  cp -aR ../etc/config-install.rc etc; chmod 755 etc/config-install.rc; \
 	  cp -aR ../etc/upgrade-outgoing.pl etc; chmod 755 etc/upgrade-outgoing.pl; \

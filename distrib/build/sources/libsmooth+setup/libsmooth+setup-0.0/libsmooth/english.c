@@ -120,6 +120,8 @@ char *english_tr[] = {
 "available via HTTP.",
 /* TR_NO_IDE_CDROM */
 "No IDE cdrom found.",
+/* TR_NO_CDROM */
+"No CDROM drive found.",
 /* TR_INSERT_CDROM */
 "Please insert the SmoothWall Express CD in the CDROM drive.",
 /* TR_INSERT_FLOPPY */

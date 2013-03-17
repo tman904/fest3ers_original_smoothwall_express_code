@@ -66,6 +66,7 @@ if [ "$(getarg single)" == "single" ]; then RUNLEVEL="S"; fi
 if [ "$(getarg explore)" == "explore" ]; then RUNLEVEL="1"; fi
 if [ "$(getarg install)" == "install" ]; then RUNLEVEL="2"; fi
 if [ "$(getarg flash)" == "flash" ]; then RUNLEVEL="3"; fi
+if [ "$(getarg install-rs)" == "install-rs" ]; then RUNLEVEL="4"; fi
 cp /etc/inittab /b.b
 sed -e 's/^DR:.:/DR:'${RUNLEVEL}':/' </b.b >/etc/inittab
 rm /b.b
@@ -74,6 +75,6 @@ kill -1 1
 # Set run level
 init ${RUNLEVEL}
 case $RUNLEVEL in
-  2|3) echo "1 4 1 7" >/proc/sys/kernel/printk
+  2|3|4) echo "1 4 1 7" >/proc/sys/kernel/printk
      ;;
 esac
