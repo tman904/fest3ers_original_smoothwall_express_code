@@ -11,8 +11,7 @@ all:
 
 download:
 	@+for i in $(PERL_MODS); do \
-	  echo; \
-	  echo "$$i"; \
+	  echo -n " $$i"; \
 	  make -C $$i download || exit 1; \
 	done
 
