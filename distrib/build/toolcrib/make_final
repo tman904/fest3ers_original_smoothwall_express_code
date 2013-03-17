@@ -165,7 +165,8 @@ fi
       build patch
       build pkg-config
       build procinfo
-      build procps
+      #build procps
+      build procps-ng
       build which
       build GeoIP
       build Python

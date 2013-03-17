@@ -23,7 +23,8 @@ export UDEVunused = eudev
 
 # Document these pkgs, don't install
 TOOLCHAIN_PKGS = expect
-OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config cnxadsl libart_lgpl 
+OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config cnxadsl \
+	     libart_lgpl procps
 
 TARGET_DIR = /build/target
 
@@ -38,7 +39,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \
 	    ncurses vim less sed flex gettext net-tools inetutils iputils \
 	    whois perl bash bzip2 kbd e2fsprogs grep gzip module-init-tools \
-	    procinfo procps psmisc shadow sysklogd logrotate sysvinit tar \
+	    procinfo procps-ng psmisc shadow sysklogd logrotate sysvinit tar \
 	    util-linux joe wget iptables ipset ipbatch pciutils usbutils \
 	    linux$(KERNEL_TYPE) openssl openssh httpd smoothd squid freefont \
 	    strace rrdtool cron tcpdump dnsmasq ntp openntpd hdparm hddtemp \
