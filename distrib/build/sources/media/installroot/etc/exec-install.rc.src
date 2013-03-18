@@ -545,26 +545,27 @@ END
     )
 
     # Upgrade .../outgoing/config
-    (
-      cd /harddisk/var/smoothwall/outgoing
-      cp config config-RESTORED
-      cp /etc/upgrade-outgoing.{pl,sh} /harddisk/tmp/
+    #(
+    #  cd /harddisk/var/smoothwall/outgoing
+    #  cp config config-RESTORED
+    #  cp /etc/upgrade-outgoing.{pl,sh} /harddisk/tmp/
 
-      # Run the update script; chroot to get perl
-      chroot /harddisk bash /tmp/upgrade-outgoing.sh
-    )
+    #  # Run the update script; chroot to get perl
+    #  chroot /harddisk bash /tmp/upgrade-outgoing.sh
+    #)
 
     # Update .../main/settings
     (
       cd /harddisk/var/smoothwall/main
       . settings-RESTORED
       HOSTNAMErestored=$HOSTNAME
+      OPENNESSrestored=$OPENNESS
       . settings-FRESH
       cat<<END > settings
 LANGUAGE=$LANGUAGE
 HOSTNAME=$HOSTNAMErestored
 KEYMAP=$KEYMAP
-OPENNESS=
+OPENNESS=$OPENNESSrestored
 END
     )
 
