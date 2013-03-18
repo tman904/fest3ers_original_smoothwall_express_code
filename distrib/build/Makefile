@@ -264,12 +264,12 @@ reprep-final:
 # Clean the entire directory back to pristine plus downloaded tarballs
 clean:
 	@if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "no_be=1 $(MAKE) clean"; \
+	  sudo su -c "no_be=1 $(ARCHset) $(MAKE) clean"; \
 	else \
 	  no_be=1 $(MAKE) --no-print-directory clean-distrib; \
 	  no_be=1 $(MAKE) --no-print-directory clean-buildroot; \
 	  no_be=1 $(MAKE) --no-print-directory clean-target; \
-	  no_be=1 $(MAKE) --no-print-directory clean-sources; \
+	  no_be=1 $(ARCHset) $(MAKE) --no-print-directory clean-sources; \
 	  no_be=1 $(MAKE) --no-print-directory clean-tools; \
 	  no_be=1 $(MAKE) --no-print-directory clean-crumbs; \
 	  rm -f $(SRC_TGZ); \
@@ -302,12 +302,12 @@ clean-target:
 #
 clean-sources:
 	@+if [ `id -u` -ne 0 ]; then \
-	  sudo su -c "no_be=1 $(MAKE) --no-print-directory clean-sources"; \
+	  sudo su -c "no_be=1 $(ARCHset) $(MAKE) --no-print-directory clean-sources"; \
 	else \
 	  tput smso; echo -n "cleaning sources"; tput rmso; \
 	  (cd sources; for I in `find -maxdepth 1 -mindepth 1 -type d | sort`; do \
 	     if [ "$$I" != "CVS" ]; then \
-	       export BUILDDIR=`pwd`; $(MAKE) --no-print-directory -C $$I clean; \
+	       export BUILDDIR=`pwd`; $(ARCHset) $(MAKE) --no-print-directory -C $$I clean; \
 	     fi \
 	  done); \
 	  echo; \
