@@ -6,18 +6,20 @@
 
 include ../Makefile.conf
 
-PACKAGE = procinfo-ng
-VERSION = 2.0.304
+PACKAGE = procinfo
+VERSION = 18
 
-BASE_URL = http://sourceforge.net/projects/$(PACKAGE)/files/$(PACKAGE)/$(VERSION)
-EXTENSION = .tar.bz2
+BASE_URL = http://www.kozmix.org/src/
 
+CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
 
+configure: $(DIR)/
+	@true
+	
 compile: configure
-	@cd $(COMPILE_DIR); sed -i -e 's/-lncurses/-lncurses -ltinfo/' Makefile
-	@$(MAKE) $(JOBS) -C $(COMPILE_DIR)
+	@$(MAKE) $(JOBS) -C $(COMPILE_DIR) LDLIBS=-ltinfo
 
 install: compile
 	@mkdir -p $(PKG_ROOT)
