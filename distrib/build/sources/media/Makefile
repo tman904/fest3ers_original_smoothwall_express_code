@@ -200,6 +200,10 @@ cdrom/smoothwall.tgz:
 	@find distrib -name .gitignore -exec rm -f {} \;
 	@ln -s /var/smoothwall/vpn/ipsec.conf distrib/etc/ipsec.conf
 	
+	@echo "      copy to Dev ..." >>$(MEDIA_BUILD_OUT)
+	@mkdir cdrom-dev
+	@cd cdrom; cp -aR . ../cdrom-dev/
+	
 	@echo "      copy to OffRoad ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nCopying to OffRoad ..."
 	@mkdir -p offroad
@@ -214,20 +218,21 @@ cdrom/smoothwall.tgz:
 	@echo "        main ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nBuilding smoothwall.tgz, stand by ..."
 	@tar -zcf cdrom/smoothwall.tgz -C distrib .
+	@cp -a cdrom/smoothwall.tgz cdrom-dev/
 	
 	@echo "        dev ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nBuilding smoothdev.tgz, stand by ..."
-	@tar -zcf cdrom/smoothdev.tgz -C distrib-dev .
+	@tar -zcf cdrom-dev/smoothdev.tgz -C distrib-dev .
 	
 	@echo "        doc ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nBuilding smoothdoc.tgz, stand by ..."
-	@tar -zcf cdrom/smoothdoc.tgz -C distrib-doc .
+	@tar -zcf cdrom-dev/smoothdoc.tgz -C distrib-doc .
 	
 	@( \
 	  src_tgz=../../../../smoothsrc.tar.gz; \
 	  if [ -e "$src_tgz" ]; then \
 	    echo -e "\nCopying smoothsrc.tgz, stand by ..."; \
-	    cp $src_tgz  cdrom/smoothsrc.tgz; \
+	    cp $src_tgz  cdrom-dev/smoothsrc.tgz; \
 	  fi \
 	)
 
@@ -253,6 +258,16 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	    -V $(BASENAME) --publisher "Smoothwall Express" cdrom; \
 	  echo -e "$${ISONAME} assembly complete\n\n"; \
 	)
+	@echo "      assemble dev ISO ..." >>$(MEDIA_BUILD_OUT)
+	@( \
+	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH)-dev; \
+	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}.iso; \
+	  /sbin/mkisofs -o $${ISONAME} \
+	    -b boot/grub/stage2_eltorito -J -R \
+	    -no-emul-boot -boot-load-size 4 -boot-info-table \
+	    -V $(BASENAME) --publisher "Smoothwall Express (Dev.)" cdrom-dev; \
+	  echo -e "$${ISONAME} assembly complete\n\n"; \
+	)
 	@echo "      assemble offRoad ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
 	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH); \
@@ -267,7 +282,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 clean:
 	@echo -n " $(PACKAGE)"
 	@rm -f Media.mediaISO.built
-	@rm -rf cdrom offroad distrib distrib-dev distrib-doc klibc temp
+	@rm -rf cdrom cdrom-dev offroad distrib distrib-dev distrib-doc klibc temp
 	@make --no-print-directory -C cdromboot clean >/dev/null 2>&1
 	@make --no-print-directory -C installroot clean >/dev/null 2>&1
 	@make --no-print-directory -C runtimeroot clean >/dev/null 2>&1
