@@ -26,6 +26,18 @@ SBINPROGS = /sbin/mke2fs /sbin/sfdisk /sbin/depmod
 SWE_PKGS = $(UDEV) kmod grub pciutils bash reiserfsprogs
 ROOTDIRS = cdrom dev etc harddisk proc sys tmp usr run
 
+# Stuff that shouldn't be needed in the initramfs
+NOT_DRIVERS = drivers/gpu drivers/parport drivers/gpio drivers/scsi/fcoe \
+              drivers/scsi/fnic drivers/scsi/osd drivers/scsi/libfc \
+	      drivers/scsi/cxgbi drivers/scsi/be2iscsi drivers/scsi/bfa \
+              drivers/scsi/lpfc drivers/hwmon drivers/media \
+	      drivers/watchdog drivers/edac drivers/cpufreq drivers/regulator \
+              net/netfilter net/ipsec \
+	      net/sched net/wireless net/bridge net/sctp net/bluetooth \
+	      net/ax25 net/wimax net/cfrm
+NOT_SHARE = locales/[a-d]* locales/e[o-z]* locales/[e-z]* doc info man readline
+NOT_USR = include info man
+
 bin:
 	mkdir -p tmp/bin tmp/lib tmp/usr/lib/klibc/bin
 	cp -aR /sbin/* tmp/bin
@@ -98,6 +110,12 @@ endif
 	@touch tmp/cdrominstall
 
 	@/build/toolcrib/striptree tmp
+
+	@# Clean extra stuff to shrink the initramfs
+	@cd tmp/lib/modules/*/kernel; rm -rf $(NOT_DRIVERS)
+	@cd tmp/usr/share; rm -rf $(NOT_SHARE)
+	@cd tmp/usr; rm -rf $(NOT_USR)
+	@cd tmp; find . -name lib\*a -exec rm {} \;
 
 	@# Build the runtime initramfs CPIO archive
 	@cd tmp; find . | cpio -o -H newc | gzip > ../../$(RUNTIME_ROOT)image.gz
