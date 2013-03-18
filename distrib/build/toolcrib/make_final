@@ -164,8 +164,7 @@ fi
       build module-init-tools
       build patch
       build pkg-config
-      build procinfo
-      #build procps
+      build procinfo-ng
       build procps-ng
       build which
       build GeoIP
