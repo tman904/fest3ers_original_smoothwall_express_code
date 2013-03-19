@@ -189,6 +189,12 @@ quit
 END
 
   echo
+  # First tell udev to remove any existing partition nodes in /dev.
+  do_or_die "dd if=/dev/zero of=/dev/$hdd bs=512 count=34"
+  (head -3 /tmp/partitions; echo "quit") > /tmp/clear-partitions
+  do_or_die "parted /dev/$hdd </tmp/clear-partitions"
+  sleep 1
+  # Now make the partitions
   do_or_die "dd if=/dev/zero of=/dev/$hdd bs=512 count=34"
   do_or_die "parted /dev/$hdd </tmp/partitions"
 
@@ -336,12 +342,12 @@ END
   cat <<END >/harddisk/$CONFIG_ROOT/main/settings
 LANGUAGE=en
 HOSTNAME=express
-KEYMAP=/usr/share/keymaps/i386/qwerty/us.map.gz
+KEYMAP=/usr/share/keymaps/i386/qwerty/uk.map.gz
 OPENNESS=halfopen
 END
 
   cat <<END >/harddisk/$CONFIG_ROOT/time/settings
-TIMEZONE=US/Eastern
+TIMEZONE=UTC
 END
 
   if grep ${cd_dev[$CD]} /tmp/hd.list >/dev/null 2>&1; then
