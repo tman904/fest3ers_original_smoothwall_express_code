@@ -198,6 +198,16 @@ int main(int argc, char *argv[])
 	root_partition = current_free;
 	fprintf(flog, "boot = %d, swap = %d, log = %d, root = %d\n",
 		boot_partition, swap_partition, log_partition, root_partition);
+
+	// To clear the existing partitions and udev
+	Fpartitions = fopen("/tmp/clear-partitions", "w");
+	fprintf(Fpartitions, "unit MiB\n");
+	fprintf(Fpartitions, "select %s\n", hd.devnode);
+	fprintf(Fpartitions, "mklabel gpt\n");
+	fprintf(Fpartitions, "quit\n");
+	fclose (Fpartitions);
+
+	// To make the partitions
 	Fpartitions = fopen("/tmp/partitions", "w");
 	fprintf(Fpartitions, "unit MiB\n");
 	fprintf(Fpartitions, "select %s\n", hd.devnode);
@@ -447,6 +457,15 @@ static int partitiondisk(char *diskdevnode)
 	
 	memset(commandstring, 0, STRING_SIZE);
 	// Be sure the partition table is cleared.
+	snprintf(commandstring, STRING_SIZE - 1, "/bin/dd if=/dev/zero of=%s bs=512 count=34", diskdevnode);
+	mysystem(commandstring);
+	
+	// Clear the existing partitions and /dev nodes, and wait for udev
+	memset(commandstring, 0, STRING_SIZE);
+	snprintf(commandstring, STRING_SIZE - 1, "/usr/sbin/parted %s </tmp/clear-partitions", diskdevnode);
+	usleep(250000);
+
+	// Clear it again
 	snprintf(commandstring, STRING_SIZE - 1, "/bin/dd if=/dev/zero of=%s bs=512 count=34", diskdevnode);
 	mysystem(commandstring);
 	
