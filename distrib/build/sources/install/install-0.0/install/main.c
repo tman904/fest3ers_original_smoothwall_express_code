@@ -80,21 +80,9 @@ int main(int argc, char *argv[])
 	if (strstr(kernelcmdline, "trimbigdisk"))
 		trimbigdisk = 1;
 
-	/* Load USB keyboard modules so dialogs can respond to USB-keyboards */
-// Shouldn't be needed with full udev
-//	fprintf(flog, "Loading USB-keyboard modules.\n");
-//
-//	mysystem("/sbin/modprobe usbhid");
-
 	newtInit();
 	newtCls();
 
-	/* Preapre storage drivers and load them, only if we haven't
-	 * got a IDE disk. */
-//	mysystem("/sbin/udevd --daemon");
-//	mysystem("/sbin/udevadm trigger");
-//	mysystem("/sbin/udevadm settle");		
-	
 	ctr = english_tr;
 	strcpy(shortlangname, "en");
 			
@@ -115,13 +103,6 @@ int main(int argc, char *argv[])
 		errorbox(ctr[TR_NO_CDROM]);
 		goto EXIT;
 	}
-//		mysystem("/sbin/modprobe usb-storage");
-//		sleep(10);
-//		if (!(findharddiskorcdrom(&cdrom, DISK_CDROM)))
-//			installtype = URL_INSTALL;
-//		else
-//			installtype = CDROM_INSTALL;
-//	}
 	else
 		installtype = CDROM_INSTALL;
 	
@@ -390,17 +371,6 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 
-	//if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/updatestorageuuids.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
-	//{
-	//	errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
-	//	goto EXIT;
-	//}
-	//if (runcommandwithstatus("/bin/chroot /harddisk /usr/bin/smoothwall/writefstab.pl", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
-	//{
-	//	errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
-	//	goto EXIT;
-	//}
-	
 	// Write the grub config, bind-mount sys stuff, install grub
 	if (runcommandwithstatus("/harddisk/usr/bin/installer/writegrubconf", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
 	{
@@ -445,9 +415,6 @@ int main(int argc, char *argv[])
 	allok = 1;
 				
 EXIT:
-	/* We don't need udev anymore. */
-	//mysystem("/bin/killall udevd");
-
 	fprintf(flog, "Install program ended.\n");	
 	fflush(flog);
 	fclose(flog);
@@ -465,9 +432,9 @@ EXIT:
 			printf("Unable to run setup.\n");
 	}
 	
-	mysystem("/bin/chroot /harddisk /sbin/umount -a");
+	//mysystem("/bin/chroot /harddisk /sbin/umount -a");
 	
-	reboot();
+	//reboot();
 
 	return 0;
 }
