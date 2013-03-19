@@ -259,7 +259,7 @@ if [ $restore -eq 2 -o $restore -eq 3 ]; then
   fi
 fi
 
-  if [ $filesys -eq 1 ]; then FS="-t ext3"; else FS="-t reiserfs"; fi
+  if [ $filesys -eq 1 ]; then FS="-t ext4"; else FS="-t reiserfs"; fi
   echo "Mounting new root filesystem"
   do_or_die "mount $FS /dev/harddisk4 /harddisk"
 
@@ -328,8 +328,7 @@ if [ $restore -eq 1 -o $restore -eq 2 ]; then
   cat <<END > /harddisk/$CONFIG_ROOT/main/hwprofile
 STORAGE_DEVNODE=harddisk
 CDROM_DEVNODE=${cd_dev[$CD]}
-STORAGE_DRIVER=
-STORAGE_DRIVER_OPTIONS=
+FS=$FSTYPE
 END
 
   uname -r >/harddisk/$CONFIG_ROOT/main/kernel
