@@ -156,22 +156,6 @@ $checked{'COMPRESSION'}{$cgiparams{'COMPRESSION'}} = 'CHECKED';
 
 &alertbox($errormessage);
 
-print <<END
-<!--
-<CENTER>
-<TABLE BORDER='0' CELLPADDING='0' CELLSPACING='0'>
-<TR><TD VALIGN='top' ALIGN='CENTER'>
-<A HREF='http://www.smoothwall.co.uk/'><IMG
- SRC='/ui/img/inlinepromo.smoothtunnel.png' BORDER='0'
- ALT='Visit smoothwall.co.uk for enhanced commercial SmoothWall products'></A>
-</TD></TR>
-</TABLE>
-</CENTER>
- -->
-END
-;
-
-
 print "<FORM METHOD='POST'>\n";
 
 &openbox($tr{'add a new connection'});

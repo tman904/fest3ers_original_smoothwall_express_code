@@ -107,7 +107,7 @@
 'version' => 'Version: ',
 'sponsors' => 'Sponsors',
 'links' => 'Liens',
-'smoothwall homepage' => 'Site web de SmoothWall',
+'smoothwall homepage' => 'Site web de Smoothwall',
 'translation teams' => 'Les équipes de traduction',
 
 # dhcp.cgi
@@ -294,7 +294,7 @@
 'automatic' => 'Automatique',
 'dod' => 'Connexion sur Demande:',
 'dod for dns' => 'Connexion sur Demande pour DNS:',
-'connect on smoothwall restart' => 'Connexion au red&eacute;marrage de SmoothWall:',
+'connect on smoothwall restart' => 'Connexion au red&eacute;marrage de Smoothwall:',
 'pppoe settings' => 'Param&egrave;tres avanc&eacute;s PPPoE:',
 'usb adsl settings' => 'Param&egrave;tres avanc&eacute;s USB ADSL:',
 'service name' => 'Nom du service:',
@@ -316,16 +316,16 @@
 'remote access2' => 'Acc&egrave;s &agrave; distance:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Arr&ecirc;t de SmoothWall en cours',
+'shutting down smoothwall' => 'Arr&ecirc;t de Smoothwall en cours',
 'shutdown control' => 'Contr&ocirc;le de l\'arr&ecirc;t du serveur',
 'shutdown' => 'ARRETER', # button
 'shutdown2' => 'Arr&ecirc;ter:',
 'shutting down' => 'Arr&ecirc;t en cours',
-'smoothwall has now shutdown' => 'SmoothWall est maintenant arr&ecirc;t&eacute;.',
-'rebooting smoothwall' => 'SmoothWall red&eacute;marre',
+'smoothwall has now shutdown' => 'Smoothwall est maintenant arr&ecirc;t&eacute;.',
+'rebooting smoothwall' => 'Smoothwall red&eacute;marre',
 'reboot' => 'REDEMARRAGE', # button
 'rebooting' => 'Red&eacute;marrage en cours',
-'smoothwall has now rebooted' => 'SmoothWall a maintenant red&eacute;marr&eacute;.',
+'smoothwall has now rebooted' => 'Smoothwall a maintenant red&eacute;marr&eacute;.',
 
 # status.cgi
 'web server' => 'Serveur Web',
@@ -476,7 +476,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'Configuration du modem USB ADSL',
-'usb adsl help' => 'Pour utiliser le modem USB vous devez t&eacute;l&eacute;charger le pilote mat&eacute;riel (firmware) sur votre serveur SmoothWall. Veuillez vous procurer l\'archive aupr&egrave;s d\'Alcatel et charger le fichier <B>mgmt.o</B> au moyen du formulaire ci-dessous.',
+'usb adsl help' => 'Pour utiliser le modem USB vous devez t&eacute;l&eacute;charger le pilote mat&eacute;riel (firmware) sur votre serveur Smoothwall. Veuillez vous procurer l\'archive aupr&egrave;s d\'Alcatel et charger le fichier <B>mgmt.o</B> au moyen du formulaire ci-dessous.',
 'upload' => 'TELECHARGER', # button
 'upload successfull' => 'T&eacute;l&eacute;chargement effectu&eacute; avec succ&egrave;s.',
 'could not create file' => 'Impossible de cr&eacute;er le fichier.',

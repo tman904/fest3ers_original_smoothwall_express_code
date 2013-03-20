@@ -73,7 +73,7 @@ char *brazilian_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Procurando: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall detectou o seguinte NIC nesta máquina: %s",
+"Smoothwall detectou o seguinte NIC nesta máquina: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "O nome do módulo não pode ser nulo.",
 /* TR_STATIC */
@@ -108,7 +108,7 @@ char *brazilian_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Selecione o modo de instalação",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall pode ser instalado de diversas formas. A mais simples é usar " \
+"Smoothwall pode ser instalado de diversas formas. A mais simples é usar " \
 "o leitor de CDROM do computador. Caso não seja possível, pode-se também "\
 "instalar através de outro computador em rede que tenha os arquivos de "\
 "instalação disponíveis via HTTP. Neste caso será necessário o disquete "\
@@ -116,9 +116,9 @@ char *brazilian_tr[] = {
 /* TR_NO_IDE_CDROM */
 "Nenhum CDROM IDE encontrado.",
 /* TR_INSERT_CDROM */
-"Por favor insira o CD SmoothWall.",
+"Por favor insira o CD Smoothwall.",
 /* TR_INSERT_FLOPPY */
-"Por favor insira o disquete de controladores SmoothWall.",
+"Por favor insira o disquete de controladores Smoothwall.",
 /* TR_PREPARE_HARDDISK */
 "O programa de instalação irá agora preparar o disco rígido IDE %s. " \
 "Primeiro serão criadas partições no disco, e depois cada partição será " \
@@ -184,7 +184,7 @@ char *brazilian_tr[] = {
 /* TR_CONGRATULATIONS */
 "Parabéns!",
 /* TR_CONGRATULATIONS_LONG */
-"SmoothWall foi instalado com sucesso. Por favor remova quaisquer disquetes " \
+"Smoothwall foi instalado com sucesso. Por favor remova quaisquer disquetes " \
 "ou CD-ROMs do computador. Em seguida será possível configurar a conexão ISDN, " \
 "interfaces de rede, e senhas do sistema. Após ter terminado a " \
 "configuração, deverá apontar o seu browser a http://smoothwall:81 ou " \
@@ -207,7 +207,7 @@ char *brazilian_tr[] = {
 "Selecione o tipo de CDROM",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Nenhum CDROM IDE foi detectado nesta máquina. Por favor qual dos seguintes " \
-"controladores deseja utilizar para que SmoothWall tenha acesso ao CDROM.",
+"controladores deseja utilizar para que Smoothwall tenha acesso ao CDROM.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(sugere %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -241,7 +241,7 @@ char *brazilian_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "A transferência falhou.",
 /* TR_ENTER_URL */
-"Digite o URL completo para o arquivo tar.gz SmoothWall. " \
+"Digite o URL completo para o arquivo tar.gz Smoothwall. " \
 "AVISO: DNS indisponível! O URL deve terminar com o arquivo 'smoothwall.tgz'.",
 
 /* nic.c */
@@ -309,7 +309,7 @@ char *brazilian_tr[] = {
 "Erro ao atualizar a senha do usuario 'setup'.",
 /* TR_ENTER_ADMIN_PASSWORD */
 "Digite a senha para o usuário 'admin'. Este é o usuário que " \
-"tem acesso à administração SmoothWall via web.",
+"tem acesso à administração Smoothwall via web.",
 /* TR_SETTING_ADMIN_PASSWORD */
 "Atualizando a senha do usuário 'admin'...",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
@@ -423,7 +423,7 @@ char *brazilian_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Menú de configuração da rede",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Selecione a configuração de rede para o SmoothWall. Os seguintes tipos " \
+"Selecione a configuração de rede para o Smoothwall. Os seguintes tipos " \
 "de configuração listam as interfaces que possuem conexão ethernet. " \
 "Se alterar esta configuração, será necessário reinicializar a rede, e terá " \
 "de reconfigurar a atribuição de controladores de rede.",
@@ -477,7 +477,7 @@ char *brazilian_tr[] = {
 "AVISO",
 /* TR_WARNING_LONG */
 "Se alterar este endereço IP enquanto estiver ligado remotamente, " \
-"a sua conexão ao computador SmoothWall será interompida, e terá de " \
+"a sua conexão ao computador Smoothwall será interompida, e terá de " \
 "voltar a conectar-se através do novo endereço IP. Trata-se de um procedimento " \
 "arriscado, e só deve ser tentado caso tenha acesso físico à máquina, para " \
 "o caso de algo correr mal.",
@@ -576,7 +576,7 @@ char *brazilian_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "Seleção de controlador USB",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Escolha o controlador USB instalado na máquina SmoothWall.",
+"Escolha o controlador USB instalado na máquina Smoothwall.",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "Controlador USB não detectado.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

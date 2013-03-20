@@ -59,7 +59,7 @@ print <<END
 <table>
 <tr>
 	<td class='helpheader'>
-		<a href="javascript:window.close();"><img src="/ui/img/help.footer.png" alt="SmoothWall Express Online Help - click to close window"></a>
+		<a href="javascript:window.close();"><img src="/ui/img/help.footer.png" alt="Smoothwall Express Online Help - click to close window"></a>
 	</td>
 </tr>
 <tr>

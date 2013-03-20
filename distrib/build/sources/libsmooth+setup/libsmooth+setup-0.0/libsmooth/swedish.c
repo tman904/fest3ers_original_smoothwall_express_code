@@ -77,7 +77,7 @@ char *swedish_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Söker efter: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall har hittat föjande Nätverkskort i din maskin: %s",
+"Smoothwall har hittat föjande Nätverkskort i din maskin: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Modulnamnet kan inte vara blankt.",
 /* TR_STATIC */
@@ -103,7 +103,7 @@ char *swedish_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Wälkommen till SmoothWall installationsprogram. Besök gärna vår " \
+"Wälkommen till Smoothwall installationsprogram. Besök gärna vår " \
 "hemsida på http://www.smoothwall.org. Om du väljer Avbryt på någon " \
 "av följande fönster kommer datorn att startas om.",
 /* TR_NO_IDE_HARDDISK */
@@ -111,16 +111,16 @@ char *swedish_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Välj installations media",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall kan installeras från olika media.   Enklast är att " \
+"Smoothwall kan installeras från olika media.   Enklast är att " \
 "använda Datorns CDROM läsare. Om datorn inte har detta, kan du alltid " \
 "installera via en annan Dator på ditt lokala Nätverk där installations filerna " \
 "finns via HTTP. I detta fall behöver du Smoothwall driver diskett.",
 /* TR_NO_IDE_CDROM */
 "Ingen IDE-cdrom hittad.",
 /* TR_INSERT_CDROM */
-"Stoppa in SmoothWall CD:n i CDROM läsaren.",
+"Stoppa in Smoothwall CD:n i CDROM läsaren.",
 /* TR_INSERT_FLOPPY */
-"Stoppa in SmoothWall driver diskett i diskettläsaren.",
+"Stoppa in Smoothwall driver diskett i diskettläsaren.",
 /* TR_PREPARE_HARDDISK */
 "Installationsprogramet kommer nu att preparera din IDE hårddisk på %s. " \
 "Först kommer disken att bli partitionerad, så att installationsprogrammet " \
@@ -186,13 +186,13 @@ char *swedish_tr[] = {
 /* TR_CONGRATULATIONS */
 "Grattis!",
 /* TR_CONGRATULATIONS_LONG */
-"SmoothWall har lyckats med installationen. Ta bort ev floppydisketter eller " \
+"Smoothwall har lyckats med installationen. Ta bort ev floppydisketter eller " \
 "CD-skivor ur datorn. Konfigurationsprogrammet kommer att fortsätta att konfigurera ISDN, " \
 "nätverkskort och system lösenord. När installationen är " \
 "klar skall du peka din webläsare på http://smoothwall:81 eller " \
-"https://smoothwall:445 (dvs det namnet du gav SmoothWall), där kan du ställa in " \
+"https://smoothwall:445 (dvs det namnet du gav Smoothwall), där kan du ställa in " \
 "modem uppkoppling (om så behövs) fjärraccess. Kom ihåg att ställa in " \
-"lösenord för SmoothWall modemuppkopplingsanvändare, om du vill förhindra att icke SmoothWall " \
+"lösenord för Smoothwall modemuppkopplingsanvändare, om du vill förhindra att icke Smoothwall " \
 "'admin' användare ska kunna ta kontroll över länken.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Tryck Ok för att starta om.",
@@ -208,7 +208,7 @@ char *swedish_tr[] = {
 "Välj CDROM-model",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Ingen IDE CDROM hittad i Datorn.   Välj vilken av " \
-"följande drivrutiner du vill använda så SmoothWall kan använda CD läsaren.",
+"följande drivrutiner du vill använda så Smoothwall kan använda CD läsaren.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(letar %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -242,7 +242,7 @@ char *swedish_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "fel vid nerladdning.",
 /* TR_ENTER_URL */
-"Skriv URL till SmoothWall tar.gz filen. " \
+"Skriv URL till Smoothwall tar.gz filen. " \
 "VARNING: DNS är inte tillgänlig!  URL:n ska alltid sluta med 'smoothwall.tgz'.",
 
 /* nic.c */
@@ -307,12 +307,12 @@ char *swedish_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Kan inte spara 'setup' lösenord.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Skriv in SmoothWall administratör lösenord.Denna användare är till för " \
-"inlogging som SmoothWalls webbadministratör.",
+"Skriv in Smoothwall administratör lösenord.Denna användare är till för " \
+"inlogging som Smoothwalls webbadministratör.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Sparar SmoothWalls administratörlösenord....",
+"Sparar Smoothwalls administratörlösenord....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
-"Kan inte spara SmoothWall administratör lösenord.",
+"Kan inte spara Smoothwall administratör lösenord.",
 /* TR_PASSWORD_PROMPT */
 "lösenord:",
 /* TR_AGAIN_PROMPT */
@@ -423,7 +423,7 @@ char *swedish_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Nätverkskonfiguration",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Välj vilken nätverkskonfiguration för SmoothWall.  Följande " \
+"Välj vilken nätverkskonfiguration för Smoothwall.  Följande " \
 "visar vilket nätverksgränssnitt som är tilldelad till respektive nätverkskort. " \
 "Om du ändrar denna inställning, kommer nätverket att starta om," \
 "då måste du tilldela om nätverksgränssnitt till respektive nätverkskort.",
@@ -477,7 +477,7 @@ char *swedish_tr[] = {
 "WARNING",
 /* TR_WARNING_LONG */
 "Om du ändrar denna IP-adress, och är inloggad via fjärrkonsolen, " \
-"så kommer du att tappa kontakten till SmoothWall, " \
+"så kommer du att tappa kontakten till Smoothwall, " \
 "du måste du åter igen ta kontakt med nya IP-adressen.Detta kan vara en riskabel åtgärd om något går fel, " \
 "Man bör göra detta enbart om fysiskt befinner sig vid datorn.",
 /* TR_SINGLE_GREEN */
@@ -574,7 +574,7 @@ char *swedish_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "USB kontroller val",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Välj vilken USB kontroller som är installarerad i din SmoothWall-dator.",
+"Välj vilken USB kontroller som är installarerad i din Smoothwall-dator.",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "USB kontroller inte hittad.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

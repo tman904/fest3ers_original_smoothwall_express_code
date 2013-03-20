@@ -6,7 +6,7 @@ indicate traffic on the <b>GREEN</b>, <b>ORANGE</b> (if configured) and
 <b>RED</b> interfaces over the last day.  </p>
 
 <P>At the top of this page two sets of traffic statistics are shown: one lists traffic
-statistics for each network interface in the SmoothWall, and the other lists
+statistics for each network interface in the Smoothwall, and the other lists
 traffic statistics per network IP address. Traffic statistics are retained
 for two months and show byte counts for incoming and outgoing directions,
 with totals recorded for the current and previous hour, day, week and month.

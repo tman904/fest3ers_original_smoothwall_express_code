@@ -145,7 +145,7 @@ td.mainbody {
 	font-weight: normal;
 	font-family: Arial, Helvetica, sans-serif;
 	background-color: #f7f7f7;
-	background-image: url( '/ui/img/orca-white.png' );
+	background-image: url( '/ui/img/bear.jpg' );
 	background-position: top right;
 	background-repeat: no-repeat;
 	border: none;
@@ -279,7 +279,7 @@ td.expand {
 
 td.helpheader {
 	background-color: #ff9900;
-	background-image: url( '/ui/img/help_header.jpg' );
+	background-image: url( '/ui/img/help_header.png' );
 	background-repeat: no-repeat;
 	background-position: top left;
 	text-align: right;
@@ -326,7 +326,7 @@ td.bottomright {
 
 td.logo {
 	border: none;
-	background-image: url( '/ui/img/banner.jpg' );
+	background-image: url( '/ui/img/banner.png' );
 	background-repeat: no-repeat;
 	background-position: top left;
 	height: 65px;
@@ -335,7 +335,7 @@ td.logo {
 
 td.header {
 	border: none;
-	background-image: url( '/ui/img/banner.jpg' );
+	background-image: url( '/ui/img/banner.png' );
 	background-repeat: no-repeat;
 	background-position: top right;
 	height: 35px;
@@ -346,7 +346,7 @@ td.header {
 td.mainmenu {
 	border: none;
 	font-size: 11px;
-	background-image: url( '/ui/img/banner.jpg' ); 
+	background-image: url( '/ui/img/banner.png' ); 
 	background-repeat: no-repeat;
 	background-position: bottom right;
 	text-align: right;
@@ -359,7 +359,7 @@ td.footer {
 	height: 28px;
 	font-size: 9px;
 	color: white;
-	background-image: url( '/ui/img/footer.jpg' );
+	background-image: url( '/ui/img/footer.png' );
         background-position: bottom left;
 	background-color: #fed79c;
 }

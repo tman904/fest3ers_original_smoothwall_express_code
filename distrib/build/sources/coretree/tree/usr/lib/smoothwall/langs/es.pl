@@ -92,7 +92,7 @@
 'version' => 'Versión: ',
 'sponsors' => 'Patrocinadores',
 'links' => 'Enlaces',
-'smoothwall homepage' => 'Página de SmoothWall',
+'smoothwall homepage' => 'Página de Smoothwall',
 'translation teams' => 'equipos de la traducción',
 
 # dhcp.cgi
@@ -280,7 +280,7 @@
 'automatic' => 'Automático',
 'dod' => 'Marcado bajo demanda:',
 'dod for dns' => 'Marcado bajo demanda para DNS:',
-'connect on smoothwall restart' => 'Conectar al reiniciar SmoothWall:',
+'connect on smoothwall restart' => 'Conectar al reiniciar Smoothwall:',
 'pppoe settings' => 'Configuración adicional de PPPoE:',
 'usb adsl settings' => 'Configuración adicional USB ADSL:',
 'service name' => 'Nombre del servicio:',
@@ -301,16 +301,16 @@
 'remote access2' => 'Acceso remoto:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Apagando SmoothWall',
+'shutting down smoothwall' => 'Apagando Smoothwall',
 'shutdown control' => 'Funciones de apagado',
 'shutdown' => 'Apagar', # button
 'shutdown2' => 'Apagar:',
 'shutting down' => 'Apagando',
-'smoothwall has now shutdown' => 'SmoothWall se ha apagado correctamente',
-'rebooting smoothwall' => 'Reiniciando SmoothWall', 
+'smoothwall has now shutdown' => 'Smoothwall se ha apagado correctamente',
+'rebooting smoothwall' => 'Reiniciando Smoothwall', 
 'reboot' => 'Reinciar', # button 
 'rebooting' => 'Reiniciando', 
-'smoothwall has now rebooted' => 'SmoothWall esta siendo reinciado ahora.', 
+'smoothwall has now rebooted' => 'Smoothwall esta siendo reinciado ahora.', 
 
 # status.cgi
 'web server' => 'Servidor de Web',
@@ -461,7 +461,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'Configuración de ADSL por USB',
-'usb adsl help' => 'Para utilizar el módem USB debe debe cargar el firmware en su computador SmoothWall. Por favor descargue el tarball desde Alcatel y después cargue el archivo <B>mgmt.o</B> usando el formulario de abajo.',
+'usb adsl help' => 'Para utilizar el módem USB debe debe cargar el firmware en su computador Smoothwall. Por favor descargue el tarball desde Alcatel y después cargue el archivo <B>mgmt.o</B> usando el formulario de abajo.',
 'upload' => 'Cargar', # button
 'upload successfull' => 'Carga exitosa.',
 'could not create file' => 'No se pudo crear el archivo.',

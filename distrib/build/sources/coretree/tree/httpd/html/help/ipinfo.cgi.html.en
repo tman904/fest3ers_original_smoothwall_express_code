@@ -1,7 +1,7 @@
 <P><FONT SIZE='3'><STRONG><U>IP Information</U></STRONG></FONT></P>
 
 <P>The Whois page is used to display the ownership information for an IP
-address or domain name.  A major use within SmoothWall Express is to determine
+address or domain name.  A major use within Smoothwall Express is to determine
 the source of messages that are appearing in the firewall or Intrusion
 Detection System logs, i.e. the source of possible hacking attempts.</P>
 

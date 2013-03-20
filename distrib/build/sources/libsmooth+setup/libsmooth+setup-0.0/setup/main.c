@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	kv = initkeyvalues();
 	if (!(readkeyvalues(kv, CONFIG_ROOT "main/settings")))
 	{
-		printf("SmoothWall is not properly installed.\n");
+		printf("Smoothwall is not properly installed.\n");
 		return 1;
 	}
 	findkey(kv, "LANGUAGE", selectedshortlang);
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 	newtInit();
 	newtCls();
 
-	newtDrawRootText(0, 0, "                SmoothWall Express 3.1 -- http://smoothwall.org/");
+	newtDrawRootText(0, 0, "                Smoothwall Express 3.1 -- http://smoothwall.org/");
 	newtPushHelpLine(ctr[TR_HELPLINE]);		
 
 	if (automode == 0)

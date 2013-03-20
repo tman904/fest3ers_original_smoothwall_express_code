@@ -69,7 +69,7 @@ char *hungarian_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Keresem: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"A SmoothWall a következö kártyát ismerte fel a gépben: %s",
+"A Smoothwall a következö kártyát ismerte fel a gépben: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "A modulnév nem lehet üres.",
 /* TR_STATIC */
@@ -95,7 +95,7 @@ char *hungarian_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Köszönti a SmoothWall installáló program. Kérjük látogassa meg " \
+"Köszönti a Smoothwall installáló program. Kérjük látogassa meg " \
 "honlapunkat a  http://www.smoothwall.org cimen.  A Megszakit kiválasztásával " \
 "ujraindul a számitógép.",
 /* TR_NO_IDE_HARDDISK */
@@ -103,7 +103,7 @@ char *hungarian_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Válasszon telepitési mediumot",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"A SmoothWall többféle forrásból installálható. A legegyszerübb ha " \
+"A Smoothwall többféle forrásból installálható. A legegyszerübb ha " \
 "CDROM drive-rol telepitjuk. Ha nincs ilyenünk akkor " \
 "hálozaton keresztül is telepithetjuk egy masik gepröl,melyen az installáló fájlok  " \
 "elérhetök HTTP-n keresztül. Ebben az esetben szükség van a hálózati driverek " \
@@ -111,9 +111,9 @@ char *hungarian_tr[] = {
 /* TR_NO_IDE_CDROM */
 "Nem találtam IDE CD-Rom-ot.",
 /* TR_INSERT_CDROM */
-"Kérem helyezze be a SmoothWall CD-t a meghajtoba.",
+"Kérem helyezze be a Smoothwall CD-t a meghajtoba.",
 /* TR_INSERT_FLOPPY */
-"Kérem helyezze a SmoothWall driver disket a floppy drive-ba.",
+"Kérem helyezze a Smoothwall driver disket a floppy drive-ba.",
 /* TR_PREPARE_HARDDISK */
 "Az installáló program elökésziti a hard disket  %s. " \
 "Elöször a lemez particionálás történik meg," \
@@ -179,13 +179,13 @@ char *hungarian_tr[] = {
 /* TR_CONGRATULATIONS */
 "Gratulálunk!",
 /* TR_CONGRATULATIONS_LONG */
-"A SmoothWall szerencsésen installálódott. Kérjük vegye ki a floppy lemezt vagy a " \
+"A Smoothwall szerencsésen installálódott. Kérjük vegye ki a floppy lemezt vagy a " \
 "Cd lemezt a számitógépböl. A Setup program fog elindulni, amellyel beállithatjuk az ISDN-t," \
 " a hálózati kártyákat és a rendszer jelszavait. Miután a Setup program" \
 "befejezödött, a web böngészödbe ird a következöket:  http://smoothwall:81 vagy " \
-"https://smoothwall:445 (vagy ami a SmoothWall gép hostneve), és állitsd be  " \
+"https://smoothwall:445 (vagy ami a Smoothwall gép hostneve), és állitsd be  " \
 "a tárcsázó hozzáférést(ha szükséges) és a távoli hozzáférést. Ne felejtsd el beállitani " \
-"a 'dial' felhasználó jelszavát, ha nem a SmoothWall " \
+"a 'dial' felhasználó jelszavát, ha nem a Smoothwall " \
 "'admin' felhasználói vezérlik a tárcsázást.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Nyomj Ok-t az ujrainditáshoz.",
@@ -201,7 +201,7 @@ char *hungarian_tr[] = {
 "Válassz CDROM tipust",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Nincs IDE CDROM a rendszerben. Válaszd ki a következök közül " \
-"a megfelelöt, hogy a SmoothWall hozzá tudjon férni.",
+"a megfelelöt, hogy a Smoothwall hozzá tudjon férni.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(javasolt %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -235,7 +235,7 @@ char *hungarian_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "A letöltés nem sikerült.",
 /* TR_ENTER_URL */
-"Ird be a SmoothWall tar.gz fájl elérési helyét. " \
+"Ird be a Smoothwall tar.gz fájl elérési helyét. " \
 "FIGYELEM: DNS nem hozzáférhetö!  'smoothwall.tgz'-vel kell végzödni a cimnek.",
 
 /* nic.c */
@@ -300,12 +300,12 @@ char *hungarian_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Probléma a 'setup' jelszó beállitásával",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Ird be a SmoothWall admin jelszavát.  Ezt a felhasználót használjuk " \
-"a SmoothWall web adminisztrációs lapjaira történö bejelentkezéshez.",
+"Ird be a Smoothwall admin jelszavát.  Ezt a felhasználót használjuk " \
+"a Smoothwall web adminisztrációs lapjaira történö bejelentkezéshez.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Beállitom a SmoothWall admin jelszót....",
+"Beállitom a Smoothwall admin jelszót....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
-"Probléma a  SmoothWall admin jelszó beállitásával.",
+"Probléma a  Smoothwall admin jelszó beállitásával.",
 /* TR_PASSWORD_PROMPT */
 "Jelszó:",
 /* TR_AGAIN_PROMPT */
@@ -416,7 +416,7 @@ char *hungarian_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Hálózati beállitások menuje",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Válaszd ki a hálózati konfigurációt a SmoothWall részére.  A következö " \
+"Válaszd ki a hálózati konfigurációt a Smoothwall részére.  A következö " \
 "konfiguráció tipusok azok, amelyekhez ethernet van csatlakoztatva" \
 "Ha megváltoztatod ezt a beállitást, akkor szükséges a hálózat újrainditása, " \
 "és át kell konfigurálni a hálózati kártya drivereket is.",

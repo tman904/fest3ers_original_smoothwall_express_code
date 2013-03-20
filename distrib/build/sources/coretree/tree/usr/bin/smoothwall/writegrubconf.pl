@@ -53,7 +53,7 @@ foreach my $kerneltype ('runtime', 'runtimebig')
 	
 	$kernels++;
 	
-	print $file "title SmoothWall-$kerneltype\n";
+	print $file "title Smoothwall-$kerneltype\n";
 
 	print $file "kernel ${kernelpath}/vmlinuz-$kernelsettings{'CURRENT'}-${kerneltype} root=$rootdev $append\n";
 	print $file "initrd ${kernelpath}/initrd-$kernelsettings{'CURRENT'}-${kerneltype}.bz2\n";
@@ -61,7 +61,7 @@ foreach my $kerneltype ('runtime', 'runtimebig')
 
 	if ($kernelsettings{'OLD'})
 	{
-		print $file "title SmoothWall-${kerneltype}-OLD\n";
+		print $file "title Smoothwall-${kerneltype}-OLD\n";
 		if ( defined $grubroot and $grubroot ne '' ){
 			print $file "root ($grubroot)\n";
 		}

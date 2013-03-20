@@ -87,7 +87,7 @@
 'version' => 'Versiune: ',
 'sponsors' => 'Sponsori',
 'links' => 'Legaturi',
-'smoothwall homepage' => 'Pagina principala a SmoothWall',
+'smoothwall homepage' => 'Pagina principala a Smoothwall',
 'translation teams' => 'echipele de traducatori',
 
 # dhcp.cgi
@@ -274,7 +274,7 @@
 'automatic' => 'Automat',
 'dod' => 'Dial on Demand:',
 'dod for dns' => 'Dial on Demand for DNS:',
-'connect on smoothwall restart' => 'Conecteaza la restartarea SmoothWall:',
+'connect on smoothwall restart' => 'Conecteaza la restartarea Smoothwall:',
 'pppoe settings' => 'Configurari aditionale PPPoE:',
 'usb adsl settings' => 'Configurari aditional USB ADSL:',
 'service name' => 'Nume serviciu:',
@@ -296,16 +296,16 @@
 'remote access2' => 'Acces extern:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Opresc SmoothWall',
+'shutting down smoothwall' => 'Opresc Smoothwall',
 'shutdown control' => 'Oprire sistem',
 'shutdown' => 'Opresc sistemul', # button
 'shutdown2' => 'Oprire sistem:',
 'shutting down' => 'Sistemul este in curs de oprire',
-'smoothwall has now shutdown' => 'SmoothWall a fost oprit.',
-'rebooting smoothwall' => 'Rebootez SmoothWall',
+'smoothwall has now shutdown' => 'Smoothwall a fost oprit.',
+'rebooting smoothwall' => 'Rebootez Smoothwall',
 'reboot' => 'Rebooteza', # button
 'rebooting' => 'Rebootez',
-'smoothwall has now rebooted' => 'SmoothWall a fost rebootat.',
+'smoothwall has now rebooted' => 'Smoothwall a fost rebootat.',
 
 # status.cgi
 'web server' => 'Server Web',
@@ -456,7 +456,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'Configurare USB ADSL',
-'usb adsl help' => 'Pentru a utiliza modemul USB trebuie incarcat firmware-ul pentru acesta in sistemul SmoothWall. Descarcati arhiva de la Alcatel si apoi incarcati fisierul  <B>mgmt.o</B> folosind formularul de mai jos.',
+'usb adsl help' => 'Pentru a utiliza modemul USB trebuie incarcat firmware-ul pentru acesta in sistemul Smoothwall. Descarcati arhiva de la Alcatel si apoi incarcati fisierul  <B>mgmt.o</B> folosind formularul de mai jos.',
 'upload' => 'Incarca', # button
 'upload successfull' => 'Incarcare reusita.',
 'could not create file' => 'Nu pot crea fisierul.',

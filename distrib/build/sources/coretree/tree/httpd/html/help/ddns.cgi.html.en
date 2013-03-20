@@ -1,20 +1,20 @@
 <P><FONT SIZE='3'><B><U>Dynamic DNS</U></B></FONT></P>
 
 <P>If you have a connection with dynamic IP, the dynamic DNS section of
-SmoothWall allows you to use dynamic DNS service provided by dyndns.org,
+Smoothwall allows you to use dynamic DNS service provided by dyndns.org,
 no-ip.com, hn.org, dhs.org and/or dyns.cx. These services allow people
 without a static IP address to have a subdomain name pointing to their
 computer, allowing them to run services like a web server, VNC, etc.</P>
 
-<P>The first step for using dynamic DNS with SmoothWall is, of course, to
+<P>The first step for using dynamic DNS with Smoothwall is, of course, to
 subscribe to this free service with one of the supported providers. Once this is
-done, you just have to fill in the form on SmoothWall's dynamic DNS
+done, you just have to fill in the form on Smoothwall's dynamic DNS
 configuration page:</P>
 
 <P>Choose the correct service from the drop-down menu.</P>
 
 <P>The checkbox <B>Behind a proxy</B> has to be checked if you're using
-the no-ip.com service and if your SmoothWall is behind a proxy. This checkbox is
+the no-ip.com service and if your Smoothwall is behind a proxy. This checkbox is
 useless with other services.</P>
 
 <P>The checkbox <B>Enable wildcards</B> allows you to have all the
@@ -47,4 +47,4 @@ DNS service providers don't like people who update their IP when it hasn't
 changed, and may block hostnames of abusive users. In the future, you won't
 need to hit this button anymore as your IP will automatically be updated
 each time your IP changes, allowing you to always be able to find your
-SmoothWall and your LAN.</P>
+Smoothwall and your LAN.</P>

@@ -60,7 +60,7 @@ sub register_page
 
   print qq!
 <div align="center">
-  <h2 style="font-size:15pt">SmoothWall Express $version</h2>
+  <h2 style="font-size:15pt">Smoothwall Express $version</h2>
   <p>User interface version $webuirevision
 </div>
 !;
@@ -75,7 +75,7 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" )
   print qq!
 <div style="margin:0; text-align:centered">
   <p style="margin:0">
-    <a target='_new' href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.x3.jpg' title='my.SmoothWall'/></a>
+    <a target='_new' href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.x3.png' title='my.Smoothwall'/></a>
   </p>
 </div>
 !;
@@ -137,7 +137,7 @@ $tr{'x3 reg info'}
 <table class='centered'>
 	<tr>
 		<td>
-			<a target='_new' href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.jpg' title='my.SmoothWall'/></a>
+			<a target='_new' href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.png' title='my.Smoothwall'/></a>
 			<br/>
 		</td>
 	</tr>
@@ -159,12 +159,12 @@ print <<END
               margin:0 0 0 8pt; display:inline-block; float:right;
               border:1pt dashed gray'>
     <p style="margin:4pt; text-align:center">
-      For more information about SmoothWall Express, please visit our website at
+      For more information about Smoothwall Express, please visit our website at
       <a href="http://smoothwall.org/" target="_breakoutWindow">
         http://smoothwall.org/</a>.
     </p>
     <p style="margin:4pt">
-      For more information about SmoothWall products, please visit 
+      For more information about Smoothwall products, please visit 
       our website at
       <a href="http://www.smoothwall.net/"
          target="_breakoutWindow">
@@ -173,10 +173,10 @@ print <<END
   </div>
 
     <p style="margin:8pt 4pt 8pt 4pt; text-align:center">
-      SmoothWall Express $version<br>
+      Smoothwall Express $version<br>
       Copyright &copy; 2000 - 2007 the
       <a href="http://smoothwall.org/team/" target="_breakoutWindow">
-        SmoothWall Team</a>.
+        Smoothwall Team</a>.
     </p>
     <p>
       A full team listing can be found
@@ -188,7 +188,7 @@ print <<END
         available under the terms of the appropriate licenses</a>.
     </p>
     <p>
-    SmoothWall&trade; is a trademark of SmoothWall Limited.
+    Smoothwall&trade; is a trademark of Smoothwall Limited.
     Linux<sup>&reg;</sup> is a registered trademark of Linus Torvalds.
     All trademarks and copyrights are the property of their
     respective owners.

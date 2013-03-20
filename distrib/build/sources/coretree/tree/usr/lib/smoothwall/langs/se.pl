@@ -91,7 +91,7 @@
 'version' => 'Version: ',
 'sponsors' => 'Sponsorer',
 'links' => 'Länkar',
-'smoothwall homepage' => 'Hemsida för SmoothWall',
+'smoothwall homepage' => 'Hemsida för Smoothwall',
 'translation teams' => 'översättningsgrupper',
 
 # dhcp.cgi
@@ -277,7 +277,7 @@
 'automatic' => 'Automatisk',
 'dod' => 'Uppringning vid Förfrågan:',
 'dod for dns' => 'Uppringning vid Förfrågan för DNS:',
-'connect on smoothwall restart' => 'Anslut vid återstart av SmoothWall:',
+'connect on smoothwall restart' => 'Anslut vid återstart av Smoothwall:',
 'pppoe settings' => 'Ytterligare inställningar för PPPoE:',
 'usb adsl settings' => 'Ytterligare inställningar för USB ADSL:',
 'service name' => 'Servicenamn:',
@@ -299,16 +299,16 @@
 'remote access2' => 'Fjärråtkomst:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Avslutar SmoothWall',
+'shutting down smoothwall' => 'Avslutar Smoothwall',
 'shutdown control' => 'Avsluta...',
 'shutdown' => 'Avsluta', # button
 'shutdown2' => 'Avsluta:',
 'shutting down' => 'Avslutar',
-'smoothwall has now shutdown' => 'SmoothWall har nu avslutats.',
-'rebooting smoothwall' => 'Startar om SmoothWall',
+'smoothwall has now shutdown' => 'Smoothwall har nu avslutats.',
+'rebooting smoothwall' => 'Startar om Smoothwall',
 'reboot' => 'Starta om', # button
 'rebooting' => 'Startar om',
-'smoothwall has now rebooted' => 'SmoothWall har nu startats om.',
+'smoothwall has now rebooted' => 'Smoothwall har nu startats om.',
 
 # status.cgi
 'web server' => 'Webserver',
@@ -459,7 +459,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'USB-ADSL-inställningar',
-'usb adsl help' => 'För att använda USB modem måste du ladda upp \"firmware\" till din SmoothWall burk. Ladda ner \"tarball\" från Alcatel och ladda sen upp filen <B>mgmt.o</B> med hjälp av formuläret nedan.',
+'usb adsl help' => 'För att använda USB modem måste du ladda upp \"firmware\" till din Smoothwall burk. Ladda ner \"tarball\" från Alcatel och ladda sen upp filen <B>mgmt.o</B> med hjälp av formuläret nedan.',
 'upload' => 'Ladda upp', # button
 'upload successfull' => 'Uppladdningen lyckades.',
 'could not create file' => 'Kunde inte skapa fil.',

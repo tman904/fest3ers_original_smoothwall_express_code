@@ -116,7 +116,7 @@
 'version' => 'Version: ',
 'sponsors' => 'Sponsors',
 'links' => 'Links',
-'smoothwall homepage' => 'SmoothWall Homepage',
+'smoothwall homepage' => 'Smoothwall Homepage',
 'translation teams' => 'Translation teams',
 
 # dhcp.cgi
@@ -296,7 +296,7 @@
 # extensions manager
 
 'ssextensions'  => 'Extensions',
-'extensions description'  => "Extensions offer you the ability to customise and expand your SmoothWall firewall beyond it's original design.  This may mean simply adding a button, or a perhaps an entire new service.",
+'extensions description'  => "Extensions offer you the ability to customise and expand your Smoothwall firewall beyond it's original design.  This may mean simply adding a button, or a perhaps an entire new service.",
 'refresh extensions list' => 'Check for more',
 'installed extensions'    => 'Installed:',
 'available extensions'    => 'Available:',
@@ -311,7 +311,7 @@
 # about smoothwall / x3
 'credits and legal'	=>	'Credits:',
 'x3 reg'		=>	'Register:',
-'x3 reg info'		=>	'Register your copy of SmoothWall Express and create your own my.SmoothWall profile.<br/><br/>A my.SmoothWall profile gives you access to:<ul><li>Email notifications (updates & patches)</li><li>Express user manual (downloadable) </li><li>Express newsletters, competitions and other announcements</li><li>Fun stuff, themes and much more</li></ul><div style="width: 100%; text-align: center;">Visit <a target="_new" href="https://my.smoothwall.org">my.SmoothWall</a> for more information.</div><br/><br/>Note:  After registering your SmoothWall system it can take a while for the registration process to update the SmoothWall Express System.  To prompt the SmoothWall System to acknowledge the registration it may be neccesary to disconnect from and reconnect to the Internet.',
+'x3 reg info'		=>	'Register your copy of Smoothwall Express and create your own my.Smoothwall profile.<br/><br/>A my.Smoothwall profile gives you access to:<ul><li>Email notifications (updates & patches)</li><li>Express user manual (downloadable) </li><li>Express newsletters, competitions and other announcements</li><li>Fun stuff, themes and much more</li></ul><div style="width: 100%; text-align: center;">Visit <a target="_new" href="https://my.smoothwall.org">my.Smoothwall</a> for more information.</div><br/><br/>Note:  After registering your Smoothwall system it can take a while for the registration process to update the Smoothwall Express System.  To prompt the Smoothwall System to acknowledge the registration it may be neccesary to disconnect from and reconnect to the Internet.',
 
 # index.cgi
 'main page' => 'Main page',
@@ -347,7 +347,7 @@
 'there are updates' => 'There are updates available for your system. Please go to the "Updates" section for more information.',
 'updates is old1' => 'Your update file is ',
 'updates is old2' => ' old. We recommend you update it on the "Updates" page.',
-'missing installation id' => 'This SmoothWall system has not yet managed to retrieve a System ID. SmoothWall systems usually receive a System ID after connecting to the Internet for the first time. This process is done once and is completely anonymous.',
+'missing installation id' => 'This Smoothwall system has not yet managed to retrieve a System ID. Smoothwall systems usually receive a System ID after connecting to the Internet for the first time. This process is done once and is completely anonymous.',
 'get system id' => 'Get System ID',
 
 # pppsetup.cgi
@@ -404,7 +404,7 @@
 'automatic' => 'Automatic',
 'dod' => 'Dial on Demand:',
 'dod for dns' => 'Dial on Demand for DNS:',
-'connect on smoothwall restart' => 'Connect on SmoothWall restart:',
+'connect on smoothwall restart' => 'Connect on Smoothwall restart:',
 'pppoe settings' => 'Additional PPPoE settings:',
 'adsl settings' => 'Additional ADSL settings:',
 'service name' => 'Service name:',
@@ -426,19 +426,19 @@
 'remote access' => 'Remote access',
 'remote access2' => 'Remote access:',
 'secure admin' => 'Allow admin access only from valid referral URLs:',
-'secure admin long' => 'In order to be certain that the request for an admin function is from the SmoothWall server and not some third party web page, a referral check is done. Enabling this feature means it is only possible to administer the SmoothWall if the URL you visit contains either the local GREEN IP, the local hostname, or the RED IP address. It will not be possible to administer the SmoothWall if you connect via a DNS or Dynamic DNS name.',
+'secure admin long' => 'In order to be certain that the request for an admin function is from the Smoothwall server and not some third party web page, a referral check is done. Enabling this feature means it is only possible to administer the Smoothwall if the URL you visit contains either the local GREEN IP, the local hostname, or the RED IP address. It will not be possible to administer the Smoothwall if you connect via a DNS or Dynamic DNS name.',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Shutting down SmoothWall',
+'shutting down smoothwall' => 'Shutting down Smoothwall',
 'shutdown control' => 'Shutdown control',
 'shutdown' => 'Shutdown', # button
 'shutdown2' => 'Shutdown:',
 'shutting down' => 'Shutting down',
-'smoothwall is shutting down' => 'SmoothWall is shutting down.',
-'rebooting smoothwall' => 'Rebooting SmoothWall',
+'smoothwall is shutting down' => 'Smoothwall is shutting down.',
+'rebooting smoothwall' => 'Rebooting Smoothwall',
 'reboot' => 'Reboot', # button
 'rebooting' => 'Rebooting',
-'smoothwall is rebooting' => 'SmoothWall is rebooting.',
+'smoothwall is rebooting' => 'Smoothwall is rebooting.',
 
 # preferences
 'drop down menus' => 'Drop down menus:',
@@ -569,7 +569,7 @@
 #'internal ipc' => 'Internal IP:',
 #'internal ip addr' => 'Internal IP Address',
 #'multi-ip add a new rule' => 'Add a new rule:',
-#'multi-ip add shutdown' => 'Adding a new external IP address requires a reboot! Reboot your SmoothWall when done adding IP addresses',
+#'multi-ip add shutdown' => 'Adding a new external IP address requires a reboot! Reboot your Smoothwall when done adding IP addresses',
 #'multi-ip broadcast' => 'Broadcast',
 #'multi-ip current ip addresses' => 'Current IP addresses:',
 #'multi-ip current rules' => 'Current rules:',
@@ -591,7 +591,7 @@
 #'multi-ip original dest' => 'Original destination IP',
 #'multi-ip portfw note' => '<B>Note:</B> The order of the following rules is important.  Please read the <A HREF=\"javascript:displayHelp(\multiip.cgi\);\">help</A> page for more information.',
 #'multi-ip remove' => 'Remove Alias',
-#'multi-ip remove shutdown' => 'Removing or editing an external IP address requires a reboot! Reboot your SmoothWall when done adding IP addresses',
+#'multi-ip remove shutdown' => 'Removing or editing an external IP address requires a reboot! Reboot your Smoothwall when done adding IP addresses',
 #'multi-ip rule no port note' => '<B>Note:</B> Forwarding all ports from a public IP address to a machine will expose it to possible attacks. Make sure you are happy that your machine is secure before taking this step.',
 #'multi-ip running' => 'Running',
 #'multi-ip section' => 'Multiple static IPs section',
@@ -837,7 +837,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'Alcatel/Thompson SpeedTouch USB ADSL setup',
-'usb adsl help' => 'To utilise the Alcatel/Thompson SpeedTouch USB modem you must upload the firmware to your SmoothWall box. Please download the tarball and then upload the file, usually called <B>mgmt.o</B>, using the form below.',
+'usb adsl help' => 'To utilise the Alcatel/Thompson SpeedTouch USB modem you must upload the firmware to your Smoothwall box. Please download the tarball and then upload the file, usually called <B>mgmt.o</B>, using the form below.',
 'upload successful' => 'Upload successful.',
 'could not create file' => 'Could not create file.',
 'mgmt upload' => 'Alcatel/Thompson SpeedTouch USB ADSL driver upload:',
@@ -948,7 +948,7 @@
 'unable to create backup floppy' => 'Unable to create backup floppy. Verify there is a write-enabled floppy disk in the drive.',
 'backup configuration' => 'Backup configuration',
 'backup floppy instructions' => 'Instructions on creating a backup disk or disk image:',
-'backup floppy instructions long' => 'Please insert a blank, formatted floppy disk in the SmoothWall computer\'s floppy disk drive before pressing the button to create the backup disk.  This disk should  be available when reinstalling or upgrading, in order for the saved configuration to be restored.<br/><br/><strong>Note:</strong>It may take up to a minute to write the information to the floppy disk. Alternatively, you may create a floppy disk image file, which you can later write to a floppy disk.<br/><br/>',
+'backup floppy instructions long' => 'Please insert a blank, formatted floppy disk in the Smoothwall computer\'s floppy disk drive before pressing the button to create the backup disk.  This disk should  be available when reinstalling or upgrading, in order for the saved configuration to be restored.<br/><br/><strong>Note:</strong>It may take up to a minute to write the information to the floppy disk. Alternatively, you may create a floppy disk image file, which you can later write to a floppy disk.<br/><br/>',
 'backup disk created successfully' => 'Backup disk created successfully.',
 'create backup floppy image file' => 'Create backup floppy image file',
 'unable to create backup floppy image file' => 

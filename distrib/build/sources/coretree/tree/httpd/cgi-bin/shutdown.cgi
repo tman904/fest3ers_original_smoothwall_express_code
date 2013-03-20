@@ -57,10 +57,10 @@ if ($death == 0 && $rebirth == 0)
 <TABLE WIDTH='100%'>
 <TR>
 	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'reboot'}'
- onClick="if(confirm('Are you sure you want to reboot this SmoothWall?')) {return true;} return false;"
+ onClick="if(confirm('Are you sure you want to reboot this Smoothwall?')) {return true;} return false;"
 ></TD>
 	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'shutdown'}'
- onClick="if(confirm('Are you sure you want to shutdown this SmoothWall?')) {return true;} return false;"
+ onClick="if(confirm('Are you sure you want to shutdown this Smoothwall?')) {return true;} return false;"
 ></TD>
 </TR>
 </TABLE>
@@ -90,7 +90,7 @@ else
 <DIV ALIGN='CENTER'>
 <TABLE BGCOLOR='#ffffff'>
 <TR><TD ALIGN='CENTER'>
-<A HREF='/' BORDER='0'><IMG SRC='/ui/img/smoothwall_big.gif'></A><BR><BR>
+<A HREF='/' BORDER='0'><IMG SRC='/ui/img/smoothwall_big.png'></A><BR><BR>
 END
 	;
 

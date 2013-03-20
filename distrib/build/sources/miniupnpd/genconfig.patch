@@ -6,7 +6,7 @@
  # detecting the OS name and version
 -OS_NAME=`uname -s`
 -OS_VERSION=`uname -r`
-+OS_NAME="SmoothWall Express"
++OS_NAME="Smoothwall Express"
 +OS_VERSION=3.1
  
  # pfSense special case
@@ -17,7 +17,7 @@
  		FW=ipfw
  		OS_URL=http://developer.apple.com/macosx
  		;;
-+	"SmoothWall Express")
++	"Smoothwall Express")
 +		FW=netfilter
 +		OS_URL=http://community.smoothwall.org/
 +		;;

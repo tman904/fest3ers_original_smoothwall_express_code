@@ -1017,7 +1017,7 @@ if ($smoothinfosettings{'DHCPINFO'} eq 'on' && -e "${swroot}/dhcp/enable") {
     # - Borrowed "dhcpLeaseData" subroutine from dhcplease.pl v0.2.5 (DHCP Pack v1.3) for SWE2.0
     # by Dane Robert Jones and Tiago Freitas Leal
     # - Borrowed parts of "displaytable" subroutine from smoothtype.pm
-    # (SmoothWall Express "Types" Module) from SWE3.0 by the SmoothWall Team
+    # (Smoothwall Express "Types" Module) from SWE3.0 by the Smoothwall Team
     # - Josh DeLong - 09/15/07 - Added unique filter
     # - Josh DeLong - 09/16/07 - Fixed sort bug and added ability to sort columns
     # - Josh DeLong - 10/1/07 - Rewrote complete dhcp.cgi to use this code

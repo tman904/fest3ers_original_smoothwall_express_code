@@ -1,8 +1,8 @@
 <P><FONT SIZE='3'><B><U>Instant Messenger Proxy</U></B></FONT></P>
 
-<p>SmoothWall has the ability to run an Instant Messenger (IM) proxy that
+<p>Smoothwall has the ability to run an Instant Messenger (IM) proxy that
 understands multiple IM protocols and can log both conversations and file
-transfers. This proxy, like all of the proxies in SmoothWall, will operate
+transfers. This proxy, like all of the proxies in Smoothwall, will operate
 on both the GREEN and PURPLE networks if it is enabled.</p>
 
 <p>Check the <strong>Enabled</strong> checkbox to turn on this service.

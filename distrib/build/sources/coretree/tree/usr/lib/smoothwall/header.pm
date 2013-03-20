@@ -291,7 +291,7 @@ sub openpage
 <html>
 <head>
 	$extrahead
-	<title>($hostname) $title - SmoothWall Express</title>
+	<title>($hostname) $title - Smoothwall Express</title>
 	<script language='javascript' SRC='/ui/js/script.js'></script>
 	<link href='/ui/css/style.css' rel='stylesheet' type='text/css'>
 END
@@ -358,11 +358,11 @@ sub closepage
 	<table class='blank'>
 	<tr>
 		<td>
-		    	<strong>SmoothWall Express $version</strong><br/>
-			SmoothWall&trade; is a trademark of <a href='http://www.smoothwall.net/'>SmoothWall Limited</a>.
+		    	<strong>Smoothwall Express $version</strong><br/>
+			Smoothwall&trade; is a trademark of <a href='http://www.smoothwall.net/'>Smoothwall Limited</a>.
 		</td>
 		<td style='text-align: right;'>
-		    	&copy; 2000 - 2013 <a href='http://smoothwall.org/about/team/'>The SmoothWall Team</a><br/>
+		    	&copy; 2000 - 2013 <a href='http://smoothwall.org/about/team/'>The Smoothwall Team</a><br/>
 			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://smoothwall.org/get/sources/'>original authors</a>
 		</td>
 	</tr>
@@ -588,7 +588,7 @@ sub getcgihash
 			$referer eq $netsettings{'GREEN_ADDRESS'} ||
 			$referer eq $redip)
 		{
-			&log("Referral $ENV{'HTTP_REFERER'} is not a SmoothWall page.");
+			&log("Referral $ENV{'HTTP_REFERER'} is not a Smoothwall page.");
 			return;
 		}
 	}        

@@ -73,7 +73,7 @@ char *danish_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Leder efter: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall har fundet følgende NIC'er på din maskine: %s",
+"Smoothwall har fundet følgende NIC'er på din maskine: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Modul navn kan ikke være blankt.",
 /* TR_STATIC */
@@ -99,7 +99,7 @@ char *danish_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Velkommen til SmoothWall installationsprogrammet. Besøg vores " \
+"Velkommen til Smoothwall installationsprogrammet. Besøg vores " \
 "hjemmeside på http://www.smoothwall.org.  Ved at vælge Annuler " \
 "på de følgende skærmbilleder kan du reboote (genstarte) computeren.",
 /* TR_NO_IDE_HARDDISK */
@@ -107,7 +107,7 @@ char *danish_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Vælg installations medie",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall kan installed fra flere kilder.  Det nemmeste er at bruge " \
+"Smoothwall kan installed fra flere kilder.  Det nemmeste er at bruge " \
 "maskinens CDROM drev. Hvis computer ikke har et CDROM drev, kan du " \
 "installere via en anden maskine på et LAN som har installationsfilerne " \
 "tilgængelige via HTTP. I dette tilfælde vil en netværks driver diskette være " \
@@ -115,9 +115,9 @@ char *danish_tr[] = {
 /* TR_NO_IDE_CDROM */
 "Ingen IDE cdrom fundet.",
 /* TR_INSERT_CDROM */
-"Indsæt venligst SmoothWall CD i CDROM drevet.",
+"Indsæt venligst Smoothwall CD i CDROM drevet.",
 /* TR_INSERT_FLOPPY */
-"Indsæt venligst SmoothWall driver disketten i floppy drevet.",
+"Indsæt venligst Smoothwall driver disketten i floppy drevet.",
 /* TR_PREPARE_HARDDISK */
 "Installations programmet vil nu forberede IDE harddisken på %s. " \
 "Først vil disken blive partitioneret, derefter vil partitionerne få lagt et " \
@@ -183,13 +183,13 @@ char *danish_tr[] = {
 /* TR_CONGRATULATIONS */
 "Tillykke!",
 /* TR_CONGRATULATIONS_LONG */
-"SmoothWall blev succesfuldt installeret. Fjern venligst alle floppy disketter eller " \
+"Smoothwall blev succesfuldt installeret. Fjern venligst alle floppy disketter eller " \
 "CDROMer i computeren. Opsætningsprogrammet vil nu køre der hvor du kan konfigurere din ISDN, " \
 " netværks kort, og system kodeord. Efter at opsætningsprogrammet er fuldført, " \
 "skal du i din web browsers adresse felt skrive http://smoothwall:81 eller " \
-"https://smoothwall:445 (eller hvad du nu har kaldt din SmoothWall), og konfigurere " \
+"https://smoothwall:445 (eller hvad du nu har kaldt din Smoothwall), og konfigurere " \
 "opkalds netværk (hvis nødvendigt) og fjern-adgang. Husk at sætte " \
-"et kodeord til SmoothWall 'opkalds' bruger, hvis du ønsker at det skal være muligt for ikke SmoothWall " \
+"et kodeord til Smoothwall 'opkalds' bruger, hvis du ønsker at det skal være muligt for ikke Smoothwall " \
 "'admin' brugere at kontrollere opkaldsforbindelsen.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Tryk Ok for at genstarte.",
@@ -205,7 +205,7 @@ char *danish_tr[] = {
 "Vælg CDROM type",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Ingen IDE CDROM blev fundet på denne maskine.  Vælg venligst hvilket " \
-"af de følgende drivere du ønsker at bruge så SmoothWall kan få adgang til CDROMen.",
+"af de følgende drivere du ønsker at bruge så Smoothwall kan få adgang til CDROMen.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(foreslå %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -239,7 +239,7 @@ char *danish_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Fejl opstod under downloadning.",
 /* TR_ENTER_URL */
-"Indtast URL'en til SmoothWall tar.gz filen. " \
+"Indtast URL'en til Smoothwall tar.gz filen. " \
 "ADVARSEL: DNS ikke tilgængelig!  Dette skulle ende med filen 'smoothwall.tgz'.",
 
 /* nic.c */
@@ -304,12 +304,12 @@ char *danish_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Problem med at indstille 'setup' kodeord.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Indtast SmoothWall admin kodeord.  Det er denne bruger der bruges " \
-"til at logge på SmoothWalls web administration sider.",
+"Indtast Smoothwall admin kodeord.  Det er denne bruger der bruges " \
+"til at logge på Smoothwalls web administration sider.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Indstiller SmoothWall admin kodeordet....",
+"Indstiller Smoothwall admin kodeordet....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
-"Problem med at indstille SmoothWalls admin kodeord.",
+"Problem med at indstille Smoothwalls admin kodeord.",
 /* TR_PASSWORD_PROMPT */
 "Kodeord:",
 /* TR_AGAIN_PROMPT */
@@ -419,7 +419,7 @@ char *danish_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Netværks konfigurations menu",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Vælg en netværks konfiguration til SmoothWall.  De følgende " \
+"Vælg en netværks konfiguration til Smoothwall.  De følgende " \
 "konfigurations typer viser de interfaces (grænseflader) som har ethernet tilsluttet. " \
 "Hvis du ændrer denne indstilling, vil det være nødvendigt at genstarte netværket, og du " \
 "vil være nødt til at genkonfigurere netværksdriver tildelingerne.",
@@ -473,9 +473,9 @@ char *danish_tr[] = {
 "ADVARSEL",
 /* TR_WARNING_LONG */
 "Hvis du ændrer denne IP adresse, og du er logget ind via fjern-adgang, " \
-"vil din forbindelse til SmoothWall maskinen blive afbrudt, og du vil " \
+"vil din forbindelse til Smoothwall maskinen blive afbrudt, og du vil " \
 "skulle etablere forbindelse igen på den nye IP. Dette er en risikofyldt operation, som kun " \
-"bør prøves, hvis du har fysisk adgang til SmoothWall maskinen, hvis noget " \
+"bør prøves, hvis du har fysisk adgang til Smoothwall maskinen, hvis noget " \
 "skulle gå galt.",
 /* TR_SINGLE_GREEN */
 "Din konfiguration er opsat til et enkelt GRØNT interface.",
@@ -571,7 +571,7 @@ char *danish_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "USB controller valg",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Vælg den USB controller som er installeret på SmoothWall maskinen.",
+"Vælg den USB controller som er installeret på Smoothwall maskinen.",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "USB controller ikke detekteret.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

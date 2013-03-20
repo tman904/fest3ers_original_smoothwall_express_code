@@ -87,7 +87,7 @@
 'version' => 'Versione: ',
 'sponsors' => 'Sponsor',
 'links' => 'Link',
-'smoothwall homepage' => 'Homepage di SmoothWall',
+'smoothwall homepage' => 'Homepage di Smoothwall',
 'translation teams' => 'I team di traduttori',
 
 # dhcp.cgi
@@ -274,7 +274,7 @@
 'automatic' => 'Automatico',
 'dod' => 'Connessione automatica:',
 'dod for dns' => 'Connessione automatica per DNS:',
-'connect on smoothwall restart' => 'Connessione al restart di SmoothWall:',
+'connect on smoothwall restart' => 'Connessione al restart di Smoothwall:',
 'pppoe settings' => 'Ulteriori Impostazioni PPPoE:',
 'usb adsl settings' => 'Ulteriori Impostazioni ADSL USB:',
 'service name' => 'Nome del servizio:',
@@ -296,16 +296,16 @@
 'remote access2' => 'Accesso remoto:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'SmoothWall sta effettuando lo Shutdown',
+'shutting down smoothwall' => 'Smoothwall sta effettuando lo Shutdown',
 'shutdown control' => 'Controllo dello Shutdown',
 'shutdown' => 'Shutdown', # button
 'shutdown2' => 'Shutdown:',
 'shutting down' => 'Shutting down',
-'smoothwall has now shutdown' => 'SmoothWall ha effettuato correttamente lo shutdown.',
-'rebooting smoothwall' => 'SmoothWall sta effettuando il reboot',
+'smoothwall has now shutdown' => 'Smoothwall ha effettuato correttamente lo shutdown.',
+'rebooting smoothwall' => 'Smoothwall sta effettuando il reboot',
 'reboot' => 'Reboot', # button
 'rebooting' => 'Rebooting',
-'smoothwall has now rebooted' => 'SmoothWall ha effettuato il reboot.',
+'smoothwall has now rebooted' => 'Smoothwall ha effettuato il reboot.',
 
 # status.cgi
 'web server' => 'Server Web',
@@ -456,7 +456,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'Impostazioni ADSL USB',
-'usb adsl help' => 'Per utilizzare il modem USB devi effettuare l\'upload del firmware dal tuo SmoothWall. Scarica il file da Alcatel e quindi effettua l\'upload del file <B>mgmt.o</B> utilizzando la form qui sotto.',
+'usb adsl help' => 'Per utilizzare il modem USB devi effettuare l\'upload del firmware dal tuo Smoothwall. Scarica il file da Alcatel e quindi effettua l\'upload del file <B>mgmt.o</B> utilizzando la form qui sotto.',
 'upload' => 'Upload', # button
 'upload successfull' => 'L\'Upload è stato completato con successo.',
 'could not create file' => 'Non posso creare il file.',

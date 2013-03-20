@@ -8,7 +8,7 @@ Credits page.</P>
 
 <P>If there have been no errors during PPP setup, and PPP is to be used as
 the external connection method, buttons will be available to <B>Connect</B>
-or <B>Disconnect</B>. Upon successful connection, the SmoothWall machine
+or <B>Disconnect</B>. Upon successful connection, the Smoothwall machine
 will beep using its internal speaker. When the connection is severed, it
 will beep twice. The status of the link will be displayed as idle, dialling
 or connected. Alternatively, in Dial on Demand mode, the Dial on Demand
@@ -19,7 +19,7 @@ command line. This includes the current time and the load averages.</P>
 <P>Additionally, if there are updates available that you have not yet
 installed, you will be informed via this page.</P>
 
-<P>SmoothWall has two web users, in addition to the root and setup login
+<P>Smoothwall has two web users, in addition to the root and setup login
 users. The first is called <B>admin</B>.  Authenticating as this user gives
 access to all configuration pages. The other user, called <B>dial</B>, is
 able only to use the <B>Connect</B> or <B>Disconnect</B> buttons. By

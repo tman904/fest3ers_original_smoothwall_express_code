@@ -72,7 +72,7 @@ char *romanian_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Caut dupa: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall a detectat urmatoarea interfata de retea in acest sistem: %s",
+"Smoothwall a detectat urmatoarea interfata de retea in acest sistem: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Numele de modul nu poate fi necompletat.",
 /* TR_STATIC */
@@ -98,7 +98,7 @@ char *romanian_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Bun venit in programul de instalare al SmoothWall. Va rugam vizitati-ne " \
+"Bun venit in programul de instalare al Smoothwall. Va rugam vizitati-ne " \
 "la adresa http://www.smoothwall.org.  Selectind Renunta in oricare din " \
 "ecranele urmatoare, sistemul pe care instalati va fi rebootat.",
 /* TR_NO_IDE_HARDDISK */
@@ -106,7 +106,7 @@ char *romanian_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Selectati mediul de instalare",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall poate fi instalat folosind diverse metode.  Cea ma simpla este sa " \
+"Smoothwall poate fi instalat folosind diverse metode.  Cea ma simpla este sa " \
 "folositi unitatea CDROM din sistem. Daca nu dispuneti de unitate de CDROM, puteti " \
 "sa faceti instalarea de pe un alt sistem din retea care are fisierele de instalare " \
 " disponibile pe  un server de HTTP. In acest caz, discheta cu driverele de retea " \
@@ -114,7 +114,7 @@ char *romanian_tr[] = {
 /* TR_NO_IDE_CDROM */
 "Nu am gasit un CDROM IDE.",
 /* TR_INSERT_CDROM */
-"Introduceti CD-ul cu SmoothWall unitate.",
+"Introduceti CD-ul cu Smoothwall unitate.",
 /* TR_INSERT_FLOPPY */
 "Introduceti discheta cu drivere de retea in unitatea floppy.",
 /* TR_PREPARE_HARDDISK */
@@ -182,7 +182,7 @@ char *romanian_tr[] = {
 /* TR_CONGRATULATIONS */
 "Felicitari!",
 /* TR_CONGRATULATIONS_LONG */
-"SmoothWall a fost instalat cu succes. Va rog sa scoateti orice floppy disc sau " \
+"Smoothwall a fost instalat cu succes. Va rog sa scoateti orice floppy disc sau " \
 "CDROM din unitatile sistemului. Se va rula programul de configurare unde veti " \
 "configura ISDN, interfete de retea, si parolele de sistem. Dupa ce configurarea " \
 "a fost completata, puteti porni browserul de web si accesa adresa http://smoothwall:81 " \
@@ -204,7 +204,7 @@ char *romanian_tr[] = {
 "Selectati tipul de CDROM",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "In acest sistem nu a fost detectat un CDROM IDE.  Selectati care din driverele urmatoare " \
-"doriti sa fie folosit astfel incat SmoothWall sa poata accesa CDROM-ul.",
+"doriti sa fie folosit astfel incat Smoothwall sa poata accesa CDROM-ul.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(sugerez %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -238,7 +238,7 @@ char *romanian_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Incarcare nereusita.",
 /* TR_ENTER_URL */
-"Introduceti URL-ul pentru fisierul SmoothWall tar.gz. " \
+"Introduceti URL-ul pentru fisierul Smoothwall tar.gz. " \
 "ATENTIE: Serverul de DNS nu este disponibil!  URL-ul trebuie sa se termine cu fisierul 'smoothwall.tgz'.",
 
 /* nic.c */
@@ -304,9 +304,9 @@ char *romanian_tr[] = {
 "Au aparut probleme la setarea parolei pentru 'setup'.",
 /* TR_ENTER_ADMIN_PASSWORD */
 "Introduceti parola pentru contul 'admin'.  Acest cont este folosit pentru conectarea " \
-"la interfata de administrare web a SmoothWall.",
+"la interfata de administrare web a Smoothwall.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Setez parola pentru contul SmoothWall 'admin'....",
+"Setez parola pentru contul Smoothwall 'admin'....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
 "Au aparut probleme la setarea parolei pentru 'admin'.",
 /* TR_PASSWORD_PROMPT */
@@ -419,7 +419,7 @@ char *romanian_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Meniu de configurare retea",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Selectati tipul configuratiei de retea pentru SmoothWall.  Urmatoarele " \
+"Selectati tipul configuratiei de retea pentru Smoothwall.  Urmatoarele " \
 "tipuri de configurare listeaza interfetele ethernet. " \
 "Daca schimbati aceste setari, va fi necesara o restartare a retelei si v trebui " \
 "sa reconfigurati asignarea drverelor pentru interfetele de retea.",
@@ -473,7 +473,7 @@ char *romanian_tr[] = {
 "ATENTIE",
 /* TR_WARNING_LONG */
 "Daca modificati aceasta adresa IP, si sunteti conectati de pe un alt sistem, " \
-"legatura cu sistemul pe care ruleaza SmoothWall va fi intrerupta, si va trebui " \
+"legatura cu sistemul pe care ruleaza Smoothwall va fi intrerupta, si va trebui " \
 "sa va reconectati la noua adresa de IP. Aceasta operatie este riscanta si ar trebui " \
 "incercata doar daca aveti acces fizic la sistem, deoarece se poate intampla ca " \
 "ceva sa nu functioneze corect.",
@@ -571,7 +571,7 @@ char *romanian_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "Selectare controler USB",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Alegeti controlerul USB instalat in sistemul SmoothWall.",
+"Alegeti controlerul USB instalat in sistemul Smoothwall.",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "Nu am detectat controllerul USB.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

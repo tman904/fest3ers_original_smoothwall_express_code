@@ -1,6 +1,6 @@
 <P><FONT SIZE='3'><B><U>Port Forwarding</U></B></FONT></P>
 
-<P>SmoothWall is able to forward incoming connection requests to machines
+<P>Smoothwall is able to forward incoming connection requests to machines
 that are behind it, on either the DMZ (ORANGE) network or on the local
 (GREEN or PURPLE) network. Those behind a dialup link probably do not
 require this feature, although it is still available to them.</P>
@@ -17,9 +17,9 @@ IP</B> matches.  If you leave this field blank, then any host on the outside
 will be able to utilise the forward.</P>
 
 <P>When an Internet host connects to this port, the connection will be
-forwarded to a host behind SmoothWall. The connection can be directed to any
+forwarded to a host behind Smoothwall. The connection can be directed to any
 IP address and port. For example, suppose you wish to run a web server behind
-your SmoothWall. The web server is on your DMZ, at IP address 192.168.2.60.
+your Smoothwall. The web server is on your DMZ, at IP address 192.168.2.60.
 You would forward from port 80, connecting again to port 80 on the
 192.168.2.60.</P>
 

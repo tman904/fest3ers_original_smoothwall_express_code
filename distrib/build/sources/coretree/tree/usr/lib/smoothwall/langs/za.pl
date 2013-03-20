@@ -83,7 +83,7 @@
 'version' => 'Weergawes: ',
 'sponsors' => 'Borge',
 'links' => 'Skakels',
-'smoothwall homepage' => 'SmoothWall Webtuiste',
+'smoothwall homepage' => 'Smoothwall Webtuiste',
 'translation teams' => 'vertaler spanne',
 
 # dhcp.cgi
@@ -270,7 +270,7 @@
 'automatic' => 'Automaties',
 'dod' => 'Skakel op aanvraag (DoD):',
 'dod for dns' => 'Skakel op aanvraag (DoD) vir DNS:',
-'connect on smoothwall restart' => 'Konnekteer wanneer SmoothWall aanskakel:',
+'connect on smoothwall restart' => 'Konnekteer wanneer Smoothwall aanskakel:',
 'pppoe settings' => 'Addisionele PPPoE opsies:',
 'usb adsl settings' => 'Addisionele USB ADSL opsies:',
 'service name' => 'Diens naam:', 
@@ -292,16 +292,16 @@
 'remote access2' => 'Afgeleë toegang:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'SmoothWall afskakel',
+'shutting down smoothwall' => 'Smoothwall afskakel',
 'shutdown control' => 'Afskakel beheer',
 'shutdown' => 'Skakel af', # button
 'shutdown2' => 'Afskakel:',
 'shutting down' => 'Besig met afskakel',
-'smoothwall has now shutdown' => 'SmoothWall is afgeskakel.',
-'rebooting smoothwall' => 'Besig met SmoothWall herbegin',
+'smoothwall has now shutdown' => 'Smoothwall is afgeskakel.',
+'rebooting smoothwall' => 'Besig met Smoothwall herbegin',
 'reboot' => 'Herbegin', # button
 'rebooting' => 'Besig met herbegin',
-'smoothwall has now rebooted' => 'SmoothWall is weer aangeskakel.',
+'smoothwall has now rebooted' => 'Smoothwall is weer aangeskakel.',
 
 # status.cgi
 'web server' => 'Web bediener',
@@ -452,7 +452,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'USB ADSL konfigurasie',
-'usb adsl help' => 'Om die USB modem te gebruik, moet jy die fermware na jou SmoothWall masjien oplaai. Laai asb die "tarball" van Alcatel af en laai <B>mgmt.o</B> op deur die vorm hieronder te gebruik.',
+'usb adsl help' => 'Om die USB modem te gebruik, moet jy die fermware na jou Smoothwall masjien oplaai. Laai asb die "tarball" van Alcatel af en laai <B>mgmt.o</B> op deur die vorm hieronder te gebruik.',
 'upload' => 'Laai Op', # button
 'upload successfull' => 'Oplaai suksesvol.',
 'could not create file' => 'Kon nie lêer skep nie.',

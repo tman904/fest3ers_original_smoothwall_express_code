@@ -92,7 +92,7 @@ char *dutch_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Op zoek naar: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall heeft de volgende NIC(s) gevonden in uw computer: %s",
+"Smoothwall heeft de volgende NIC(s) gevonden in uw computer: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Modulenaam mag niet leeg zijn.",
 /* TR_STATIC */
@@ -118,7 +118,7 @@ char *dutch_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Welkom bij het SmoothWall installatieprogramma. Breng een bezoek aan onze " \
+"Welkom bij het Smoothwall installatieprogramma. Breng een bezoek aan onze " \
 "homepage op http://www.smoothwall.org.  Wanneer u de installatie afbreekt " \
 "op een van de volgende schermen, dan zal de computer opnieuw starten.",
 /* TR_NO_IDE_HARDDISK */
@@ -126,16 +126,16 @@ char *dutch_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Selecteer installatiemedium",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall kan van verschillende bronnen geinstalleerd worden.  Het eenvoudigste is " \
+"Smoothwall kan van verschillende bronnen geinstalleerd worden.  Het eenvoudigste is " \
 "om de CDROM-speler van de computer te gebruiken. Als uw computer er geen heeft, dan kunt u " \
 "via een andere computer op het netwerk installeren die de installatiebestanden beschikbaar " \
 "stelt via HTTP. In dat geval heeft u de netwerk driverdiskette nodig.",
 /* TR_NO_IDE_CDROM */
 "Geen IDE CDROM-speler gevonden.",
 /* TR_INSERT_CDROM */
-"Plaats de SmoothWall CD in de CDROM-speler.",
+"Plaats de Smoothwall CD in de CDROM-speler.",
 /* TR_INSERT_FLOPPY */
-"Plaats de SmoothWall driverdiskette in het diskettestation.",
+"Plaats de Smoothwall driverdiskette in het diskettestation.",
 /* TR_PREPARE_HARDDISK */
 "Het installatieprogramma zal nu de IDE harde schijf op %s klaarmaken. " \
 "Eerst wordt de schijf gepartitioneerd, daarna wordt er een filesystem op de " \
@@ -201,13 +201,13 @@ char *dutch_tr[] = {
 /* TR_CONGRATULATIONS */
 "Gefeliciteerd!",
 /* TR_CONGRATULATIONS_LONG */
-"De SmoothWall installatie is gelukt. Haal a.u.b. de diskette en/of CDROM " \
+"De Smoothwall installatie is gelukt. Haal a.u.b. de diskette en/of CDROM " \
 "uit de computer. Setup zal nu starten. Hiermee kunt u ISDN, netwerkkaarten, " \
 "en systeempasswords instellen. Als Setup is voltooid, ga dan met uw " \
 "web browser naar http://smoothwall:81 of https://smoothwall:445 " \
-"(of hoe uw SmoothWall ook heet), en configureer dialup networking (indien " \
+"(of hoe uw Smoothwall ook heet), en configureer dialup networking (indien " \
 "benodigd) en externe toegang. Vergeet niet een password in te stellen " \
-"voor de SmoothWall 'dial' gebruiker, als u niet-SmoothWall 'admin'-gebruikers " \
+"voor de Smoothwall 'dial' gebruiker, als u niet-Smoothwall 'admin'-gebruikers " \
 "de inbelverbinding wilt laten beheren.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Druk op Ok om opnieuw te starten.",
@@ -223,7 +223,7 @@ char *dutch_tr[] = {
 "Selecteer CDROM-type",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Er is geen IDE CDROM gedetecteerd in deze computer.  Selecteer welke van de " \
-"volgende drivers u wilt gebruiken zodat SmoothWall de CDROM-speler kan gebruiken.",
+"volgende drivers u wilt gebruiken zodat Smoothwall de CDROM-speler kan gebruiken.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(voorstel %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -257,7 +257,7 @@ char *dutch_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Kon niet downloaden.",
 /* TR_ENTER_URL */
-"Geef de URL naar het SmoothWall tar.gz bestand. " \
+"Geef de URL naar het Smoothwall tar.gz bestand. " \
 "WAARSCHUWING: DNS niet beschikbaar!  Het moet met bestandsnaam 'smoothwall.tgz' eindigen.",
 
 /* nic.c */
@@ -322,12 +322,12 @@ char *dutch_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Probleem met instellen 'setup' password.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Geef het SmoothWall admin password.  Dit is de gebruikersnaam die u moet gebruiken om in te " \
-"loggen op de SmoothWall beheer-webpagina\'s.",
+"Geef het Smoothwall admin password.  Dit is de gebruikersnaam die u moet gebruiken om in te " \
+"loggen op de Smoothwall beheer-webpagina\'s.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"SmoothWall admin password wordt gezet....",
+"Smoothwall admin password wordt gezet....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
-"Probleem met instellen SmoothWall admin password.",
+"Probleem met instellen Smoothwall admin password.",
 /* TR_PASSWORD_PROMPT */
 "Password:",
 /* TR_AGAIN_PROMPT */
@@ -438,7 +438,7 @@ char *dutch_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Netwerk-configuratie menu",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Selecteer de netwerk-configuratie voor SmoothWall.  De volgende " \
+"Selecteer de netwerk-configuratie voor Smoothwall.  De volgende " \
 "configuratietypes geven de interfaces weer die op ethernet aangesloten zijn. " \
 "Als u deze instelling wijzigt, dan zal een netwerk-herstart nodig zijn en zult " \
 "u de netwerkdriver-toewijzing moeten herconfigureren.",
@@ -492,7 +492,7 @@ char *dutch_tr[] = {
 "WAARSCHUWING",
 /* TR_WARNING_LONG */
 "Als u dit IP-adres wijzigt en u bent remote ingelogd, dan zal uw " \
-"verbinding met de SmoothWall computer verbroken worden en zult u opnieuw " \
+"verbinding met de Smoothwall computer verbroken worden en zult u opnieuw " \
 "moeten verbinden via het nieuwe IP-adres. Dit brengt risico's met zich mee en " \
 "dit kunt u beter alleen doen als u fysieke toegang heeft tot de computer, voor het " \
 "geval er iets fout mocht gaan.",
@@ -590,7 +590,7 @@ char *dutch_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "USB controller selectie",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Kies de USB controller die is geinstalleerd in deze SmoothWall computer.",
+"Kies de USB controller die is geinstalleerd in deze Smoothwall computer.",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "USB controller niet gedetecteerd.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

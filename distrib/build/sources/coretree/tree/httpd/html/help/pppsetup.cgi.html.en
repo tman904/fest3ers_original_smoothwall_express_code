@@ -29,9 +29,9 @@ suffice and give the highest available download speed from your ISP, but on
 very old computers with old serial controllers, you may need to select a
 slower speed.  If you are using dual channel ISDN on an external ISDN TA,
 you may choose to use the highest setting, although you should be aware that
-this requires a powerful CPU in your SmoothWall.</P>
+this requires a powerful CPU in your Smoothwall.</P>
 
-<P>The <B>Persistent Connection</B> checkbox is used to instruct SmoothWall
+<P>The <B>Persistent Connection</B> checkbox is used to instruct Smoothwall
 to try to re-dial the line if the link fails for some reason. Use this with
 caution.  If you have metered charges, you probably not want to use this.
 However, if you have unlimited service time with your ISP, you will probably
@@ -39,7 +39,7 @@ want to use this in order to keep the link connected as much as
 possible.</P>
 
 <P>Whether or not <B>Persistent</B> is enabled, if more then the <B>Maximum
-Retries</B> number of dial attempts fail in a row, SmoothWall will give up
+Retries</B> number of dial attempts fail in a row, Smoothwall will give up
 until you try to dial the link again by pressing the <B>Dial</B> button.</P>
 
 <P>You can choose Tone or Pulse dialing using the drop-down box. A checkbox
@@ -52,14 +52,14 @@ dropped. Setting this to 0 disables this timeout.</P>
 
 <P><B>Dial on Demand</B> is available by clicking the relevant checkboxes. After
 enabling Dial on Demand, you still have to click the <B>Connect</B> button
-on the home page to start SmoothWall waiting for an outgoing request.  The
-<B>Dial on Demand for DNS</B> option will make SmoothWall dial for DNS
+on the home page to start Smoothwall waiting for an outgoing request.  The
+<B>Dial on Demand for DNS</B> option will make Smoothwall dial for DNS
 requests, which is usually what you want.</P>
 
-<P><B>Connect on SmoothWall Restart</B> will make SmoothWall connect after booting.
+<P><B>Connect on Smoothwall Restart</B> will make Smoothwall connect after booting.
 This is especially useful in Dial on Demand mode, because it will
 automatically put the system into Dial on Demand waiting mode each time the
-SmoothWall machine is switched on.</P>
+Smoothwall machine is switched on.</P>
 
 <P><B>ISP Requires Carriage Return:</B> Most ISP require that the modem send a carriage
 return to signal it has finished sending.  Default is unchecked.</P>
@@ -75,7 +75,7 @@ script, choose standard login script. For people in the UK who use Demon
 Internet as their ISP, a special script has been created for them to use.
 The "Other" login script option has been provided for people who have ISPs
 with special needs. If you need to do this, you will need to login to the
-SmoothWall box and create a file in /etc/ppp. This filename (without the
+Smoothwall box and create a file in /etc/ppp. This filename (without the
 /etc/ppp component) should be entered into the Script name box. The file
 contains 'expect send' pairs, separated by a tab. <B>USERNAME</B> will be
 substituted for the username and <B>PASSWORD</B> for the password. Examine the file

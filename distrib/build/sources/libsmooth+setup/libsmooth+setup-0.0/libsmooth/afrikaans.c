@@ -72,7 +72,7 @@ char *afrikaans_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Soek na: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall het die volgende NIC in jou masjien gevind: %s",
+"Smoothwall het die volgende NIC in jou masjien gevind: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Module naam kan nie blanko wees nie.",
 /* TR_STATIC */
@@ -98,7 +98,7 @@ char *afrikaans_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Welkom by die SmoothWall installasie program. Besoek asb ons " \
+"Welkom by die Smoothwall installasie program. Besoek asb ons " \
 "webtuiste by http://www.smoothwall.org.  Deur Kanselleer op enige " \
 "van die volgende skerms te druk, sal die masjien oorbegin (\"reboot\").",
 /* TR_NO_IDE_HARDDISK */
@@ -106,7 +106,7 @@ char *afrikaans_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Selekteer installasie media",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall kan van verskeie media geïnstalleer word.  Die eenvoudigste is om " \
+"Smoothwall kan van verskeie media geïnstalleer word.  Die eenvoudigste is om " \
 "die masjien se CDROM aandrywer te gebruik. Indien die masjien nie CDROMs kan " \
 "hanteer nie, kan jy via 'n ander masjien op die LAN installeer wat die installasie " \
 "lêers via HTTP beskikbaar stel. In hierdie geval sal die netwerk drywer disket " \
@@ -114,9 +114,9 @@ char *afrikaans_tr[] = {
 /* TR_NO_IDE_CDROM */
 "Geen IDE cdrom gevind nie.",
 /* TR_INSERT_CDROM */
-"Plaas asb die SmoothWall CD in die CDROM aandrywer.",
+"Plaas asb die Smoothwall CD in die CDROM aandrywer.",
 /* TR_INSERT_FLOPPY */
-"Plaas asb die SmoothWall drywer disket in die floppie aandrywer.",
+"Plaas asb die Smoothwall drywer disket in die floppie aandrywer.",
 /* TR_PREPARE_HARDDISK */
 "Die installasie program sal nou die IDE hardeskyf op %s voorberei. " \
 "Die skyf sal eestens ge-partisioneer word, alvorens 'n lêerstelsel " \
@@ -182,13 +182,13 @@ char *afrikaans_tr[] = {
 /* TR_CONGRATULATIONS */
 "Geluk!",
 /* TR_CONGRATULATIONS_LONG */
-"SmoothWall is suksesvol geïnstalleer. Verwyder asb enige floppie skywe of " \
+"Smoothwall is suksesvol geïnstalleer. Verwyder asb enige floppie skywe of " \
 "CDROMs in die rekenaar. 'Setup' sal nou loop waar jy ISDN, netwerk kaarte en " \
 "stelsel wagwoorde kan opstel. Nadat die opstelling voltooi is moet jy jou " \
 "webbladleser mik na http://smoothwall:81 of https://smoothwall:445 (of wat " \
-"ookal jou SmoothWall se naam is), en dan die inbel netwerk (indien benodig) " \
-"en afgeleë toegang opstel. Onthou om 'n wagwoord vir die SmoothWall 'dial' " \
-"gebruiker op te stel, indien jy gebruikers anders as die SmoothWall 'admin' " \
+"ookal jou Smoothwall se naam is), en dan die inbel netwerk (indien benodig) " \
+"en afgeleë toegang opstel. Onthou om 'n wagwoord vir die Smoothwall 'dial' " \
+"gebruiker op te stel, indien jy gebruikers anders as die Smoothwall 'admin' " \
 "gebruiker wil toelaat om die inbel skakel te beheer.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Druk Ok onm die majien te laat oorbegin ('reboot').",
@@ -204,7 +204,7 @@ char *afrikaans_tr[] = {
 "Selekteer die CDROM tipe",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Geen IDE CDROM is op die masjien gevind nie.  Selekteer asb watter van die volgende " \
-"drywers jy wil gebruik om SmoothWall in staat te stel om jou CDROM te gebruik.",
+"drywers jy wil gebruik om Smoothwall in staat te stel om jou CDROM te gebruik.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(stel %x voor)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -238,7 +238,7 @@ char *afrikaans_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Aflaai get gefaal.",
 /* TR_ENTER_URL */
-"Verskaf die URL na die SmoothWall tar.gz lêer. " \
+"Verskaf die URL na die Smoothwall tar.gz lêer. " \
 "WAARSKUWING: DNS nie beskikbaar!  Die URL moet met 'smoothwall.tgz' eindig.",
 
 /* nic.c */
@@ -303,12 +303,12 @@ char *afrikaans_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Probleem met stel van 'setup' wagwoord.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Tik die SmoothWall admin wagwoord.  Teken as die gebruiker aan " \
-"op die SmoothWall web admin bladsye.",
+"Tik die Smoothwall admin wagwoord.  Teken as die gebruiker aan " \
+"op die Smoothwall web admin bladsye.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Besig om SmoothWall admin se wagwoord te stel....",
+"Besig om Smoothwall admin se wagwoord te stel....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
-"Probleme met stel van SmoothWall admin wagwoord.",
+"Probleme met stel van Smoothwall admin wagwoord.",
 /* TR_PASSWORD_PROMPT */
 "Wagwoord:",
 /* TR_AGAIN_PROMPT */
@@ -419,7 +419,7 @@ char *afrikaans_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Netwerk konfigurasie kieslys",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Selekteer die netwerk konfigurasie vir SmoothWall.  Die volgende " \
+"Selekteer die netwerk konfigurasie vir Smoothwall.  Die volgende " \
 "konfigurasietipes lys die koppelvlakke waarop ethernet beskikbaar is. " \
 "Indien jy die opsie verander, sal dit nodig wees om die netwerk weer oor te laat begin, en jy " \
 "sal die netwerk drywer toewysings weer moet konfigureer.",
@@ -473,7 +473,7 @@ char *afrikaans_tr[] = {
 "WAARSKUWING",
 /* TR_WARNING_LONG */
 "Indien jy die IP verander en jy is via die netwerk aangeteken, " \
-"sal jou konneksie met SmoothWall verbreek word en jy sal weer " \
+"sal jou konneksie met Smoothwall verbreek word en jy sal weer " \
 "met die nuwe IP moet konnekteer. Hierdie is 'n riskante operasie en moet " \
 "slegs gedoen word indien daar geen fisiese toegang tot die masjien beskikbaar is nie, " \
 "ingeval probleme opduik.",
@@ -571,7 +571,7 @@ char *afrikaans_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "USB beheerder seleksie",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Selekteer die USB beheerder wat in die SmoothWall masien geïnstalleer is.",
+"Selekteer die USB beheerder wat in die Smoothwall masien geïnstalleer is.",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "USB beheerder nie opgespoor nie.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

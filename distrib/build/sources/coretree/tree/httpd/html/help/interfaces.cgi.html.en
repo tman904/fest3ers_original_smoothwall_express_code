@@ -4,7 +4,7 @@
 interfaces, and to configure the external (RED) interface.</p>
 
 <p>The network interfaces displayed will vary depending on which interfaces
-have been inserted in the computer running SmoothWall Express, and the
+have been inserted in the computer running Smoothwall Express, and the
 Configuration Type selected in the Setup program's Networking section.</p>
 
 <p>For each of the internal interfaces presented (GREEN, PURPLE and ORANGE),

@@ -1,6 +1,6 @@
 <P><FONT SIZE='3'><B><U>Timed Access</U></B></FONT></P>
 
-<p>SmoothWall Express has the ability to allow or disalow Inetnet access at
+<p>Smoothwall Express has the ability to allow or disalow Inetnet access at
 certain times of the day, for a specified group of local machines.</p>
 
 <p>If this ability is required, <strong>Enable</strong> it with the checkbox.</p>
@@ -35,6 +35,6 @@ alternatively it can be entered 192.168.168.0/255.255.255.0</p>
 
 <p>Press <strong>Save</strong> to enable or disable the timed access rules.</p>
 
-<p><strong>Please note:</strong> All access to the Internet and to the SmoothWall
+<p><strong>Please note:</strong> All access to the Internet and to the Smoothwall
 itself is blocked using this page.  This includes the ability to administer
-the SmoothWall on its web interface.</p>
+the Smoothwall on its web interface.</p>

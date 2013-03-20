@@ -78,7 +78,7 @@ char *spanish_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Buscando el siguiente adaptador: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall ha detectado la siguiente interfaz de red: %s",
+"Smoothwall ha detectado la siguiente interfaz de red: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "El nombre de módulo no puede estar vacio.",
 /* TR_STATIC */
@@ -104,7 +104,7 @@ char *spanish_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Bienvenido al programa de instalación de SmoothWall. Por favor visite nuestra " \
+"Bienvenido al programa de instalación de Smoothwall. Por favor visite nuestra " \
 "página en http://www.smoothwall.org. Seleccionando Cancelar en cualquiera " \
 "de las siguientes pantallas reiniciará la computadora.",
 /* TR_NO_IDE_HARDDISK */
@@ -112,7 +112,7 @@ char *spanish_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Seleccione el medio de instalación",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall puede ser instalado desde múltiples fuentes. La mas simple es " \
+"Smoothwall puede ser instalado desde múltiples fuentes. La mas simple es " \
 "usar el CDROM de la máquina. Si la computadora no tiene CDROM, puede " \
 "instalarse a través de otra máquina en la LAN que tenga los archivos de instalación " \
 "disponibles via HTTP. En este caso el diskette con los controladores de red serán " \
@@ -120,7 +120,7 @@ char *spanish_tr[] = {
 /* TR_NO_IDE_CDROM */
 "IDE cdrom no encontrado.",
 /* TR_INSERT_CDROM */
-"Por favor inserte el CD de SmoothWall en el CDROM.",
+"Por favor inserte el CD de Smoothwall en el CDROM.",
 /* TR_INSERT_FLOPPY */
 "Por favor inserte el diskette del controlador de Smootwall en la disketera.",
 /* TR_PREPARE_HARDDISK */
@@ -188,16 +188,16 @@ char *spanish_tr[] = {
 /* TR_CONGRATULATIONS */
 "Felicitaciones!",
 /* TR_CONGRATULATIONS_LONG */
-"La instalación de SmoothWall se ha realizado con éxito. Retire por favor cualquier" \
+"La instalación de Smoothwall se ha realizado con éxito. Retire por favor cualquier" \
 "disquette o CD-ROM del ordenador. El programa de Configuración le guiará" \
 "a continuación a través de distintas opciones donde usted podrá" \
 "configurar sus dispositivos RDSI, tarjetas de red, así como las" \
 "contraseñas del sistema. Una vez terminada la configuración, deberá escribir " \
 "en su navegador de internet la dirección http://smoothwall:81 o " \
-"https://smoothwall:445 (o cambiando SmoothWall por el nombre con que lo haya " \
+"https://smoothwall:445 (o cambiando Smoothwall por el nombre con que lo haya " \
 "personalizado), a continuación deberá configurar la conexión telefónica" \
 "(si es necesario) y el acceso remoto. No se olvide poner las contraseñas" \
-"para SmootWall del usuario 'dial', si no puede conectar a SmoothWall" \
+"para SmootWall del usuario 'dial', si no puede conectar a Smoothwall" \
 "el usuario 'admin' está capacitado para corregir cualquier error de configuración.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Pulse Ok para reiniciar el ordenador.",
@@ -213,7 +213,7 @@ char *spanish_tr[] = {
 "Seleccione el tipo de CD-ROM",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "No se ha detectado una unidad CD-ROM IDE en este ordenador. Por favor, seleccione " \
-"uno de los siguientes controladores que desee SmoothWall utilice para controlar el CD-ROM.",
+"uno de los siguientes controladores que desee Smoothwall utilice para controlar el CD-ROM.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(recomendamos %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -247,7 +247,7 @@ char *spanish_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Fallo al descargar el archivo de la red.",
 /* TR_ENTER_URL */
-"Introduzca la URL del archivo 'tar.gz' de SmoothWall. " \
+"Introduzca la URL del archivo 'tar.gz' de Smoothwall. " \
 "¡ATENCION: DNS no disponible! Se debe terminar con el fichero 'smoothwall.tgz'.",
 
 /* nic.c */
@@ -312,10 +312,10 @@ char *spanish_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Hubo problemas mientras se configuraba la contraseña para 'setup'.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Ingrese la contraseña del usuario admin de SmoothWall. Este es el usuario para utilizar " \
-"las páginas web de administración de SmoothWall.",
+"Ingrese la contraseña del usuario admin de Smoothwall. Este es el usuario para utilizar " \
+"las páginas web de administración de Smoothwall.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Configurando la contraseña del usuario admin de SmoothWall ...",
+"Configurando la contraseña del usuario admin de Smoothwall ...",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
 "Hubo problemas mientras se configuraba la contraseña para admin.",
 /* TR_PASSWORD_PROMPT */
@@ -428,7 +428,7 @@ char *spanish_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Menu de configuración de red",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Seleccione la configuración de red para SmoothWall. Los siguientes " \
+"Seleccione la configuración de red para Smoothwall. Los siguientes " \
 "tipos de configuración muestran las interfases que tienen ethernet adosadas. " \
 "Si cambia esta configuración, los servicios de red serán reiniciados y " \
 "deberá reconfigurar la asignación de adaptadores/controladores de red.",
@@ -482,7 +482,7 @@ char *spanish_tr[] = {
 "PELIGRO",
 /* TR_WARNING_LONG */
 "Si cambia la dirección IP, y se encuentra conectado en forma remota, " \
-"perderá su conexión con la máquina SmoothWall, y tendra que reconectar " \
+"perderá su conexión con la máquina Smoothwall, y tendra que reconectar " \
 "con la nueva dirección IP . Esta es una operación riesgosa y solo debe" \
 "realizarse si tiene acceso físico a la máquina por si algo malo " \
 "sucediera.",
@@ -580,7 +580,7 @@ char *spanish_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "Selección de controlador USB",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Seleccione el controlador USB instalado en su máquina SmoothWall.",
+"Seleccione el controlador USB instalado en su máquina Smoothwall.",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "Controlador USB no pudo ser detectado.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

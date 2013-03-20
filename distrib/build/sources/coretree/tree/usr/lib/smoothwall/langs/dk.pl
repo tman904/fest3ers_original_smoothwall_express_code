@@ -89,7 +89,7 @@ tegn.',
 'version' => 'Version: ',
 'sponsors' => 'Sponsorer',
 'links' => 'L&aelig;nker',
-'smoothwall homepage' => 'SmoothWalls Hjemmeside',
+'smoothwall homepage' => 'Smoothwalls Hjemmeside',
 'translation teams' => 'oversættelses hold',
 
 # dhcp.cgi
@@ -276,7 +276,7 @@ tegn.',
 'automatic' => 'Automatisk',
 'dod' => 'Kald p&aring; Kommando:',
 'dod for dns' => 'Kald p&aring; kommando til DNS:',
-'connect on smoothwall restart' => 'Etabler forbindelse ved SmoothWall genstart:',
+'connect on smoothwall restart' => 'Etabler forbindelse ved Smoothwall genstart:',
 'pppoe settings' => 'Yderligere PPPoE indstillinger:',
 'usb adsl settings' => 'Yderligere USB ADSL indstillinger:',
 'service name' => 'Service navn:',
@@ -298,16 +298,16 @@ tegn.',
 'remote access2' => 'Fjern-adgang:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Lukker SmoothWall ned',
+'shutting down smoothwall' => 'Lukker Smoothwall ned',
 'shutdown control' => 'Nedluknings kontrol',
 'shutdown' => 'Luk Ned', # button
 'shutdown2' => 'Luk Ned:',
 'shutting down' => 'Lukker Ned',
-'smoothwall has now shutdown' => 'SmoothWall er nu lukket ned.',
-'rebooting smoothwall' => 'Genstarter SmoothWall', 
+'smoothwall has now shutdown' => 'Smoothwall er nu lukket ned.',
+'rebooting smoothwall' => 'Genstarter Smoothwall', 
 'reboot' => 'Genstart', # button 
 'rebooting' => 'Genstarter',
-'smoothwall has now rebooted' => 'SmoothWall har nu genstartet.',
+'smoothwall has now rebooted' => 'Smoothwall har nu genstartet.',
 
 # status.cgi
 'web server' => 'Web server',
@@ -458,7 +458,7 @@ tegn.',
 
 # usbadsl.cgi
 'usb adsl setup' => 'USB ADSL ops&aelig;tning',
-'usb adsl help' => 'For at bruge USB modem m&aring; du f&oslash;rst uploade firmwaren til din SmoothWall installation. Download venligst den komprimerede tarball fra Alcatel og upload derefter filen <B>mgmt.o</B> ved at bruge nedenst&aring;ende formular.',
+'usb adsl help' => 'For at bruge USB modem m&aring; du f&oslash;rst uploade firmwaren til din Smoothwall installation. Download venligst den komprimerede tarball fra Alcatel og upload derefter filen <B>mgmt.o</B> ved at bruge nedenst&aring;ende formular.',
 'upload' => 'Upload', # button
 'upload successfull' => 'Upload lykkedes.',
 'could not create file' => 'Kunne ikke danne fil.',

@@ -1,9 +1,9 @@
 <P><FONT SIZE='3'><B><U>Updates</U></B></FONT></P>
 
-<P>This page is used to manage updates to your SmoothWall system.</P>
+<P>This page is used to manage updates to your Smoothwall system.</P>
 
 <p>From time to time security and product updates are rolled out to all 
-SmoothWall systems,  this page is used to apply these updates in a simple
+Smoothwall systems,  this page is used to apply these updates in a simple
 fashion.</p>
 
 <p>The main panel of the update page will present a list of both the 
@@ -23,5 +23,5 @@ Advanced</strong> button and then simply use the <B>Browse</B> button
 to select the saved file on your hard disk and then click the <B>Upload</B>
 button to apply the patch. Once done, you will see the patch in the
 "installed" list. PLEASE NOTE: only official patches will work with this
-system. Some patches may automatically reboot your SmoothWall machine, read
+system. Some patches may automatically reboot your Smoothwall machine, read
 the instructions carefully before installing ANY patch!</P>

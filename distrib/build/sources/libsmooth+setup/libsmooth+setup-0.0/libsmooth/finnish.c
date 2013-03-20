@@ -73,7 +73,7 @@ char *finnish_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Etsin: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall on lˆyt‰nyt verkkosovittimen: %s",
+"Smoothwall on lˆyt‰nyt verkkosovittimen: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Moduulin nimi on annettava.",
 /* TR_STATIC */
@@ -99,7 +99,7 @@ char *finnish_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Tervetuloa SmoothWall asennusohjelmaan. Pyyd‰mme k‰ym‰‰n kotisivuillamme " \
+"Tervetuloa Smoothwall asennusohjelmaan. Pyyd‰mme k‰ym‰‰n kotisivuillamme " \
 "osoitteessa http://www.smoothwall.org. Jos valitset Peruuta " \
 "seuraavilla n‰ytˆill‰, tietokone k‰ynnistet‰‰n uudelleen.",
 /* TR_NO_IDE_HARDDISK */
@@ -107,7 +107,7 @@ char *finnish_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Valitse asennusmedia",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall voidaan asentaa useista eri l‰hteist‰.  Helpointa on " \
+"Smoothwall voidaan asentaa useista eri l‰hteist‰.  Helpointa on " \
 "k‰ytt‰‰ tietokoneen CDROM-asemaa. Jos tietokoneessa ei ole CDROM-asemaa, voit " \
 "asentaa toiselta verkossa olevalta tietokoneelta, jolta asennustiedostot " \
 "noudetaan HTTP-protokollalla. T‰ss‰ tapauksessa tarvitset verkkosovittimen " \
@@ -115,9 +115,9 @@ char *finnish_tr[] = {
 /* TR_NO_IDE_CDROM */
 "Yht‰‰n IDE CDROM-asemaa ei lˆytynyt.",
 /* TR_INSERT_CDROM */
-"Laita SmoothWall CD CDROM-asemaan.",
+"Laita Smoothwall CD CDROM-asemaan.",
 /* TR_INSERT_FLOPPY */
-"Laita SmoothWall laiteohjainlevyke levykeasemaan.",
+"Laita Smoothwall laiteohjainlevyke levykeasemaan.",
 /* TR_PREPARE_HARDDISK */
 "Asennusohjelma valmistelee IDE kiintolevyn %s. " \
 "Aluksi levy osioidaan ja sitten osioille luodaan " \
@@ -183,13 +183,13 @@ char *finnish_tr[] = {
 /* TR_CONGRATULATIONS */
 "Onneksi olkoon!",
 /* TR_CONGRATULATIONS_LONG */
-"SmoothWall on nyt asennettu. Poista levykkeet ja " \
+"Smoothwall on nyt asennettu. Poista levykkeet ja " \
 "CDROM:t asemista. Vuorossa on nyt asetusten tekeminen (ISDN, " \
 "verkkosovittimet ja salasanat). Kun asennus on valmis, k‰y hallintasivuilla " \
 "osoitteessa http://smoothwall:81 tai https://smoothwall:445 " \
 "(korvaa 'smoothwall' asennuksessa k‰ytt‰m‰ll‰si is‰nt‰nimell‰), " \
 "jos sinun tarvitsee luoda puhelinverkkoyhteyden asetukset. Muista antaa " \
-"SmoothWallin 'dial'-k‰ytt‰j‰lle salasana, jos tahdot muidenkin kuin " \
+"Smoothwallin 'dial'-k‰ytt‰j‰lle salasana, jos tahdot muidenkin kuin " \
 "p‰‰k‰ytt‰j‰n voivan avata ja sulkea yhteyden.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Paina OK k‰ynnist‰‰ksesi tietokoneen uudelleen.",
@@ -205,7 +205,7 @@ char *finnish_tr[] = {
 "Valitse CDROMin tyyppi",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Yht‰‰n IDE CDROM-asenaa ei lˆytynyt.  Valitse, mit‰ n‰ist‰ laiteohjaimista " \
-"haluat SmoothWallin k‰ytt‰v‰n CDROM-aseman ohjaamiseen.",
+"haluat Smoothwallin k‰ytt‰v‰n CDROM-aseman ohjaamiseen.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(ehdotus %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -239,7 +239,7 @@ char *finnish_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Lataus ep‰onnistui.",
 /* TR_ENTER_URL */
-"Anna SmoothWall tar.gz-tiedoston URL. " \
+"Anna Smoothwall tar.gz-tiedoston URL. " \
 "VAROITUS: DNS ei ole k‰ytett‰viss‰. Osoitteen tulee p‰‰tty‰ " \
 "tiedostonimeen 'smoothwall.tgz'.",
 
@@ -306,12 +306,12 @@ char *finnish_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "K‰ytt‰j‰n 'setup' salasanan asettaminen ep‰onnistui.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Anna SmoothWall p‰‰k‰ytt‰j‰n salasana. K‰yt‰ t‰t‰ tunnusta " \
-"SmoothWallin web-hallintaan kirjautumiseen.",
+"Anna Smoothwall p‰‰k‰ytt‰j‰n salasana. K‰yt‰ t‰t‰ tunnusta " \
+"Smoothwallin web-hallintaan kirjautumiseen.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Asetetaan SmoothWall p‰‰k‰ytt‰j‰n salasana...",
+"Asetetaan Smoothwall p‰‰k‰ytt‰j‰n salasana...",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
-"SmoothWall p‰‰k‰ytt‰j‰n salasanan asettaminen ep‰onnistui.",
+"Smoothwall p‰‰k‰ytt‰j‰n salasanan asettaminen ep‰onnistui.",
 /* TR_PASSWORD_PROMPT */
 "Salasana:",
 /* TR_AGAIN_PROMPT */
@@ -421,7 +421,7 @@ char *finnish_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Verkkoasetukset",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Valitse SmoothWallin k‰ytt‰m‰ verkkoasetus. Valitse listasta, " \
+"Valitse Smoothwallin k‰ytt‰m‰ verkkoasetus. Valitse listasta, " \
 "miss‰ verkkoliit‰nnˆiss‰ k‰ytet‰‰n ethernet-sovittimia. " \
 "Valinnan muuttaminen vaatii verkko-ohjelmiston uudelleenk‰ynnistyksen " \
 "ja nollaa tehdyt laiteohjainvalinnat.",
@@ -477,7 +477,7 @@ char *finnish_tr[] = {
 "Jos muutat t‰m‰n IP-osoitteen ja olet et‰yhteydess‰ koneeseen, " \
 "yhteys katkeaa ja joudut ottamaan uudestaan yhteytt‰ uuteen IP-osoitteeseen. " \
 "T‰m‰ on vaarallinen toimenpide ja sit‰ tulisi yritt‰‰ vain jos " \
-"p‰‰set mahdollisessa virhetilanteessa kirjautumaan SmoothWall-koneen " \
+"p‰‰set mahdollisessa virhetilanteessa kirjautumaan Smoothwall-koneen " \
 "omalle konsolille.",
 /* TR_SINGLE_GREEN */
 "T‰m‰ asetus k‰ytt‰‰ yht‰ GREEN-liit‰nt‰‰.",

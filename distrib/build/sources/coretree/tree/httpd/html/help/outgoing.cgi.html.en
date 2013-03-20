@@ -6,7 +6,7 @@ of IP address can be supplied which are not subject to any blocking.</p>
 
 <p>Each interface can be set to filter or not using the checkboxes on the
 <strong>Outgoing filtering</strong> page. The default filtering level is
-determined when SmoothWall is installed and is either Open (all traffic is
+determined when Smoothwall is installed and is either Open (all traffic is
 allowed onto the Internet), Half-open (some traffic is allowed, with the
 rest being blocked) or Closed (all traffic being blocked unless you
 explicitly add a rule to allow it).  If the filtering of an interface is on,

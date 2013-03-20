@@ -105,7 +105,7 @@ close(LOG);
 if ($cgiparams{'ACTION'} eq $tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "SmoothWall IDS snort log\r\n";
+	print "Smoothwall IDS snort log\r\n";
 	print "Date: $cgiparams{'DAY'} $longmonths[$cgiparams{'MONTH'}]\r\n"; 
 	print "\r\n";
 

@@ -73,7 +73,7 @@ char *norwegian_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Leter etter: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall har funnet følgende nettverkskort i maskinen din: %s",
+"Smoothwall har funnet følgende nettverkskort i maskinen din: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Modul navnet kan ikke være blankt.",
 /* TR_STATIC */
@@ -99,7 +99,7 @@ char *norwegian_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Velkommen til SmoothWall installasjonsprogrammet. Vennligst"\
+"Velkommen til Smoothwall installasjonsprogrammet. Vennligst"\
 "besøk våre hjemmesider på http://www.smoothwall.org. Velg"\
 "Hvis du trykker Avbryt på de følgende skjermene, vil maksinen"\
 "bli startet på ny",
@@ -108,7 +108,7 @@ char *norwegian_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Velg installasjons medium",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall kan bli installert fra flere kilder. Det enkleste er å bruke "\
+"Smoothwall kan bli installert fra flere kilder. Det enkleste er å bruke "\
 "maskinens CDROM driver. Hvis datamaskinen ikke har dette, kan du "\
 "installere via en annen maskin på lokalnettet som har installasjonsfilene "\
 "tilgjengelige via HTTP. I dette tilfellet vil du bli spurt om å sette i disketten "\
@@ -116,9 +116,9 @@ char *norwegian_tr[] = {
 /* TR_NO_IDE_CDROM */
 "Fant ingen IDE CDROM.",
 /* TR_INSERT_CDROM */
-"Vennligst sett din SmoothWall CD i CDROM spilleren.",
+"Vennligst sett din Smoothwall CD i CDROM spilleren.",
 /* TR_INSERT_FLOPPY */
-"Vennligst sett SmoothWall nettverks driver disketten i diskettstasjonen.",
+"Vennligst sett Smoothwall nettverks driver disketten i diskettstasjonen.",
 /* TR_PREPARE_HARDDISK */
 "Installasjons programmet vil nå klargjøre IDE disken på %s. "\
 "Først vil disken bli partisjonert, og så vil det bli laget filsystemer "\
@@ -184,11 +184,11 @@ char *norwegian_tr[] = {
 /* TR_CONGRATULATIONS */
 "Gratulerer!",
 /* TR_CONGRATULATIONS_LONG */
-"SmoothWall ble vellykket installert. Vennligst fjern alle disketter og "\
+"Smoothwall ble vellykket installert. Vennligst fjern alle disketter og "\
 "CDROM plater fra datamaskinen. Setup programmet vil nå bli kjørt, og du "\
 "kan konfigurere ISDN, nettverkskort og systempassord. Etter at setup er ferdig, "\
 "kan du fortsette konfigurasjon ved å peke nettleseren til http://smoothwall:81/ "
-"eller https://smoothwall:445/ (hvor smoothwall er navnet du gav til din SmoothWall). "\
+"eller https://smoothwall:445/ (hvor smoothwall er navnet du gav til din Smoothwall). "\
 "Her kan du konfigurer passord for \'dial\' brukeren og mye mer. ",
 /* TR_PRESS_OK_TO_REBOOT */
 "Trykk ok for å starte på ny.",
@@ -204,7 +204,7 @@ char *norwegian_tr[] = {
 "Velg CDROM type",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Ingen IDE CDROM ble funnet på denne maskinen. Vennligst velg hvilken "\
-"av de følgende driverne du ønsker å bruke slik at SmoothWall får tilgang til "\
+"av de følgende driverne du ønsker å bruke slik at Smoothwall får tilgang til "\
 "din CDROM. ",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(foreslå %x)",
@@ -239,7 +239,7 @@ char *norwegian_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Kan ikke hente ned.",
 /* TR_ENTER_URL */
-"Skriv inn en URL til SmoothWall sin tar.gz fil. "\
+"Skriv inn en URL til Smoothwall sin tar.gz fil. "\
 "ADVARSEL: DNS er ikke tilgjengelig! Dette bør ende med filen \'Smoohwall.tgz\'.",
 
 /* nic.c */
@@ -303,12 +303,12 @@ char *norwegian_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Kan ikke sette 'setup' passordet.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Skriv inn SmoothWall admin passordet. Denne brukeren "\
-"kan logge seg inn på SmoothWall vev administrerings sidene.",
+"Skriv inn Smoothwall admin passordet. Denne brukeren "\
+"kan logge seg inn på Smoothwall vev administrerings sidene.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Setter SmoothWall admin passordet....",
+"Setter Smoothwall admin passordet....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
-"Kan ikke sette SmoothWall admin passordet.",
+"Kan ikke sette Smoothwall admin passordet.",
 /* TR_PASSWORD_PROMPT */
 "Passord:",
 /* TR_AGAIN_PROMPT */
@@ -419,7 +419,7 @@ char *norwegian_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Meny for å konfigurere nettverket",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Velg nettverks konfigurasjon for SmoothWall. De følgende "\
+"Velg nettverks konfigurasjon for Smoothwall. De følgende "\
 "konfigurasjonstypene lister de portene som har ethernet koblet til. "\
 "Hvis du forandrer disse instillingene, må nettverket startes på ny, og du "\
 "må konfigurere nettverk driver tildelingen på ny.",
@@ -472,7 +472,7 @@ char *norwegian_tr[] = {
 "ADVARSEL",
 /* TR_WARNING_LONG */
 "Hvis du forandrer denne IP adressen, og du er logget inn fra en annen maskin, "\
-"vil din forbindelse til SmoothWall maskinen bli brutt, og du må koble til en ny IP. "\
+"vil din forbindelse til Smoothwall maskinen bli brutt, og du må koble til en ny IP. "\
 "Dette er en svært risikabel operasjon, og bør "\
 "bare benyttes hvis du har fysisk tilgang til maskinen dersom noe går galt.",
 /* TR_SINGLE_GREEN */
@@ -570,7 +570,7 @@ char *norwegian_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "Valg av USB kontrollør",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Velg den USB kontrolløren som er installert på denne SmoothWall maskinen.",
+"Velg den USB kontrolløren som er installert på denne Smoothwall maskinen.",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "USB kontrolløren ble ikke funnet.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

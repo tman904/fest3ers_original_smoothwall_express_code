@@ -107,7 +107,7 @@
 'version' => 'Versie: ',
 'sponsors' => 'Sponsors',
 'links' => 'Links',
-'smoothwall homepage' => 'SmoothWall Homepage',
+'smoothwall homepage' => 'Smoothwall Homepage',
 'translation teams' => 'Vertalings team',
 
 # dhcp.cgi
@@ -294,7 +294,7 @@
 'automatic' => 'Automatisch',
 'dod' => 'Dial on Demand:',
 'dod for dns' => 'Dial on Demand voor DNS:',
-'connect on smoothwall restart' => 'Connectie na herstart SmoothWall:',
+'connect on smoothwall restart' => 'Connectie na herstart Smoothwall:',
 'pppoe settings' => 'Additionele PPPoE instellingen:',
 'usb adsl settings' => 'Additionele USB ADSL instellingen:',
 'service name' => 'Service naam:',
@@ -315,12 +315,12 @@
 'remote access2' => 'Toegang van buitenaf:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Bezig met afsluiten van SmoothWall',
+'shutting down smoothwall' => 'Bezig met afsluiten van Smoothwall',
 'shutdown control' => 'Afsluit controle',
 'shutdown' => 'Afsluiten', # button
 'shutdown2' => 'Afsluiten:',
 'shutting down' => 'Bezig met afsluiten',
-'smoothwall has now shutdown' => 'SmoothWall is afgesloten.',
+'smoothwall has now shutdown' => 'Smoothwall is afgesloten.',
 'rebooting smoothwall' => 'Smoothwall wordt herstart.',
 'reboot' => 'Herstart', # button
 'rebooting' => 'Herstarten',

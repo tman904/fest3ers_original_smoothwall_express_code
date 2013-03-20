@@ -1,6 +1,6 @@
 <P><FONT SIZE='3'><STRONG><U>DHCP</U></STRONG></FONT></P>
 
-<P>SmoothWall may optionally run a DHCP server, and this is where it is
+<P>Smoothwall may optionally run a DHCP server, and this is where it is
 configured.</P>
 
 <P>Both the GREEN and PURPLE interfaces can have DHCP service.  Select
@@ -22,18 +22,18 @@ your start address would be 192.168.0.100 and the end address could be
 192.168.0.254.</P>
 
 <P>The two DNS servers' addresses specify what the DHCP server should tell
-its clients to use for their DNS server. Because SmoothWall runs a DNS
+its clients to use for their DNS server. Because Smoothwall runs a DNS
 proxy, you will probably want to leave the default alone and set the Primary
-DNS server to the SmoothWall box's IP address. If you run a local DNS server
+DNS server to the Smoothwall box's IP address. If you run a local DNS server
 and want your desktops to use it, set the Secondary DNS to its address.</P>
 
 <P>The two NTP servers' addresses specify which NTP servers the
-SmoothWall DHCP server should tell its clients to use. This can be used
-to configure the network hosts to time-sync with the SmoothWall's (or other
+Smoothwall DHCP server should tell its clients to use. This can be used
+to configure the network hosts to time-sync with the Smoothwall's (or other
 server's) system time.</P>
 
 <P>The two WINS servers' addresses, likewise, specify what WINS servers the
-SmoothWall DHCP server should tell its clients to use. This is often not
+Smoothwall DHCP server should tell its clients to use. This is often not
 required on very small Windows networks. You can assign primary and
 secondary servers.</P>
 
@@ -49,7 +49,7 @@ give to the clients. This should not be confused with the <STRONG>
 Domain name suffix</STRONG>, described above.</P>
 
 <P>The two NIS servers' addresses, likewise, specify what NIS servers the
-SmoothWall DHCP server should tell its clients to use. This is useful
+Smoothwall DHCP server should tell its clients to use. This is useful
 in UNIX environments which are utilising NIS.</P>
 
 <P>The <STRONG>Add a new static assignment</STRONG> section is used to allocate a

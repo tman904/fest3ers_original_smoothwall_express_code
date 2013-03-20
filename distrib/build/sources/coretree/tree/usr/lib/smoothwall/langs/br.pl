@@ -87,7 +87,7 @@
 'version' => 'Vers&atilde;o: ',
 'sponsors' => 'Patrocinadores',
 'links' => 'Liga&ccedil;&otilde;es',
-'smoothwall homepage' => 'P&aacute; do SmoothWall',
+'smoothwall homepage' => 'P&aacute; do Smoothwall',
 'translation teams' => 'Time de Tradutores',
 
 # dhcp.cgi
@@ -274,7 +274,7 @@
 'automatic' => 'Autom&aacute;tico',
 'dod' => 'Discagem sob demanda:',
 'dod for dns' => 'Discagem sob demanda para DNS:',
-'connect on smoothwall restart' => 'Reiniciar conex&atilde;o no SmoothWall:',
+'connect on smoothwall restart' => 'Reiniciar conex&atilde;o no Smoothwall:',
 'pppoe settings' => 'Configura&ccedil;&otilde;es adicionais PPPoE:',
 'usb adsl settings' => 'Configura&ccedil;&otilde;es adicionais USB ADSL:',
 'service name' => 'Nome do servi&ccedil;o:',
@@ -296,16 +296,16 @@
 'remote access2' => 'Acesso remoto:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'SmoothWall est&aacute; sendo desligado',
+'shutting down smoothwall' => 'Smoothwall est&aacute; sendo desligado',
 'shutdown control' => 'Controle de desligamento',
 'shutdown' => 'Desligar', # button
 'shutdown2' => 'Desligar:',
 'shutting down' => 'Desligando',
-'smoothwall has now shutdown' => 'SmoothWall est&aacute; agora desligado.',
+'smoothwall has now shutdown' => 'Smoothwall est&aacute; agora desligado.',
 'reboot' => 'Reiniciar',
 'rebooting' => 'Reiniciando',
-'rebooting smoothwall' => 'Reiniciando SmoothWall',
-'smoothwall has now rebooted' => 'O SmoothWall est&aacute; sendo reiniciado agora',
+'rebooting smoothwall' => 'Reiniciando Smoothwall',
+'smoothwall has now rebooted' => 'O Smoothwall est&aacute; sendo reiniciado agora',
 
 # status.cgi
 'web server' => 'Servidor Web',
@@ -456,7 +456,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'Configura&ccedil;&atilde;o USB ADSL',
-'usb adsl help' => 'Para utilizar o modem USB voc&ecirc; deve carregar o firmware em sua m&aacute;quina SmoothWall. Por favor obtenha o tarball da Alcatel e ent&atilde;o carregue o arquivo <B>mgmt.o</B> usando o formul&aacute;rio abaixo.',
+'usb adsl help' => 'Para utilizar o modem USB voc&ecirc; deve carregar o firmware em sua m&aacute;quina Smoothwall. Por favor obtenha o tarball da Alcatel e ent&atilde;o carregue o arquivo <B>mgmt.o</B> usando o formul&aacute;rio abaixo.',
 'upload' => 'Carregar', # button
 'upload successfull' => 'Carregamento bem sucedido.',
 'could not create file' => 'N&atilde;o foi poss&iacute;vel criar arquivo.',

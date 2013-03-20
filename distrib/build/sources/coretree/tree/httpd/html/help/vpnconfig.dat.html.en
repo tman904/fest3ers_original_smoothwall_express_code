@@ -3,7 +3,7 @@
 <P>This page is used to do basic VPN configuration. To find out more about
 VPNs, please visit the FreeSWAN web site <A
 HREF='http://www.freeswan.org'>here</A>.</P> Although primarily intended to
-VPN multiple SmoothWalls together, it is possible for SmoothWall to
+VPN multiple Smoothwalls together, it is possible for Smoothwall to
 inter-operate with any VPN product that supports IPSec and standard encryption
 techniques such as 3DES.</P>
 
@@ -42,12 +42,12 @@ their information. To remove a connection, check its checkbox and click the
 connections checkbox and then click the <B>Edit</B> button.</P>
 
 <P><B>Import/Export:</B> To export settings, simply click the <B>Export</B> button.
-These can then be imported to SmoothWall by using the <B>Browse</B> button to find
+These can then be imported to Smoothwall by using the <B>Browse</B> button to find
 the saved file on your hard rive and uploading it using the form by using the
-<B>Import</B> button to upload them to your SmoothWall.  This is best used by
+<B>Import</B> button to upload them to your Smoothwall.  This is best used by
 exporting your settings and sending them to the person at the other end of
 your VPN connection to import to ensure all settings match.  Note that the
 export file contains the VPN secret information, so you must ensure that the
 file is transfered securely!  Either put it on a floppy disk and mail it, or
 use a secure Internet link such as a PGP encrypted mail or https to the
-other SmoothWall.</P>
+other Smoothwall.</P>

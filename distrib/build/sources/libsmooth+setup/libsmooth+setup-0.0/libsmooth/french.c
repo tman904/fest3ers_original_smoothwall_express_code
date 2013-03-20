@@ -94,7 +94,7 @@ char *french_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Recherche: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall a détecté l'interface réseau dans votre machine: %s",
+"Smoothwall a détecté l'interface réseau dans votre machine: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Le nom du module ne peut pas être vide.",
 /* TR_STATIC */
@@ -120,7 +120,7 @@ char *french_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Bienvenue au programme d'installation de SmoothWall.  Venez voir " \
+"Bienvenue au programme d'installation de Smoothwall.  Venez voir " \
 "notre page d'accueil à http://www.smoothwall.org.  Si vous annulez " \
 "l'un des écrans qui suivent l'ordinateur redémarrera.",
 /* TR_NO_IDE_HARDDISK */
@@ -137,9 +137,9 @@ char *french_tr[] = {
 /* TR_NO_IDE_CDROM */
 "Aucun CDROM IDE.",
 /* TR_INSERT_CDROM */
-"Placer le CD de SmoothWall dans le lecteur CDROM.",
+"Placer le CD de Smoothwall dans le lecteur CDROM.",
 /* TR_INSERT_FLOPPY */
-"Insérer la disquette des pilotes (drivers) de SmoothWall dans le lecteur.",
+"Insérer la disquette des pilotes (drivers) de Smoothwall dans le lecteur.",
 /* TR_PREPARE_HARDDISK */
 "Le programme d'installation va maintenant préparer le disque dur IDE " \
 "de %s. Le disque sera partitionné, et un système de gestion " \
@@ -205,7 +205,7 @@ char *french_tr[] = {
 /* TR_CONGRATULATIONS */
 "Félicitations!",
 /* TR_CONGRATULATIONS_LONG */
-"L'installation de SmoothWall a réussit. Retirez le CDROM et la disquette " \
+"L'installation de Smoothwall a réussit. Retirez le CDROM et la disquette " \
 "de l'ordinateur.  La configuration du système va maintenant commencer. " \
 "Vous aurez la possibilité de faire la configuration de vos périphériques RNIS et réseaux " \
 "ainsi que de choisir les mots de passe du système. Une fois que la " \
@@ -214,7 +214,7 @@ char *french_tr[] = {
 "et il est suggéré que vous configuriez la connexion à internet" \
 "(si vous en avez besoin) et l'accès à distance.  N'oubliez pas " \
 "de spécifier un mot de passe pour l'utilisateur 'dial' si vous voulez " \
-"que les utilisateurs de SmoothWall non 'admin' puissent avoir contrôle de la ligne.",
+"que les utilisateurs de Smoothwall non 'admin' puissent avoir contrôle de la ligne.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Pressez OK pour redémarrer l'ordinateur.",
 /* TR_ERROR */
@@ -229,7 +229,7 @@ char *french_tr[] = {
 "Sélectionnez un type de CDROM",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "Un lecteur de CDROM IDE n'a été pas trouvé dans l'ordinateur. " \
-"Sélectionnez les pilotes suivants que SmoothWall utilisera pour accéder " \
+"Sélectionnez les pilotes suivants que Smoothwall utilisera pour accéder " \
 "au lecteur CDROM.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(suggestion %x)",
@@ -264,7 +264,7 @@ char *french_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Le téléchargement a échoué.",
 /* TR_ENTER_URL */
-"Inscrivez l'URL du fichier tar.gz de SmoothWall. " \
+"Inscrivez l'URL du fichier tar.gz de Smoothwall. " \
 "AVERTEEEEISSEMENT: Le DNS n'est pas disponible!  Ceci devrait terminer avec " \
 "le fichier 'smoothwall.tgz'.",
 
@@ -334,7 +334,7 @@ char *french_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Il n'est pas possible d'écrire le mot de passe pour 'setup'.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Inscrivez le mot de passe pour l'administrateur de SmoothWall. " \
+"Inscrivez le mot de passe pour l'administrateur de Smoothwall. " \
 "Seulement l'utilisateur 'admin' peut accéder aux pages webs d'administration.",
 /* TR_SETTING_ADMIN_PASSWORD */
 "Sauvegarde du mot de passe pour administrateur....",
@@ -452,7 +452,7 @@ char *french_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Menu de configuration du réseau",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Sélectionnez le configuration du réseau pour SmoothWall.  Les configurations " \
+"Sélectionnez le configuration du réseau pour Smoothwall.  Les configurations " \
 "qui suivent indiquent les interfaces qui sont reliées à l'ethernet. " \
 "Si vous changez cet élément le réseau devra être relancé, et " \
 "vous serez forcé de reconfigurer les pilotes du réseau.",
@@ -505,7 +505,7 @@ char *french_tr[] = {
 "AVERTEEEEISSEMENT",
 /* TR_WARNING_LONG */
 "Si vous changez l'adresse IP, et que vous êtes logué par accès à distance, " \
-"la connexion à la machine SmoothWall sera interrompue et vous aurez besoin " \
+"la connexion à la machine Smoothwall sera interrompue et vous aurez besoin " \
 "de vous reconnecter avec la nouvelle adresse IP.  Ceci est une opération qui " \
 "est très risquée et qui devrait seulement être essayée si vous avez " \
 "directement accès a la machine pour régler les problèmes éventuels.",
@@ -605,7 +605,7 @@ char *french_tr[] = {
 /* TR_USB_CONTROLLER_SELECTION */
 "Sélection du contrôleur USB",
 /* TR_CHOOSE_THE_USB_CONTROLLER_INSTALLED */
-"Choisissez le contrôleur USB installé sur la machine SmoothWall .",
+"Choisissez le contrôleur USB installé sur la machine Smoothwall .",
 /* TR_USB_CONTROLLER_NOT_DETECTED */
 "Contrôleur USB non détecté.",
 /* TR_UNABLE_TO_FIND_A_USB_CONTROLLER */

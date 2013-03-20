@@ -30,7 +30,7 @@
 
 #include "langs.h"
 
-#define TITLE "SmoothWall Express 3.1"
+#define TITLE "Smoothwall Express 3.1"
 
 #define STRING_SIZE 256
 

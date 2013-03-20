@@ -91,7 +91,7 @@ close (FILE);
 if ($cgiparams{'ACTION'} eq $tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "SmoothWall diagnostics\r\n";
+	print "Smoothwall diagnostics\r\n";
 	print "Section: $cgiparams{'SECTION'} ";
 	print "Date: $cgiparams{'DAY'} $longmonths[$cgiparams{'MONTH'}]\r\n\r\n"; 
 
@@ -138,7 +138,7 @@ print <<END
 <TR>
 	<TD class='base' WIDTH='10%'>$tr{'section'}</TD>
 	<TD WIDTH='20%'><SELECT NAME='SECTION'>
-	<OPTION $selected{'SECTION'}{'smoothwall'} VALUE='smoothwall'>SmoothWall
+	<OPTION $selected{'SECTION'}{'smoothwall'} VALUE='smoothwall'>Smoothwall
 	<OPTION $selected{'SECTION'}{'ppp'} VALUE='ppp'>PPP
 	<OPTION $selected{'SECTION'}{'isdn'} VALUE='isdn'>ISDN
 	<OPTION $selected{'SECTION'}{'dhcp'} VALUE='dhcp'>$tr{'dhcp server'}

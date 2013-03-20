@@ -87,7 +87,7 @@
 'version' => 'Versjon: ',
 'sponsors' => 'Sponsorer',
 'links' => 'Lenker',
-'smoothwall homepage' => 'SmoothWall Hjemmeside',
+'smoothwall homepage' => 'Smoothwall Hjemmeside',
 'translation teams' => 'Oversettere',
 
 # dhcp.cgi
@@ -275,7 +275,7 @@
 'automatic' => 'Automatisk',
 'dod' => 'Ring Ved Behov:',
 'dod for dns' => 'Ring Ved Behov for DNS:',
-'connect on smoothwall restart' => 'Koble til n&aring;r SmoothWall starter p&aring; ny:',
+'connect on smoothwall restart' => 'Koble til n&aring;r Smoothwall starter p&aring; ny:',
 'pppoe settings' => 'Tilleggsinstillinger for  PPPoE:',
 'usb adsl settings' => 'Tilleggsinstillinger USB ADSL:',
 'service name' => 'Tjeneste navn:',
@@ -296,17 +296,17 @@
 'remote access2' => 'Fjerntilgang:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Sl&aring;r av SmoothWall',
+'shutting down smoothwall' => 'Sl&aring;r av Smoothwall',
 'shutdown control' => 'Sl&aring; av kontroll',
 'shutdown' => 'SLA AV', # button
 'shutdown2' => 'Sl&aring; av:',
 'shutting down' => 'Sl&aring;r av',
-'smoothwall has now shutdown' => 'SmoothWall har n&aring; blitt sl&aring;tt av.',
-'smoothwall has now shutdown' => 'SmoothWall er n&aring; sl&aring;tt av.',
-'rebooting smoothwall' => 'Starter SmoothWall p&aring; ny',
+'smoothwall has now shutdown' => 'Smoothwall har n&aring; blitt sl&aring;tt av.',
+'smoothwall has now shutdown' => 'Smoothwall er n&aring; sl&aring;tt av.',
+'rebooting smoothwall' => 'Starter Smoothwall p&aring; ny',
 'reboot' => 'START PA NY', # button
 'rebooting' => 'Starter p&aring; ny',
-'smoothwall has now rebooted' => 'SmoothWall har n&aring; startet p&aring; ny.',
+'smoothwall has now rebooted' => 'Smoothwall har n&aring; startet p&aring; ny.',
 
 # status.cgi
 'web server' => 'Vev tjener',
@@ -457,7 +457,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'USB ADSL oppsett',
-'usb adsl help' => 'For &aring; ta i bruk USB modemet, m&aring; du laste opp firmware til SmoothWall boksen. Vennligst last den tar-pakken fra Alcatel for s&aring; &aring; laste opp filen <b>mgmt.o</b> ved hjelp av skjemaet under.',
+'usb adsl help' => 'For &aring; ta i bruk USB modemet, m&aring; du laste opp firmware til Smoothwall boksen. Vennligst last den tar-pakken fra Alcatel for s&aring; &aring; laste opp filen <b>mgmt.o</b> ved hjelp av skjemaet under.',
 'upload' => 'Last opp', # button
 'upload successfull' => 'Opplastingen var vellykket.',
 'could not create file' => 'Kunne ikke lage filen.',

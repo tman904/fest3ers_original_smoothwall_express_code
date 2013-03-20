@@ -236,7 +236,7 @@ foreach my $update ( sort keys %updates ){
 if ( $installed_count > 0 ){
 	print qq{
 		<strong>$tr{'installed updates'}</strong><br>
-		<span style='color: #808080;'>The following updates have already been applied to your SmoothWall Express system</span>
+		<span style='color: #808080;'>The following updates have already been applied to your Smoothwall Express system</span>
 		<br/>
 		<br/>
 	};

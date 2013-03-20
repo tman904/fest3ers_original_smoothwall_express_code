@@ -116,7 +116,7 @@ else
 if ($cgiparams{'ACTION'} eq $tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "SmoothWall proxy log\r\n";
+	print "Smoothwall proxy log\r\n";
 	print "Date: $cgiparams{'DAY'} $longmonths[$cgiparams{'MONTH'}]\r\n"; 
 	print "Source IP: $cgiparams{'SOURCE_IP'}\r\n";
 	if ($cgiparams{'ENABLE_FILTER'} eq 'on') {

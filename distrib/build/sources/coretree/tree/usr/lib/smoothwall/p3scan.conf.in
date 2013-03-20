@@ -7,7 +7,7 @@ virusregexp = .*: (.*) (FOUND|ERROR)
 broken
 template = /usr/lib/smoothwall/p3scan.mail
 notify = The email has been removed.
-subject = SmoothWall detected a virus: 
+subject = Smoothwall detected a virus: 
 viruscode = 2,1
 demime
 scannertype = basic

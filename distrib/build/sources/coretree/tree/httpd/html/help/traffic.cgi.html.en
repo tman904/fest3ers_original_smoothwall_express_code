@@ -1,6 +1,6 @@
 <P><FONT SIZE='3'><B><U>QoS</U></B></FONT></P>
 
-<p>SmoothWall is able to decide if some of the network traffic is more
+<p>Smoothwall is able to decide if some of the network traffic is more
 urgent than others. Imagine your network connection is like a multilane
 freeway or motorway. The faster the connection, the more lanes. However, a
 motorway is not very fast if every lane is blocked by a large lorry!</p>
@@ -32,7 +32,7 @@ actually is rather than believing promises of the ISP.  Note that for ADSL
 connection speed can vary, so try to do speed tests at the busiest time of day,
 otherwise you may find that QoS will stop working if the line gets busier.</p>
 
-<p>It is very important that the SmoothWall is the slowest part of the network
+<p>It is very important that the Smoothwall is the slowest part of the network
 (only by a few percent will do) - you may need to adjust the headroom parameter 
 so that you have the minimum headroom where QoS is actually working.
 How to tell if it's working? Try doing a low priority task such as p2p file sharing

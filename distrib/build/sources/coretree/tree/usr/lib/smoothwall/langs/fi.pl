@@ -87,7 +87,7 @@
 'version' => 'Versio: ',
 'sponsors' => 'Tukijat',
 'links' => 'Linkit',
-'smoothwall homepage' => 'SmoothWallin kotisivu',
+'smoothwall homepage' => 'Smoothwallin kotisivu',
 'translation teams' => 'kääntäjäryhmät',
 
 # dhcp.cgi
@@ -274,7 +274,7 @@
 'automatic' => 'Automaattisesti',
 'dod' => 'Yhdist&auml; tarvittaessa:',
 'dod for dns' => 'Yhdist&auml; tarvittaessa DNS&auml;&auml;:',
-'connect on smoothwall restart' => 'Yhdist&auml; SmoothWallin k&auml;ynnistyess&auml;:',
+'connect on smoothwall restart' => 'Yhdist&auml; Smoothwallin k&auml;ynnistyess&auml;:',
 'pppoe settings' => 'PPPoE -asetukset:',
 'usb adsl settings' => 'USB ADSL -asetukset:',
 'service name' => 'Palvelun nimi:',
@@ -296,16 +296,16 @@
 'remote access2' => 'Et&auml;k&auml;ytt&ouml;:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Sammutetaan SmoothWall',
+'shutting down smoothwall' => 'Sammutetaan Smoothwall',
 'shutdown control' => 'Sammutus',
 'shutdown' => 'Sammuta', # button
 'shutdown2' => 'Sammuta:',
 'shutting down' => 'Sammutan',
-'smoothwall has now shutdown' => 'SmoothWall on nyt sammutettu.',
-'rebooting smoothwall' => 'K&auml;ynnistet&auml;&auml;n SmoothWall uudelleen',
+'smoothwall has now shutdown' => 'Smoothwall on nyt sammutettu.',
+'rebooting smoothwall' => 'K&auml;ynnistet&auml;&auml;n Smoothwall uudelleen',
 'reboot' => 'Kaynnista uudelleen', # button
 'rebooting' => 'K&auml;ynnistet&auml;&auml;n uudelleen',
-'smoothwall has now rebooted' => 'SmoothWall on k&auml;ynnistetty.',
+'smoothwall has now rebooted' => 'Smoothwall on k&auml;ynnistetty.',
 
 # status.cgi
 'web server' => 'Web-palvelin',
@@ -456,7 +456,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'USB ADSL -asetukset',
-'usb adsl help' => 'K&auml;ytt&auml;&auml;ksesi USB-modeemia sinun on ladattava uusi modeemin laiteohjelmisto SmoothWall-koneellesi. Nouda tar-paketti Alcatelin sivuilta ja lataa tiedosto <B>mgmt.o</B> alla olevaa lomaketta k&auml;ytt&auml;en.',
+'usb adsl help' => 'K&auml;ytt&auml;&auml;ksesi USB-modeemia sinun on ladattava uusi modeemin laiteohjelmisto Smoothwall-koneellesi. Nouda tar-paketti Alcatelin sivuilta ja lataa tiedosto <B>mgmt.o</B> alla olevaa lomaketta k&auml;ytt&auml;en.',
 'upload' => 'Lataa', # button
 'upload successfull' => 'Lataus onnistui.',
 'could not create file' => 'Tiedoston luonti ep&auml;onnistui.',

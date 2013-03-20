@@ -87,7 +87,7 @@
 'version' => 'Verzió: ',
 'sponsors' => 'Szponzorok',
 'links' => 'Linkek',
-'smoothwall homepage' => 'SmoothWall Weboldal',
+'smoothwall homepage' => 'Smoothwall Weboldal',
 "translation teams" => 'Fordító csoportok',
 
 # dhcp.cgi
@@ -274,7 +274,7 @@
 'automatic' => 'Automatikus',
 'dod' => 'Dial on Demand:',
 'dod for dns' => 'Dial on Demand for DNS:',
-'connect on smoothwall restart' => 'Kapcsolódás a SmoothWall újraindítása után:',
+'connect on smoothwall restart' => 'Kapcsolódás a Smoothwall újraindítása után:',
 'pppoe settings' => 'Additional PPPoE settings:',
 'usb adsl settings' => 'Additional USB ADSL settings:',
 'service name' => 'Service name:',
@@ -293,16 +293,16 @@
 'remote access2' => 'Távoli hozzáférés:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'SmoothWall leállítása',
+'shutting down smoothwall' => 'Smoothwall leállítása',
 'shutdown control' => 'Leállítás vezérlés',
 'shutdown' => 'Shutdown', # button
 'shutdown2' => 'Leállítás:',
 'shutting down' => 'Leállítás folyamatban',
-'smoothwall has now shutdown' => 'A SmoothWall leállt.',
-'rebooting smoothwall' => 'A SmoothWall újraindítása',
+'smoothwall has now shutdown' => 'A Smoothwall leállt.',
+'rebooting smoothwall' => 'A Smoothwall újraindítása',
 'reboot' => 'Reboot', # button
 'rebooting' => 'Újraindítás',
-'smoothwall has now rebooted' => 'A SmoothWall újraindult.',
+'smoothwall has now rebooted' => 'A Smoothwall újraindult.',
 # status.cgi
 'web server' => 'Web szerver',
 'cron server' => 'CRON szerver',
@@ -452,7 +452,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'USB ADSL beállítás',
-'usb adsl help' => 'Az USB ADSL modem használatához fel kell tölteni a firmware-ta SmoothWall-ba. Töltsd le a tar file-t az Alcatel-tõl majjd töltsd fel <B>mgmt.o</B> az alábbiak szerint.',
+'usb adsl help' => 'Az USB ADSL modem használatához fel kell tölteni a firmware-ta Smoothwall-ba. Töltsd le a tar file-t az Alcatel-tõl majjd töltsd fel <B>mgmt.o</B> az alábbiak szerint.',
 'upload' => 'Feltolt', # button
 'upload successfull' => 'Feltoltes sikeres.',
 'could not create file' => 'Nem lehet a file-t létrehozni.',

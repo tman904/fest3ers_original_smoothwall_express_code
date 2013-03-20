@@ -1,6 +1,6 @@
 <P><FONT SIZE='3'><B><U>Web Proxy</U></B></FONT></P>
 
-<P>SmoothWall has the capability to run a caching web proxy for both the
+<P>Smoothwall has the capability to run a caching web proxy for both the
 GREEN and PURPLE networks. This caching mechanism naturally requires disk
 space, and as such, you should consider the available space to use for
 caching when configuring the proxy.</P>
@@ -14,7 +14,7 @@ megabytes. The size of the cache may grow beyond this figure, however,
 because files are only removed from the cache every 15 minutes. You should
 set this figure so the cache will not fill the available disk space.</P>
 
-<P>The <B>Remote proxy</B> box allows SmoothWall to utilize your ISP's own
+<P>The <B>Remote proxy</B> box allows Smoothwall to utilize your ISP's own
 web proxy.  Enter the machine name in the following format: hostname:port</P>
 
 <P>The <B>Remote proxy username</B> and <B>Remote proxy password</B> boxes
@@ -36,14 +36,14 @@ the proxy will allow through.  You can use this to, for example, stop people fro
 downloading large files that would slow down your network.  The default is
 not to place any restriction on download size.</B>
 
-<P><B>Transparent</B> proxying is a feature of the SmoothWall web proxy
+<P><B>Transparent</B> proxying is a feature of the Smoothwall web proxy
 whereby there is no need to configure the web browsers for proxying.
 Requests are automatically redirected through the cache.  In this way, it is
 possible to stop desktop clients from browsing without going through your
 proxy.</P>
 
 <P>If you are not using transparent proxying, then you should configure your
-browser to use port 800 on the SmoothWall as the web proxy.</P>
+browser to use port 800 on the Smoothwall as the web proxy.</P>
 
 <P>Enable or disable the proxy by clicking the <B>Enable</B> checkbox and pressing
 <B>Save</B>.</P>

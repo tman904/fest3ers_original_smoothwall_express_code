@@ -1,4 +1,4 @@
-SmoothWall Express Build System
+Smoothwall Express Build System
 
 OVERVIEW
 
@@ -21,7 +21,7 @@ each compiled package is tarred up into a tarball that is used in step 3.
 
 3. Create the last few tools needed to create the final bootable ISO (such
 as mkisofs, and grub).  Then build the smoothwall.tgz, by untarring the
-packages compiled in step 2 into a new directory.  SmoothWall specific files
+packages compiled in step 2 into a new directory.  Smoothwall specific files
 are added from the "coretree" package.  Finally build the bootdisk images
 and the ISO itself.
 
@@ -70,12 +70,12 @@ fetched.
 build/target contains all of the final compiled/assembled package tarballs that
 will be used to prepare the installation media. build/target/isos contains
 the ISO 9660 images that users will download, burn to CD/DVD, and install to
-load their own SmoothWall Express firewalls.
+load their own Smoothwall Express firewalls.
 
 build/toolcrib contains all of the top-level scripts used to check, prepare,
 compile, build and assemble the system. It contains scripts that install the
 necessary packages on a standard GNU/Linux distribution so that it can build
-SmoothWall Express. There is a script used to build the three phases of the
+Smoothwall Express. There is a script used to build the three phases of the
 toolchain and a script used to build the final phase of the system. There are
 a number of scripts used to adjust the toolchain during the build process
 and to verify its correct operation.
@@ -111,7 +111,7 @@ will end up in this build/target/iso dir.
 THE TOOLCRIB
 
 The toolcrib contains nearly all of the scripts and utilities used to build
-SmoothWall. In alphabetical order, they are:
+Smoothwall. In alphabetical order, they are:
 
 as_chroot - enable the build system to perform specific operations as root
 (the super user) in a change-root (chroot) jail. This allows the user to
@@ -123,7 +123,7 @@ parent. This is part of what enables the system to be built almost anywhere in
 the host's filesystem(s).
 
 dlverify - this script is used to perform that actual download of each package's
-source tarballs. It defaults to looking in the SmoothWall Express project's
+source tarballs. It defaults to looking in the Smoothwall Express project's
 archive for them, but will fall back to the upstream insternet sources as needed.
 There are provisions to use different internet and local collections. There are
 a few options available to control other aspects of its operation. Please read the
@@ -234,7 +234,7 @@ it was interrupted.
 
 TESTED HOST ENVIRONMENTS
 
-SmoothWall Express 3.1 (of course)
+Smoothwall Express 3.1 (of course)
 Debian Wheezy
 Debian Squeeze
 Gentoo
@@ -249,19 +249,19 @@ and GLIBC 3.15-3.17.
 THANKS TO
 
 Linux From Scratch (www.linuxfromscratch.org); their LFS books were invaluable
-on the journey enhancing the build system and imodernizing the source packages.
+on the journey enhancing the build system and modernizing the source packages.
 
 
 CREDITS
 
-Lawrence Manning (smoothwall@aslak.net)
+Lawrence Manning (smoothwall@aslak.net) - Initial implementation.
 Neal Murphy (neal.p.murphy@alum.wpi.edu) - SMP, re-entrance and bread crumbs,
   general modernization, 2009-2013.
 
 
 COPYRIGHT AND LICENCE
 
-The SmoothWall build system and associated scripts are (c) SmoothWall Ltd,
+The Smoothwall build system and associated scripts are (c) Smoothwall Ltd,
 2005 and licenced under the GNU GPL v2.
 
 Murphy's enhancements are © Neal P. Murphy and fully licensed under the GNU GPL v2.

@@ -111,7 +111,7 @@
 'version' => 'Version: ',
 'sponsors' => 'Sponsoren',
 'links' => 'Links',
-'smoothwall homepage' => 'SmoothWall Homepage',
+'smoothwall homepage' => 'Smoothwall Homepage',
 'translation teams' => 'Übersetzer-Teams',
 
 # dhcp.cgi
@@ -321,16 +321,16 @@
 'remote access2' => 'Fernzugang:',
 
 # shutdown.cgi
-'shutting down smoothwall' => 'Beende SmoothWall',
+'shutting down smoothwall' => 'Beende Smoothwall',
 'shutdown control' => 'Kontrolle zum Herunterfahren',
 'shutdown' => 'Beenden', # button
 'shutdown2' => 'Beenden:',
 'shutting down' => 'fahre herunter',
-'smoothwall has now shutdown' => 'SmoothWall ist jetzt heruntergefahren.',
-'rebooting smoothwall' => 'SmoothWall wird neu gestartet.',
+'smoothwall has now shutdown' => 'Smoothwall ist jetzt heruntergefahren.',
+'rebooting smoothwall' => 'Smoothwall wird neu gestartet.',
 'reboot' => 'Neustart', # button
 'rebooting' => 'Starte neu',
-'smoothwall has now rebooted' => 'SmoothWall wurde neu gestartet.',
+'smoothwall has now rebooted' => 'Smoothwall wurde neu gestartet.',
 
 # status.cgi
 'web server' => 'Webserver',
@@ -481,7 +481,7 @@
 
 # usbadsl.cgi
 'usb adsl setup' => 'USB ADSL-Setup',
-'usb adsl help' => 'Um das USB-Modem nutzen zu k&ouml;nnen m&uuml;ssen Sie die Modem-Firmware zu Ihrer SmoothWall hochladen. Bitte holen Sie das Archiv von Alcatels WebSite und laden Sie anschlie&szlig;end die Datei <B>mgmt.o</B> in die SmoothWall hoch indem Sie folgendes Formular verwenden.',
+'usb adsl help' => 'Um das USB-Modem nutzen zu k&ouml;nnen m&uuml;ssen Sie die Modem-Firmware zu Ihrer Smoothwall hochladen. Bitte holen Sie das Archiv von Alcatels WebSite und laden Sie anschlie&szlig;end die Datei <B>mgmt.o</B> in die Smoothwall hoch indem Sie folgendes Formular verwenden.',
 'upload' => 'Hochladen', # button
 'upload successfull' => 'Datei&uuml;bertragung erfolgreich.',
 'could not create file' => 'Datei konnte nicht erstellt werden.',

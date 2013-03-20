@@ -67,7 +67,7 @@ if($added)
 if ($found == 1)
 {
 	if ($temp[1] =~ /^success/) {
-		print STDERR "got my.SmoothWall system info with id [$sysid]\n";
+		print STDERR "got my.Smoothwall system info with id [$sysid]\n";
 		exit 0; 
 	} else {
 		exit 1; 

@@ -231,7 +231,7 @@ echo "  dhcpd (if enabled)"
 echo "  Saving dmesg buffer to /var/log/dmesg"
 dmesg >/var/log/dmesg
 
-logger -t smoothwall "SmoothWall started."
+logger -t smoothwall "Smoothwall started."
 
 /usr/bin/sounds/startupsound
 

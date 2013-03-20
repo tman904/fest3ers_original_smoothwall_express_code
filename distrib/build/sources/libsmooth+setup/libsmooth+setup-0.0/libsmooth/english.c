@@ -75,7 +75,7 @@ char *english_tr[] = {
 /* TR_LOOKING_FOR_NIC (%s is a nic name) */
 "Looking for: %s",
 /* TR_FOUND_NIC (%s is a nic name) */
-"SmoothWall Express has detected the following NIC in your machine: %s",
+"Smoothwall Express has detected the following NIC in your machine: %s",
 /* TR_MODULE_NAME_CANNOT_BE_BLANK */
 "Module name cannot be blank.",
 /* TR_STATIC */
@@ -106,7 +106,7 @@ char *english_tr[] = {
 /* INSTALL */
 /***********/
 /* TR_WELCOME */
-"Welcome to the SmoothWall Express installation program. Please visit our " \
+"Welcome to the Smoothwall Express installation program. Please visit our " \
 "homepage at http://www.smoothwall.org.  Selecting Cancel on any " \
 "of the following screens will reboot the computer.",
 /* TR_NO_HARDDISK */
@@ -114,7 +114,7 @@ char *english_tr[] = {
 /* TR_SELECT_INSTALLATION_MEDIA */
 "Select installation media",
 /* TR_SELECT_INSTALLATION_MEDIA_LONG */
-"SmoothWall Express can be installed from multiple sources.  The simplest is to " \
+"Smoothwall Express can be installed from multiple sources.  The simplest is to " \
 "use the machines CDROM drive. If the computer lacks a drive, you may " \
 "install via another machine on the LAN which has the installation files " \
 "available via HTTP.",
@@ -123,9 +123,9 @@ char *english_tr[] = {
 /* TR_NO_CDROM */
 "No CDROM drive found.",
 /* TR_INSERT_CDROM */
-"Please insert the SmoothWall Express CD in the CDROM drive.",
+"Please insert the Smoothwall Express CD in the CDROM drive.",
 /* TR_INSERT_FLOPPY */
-"Please insert the SmoothWall Express driver diskette in the floppy drive.",
+"Please insert the Smoothwall Express driver diskette in the floppy drive.",
 /* TR_PREPARE_HARDDISK */
 "The installation program will now prepare the harddisk on %s. " \
 "First the disk will be partitioned, and then the partitions will have " \
@@ -135,7 +135,7 @@ char *english_tr[] = {
 /* TR_PREPARE_HARDDISK_WARNING_LONG */
 "You are about to PERMANENTLY ERASE the contents of the harddisk. This will " \
 "OVERWRITE ALL DATA ON ALL PARTITIONS on your harddisk. If you " \
-"would like to continue with the installation of SmoothWall Express, " \
+"would like to continue with the installation of Smoothwall Express, " \
 "press the Ok button. Otherwise press Cancel to ABORT the installation " \
 "process. There is NO UNDO FEATURE once this has been done.",
 /* TR_PARTITIONING_DISK */
@@ -203,13 +203,13 @@ char *english_tr[] = {
 /* TR_CONGRATULATIONS */
 "Congratulations!",
 /* TR_CONGRATULATIONS_LONG */
-"SmoothWall Express was successfully installed. Please remove any floppy disks or " \
+"Smoothwall Express was successfully installed. Please remove any floppy disks or " \
 "CDROMs in the computer. Setup will now run where you may configure ISDN, " \
 "network cards, and the system passwords. After Setup has been " \
 "completed, you should point your web browser at http://smoothwall:81 or " \
-"https://smoothwall:441 (or whatever you name your SmoothWall Express), and configure " \
+"https://smoothwall:441 (or whatever you name your Smoothwall Express), and configure " \
 "dialup networking (if required) and remote access. Remember to set " \
-"a password for the SmoothWall Express 'dial' user, if you wish non SmoothWall Express " \
+"a password for the Smoothwall Express 'dial' user, if you wish non Smoothwall Express " \
 "'admin' users to be able to control the link.",
 /* TR_PRESS_OK_TO_REBOOT */
 "Press Ok to reboot.",
@@ -225,7 +225,7 @@ char *english_tr[] = {
 "Select CDROM type",
 /* TR_SELECT_CDROM_TYPE_LONG */
 "No IDE CDROM was detected in this machine.  Please select which of the " \
-"following drivers you wish to use so that SmoothWall Express can access the CDROM.",
+"following drivers you wish to use so that Smoothwall Express can access the CDROM.",
 /* TR_SUGGEST_IO (%x is an IO number) */
 "(suggest %x)",
 /* TR_SUGGEST_IRQ (%d is an IRQ number) */
@@ -259,7 +259,7 @@ char *english_tr[] = {
 /* TR_FAILED_TO_DOWNLOAD */
 "Failed to download.",
 /* TR_ENTER_URL */
-"Enter the URL to the SmoothWall tar.gz file. " \
+"Enter the URL to the Smoothwall tar.gz file. " \
 "WARNING: DNS not available!  This should end with the file 'smoothwall.tgz'.",
 
 /* nic.c */
@@ -330,11 +330,11 @@ char *english_tr[] = {
 /* TR_RESTORE_CONFIGURATION */
 "Restore configuration",
 /* TR_RESTORE_LONG */
-"Do you want to restore the configuration for this SmoothWall Express from a " \
+"Do you want to restore the configuration for this Smoothwall Express from a " \
 "previous installation using a backup floppy disk? If you select " \
 "'Yes', the areas which were restored from the backup will be " \
 "automatically configured and will not be displayed to you. This can also " \
-"be used to restore settings from a previous version of SmoothWall Express.",
+"be used to restore settings from a previous version of Smoothwall Express.",
 /* TR_DO_YOU_WANT_TO_REBOOT */
 "A reboot is required to make changed settings active. Do you wish to " \
 "reboot now?",
@@ -354,12 +354,12 @@ char *english_tr[] = {
 /* TR_PROBLEM_SETTING_SETUP_PASSWORD */
 "Problem setting 'setup' password.",
 /* TR_ENTER_ADMIN_PASSWORD */
-"Enter SmoothWall admin password.  This is the user to use for " \
-"logging into the SmoothWall web administration pages.",
+"Enter Smoothwall admin password.  This is the user to use for " \
+"logging into the Smoothwall web administration pages.",
 /* TR_SETTING_ADMIN_PASSWORD */
-"Setting SmoothWall admin password....",
+"Setting Smoothwall admin password....",
 /* TR_PROBLEM_SETTING_ADMIN_PASSWORD */
-"Problem setting SmoothWall admin password.",
+"Problem setting Smoothwall admin password.",
 /* TR_PASSWORD_PROMPT */
 "Password:",
 /* TR_AGAIN_PROMPT */
@@ -470,7 +470,7 @@ char *english_tr[] = {
 /* TR_NETWORK_CONFIGURATION_MENU */
 "Network configuration menu",
 /* TR_NETWORK_CONFIGURATION_TYPE_LONG */
-"Select the network configuration for SmoothWall Express.  The following " \
+"Select the network configuration for Smoothwall Express.  The following " \
 "configuration types list those interfaces which have ethernet attached. " \
 "If you change this setting, a network restart will be required, and you " \
 "will have to reconfigure the network driver assignments.",
@@ -524,7 +524,7 @@ char *english_tr[] = {
 "WARNING",
 /* TR_WARNING_LONG */
 "If you change this IP address, and you are logged in remotely, " \
-"your connection to the SmoothWall Express machine will be broken, and you will " \
+"your connection to the Smoothwall Express machine will be broken, and you will " \
 "have to reconnect on the new IP. This is a risky operation, and should " \
 "only be attempted if you have physical access to the machine, should " \
 "something go wrong.",
@@ -615,13 +615,13 @@ char *english_tr[] = {
 "Port:",
 /* TR_WEB_PROXY_LONG */
 "When requesting the Update list, " \
-"SmoothWall Express must connect to a webserver. Some ISPs will block " \
-"this direct traffic, and instead they will require SmoothWall Express to access " \
+"Smoothwall Express must connect to a webserver. Some ISPs will block " \
+"this direct traffic, and instead they will require Smoothwall Express to access " \
 "this server indirectly, via a web proxy. If your ISP requires you to " \
 "connect this way, please enter the web proxy Hostname and Port. Most ISPs " \
 "do not require you to connect through a web proxy, in which case you should " \
 "leave these settings blank. Note that this setting has nothing to do with " \
-"SmoothWall Express\' built in proxy service.",
+"Smoothwall Express\' built in proxy service.",
 /* TR_PORT_IS_INVALID */
 "Port is invalid.",
 /* TR_PORT_NOT_GIVEN */
@@ -681,7 +681,7 @@ char *english_tr[] = {
 "Select the default security policy for outgoing requests. This setting does NOT " \
 "affect incoming requests in any way, which are always blocked unless explicitily allowed.\n" \
 "\n" \
-"   'Open' : all outgoing requests are allowed (this is the same as previous versions of SmoothWall Express).\n" \
+"   'Open' : all outgoing requests are allowed (this is the same as previous versions of Smoothwall Express).\n" \
 "   'Half-open' : most outoing requests are allowed, except for potentionally harmful ones.\n" \
 "   'Closed' : all outgoing requests are blocked, and must be explicitly enabled on the " \
 "ports and services you require.\n" \

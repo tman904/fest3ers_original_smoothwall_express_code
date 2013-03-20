@@ -142,7 +142,7 @@ my %ownership;
 if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" ){
 	&openbox();
 
-	print "<div style='width: 100%; text-align: center;'><a href='/cgi-bin/register.cgi'><img src='/ui/img/frontpage/frontpage.x3.jpg' alt='SmoothWall Express'/></a></div>";
+	print "<div style='width: 100%; text-align: center;'><a href='/cgi-bin/register.cgi'><img src='/ui/img/frontpage/frontpage.x3.png' alt='Smoothwall Express'/></a></div>";
 	&closebox();
 } else {
 
@@ -152,7 +152,7 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" )
 		while ( my $input = <LIST> ){
 			my ( $url, $md5, $link, $alt ) = ( $input =~/([^\|]*)\|([^\|]*)\|([^\|]*)\|(.*)/ );
 	
-			if ( -e "/httpd/html/ui/img/frontpage/$md5.jpg" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.jpg", $md5) == 1 )){
+			if ( -e "/httpd/html/ui/img/frontpage/$md5.png" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.png", $md5) == 1 )){
 				push @images, { md5 => $md5, href => $link, alt => $alt };
 			}
 		}
@@ -161,12 +161,12 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" )
 			my $day = (localtime(time))[6];
 			my $r = ( $day % scalar(@images) );
 			my $image = $images[$r];
-			print "<div style='width: 100%; text-align: center;'><a href='$image->{'href'}'><img src='/ui/img/frontpage/$image->{'md5'}.jpg' alt='$image->{'alt'}'/></a></div>";
+			print "<div style='width: 100%; text-align: center;'><a href='$image->{'href'}'><img src='/ui/img/frontpage/$image->{'md5'}.png' alt='$image->{'alt'}'/></a></div>";
 		} else {
-			print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.jpg' alt='SmoothWall Express'/></div>";
+			print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.png' alt='Smoothwall Express'/></div>";
 		}
 	} else {
-		print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.jpg' alt='SmoothWall Express'/></div>";
+		print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.png' alt='Smoothwall Express'/></div>";
 	}
 
 	&closebox();
