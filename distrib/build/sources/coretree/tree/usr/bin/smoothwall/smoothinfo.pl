@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 # Perl script to gather the info requested  in the UI.
 # smoothinfo.pl v. 2.2b (c) Pascal Touch (nanouk) on Smoothwall forums
+# smoothinfo.pl v. 2.2c © Neal Murphy (fest3er) on Smoothwall forums;
+#     Roadster & SWE3.1 integration and tweaks
 # Improved mods sorting routine and the list is now numbered.
 # New smoothd module to make SmoothInfo more "compliant".
 # Packed using Steve McNeill's Mod Build System.
