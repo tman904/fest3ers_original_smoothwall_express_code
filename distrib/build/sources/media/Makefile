@@ -77,6 +77,8 @@ cdrom:
 cdrom/smoothwall.tgz:
 	echo "      prepare cdrom tree" >>$(MEDIA_BUILD_OUT)
 	mkdir -p distrib distrib/sys distrib-dev distrib-doc/usr/share/
+	mkdir -p distrib/usr; cd distrib/usr; ln -s lib lib64
+	mkdir -p distrib-dev/usr; cd distrib-dev/usr; ln -s lib lib64
 	
 	install -D runtimerootimage.gz distrib/boot/initrd-$(K_SWE_VERSION).gz
 	
@@ -98,7 +100,6 @@ cdrom/smoothwall.tgz:
 	
 	@echo "        copy dev shared libs to distrib" >>$(MEDIA_BUILD_OUT)
 	@echo "Copying dev shared libs to distrib:"
-	@cd distrib; mkdir -p usr; cd usr; ln -s lib lib64
 	(cd distrib-dev; \
 	  find . -name \*.so\* -print | cpio -pd ../distrib \
 	)
