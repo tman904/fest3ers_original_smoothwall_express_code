@@ -77,8 +77,13 @@ cdrom:
 cdrom/smoothwall.tgz:
 	echo "      prepare cdrom tree" >>$(MEDIA_BUILD_OUT)
 	mkdir -p distrib distrib/sys distrib-dev distrib-doc/usr/share/
+
+ifeq ($(BITS_64), yes)
+	cd distrib; ln -s lib lib64
+	cd distrib-dev; ln -s lib lib64
 	mkdir -p distrib/usr; cd distrib/usr; ln -s lib lib64
 	mkdir -p distrib-dev/usr; cd distrib-dev/usr; ln -s lib lib64
+endif
 	
 	install -D runtimerootimage.gz distrib/boot/initrd-$(K_SWE_VERSION).gz
 	
