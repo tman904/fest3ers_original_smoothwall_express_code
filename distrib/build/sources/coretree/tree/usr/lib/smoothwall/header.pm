@@ -209,8 +209,8 @@ END
 <tr>
 	<td colspan='2' class='quicklink'>
 		<!-- Quicklink Section -->
-		<p style="margin:2px">
-		<a href='/cgi-bin/shutdown.cgi'>$tr{'ssshutdown'}</a> | <a href="javascript:displayHelp('$thisscript');" title="This will popup a new window with the requested help file">help <img src="/ui/img/help.gif" alt="" style='vertical-align:middle'></a></p>
+		<p style="margin:2px; vertical-align:middle">
+		<a href='/cgi-bin/shutdown.cgi'>$tr{'ssshutdown'}</a> | <a href="javascript:displayHelp('$thisscript');" title="This will popup a new window with the requested help file">help <img src="/ui/img/help.gif" alt="" ></a></p>
 	</td>
 </tr>
 
