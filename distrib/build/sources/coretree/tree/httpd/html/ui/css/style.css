@@ -33,6 +33,7 @@ body {
 	font-weight : normal;
 	text-decoration : none;
 	background-color: #efefef;
+	background-image: url(/ui/img/wall-block-larger.jpg);
 }
 
 p {
@@ -42,15 +43,23 @@ p {
 	text-decoration : none;
 }
 
-table.main {
-	width: 800px;
+table.frame {
+	width: auto;
 	margin-left: auto;
 	margin-right: auto;
-	border: solid black 1px;
+	border: none
 	margin-top: 5px;
 	margin-bottom: 5px;
 	padding: 0px;
 	border-collapse: collapse;
+	background-color: none;
+}
+
+table.main {
+	width: 800px;
+	margin: 0 0 0 0;
+	border: none;
+	padding: 0;
 	background-color: white;
 }
 

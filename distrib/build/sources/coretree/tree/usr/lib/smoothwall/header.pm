@@ -209,7 +209,8 @@ END
 <tr>
 	<td colspan='2' class='quicklink'>
 		<!-- Quicklink Section -->
-		<a href='/cgi-bin/shutdown.cgi'>$tr{'ssshutdown'}</a> | <a href="javascript:displayHelp('$thisscript');" title="This will popup a new window with the requested help file">help</a> <img src="/ui/img/help.gif" alt="">
+		<p style="margin:2px">
+		<a href='/cgi-bin/shutdown.cgi'>$tr{'ssshutdown'}</a> | <a href="javascript:displayHelp('$thisscript');" title="This will popup a new window with the requested help file">help <img src="/ui/img/help.gif" alt="" style='vertical-align:middle'></a></p>
 	</td>
 </tr>
 
@@ -311,7 +312,19 @@ END
 		$cellwidth = $pagewidth / 2;
 		print <<END
 <body>
-<table class='main'>
+<table class='frame' cellpadding='0' cellspacing='0'>
+<tr style="margin:0">
+  <td style="background-image:url(/ui/img/top-left.png); max-height:4px; height:4px; min-height:4px; max-width:4px; min-width:4px; background-repeat:none"></td>
+  <td style="background-image:url(/ui/img/top.png); max-height:4px; height:4px; min-height:4px; background-repeat:repeat-x"></td>
+  <td style="background-image:url(/ui/img/top-right.png); max-height:4px; height:4px; min-height:4px; max-width:4px; width:4px; min-width:4px; background-repeat:none"></td>
+</tr>
+<tr style="margin:0">
+  <td style="background-image:url(/ui/img/left.png); max-width:4px; width:4px; min-width:4px; background-repeat:repeat-y">
+  </td>
+  <td>
+
+
+<table class='main' cellpadding='0' cellspacing='0'>
 <tr>
 	<td class='logo' rowspan='2'>
 	</td><td class='header'>
@@ -354,22 +367,32 @@ sub closepage
 </tr>
 <tr><td colspan='2' style='background-color: #909090; height: 6px;'></td></tr>
 <tr>
-	<td class='footer' style='height: 38px;' colspan='2'>
-	<table class='blank'>
-	<tr>
-		<td>
+	<td class='footer' colspan='2' style='width:100%; text-align:center;'>
+		<div style="width:49%; text-align:left; margin:2px; display:inline-block">
 		    	<strong>Smoothwall Express $version</strong><br/>
 			Smoothwall&trade; is a trademark of <a href='http://www.smoothwall.net/'>Smoothwall Limited</a>.
-		</td>
-		<td style='text-align: right;'>
+		</div>
+		<div style="width:49%; text-align:right; margin:2px; display:inline-block">
 		    	&copy; 2000 - 2013 <a href='http://smoothwall.org/about/team/'>The Smoothwall Team</a><br/>
 			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://smoothwall.org/get/sources/'>original authors</a>
-		</td>
-	</tr>
-	</table>
+		</div>
 	</td>
 </tr> 
 </table>
+  </td>
+  <td style="background-image:url(/ui/img/right.png); max-width:6px; width:6px; min-width:6px; background-repeat:repeat-y">
+  </td>
+</tr>
+<tr>
+  <td style="background-image:url(/ui/img/bottom-left.png); max-height:6px; height:6px; min-height:6px; max-width:4px; min-width:4px; background-repeat:none">
+  </td>
+  <td style="background-image:url(/ui/img/bottom.png); max-height:6px; height:6px; min-height:6px; background-repeat:repeat-x">
+  </td>
+  <td style="background-image:url(/ui/img/bottom-right.png); max-height:6px; height:6px; min-height:6px; max-width:6px; width:6px; min-width:6px; background-repeat:none">
+  </td>
+</tr>
+</table>
+  
 END
 		;
 	}
