@@ -84,52 +84,6 @@ print "
 
 &closebox();
 
-# Get all langs present
-
-&openbox('Language:');
-
-$langpipe = "cd /usr/lib/smoothwall/langs;";
-$langpipe .= "/bin/ls -C1 | /bin/grep -v base | ";
-$langpipe .= "/usr/bin/sed -e 's/alertboxes\.//' -e 's/glossary\.//' -e 's/\.pl//' | ";
-$langpipe .= "/bin/sort | /usr/bin/uniq |";
-if (open (LANGS, $langpipe))
-{
-  my @langs = <LANGS>;
-  chomp @langs;
-  close LANGS;
-
-  print "
-<table style='width:100%; margin: 8pt 0'>
-  <tr>
-    <td>
-";
-
-  my $rowlim = int (@langs / 5);
-  my $rowcnt = 0;
-  foreach $lang (@langs)
-  {
-    print "      <p style='margin:4pt 0 0 18pt'>\n";
-    print "        <input type='radio' name='LANGUAGE' value='$lang'";
-    print "$selected{'LANGUAGE'}{$lang}>$lang\n";
-    print "      </p>\n";
-    $rowcnt++;
-    if ($rowcnt > $rowlim)
-    {
-      $rowcnt = 0;
-      print "    </td>\n    <td>\n";
-    }
-  }
-}
-
-
-print "
-    </td>
-  </tr>
-</table>
-";
-
-&closebox();
-
 print <<END
 <table style='width: 100%;'>
 <tr>

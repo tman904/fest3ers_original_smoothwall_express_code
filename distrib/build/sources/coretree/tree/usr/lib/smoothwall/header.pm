@@ -49,9 +49,9 @@ my $hostname = hostname();
 
 &readhash("${swroot}/main/settings", \%settings);
 &readhash("${swroot}/main/uisettings", \%uisettings);
-$language = $settings{'LANGUAGE'};
+my $languages = $ENV{HTTP_ACCEPT_LANGUAGE} || 'en';
+my ($language, @junk) = split(/,/, $languages);
 
-if ($language =~ /^(\w+)$/) {$language = $1;}
 require "/usr/lib/smoothwall/langs/en.pl";
 if (${language} ne "en")
 {
