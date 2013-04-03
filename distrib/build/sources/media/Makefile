@@ -65,6 +65,8 @@ DEV_PKGS = kernel-headers patch make autoconf automake bison dejagnu gcc \
 	   klibc pkg-config sudo texinfo dev86 busybox \
 	   libtool nasm acpica
 
+NOT_DRIVERS = drivers/video
+
 cdrom:
 	mkdir cdrom
 	echo "      runtimeroot" >>$(MEDIA_BUILD_OUT)
@@ -146,6 +148,10 @@ endif
 	    mv distrib/usr/$$I/* distrib-doc/usr/$$I/; fi; \
 	done
 	
+	@echo "        delete FB devices" >>$(MEDIA_BUILD_OUT)
+	@for i in distrib/lib/modules/*; do \
+	    (cd $$i/kernel; rm -rf $(NOT_DRIVERS)); \
+	  done
 	@echo "        strip symbols" >>$(MEDIA_BUILD_OUT)
 	/build/toolcrib/striptree distrib
 	/build/toolcrib/striptree distrib-dev
