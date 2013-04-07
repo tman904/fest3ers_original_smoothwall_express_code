@@ -145,7 +145,7 @@ if [ ! -e /etc/httpd/server.key ]; then
 		/boot/vmlinuz-`uname -r`:/var/smoothwall/ethernet/settings:/var/log/dmesg -out \
 		/etc/httpd/server.key 1024
         echo "  CSR"
-        cat /etc/certparams | /usr/bin/openssl \
+        sed -e "6 s/Smoothwall/$HOSTNAME/" /etc/certparams | /usr/bin/openssl \
 		req -new -key /etc/httpd/server.key -out /etc/httpd/server.csr
         echo "  Signing certificate"
 	/usr/bin/openssl x509 -req -days 999999 -in \
