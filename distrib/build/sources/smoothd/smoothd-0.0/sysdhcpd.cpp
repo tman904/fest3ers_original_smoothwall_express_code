@@ -77,7 +77,7 @@ int start_dhcpd(std::vector<std::string> & parameters, std::string & response)
 	if (stat("/var/smoothwall/dhcp/enable", &sb) == -1)
 	{
 	  response = "DHCPD disabled: won't start!";
-	  return -1;
+	  return 0;
 	}
 
 	// It is enabled, so proceed
