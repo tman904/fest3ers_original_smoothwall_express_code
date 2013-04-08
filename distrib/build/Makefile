@@ -176,7 +176,10 @@ crumbs/Final.built: crumbs/resolv.conf crumbs/Final.prep.built
 
 build: crumbs/host.checked crumbs/Final.built
 
-rebuild: clean predownload build
+rebuild:
+	+@for i in clean predownload build; do \
+	    $(MAKE) $$i; \
+	done
 
 # prepare the installation media
 #
@@ -193,7 +196,10 @@ mediaflash:
 
 # after a successful build, this will do everything
 #
-package: clean savesources predownload build media
+package:
+	+@for i in clean savesources predownload build media; do \
+	    $(MAKE) $$i; \
+	done
 	@if [ `id -u` -eq 0 ]; then CMD="bash"; else CMD="sudo su"; fi \
 	   $$CMD -c "rm -f $(SRC_TGZ)"
 
