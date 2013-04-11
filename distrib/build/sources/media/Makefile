@@ -23,7 +23,7 @@ export UDEVunused = eudev
 
 # Document these pkgs, don't install
 TOOLCHAIN_PKGS = expect
-OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config cnxadsl \
+OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
 	     libart_lgpl procps procinfo
 
 TARGET_DIR = /build/target
@@ -33,7 +33,7 @@ ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr sqlite \
 
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    daq libnet libnetfilter_queue libnfnetlink attr libcap-ng \
-	    libcap fontconfig glib cairo libffi readline libpcap \
+	    libcap fontconfig glib cairo libffi readline libpcap sqlite \
 	    libosip2 libpcap pango zlib slang pixman libxml2 libusb \
 	    kmod gmp mpfr mpc popt yaml perl-mods libcap-ng rsync \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \

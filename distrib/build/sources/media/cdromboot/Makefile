@@ -7,7 +7,7 @@
 include ../../Makefile.versions
 include ../../Makefile
 
-GRUBFILES = grub.conf main.conf other.conf help.txt
+GRUBFILES = grub.conf main.conf other.conf help.txt backdrop.xpm.gz
 default:
 	mkdir -p ../cdrom/boot/grub
 	cp -a /build/buildroot/grub/usr/share/grub/i386-pc/* ../cdrom/boot/grub
