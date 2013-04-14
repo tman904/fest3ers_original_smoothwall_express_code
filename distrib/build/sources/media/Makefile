@@ -28,12 +28,13 @@ OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
 
 TARGET_DIR = /build/target
 
-ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr sqlite \
-	   samba subversion ntop iperf squidguard
+ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr \
+	   subversion ntop iperf squidGuard
+KVM_PKGS = samba
 
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    daq libnet libnetfilter_queue libnfnetlink attr libcap-ng \
-	    libcap fontconfig glib cairo libffi readline libpcap sqlite \
+	    libcap fontconfig glib cairo libffi readline libpcap sqlite-autoconf \
 	    libosip2 libpcap pango zlib slang pixman libxml2 libusb \
 	    kmod gmp mpfr mpc popt yaml perl-mods libcap-ng rsync \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \
@@ -51,7 +52,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
 	    $(UDEV) lm_sensors xz pcmciautils qemu-kvm sysfsutils \
-	    coretree device-ids
+	    coretree $(ADV_PKGS) device-ids
 
 # INST_PKGS notes.
 # 'coretree' *MUST* be third-last.
