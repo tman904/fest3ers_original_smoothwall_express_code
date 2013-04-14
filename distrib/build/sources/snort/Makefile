@@ -7,7 +7,6 @@
 include ../Makefile.conf
 
 PACKAGE = snort
-VERSION = 2.9.2.1
 
 # Deal with snort: get the latest version number dynamically. :)
 #
@@ -17,6 +16,9 @@ URL := $(shell ../../toolcrib/get-snort-ver.sh -u $(PACKAGE))
 BASE_URL = http://www.snort.org
 
 PATCH_FILE1 = snort-pidfix.patch
+
+CONFIG_OPTS = --enable-gre --enable-targetbased --enable-ppm \
+	      --enable-perfprofiling --enable-zlib
 
 # You're looking in here because the build system failed to find
 # the snort source package or it failed to build.
@@ -46,6 +48,9 @@ install: compile
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/rules/
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/preproc_rules/
+	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/
+	@touch $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/black.list
+	@touch $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/white.list
 	@install -D $(COMPILE_DIR)/etc/unicode.map $(PKG_ROOT)/var/smoothwall/snort/unicode.map
 	@install -D $(COMPILE_DIR)/etc/classification.config $(PKG_ROOT)/var/smoothwall/snort/classification.config
 	@install -D $(COMPILE_DIR)/etc/reference.config $(PKG_ROOT)/var/smoothwall/snort/reference.config
