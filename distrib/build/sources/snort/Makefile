@@ -49,6 +49,8 @@ install: compile
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/rules/
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/preproc_rules/
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/
+	@touch $(PKG_ROOT)/var/smoothwall/snort/rules/local.rules
+	@touch $(PKG_ROOT)/var/smoothwall/snort/rules/deleted.rules
 	@touch $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/black.list
 	@touch $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/white.list
 	@install -D $(COMPILE_DIR)/etc/unicode.map \
