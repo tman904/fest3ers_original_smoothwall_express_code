@@ -51,13 +51,27 @@ install: compile
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/
 	@touch $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/black.list
 	@touch $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/white.list
-	@install -D $(COMPILE_DIR)/etc/unicode.map $(PKG_ROOT)/var/smoothwall/snort/unicode.map
-	@install -D $(COMPILE_DIR)/etc/classification.config $(PKG_ROOT)/var/smoothwall/snort/classification.config
-	@install -D $(COMPILE_DIR)/etc/reference.config $(PKG_ROOT)/var/smoothwall/snort/reference.config
-	@install -D $(COMPILE_DIR)/preproc_rules/preprocessor.rules $(PKG_ROOT)/var/smoothwall/snort/preproc_rules/preprocessor.rules
-	@install -D $(COMPILE_DIR)/preproc_rules/decoder.rules $(PKG_ROOT)/var/smoothwall/snort/preproc_rules/decoder.rules
+	@install -D $(COMPILE_DIR)/etc/unicode.map \
+	    $(PKG_ROOT)/var/smoothwall/snort/unicode.map
+	@install -D $(COMPILE_DIR)/etc/classification.config \
+	    $(PKG_ROOT)/var/smoothwall/snort/classification.config
+	@install -D $(COMPILE_DIR)/etc/reference.config \
+	    $(PKG_ROOT)/var/smoothwall/snort/reference.config
+	@install -D $(COMPILE_DIR)/preproc_rules/preprocessor.rules \
+	    $(PKG_ROOT)/var/smoothwall/snort/preproc_rules/preprocessor.rules
+	@install -D $(COMPILE_DIR)/preproc_rules/decoder.rules \
+	    $(PKG_ROOT)/var/smoothwall/snort/preproc_rules/decoder.rules
 	@chown nobody:nobody -R $(PKG_ROOT)/var/smoothwall/
 	@mkdir -p $(PKG_ROOT)/$(MODULE_DIR)/usr/lib/smoothwall
 	@echo $(VERSION) > $(PKG_ROOT)/$(MODULE_DIR)/usr/lib/smoothwall/snortversion
+	SNORT_OPTS=`echo -n "$(CONFIG_OPTS)" | sed -e 's/ +/ /'`; \
+	  sed -e "/OPTIONS :/s/:.*$$/: $$SNORT_OPTS/" \
+	      -e '/OPTIONS :/a #     SWE built : $(PACKAGE)-$(VERSION)' \
+	      < snort.conf > $(COMPILE_DIR)/snort.conf.sed
+	install -D $(COMPILE_DIR)/snort.conf.sed $(PKG_ROOT)/etc/snort.conf
+	chown root:root -R $(PKG_ROOT)/etc
+	chmod 755 -R $(PKG_ROOT)/etc
+	chmod 644 -R $(PKG_ROOT)/etc/snort.conf
+
 
 include ../Makefile.rules
