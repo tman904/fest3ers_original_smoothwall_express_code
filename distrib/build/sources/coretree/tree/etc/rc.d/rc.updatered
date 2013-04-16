@@ -18,7 +18,7 @@ if [ "$RED_TYPE" = "DHCP" ]; then
 	DNSMASQ_DNS2=`/usr/bin/smoothwall/getdnsfromdhcpc.pl 2`
 	. /var/lib/dhcpcd/dhcpcd-${RED_DEV}.info
 	echo "$IPADDR" >/var/smoothwall/red/local-ipaddress
-	echo "$GATEWAY" >/var/smoothwall/red/remote-ipaddress
+	echo "$GATEWAYS" >/var/smoothwall/red/remote-ipaddress
 elif [ "$RED_TYPE" = "STATIC" ]; then
 	if [ "$DNS1_OVERRIDE" != "" -o "$DNS2_OVERRIDE" != "" ]; then
 	  DNSMASQ_DNS1=$DNS1_OVERRIDE
