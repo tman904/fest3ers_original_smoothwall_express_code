@@ -48,6 +48,7 @@ install: compile
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/rules/
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/preproc_rules/
+	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/so_rules/
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/reputation_lists/
 	@touch $(PKG_ROOT)/var/smoothwall/snort/rules/local.rules
 	@touch $(PKG_ROOT)/var/smoothwall/snort/rules/deleted.rules
