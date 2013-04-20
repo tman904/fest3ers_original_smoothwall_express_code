@@ -3,7 +3,7 @@
 . /harddisk/var/smoothwall/main/kernel
 
 # Copy the backdrop
-cp /boot/grub/express_boot_protect.xpm.gz /harddisk/boot/grub/
+cp /cdrom/boot/grub/express_boot_protect.xpm.gz /harddisk/boot/grub/
 
 # Write the config
   cat > /harddisk/boot/grub/grub.conf <<END
