@@ -23,8 +23,10 @@ default 0
 # Allow 10 seconds before booting the default.
 timeout 10
 
-# Use prettier colors (OR/BK, YL/BK).
-color 0x06 0x0e
+# Official backdrop
+splashimage=/grub/express_boot_protect.xpm.gz
+foreground=cfcfcf
+background=222222
 
 # Boot using VESA console
 title Smoothwall Express (VESA Console)

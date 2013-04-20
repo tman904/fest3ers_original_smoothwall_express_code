@@ -403,6 +403,7 @@ END
   rm -rf ${HDTMP}
 
   echo "  configuring boot loader"
+  cp /cdrom/boot/grub/express_boot_protect.xpm.gz /harddisk/boot/grub/
   cat > /harddisk/boot/grub/grub.conf <<END
 # Begin /boot/grub/grub.conf
 
@@ -436,8 +437,10 @@ END
 # Allow 10 seconds before booting the default.
 timeout 10
 
-# Use prettier colors (OR/BK, YL/BK).
-color 0x06 0x0e
+# Official backdrop
+splashimage=/grub/express_boot_protect.xpm.gz
+foreground=cfcfcf
+background=222222
 
 # Boot using VESA console
 title Smoothwall Express (VESA Console)

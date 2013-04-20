@@ -7,7 +7,9 @@
 include ../../Makefile.versions
 include ../../Makefile
 
-GRUBFILES = grub.conf main.conf other.conf help.txt backdrop.xpm.gz
+GRUBFILES = grub.conf main.conf other.conf help.txt \
+	    express_boot_install.xpm.gz express_boot_protect.xpm.gz
+
 default:
 	mkdir -p ../cdrom/boot/grub
 	cp -a /build/buildroot/grub/usr/share/grub/i386-pc/* ../cdrom/boot/grub
