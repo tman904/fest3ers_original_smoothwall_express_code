@@ -395,7 +395,10 @@ sub runoinkmaster
   document.getElementById('progress').style.background = '#a0a0ff';
 </script>
 ";
-    print "<p style='background:white; border:solid black 2pt; padding:2pt'>\n";
+    if ($formdebug ne "")
+    {
+      print "<p style='background:white; border:solid black 2pt; padding:2pt'>\n";
+    }
     while(<FD>)
     {
       if ($formdebug ne "")
@@ -471,7 +474,10 @@ print "
 ";
       }
     }
-    print "</p>\n";
+    if ($formdebug ne "")
+    {
+      print "</p>\n";
+    }
     close(FD);
 
     if ($?)
