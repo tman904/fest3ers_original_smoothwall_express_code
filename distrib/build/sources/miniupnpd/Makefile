@@ -20,6 +20,7 @@ COMPILE = yes
 INSTALL = yes
 
 configure: patch
+	cd $(DIR); make -f Makefile.linux config.h
 	@true
 
 compile: configure
