@@ -134,6 +134,7 @@ else
       
       # Get the list of files
       feedback $AUTOBACK "Finding files to back up"
+      sleep .5
       (
         cd /; 
         find "${FILES_TO_SAVE[@]}" ${EXCLUDES} ${incrementalOPT}
@@ -157,15 +158,19 @@ else
         i=i+1
         feedback $AUTOBACK "$i/$FILECOUNT: $a" "same"
       done
+      feedback $AUTOBACK "${BACKUP_TYPE} backup complete."
+      sleep 1
     done
     rm -rf ${BACK_DIR}/tmp
 
     # Flush the buffers out to the drive.
     feedback $AUTOBACK "Flushing data to backup device."
+    sleep .5
     sync
 
     # Unmount
     feedback $AUTOBACK "Unmounting backup device."
+    sleep .5
     (sleep .5; umount $MOUNT_PT >/dev/null 2>&1)&
     inotifywait -q -e unmount $MOUNT_PT >/dev/null 2>&1
     while grep -q " $MOUNT_PT " /proc/mounts; do sleep .1; done
@@ -175,3 +180,4 @@ else
 fi  # medium mounted
 
 feedback $AUTOBACK "Backup complete."
+sleep 2
