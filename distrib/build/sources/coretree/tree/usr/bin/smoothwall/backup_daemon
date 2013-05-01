@@ -263,9 +263,9 @@ if [ "$AUTOBACK" == "MANUAL" ]; then
   # Running por mano, so do the backup now
   . backup_run RunByBackupDaemonOrSys $AUTOBACK
 
-elif [ \( "$BTYPE" == "incremental" -a $timeINCREMENTAL == 'now' \) -o \
-       \( "$BTYPE" == "full" -a $timeFULL == 'now' \) -o \
-       \( "$BTYPE" == "var total" -a $timeVARTOTAL == 'now' \) ]; then
+elif [ \( "$BTYPE" == "incremental" -a "$timeINCREMENTAL" == "now" \) -o \
+       \( "$BTYPE" == "full" -a "$timeFULL" == "now" \) -o \
+       \( "$BTYPE" == "var total" -a "$timeVARTOTAL" == "now" \) ]; then
   # Running by daemon 'now'
   . backup_run RunByBackupDaemonOrSys $AUTOBACK
 
