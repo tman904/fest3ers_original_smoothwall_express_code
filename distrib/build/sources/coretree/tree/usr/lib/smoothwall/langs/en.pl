@@ -442,6 +442,7 @@
 
 # preferences
 'drop down menus' => 'Drop down menus:',
+'always use english' => 'Always use english:',
 
 # status.cgi
 'web server' => 'Web server',

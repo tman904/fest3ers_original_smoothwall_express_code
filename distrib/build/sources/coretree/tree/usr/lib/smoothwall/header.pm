@@ -48,12 +48,13 @@ my $hostname = hostname();
 # customised settings (such as languages)
 
 &readhash("${swroot}/main/settings", \%settings);
+$uisettings{'ALWAYS_ENGLISH'} = 'on';
 &readhash("${swroot}/main/uisettings", \%uisettings);
 my $languages = $ENV{HTTP_ACCEPT_LANGUAGE} || 'en';
 my ($language, @junk) = split(/,/, $languages);
 
 require "/usr/lib/smoothwall/langs/en.pl";
-if (${language} ne "en")
+if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
 {
   foreach $key (sort keys %basetr)
   {

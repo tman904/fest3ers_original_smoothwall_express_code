@@ -13,6 +13,7 @@ my %cgiparams, %settingsParams, %uiSettingsParams;
 
 $cgiparams{'ACTION'} = '';
 $cgiparams{'MENU'} = 'off';
+$cgiparams{'ALWAYS_ENGLISH'} = 'off';
 $cgiparams{'LANGUAGE'} = 'en';
 $cgiparams{'HOSTNAME'} = '';
 $cgiparams{'KEYMAP'} = '';
@@ -28,6 +29,7 @@ if ($cgiparams{'ACTION'} eq $tr{'save'})
 	$settingsParams{'OPENNESS'} = $cgiparams{'OPENNESS'};
 
 	$uiSettingsParams{'MENU'} = $cgiparams{'MENU'};
+	$uiSettingsParams{'ALWAYS_ENGLISH'} = $cgiparams{'ALWAYS_ENGLISH'};
 	
 	&writehash("${swroot}/main/settings", \%settingsParams);
 	&writehash("${swroot}/main/uisettings", \%uiSettingsParams);
@@ -48,6 +50,7 @@ if ($cgiparams{'ACTION'} eq $tr{'save'})
 if ($cgiparams{'ACTION'} eq '')
 {
 	$cgiparams{'MENU'} = 'on';
+	$cgiparams{'ALWAYS_ENGLISH'} = 'on';
 }
 
 &readhash("${swroot}/main/uisettings", \%cgiparams);
@@ -56,7 +59,7 @@ if ($cgiparams{'ACTION'} eq '')
 my %checked, %selected;
 
 $checked{'MENU'}{$cgiparams{'MENU'}} = " checked";
-$selected{'LANGUAGE'}{$cgiparams{'LANGUAGE'}} = " checked";
+$checked{'ALWAYS_ENGLISH'}{$cgiparams{'ALWAYS_ENGLISH'}} = " checked";
 
 &openpage( $tr{'preferences'}, 1, '', 'maintenance');
 
@@ -76,8 +79,8 @@ print "
   <tr>
     <td class='base' style='width: 25%;'>$tr{'drop down menus'}</td>
     <td style='width: 25%;'><input type='checkbox' name='MENU' $checked{'MENU'}{'on'}></td>
-    <td style='width: 25%;'>&nbsp;</td>
-    <td style='width: 25%;'>&nbsp;</td>
+    <td class='base' style='width: 25%;'>$tr{'always use english'}</td>
+    <td style='width: 25%;'><input type='checkbox' name='ALWAYS_ENGLISH' $checked{'ALWAYS_ENGLISH'}{'on'}></td>
   </tr>
 </table>
 ";
