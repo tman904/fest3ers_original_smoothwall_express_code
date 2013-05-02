@@ -57,13 +57,9 @@ mount -n -o remount,rw /
 /sbin/udevadm trigger --attr-match=modalias
 /sbin/udevadm settle
 
-echo "Clearing and refilling mtab"
->/etc/mtab
-mount -f /
-mount -f /proc
-mount -f /sys
-mount -f /dev
-mount -f /dev/pts
+echo "Relinking mtab"
+rm -f /etc/mtab
+ln -s /proc/mounts /etc/mtab
 
 echo -n "Checking other filesystems: "
 /sbin/fsck $FORCE -R -T -a -C -A
@@ -91,7 +87,8 @@ if [ $RC -gt 1 ]; then
 fi
 
 echo "Mounting other filesystems"
-mount -a
+mount /boot
+mount /var/log
 
 echo "Directing core dumps to /var/log"
 mkdir -p /var/log/coredumps
@@ -148,7 +145,7 @@ if [ ! -e /etc/httpd/server.key ]; then
 		/boot/vmlinuz-`uname -r`:/var/smoothwall/ethernet/settings:/var/log/dmesg -out \
 		/etc/httpd/server.key 1024
         echo "  CSR"
-        cat /etc/certparams | /usr/bin/openssl \
+        sed -e "6 s/Smoothwall/$HOSTNAME/" /etc/certparams | /usr/bin/openssl \
 		req -new -key /etc/httpd/server.key -out /etc/httpd/server.csr
         echo "  Signing certificate"
 	/usr/bin/openssl x509 -req -days 999999 -in \

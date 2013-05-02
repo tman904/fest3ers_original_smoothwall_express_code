@@ -359,20 +359,22 @@ int countcards(void)
 }
 
 /* Finds the listed module name and copies the card description back. */
-int findnicdescription(char *modulename, char *description)
+int findnicdescription(char *device, char *description)
 {
 	int c = 0;
-	
-	while (strlen(nics[c].description))
+	char cmd[STRING_SIZE];
+
+	snprintf (cmd, STRING_SIZE,
+		 "/bin/bash /usr/bin/smoothwall/getnicdescription %s", device);
+	FILE *desc_p = popen(cmd, "r");
+
+	if (desc_p)
 	{
-		if (strcmp(nics[c].modulename, modulename) == 0)
-		{
-			strcpy(description, nics[c].description);
-			return 1;
-		}
-		c++;
+		char *line_p = fgets(description, STRING_SIZE, desc_p);
+		pclose(desc_p);
+		return 1;
 	}
-	
+
 	strcpy(description, "UNKNOWN");
 
 	return 0;

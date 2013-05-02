@@ -25,9 +25,8 @@ callAudible () {
 # Provide user feedback, to the flag file for the daemon
 #   or to STDOUT if started manually
 feedback () {
-  if [ "$1" == "AUTO" ]; then
-    echo -e $2 > ${BACK_FLAG}
-  else
+  echo -e $2 > ${BACK_FLAG}
+  if [ "$1" == "MANUAL" ]; then
     if [ "$3" == "same" ]; then
       echo -e "\033[A$2\033[K"
     else

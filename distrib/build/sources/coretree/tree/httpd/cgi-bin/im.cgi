@@ -152,7 +152,7 @@ print <<END
 	<td><input type='checkbox' name='IRC' $checked{'IRC'}{'on'}></td>
 </tr>
 <tr>
-	<td class='base'>Gadu-Gdu:</td>
+	<td class='base'>Gadu-Gadu:</td>
 	<td><input type='checkbox' name='GG' $checked{'GG'}{'on'}></td>
 	<td class='base'>Jabber and Gtalk:</td>
 	<td><input type='checkbox' name='XMPP' $checked{'XMPP'}{'on'}></td>

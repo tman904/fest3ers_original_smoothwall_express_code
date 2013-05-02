@@ -88,7 +88,7 @@ int setnetaddress(struct keyvalue *kv, char *colour);
 void networkdialogcallbacktype(newtComponent cm, void *data);
 int interfacecheck(struct keyvalue *kv, char *colour);
 int countcards(void);
-int findnicdescription(char *modulename, char *description);
+int findnicdescription(char *device, char *description);
 int getnicmac(char *dest, int size, char *dev);
 	  
 /* data.c */

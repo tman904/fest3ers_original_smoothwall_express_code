@@ -320,15 +320,41 @@ if [ $restore -gt 1 ]; then
   done
 fi
 
+# Don't offer to install stuff that ain't there.
+
+# Confuser: First try to mount the whole medium as an ISO9660 CD-/DVD-ROM;
+# failing that, try mounting it as type 'isofs'. Failing that, try mounting
+# partition #1 as VFAT. ##-FIXME-## This probably should allow any FS, not
+# just vfat. (Same in exec-install.)
+CDMNTLOG="/cdmount.log"
+> $CDMNTLOG
+offerDEV=1
+menuMsg="The development and documentation archives were not found."
+menuMsg="$menuMsg They cannot be installed."
+
+mount -t iso9660  /dev/${cd_dev[$CD]}  /cdrom -o ro >> $CDMNTLOG 2>&1 \
+|| mount -t isofs /dev/${cd_dev[$CD]}  /cdrom -o ro >> $CDMNTLOG 2>&1 \
+|| mount -t vfat  /dev/${cd_dev[$CD]}1 /cdrom -o rw >> $CDMNTLOG 2>&1
+if [ $? -eq 0 ]; then
+  # Now see if the tarballs are there.
+  ls /cdrom/smoothdev.tgz /cdrom/smoothdoc.tgz >/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    menuMsg="Choose whether or not to install the development and"
+    menuMsg="$menuMsg documentation archives."
+    offerDEV=0
+  fi
+  umount /cdrom >/dev/null 2>&1
+fi
+
 while [ 1 -eq 1 ]; do
   # Dev Pkgs
-  menuMsg="Choose whether or not to install the development and documentation"
-  menuMsg="$menuMsg archives."
   dlgCmd="--backtitle '$BACKTITLE' --title 'Development packages'"
   dlgCmd="$dlgCmd --default-item '1.' --menu '$menuMsg' 0 0 0"
 
   dlgCmd="$dlgCmd 1. 'Do \\Zbnot\\ZB install'"
-  dlgCmd="$dlgCmd 2. '\\ZbInstall\\ZB development packages'"
+  if [ $offerDEV -eq 0 ]; then
+    dlgCmd="$dlgCmd 2. '\\ZbInstall\\ZB development packages'"
+  fi
 
   rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
   dev=${rsp/\./}

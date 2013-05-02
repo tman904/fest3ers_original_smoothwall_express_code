@@ -19,7 +19,8 @@ sleep 3
 echo "Turning off swap"
 /sbin/swapoff -a
 echo "Unmounting others"
-umount -a
+umount -l /var/log
+umount -l /boot
 echo "Remounting root RO"
 mount -n -o remount,ro /
 

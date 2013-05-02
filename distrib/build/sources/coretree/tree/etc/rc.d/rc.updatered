@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Like nearly everything in SWE, the file is covered by the project's
+#   umbrella GPL license.
+
+# Tweaks to handle DHCP changes by Neal Murphy and Stan Prescott, 4/2013
+
 # crEcho: print stuff with <CR><NL> at EOL
 function crEcho {
   if [ "$1" == "-n" ]; then
@@ -11,15 +16,62 @@ function crEcho {
   echo $crOpts "$*\r"
 }
 
-. /var/smoothwall/ethernet/settings
+ethDIR="/var/smoothwall/ethernet"
+redDIR="/var/smoothwall/red"
+
+. ${ethDIR}/settings
 
 if [ "$RED_TYPE" = "DHCP" ]; then
 	DNSMASQ_DNS1=`/usr/bin/smoothwall/getdnsfromdhcpc.pl 1`
 	DNSMASQ_DNS2=`/usr/bin/smoothwall/getdnsfromdhcpc.pl 2`
 	. /var/lib/dhcpcd/dhcpcd-${RED_DEV}.info
-	echo "$IPADDR" >/var/smoothwall/red/local-ipaddress
-	echo "$GATEWAY" >/var/smoothwall/red/remote-ipaddress
+
+	# Did nothing change?
+	if [ "$2" == "up" -a \
+	     "$IPADDR" == "$RED_ADDRESS" -a \
+	     "$NETMASK" == "$RED_NETMASK" -a \
+	     "$GATEWAYS" == "$DEFAULT_GATEWAY" -a \
+	     "$DNSMASQ_DNS1" == "$DNS1" -a \
+	     "$DNSMASQ_DNS2" == "$DNS2" ]; then
+	  # Nothing changed, nothing to do
+	  logger -t updatered "DHCP lease renewed; no changes"
+	  exit 0
+	fi
+	if [ "$2" == "down" ]; then
+	  # Nothing to do; either the system is going down or networking is
+	  #   being stopped for restart. *Technically*, it might be more correct
+	  #   to stop the various services; but since they are re-started soon
+	  #   enough or the system halts, it might not matter.
+	  logger -t updatered "DHCP lease lost; taking no action"
+	  exit 0
+	fi
+	# Something changed or ARGV2 is 'new' or 'down', so update most everything
+	logger -t updatered "DHCP lease changed; updating RED info"
+	rm -f ${ethDIR}/bootUP
+	RED_ADDRESS=$IPADDR
+	RED_NETMASK=$NETMASK
+	DEFAULT_GATEWAY=$GATEWAYS
+	DNS1=$DNSMASQ_DNS1
+	DNS2=$DNSMASQ_DNS2
+	# Update ethernet/settings
+	(
+	  egrep -v "^RED_ADDRESS|^RED_NETMASK|^DEFAULT_GATEWAY|^DNS1|^DNS2" \
+	    ${ethDIR}/settings
+	  echo "RED_ADDRESS=$IPADDR"
+	  echo "RED_NETMASK=$NETMASK"
+	  echo "DEFAULT_GATEWAY=$GATEWAYS"
+	  echo "DNS1=$DNSMASQ_DNS1"
+	  echo "DNS2=$DNSMASQ_DNS2"
+	) > /tmp/ethernet-settings
+	cat /tmp/ethernet-settings > ${ethDIR}/settings
+	rm -f /tmp/ethernet-settings
+	# Update red/ files
+	echo "$IPADDR" > ${redDIR}/local-ipaddress
+	echo "$GATEWAYS" > ${redDIR}/remote-ipaddress
+	echo "$NETMASK" > ${redDIR}/dhcp-netmask
+
 elif [ "$RED_TYPE" = "STATIC" ]; then
+	logger -t updatered "Setting RED's static IP info"
 	if [ "$DNS1_OVERRIDE" != "" -o "$DNS2_OVERRIDE" != "" ]; then
 	  DNSMASQ_DNS1=$DNS1_OVERRIDE
 	  DNSMASQ_DNS2=$DNS2_OVERRIDE
@@ -31,12 +83,15 @@ elif [ "$RED_TYPE" = "STATIC" ]; then
 	echo "$DEFAULT_GATEWAY" >/var/smoothwall/red/remote-ipaddress
 fi
 
+logger -t updatered "Updating RED"
+crEcho "Updating RED"
+
 echo -n "$RED_DEV" >/var/smoothwall/red/iface
 touch /var/smoothwall/red/active
 echo "$DNSMASQ_DNS1" >/var/smoothwall/red/dns1
+chown nobody:nobody /var/smoothwall/red/dns1
 echo "$DNSMASQ_DNS2" >/var/smoothwall/red/dns2
-
-crEcho "Updating RED"
+chown nobody:nobody /var/smoothwall/red/dns2
 
 crEcho "..DNSMasq"
 /usr/bin/smoothcom dnsproxyrestart $DNSMASQ_DNS1 $DNSMASQ_DNS2

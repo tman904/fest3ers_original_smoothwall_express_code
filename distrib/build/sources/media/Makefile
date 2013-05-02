@@ -23,17 +23,18 @@ export UDEVunused = eudev
 
 # Document these pkgs, don't install
 TOOLCHAIN_PKGS = expect
-OTHER_PKGS = updates jam sqlite $(UDEVunused) udev-config cnxadsl \
+OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
 	     libart_lgpl procps procinfo
 
 TARGET_DIR = /build/target
 
-ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr sqlite \
-	   samba subversion ntop iperf squidguard
+ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr \
+	   subversion ntop iperf squidGuard
+KVM_PKGS = samba
 
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    daq libnet libnetfilter_queue libnfnetlink attr libcap-ng \
-	    libcap fontconfig glib cairo libffi readline libpcap \
+	    libcap fontconfig glib cairo libffi readline libpcap sqlite-autoconf \
 	    libosip2 libpcap pango zlib slang pixman libxml2 libusb \
 	    kmod gmp mpfr mpc popt yaml perl-mods libcap-ng rsync \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \
@@ -51,7 +52,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
 	    $(UDEV) lm_sensors xz pcmciautils qemu-kvm sysfsutils \
-	    coretree device-ids
+	    coretree $(ADV_PKGS) device-ids
 
 # INST_PKGS notes.
 # 'coretree' *MUST* be third-last.
@@ -64,6 +65,8 @@ DEV_PKGS = kernel-headers patch make autoconf automake bison dejagnu gcc \
 	   gdb tcl m4 neon git screen lynx groff man man-pages \
 	   klibc pkg-config sudo texinfo dev86 busybox \
 	   libtool nasm acpica
+
+NOT_DRIVERS = drivers/video
 
 cdrom:
 	mkdir cdrom
@@ -146,6 +149,10 @@ endif
 	    mv distrib/usr/$$I/* distrib-doc/usr/$$I/; fi; \
 	done
 	
+	@echo "        delete FB devices" >>$(MEDIA_BUILD_OUT)
+	@for i in distrib/lib/modules/*; do \
+	    (cd $$i/kernel; rm -rf $(NOT_DRIVERS)); \
+	  done
 	@echo "        strip symbols" >>$(MEDIA_BUILD_OUT)
 	/build/toolcrib/striptree distrib
 	/build/toolcrib/striptree distrib-dev

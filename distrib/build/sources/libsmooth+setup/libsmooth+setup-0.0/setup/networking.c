@@ -308,17 +308,19 @@ int drivermenu(void)
 	/* This horrible bit formats the heading :( */
 	strcpy(driver, "");
 	findkey(kv, "GREEN_DISPLAYDRIVER", driver);
-	findnicdescription(driver, temp);
 	strcpy(dev, ctr[TR_UNSET]);
 	findkey(kv, "GREEN_DEV", dev);
+	findnicdescription(dev, temp);
 	displaynicinfowithmac(temp1, sizeof(temp1), "GREEN", dev, temp);
 	strcat(message, temp1);
 
 	if (CONFIG_TYPE_ORANGE(configtype))
 	{
-		strcpy(driver, ""); findkey(kv, "ORANGE_DISPLAYDRIVER", driver);
-		findnicdescription(driver, temp);
-		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "ORANGE_DEV", dev);
+		strcpy(driver, "");
+		findkey(kv, "ORANGE_DISPLAYDRIVER", driver);
+		strcpy(dev, ctr[TR_UNSET]);
+		findkey(kv, "ORANGE_DEV", dev);
+		findnicdescription(dev, temp);
 		displaynicinfowithmac(temp1, sizeof(temp1), "ORANGE", dev, temp);
 		strcat(message, temp1);
 	}
@@ -326,17 +328,19 @@ int drivermenu(void)
 	{
 		strcpy(driver, "");
 		findkey(kv, "PURPLE_DISPLAYDRIVER", driver);
-		findnicdescription(driver, temp);
 		strcpy(dev, ctr[TR_UNSET]);
 		findkey(kv, "PURPLE_DEV", dev);
+		findnicdescription(dev, temp);
 		displaynicinfowithmac(temp1, sizeof(temp1), "PURPLE", dev, temp);
 		strcat(message, temp1);
 	}
 	if (CONFIG_TYPE_RED(configtype))
 	{
-		strcpy(driver, ""); findkey(kv, "RED_DISPLAYDRIVER", driver);
-		findnicdescription(driver, temp);
-		strcpy(dev, ctr[TR_UNSET]); findkey(kv, "RED_DEV", dev);
+		strcpy(driver, "");
+		findkey(kv, "RED_DISPLAYDRIVER", driver);
+		strcpy(dev, ctr[TR_UNSET]);
+		findkey(kv, "RED_DEV", dev);
+		findnicdescription(dev, temp);
 		displaynicinfowithmac(temp1, sizeof(temp1), "RED", dev, temp);
 		strcat(message, temp1);
 	}
@@ -423,9 +427,9 @@ int changedrivers(void)
 		toallocate = countofcards - nictocheck;
 		while (!abort && toallocate > 0 && nictocheck < countofcards && sofarallocated < needcards)
 		{
-			findnicdescription(displaydriver, temp);
 			/* Get device name, eth%d is hard coded. */
 			sprintf(nexteth, "eth%d", nictocheck);
+			findnicdescription(nexteth, temp);
 			/* Get MAC address. */
 			if (getnicmac(mac, STRING_SIZE, nexteth))
 				/* If MAC found put at the end of NIC description. */

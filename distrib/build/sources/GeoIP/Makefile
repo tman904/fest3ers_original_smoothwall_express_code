@@ -11,13 +11,11 @@ VERSION = 1.4.8
 
 BASE_URL = http://www.maxmind.com/download/geoip/api/c
 
+CONFIG_OPTS = --with-gnu-ld
 CONFIGURE = yes
 configure: patch
 	cd $(COMPILE_DIR); \
-	  LT_VER=`/usr/bin/libtool --config |grep macro_version=|sed -e 's/.*=//'`; \
-	  LT_REV=`/usr/bin/libtool --config |grep macro_revision=|sed -e 's/.*=//'`; \
-	  sed -i -e 's/^VERSION=.*/VERSION="'$$LT_VER'"/' \
-	         -e 's/^package_revision=.*/package_revision='$$LT_REV'/' ltmain.sh
+	  autoreconf -v -f --install
 	cd $(COMPILE_DIR); $(PRE_CONFIGURE) ./configure --prefix=$(PKG_DIR) $(CONFIG_OPTS)
 
 include ../Makefile.rules

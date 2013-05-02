@@ -32,7 +32,7 @@ NOT_DRIVERS = drivers/gpu drivers/parport drivers/gpio drivers/scsi/fcoe \
 	      drivers/scsi/cxgbi drivers/scsi/be2iscsi drivers/scsi/bfa \
               drivers/scsi/lpfc drivers/hwmon drivers/media \
 	      drivers/watchdog drivers/edac drivers/cpufreq drivers/regulator \
-              net/netfilter net/ipsec \
+              drivers/video net/netfilter net/ipsec \
 	      net/sched net/wireless net/bridge net/sctp net/bluetooth \
 	      net/ax25 net/wimax net/cfrm
 NOT_SHARE = locales/[a-d]* locales/e[o-z]* locales/[e-z]* doc info man readline
@@ -112,7 +112,7 @@ endif
 	@/build/toolcrib/striptree tmp
 
 	@# Clean extra stuff to shrink the initramfs
-	@cd tmp/lib/modules/*/kernel; rm -rf $(NOT_DRIVERS)
+	@for i in tmp/lib/modules/*; do (cd "$$i/kernel"; rm -rf $(NOT_DRIVERS)); done
 	@cd tmp/usr/share; rm -rf $(NOT_SHARE)
 	@cd tmp/usr; rm -rf $(NOT_USR)
 	@cd tmp; find . -name lib\*a -exec rm {} \;

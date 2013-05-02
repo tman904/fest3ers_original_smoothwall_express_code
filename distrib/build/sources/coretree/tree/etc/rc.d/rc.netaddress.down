@@ -31,4 +31,4 @@ for i in /var/run/dhcpcd-*.pid; do
 done
 
 rm -f /var/smoothwall/red/*
-/usr/bin/smoothcom dnsproxyrestart
+/usr/bin/smoothcom dnsproxystop

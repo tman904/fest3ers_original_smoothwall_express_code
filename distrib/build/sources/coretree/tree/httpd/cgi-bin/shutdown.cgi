@@ -53,14 +53,17 @@ if ($death == 0 && $rebirth == 0)
 	print "<FORM METHOD='POST'>\n";
 
 	&openbox($tr{'shutdown2'});
+	my $myName = `hostname`;
+	chomp $myName;
+	$myName = " ($myName)";
 	print <<END
 <TABLE WIDTH='100%'>
 <TR>
 	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'reboot'}'
- onClick="if(confirm('Are you sure you want to reboot this Smoothwall?')) {return true;} return false;"
+ onClick="if(confirm('Are you sure you want to reboot this Smoothwall$myName?')) {return true;} return false;"
 ></TD>
 	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'shutdown'}'
- onClick="if(confirm('Are you sure you want to shutdown this Smoothwall?')) {return true;} return false;"
+ onClick="if(confirm('Are you sure you want to shutdown this Smoothwall$myName?')) {return true;} return false;"
 ></TD>
 </TR>
 </TABLE>
