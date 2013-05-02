@@ -392,6 +392,7 @@ END
 
 print <<END
 <FORM METHOD='POST' NAME='myform'>
+
 <DIV ALIGN='CENTER'>
 <BR>
 <table style='width: 95%; border:solid 1px; border-color:orange; background-color:#f9f0c7; margin:0px; padding:4px;'>
@@ -406,71 +407,72 @@ END
 &openbox($tr{'smoothinfo-include'});
 
 print <<END
-<BR>
 <TABLE WIDTH='100%'>
   <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-config-tip'}'>$tr{'smoothinfo-config'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-config-tip'}'>$tr{'smoothinfo-config'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONFIG' VALUE='on' $checked{'CONFIG'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-connection-tip'}'>$tr{'smoothinfo-connection'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-connection-tip'}'>$tr{'smoothinfo-connection'}:</TD>
     <TD><INPUT TYPE='checkbox' NAME='CONNTYPE' VALUE='on' $checked{'CONNTYPE'}{'on'}></TD>
   </TR>
   <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-adapters-tip'}'>$tr{'smoothinfo-adapters'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-adapters-tip'}'>$tr{'smoothinfo-adapters'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ADAPTERS' $checked{'ADAPTERS'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-ifconfig-tip'}'>$tr{'smoothinfo-ifconfig'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-ifconfig-tip'}'>$tr{'smoothinfo-ifconfig'}:</TD>
     <TD><INPUT TYPE='checkbox' NAME='NETCONF1' VALUE='on' $checked{'NETCONF1'}{'on'}></TD>
   </TR>
-    <TD  WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-net settings-tip'}">$tr{'smoothinfo-net settings'}</TD>
+    <TD  WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-net settings-tip'}">$tr{'smoothinfo-net settings'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='NETCONF2' $checked{'NETCONF2'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}</TD>
+    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ROUTE' $checked{'ROUTE'}{'on'}></TD>
     <TR>
-    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-dhcpinfo-tip'}'>$tr{'smoothinfo-dhcpinfo'}</TD>
+    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-dhcpinfo-tip'}'>$tr{'smoothinfo-dhcpinfo'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DHCPINFO' $checked{'DHCPINFO'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-portfw'}</TD>
+    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-portfw'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='PORTFW' $checked{'PORTFW'}{'on'}></TD>
   </TR>
   <TR>
-    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-cpu'}</TD>
+    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-cpu'}:</TD>
     <TD><INPUT TYPE='checkbox' NAME='CPU' $checked{'CPU'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-irqs-tip'}'>$tr{'smoothinfo-irqs'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-irqs-tip'}'>$tr{'smoothinfo-irqs'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='IRQs' $checked{'IRQs'}{'on'}></TD>
   </TR>
   <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-memory-tip'}'>$tr{'smoothinfo-memory'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-memory-tip'}'>$tr{'smoothinfo-memory'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='MEMORY' $checked{'MEMORY'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-diskspace'}</TD>
+    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-diskspace'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DISKSPACE' $checked{'DISKSPACE'}{'on'}></TD>
   </TR>
   <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-mods-tip'}'>$tr{'smoothinfo-installed-mods'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-mods-tip'}'>$tr{'smoothinfo-installed-mods'}:</TD>
     <TD><INPUT TYPE='checkbox' NAME='MODLIST' $checked{'MODLIST'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-modules-tip'}'>$tr{'smoothinfo-modules'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-modules-tip'}'>$tr{'smoothinfo-modules'}:</TD>
     <TD><INPUT TYPE='checkbox' NAME='LOADEDMODULES' $checked{'LOADEDMODULES'}{'on'}></TD>
   </TR>
   <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-top-tip'}">$tr{'smoothinfo-top'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-top-tip'}">$tr{'smoothinfo-top'}:</TD>
     <TD><INPUT TYPE='checkbox' NAME='TOP' $checked{'TOP'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-conntracks-tip'}'>$tr{'smoothinfo-conntracks'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-conntracks-tip'}'>$tr{'smoothinfo-conntracks'}:</TD>
     <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONNTRACKS' $checked{'CONNTRACKS'}{'on'}></TD>
   </TR>
   <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-services-status-tip'}'>$tr{'smoothinfo-services-status'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-services-status-tip'}'>$tr{'smoothinfo-services-status'}:</TD>
     <TD><INPUT TYPE='checkbox' NAME='SERVICES' $checked{'SERVICES'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-mod-services-status-tip'}">$tr{'smoothinfo-mod-services-status'}</TD>
+    <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-mod-services-status-tip'}">$tr{'smoothinfo-mod-services-status'}:</TD>
     <TD><INPUT TYPE='checkbox' NAME='MODSERVICES' $checked{'MODSERVICES'}{'on'}></TD>
   </TR>
 </TABLE>
-<BR>
-<FIELDSET style='border-style:solid; border-width:1px; border-color:grey;'>
-  <LEGEND>
-    <B>&nbsp LOGS &nbsp;
+<HR WIDTH='50%'>
+END
+;
+
+
+print <<END
+    <b>Logs:</b> &nbsp;
     <A href='#'>
       <IMG SRC='/ui/img/help.gif' ALT='?' TITLE='$tr{'smoothinfo-log-help'}'
            VALIGN='top' onclick="javascript:toggle('help'); return false;">
     </A>
-    </B>
-  </LEGEND>
+
 <TABLE WIDTH='100%' border='$border' cellpadding='0' cellspacing='0'>
   <TR>
     <TD class='tightbase' TITLE='$tr{'smoothinfo-dmesg-tip'}'>$tr{'smoothinfo-dmesg'}</TD>
@@ -540,7 +542,6 @@ print <<END
 </FIELDSET>
 
 <DIV ALIGN='CENTER' Id='help' style='display: none'>
-<BR>
 <table style='width: 99%; border:dotted 1px; background-color:#ffee88; margin:0px; padding:4px;'>
 <TR>
   <TD width='15%' style='font-size:100%; font-style:italic;'>$tr{'smoothinfo-dmesg'}</TD>
@@ -559,7 +560,7 @@ print <<END
   <TD style='font-size:100%;'>$tr{'smoothinfo-system-log-help'}</TD>
 </TR>
 </TABLE>
-</DIV
+</DIV>
 END
 ;
 
@@ -672,7 +673,6 @@ END
 ;
 &openbox("$tr{'smoothinfo-other'}:");
 print <<END
-<BR>
 <TABLE WIDTH='100%'>
 <TR>
   <TD WIDTH='9%'><b>$tr{'smoothinfo-other-title'}</b></TD><TD WIDTH='91%'><INPUT TYPE='text' NAME='SECTIONTITLE' Id='sectiontitle' VALUE='$smoothinfosettings{'SECTIONTITLE'}'  @{[jsvalidregex('sectiontitle','^[a-zA-Z0-9-_., ]+$')]} size='20'>&nbsp <i>(required)</i></TD>
@@ -747,7 +747,6 @@ $bbcodehelp = '';
 
 &openbox($tr{'smoothinfo-report'});
 print <<END
-<BR>
 <DIV ALIGN='CENTER'>
 <TABLE WIDTH='60%'>
 <TR>
@@ -787,12 +786,4 @@ print "</FORM>\n";
 
 &closebigbox();
 
-print <<END
-<TABLE WIDTH='100%'>
-<TR>
-  <TD ALIGN='right'><sup><small>$version &nbsp</small></sup></TD>
-</TR>
-</TABLE>
-END
-;
 &closepage();
