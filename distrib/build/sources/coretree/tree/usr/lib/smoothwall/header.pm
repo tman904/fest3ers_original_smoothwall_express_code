@@ -385,7 +385,7 @@ sub closepage
 		</div>
 		<div style="width:49%; text-align:right; margin:2px; display:inline-block">
 		    	&copy; 2000 - 2013 <a href='http://smoothwall.org/about/team/'>The Smoothwall Team</a><br/>
-			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://smoothwall.org/get/sources/'>original authors</a>
+			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://www.smoothwall.org/download/sources/'>original authors</a>
 		</div>
 	</td>
 </tr> 
