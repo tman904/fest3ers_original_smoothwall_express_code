@@ -220,7 +220,7 @@ END
 
 <tr>
 	<td colspan='2'>
-	<p style="margin: 0 0 2pt 9pt; font-weight:bold; font-size:8pt; font-family:Arial,sans-serif">($hostname)</p>
+	&nbsp;
 END
 	;
 
@@ -328,9 +328,19 @@ END
 <table class='main' cellpadding='0' cellspacing='0'>
 <tr>
 	<td class='logo' rowspan='2'>
-	</td><td class='header'>
-	</td> 
+	</td>
+<td class='header'>
+
+<table class='frame' cellpadding='0' cellspacing='0'>
+<tr>
+<td style="width: 450px;"></td>
+<td>
+<p style="margin: 0 0 2pt 9pt; font-size:8pt; color:white; font-family:Arial,sans-serif">system: $hostname</p>
+</td> 
 </tr>
+</table>
+
+</td>
 END
 		;
 		&showmenu($thissection);
