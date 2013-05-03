@@ -231,7 +231,8 @@ endif
 	@echo "        main ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nBuilding smoothwall.tgz, stand by ..."
 	@tar -zcf cdrom/smoothwall.tgz -C distrib .
-	@cp -a cdrom/smoothwall.tgz cdrom-dev/
+	@echo -n `tar tvf cdrom/smoothwall.tgz |wc -l` > cdrom/smoothwall.tgz.filecount
+	@cp -a cdrom/smoothwall.tgz* cdrom-dev/
 	
 	@echo "        dev ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nBuilding smoothdev.tgz, stand by ..."

@@ -35,7 +35,9 @@ int main(int argc, char *argv[])
 	char *insertmessage, *insertdevnode;
 	char tarballfilename[STRING_SIZE];
 	char shortlangname[10];
+	char tarballFileCountStr[21];
 	int allok = 0;
+	int tarballFileCount = 40000;
 	struct keyvalue *ethernetkv = initkeyvalues();
 	FILE *handle;
 	FILE *Fpartitions, *openShut;
@@ -304,7 +306,14 @@ int main(int argc, char *argv[])
 
 	/* Either use tarball from cdrom or download. */
 	if (installtype == CDROM_INSTALL)
+	{
 		strncpy(tarballfilename, "/cdrom/smoothwall.tgz", STRING_SIZE);
+		// Get the tarball's file count
+		openShut = fopen("/cdrom/smoothwall.tgz.filecount", "r");
+		fscanf(openShut, "%20s", tarballFileCountStr);
+		fclose(openShut);
+		tarballFileCount = strtol(tarballFileCountStr, NULL, 10);
+	}
 	else
 	{
 		if (!(downloadtarball()))
@@ -319,7 +328,7 @@ int main(int argc, char *argv[])
 	snprintf(commandstring, STRING_SIZE, 
 		"/bin/tar -C /harddisk -zxvf %s",
 		tarballfilename);
-	if (runcommandwithprogress(45, 4, TITLE, commandstring, 27238,
+	if (runcommandwithprogress(45, 4, TITLE, commandstring, tarballFileCount,
 		ctr[TR_INSTALLING_FILES]))
 	{
 		errorbox(ctr[TR_UNABLE_TO_INSTALL_FILES]);
