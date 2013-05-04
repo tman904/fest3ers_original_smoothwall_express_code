@@ -33,7 +33,8 @@ export PERL_MODS = Authen-NTLM \
 	    Set-IntSpan \
 	    URI \
 	    libnet \
-	    libwww-perl
+	    libwww-perl \
+	    local-lib
 
 DOWNLOAD = yes
 download:
