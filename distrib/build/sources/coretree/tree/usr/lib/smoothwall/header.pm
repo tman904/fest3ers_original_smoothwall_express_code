@@ -68,7 +68,7 @@ if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
 require "/usr/lib/smoothwall/langs/base.pl";
 
 require "/usr/lib/smoothwall/langs/alertboxes.en.pl";
-if (${language} ne "en")
+if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
 {
   foreach $key (sort keys %baseabouttext)
   {
