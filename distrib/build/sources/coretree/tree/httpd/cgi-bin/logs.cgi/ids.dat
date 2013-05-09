@@ -55,7 +55,7 @@ if ($day < 10) {
         $day = "0$day"; }
 my $line = 0;
 my $lines = 0;
-my ($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport, @refs);
+my ($ruleID,$title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport, @refs);
 open(LOG, "/var/log/snort/alert");
 while(<LOG>)
 {
@@ -67,9 +67,10 @@ while(<LOG>)
 			&append;
 			$line = 1;
 		}
-		($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport) = ("n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a");
+		($ruleID,$title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport) = ("n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a");
 		@refs = ();
-		$_ =~ m/:([0-9]{1,4})\] (.*) \[\*\*\]/;
+		$_ =~ m/\[\*\*\] \[(.*)\] (.*) \[\*\*\]/;
+		$ruleID = $1;
 		$title = $2;
 	}
 	if ($_ =~ m/Classification: (.*)\] \[Priority: (\d)\]/)
@@ -111,9 +112,10 @@ if ($cgiparams{'ACTION'} eq $tr{'export'})
 
 	foreach $_ (@log)
 	{
-		my ($datetime,$title,$priority,$classification,$ipinfo,$refs) = split(/\|/);
+		my ($datetime,$ruleID,$title,$priority,$classification,$ipinfo,$refs) = split(/\|/);
 		print <<END
 Date: $datetime
+RuleID: $ruleID
 Name: $title
 Priority: $priority
 Type: $classification
@@ -282,12 +284,18 @@ foreach $_ (@slice)
 		print "<TR BGCOLOR='$table1colour'><TD>\n"; }
 	else {
 		print "<TR BGCOLOR='$table2colour'><TD>\n"; }
-	my ($datetime,$title,$priority,$classification,$ipinfo,$refs) = split(/\|/);
+	my ($datetime,$ruleID,$title,$priority,$classification,$ipinfo,$refs) = split(/\|/);
 	print <<END
 <TABLE WIDTH='100%'>
 <TR>
-<TD WIDTH='80'><B>$tr{'datec'}</B></TD><TD WIDTH='100'>$datetime</TD>
-<TD WIDTH='65'><B>$tr{'namec'}</B></TD><TD>$title</TD>
+<TD WIDTH='12%'><B>$tr{'datec'}</B></TD>
+<TD WIDTH='15%'>$datetime</TD>
+<TD WIDTH='10%'><B>Rule ID:</B></TD>
+<TD>$ruleID</TD>
+</TR>
+<TR>
+<TD><B>$tr{'namec'}</TD>
+<TD COLSPAN='3'>$title</TD>
 </TR>
 <TR><TD><B>$tr{'priorityc'}</B></TD><TD>$priority</TD>
 <TD><B>$tr{'typec'}</B></TD><TD>$classification</TD>
@@ -331,7 +339,7 @@ END
 
 sub append
 {
-	$log[$lines] = "$date $time|$title|$priority|$classification|$srcip:$srcport -> $destip:$destport|";
+	$log[$lines] = "$date $time|$ruleID|$title|$priority|$classification|$srcip:$srcport -> $destip:$destport|";
 	foreach $_ (@refs) {
 		$log[$lines] = "$log[$lines]$_,"; }
 	$lines++;
