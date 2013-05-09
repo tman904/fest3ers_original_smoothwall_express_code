@@ -286,6 +286,7 @@
 # logs.cgi/ids.dat
 'ids log viewer' => 'IDS log viewer',
 'datec' => 'Date:',
+'ruleidc' => 'Rule ID:',
 'namec' => 'Name:',
 'priorityc' => 'Priority:',
 'typec' => 'Type:',

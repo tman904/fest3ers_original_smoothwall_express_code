@@ -290,7 +290,7 @@ foreach $_ (@slice)
 <TR>
 <TD WIDTH='12%'><B>$tr{'datec'}</B></TD>
 <TD WIDTH='15%'>$datetime</TD>
-<TD WIDTH='10%'><B>Rule ID:</B></TD>
+<TD WIDTH='10%'><B>$tr{'ruleidc'}</B></TD>
 <TD>$ruleID</TD>
 </TR>
 <TR>
