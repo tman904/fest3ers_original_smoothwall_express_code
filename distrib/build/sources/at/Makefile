@@ -22,7 +22,6 @@ INSTALL = yes
 
 install: compile
 	@mkdir -p $(PKG_ROOT)
-	@make -C $(COMPILE_DIR) prefix=$(PKG_ROOT)$(PKG_DIR) install
-	@install -d /var/spool/atjobs /var/spool/atspool
+	@make -C $(COMPILE_DIR) IROOT=$(PKG_ROOT) install
 
 include ../Makefile.rules
