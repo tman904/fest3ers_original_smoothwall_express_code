@@ -10,12 +10,13 @@
 # backup_daemon
 #   The daemon watches for known backup devices to be plugged in and automatically
 #   runs the respective backup. It will perform a backup 'now' or at a specified
-#   later time (typically early morning).
+#   later time (typically early morning). A vat/total backup is always performed
+#   'now'.
 # backup_sys is a symlink to backup_daemon. When run manually, it will perform the
 #   type of backup associated with the drive plugged in. It always performs backups
 #   'now'.
 # In all cases, a backup medium *must* be configured before it can be used. The
-#   Roadster-style installer will automatically add the install source drive as
+#   advanced installer will automatically add the install source drive as
 #   a var/total medium *if* it was *not* a CD/DVD.
 
 
@@ -31,6 +32,8 @@ usage () {
   echo "  Specify '-f' to add a new medium to the full set."
   echo "  Specify '-i' to add a new medium to the incremental set."
   echo "  Specify '-v' to add a new medium to the vartotal set. (F/W only)"
+  echo
+  echo "The F/W UI uses '-V' to add a new medium to the vartotal set."
   exit 1
 }
 
@@ -45,16 +48,18 @@ ROOTDIR=/var/smoothwall
 # Set PATH for security
 PATH=/usr/bin/smoothwall:/bin:/usr/bin
 
-relROOTDIR=${ROOTDIR/\//}
-BACK_DIR=${ROOTDIR}/backup
-relBACK_DIR=${relROOTDIR}/backup
-DEV_FILE="${BACK_DIR}/devices"
-BACK_FLAG="${BACK_DIR}/flag"
-BACK_HIST="${BACK_DIR}/history"
-BACK_SETTINGS="${BACK_DIR}/settings"
+export relROOTDIR=${ROOTDIR/\//}
+export BACK_DIR=${ROOTDIR}/backup
+export relBACK_DIR=${relROOTDIR}/backup
+export DEV_FILE="${BACK_DIR}/devices"
+export BACK_FLAG="${BACK_DIR}/flag"
+export BACK_HIST="${BACK_DIR}/history"
+export BACK_SETTINGS="${BACK_DIR}/settings"
+export addNewID delID AUTOBACK
 
 # Get global functions
 . /usr/lib/smoothwall/backup_functions
+umask 002
 
 # How this script was run determines where feedback is sent.
 if [ `basename $0` == "backup_daemon" ]; then
@@ -65,15 +70,18 @@ if [ `basename $0` == "backup_daemon" ]; then
   addNewID=0
   AUTOBACK="AUTO"
 else
+  delID=0
   case $1 in
     "") addNewID=0;;
     "-f") addNewID=1;;
     "-i") addNewID=2;;
     "-v") addNewID=3;;
+    "-S") delID=1;;
+    "-V") addNewID=4;;
     *) usage; exit 1;;
   esac
   AUTOBACK="MANUAL"
-  trap "rm -f ${ROOTDIR}/backup/DISABLE_DAEMON; if [ -d /backup ]; then umount /backup; rmdir /backup; fi" 0
+  trap "rm -f ${ROOTDIR}/backup/{DISABLE_DAEMON,devices}; if [ -d /backup ]; then umount /backup; rmdir /backup; fi" 0
 fi
 
 # Ensure the files and dirs exist with reasonable defaults
@@ -112,6 +120,20 @@ fi
 # Get the backup media IDs and other settings
 . ${BACK_SETTINGS}
 
+# If this is a simple 'read settings, write config and settings' operation...
+if [ $delID -eq 1 ]; then
+  unset VARTOTAL; declare -A VARTOTAL
+  # Get the contents of config
+  OIFS=$IFS; IFS=","
+  while read a b; do
+    VARTOTAL["$a"]="$b"
+  done < $BACK_DIR/config
+  IFS=$OIFS
+  # and save it all
+  writeSettings
+  exit 0
+fi
+
 HOST=`uname -n`
 DATE=`date +"%Y-%m-%d"`
 TIME=`date +"%H:%M:%S"`
@@ -126,24 +148,28 @@ if [ $AUTOBACK == "MANUAL" ]; then
   # Always disable the daemon when running manual
   touch ${BACK_DIR}/DISABLE_DAEMON
   # Customize the message
-  if [ $addNewID -gt 0 ]; then
-    # Adding new medium
-    feedback $AUTOBACK "Plug in new medium"
-  else
-    # Performing backup
-    feedback $AUTOBACK "Plug in backup medium"
-  fi
+  case $addNewID in
+    1|2|3)
+      # Adding new medium
+      feedback $AUTOBACK "Plug in new drive"
+      ;;
+    4)
+      # Adding new medium via F/W UI
+      echo "Plug in new drive..." > ${BACK_DIR}/addFlag
+      ;;
+  esac
 fi
 
-# Wait until the correct (or an acceptable) node appears in /dev/disk/by-id
+# Wait until the correct (or an acceptable) node appears in /dev/disk/by-id or the
+#   DISABLED or CANCEL files appear in $BACK_DIR
 
 # Ignore SIGUSR1 for now; new bash doesn't allow 'ignore', so do a no-op
-trap "echo -n 'parenttrap'" SIGUSR1
+trap "true" SIGUSR1
 
 # Watch for CREATEs in /dev of $BACKUP_ID
 (
   # Restore default USR1 handler for this subshell
-  trap "echo -n 'watchtrap';exit" SIGUSR1
+  trap SIGUSR1
 
   # Are we enabled or disabled?
   if [ -e $BACK_DIR/DISABLE_DAEMON ]; then
@@ -153,7 +179,8 @@ trap "echo -n 'parenttrap'" SIGUSR1
   fi
 
   # Loop reading inotify events
-  $INOTIFY_CMD -e CREATE,DELETE -m /dev/disk/by-id $BACK_DIR 2>&- | while read dir event id; do
+  $INOTIFY_CMD -e CREATE,DELETE -m /dev/disk/by-id $BACK_DIR 2>&- | while read dir event filename; do
+
     case $dir in
       /dev/disk/by-id/)
         # Handle CREATE events only if AUTO and enabled or if MANUAL
@@ -161,10 +188,12 @@ trap "echo -n 'parenttrap'" SIGUSR1
              \( \( "$AUTOBACK" == "AUTO" -a $ENABLED -eq 0 \) -o \
                 "$AUTOBACK" == "MANUAL" \) ]; then
           # Get the ID (less partition info)
-          ID="${id/-part[0-9]*/}"
+          ID="${filename/-part[0-9]*/}"
+
           # Be sure we pick up newly added media (for daemon)
           unset INCREMENTAL FULL VARTOTAL
           . ${BACK_SETTINGS}
+
           # Compare to configured IDs
           retCode=1
           for i in "${INCREMENTAL[@]}" "${FULL[@]}" "${VARTOTAL[@]}"; do
@@ -174,19 +203,43 @@ trap "echo -n 'parenttrap'" SIGUSR1
             fi
           done
 
+          # What to do whether or not the plugged-in drive is configured
           if [ "$AUTOBACK" == "AUTO" -a $retCode -eq 1 ]; then
             # Go 'round if AUTO and NOT a configured ID
             continue
+
           elif [ "$AUTOBACK" == "MANUAL" -a $retCode -eq 0 -a $addNewID -gt 0 ]; then
             # Go 'round if MANUAL, ID is configured, and adding a new medium
-            feedback $AUTOBACK "Medium already configured!"
-            NODE="disk/by-id/$ID"
-            removeMedium
-            kill -USR1 0
+            if [ $addNewID -lt 4 ]; then
+              # Notify directly
+              feedback $AUTOBACK "Medium already configured!"
+              removeMedium "$ID"
+              rm -f ${BACK_DIR}/devices
+
+            else
+              # Do the UI tango
+              echo "Medium already configured!" > ${BACK_DIR}/addFlag
+              restoreUsr2Trap=`trap -p SIGUSR2`; trap 'true' SIGUSR2
+              IN_EVENT=`trap SIGUSR2; $INOTIFY_CMD -e close_write -m ${BACK_DIR}  2>/dev/null | while read a b c; do
+                          if [ "$c" == "CANCELadd" ]; then
+                            echo "$c";
+                            kill -SIGUSR2 0;
+                          fi;
+                        done`
+              eval $restoreUsr2Trap
+              rm -f ${BACK_DIR}/CANCELadd
+              removeMedium "$ID"
+              echo "Operation Cancelled." > ${BACK_DIR}/addFlag
+              sleep 1
+
+              rm -f ${BACK_DIR}/addFlag ${BACK_DIR}/devices
+            fi
+            kill -SIGUSR1 0
+
           elif [ "$AUTOBACK" == "MANUAL" -a $retCode -eq 1 -a $addNewID -gt 0 ]; then
             # If MANUAL, ID is not configured, and adding a new medium
             echo "${ID}-part1" > ${DEV_FILE}
-            kill -USR1 0
+            kill -SIGUSR1 0
           fi
 
           # If the ID was found and there's a device node and a partition #1 node, it's good to go.
@@ -194,24 +247,34 @@ trap "echo -n 'parenttrap'" SIGUSR1
             # Save it
             echo "${ID}-part1" > ${DEV_FILE}
             # I slay me!
-            kill -USR1 0;
+            kill -SIGUSR1 0;
           fi
         fi
         ;;
 
       $BACK_DIR/)
         # Change enabled state as needed
-        if [ $id == "DISABLE_DAEMON" ]; then
+        if [ $filename == "DISABLE_DAEMON" ]; then
           if [ $event == "CREATE" ]; then
             ENABLED=1
           elif [ $event == "DELETE" ]; then
             ENABLED=0
           fi
+
+        elif [ $filename == "CANCELadd" ]; then
+          # Cancel the 'plug it in' operation
+          if [ "$AUTOBACK" == "MANUAL" -a $addNewID -gt 0 ]; then
+            echo "Operation cancelled." > $BACK_DIR/addFlag
+            sleep 1
+            rm $BACK_DIR/CANCELadd
+            rm -f ${BACK_DIR}/addFlag ${BACK_DIR}/devices
+            kill -SIGUSR1 0
+          fi
         fi
         ;;
     esac
   done
-) >/dev/null 2>&1 &
+) & #>/dev/null 2>&1 &
 wait
 
 # Restore default USR1 handler
@@ -225,15 +288,70 @@ fi
 
 # Read the node info
 read NODE < ${DEV_FILE}
-devID=${NODE/-part1/}
+devID=${NODE/-part*/}
+partID="${devID}-part1"
 NODE="disk/by-id/$NODE"
 
 
 # If adding a new medium, do so and exit.
 if [ $AUTOBACK == "MANUAL" ]; then
   if [ $addNewID -gt 0 ]; then
-    echo -n "Enter your name for this medium: "
-    read newIDX
+    case $addNewID in
+      1|2|3)
+        echo -n "Enter your name for this drive: "
+        read newIDX
+        ;;
+      4)
+        # Verify the drive/partition
+        sleep 1
+        if [ ! -e "/dev/disk/by-id/${partID}" ]; then
+          echo -n "Error: The drive doesn't appear to have a filesytem on partition #1.<br />Fix this or use another drive." > ${BACK_DIR}/addFlag
+          trap 'true' SIGUSR1
+          IN_EVENT=`trap SIGUSR1; $INOTIFY_CMD -e close_write -m ${BACK_DIR}  2>/dev/null | while read a b c; do
+                      if [ "$c" == "CANCELadd" ]; then
+                        echo "$c";
+                        kill -SIGUSR1 0;
+                        exit;
+                      fi;
+                    done`
+          trap SIGUSR1
+          if [ "$IN_EVENT" == "CANCELadd" ]; then
+            rm -f ${BACK_DIR}/CANCELadd
+          fi
+          removeMedium "$devID"
+          echo "Operation aborted." > ${BACK_DIR}/addFlag
+          sleep 1
+          rm -f ${BACK_DIR}/addFlag ${BACK_DIR}/DISABLE_DAEMON ${BACK_DIR}/devices
+          exit 1
+        fi
+
+        echo -n "Enter your name for this drive..." > ${BACK_DIR}/addFlag
+        touch ${BACK_DIR}/addResponse
+        trap 'true' SIGUSR1
+        IN_EVENT=`trap SIGUSR1; $INOTIFY_CMD -e close_write -m ${BACK_DIR}  2>/dev/null | while read a b c; do
+                    if [ "$c" == "addResponse" -o "$c" == "CANCELadd" ]; then
+                      echo "$c";
+                      kill -SIGUSR1 0;
+                    fi;
+                  done`
+        trap SIGUSR1
+        case $IN_EVENT in
+          addResponse)
+            newIDX=`cat ${BACK_DIR}/addResponse`
+            rm -f ${BACK_DIR}/addResponse
+            ;;
+          CANCELadd)
+            rm -f ${BACK_DIR}/CANCELadd
+            removeMedium "$devID"
+            echo "Operation Cancelled." > ${BACK_DIR}/addFlag
+            sleep 1
+            rm -f ${BACK_DIR}/addFlag
+            exit 1
+            ;;
+        esac
+        ;;
+    esac
+
     case $addNewID in
       1)
         FULL["$newIDX"]=$devID
@@ -241,14 +359,23 @@ if [ $AUTOBACK == "MANUAL" ]; then
       2)
         INCREMENTAL["$newIDX"]=$devID
         ;;
-      3)
+      3|4)
         VARTOTAL["$newIDX"]=$devID
         ;;
     esac
     writeSettings
-    removeMedium
+    removeMedium "$devID"
+    if [ $addNewID -eq 4 ]; then
+      echo "Operation complete." > ${BACK_DIR}/addFlag
+      sleep 1
+      rm -f ${BACK_DIR}/addFlag
+    fi
     exit 0
   fi
+
+  # We are MANUAL and adding a medium. Always exit. But we shouldn't get here,
+  #   so it's sort-of an error
+  exit -1
 fi
 
 # Give audible feedback if automatic
@@ -281,7 +408,7 @@ else
   # Now do the stuff to wait for completion
 
   # Ignore SIGUSR1 for now; new bash doesn't allow 'ignore', so do a no-op
-  trap "echo -n ''" SIGUSR1
+  trap "true" SIGUSR1
 
   # Watch for "Backup complete'" to appear in flag file
   # Subshelled to do USR1 and backgrounded to silence unsilenceable messages.
@@ -292,7 +419,7 @@ else
     # And wait until the delayed backup is complete
     inotifywait -q -e CLOSE_WRITE -m ${BACK_FLAG} 2>/dev/null | \
       while read file event; do
-        if grep -q "Backup complete." ${BACK_FLAG}; then kill -USR1 0; fi
+        if grep -q "Backup complete." ${BACK_FLAG}; then kill -SIGUSR1 0; fi
       done >/dev/null 2>&1
   ) >/dev/null 2>&1 &
   # Wait for the kid to perish
@@ -302,7 +429,7 @@ else
 fi
 
 # Tell the user to unplug the drive
-removeMedium
+removeMedium "$devID"
 
 FPRE=`echo $FNAME | sed -e 's/total\/var//'`
 rm -f ${DEV_FILE} ${FPRE}{total,var}.{list,tarhead,tarheel}

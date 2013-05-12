@@ -6,7 +6,7 @@ use header qw( :standard );
 print "Pragma: no-cache\n";
 print "Cache-control: no-cache\n";
 print "Connection: close\n";
-print "content-type: text/html\n\n";
+print "content-type: text/plain\n\n";
 
 my $flagfile = "${swroot}/backup/flag";
 

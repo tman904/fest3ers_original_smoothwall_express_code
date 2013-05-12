@@ -86,5 +86,5 @@ function handleFlag(flagText) {
   }
 
   // Re-schedule
-  setTimeout ("simpleMonitor('/cgi-bin/txt-bu-flag.cgi', handleFlag)", delay);
+  setTimeout ("simpleMonitor(backupMonitorObj, '/cgi-bin/txt-bu-flag.cgi', handleFlag)", delay);
 }

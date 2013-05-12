@@ -66,14 +66,31 @@ setFiles () {
 
 # Remove the medium
 removeMedium () {
-  callAudible /usr/bin/sounds/ring.bpf
+  # $1 = device ID node in by-id
 
   /sbin/hdparm -y /dev/$NODE >/dev/null 2>&1
 
-  feedback $AUTOBACK "Remove the backup medium."
+  callAudible /usr/bin/sounds/ring.bpf
+
+  if [ $addNewID -eq 4 ]; then
+    echo -n "Remove the backup medium." > ${BACK_DIR}/addFlag
+  else
+    feedback $AUTOBACK "Remove the backup medium."
+  fi
+
+  # Store the existing trap for restoration
+  savedUsr2Trap=`trap -p SIGUSR2`
 
   # Watch for the node removal
-  $INOTIFY_CMD -e DELETE /dev/$NODE 2>&-
+  trap "true" SIGUSR2
+  IN_EVENT=`trap SIGUSR2; $INOTIFY_CMD -m -e DELETE /dev/disk/by-id 2>/dev/null | while read a b c; do
+    if [ "$c" == "$1" ]; then
+      echo "$c";
+      kill -SIGUSR2 0;
+      exit;
+    fi;
+  done`
+  eval `$savedUsr2Trap`
 
   callAudible /usr/bin/sounds/removed
 }
@@ -83,6 +100,18 @@ removeMedium () {
 writeSettings () {
   local i
   typeset -i i
+  (
+    for idx in "${!INCREMENTAL[@]}"; do
+      echo "$idx,${INCREMENTAL[$idx]}"
+    done
+    for idx in "${!FULL[@]}"; do
+      echo "$idx,${FULL[$idx]}"
+    done
+    for idx in "${!VARTOTAL[@]}"; do
+      echo "$idx,${VARTOTAL[$idx]}"
+    done
+  ) >${BACK_DIR}/config
+
   (
     echo "declare -A INCREMENTAL FULL VARTOTAL"
     # Files-n-dirs may contain embedded spaces

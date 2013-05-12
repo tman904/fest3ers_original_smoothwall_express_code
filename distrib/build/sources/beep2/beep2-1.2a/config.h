@@ -5,7 +5,7 @@
  */
 
 /* output device */
-#define OUTPUT_DEVICE "/dev/tty1"
+#define OUTPUT_DEVICE "/dev/tty13"
 
 /* use system logging */
 #define SYSTEM_LOGGING

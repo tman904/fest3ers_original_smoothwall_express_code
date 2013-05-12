@@ -45,6 +45,7 @@ firewall.  Further information on your Smoothwall Express is available from <a h
 'outbound.cgi'		=> 'Configure interfaces to have outbound traffic blocked, except on specific rules.',
 'ipblock.cgi' 		=> 'Add blocking rules to prevent access from specified IP addresses or networks.',
 'backup.img' 		=> 'Use this page to create a backup floppy disk or floppy disk image file.',
+'backup.cgi' 		=> 'Use this page to create a backup on a USB/eSATA/Fireware or other hot-plug drive.',
 'im.cgi'		=> 'Configure the IM logging proxy.',
 'outgoing.cgi' 		=> 'Add rules to control local machine\'s access to external services and set time frames for them.',
 'traffic.cgi'		=> 'Set the best speed which your network is capable of achieving. The headroom should be increased if traffic shaping is having no effect.',

@@ -1,4 +1,14 @@
-function simpleMonitor(url, callback)
+// This is a genericized asynch data fetcher. It is intended to facilitate
+//   simple asynch command and data passing between the server and the
+//   browser.
+
+// This code is largely stolen from bandwidthbars.cgi and is licensed
+//   and copyrighted under the same terms.
+
+
+// function simpleMonitor() kicks off an asynch HTTP request to the server.
+//   when it's done, it calls the callback function with the rec'd text.
+function simpleMonitor(httpReqObject, url, callback)
 {
         var xmlHttpReq = false;
         var self = this;
@@ -6,22 +16,27 @@ function simpleMonitor(url, callback)
 
         if (window.XMLHttpRequest) {
                 // Mozilla/Safari
-                self.xmlHttpReq = new XMLHttpRequest();
+                httpReqObject = new XMLHttpRequest();
         } else if (window.ActiveXObject) {
                 // IE
-                self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+                httpReqObject = new ActiveXObject("Microsoft.XMLHTTP");
         }
 
-        self.xmlHttpReq.open('GET', url, true);
-        self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        httpReqObject.open('GET', url, true);
+        httpReqObject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-        self.xmlHttpReq.onreadystatechange = function() {
-                if ( self.xmlHttpReq && self.xmlHttpReq.readyState == 4) {
-                        callback(self.xmlHttpReq.responseText);
+        httpReqObject.onreadystatechange = function() {
+                if ( httpReqObject && httpReqObject.readyState == 4) {
+                        callback(httpReqObject.responseText);
                 }
         }
 
         //document.getElementById('status').style.display = "inline";
 
-        self.xmlHttpReq.send( null );
+        httpReqObject.send( null );
 }
+
+
+// Function no_op(): a callback when we expect nothing from the server or we
+//   don't care about the data.
+function no_op() { }

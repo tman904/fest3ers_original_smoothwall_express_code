@@ -37,31 +37,7 @@ if ($ENV{'QUERY_STRING'} &&
 my $errormessage = '';
 my @service = ();
 
-if ($cgiparams{'ACTION'} eq $tr{'bu add medium'})
-{
-  if ($cgiparams{'STATE'} eq "PluggedIn") {
-    # validate name: only [A-Za-z -_]
-    unless($cgiparams{'NAME'} =~ /^[A-Za-z0-9 -_]+$/) {
-      $errormessage .= $tr{'bu invalid name'};
-    }
-    # is it in use?
-    if(system("grep '".$cgiparams{'NAME'}."' ${swroot}/backup/config >/dev/null 2>&1")) {
-      $errormessage .= $tr{'bu name used'};
-    }
-    unless ($errormessage)
-    {
-      open(FILE,">>$filename") or die 'Unable to open config file.';
-      flock FILE, 2;
-      print FILE "$cgiparams{'NAME'},$cgiparams{'ID'}\n";
-      close(FILE);
-      undef %cgiparams;
-      $cgiparams{'COLUMN'} = 1;
-      $cgiparams{'ORDER'} = $tr{'log ascending'};
-
-      #system('/usr/bin/smoothwall/writepnpbackup.pl');
-    }
-  }
-}
+# There is no action for 'Add Drive'; it is handled in javascript
 
 if ($cgiparams{'ACTION'} eq $tr{'remove'})
 {
@@ -80,8 +56,6 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'})
         }
         if ($count == 0) {
                 $errormessage .= $tr{'nothing selected'}; }
-        if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-                $errormessage = $tr{'you can only select one item to edit'}; }
         unless ($errormessage)
         {
                 open(FILE, ">$filename") or die 'Unable to open config file.';
@@ -92,19 +66,10 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'})
                         $id++;
                         unless ($cgiparams{$id} eq "on") {
                                 print FILE "$line"; }
-                        elsif ($cgiparams{'ACTION'} eq $tr{'edit'})
-                        {
-                                chomp($line);
-                                my @temp = split(/\,/,$line);
-                                $cgiparams{'IP'} = $temp[0];
-                                $cgiparams{'HOSTNAME'} = $temp[1];
-                                $cgiparams{'ENABLED'} = $temp[2];
-                                $cgiparams{'COMMENT'} = $temp[3];
-                        }
                 }
                 close(FILE);
-
-                #system('/usr/bin/smoothwall/writepnpackup.pl');
+                # Write settings file
+                system('/usr/bin/smoothwall/backup_sys -S');
 
         }
 }
@@ -117,7 +82,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'})
 &openbigbox('100%', 'LEFT');
 
 # Include the simple_monitor function
-print "
+print <<END;
 <script type='text/javascript'
         language='JavaScript'
         src='/ui/js/monitor.js'>
@@ -127,20 +92,28 @@ print "
         src='/ui/js/backup_monitor.js'>
 </script>
 <script type='text/javascript'
+        language='JavaScript'
+        src='/ui/js/backup_add_drive.js'>
+</script>
+<script type='text/javascript'
         language='JavaScript'>
   // Schedule the first one
   var backupState = 'start';  // Initial state
   var lastFileno = 0;         // Detect when progress bar should change
   var whichBar = 0;           // Which progress bar
-  var maxwidth = ${maxwidth};
+  var maxwidth = '${maxwidth}';
   var removePrompt = '$tr{'bu remove drive'}';
+  var backupMonitorObj = new Object();
+  var addDriveMonitorObj = new Object();
+  var addDriveOneShotObj = new Object();
 
-  simpleMonitor('/cgi-bin/txt-bu-flag.cgi', handleFlag);
-</script>\n";
+  simpleMonitor(backupMonitorObj, '/cgi-bin/txt-bu-flag.cgi', handleFlag);
+</script>
+END
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='post'>\n";
 
 &openbox($tr{'bu backup statusc'});
 
@@ -185,6 +158,8 @@ END
 ;
 &closebox();
 
+&openbox();
+
 &openbox($tr{'bu known mediac'});
 
 my %render_settings =
@@ -220,12 +195,56 @@ my %render_settings =
 print <<END
 <table class='blank'>
 <tr>
-<td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+<td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value="$tr{'remove'}"></td>
 <td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
 </tr>
 </table>
 END
 ;
+&closebox();
+
+&openbox();
+
+print<<END;
+<table class='blank'>
+<tr>
+  <td align='center' style='width: 20%;text-align:center'>
+    <input id='buAddDrive' type='submit' name='ACTION' value='$tr{"bu add drive"}'
+           onclick='simpleMonitor(addDriveMonitorObj, "/cgi-bin/txt-bu-startAdd.cgi", handleAddFlag); return false;'
+           style='margin:.2em; text-align:center'><br />
+    <input id='buOK' type='submit' disabled='disabled' name='ACTION' value='$tr{"bu ok"}'
+           onclick='simpleMonitor(addDriveOneShotObj, "/cgi-bin/txt-bu-setRsp.cgi?rsp="+buNameEntry.value, no_op);
+                    return false;'
+           style='margin:.2em; text-align:center'><br />
+    <input id='buCancel' type='submit' disabled='disabled' name='ACTION' value='$tr{"bu cancel"}'
+           onclick='simpleMonitor(addDriveOneShotObj, "/cgi-bin/txt-bu-cancelAdd.cgi", no_op); return false;'
+           style='margin:.2em; text-align:center'>
+  </td>
+  <td style='width:75%'>
+    <p id='buPrompt'>$tr{'bu default prompt'}</p>
+    <div id='buInput' style='display:none'>
+      <p style='display:inline-block; text-align:right; margin-right:.5em'>
+        $tr{'bu name'}:
+      </p>
+      <input id='buNameEntry' type='text' name='driveName' style='width:50%'
+             onkeyup='if (buNameEntry.value.match(/^[a-zA-Z0-9_-]+\$/) == null)
+                         buNameEntry.style.backgroundColor="#ffdddd";
+                       else
+                         buNameEntry.style.backgroundColor="";
+                       ;'>
+      <p style='display:inline-block; margin-right:.5em'>
+        <i>allowed: (A-Z, a-z, 0-9, _, -)</i>
+      </p>
+    </div>
+  </td>
+</tr>
+</table>
+<div id='debug' style='border:green 2pt solid; display:none'></div>
+END
+  
+
+&closebox();
+
 &closebox();
 
 &alertbox('add','add');
