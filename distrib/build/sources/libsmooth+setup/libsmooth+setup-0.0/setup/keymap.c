@@ -41,6 +41,8 @@ int handlekeymap(void)
 	filenamecount = 0;	
 
 	process(KEYMAPROOT "azerty", "");		
+	process(KEYMAPROOT "colemak", "");
+	process(KEYMAPROOT "olpc", "");
 	process(KEYMAPROOT "dvorak", "");
 	process(KEYMAPROOT "fgGIod", "");	
 	process(KEYMAPROOT "qwerty", "");
@@ -51,12 +53,19 @@ int handlekeymap(void)
 	for (c = 0; filenames[c]; c++)
 	{
 		displaynames[c] = malloc(STRING_SIZE);
-		if ((temp = strrchr(filenames[c], '/')))
-			strcpy(displaynames[c], temp + 1);
-		else
-			strcpy(displaynames[c], filenames[c]);
+		temp = strrchr (filenames[c], '/');
+		strcpy(displaynames[c], temp + 1);
 		if ((temp = strstr(displaynames[c], ".map.gz")))
 			*temp = '\0';
+                temp = displaynames[c] + strlen(displaynames[c]);
+		strcat(temp, "                              ");
+		temp = strstr (filenames[c], "i386/");
+		strcpy (displaynames[c]+23, temp+5);
+		temp = displaynames[c]+22;
+		*temp = '[';
+		temp = strrchr(displaynames[c], '/');
+		*temp = ']';
+		*++temp = '\0';
 	}
 	displaynames[c] = NULL;
 	
@@ -124,6 +133,8 @@ static int process(char *prefix, char *path)
 	while ((de = readdir(dir)))
 	{
 		if (de->d_name[0] == '.') continue;
+		if ((strstr(de->d_name, ".doc"))) continue;
+		if ((strstr(de->d_name, ".m4"))) continue;
 		snprintf(newpath, PATH_MAX, "%s/%s", path, de->d_name);
 		process(prefix, newpath);
 	}
