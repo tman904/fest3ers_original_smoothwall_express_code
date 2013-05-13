@@ -353,14 +353,16 @@ END
   if grep ${cd_dev[$CD]} /tmp/hd.list >/dev/null 2>&1; then
     # Installing from USB flash or other 'hard drive' (*not* a CD)?
     #   Assume this same device will be used for PnP backups.
+    #   Write both 'settings' and 'config'
     (
       BACK_SETTINGS=/harddisk/$CONFIG_ROOT/backup/settings
+      BACK_CONFIG=/harddisk/$CONFIG_ROOT/backup/config
       eval `/sbin/udevadm info --path=/sys/block/${cd_dev[$CD]} --query=all \
         | egrep "ID_BUS=|ID_SERIAL=" | sed -e 's/^E: //'`
-      . /harddisk/usr/lib/smoothwall/backup_functions
       . ${BACK_SETTINGS}
       VARTOTAL['install']="$ID_BUS-$ID_SERIAL"
-      writeSettings
+      echo "install,$ID_BUS-$ID_SERIAL" > $BACK_CONFIG
+      chroot /harddisk /usr/bin/smoothwall/backup_sys -S
     )
   fi
 
