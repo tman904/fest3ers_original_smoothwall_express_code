@@ -1,0 +1,70 @@
+<p><FONT SIZE='3'><STRONG><U>Backup</U></STRONG></FONT></P>
+
+<h3 style='margin:2em 0 0 0'>Overview</h3>
+
+<p>
+The backup page is used to invoke a backup of Smoothwall Express's
+configuration information to a hot-plugged USB, eSATA or Firewire drive.
+During the process, two archives are made. The 'var' archive contains all of
+the variable data (settings, configs, mods, logs, et al.). The 'total' archive
+contains a complete total backup of the entire filesystem.
+</p>
+
+<p>
+This backup system is Plug-n-Play. If the drive has been configured for use, plugging
+it in will trigger the backup process. If running a manual backup, the drive need not
+be configured; the script will prompt you to plug in and unplug the drive.
+</p>
+
+<p>
+The drive must contain a valid partition table (MSDOS, PC98 and GPT are recognised). The
+drive must contain a valid filesystem in partition 1; VFAT (MS-FAT), EXT-2&mdash;EXT-4
+and reiserfs are recognized. USB thumb drives are configured at the factory with a PC98
+partition table and a VFAT filesystem on partition #1.
+</p>
+
+<h3 style='margin:2em 0 0 0'>Configure (Add/Delete) Drives</h3>
+<p>
+When you install from a writable drive (flash or rotating), that drive will be
+configured for use as a PnP Backup drive. To configure other drives, click the
+'Add Drive' button on the backup page and follow the prompts. Alternatively, you
+can run '/usr/bin/smoothwall/backup_sys -v' on a console or ssh command line; follow
+the prompts. To remove a configured drive, click that drive's checkbox and then
+click 'Remove'. Via command line, edit '/var/smoothwall/backup/config' and delete
+the line containing the drive you wish to delete; then run
+'/usr/bin/smoothwall/backup_sys -S' to finish the removal.
+</p>
+
+<h3 style='margin:2em 0 0 0'>Manual Operation</h3>
+<p>
+You can manually run backups by running '/usr/bin/smoothwall/backup_sys'; follow
+the prompts to plug in and unplug the drive. You can monitor a backup's progress via
+the Status box of the backup page or you can run '/usr/bin/smoothwall/backup_mon'
+on the command line.
+
+<h3 style='margin:2em 0 0 0'>Restoration</h3>
+<p>
+These archives can be restored during an installation using the Advanced Installer.
+They make upgrading and migrating to new hardware very easy. If upgrading to a new
+version of Smoothwall Express, boot the install drive (be it read-only optical, or
+writable flash or rotating disk). Also connect the archive drive if it is separate.
+Select the advanced installer, choose the 'var'
+restore and follow the prompts. To move your Smoothwall Express to new hardware or
+to clone the system, boot the install drive, choose the 'total' restore, and follow
+the prompts. If the ethernet interfaces (NICs) are different, setup will be run and
+you will have to assign the new NICs to the correct GREEN, ORANGE, PURPLE and/or RED
+zones.
+</p>
+
+<h3>Caveats</h3>
+<p>The Iomega Rev drive identifies itself to the host as a CD drive; it will
+not work with this system. <i>With proper udev rules, the Rev drive could be made to
+work.</i>
+</p>
+
+<p>
+A 'total' archive contains all files on all mounted filesystems. The installer
+cannot know about any filesystems you may add to unused space. If you set up a
+build system, you may want to put the build directory on a separate drive and
+unmount it before backing up the system.
+</p>
