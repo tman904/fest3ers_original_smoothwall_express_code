@@ -349,7 +349,7 @@ END
 		;
 	} else { 
 		print <<END
-<body onLoad="window.focus() style="background:white"">
+<body onLoad="window.focus()" style="background:white">
 END
 		;
 	}
