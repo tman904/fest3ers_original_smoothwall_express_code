@@ -24,7 +24,7 @@ export UDEVunused = eudev
 # Document these pkgs, don't install
 TOOLCHAIN_PKGS = expect
 OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
-	     libart_lgpl procps procinfo
+	     libart_lgpl procps procinfo openswan 
 
 TARGET_DIR = /build/target
 
@@ -47,7 +47,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    iproute2 gd expat ethtool listtables inotify-tools bridge-utils \
 	    beep2 pcre trafficstats iftop setuids ppp isdn4k-utils rp-pppoe \
 	    ibod dhcpcd eciadsl-synch_bin eciadsl-usermode dhcp snort \
-	    oinkmaster openswan wireless_tools imspector diffutils clamav \
+	    oinkmaster libreswan wireless_tools imspector diffutils clamav \
 	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
