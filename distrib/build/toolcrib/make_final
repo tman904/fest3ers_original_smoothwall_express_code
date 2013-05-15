@@ -320,7 +320,7 @@ fi
       build dhcp
       build snort
       build oinkmaster
-      build libreswan
+      build openswan
       build wireless_tools
 
       build noip
