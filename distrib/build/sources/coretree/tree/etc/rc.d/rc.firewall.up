@@ -42,6 +42,7 @@ echo 360 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_close
 # And reject DNS
 /usr/sbin/ip6tables -A FORWARD -p udp --destination-port 53 -j REJECT
 /usr/sbin/ip6tables -A INPUT -p udp --destination-port 53 -j REJECT
+/usr/sbin/ip6tables -A OUTPUT -p udp --destination-port 53 -j REJECT
 
 /sbin/iptables -F
 /sbin/iptables -X
