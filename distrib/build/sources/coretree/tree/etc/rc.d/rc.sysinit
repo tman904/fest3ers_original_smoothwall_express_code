@@ -241,12 +241,5 @@ logger -t smoothwall "Smoothwall started."
 
 unset STARTSTOP
 
-# Start a 'daemon' that waits for the power button to be pressed
-(
-  while read a b c d; do
-    if [ "$a" == "button/power" ]; then
-      shutdown -h -P -t 2 now \"Power button pressed\"
-      exit
-    fi
-  done </proc/acpi/event
-)&
+# Start a shutdown daemon that waits for the power button to be pressed
+/usr/bin/smoothwall/powerButton.pl&
