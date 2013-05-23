@@ -106,8 +106,8 @@ chmod 660 /dev/ttyI* >/dev/null 2>&1
 
 # Let httpd (nobody) make atari sounds (for backup).
 # It's write-only, so should be OK for now.
-# But it really should use tty63.
-chmod 620 /dev/tty13 >/dev/null 2>&1
+# But it really should use tty63, just so it's way out of the way.
+chmod 622 /dev/tty13 >/dev/null 2>&1
 chgrp nobody /dev/tty13 >/dev/null 2>&1
 
 chmod 1777 /tmp
