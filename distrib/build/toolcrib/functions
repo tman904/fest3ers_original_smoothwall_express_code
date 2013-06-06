@@ -121,6 +121,7 @@ function build_tc_stage_3() {
   buildenv expect 1
   buildenv dejagnu 1
   buildenv ncurses 1
+  buildenv openssl 1
   buildenv flex 1
   buildenv bash 1
   buildenv xz 1

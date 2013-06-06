@@ -8,9 +8,10 @@ include ../Makefile.conf
 include ../Makefile.versions
 
 PACKAGE = iproute2
-VERSION = 2.6.39
+VERSION = 3.9.0
 
-BASE_URL = http://devresources.linuxfoundation.org/dev/iproute2/download
+BASE_URL = https://www.kernel.org/pub/linux/utils/net/$(PACKAGE)/
+
 EXTENSION=.tar.gz
 
 PATCH_FILE1 = m_xt.c.patch

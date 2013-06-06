@@ -12,13 +12,8 @@ VERSION = 1.14
 BASE_URL = ftp://ftp.gnu.org/gnu/wget
 EXTENSION = .tar.xz
 
-ifeq ($(BUILD_PHASE), Stage_3)
-CONFIG_OPTS = --without-ssl
-endif
-
-ifeq ($(BUILD_PHASE), Final)
+# Some sites disallow HTTP
 CONFIG_OPTS = --with-ssl=openssl
-endif
 
 COMPILE = yes
 compile: configure
