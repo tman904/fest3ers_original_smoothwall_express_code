@@ -38,6 +38,7 @@ feedback () {
 
 # Set the files to save based on the type of backup
 setFiles () {
+  pushd /
   case ${BACKUP_TYPE} in
     var)
       # These should never change
@@ -61,6 +62,7 @@ setFiles () {
       FILES_TO_SAVE=(./${HNAME}.tarhead ".${toSAVE[@]}" ./${HNAME}.tarheel)
       ;;
   esac
+  popd
 }
 
 

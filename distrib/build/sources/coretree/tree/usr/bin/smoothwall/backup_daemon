@@ -57,6 +57,9 @@ export BACK_HIST="${BACK_DIR}/history"
 export BACK_SETTINGS="${BACK_DIR}/settings"
 export addNewID delID AUTOBACK
 
+# Be sure this exists and is set
+delID=0
+
 # Get global functions
 . /usr/lib/smoothwall/backup_functions
 umask 002
@@ -70,7 +73,6 @@ if [ `basename $0` == "backup_daemon" ]; then
   addNewID=0
   AUTOBACK="AUTO"
 else
-  delID=0
   case $1 in
     "") addNewID=0;;
     "-f") addNewID=1;;
@@ -147,6 +149,7 @@ cd $BACK_DIR
 if [ $AUTOBACK == "MANUAL" ]; then
   # Always disable the daemon when running manual
   touch ${BACK_DIR}/DISABLE_DAEMON
+  sleep 1
   # Customize the message
   case $addNewID in
     1|2|3)
@@ -254,7 +257,7 @@ trap "true" SIGUSR1
 
       $BACK_DIR/)
         # Change enabled state as needed
-        if [ $filename == "DISABLE_DAEMON" ]; then
+        if [ $filename == "DISABLE_DAEMON" -a "$AUTOBACK" == "AUTO" ]; then
           if [ $event == "CREATE" ]; then
             ENABLED=1
           elif [ $event == "DELETE" ]; then
@@ -281,7 +284,7 @@ wait
 trap SIGUSR1
 
 # Tried to add an already-configured medium?
-if [ ! -e ${DEV_FILE} ]; then
+if [ ! -e ${DEV_FILE} -a "$AUTOBACK" == "MANUAL" ]; then
   # Re-enable the daemon
   exit 1
 fi
@@ -390,9 +393,9 @@ if [ "$AUTOBACK" == "MANUAL" ]; then
   # Running por mano, so do the backup now
   . backup_run RunByBackupDaemonOrSys $AUTOBACK
 
-elif [ \( "$BTYPE" == "incremental" -a "$timeINCREMENTAL" == "now" \) -o \
-       \( "$BTYPE" == "full" -a "$timeFULL" == "now" \) -o \
-       \( "$BTYPE" == "var total" -a "$timeVARTOTAL" == "now" \) ]; then
+elif [ \( "$BTYPE" == "incremental" -a "$timeINCREMENTAL" != "at" \) -o \
+       \( "$BTYPE" == "full" -a "$timeFULL" != "at" \) -o \
+       \( "$BTYPE" == "var total" -a "$timeVARTOTAL" != "at" \) ]; then
   # Running by daemon 'now'
   . backup_run RunByBackupDaemonOrSys $AUTOBACK
 
