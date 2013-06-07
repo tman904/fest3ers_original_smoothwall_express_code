@@ -62,14 +62,12 @@ default:
 	@echo "  make package"
 	@echo
 	@echo "To build 32-bit on x86_64:"
-	@echo "  mARCH=i686 make build"
-	@echo "or"
-	@echo "  export mARCH=i686   # Needed only to change mARCH"
+	@echo "  linux32"
 	@echo "  make build"
-	@echo "or"
-	@echo "  linux32 make build"
+	@echo "This is the only method known to produce consisten results."
 	@echo
 	@echo "Useful targets:"
+	@echo "  toolchain         Build the toolchain and archive it for re-use."
 	@echo "  build             Build SWE3.1 or continue building from an error."
 	@echo "  media             Make ISO and prepare bootable flash drive."
 	@echo "  rebuild           Build SWE3.1 from scratch."
