@@ -30,6 +30,7 @@
 export SHELL = bash
 export SRC_TGZ = ../../smoothsrc.tar.gz
 
+include sources/Makefile
 include sources/Makefile.flags-arch
 
 ifndef ktype
@@ -150,10 +151,17 @@ crumbs/tc_stage_3.built: crumbs/tc_stage_2.built
 	@#exit 103
 	@touch crumbs/tc_stage_3.built
 
+# make the toolchain only
+crumbs/toolchain.built: crumbs/host.checked crumbs/tc_stage_3.built
+	@sudo su -c "chown --reference . target"
+	@tar cf target/smoothwall-toolchain-$(mARCH)$(PRODUCT_EXTRA).tar.gz ../tools crumbs
+	@touch crumbs/toolchain.built
+
+toolchain: crumbs/toolchain.built
 
 # prepare final build environment
 #
-crumbs/Final.prep.built: crumbs/tc_stage_3.built
+crumbs/Final.prep.built: crumbs/toolchain.built
 	@(tput smso; echo -e "\nPreparing Final Build tree"; tput rmso) \
 	    <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
 	+@$(ARCHset) toolcrib/as_chroot \
