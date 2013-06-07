@@ -641,7 +641,7 @@ Vtraf_stat list_class(const char *dev) {
 	}
 	
 	
-	if (rtnl_dump_filter(&rth, tc_callback, (void *)&stats, NULL, NULL) < 0) {
+	if (rtnl_dump_filter(&rth, tc_callback, (void *)&stats) < 0) {
 	errorstat.error = "dump terminated";
 		stats.push_back(errorstat);
 		rtnl_close(&rth);

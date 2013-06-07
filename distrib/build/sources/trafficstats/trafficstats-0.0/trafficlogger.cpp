@@ -353,7 +353,7 @@ void livestats::save_period_helper(FILE *fd, std::string plabel, std::vector<std
 	for(k = range.begin(); k != range.end(); k++) {
 		label = *k + plabel;
 		if((i = nc_byte_counts.find(label)) != nc_byte_counts.end() && (i->second/SAVE_SCALE_FACTOR) != 0) {
-			fprintf(fd,"%s=%ld\n", label.c_str(), i->second/SAVE_SCALE_FACTOR);
+			fprintf(fd,"%s=%lld\n", label.c_str(), i->second/SAVE_SCALE_FACTOR);
 		}
 		else {
 			fprintf(fd, "%s=0\n", label.c_str());
@@ -428,7 +428,7 @@ bool livestats::check_rollovers(const timestamp timestamp, const reltimes &times
 	std::map<std::string, bytecount_t> &nc_byte_counts = const_cast<std::map<std::string, bytecount_t> &>(byte_counts);
 	bytecount_t count;
 
-	if(last_update.t.tv_sec == 0 || timestamp.t.tv_sec == last_update.t.tv_sec && timestamp.t.tv_usec == last_update.t.tv_usec)
+	if(last_update.t.tv_sec == 0 || (timestamp.t.tv_sec == last_update.t.tv_sec && timestamp.t.tv_usec == last_update.t.tv_usec))
 		return doneit; // no work to do -  - no prev time known yet or time not changed
 
 	// have any boundaries been crossed
