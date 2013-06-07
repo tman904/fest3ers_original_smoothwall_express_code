@@ -32,7 +32,7 @@ EXCLUDE_DRIVERS = bluetooth connector gpu infiniband mfd misc mtd parport \
 
 SBINPROGS = /sbin/mke2fs /sbin/sfdisk /sbin/depmod
 SWE_PKGS = $(UDEV) kmod grub pciutils bash reiserfsprogs util-linux pcmciautils \
-	   sysfsutils parted readline inotify-tools mtools device-ids
+	   sysfsutils parted readline inotify-tools mtools device-ids kbd
 ROOTDIRS = cdrom dev etc harddisk proc sys tmp usr run
 GZIP_PKGS = gunzip
 
