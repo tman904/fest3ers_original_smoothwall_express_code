@@ -67,7 +67,7 @@ function buildenv()
     echo "    $1 already built" >>${BUILD_OUT}
   else
     echo "    $1"
-    ( docommand "$1" "make -C sources/$1 BUILDENV=$2 clean install") > sources/$1/$BUILD_PHASE.out 2>&1
+    ( docommand "$1" "make -C sources/$1 clean install") > sources/$1/$BUILD_PHASE.out 2>&1
     status=$?
     if [ $status -eq 0 ]; then
       touch sources/$1/$BUILD_PHASE.built
