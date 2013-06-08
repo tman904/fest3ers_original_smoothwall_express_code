@@ -13,7 +13,13 @@ BASE_URL = ftp://ftp.gnu.org/gnu/wget
 EXTENSION = .tar.xz
 
 # Some sites disallow HTTP
+ifeq ($(BUILD_PHASE), Stage_3)
+CONFIG_OPTS = --with-ssl=openssl --with-libssl-prefix=$(PKG_DIR)
+endif
+
+ifeq ($(BUILD_PHASE), Final)
 CONFIG_OPTS = --with-ssl=openssl
+endif
 
 COMPILE = yes
 compile: configure

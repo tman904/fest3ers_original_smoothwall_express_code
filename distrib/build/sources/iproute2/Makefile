@@ -14,8 +14,6 @@ BASE_URL = https://www.kernel.org/pub/linux/utils/net/$(PACKAGE)/
 
 EXTENSION=.tar.gz
 
-PATCH_FILE1 = m_xt.c.patch
-
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
