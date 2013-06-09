@@ -6,8 +6,8 @@ memory_replacement_policy heap GDSF
 
 half_closed_clients off
 
-cache_swap_high 100%
-cache_swap_low 80%
+cache_swap_high 100
+cache_swap_low 80
 
 shutdown_lifetime 3 seconds
 icp_port 0

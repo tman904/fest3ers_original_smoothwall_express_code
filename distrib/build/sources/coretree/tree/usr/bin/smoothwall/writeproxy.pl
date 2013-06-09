@@ -23,9 +23,6 @@ flock(FILE, 2);
 print FILE <<END
 # ACCESS CONTROLS
 # ----------------------------------------------------------------
-acl manager proto cache_object
-acl localhost src 127.0.0.1/32
-acl to_localhost dst 127.0.0.1/8
 END
 ;
 my $green_block = new2 Net::Netmask($netsettings{'GREEN_NETADDRESS'}, $netsettings{'GREEN_NETMASK'});
