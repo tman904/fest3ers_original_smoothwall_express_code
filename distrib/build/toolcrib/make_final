@@ -353,7 +353,8 @@ fi
       build smartmontools
       build squidguard
       build subversion
-      build qemu-kvm
+      #build qemu-kvm   # qemu-kvm was fully merged into qemu as of v1.3
+      build qemu
       build ntop
       build iperf
 
