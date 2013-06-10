@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = samba
-VERSION = 3.6.7
+VERSION = 3.6.15
 
 BASE_URL = http://www.samba.org/samba/ftp/stable/
 
