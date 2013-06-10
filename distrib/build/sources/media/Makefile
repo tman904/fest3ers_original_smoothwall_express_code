@@ -24,7 +24,7 @@ export UDEVunused = eudev
 # Document these pkgs, don't install
 TOOLCHAIN_PKGS = expect
 OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
-	     libart_lgpl procps procinfo qemu-kvm 
+	     libart_lgpl procps procinfo
 
 TARGET_DIR = /build/target
 
