@@ -45,7 +45,7 @@ $(DIR)/: download
 INSTALL = yes
 install: compile
 	@ # Disable problematic rule(s)
-	@cd $(COMPILE_DIR)preproc_rules; sed -i -e 's/\(alert ( msg: "STREAM5_NO_3WHS"; sid: 20; gid: 129\)/#\1/'
+	@cd $(COMPILE_DIR)/preproc_rules; sed -i -e 's/\(alert ( msg: "STREAM5_NO_3WHS"; sid: 20; gid: 129\)/#\1/'
 	@mkdir -p $(PKG_ROOT)
 	@make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	@mkdir -p $(PKG_ROOT)/var/smoothwall/snort/rules/
