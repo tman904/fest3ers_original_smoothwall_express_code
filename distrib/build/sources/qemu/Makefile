@@ -10,6 +10,7 @@ PACKAGE = qemu
 VERSION = 1.5.0
 
 BASE_URL = http://wiki.qemu-project.org/download
+EXTENSION = .tar.bz2
 
 #PATCH_FILE1 = configure.patch
 
