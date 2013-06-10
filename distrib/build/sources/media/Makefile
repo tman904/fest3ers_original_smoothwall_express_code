@@ -24,7 +24,7 @@ export UDEVunused = eudev
 # Document these pkgs, don't install
 TOOLCHAIN_PKGS = expect
 OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
-	     libart_lgpl procps procinfo
+	     libart_lgpl procps procinfo qemu-kvm 
 
 TARGET_DIR = /build/target
 
@@ -51,7 +51,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
-	    $(UDEV) lm_sensors xz pcmciautils qemu-kvm sysfsutils \
+	    $(UDEV) lm_sensors xz pcmciautils qemu sysfsutils \
 	    coretree $(ADV_PKGS) device-ids
 
 # INST_PKGS notes.
