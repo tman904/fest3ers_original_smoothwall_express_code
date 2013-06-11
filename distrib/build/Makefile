@@ -151,8 +151,9 @@ crumbs/tc_stage_3.built: crumbs/tc_stage_2.built
 
 # make the toolchain only
 crumbs/toolchain.built: crumbs/host.checked crumbs/tc_stage_3.built
+	@mkdir -pv target
 	@sudo su -c "chown --reference . target"
-	@tar cf target/smoothwall-toolchain-$(mARCH)$(PRODUCT_EXTRA).tar.gz ../tools crumbs
+	@tar cfJ target/smoothwall-toolchain-$(mARCH)$(PRODUCT_EXTRA).tar.xz ../tools crumbs
 	@touch crumbs/toolchain.built
 
 toolchain: crumbs/toolchain.built
