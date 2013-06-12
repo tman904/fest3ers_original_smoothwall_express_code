@@ -160,7 +160,8 @@ endif
 	
 	@echo -e "\nProduct info:"
 	@( \
-	echo "  PRODUCT='$(PRODUCT_NAME)$(PRODUCT_EXTRA)'"; \
+	echo "  BASENAME='$(BASENAME)'"; \
+	echo "  PRODUCT='$(PRODUCT_NAME)'"; \
 	echo "  VERSION='$(PRODUCT_VERSION)'"; \
 	echo "  REVISION='$(REVISION)'"; \
 	echo "  UI_VERSION='$(UI_VERSION)'"; \
@@ -170,7 +171,8 @@ endif
 	
 	@mkdir -p distrib/var/smoothwall/main
 	@( \
-	  echo "PRODUCT='$(PRODUCT_NAME)$(PRODUCT_EXTRA)'" ; \
+	  echo "BASENAME='$(BASENAME)'"; \
+	  echo "PRODUCT='$(PRODUCT_NAME)'" ; \
 	  echo "VERSION='$(PRODUCT_VERSION)'" ; \
 	  echo "REVISION='$(REVISION)'" ; \
 	  echo "UI_VERSION='$(UI_VERSION)'" ; \

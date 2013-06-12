@@ -60,7 +60,7 @@ sub register_page
 
   print qq!
 <div align="center">
-  <h2 style="font-size:15pt">Smoothwall Express $version</h2>
+  <h2 style="font-size:15pt">Smoothwall Express $displayVersion</h2>
   <p>User interface version $webuirevision
 </div>
 !;
@@ -173,7 +173,7 @@ print <<END
   </div>
 
     <p style="margin:8pt 4pt 8pt 4pt; text-align:center">
-      Smoothwall Express $version<br>
+      Smoothwall Express $displayVersion<br>
       Copyright &copy; 2000 - 2007 the
       <a href="http://smoothwall.org/team/" target="_breakoutWindow">
         Smoothwall Team</a>.

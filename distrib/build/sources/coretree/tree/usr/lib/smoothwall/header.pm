@@ -13,7 +13,7 @@ require Exporter;
 our @_validation_items;
 
 @EXPORT       = qw();
-@EXPORT_OK    = qw( $language $version $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo readvalue writevalue writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items getsystemid outputfile );
+@EXPORT_OK    = qw( $language $version $displayVersion $webuirevision $viewsize @menu $swroot $thisscript showhttpheaders showmenu showsection openpage closepage openbigbox closebigbox openbox closebox alertbox pageinfo readvalue writevalue writehash readhash getcgihash log pipeopen age validip validmask validipormask validipandmask validport validportrange validmac validhostname validcomment basename connectedstate %tr @_validation_items getsystemid outputfile );
 %EXPORT_TAGS  = (
 		standard   => [@EXPORT_OK],
 		);
@@ -27,8 +27,14 @@ $|=1; # line buffering
 my %productdata;
 &readhash( "/var/smoothwall/main/productdata", \%productdata );
 
-my $devVersion = $productdata{'PRODUCT'};
-$devVersion =~ s/Express//;
+$displayVersion = $productdata{'BASENAME'};
+$displayVersion =~ s/[^-]*-//;
+if ($displayVersion =~ /.*-.*/) {
+  $displayVersion =~ s/-/-$productdata{'REVISION'}-$productdata{'ARCH'}-/;
+} else {
+  $displayVersion .= "-$productdata{'REVISION'}-$productdata{'ARCH'}";
+}
+
 $version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}$devVersion";
 
 $webuirevision = $productdata{'UI_VERSION'};
@@ -382,7 +388,7 @@ sub closepage
 <tr>
 	<td class='footer' colspan='2' style='width:100%; text-align:center;'>
 		<div style="width:49%; text-align:left; margin:2px; display:inline-block">
-		    	<strong>Smoothwall Express $version</strong><br/>
+		    	<strong>Smoothwall Express $displayVersion</strong><br/>
 			Smoothwall&trade; is a trademark of <a href='http://www.smoothwall.net/'>Smoothwall Limited</a>.
 		</div>
 		<div style="width:49%; text-align:right; margin:2px; display:inline-block">
