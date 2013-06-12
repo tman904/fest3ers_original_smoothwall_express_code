@@ -27,7 +27,9 @@ $|=1; # line buffering
 my %productdata;
 &readhash( "/var/smoothwall/main/productdata", \%productdata );
 
-$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
+my $devVersion = $productdata{'PRODUCT'};
+$devVersion =~ s/Express//;
+$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}$devVersion";
 
 $webuirevision = $productdata{'UI_VERSION'};
 $viewsize = 200;
