@@ -263,10 +263,14 @@ extracontent:
 	find cdrom -name CVS -exec rm -rf {} \;
 	find cdrom -name .svn -exec rm -rf {} \;
 
+# In the 'all' rule, note that BASENAME and RELEASE definitions are the same in all
+#   three cases. But they are in different shells and require a bashism for editing,
+#   thus all three are needed.
 all: cdrom cdrom/smoothwall.tgz extracontent
 	@echo "      assemble full ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH); \
+	  BASENAME=$(BASENAME); \
+	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##-}"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
@@ -276,8 +280,9 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	)
 	@echo "      assemble dev ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH)-dev; \
-	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}.iso; \
+	  BASENAME=$(BASENAME); \
+	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##-}"; \
+	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-dev.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
 	    -no-emul-boot -boot-load-size 4 -boot-info-table \
@@ -286,7 +291,8 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	)
 	@echo "      assemble offRoad ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  RELEASE=$(PRODUCT_NAME)-$(PRODUCT_VERSION)$(PRODUCT_EXTRA)-$(mARCH); \
+	  BASENAME=$(BASENAME); \
+	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##-}"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-offroad.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
