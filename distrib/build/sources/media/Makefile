@@ -270,7 +270,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	@echo "      assemble full ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
 	  BASENAME=$(BASENAME); \
-	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##-}"; \
+	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##*-}"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
@@ -281,7 +281,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	@echo "      assemble dev ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
 	  BASENAME=$(BASENAME); \
-	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##-}"; \
+	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##*-}"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-dev.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
@@ -292,7 +292,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	@echo "      assemble offRoad ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
 	  BASENAME=$(BASENAME); \
-	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##-}"; \
+	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##*-}"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-offroad.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
