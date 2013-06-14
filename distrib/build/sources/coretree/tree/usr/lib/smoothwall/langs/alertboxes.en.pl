@@ -13,7 +13,7 @@ firewall.  Further information on your Smoothwall Express is available from <a h
  title=\'www.smoothwall.org - external link\'>our website</a>.
 ',
 
-'credits.cgi' 		=> 'Smoothwall Express' . $tr{'version'} . ' ' . $version . '-' . $revision . ' ' . $webuirevision,
+'credits.cgi' 		=> 'Smoothwall Express' . $tr{'version'} . ' ' . $displayVersion . ' ' . $webuirevision,
 'status.cgi' 		=> 'Active service status of your Smoothie.',
 'advstatus.cgi' 	=> 'Pertinent information about your Smoothie, current configuration and resource usage.',
 'graphs.cgi' 		=> 'Statistical graphical and numeric data based upon traffic usage across your Smoothwall\'s network interfaces.',

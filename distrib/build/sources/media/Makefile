@@ -160,23 +160,21 @@ endif
 	
 	@echo -e "\nProduct info:"
 	@( \
-	echo "  BASENAME='$(BASENAME)'"; \
 	echo "  PRODUCT='$(PRODUCT_NAME)'"; \
 	echo "  VERSION='$(PRODUCT_VERSION)'"; \
+	echo "  EXTRA='$(PRODUCT_EXTRA)'"; \
 	echo "  REVISION='$(REVISION)'"; \
 	echo "  UI_VERSION='$(UI_VERSION)'"; \
-	echo "  FIXES='$(FIXES_NUMBER)'"; \
 	echo "  ARCH='$(mARCH)'"; \
 	) | sed -u -e 's/^/  /'
 	
 	@mkdir -p distrib/var/smoothwall/main
 	@( \
-	  echo "BASENAME='$(BASENAME)'"; \
 	  echo "PRODUCT='$(PRODUCT_NAME)'" ; \
 	  echo "VERSION='$(PRODUCT_VERSION)'" ; \
+	  echo "EXTRA='$(PRODUCT_EXTRA)'"; \
 	  echo "REVISION='$(REVISION)'" ; \
 	  echo "UI_VERSION='$(UI_VERSION)'" ; \
-	  echo "FIXES='$(FIXES_NUMBER)'" ; \
 	  echo "ARCH='$(mARCH)'" ; \
 	) > distrib/var/smoothwall/main/productdata
 	
@@ -263,14 +261,10 @@ extracontent:
 	find cdrom -name CVS -exec rm -rf {} \;
 	find cdrom -name .svn -exec rm -rf {} \;
 
-# In the 'all' rule, note that BASENAME and RELEASE definitions are the same in all
-#   three cases. But they are in different shells and require a bashism for editing,
-#   thus all three are needed.
 all: cdrom cdrom/smoothwall.tgz extracontent
 	@echo "      assemble full ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  BASENAME=$(BASENAME); \
-	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##*-}"; \
+	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mARCH)"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
@@ -280,8 +274,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	)
 	@echo "      assemble dev ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  BASENAME=$(BASENAME); \
-	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##*-}"; \
+	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mARCH)"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-dev.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
@@ -291,8 +284,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	)
 	@echo "      assemble offRoad ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  BASENAME=$(BASENAME); \
-	  RELEASE="$(PRODUCT_NAME)-$(PRODUCT_VERSION)-$(REVISION)-$(mARCH)-$${BASENAME##*-}"; \
+	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mARCH)"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-offroad.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \

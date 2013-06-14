@@ -27,15 +27,8 @@ $|=1; # line buffering
 my %productdata;
 &readhash( "/var/smoothwall/main/productdata", \%productdata );
 
-$displayVersion = $productdata{'BASENAME'};
-$displayVersion =~ s/[^-]*-//;
-if ($displayVersion =~ /.*-.*/) {
-  $displayVersion =~ s/-/-$productdata{'REVISION'}-$productdata{'ARCH'}-/;
-} else {
-  $displayVersion .= "-$productdata{'REVISION'}-$productdata{'ARCH'}";
-}
-
-$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}$devVersion";
+$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
+$displayVersion = "$productdata{'VERSION'}$productdata{'EXTRA'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
 
 $webuirevision = $productdata{'UI_VERSION'};
 $viewsize = 200;
