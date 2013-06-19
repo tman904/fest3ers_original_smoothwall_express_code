@@ -21,6 +21,14 @@ function cleanup {
   rmdir $1
   umount ./$2
   rmdir $2
+  while true; do
+    set `grep Dirty /proc/meminfo`
+    dirty=$2
+    set `grep Writeback /proc/meminfo`
+    wb=$2
+    if [ "$dirty" -eq 0 -a "$wb" -eq 0 ]; then break; fi
+    sleep 1
+  done
 }
 
 function countdown {
@@ -200,7 +208,7 @@ echo "Wrenching..."
 PRT=`echo "find /smoothwall.tgz" | ${ORIG_DIR}/../usr/sbin/grub --batch 2>&- | egrep "\([^ ]*\)"`
 DRV=`echo $PRT | sed -e 's/,[0-9]*//'`
 sed -i -e "s/(cd)/(hd0,0)/" -e 's/115200/'$BAUD'/' ${FL}/boot/grub/*.conf
-sed -i -e '/Install Smoothwall Express$/,+4d' ${FL}/boot/grub/main.conf
+sed -i -e '/Install Smoothwall Express$/,/^$/d' ${FL}/boot/grub/main.conf
 echo -e "root ${PRT}\nsetup ${DRV}" | ${ORIG_DIR}/../usr/sbin/grub --batch
 
 echo
