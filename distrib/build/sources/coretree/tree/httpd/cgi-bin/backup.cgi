@@ -164,7 +164,7 @@ END
 
 my %render_settings =
 (
-	'url'     => "/cgi-bin/hosts.cgi?[%COL%],[%ORD%]",
+	'url'     => "/cgi-bin/backup.cgi?[%COL%],[%ORD%]",
 	'columns' => 
 	[
 		{ 
