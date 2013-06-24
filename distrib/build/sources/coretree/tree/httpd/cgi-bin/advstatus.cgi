@@ -37,14 +37,14 @@ print qq|
 <table style='width: 90%; margin-left: auto; margin-right: auto; border-collapse: collapse; border: solid 1px #c0c0c0;'>
 <tr>
 	<th>&nbsp;</th>
-	<th style='text-align: right; width: 50px'>$tr{ 'adv total' }</th>
-	<th style='text-align: right; width: 50px'>$tr{ 'adv used' }</th>
-	<th style='text-align: right; width: 50px'>$tr{ 'adv free' }</th>
+	<th style='text-align: right; width: 6em'>$tr{ 'adv total' }</th>
+	<th style='text-align: right; width: 6em'>$tr{ 'adv used' }</th>
+	<th style='text-align: right; width: 6em'>$tr{ 'adv free' }</th>
 	<th style='text-align: right;'>&nbsp;</th>
 	<th style='text-align: center; width: 150px;'>$tr{ 'adv used%' }</th>
-	<th style='text-align: right; width: 50px;' >$tr{ 'adv shared' }</th>
-	<th style='text-align: right; width: 50px;' >$tr{ 'adv buffers' }</th>
-	<th style='text-align: right; width: 50px;' >$tr{ 'adv cached' }</th>
+	<th style='text-align: right; width: 6em;' >$tr{ 'adv shared' }</th>
+	<th style='text-align: right; width: 6em;' >$tr{ 'adv buffers' }</th>
+	<th style='text-align: right; width: 6em;' >$tr{ 'adv cached' }</th>
 </tr>
 |;
 
