@@ -61,7 +61,7 @@ TIME=`date +"%H:%M:%S"`
 EXCLUDES="( -path ./proc -prune -o -path ./dev -prune -o -path ./sys -prune"
 # The mount point and temp backup files aren't needed either.
 EXCLUDES="$EXCLUDES -o -path .${ROOTDIR}/backup/tmp -prune -o -path ./backup -prune"
-EXCLUDES="$EXCLUDES -o -path .${ROOTDIR}/backup/DISABLE_DAEMON -prune )"
+EXCLUDES="$EXCLUDES -o -path .${ROOTDIR}/backup/DISABLE_DAEMON -prune -o -true )"
 
 INOTIFY_CMD="inotifywait -q"
 
@@ -129,7 +129,7 @@ else
         if [ "$LAST" == "" ]; then LAST=`date -d 'last week' "+%Y-%m-%d"`; fi
         incrementalOPT="-o ( -newermt $LAST -o -newerct $LAST ) -print"
       else
-        incrementalOPT="-o -print"
+        incrementalOPT="-print"
       fi
       
       # Get the list of files
@@ -137,7 +137,7 @@ else
       sleep .5
       (
         cd /; 
-        find "${FILES_TO_SAVE[@]}" ${EXCLUDES} ${incrementalOPT}
+        find "${FILES_TO_SAVE[@]}" ${EXCLUDES} '!' -type s ${incrementalOPT}
       ) > /${HNAME}.list #2>/dev/null
 
       # Get the number of files
