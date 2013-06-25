@@ -36,7 +36,7 @@ sub downloadlist
 	my $host; my $port;
         unless ($proxy{'SERVER'})
         {
-                $host = 'www.smoothwall.org';
+                $host = 'downloads.smoothwall.org';
                 $port = 80;
         }
         else
@@ -52,7 +52,11 @@ sub downloadlist
 		$errormessage = $tr{'could not connect to smoothwall org'};
 		return 0;
 	}
-	print $sock "GET http://www.smoothwall.org/updates/$version/info HTTP/1.1\r\nHost: www.smoothwall.org\r\nConnection: close\r\n\r\n";
+
+	# From header.pm:
+	#$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
+
+	print $sock "GET http://downloads.smoothwall.org/updates/$version/info HTTP/1.1\r\nHost: downloads.smoothwall.org\r\nConnection: close\r\n\r\n";
 	my $ret = '';
 	while (<$sock>) {
 		$ret .= $_; }
