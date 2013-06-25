@@ -190,6 +190,10 @@ writeSettings () {
 function backupType () {
   local i
   BTYPE=""
+
+  # Read the settings in case they changed.
+  . ${BACK_SETTINGS}
+
   # Is it weekly?
   for i in "${!INCREMENTAL[@]}"; do
     if [ "${INCREMENTAL[$i]}" == "$devID" ]; then
