@@ -12,6 +12,8 @@ TARBALL = $(PACKAGE)-$(VERSION)
 
 BASE_URL = https://bitbucket.org/braindamaged/udev/downloads
 
+PATCH_FILE1 = udev-watch.c.patch
+
 CONFIG_OPTS = --prefix=/usr           \
 	      --bindir=/sbin          \
 	      --sysconfdir=/etc       \
