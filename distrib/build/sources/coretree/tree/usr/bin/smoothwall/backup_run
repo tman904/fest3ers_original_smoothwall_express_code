@@ -106,7 +106,7 @@ else
     # Good type, proceed with backup
     for BACKUP_TYPE in $BTYPE; do
       # Set the flag file names
-      FNAME="${HOST}_${DATE}_${PRODUCT}_${RELEASE}_${BACKUP_TYPE}"
+      FNAME="${HOST}_${DATE}_${PRODUCT}_${VERSION}${REVISION}_${BACKUP_TYPE}"
       HNAME="${relBACK_DIR}/tmp/${FNAME}"
       touch /${HNAME}.tarhead
       touch /${HNAME}.tarheel
