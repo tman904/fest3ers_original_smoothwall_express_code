@@ -163,7 +163,6 @@ case `basename $0` in
     else
       # Assume on booted Roadster, use the natural grub
       GRUB=""
-      GRUB="${ORIG_DIR}/.."
     fi
     ;;
   auto_flash)
