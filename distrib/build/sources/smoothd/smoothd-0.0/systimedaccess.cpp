@@ -196,7 +196,7 @@ int setallowed(bool allowed, bool logging)
 		}
 		else
 		{
-			ipb.push_back("iptables -R timedaction 1 -j LOG --log-prefix -Denied-by-Timed-Access:-");
+			ipb.push_back("iptables -R timedaction 1 -j LOG --log-prefix 'Denied-by-filter:timedaction '");
 		}
 	}
 	
