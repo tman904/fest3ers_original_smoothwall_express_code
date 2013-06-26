@@ -193,7 +193,7 @@ fi
 /sbin/iptables -A block -p icmp -i ppp0 -j ACCEPT
 /sbin/iptables -A block -p icmp -i ippp0 -j ACCEPT
 if [ "$RED_DEV" != "" ]; then
-	/sbin/iptables -A block -p icmp -i $RED_DEV -d $RED_NETADDRESS/$RED_NETMASK -j ACCEPT
+	/sbin/iptables -A block -p icmp -i $RED_DEV -j ACCEPT
 fi
 
 /sbin/iptables -N badtraffic
