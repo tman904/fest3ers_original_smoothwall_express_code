@@ -69,7 +69,7 @@ int set_ipblock(std::vector<std::string> & parameters, std::string & response)
 		if (enabled == "on")
 		{
 			if (log == "on")
-				ipb.push_back("iptables -A ipblock -s " + remip + " -j LOG --log-prefix 'Denied-by-filter:ipblock '");
+				ipb.push_back("iptables -A ipblock -s " + remip + " -j LOG --log-prefix \"Denied-by-filter:ipblock \"");
 			ipb.push_back("iptables -A ipblock -s " + remip + " -j " + target);
 		}
 	}

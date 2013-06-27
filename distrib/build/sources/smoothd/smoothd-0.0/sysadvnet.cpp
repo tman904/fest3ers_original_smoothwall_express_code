@@ -73,7 +73,7 @@ int set_advnet(std::vector<std::string> & parameters, std::string & response)
 	ipb.push_back("iptables -F badtraffic");
 	if (settings["BAD_TRAFFIC"] == "DROP")
 	{
-		ipb.push_back("iptables -A badtraffic -j LOG --log-prefix 'Denied-by-filter:badtraffic '");
+		ipb.push_back("iptables -A badtraffic -j LOG --log-prefix \"Denied-by-filter:badtraffic \"");
 		ipb.push_back("iptables -A badtraffic -j DROP");
 	}
 	
