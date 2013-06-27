@@ -51,15 +51,16 @@ var visibility = new Array();
 
 var totals = new Array();
 
-rates[ 10      ] = "10 bps";
-rates[ 100     ] = "100 bps";
-rates[ 1000    ] = "1 kbps";
-rates[ 10000   ] = "10 kbps";
-rates[ 100000  ] = "100 kbps";
-rates[ 1000000    ] = "1 Mbps";
-rates[ 10000000   ] = "10 Mbps";
-rates[ 100000000  ] = "100 Mbps";
-rates[ 1000000000 ] = "1 Gbps";
+rates[ 10          ] = "10 bps";
+rates[ 100         ] = "100 bps";
+rates[ 1000        ] = "1 kbps";
+rates[ 10000       ] = "10 kbps";
+rates[ 100000      ] = "100 kbps";
+rates[ 1000000     ] = "1 Mbps";
+rates[ 10000000    ] = "10 Mbps";
+rates[ 100000000   ] = "100 Mbps";
+rates[ 1000000000  ] = "1 Gbps";
+rates[ 10000000000 ] = "10 Gbps";
 
 var titles = new Array();
 titles[ 'inc' ] = "I<br/>n<br/>c<br/>o<br/>m<br/>i<br/>n<br/>g";
@@ -184,14 +185,18 @@ function update_graph( tinterface, direction, value)
 
 	var re = new RegExp( /(\\d+\\.?\\d?)/ );
 
-	if ( value2 > 1048576 ){
-		value2 = ( value2 / 1048576 );
+	if ( value2 > 1000000000 ){
+		value2 = ( value2 / 1000000000 );
+		var m2 = re.exec( value2 ); 
+		value2 = m2[1] + "Gbps";
+	} else if ( value2 > 1000000 ){
+		value2 = ( value2 / 1000000 );
 		var m2 = re.exec( value2 ); 
 		value2 = m2[1] + "Mbps";
-	} else if ( value2 > 1024 ){
-		value2 = ( value2 / 1024 );
+	} else if ( value2 > 1000 ){
+		value2 = ( value2 / 1000 );
 		var m2 = re.exec( value2 ); 
-		value2 = m2[1] + "Kbps";
+		value2 = m2[1] + "kbps";
 	} else {
 		var m2 = re.exec( value2 ); 
 		value2 = m2[1] + "bps";
@@ -240,7 +245,7 @@ function maxit( v1, v2 )
 
 function rationalise( value )
 {
-	for ( var v = 10; v < 1000000000 ; v *= 10 ){
+	for ( var v = 10; v <= 10000000000 ; v *= 10 ){
 		if ( maxit( value, v ) == v ){
 			return v;
 		}
