@@ -144,7 +144,7 @@ print <<END
 <table style='width: 100%;'>
 <tr>
 	<td class='base'>$tr{'source ip or networkc'}</td>
-	<td><input type='text' name='SRC_IP' value='$cgiparams{'SRC_IP'}'id='iaddress' @{[jsvalidipormask('iaddress')]}></td>
+	<td><input type='text' name='SRC_IP' value='$cgiparams{'SRC_IP'}' id='iaddress' @{[jsvalidipormask('iaddress')]}></td>
 	<td class='base'>$tr{'protocolc'}</td>
 	<td>
 		<SELECT NAME='PROTOCOL'>
