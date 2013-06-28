@@ -73,26 +73,36 @@ foreach my $iface ('eth0', 'eth1', 'eth2', 'eth3', 'ppp0', 'ippp0')
 				if ($value > 1000)
 				{
 					$value /= 1000;
-					$units = 'Kbits/s';
+					$units = 'kbits/s';
 				}
 				if ($value > 1000)
 				{
 					$value /= 1000;
 					$units = 'Mbits/s';
 				}
+				if ($value > 1000)
+				{
+					$value /= 1000;
+					$units = 'Gbits/s';
+				}
 			}
 			else
 			{
-				$units = 'KB';
-				if ($value > 1024)
+				$units = 'kB';
+				if ($value > 1000)
 				{
-					$value /= 1024;
+					$value /= 1000;
 					$units = 'MB';
 				}
-				if ($value > 1024)
+				if ($value > 1000)
 				{
-					$value /= 1024;
+					$value /= 1000;
 					$units = 'GB';
+				}
+				if ($value > 1000)
+				{
+					$value /= 1000;
+					$units = 'TB';
 				}
 			}
 			$value = sprintf("%0.1f", $value);
@@ -134,26 +144,36 @@ foreach my $stat (keys %stats) {
 			if ($value > 1000)
 			{
 				$value /= 1000;
-				$units = 'Kbits/s';
+				$units = 'kbits/s';
 			}
 			if ($value > 1000)
 			{
 				$value /= 1000;
 				$units = 'Mbits/s';
 			}
+			if ($value > 1000)
+			{
+				$value /= 1000;
+				$units = 'Gbits/s';
+			}
 		}
 		else
 		{
-			$units = 'KB';
-			if ($value > 1024)
+			$units = 'kB';
+			if ($value > 1000)
 			{
-				$value /= 1024;
+				$value /= 1000;
 				$units = 'MB';
 			}
-			if ($value > 1024)
+			if ($value > 1000)
 			{
-				$value /= 1024;
+				$value /= 1000;
 				$units = 'GB';
+			}
+			if ($value > 1000)
+			{
+				$value /= 1000;
+				$units = 'TB';
 			}
 		}
 		$value = sprintf("%0.1f", $value);
