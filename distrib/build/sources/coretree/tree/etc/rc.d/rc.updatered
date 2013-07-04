@@ -53,18 +53,6 @@ if [ "$RED_TYPE" = "DHCP" ]; then
 	DEFAULT_GATEWAY=$GATEWAYS
 	DNS1=$DNSMASQ_DNS1
 	DNS2=$DNSMASQ_DNS2
-	# Update ethernet/settings
-	(
-	  egrep -v "^RED_ADDRESS|^RED_NETMASK|^DEFAULT_GATEWAY|^DNS1|^DNS2" \
-	    ${ethDIR}/settings
-	  echo "RED_ADDRESS=$IPADDR"
-	  echo "RED_NETMASK=$NETMASK"
-	  echo "DEFAULT_GATEWAY=$GATEWAYS"
-	  echo "DNS1=$DNSMASQ_DNS1"
-	  echo "DNS2=$DNSMASQ_DNS2"
-	) > /tmp/ethernet-settings
-	cat /tmp/ethernet-settings > ${ethDIR}/settings
-	rm -f /tmp/ethernet-settings
 	# Update red/ files
 	echo "$IPADDR" > ${redDIR}/local-ipaddress
 	echo "$GATEWAYS" > ${redDIR}/remote-ipaddress
@@ -81,6 +69,7 @@ elif [ "$RED_TYPE" = "STATIC" ]; then
         fi
 	echo "$RED_ADDRESS" >/var/smoothwall/red/local-ipaddress
 	echo "$DEFAULT_GATEWAY" >/var/smoothwall/red/remote-ipaddress
+	echo "" > ${redDIR}/dhcp-netmask
 fi
 
 logger -t updatered "Updating RED"
