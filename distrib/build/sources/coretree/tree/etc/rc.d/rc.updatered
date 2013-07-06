@@ -69,7 +69,7 @@ elif [ "$RED_TYPE" = "STATIC" ]; then
         fi
 	echo "$RED_ADDRESS" >/var/smoothwall/red/local-ipaddress
 	echo "$DEFAULT_GATEWAY" >/var/smoothwall/red/remote-ipaddress
-	echo "" > ${redDIR}/dhcp-netmask
+	> ${redDIR}/dhcp-netmask
 fi
 
 logger -t updatered "Updating RED"
