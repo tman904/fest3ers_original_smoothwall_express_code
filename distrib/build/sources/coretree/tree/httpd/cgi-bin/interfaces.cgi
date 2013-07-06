@@ -14,15 +14,15 @@ use smoothd qw(message);
 use Socket;
 
 my %cgiparams;
-my %selected;
 my %checked;
-my %settings;
-my $errormessage = '';
 my $dhcpip;
 my $dhcpgw;
 my $dhcpnm;
 my $dhcpdns1;
 my $dhcpdns2;
+my $errormessage = '';
+my %selected;
+my %settings;
 
 &showhttpheaders();
 &getcgihash(\%cgiparams);
@@ -35,19 +35,29 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 {
   # assign the settings over the top of their erstwhile counterparts.
 
-  $settings{'GREEN_ADDRESS'} = $cgiparams{'GREEN_ADDRESS'} if ( defined $cgiparams{'GREEN_ADDRESS'} );
-  $settings{'GREEN_NETMASK'} = $cgiparams{'GREEN_NETMASK'} if ( defined $cgiparams{'GREEN_NETMASK'} );
+  $settings{'GREEN_ADDRESS'} = $cgiparams{'GREEN_ADDRESS'}
+    if ( defined $cgiparams{'GREEN_ADDRESS'} );
+  $settings{'GREEN_NETMASK'} = $cgiparams{'GREEN_NETMASK'}
+    if ( defined $cgiparams{'GREEN_NETMASK'} );
 
-  $settings{'ORANGE_ADDRESS'} = $cgiparams{'ORANGE_ADDRESS'} if ( defined $cgiparams{'ORANGE_ADDRESS'} );
-  $settings{'ORANGE_NETMASK'} = $cgiparams{'ORANGE_NETMASK'} if ( defined $cgiparams{'ORANGE_NETMASK'} );
+  $settings{'ORANGE_ADDRESS'} = $cgiparams{'ORANGE_ADDRESS'}
+    if ( defined $cgiparams{'ORANGE_ADDRESS'} );
+  $settings{'ORANGE_NETMASK'} = $cgiparams{'ORANGE_NETMASK'}
+    if ( defined $cgiparams{'ORANGE_NETMASK'} );
 
-  $settings{'PURPLE_ADDRESS'} = $cgiparams{'PURPLE_ADDRESS'} if ( defined $cgiparams{'PURPLE_ADDRESS'} );
-  $settings{'PURPLE_NETMASK'} = $cgiparams{'PURPLE_NETMASK'} if ( defined $cgiparams{'PURPLE_NETMASK'} );
+  $settings{'PURPLE_ADDRESS'} = $cgiparams{'PURPLE_ADDRESS'}
+    if ( defined $cgiparams{'PURPLE_ADDRESS'} );
+  $settings{'PURPLE_NETMASK'} = $cgiparams{'PURPLE_NETMASK'}
+    if ( defined $cgiparams{'PURPLE_NETMASK'} );
 
-  $settings{'RED_TYPE'} = $cgiparams{'RED_TYPE'} if ( defined $cgiparams{'RED_TYPE'} );
-  $settings{'RED_DHCP_HOSTNAME'} = $cgiparams{'RED_DHCP_HOSTNAME'} if ( defined $cgiparams{'RED_DHCP_HOSTNAME'} );
-  $settings{'RED_ADDRESS'} = $cgiparams{'RED_ADDRESS'} if ( defined $cgiparams{'RED_ADDRESS'} );
-  $settings{'RED_NETMASK'} = $cgiparams{'RED_NETMASK'} if ( defined $cgiparams{'RED_NETMASK'} );
+  $settings{'RED_TYPE'} = $cgiparams{'RED_TYPE'}
+    if ( defined $cgiparams{'RED_TYPE'} );
+  $settings{'RED_DHCP_HOSTNAME'} = $cgiparams{'RED_DHCP_HOSTNAME'}
+    if ( defined $cgiparams{'RED_DHCP_HOSTNAME'} );
+  $settings{'RED_ADDRESS'} = $cgiparams{'RED_ADDRESS'}
+    if ( defined $cgiparams{'RED_ADDRESS'} );
+  $settings{'RED_NETMASK'} = $cgiparams{'RED_NETMASK'}
+    if ( defined $cgiparams{'RED_NETMASK'} );
 
   $settings{'DEFAULT_GATEWAY'} = $cgiparams{'DEFAULT_GATEWAY'} if ( defined $cgiparams{'DEFAULT_GATEWAY'} );
   $settings{'DNS1'} = $cgiparams{'DNS1'} if ( defined $cgiparams{'DNS1'} );
@@ -55,60 +65,94 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
   if ( %cgiparams && ! defined $cgiparams{'RED_IGNOREMTU'} ) {
       $cgiparams{'RED_IGNOREMTU'} = "off";
   }
-  $settings{'RED_IGNOREMTU'} = $cgiparams{'RED_IGNOREMTU'} if ( defined $cgiparams{'RED_IGNOREMTU'} );
-  $settings{'DNS1_OVERRIDE'} = $cgiparams{'DNS1_OVERRIDE'} if ( defined $cgiparams{'DNS1_OVERRIDE'} );
-  $settings{'DNS2_OVERRIDE'} = $cgiparams{'DNS2_OVERRIDE'} if ( defined $cgiparams{'DNS2_OVERRIDE'} );
+  $settings{'RED_IGNOREMTU'} = $cgiparams{'RED_IGNOREMTU'}
+    if ( defined $cgiparams{'RED_IGNOREMTU'} );
+  $settings{'DNS1_OVERRIDE'} = $cgiparams{'DNS1_OVERRIDE'}
+    if ( defined $cgiparams{'DNS1_OVERRIDE'} );
+  $settings{'DNS2_OVERRIDE'} = $cgiparams{'DNS2_OVERRIDE'}
+    if ( defined $cgiparams{'DNS2_OVERRIDE'} );
 
   # now some sanity checks of the settings we've just tried
   
-  if ( not &validip( $settings{'GREEN_ADDRESS'} )){
+  if ( not &validip( $settings{'GREEN_ADDRESS'} ))
+  {
     $errormessage .= $tr{'the ip address for the green interface is invalid'}."<br />\n";
   }
 
-  if ( not &validmask( $settings{'GREEN_NETMASK'} )){
+  if ( not &validmask( $settings{'GREEN_NETMASK'} ))
+  {
     $errormessage .= $tr{'the netmask for the green interface is invalid'}."<br />\n";
   }
 
-  ( $settings{'GREEN_NETADDRESS'}, $settings{'GREEN_BROADCAST'} ) = &bcast_and_net( $settings{'GREEN_ADDRESS'}, $settings{'GREEN_NETMASK'} );
+  ( $settings{'GREEN_NETADDRESS'}, $settings{'GREEN_BROADCAST'} ) =
+      &bcast_and_net( $settings{'GREEN_ADDRESS'}, $settings{'GREEN_NETMASK'} );
 
-  if ( defined $settings{'ORANGE_ADDRESS'} and $settings{'ORANGE_ADDRESS'} ne "" ){
-    if ( not &validip( $settings{'ORANGE_ADDRESS'} )){
+  if ( defined $settings{'ORANGE_ADDRESS'} and $settings{'ORANGE_ADDRESS'} ne "" )
+  {
+    if ( not &validip( $settings{'ORANGE_ADDRESS'} ))
+    {
       $errormessage .= $tr{'the ip address for the orange interface is invalid'}."<br />\n";
-    } elsif ( not &validmask( $settings{'ORANGE_NETMASK'} )){
+    }
+    elsif ( not &validmask( $settings{'ORANGE_NETMASK'} ))
+    {
       $errormessage .= $tr{'the netmask for the orange interface is invalid'}."<br />\n";
-    } else {
+    }
+    else
+    {
       ( $settings{'ORANGE_NETADDRESS'}, $settings{'ORANGE_BROADCAST'} ) =
           &bcast_and_net( $settings{'ORANGE_ADDRESS'}, $settings{'ORANGE_NETMASK'} );
     }
   }
 
-  if ( defined $settings{'PURPLE_ADDRESS'} and $settings{'PURPLE_ADDRESS'} ne "" ) {
-    if ( not &validip( $settings{'PURPLE_ADDRESS'} )) {
+  if ( defined $settings{'PURPLE_ADDRESS'} and $settings{'PURPLE_ADDRESS'} ne "" )
+  {
+    if ( not &validip( $settings{'PURPLE_ADDRESS'} ))
+    {
       $errormessage .= $tr{'the ip address for the purple interface is invalid'}."<br />\n";
-    } elsif ( not &validmask( $settings{'PURPLE_NETMASK'} )){
+    }
+    elsif ( not &validmask( $settings{'PURPLE_NETMASK'} ))
+    {
       $errormessage .= $tr{'the netmask for the purple interface is invalid'}."<br />\n";
-    } else {
+    }
+    else
+    {
       ( $settings{'PURPLE_NETADDRESS'}, $settings{'PURPLE_BROADCAST'} ) = &bcast_and_net( $settings{'PURPLE_ADDRESS'}, $settings{'PURPLE_NETMASK'} ); 
     }
   }
 
-  if ( defined $settings{'RED_TYPE'} and $settings{'RED_TYPE'} ne "" ) {
-    if ( $settings{'RED_TYPE'} eq "STATIC" ) {
-      if ( not &validip( $settings{'RED_ADDRESS'} )){
+  if ( defined $settings{'RED_TYPE'} and $settings{'RED_TYPE'} ne "" )
+  {
+    if ( $settings{'RED_TYPE'} eq "STATIC" )
+    {
+      if ( not &validip( $settings{'RED_ADDRESS'} ))
+      {
         $errormessage .= $tr{'the ip address for the red interface is invalid'}."<br />\n";
-      } elsif ( not &validmask( $settings{'RED_NETMASK'} )){
+      }
+      elsif ( not &validmask( $settings{'RED_NETMASK'} ))
+      {
         $errormessage .= $tr{'the netmask for the red interface is invalid'}."<br />\n";
-      } elsif ( $settings{'DEFAULT_GATEWAY'} ne "" and not &validmask( $settings{'DEFAULT_GATEWAY'} )){
+      }
+      elsif ( $settings{'DEFAULT_GATEWAY'} ne "" and not &validmask( $settings{'DEFAULT_GATEWAY'} ))
+      {
         $errormessage .= $tr{'invalid default gateway'}."<br />\n";
-      } elsif ( $settings{'DNS1'} ne "" and not &validmask( $settings{'DNS1'} )){
+      }
+      elsif ( $settings{'DNS1'} ne "" and not &validmask( $settings{'DNS1'} ))
+      {
         $errormessage .= $tr{'invalid primary dns'}."<br />\n";
-      } elsif ( $settings{'DNS2'} ne "" and not &validmask( $settings{'DNS2'} )){
+      }
+      elsif ( $settings{'DNS2'} ne "" and not &validmask( $settings{'DNS2'} ))
+      {
         $errormessage .= $tr{'invalid secondary dns'}."<br />\n";
-      } else {
+      }
+      else
+      {
         if ( (not defined $settings{'DNS1'} or $settings{'DNS1'} eq "") and
-           ( defined $settings{'DNS2'} and $settings{'DNS2'} ne "" ) ){
+           ( defined $settings{'DNS2'} and $settings{'DNS2'} ne "" ) )
+        {
           $errormessage .= $tr{'cannot specify secondary dns without specifying primary'}."<br />\n";
-        } else {
+        }
+        else
+        {
           ( $settings{'RED_NETADDRESS'}, $settings{'RED_BROADCAST'} ) = 
               &bcast_and_net( $settings{'RED_ADDRESS'}, $settings{'RED_NETMASK'} );
         }
@@ -116,12 +160,14 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
     }
   }
 
-  unless ($errormessage) {
+  unless ($errormessage)
+  {
     &writehash("${swroot}/ethernet/settings", \%settings);
 
     my $success = &message('cyclenetworking');
 
-    if (not defined $success) {
+    if (not defined $success)
+    {
       $errormessage .= $tr{'smoothd failure'}.": cyclenetworking<br />\n";
     }
 
@@ -129,55 +175,72 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
     # inaccessible. Restart all services which depend on firewall rules.
     system('/usr/bin/smoothwall/writedhcp.pl');
 
-    foreach my $service (qw(dhcpd p3scan squid im sip)) {
+    foreach my $service (qw(dhcpd p3scan squid im sip))
+    {
       my $success = &message($service.'restart');
 
-      if (not defined $success) {
+      if (not defined $success)
+      {
         $errormessage .= $tr{'smoothd failure'}.": $service.'restart'<br />\n";
       }
     }
-
   }
 }
 
-if ( $settings{'RED_TYPE'} eq "DHCP" ) {
+if ( $settings{'RED_TYPE'} eq "DHCP" )
+{
   # Display some DHCP values in the UI
-  if (open (FILE, "/var/smoothwall/red/local-ipaddress")) {
+  if (open (FILE, "/var/smoothwall/red/local-ipaddress"))
+  {
     $dhcpip = <FILE>;
     close FILE;
-  } else {
+  }
+  else
+  {
     $errormessage .= 'Unable to open local IP file<br />\n';
   }
   $cgiparams{'RED_ADDRESS'} = $dhcpip;
 
-  if (open (FILE, "/var/smoothwall/red/remote-ipaddress")) {
+  if (open (FILE, "/var/smoothwall/red/remote-ipaddress"))
+  {
     $dhcpgw = <FILE>;
     close FILE;
-  } else {
+  }
+  else
+  {
     $errormessage .= 'Unable to open remote IP file<br />\n';
   }
   $cgiparams{'DEFAULT_GATEWAY'} = $dhcpgw;
 
-  if (open (FILE, "/var/smoothwall/red/dhcp-netmask")) {
+  if (open (FILE, "/var/smoothwall/red/dhcp-netmask"))
+  {
     $dhcpnm = <FILE>;
     close FILE;
-  } else {
-    $errormessage .= 'DHCP NETMASK file not ready yet; ignoring<br />\n';
+  }
+  else
+  {
+    $errormessage .= 'Unable to open DHCP NETMASK file<br />\n';
   }
   $cgiparams{'RED_NETMASK'} = $dhcpnm;
 
-  if (open (FILE, "/var/smoothwall/red/dns1")) {
+  if (open (FILE, "/var/smoothwall/red/dns1"))
+  {
     $dhcpdns1 = <FILE>;
     close FILE;
-  } else {
+  }
+  else
+  {
     $errormessage .= 'Unable to open DNS1 file<br />\n';
   }
   $cgiparams{'DNS1'} = $dhcpdns1;
 
-  if (open (FILE, "/var/smoothwall/red/dns2")) {
+  if (open (FILE, "/var/smoothwall/red/dns2"))
+  {
     $dhcpdns2 = <FILE>;
     close FILE;
-  } else {
+  }
+  else
+  {
     $errormessage .= 'Unable to open DNS2 file<br />\n';
   }
   $cgiparams{'DNS2'} = $dhcpdns2;
@@ -196,7 +259,7 @@ print "<form method='post'>";
 &display_interface( \%settings, 'ORANGE' );
 &display_interface( \%settings, 'PURPLE' );
 
-# if red is on an etherNet, we can show some configuration options for it.
+# if red is on an etherNet, show some configuration options for it.
 &display_red_interface( \%settings );
 
 print <<END;
@@ -317,7 +380,7 @@ sub display_red_interface
     <tr>
       <td class='base' style='width: 25%;'>$tr{'physical interface'}</td>
       <td style='width: 25%;'><b>$interface</b></td>
-      <td class='base' style='width: 25%;'>$tr{'connection method'}:</td>
+      <td class='base' style='width: 25%;'>$tr{'connection method'}</td>
       <td style='width: 25%;'>
       <script>
 function optify( field )
@@ -356,7 +419,7 @@ function optify( field )
   }
 }
       </script>
-      <select name='RED_TYPE' id='type' onChange="optify('type');">
+      <select name='RED_TYPE' id='type' onChange='optify('type');'>
         <option value='STATIC' $selected{'STATIC'}>$tr{'static'}</option>
         <option value='DHCP'   $selected{'DHCP'}>DHCP</option>
         <option value='PPPOE'  $selected{'PPPOE'}>PPPoE</option>
@@ -376,7 +439,8 @@ function optify( field )
 END
 
 
-  if ($settings{'RED_TYPE'} eq "DHCP") {
+  if ($settings{'RED_TYPE'} eq "DHCP")
+  {
     # This field is display-only, but we need to preserve it,
     #   so use tmp names and the values read from the file in .../red/.
     #   %settings: values to save
@@ -392,7 +456,9 @@ print <<END;
 END
 
 
-  } else {
+  }
+  else
+  {
     # with STATIC, the fields have real values
 
 
@@ -410,7 +476,7 @@ END
 print <<END;
     </tr>
     <tr>
-      <td rowspan='5' colspan='2'>
+      <td rowspan='6' colspan='2'>
 END
 
 
@@ -452,11 +518,11 @@ END
 
 print <<END;
       </td>
-    </tr>
 END
 
 
-  if ($settings{'RED_TYPE'} eq "DHCP") {
+  if ($settings{'RED_TYPE'} eq "DHCP")
+  {
     # These fields are display-only, but we need to preserve them,
     #   so use tmp names and the values read from the files in .../red/.
     #   %settings: values to save
@@ -499,7 +565,9 @@ print <<END;
 END
 
 
-  } else {
+  }
+  else
+  {
     # with STATIC, the fields have real values
 
 
