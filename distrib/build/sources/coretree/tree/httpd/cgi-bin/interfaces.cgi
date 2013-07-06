@@ -52,7 +52,7 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
   $settings{'DEFAULT_GATEWAY'} = $cgiparams{'DEFAULT_GATEWAY'} if ( defined $cgiparams{'DEFAULT_GATEWAY'} );
   $settings{'DNS1'} = $cgiparams{'DNS1'} if ( defined $cgiparams{'DNS1'} );
   $settings{'DNS2'} = $cgiparams{'DNS2'} if ( defined $cgiparams{'DNS2'} );
-  if ( defined %cgiparams && ! defined $cgiparams{'RED_IGNOREMTU'} ) {
+  if ( %cgiparams && ! defined $cgiparams{'RED_IGNOREMTU'} ) {
       $cgiparams{'RED_IGNOREMTU'} = "off";
   }
   $settings{'RED_IGNOREMTU'} = $cgiparams{'RED_IGNOREMTU'} if ( defined $cgiparams{'RED_IGNOREMTU'} );
@@ -373,13 +373,49 @@ function optify( field )
       <td class='base'>$tr{'mac addressc'}</td>
       <td><b>$macaddress</b></td>
       <td class='base'>$tr{'ip addressc'}</td>
-      <td><input id='ipaddress'  @{[jsvalidip('ipaddress')]}  type='text' name='RED_ADDRESS' value='$settings{'RED_ADDRESS'}'></td>
+END
+
+
+  if ($settings{'RED_TYPE'} eq "DHCP") {
+    # This field is display-only, but we need to preserve it,
+    #   so use tmp names and the values read from the file in .../red/.
+    #   %settings: values to save
+    #   %cgiparams: values to toss
+
+
+print <<END;
+      <td style='width: 25%;'>
+        <input type='hidden' name='RED_ADDRESS' value='$settings{"RED_ADDRESS"}'>
+        <input id='ipaddress' @{[jsvalidip('ipaddress','true')]} type='text'
+               name='tmpDiscardAD' value='$cgiparams{"RED_ADDRESS"}'>
+      </td>
+END
+
+
+  } else {
+    # with STATIC, the fields have real values
+
+
+print <<END;
+      <td style='width: 25%;'>
+        <input id='ipaddress' @{[jsvalidip('ipaddress','true')]} type='text'
+               name='RED_ADDRESS' value='$settings{"RED_ADDRESS"}'>
+      </td>
+END
+
+
+  }
+
+
+print <<END;
     </tr>
     <tr>
       <td rowspan='5' colspan='2'>
 END
 
+
   &openbox("Overrides");
+
 
   print <<END;
         <table style='width:100%'>
@@ -410,55 +446,101 @@ END
         </table>
 END
 
+
   &closebox();
+
 
 print <<END;
       </td>
-      <td class='base'>$tr{'netmaskc'}</td>
-      <td><input id='netmask' type='text'  @{[jsvalidip('netmask')]}  name='RED_NETMASK' value='$settings{"RED_NETMASK"}'></td>
     </tr>
-    <tr>
-      <td class='base' style='width: 25%;'>$tr{'default gateway'}</td>
-      <td style='width: 25%;'><input id='gateway'  @{[jsvalidip('gateway','true')]}  type='text' name='DEFAULT_GATEWAY' value='$settings{"DEFAULT_GATEWAY"}'></td>
-    </tr>
-    <tr>
 END
 
+
   if ($settings{'RED_TYPE'} eq "DHCP") {
-    # These DNS fields are display-only, but we need to preserve DNS[12],
+    # These fields are display-only, but we need to preserve them,
     #   so use tmp names and the values read from the files in .../red/.
     #   %settings: values to save
     #   %cgiparams: values to toss
+
+
 print <<END;
+    <tr>
+      <td class='base'>$tr{'netmaskc'}</td>
+      <td style='width: 25%;'>
+        <input type='hidden' name='RED_NETMASK' value='$settings{"RED_NETMASK"}'>
+        <input id='primary' @{[jsvalidip('gateway','true')]} type='text'
+               name='tmpDiscardNM' value='$cgiparams{"RED_NETMASK"}'>
+      </td>
+    </tr>
+    <tr>
+      <td class='base' style='width: 25%;'>$tr{'default gateway'}</td>
+      <td style='width: 25%;'>
+        <input type='hidden' name='DEFAULT_GATEWAY' value='$settings{"DEFAULT_GATEWAY"}'>
+        <input id='primary' @{[jsvalidip('gateway','true')]} type='text'
+               name='tmpDiscardGW' value='$cgiparams{"DEFAULT_GATEWAY"}'>
+      </td>
+    </tr>
+    <tr>
       <td class='base' style='width: 25%;'>$tr{'primary dns'}</td>
       <td style='width: 25%;'>
         <input type='hidden' name='DNS1' value='$settings{"DNS1"}'>
-        <input id='primary'  @{[jsvalidip('primary','true')]}  type='text' name='tmpDiscard1' value='$cgiparams{"DNS1"}'>
+        <input id='primary' @{[jsvalidip('primary','true')]} type='text'
+               name='tmpDiscard1' value='$cgiparams{"DNS1"}'>
       </td>
     </tr>
-    <tr>
+    <tr style='vertical-align:top'>
       <td class='base'>$tr{'secondary dns'}</td>
       <td style='width: 25%;'>
         <input type='hidden' name='DNS2' value='$settings{"DNS2"}'>
-        <input id='secondary'  @{[jsvalidip('secondary','true')]}  type='text' name='tmpDiscard2' value='$cgiparams{"DNS2"}'>
-      </td>
+        <input id='secondary' @{[jsvalidip('secondary','true')]} type='text'
+               style='vertical-align:top'
+               name='tmpDiscard2' value='$cgiparams{"DNS2"}'></td>
+    </tr>
 END
+
+
   } else {
-    # the DNS fields have real data here.
+    # with STATIC, the fields have real values
+
+
 print <<END;
-      <td class='base' style='width: 25%;'>$tr{'primary dns'}</td>
-      <td style='width: 25%;'><input id='primary'  @{[jsvalidip('primary','true')]}  type='text' name='DNS1' value='$settings{"DNS1"}'></td>
+    <tr>
+      <td class='base'>$tr{'netmaskc'}</td>
+      <td>
+        <input id='netmask' type='text'  @{[jsvalidip('netmask')]}
+               name='RED_NETMASK' value='$settings{"RED_NETMASK"}'>
+      </td>
     </tr>
     <tr>
+      <td class='base' style='width: 25%;'>$tr{'default gateway'}</td>
+      <td style='width: 25%;'>
+        <input id='gateway' @{[jsvalidip('gateway','true')]} type='text'
+               name='DEFAULT_GATEWAY' value='$settings{"DEFAULT_GATEWAY"}'>
+      </td>
+    </tr>
+    <tr>
+      <td class='base' style='width: 25%;'>$tr{'primary dns'}</td>
+      <td style='width: 25%;'>
+        <input id='primary' @{[jsvalidip('primary','true')]} type='text'
+               name='DNS1' value='$settings{"DNS1"}'>
+      </td>
+    </tr>
+    <tr style='vertical-align:top'>
       <td class='base'>$tr{'secondary dns'}</td>
-      <td style='width: 25%;'><input id='secondary'  @{[jsvalidip('secondary','true')]}  type='text' name='DNS2' value='$settings{"DNS2"}'></td>
+      <td style='width: 25%;'>
+        <input id='secondary' @{[jsvalidip('secondary','true')]} type='text'
+               name='DNS2' value='$settings{"DNS2"}'></td>
+    </tr>
 END
+
+
   }
 
+
 print<<END;
-    </tr>
   </table>
 END
+
 
   &closebox();
 
