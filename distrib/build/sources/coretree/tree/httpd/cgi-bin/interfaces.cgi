@@ -193,6 +193,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   if (open (FILE, "/var/smoothwall/red/local-ipaddress"))
   {
     $dhcpip = <FILE>;
+    chomp $dhcpip;
     close FILE;
   }
   else
@@ -204,6 +205,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   if (open (FILE, "/var/smoothwall/red/remote-ipaddress"))
   {
     $dhcpgw = <FILE>;
+    chomp $dhcpgw;
     close FILE;
   }
   else
@@ -215,6 +217,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   if (open (FILE, "/var/smoothwall/red/dhcp-netmask"))
   {
     $dhcpnm = <FILE>;
+    chomp $dhcpnm;
     close FILE;
   }
   else
@@ -226,6 +229,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   if (open (FILE, "/var/smoothwall/red/dns1"))
   {
     $dhcpdns1 = <FILE>;
+    chomp $dhcpdns1;
     close FILE;
   }
   else
@@ -237,6 +241,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   if (open (FILE, "/var/smoothwall/red/dns2"))
   {
     $dhcpdns2 = <FILE>;
+    chomp $dhcpdns2;
     close FILE;
   }
   else
@@ -273,6 +278,8 @@ END
 
 &closepage();
 
+
+
 sub display_interface
 {
   my ( $settings, $prefix ) = @_;
@@ -282,9 +289,8 @@ sub display_interface
   # Get the MAC address
   if (open (MACADDR, "/sys/class/net/${interface}/address"))
   {
-    $_ = <MACADDR>;
-    chomp;
-    $macaddress = $_;
+    $macaddress = <MACADDR>;
+    chomp $macaddress;
     close (MACADDR);
   }
   else
@@ -296,6 +302,7 @@ sub display_interface
   if (open (DRIVER, "/bin/ls -C1 /sys/class/net/${interface}/device/driver/module/drivers|"))
   {
     $_ = <DRIVER>;
+    chomp;
     my ($bus, $driver) = split(/:/);
     $settings{"${prefix}_DISPLAYBUS"} = $bus;
     $settings{"${prefix}_DISPLAYDRIVER"} = $driver;
@@ -320,7 +327,7 @@ sub display_interface
     </tr>
     <tr>
       <td class='base'>$tr{'mac addressc'}</td>
-      <td><b>$macaddress<b/></td>
+      <td><b>$macaddress</b></td>
       <td>&nbsp;</td>
       <td>&nbsp;</td>
     </tr>
@@ -341,9 +348,8 @@ sub display_red_interface
   # Get the MAC address
   if (open (MACADDR, "/sys/class/net/${interface}/address"))
   {
-    $_ = <MACADDR>;
-    chomp;
-    $macaddress = $_;
+    $macaddress = <MACADDR>;
+    chomp $macaddress;
     close (MACADDR);
   }
   else
@@ -355,6 +361,7 @@ sub display_red_interface
   if (open (DRIVER, "/bin/ls -C1 /sys/class/net/${interface}/device/driver/module/drivers|"))
   {
     $_ = <DRIVER>;
+    chomp;
     my ($bus, $driver) = split(/:/);
     $settings{"RED_DISPLAYBUS"} = $bus;
     $settings{"RED_DISPLAYDRIVER"} = $driver;
@@ -382,44 +389,44 @@ sub display_red_interface
       <td style='width: 25%;'><b>$interface</b></td>
       <td class='base' style='width: 25%;'>$tr{'connection method'}</td>
       <td style='width: 25%;'>
-      <script>
+      <script type='text/javascript'>
 function optify( field )
 {
   var inputval = document.getElementById(field).value;
   if ( inputval == 'DHCP' ){
-    _enable('hostname');
-    _enable('ignoremtu');
-    _disable('ipaddress');
-    _disable('netmask');
-    _disable('gateway');
-    _disable('primary');
-    _disable('secondary');
-    _enable('primaryoverride');
-    _enable('secondaryoverride');
+    _show('hostname');
+    _show('ignoremtu');
+    _hide('ipaddress');
+    _hide('netmask');
+    _hide('gateway');
+    _hide('primary');
+    _hide('secondary');
+    _show('primaryoverride');
+    _show('secondaryoverride');
   } else if ( inputval == 'STATIC' ){
-    _disable('hostname');
-    _disable('ignoremtu');
-    _enable('ipaddress');
-    _enable('netmask');
-    _enable('gateway');
-    _enable('primary');
-    _enable('secondary');
-    _enable('primaryoverride');
-    _enable('secondaryoverride');
+    _hide('hostname');
+    _hide('ignoremtu');
+    _show('ipaddress');
+    _show('netmask');
+    _show('gateway');
+    _show('primary');
+    _show('secondary');
+    _show('primaryoverride');
+    _show('secondaryoverride');
   } else if ( inputval == 'PPPOE' ){
-    _disable('hostname');
-    _disable('ignoremtu');
-    _disable('ipaddress');
-    _disable('netmask');
-    _disable('gateway');
-    _disable('primary');
-    _disable('secondary');
-    _disable('primaryoverride');
-    _disable('secondaryoverride');
+    _hide('hostname');
+    _hide('ignoremtu');
+    _hide('ipaddress');
+    _hide('netmask');
+    _hide('gateway');
+    _hide('primary');
+    _hide('secondary');
+    _hide('primaryoverride');
+    _hide('secondaryoverride');
   }
 }
       </script>
-      <select name='RED_TYPE' id='type' onChange='optify('type');'>
+      <select name='RED_TYPE' id='type' onChange='optify("type");'>
         <option value='STATIC' $selected{'STATIC'}>$tr{'static'}</option>
         <option value='DHCP'   $selected{'DHCP'}>DHCP</option>
         <option value='PPPOE'  $selected{'PPPOE'}>PPPoE</option>
@@ -430,7 +437,12 @@ function optify( field )
       <td class='base'>$tr{'nic type'}</td>
       <td><b>$settings{'RED_DISPLAYDRIVER'} ($settings{'RED_DISPLAYBUS'})</b></td>
       <td class='base'>$tr{'dhcp hostname'}</td>
-      <td><input type='text' id='hostname' name='RED_DHCP_HOSTNAME' value='$settings{'RED_DHCP_HOSTNAME'}'></td>
+      <td>
+        <span class='input' id='hostnameText'>$settings{'RED_DHCP_HOSTNAME'}</span>
+        <input id='hostname' @{[jsvalidhostname('hostname','true')]} type='text'
+               style='display:none'
+               name='RED_DHCP_HOSTNAME' value='$settings{"RED_DHCP_HOSTNAME"}'>
+      </td>
     </tr>
     <tr>
       <td class='base'>$tr{'mac addressc'}</td>
@@ -439,41 +451,20 @@ function optify( field )
 END
 
 
-  if ($settings{'RED_TYPE'} eq "DHCP")
-  {
-    # This field is display-only, but we need to preserve it,
-    #   so use tmp names and the values read from the file in .../red/.
-    #   %settings: values to save
-    #   %cgiparams: values to toss
+# Include both display-only and input fields, but display only one.
+#   %settings: static values
+#   %cgiparams: static values overridden with DHCP/PPPoE values, then with
+#     DNS override values.
 
 
+# use 'current' address
 print <<END;
       <td style='width: 25%;'>
-        <input type='hidden' name='RED_ADDRESS' value='$settings{"RED_ADDRESS"}'>
+        <span class='input' id='ipaddressText'>$cgiparams{'RED_ADDRESS'}</span>
         <input id='ipaddress' @{[jsvalidip('ipaddress','true')]} type='text'
-               name='tmpDiscardAD' value='$cgiparams{"RED_ADDRESS"}'>
-      </td>
-END
-
-
-  }
-  else
-  {
-    # with STATIC, the fields have real values
-
-
-print <<END;
-      <td style='width: 25%;'>
-        <input id='ipaddress' @{[jsvalidip('ipaddress','true')]} type='text'
+               style='display:none'
                name='RED_ADDRESS' value='$settings{"RED_ADDRESS"}'>
       </td>
-END
-
-
-  }
-
-
-print <<END;
     </tr>
     <tr>
       <td rowspan='6' colspan='2'>
@@ -482,30 +473,45 @@ END
 
   &openbox("Overrides");
 
+  if ($ignoremtuchecked eq '')
+  {
+    $ignoremtutext = 'Not checked';
+  }
+  else
+  {
+    $ignoremtutext = 'Checked';
+  }
 
-  print <<END;
+print <<END;
         <table style='width:100%'>
           <tr>
             <td class='base'>$tr{'ignore mtu'}</td>
             <td style='width: 25%;'>
-              <input id='ignoremtu'  type='checkbox' name='RED_IGNOREMTU'$ignoremtuchecked>
+              <span class='input' id='ignoremtuText'>$ignoremtutext</span>
+              <input id='ignoremtu'  type='checkbox' 
+                     style='display:none'
+                     name='RED_IGNOREMTU'$ignoremtuchecked>
             </td>
           </tr>
           <tr>
             <td class='base' style='width: 25%;'>$tr{'primary dns override'}</td>
             <td style='width: 25%;'>
+              <span class='input' id='primaryoverrideText'>$settings{'DNS1_OVERRIDE'}</span>
               <input id='primaryoverride'
                      @{[jsvalidip('primaryoverride','true')]}
                      type='text' name='DNS1_OVERRIDE'
+                     style='display:none'
                      value='$settings{"DNS1_OVERRIDE"}'>
             </td>
           </tr>
           <tr>
             <td class='base' style='width: 25%;'>$tr{'secondary dns override'}</td>
             <td style='width: 25%;'>
+              <span class='input' id='secondaryoverrideText'>$settings{'DNS2_OVERRIDE'}</span>
               <input id='secondaryoverride'
                      @{[jsvalidip('secondaryoverride','true')]}
                      type='text' name='DNS2_OVERRIDE'
+                     style='display:none'
                      value='$settings{"DNS2_OVERRIDE"}'>
             </td>
           </tr>
@@ -518,94 +524,41 @@ END
 
 print <<END;
       </td>
-END
-
-
-  if ($settings{'RED_TYPE'} eq "DHCP")
-  {
-    # These fields are display-only, but we need to preserve them,
-    #   so use tmp names and the values read from the files in .../red/.
-    #   %settings: values to save
-    #   %cgiparams: values to toss
-
-
-print <<END;
     <tr>
       <td class='base'>$tr{'netmaskc'}</td>
       <td style='width: 25%;'>
-        <input type='hidden' name='RED_NETMASK' value='$settings{"RED_NETMASK"}'>
-        <input id='primary' @{[jsvalidip('gateway','true')]} type='text'
-               name='tmpDiscardNM' value='$cgiparams{"RED_NETMASK"}'>
-      </td>
-    </tr>
-    <tr>
-      <td class='base' style='width: 25%;'>$tr{'default gateway'}</td>
-      <td style='width: 25%;'>
-        <input type='hidden' name='DEFAULT_GATEWAY' value='$settings{"DEFAULT_GATEWAY"}'>
-        <input id='primary' @{[jsvalidip('gateway','true')]} type='text'
-               name='tmpDiscardGW' value='$cgiparams{"DEFAULT_GATEWAY"}'>
-      </td>
-    </tr>
-    <tr>
-      <td class='base' style='width: 25%;'>$tr{'primary dns'}</td>
-      <td style='width: 25%;'>
-        <input type='hidden' name='DNS1' value='$settings{"DNS1"}'>
-        <input id='primary' @{[jsvalidip('primary','true')]} type='text'
-               name='tmpDiscard1' value='$cgiparams{"DNS1"}'>
-      </td>
-    </tr>
-    <tr style='vertical-align:top'>
-      <td class='base'>$tr{'secondary dns'}</td>
-      <td style='width: 25%;'>
-        <input type='hidden' name='DNS2' value='$settings{"DNS2"}'>
-        <input id='secondary' @{[jsvalidip('secondary','true')]} type='text'
-               style='vertical-align:top'
-               name='tmpDiscard2' value='$cgiparams{"DNS2"}'></td>
-    </tr>
-END
-
-
-  }
-  else
-  {
-    # with STATIC, the fields have real values
-
-
-print <<END;
-    <tr>
-      <td class='base'>$tr{'netmaskc'}</td>
-      <td>
-        <input id='netmask' type='text'  @{[jsvalidip('netmask')]}
+        <span class='input' id='netmaskText'>$cgiparams{'RED_NETMASK'}</span>
+        <input id='netmask' @{[jsvalidmask('netmask','true')]} type='text'
+               style='display:none'
                name='RED_NETMASK' value='$settings{"RED_NETMASK"}'>
       </td>
     </tr>
     <tr>
       <td class='base' style='width: 25%;'>$tr{'default gateway'}</td>
       <td style='width: 25%;'>
+        <span class='input' id='gatewayText'>$cgiparams{'DEFAULT_GATEWAY'}</span>
         <input id='gateway' @{[jsvalidip('gateway','true')]} type='text'
+               style='display:none'
                name='DEFAULT_GATEWAY' value='$settings{"DEFAULT_GATEWAY"}'>
       </td>
     </tr>
     <tr>
       <td class='base' style='width: 25%;'>$tr{'primary dns'}</td>
       <td style='width: 25%;'>
+        <span class='input' id='primaryText'>$cgiparams{'DNS1'}</span>
         <input id='primary' @{[jsvalidip('primary','true')]} type='text'
+               style='display:none'
                name='DNS1' value='$settings{"DNS1"}'>
       </td>
     </tr>
-    <tr style='vertical-align:top'>
+    <tr>
       <td class='base'>$tr{'secondary dns'}</td>
       <td style='width: 25%;'>
+        <span class='input' id='secondaryText'>$cgiparams{'DNS2'}</span>
         <input id='secondary' @{[jsvalidip('secondary','true')]} type='text'
-               name='DNS2' value='$settings{"DNS2"}'></td>
+               style='display:none'
+               name='DNS2' value='$settings{"DNS2"}'>
     </tr>
-END
-
-
-  }
-
-
-print<<END;
   </table>
 END
 

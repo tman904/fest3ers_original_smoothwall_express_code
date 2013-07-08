@@ -27,6 +27,17 @@ input[type=text],option,select {
 }
 
 
+span.input {
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size : 11px;
+	red: #dc143c;
+	green: #05E867;
+	orange: #ff4500;
+	purple: #9400d3;
+}
+
+
 body {
 	font-size : 11px;
 	font-family: Arial, Helvetica, sans-serif;

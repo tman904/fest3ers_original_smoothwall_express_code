@@ -26,6 +26,26 @@ function displayHelp(url) {
 
 /* Validation functions and related options */
 
+function _hide(field)
+{
+	if ( document.getElementById(field) ){
+		document.getElementById(field).style.display = 'none';
+	}
+	if ( document.getElementById(field +'Text') ){
+		document.getElementById(field +'Text').style.display = 'inline-block';
+	}
+}
+
+function _show(field)
+{
+	if ( document.getElementById(field) ){
+		document.getElementById(field).style.display = 'inline-block';
+	}
+	if ( document.getElementById(field +'Text') ){
+		document.getElementById(field +'Text').style.display = 'none';
+	}
+}
+
 function _disable(field)
 {
 	if ( document.getElementById(field) ){
