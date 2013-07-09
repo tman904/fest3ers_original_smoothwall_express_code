@@ -20,7 +20,8 @@ my $dhcpgw;
 my $dhcpnm;
 my $dhcpdns1;
 my $dhcpdns2;
-my $errormessage = '';
+my $errormessage = "";
+my $reddhcp;
 my %selected;
 my %settings;
 
@@ -198,7 +199,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   }
   else
   {
-    $errormessage .= 'Unable to open local IP file<br />\n';
+    $errormessage .= "Unable to open local IP file<br />\n";
   }
   $cgiparams{'RED_ADDRESS'} = $dhcpip;
 
@@ -210,7 +211,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   }
   else
   {
-    $errormessage .= 'Unable to open remote IP file<br />\n';
+    $errormessage .= "Unable to open remote IP file<br />\n";
   }
   $cgiparams{'DEFAULT_GATEWAY'} = $dhcpgw;
 
@@ -222,7 +223,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   }
   else
   {
-    $errormessage .= 'Unable to open DHCP NETMASK file<br />\n';
+    $errormessage .= "Unable to open DHCP NETMASK file<br />\n";
   }
   $cgiparams{'RED_NETMASK'} = $dhcpnm;
 
@@ -234,7 +235,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   }
   else
   {
-    $errormessage .= 'Unable to open DNS1 file<br />\n';
+    $errormessage .= "Unable to open DNS1 file<br />\n";
   }
   $cgiparams{'DNS1'} = $dhcpdns1;
 
@@ -246,7 +247,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   }
   else
   {
-    $errormessage .= 'Unable to open DNS2 file<br />\n';
+    $errormessage .= "Unable to open DNS2 file<br />\n";
   }
   $cgiparams{'DNS2'} = $dhcpdns2;
 }
@@ -524,6 +525,7 @@ END
 
 print <<END;
       </td>
+    </tr>
     <tr>
       <td class='base'>$tr{'netmaskc'}</td>
       <td style='width: 25%;'>
@@ -558,6 +560,7 @@ print <<END;
         <input id='secondary' @{[jsvalidip('secondary','true')]} type='text'
                style='display:none'
                name='DNS2' value='$settings{"DNS2"}'>
+      </td>
     </tr>
   </table>
 END
