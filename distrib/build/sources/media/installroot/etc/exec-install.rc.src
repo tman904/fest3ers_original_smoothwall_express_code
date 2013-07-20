@@ -436,8 +436,8 @@ END
 
   cat >> /harddisk/boot/grub/grub.conf <<END
 
-# Allow 10 seconds before booting the default.
-timeout 10
+# Allow 5 seconds before booting the default.
+timeout 5
 
 # Official backdrop
 splashimage=/grub/express_boot_protect.xpm.gz
