@@ -25,7 +25,7 @@ terminal console
 default 0
 
 # Allow 10 seconds before booting the default.
-timeout 10
+timeout 5
 
 # Official backdrop
 splashimage=/grub/express_boot_protect.xpm.gz
