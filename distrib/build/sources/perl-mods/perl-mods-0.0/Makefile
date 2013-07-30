@@ -2,7 +2,7 @@
 #
 # (c) SmoothWall Ltd 2005
 #
-# This code isdistributed under the terms of the GPL v2.
+# This code is distributed under the terms of the GPL v2.
 
 all:
 	@+for i in $(PERL_MODS); do \

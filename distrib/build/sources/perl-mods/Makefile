@@ -16,7 +16,9 @@ VERSION = 0.0
 
 # List of all mods to be built. Add here, then add dir and makefile in
 #   version dir below.
-export PERL_MODS = Authen-NTLM \
+export PERL_MODS = \
+	    App-Control \
+	    Authen-NTLM \
 	    Authen-SASL \
 	    Config-Patch \
 	    Date-Calc \
