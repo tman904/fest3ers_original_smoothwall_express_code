@@ -1,26 +1,28 @@
-#!/usr/bin/perl
+#! /bin/bash
 
-my $baseurl = 'https://smoothwall.svn.sourceforge.net/svnroot/smoothwall/';
-my $differ = '/usr/src/expresscore/distrib/build/differ';
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 commitID_begin [commitID_end]"
+  echo
+  echo "where commitID_begin is the git commit ID of the base of changes"
+  echo "          (usually the last release), and"
+  echo "      commitID_end is the end of the change period; if not specified,"
+  echo "          defaults to 'HEAD'."
+  echo "The commit IDs may be branch names."
+  echo
+  echo "Produce a list of files that changed between commitID_begin and commitID_end."
+  echo "This list will be used to help prepare updates."
+  exit 1
+fi
 
-my $rev = $ARGV[0];
-my $dir = $ARGV[1];
+# Get the first commit
+if [ "x$1" != "x" ]; then commitBegin="$1"; fi
 
-if ($rev eq '')
-{
-	print "Usage: makedifflist REV DIR\n";
-	print "Ex: makedifflist tags/update2 coretree/tree\n";
-	print "NOTE! DOES NOT COPE WITH *NEW* FILES\n";
-	
-	exit;
-}
+# Get the last commit
+if [ "x$2" == "x" ]; then
+  commitEnd="HEAD"
+else
+  commitEnd="$2"
+fi
 
-my @output = `svn diff --diff-cmd=$differ $baseurl/trunk/distrib/build/sources/$dir $baseurl/$rev/distrib/build/sources/$dir`;
-
-foreach (@output)
-{
-	if (/^FILE:(.*)$/)
-	{
-		print "./$1\n";
-	}
-}
+# Show what changed
+git diff --name-only $commitBegin $commitEnd
