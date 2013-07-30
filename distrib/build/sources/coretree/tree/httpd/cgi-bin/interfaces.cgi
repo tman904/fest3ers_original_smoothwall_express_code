@@ -188,9 +188,13 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
   }
 }
 
-if ( $settings{'RED_TYPE'} eq "DHCP" )
+#if (( $settings{'RED_TYPE'} eq "STATIC" ) or ( $settings{'RED_TYPE'} eq "PPPOE" ))
+#{
+#  # Display some DHCP values in the UI
+
+if (( $settings{'RED_TYPE'} ne "STATIC" ))
 {
-  # Display some DHCP values in the UI
+  # Display some DHCP/PPP values in the UI
   if (open (FILE, "/var/smoothwall/red/local-ipaddress"))
   {
     $dhcpip = <FILE>;
@@ -223,7 +227,7 @@ if ( $settings{'RED_TYPE'} eq "DHCP" )
   }
   else
   {
-    $errormessage .= "Unable to open DHCP NETMASK file<br />\n";
+    $errormessage .= "Unable to open NETMASK file<br />\n";
   }
   $cgiparams{'RED_NETMASK'} = $dhcpnm;
 
