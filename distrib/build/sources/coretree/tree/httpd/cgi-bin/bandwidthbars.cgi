@@ -25,10 +25,24 @@ my @bar_names;
 my $oururl = "/cgi-bin/trafficstats.cgi?BARS=1";
 
 # Is SWE3
-open (HDL, "/usr/sbin/ip link | grep -v lo: | grep ',UP' | sed -e 's/^[0-9]*: //' -e 's/:.*//'|");
-my @devices = <HDL>;
+open (HDL, "/usr/sbin/ip link | egrep 'ppp[0-9]+:' | sed -e 's/^[0-9]*: //' -e 's/:.*//'|");
+my @PPPdevices = <HDL>;
 close (HDL);
-chomp @devices;
+chomp @PPPdevices;
+my @devices;
+{
+	my $i = 0;
+	if ( $netsettings{'GREEN_DEV'}) { $devices[$i++] = $netsettings{'GREEN_DEV'}; }
+	if ( $netsettings{'ORANGE_DEV'}) { $devices[$i++] = $netsettings{'ORANGE_DEV'}; }
+	if ( $netsettings{'PURPLE_DEV'}) { $devices[$i++] = $netsettings{'PURPLE_DEV'}; }
+	if ($netsettings{'RED_TYPE'} eq 'STATIC' or $netsettings{'RED_TYPE'} eq 'DHCP')
+	{
+		$devices[$i++] = $netsettings{'RED_DEV'};
+	} else {
+		# Must be PPP; get from PPPdevices (ppp0 or ippp0)
+		$devices[$i++] = $PPPdevices[0] if ($PPPdevices[0]);
+  }
+}
 
 &openbox('Bandwidth bars:');
 &realtime_graphs();
@@ -45,8 +59,8 @@ sub printableiface
 			$netsettings{'ORANGE_DEV'} => 'Orange',
 			$netsettings{'PURPLE_DEV'} => 'Purple',
 			$netsettings{'RED_DEV'} => 'Red',
-			'ppp0' => 'Modem',
-			'ippp0' => 'ISDN');
+			'ppp0' => 'Red (PPP)',
+			'ippp0' => 'Red (ISDN)');
 	return $ifaces{$iface} || $iface;
 }
 			
@@ -109,6 +123,8 @@ sub realtime_graphs
 		$iftitle =~ s/(GREEN|RED|ORANGE|PURPLE)//;
 		$iftitle = printableiface($iftitle);
 		if ($iftitle eq 'Red') { $bgcolor = '#ffaaaa'; }
+		elsif ($iftitle eq 'Red (PPP)') { $bgcolor = '#ffaaaa'; }
+		elsif ($iftitle eq 'Red (ISDN)') { $bgcolor = '#ffaaaa'; }
 		elsif ($iftitle eq "Green") {$bgcolor = "#bbffbb";}
 		elsif ($iftitle eq "Purple") {$bgcolor = "#ddaaff";}
 		elsif ($iftitle eq "Orange") {$bgcolor = "#ffaa77";}
