@@ -7,6 +7,13 @@
 /etc/rc.d/rc.vpn.down
 /usr/bin/killall trafficlogger
 
+# Take down dialup, ISDN or stutterpox
+if [ $RED_TYPE != 'STATIC' -a $RED_TYPE != 'PPPOE' ]; then
+  /usr/bin/smoothcom updown down
+  # Add this for good measure, Justin Case.
+  /etc/ppp/ip-down
+fi
+
 # Take GREEN down, if allowed.
 if [ "$1" != "NOTGREEN" ]; then
   (
