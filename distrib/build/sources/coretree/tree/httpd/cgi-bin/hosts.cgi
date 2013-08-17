@@ -165,7 +165,7 @@ my %render_settings =
 			size   => 15,
 			valign => 'top',
 			maxrowspan => 2,
-			sort   => 'cmp',
+			sort   => \&ipcompare,
 		},
 		{
 			column => '2',
