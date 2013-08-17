@@ -34,9 +34,9 @@ sub writeentry
 	$ip  = $_[0];
 	$name = $_[1];
 
-	print FILE "$ip\t$name";
+	print FILE "$ip\t";
 
 	if (!($name =~ /\./) && $dhcpsettings{'DOMAIN_NAME'}) {
-		print FILE " ${name}.${dhcpsettings{'DOMAIN_NAME'}}"; }
-	print FILE "\n";
+		print FILE " ${name}.${dhcpsettings{'DOMAIN_NAME'}} "; }
+	print FILE "$name\n";
 }
