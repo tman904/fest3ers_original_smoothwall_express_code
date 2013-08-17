@@ -234,7 +234,7 @@ static int adslenabledpressed(void)
 
 	if ((strcmp(ifacetype, "usb") == 0) && (usbfail))
 	{
-		errorbox("Device requires a USB interface which was not dected.");
+		errorbox("Device requires a USB interface which was not detected.");
 		replacekeyvalue(kv, "ENABLED", "off");
 		result = 1;
 	}
