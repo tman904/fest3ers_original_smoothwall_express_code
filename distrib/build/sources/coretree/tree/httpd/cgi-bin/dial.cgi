@@ -19,15 +19,28 @@ if ($cgiparams{'ACTION'} eq $tr{'dial'})
 {
 	my $success = message('updown', 'UP');
 		
-	if (not defined $success) {
-		&log("Dial failed"); }
+	if (not defined $success)
+	{
+		&log("Dial failed");
+	}
 }
 elsif ($cgiparams{'ACTION'} eq $tr{'hangup'})
 {
 	my $success = message('updown', 'DOWN');
 		
-	if (not defined $success) {
-		&log("Hangup failed"); }
+	if (not defined $success)
+	{
+		&log("Hangup failed");
+	}
+	else
+	{
+		if ( -e "${swroot}/red/active" )
+		{
+			# If it failed silently, it might not've ever come up, so
+			#   be sure it doesn't get stuck in a false up state.
+			system ("/etc/ppp/ip-down");
+		}
+	}
 }
 
 sleep 1;

@@ -413,24 +413,9 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -t mangle -A postrouting-2 -o $RED_DEV -j RETURN
 fi
 
+# Prepare traffic accounting
 /sbin/iptables -t mangle -N account
-
-if [ "$GREEN_DEV" != "" ] ; then
-	/sbin/iptables -t mangle -A account -j ACCOUNT \
-		--addr $GREEN_NETADDRESS/$GREEN_NETMASK --tname GREEN
-fi
-if [ "$ORANGE_DEV" != "" ] ; then
-	/sbin/iptables -t mangle -A account -j ACCOUNT \
-		--addr $ORANGE_NETADDRESS/$ORANGE_NETMASK --tname ORANGE
-fi
-if [ "$PURPLE_DEV" != "" ] ; then
-	/sbin/iptables -t mangle -A account -j ACCOUNT \
-		--addr $PURPLE_NETADDRESS/$PURPLE_NETMASK --tname PURPLE
-fi
-if [ "$RED_DEV" != "" ] ; then
-	/sbin/iptables -t mangle -A account -j ACCOUNT \
-		--addr $RED_NETADDRESS/$RED_NETMASK --tname RED
-fi
+. /etc/rc.d/inc.account-setup
 for I in INPUT OUTPUT FORWARD; do
 	/sbin/iptables -t mangle -A $I -j account
 done

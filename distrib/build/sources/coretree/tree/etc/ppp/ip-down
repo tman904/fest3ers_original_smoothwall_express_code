@@ -11,8 +11,8 @@ use smoothd qw( message );
 
 &log("PPP has gone down on $ARGV[0]");
 
-if (!-e "${swroot}/red/active") {
-	exit; }
+#if (!-e "${swroot}/red/active") {
+#	exit; }
 
 umask 022;
 
@@ -24,19 +24,20 @@ my %netsettings;
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 
 unlink "${swroot}/red/active";
-unlink "${swroot}/red/local-ipaddress";
-unlink "${swroot}/red/remote-ipaddress";
-unlink "${swroot}/red/iface";
-unlink "${swroot}/red/dns1";
-unlink "${swroot}/red/dns2";
+open(FILE, ">${swroot}/red/local-ipaddress"); close FILE;
+open(FILE, ">${swroot}/red/remote-ipaddress"); close FILE;
+open(FILE, ">${swroot}/red/dhcp-netmask"); close FILE;
+open(FILE, ">${swroot}/red/iface"); close FILE;
+open(FILE, ">${swroot}/red/dns1"); close FILE;
+open(FILE, ">${swroot}/red/dns2"); close FILE;
 
 # Reset default route to ippp0 for dial on demand
 if ((-e "${swroot}/red/dial-on-demand") &&
     ($pppsettings{'COMPORT'} =~ /^isdn/)) {
-	system ('/sbin/route','add','default','dev','ippp0');
+	system ('/usr/sbin/ip','route','replace','default','dev','ippp0');
 }
 
-# Leave dnrd running if dial on demand for DNS
+# Leave dnsmasq running if dial on demand for DNS
 if ((! -e "${swroot}/red/dial-on-demand") ||
 	($pppsettings{'DIALONDEMANDDNS'} ne 'on'))
 {
