@@ -43,7 +43,7 @@ ifeq ($(mARCH), i686)
   export ARCH_OK = yes
   export BITS_32 = yes
   export SWE_TGT = $(mARCH)-swe-linux-gnu
-  export CFLAGS = $(OPT_FLAGS) -m32 -march=$(mARCH) -mtune=pentium-mmx
+  export CFLAGS = $(OPT_FLAGS) -m32 -march=$(mARCH) -mtune=generic
   ifeq ($(CANi686), 0)
     export ARCHset = linux32
   endif
