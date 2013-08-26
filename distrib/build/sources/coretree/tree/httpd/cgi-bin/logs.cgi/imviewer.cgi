@@ -123,7 +123,9 @@ function xmlhttpPost()
         	self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
     	}
 
-	var url = "$url" + "?mode=render&section=" + section + "&skimhtml=" + skimhtml + "&offset=" + offset + "&conversation=" + conversationdate;
+	// The # in the channel name corfuses the web browser, so
+	//   change it to CHAN__. The CGI will change it back.
+	var url = "$url" + "?mode=render&section=" + section.replace(/#/,"CHAN__") + "&skimhtml=" + skimhtml + "&offset=" + offset + "&conversation=" + conversationdate;
     	self.xmlHttpReq.open('POST', url, true);
 	self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
@@ -375,6 +377,11 @@ sub pagebody
 sub parser
 {
 	my ( $section, $offset, $conversationdate, $skimhtml ) = @_;
+
+	# The "#" cornfuses the web server, so it got changed. Now change
+	#   it back.
+	$section =~ s/CHAN__/#/g;
+
 	# render the user list ...
 
 	chomp $offset;	
