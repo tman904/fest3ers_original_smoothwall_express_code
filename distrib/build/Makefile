@@ -109,7 +109,7 @@ default:
 	@echo "into your ~/.bashrc so they're always ready."
 	@echo
 	@echo "This is the basic environment to be used to build:"
-	@sed -e 's/^/  /'
+	@sed -e 's/^/  /' crumbs/build_environment
 
 
 # Host check
