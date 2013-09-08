@@ -24,6 +24,8 @@ install: compile
 	mkdir -p $(PKG_ROOT)
 	+cd $(DIR); \
 	  $(MAKE) DESTDIR=$(PKG_ROOT) install; \
+	  install runtime/vimrc_example.vim $(PKG_ROOT)$(PKG_DIR)/share/vim/vimrc; \
+	  sed -i -e 's/mouse=a/mouse=/' $(PKG_ROOT)$(PKG_DIR)/share/vim/vimrc
 	cd $(PKG_ROOT)/usr/bin; ln -s vim vi;
 	cd $(PKG_ROOT)/usr/share/man; \
 	  for L in {,*/}/man1/vim.1; do \
@@ -33,5 +35,6 @@ install: compile
 	  mkdir doc; \
 	  cd doc; \
 	  ln -sv ../vim/vim73/doc vim-$(MAJ).$(MIN)
+
 
 include ../Makefile.rules
