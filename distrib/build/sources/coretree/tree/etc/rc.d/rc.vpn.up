@@ -3,16 +3,7 @@
 . /var/smoothwall/ethernet/settings
 . /var/smoothwall/vpn/settings
 
-if [ "$ENABLED" != "on" ]; then
-	exit
-fi;
-
-CURRENT_IP=`cat /var/smoothwall/red/local-ipaddress`
-
-if [ "$VPN_IP" = "" ]; then
-	VPN_IP=$RED_ADDRESS
-fi
-
-if [ "$CURRENT_IP" = "$VPN_IP" ]; then
+# If RED is up and IPSEC is enabled, start it
+if [ -f /var/smoothwall/red/active -a "$ENABLED" == "on" ]; then
 	/usr/bin/smoothcom ipsecrestart
 fi
