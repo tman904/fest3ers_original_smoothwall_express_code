@@ -36,7 +36,6 @@ int writeconfigs(struct blockdevice *hd, struct keyvalue *ethernetkv, char *lang
 		ignore = chmod ("/harddisk" CONFIG_ROOT "main/settings", S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
 		ignore = chown ("/harddisk" CONFIG_ROOT "main/settings", pwd->pw_uid, pwd->pw_gid);
 	}
-}
 
 	return 1;
 }
