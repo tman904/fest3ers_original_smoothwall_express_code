@@ -32,7 +32,7 @@ int writeconfigs(struct blockdevice *hd, struct keyvalue *ethernetkv, char *lang
 	freekeyvalues(kv);
 	if (pwd = getpwnam("nobody"))
 	{
-		# Has to work, so ignore return vals
+		/* Has to work, so ignore return vals */
 		ignore = chmod ("/harddisk" CONFIG_ROOT "main/settings", S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
 		ignore = chown ("/harddisk" CONFIG_ROOT "main/settings", pwd->pw_uid, pwd->pw_gid);
 	}
