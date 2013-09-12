@@ -8,6 +8,8 @@
  * filename: config.c
  * Write the config and get password stuff. */
 
+#include <pwd.h>
+
 #include "install.h"
 
 extern FILE *flog;
@@ -21,6 +23,7 @@ int writeconfigs(struct blockdevice *hd, struct keyvalue *ethernetkv, char *lang
 	char devnode[STRING_SIZE];
 	int ignore;
 	struct keyvalue *kv = initkeyvalues();
+	struct passwd *pwd;
 	
 	/* Write out the network settings we got from a few mins ago. */
 	writekeyvalues(ethernetkv, "/harddisk" CONFIG_ROOT "ethernet/settings");
