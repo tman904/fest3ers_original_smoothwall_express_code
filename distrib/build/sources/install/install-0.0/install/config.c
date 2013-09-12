@@ -19,6 +19,7 @@ extern char **ctr;
 int writeconfigs(struct blockdevice *hd, struct keyvalue *ethernetkv, char *lang)
 {
 	char devnode[STRING_SIZE];
+	int ignore;
 	struct keyvalue *kv = initkeyvalues();
 	
 	/* Write out the network settings we got from a few mins ago. */
@@ -29,6 +30,13 @@ int writeconfigs(struct blockdevice *hd, struct keyvalue *ethernetkv, char *lang
 	replacekeyvalue(kv, "HOSTNAME", "smoothwall");
 	writekeyvalues(kv, "/harddisk" CONFIG_ROOT "main/settings");
 	freekeyvalues(kv);
+	if (pwd = getpwnam("nobody"))
+	{
+		# Has to work, so ignore return vals
+		ignore = chmod ("/harddisk" CONFIG_ROOT "main/settings", S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
+		ignore = chown ("/harddisk" CONFIG_ROOT "main/settings", pwd->pw_uid, pwd->pw_gid);
+	}
+}
 
 	return 1;
 }

@@ -345,6 +345,8 @@ HOSTNAME=smoothwall
 KEYMAP=/usr/share/keymaps/i386/qwerty/uk.map.gz
 OPENNESS=halfopen
 END
+  chown nobody:nobody /harddisk/$CONFIG_ROOT/main/settings
+  chmod 664 /harddisk/$CONFIG_ROOT/main/settings
 
   cat <<END >/harddisk/$CONFIG_ROOT/time/settings
 TIMEZONE=UTC
