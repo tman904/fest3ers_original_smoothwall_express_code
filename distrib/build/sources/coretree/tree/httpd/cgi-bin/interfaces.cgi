@@ -266,9 +266,12 @@ print "<form method='post'>";
 
 # deal with the green, orange and purple settings.
 &display_interface( \%settings, 'GREEN' );
-&display_interface( \%settings, 'ORANGE' );
-&display_interface( \%settings, 'PURPLE' );
-
+if ($settings{'ORANGE_DEV'}) {
+  &display_interface( \%settings, 'ORANGE' );
+}
+if ($settings{'PURPLE_DEV'}) {
+  &display_interface( \%settings, 'PURPLE' );
+}
 # if red is on an etherNet, show some configuration options for it.
 &display_red_interface( \%settings );
 
