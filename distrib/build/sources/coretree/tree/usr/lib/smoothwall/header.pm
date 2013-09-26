@@ -569,6 +569,8 @@ sub readhash
 	while (<FILE>)
 	{
 		chomp;
+		next if ($_ =~ /^\s*#/);
+		next if ($_ eq "");
 		($var, $val) = split /=/, $_, 2;
 		if ($var)
 		{

@@ -23,73 +23,122 @@ my $errormessage = '';
 my %settings;
 my %netsettings;
 
-# two values are scale factor from full line speed for rate and ceiling
-# 1.0 is full speed
-# values of rates must add up to no more than 1.0
-# as cannot promise more than the avaailable bandwidth!
+# Two values are scale factor from full line speed for rate and ceiling
+# 100% is full speed
+# Values > 1 are actual bit rates
+# The sum of the 'share' rates must not exceed 100%.
+# as cannot promise more than the available bandwidth!
+
+# HTB bandwidth sharing ratios.
+# First value is the 'share' rate, used when there is bandwidth contention.
+# The sum of the 'share' rates must never exceed 100%.
+# Second is the maximum B/W the class may use, with or without contention.
+# A rate is either a percentage of the link's bandwidth (<=100) OR an
+# actual bit rate (>100).
+# The 'share' rates indicate the relative proportion of the bandwidth each
+#   contending stream will get. Thus, if there are only normal and admin
+#   packets to send, each stream will get a 1/10:1/10 share (50%). If there
+#   are normal, admin and isochronous (assume 10Mb/s outbound) streams, they
+#   will receive 1/10:1/10:64/10000 shares of bandwidth.
+# In the absence of contention (only one stream to transmit), smallpkt can use
+#   up to 20% of availabled bandwidth, isochron can use up to 120kb/s, and the
+#   rest can use up to 100%.
+# A drawback to the current implementation is that internal NICs are assumed
+#   to be all the same speed.
+
 my %scale = (
-	normal => [0.4,0.9],
-	high => [0.2, 0.9],
-	low => [0.15, 0.4],
-	slow => [0.01, 0.02],
-	smoothadmin => [0.05, 0.95],
-	webcache => [0.05, 0.95],
-	smallpkt => [0.05, 0.1],
-	localtraffic => [0.05, 0.95]
+	      normal => [   10,     100],
+	        high => [   10,     100],
+	         low => [   10,     100],
+	    isochron => [64000,  128000],
+	 smoothadmin => [   10,     100],
+	    webcache => [   10,     100],
+	    smallpkt => [   10,      20],
+	localtraffic => [   10,     100]
+);
+
+my %prios = (
+	        high => 0,
+	      normal => 1,
+	         low => 2,
+            isochron => 3,
+         smoothadmin => 4,
+            webcache => 5,
+);
+
+my %classIDs = (
+                none => 0,
+                 all => 1,
+              normal => 2,
+                high => 3,
+                 low => 4,
+            isochron => 5,
+         smoothadmin => 6,
+            webcache => 7,
+        localtraffic => 8,
+            smallpkt => 9,
 );
 
 &readhash("${swroot}/ethernet/settings", \%netsettings );
-&readhash("${swroot}/traffic/settings", \%settings );
+&readhash("${swroot}/traffic/settings", \%trafficsettings );
 
-# Action a "Save" request ...
+# We have a "Save" request ...
 
 if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 {
-	# Turn our cgi parameters into the more compact settings form
-	# the checkboxes
-	# force this to on
+	# Turn our cgi parameters into the more compact settings from the checkboxes.
+	# Value: 'on' or 'off'
 	$cgiparams{'PERIPSTATS'} = 'on';
 	for(qw/ENABLE PERIPSTATS/) 
 	{
-		$settings{$_} = (defined $cgiparams{$_} ? 'on' : 'off');
+		$trafficsettings{$_} = (defined $cgiparams{$_} ? 'on' : 'off');
 	}
+
 	# simple numeric quantities
-	for(qw/HEADROOM INTERNAL_SPEED UPLOAD_SPEED DOWNLOAD_SPEED/) 
+	# Need separate GN/OR/PU/RD values here
+	for(qw/INTERNAL_SPEED UPLOAD_SPEED DOWNLOAD_SPEED/) 
 	{
-		$settings{$_} = $1 if defined $cgiparams{$_} && $cgiparams{$_} =~ /^(\d+)$/;
+		$trafficsettings{$_} = $1 if defined $cgiparams{$_} && $cgiparams{$_} =~ /^(\d+)$/;
 	}
-	# prios are hard coded for now
-	if(!defined $settings{'PRIO'}) 
-	{
-		$settings{'PRIO'} = 'high,0,normal,1,low,2,slow,3,smoothadmin,0,webcache,1,localtraffic,0,smallpkt,0';
-	}
-	# and classids
-	if(!defined $settings{'CLASSIDS'}) 
-	{
-		$settings{'CLASSIDS'} = 'all,100,none,0,normal,109,high,110,low,111,slow,112,smoothadmin,113,webcache,114,localtraffic,115,smallpkt,116';
-	}
-	# classids are never redefined in the UI
-	my %classids = split(',', $settings{'CLASSIDS'});
+
+	# classIDs are never redefined in the UI
 	if(defined $cgiparams{'DEFAULT_TRAFFIC'} && 
-		defined $classids{$cgiparams{'DEFAULT_TRAFFIC'}})
+		defined $classIDs{$cgiparams{'DEFAULT_TRAFFIC'}})
 	{
-		$settings{'DEFAULT_TRAFFIC'} =  $cgiparams{'DEFAULT_TRAFFIC'};
+		$trafficsettings{'DEFAULT_TRAFFIC'} =  $cgiparams{'DEFAULT_TRAFFIC'};
 	}
 	
 	# Now the rates and ceilings
-	@settings{'DRATE','DCEIL','URATE', 'UCEIL'} = ('' x 4);
-	for(keys %classids) {
+	$trafficsettings{'DRATE'} = ('');
+	$trafficsettings{'DCEIL'} = ('');
+	$trafficsettings{'URATE'} = ('');
+	$trafficsettings{'UCEIL'} = ('');
+	for(keys %classIDs) {
 		next if /^(all|none)$/;
-		my $mulfactor = ($_ eq 'localtraffic' ? $settings{'INTERNAL_SPEED'} : 
-			$settings{'DOWNLOAD_SPEED'} * ((100 - $settings{'HEADROOM'})/100));
-		$settings{'DRATE'} .= "$_," . int($scale{$_}->[0] * $mulfactor) . ',';
-		$settings{'DCEIL'} .= "$_," . int($scale{$_}->[1] * $mulfactor) . ',';
+		# first downloads
+		my $mulfactor = ($_ eq 'localtraffic' 
+		    ? $trafficsettings{'INTERNAL_SPEED'}
+		    : $trafficsettings{'DOWNLOAD_SPEED'});
+		# <=100 is %age, >100 is b/s
+		if ($scale{$_} <= 100) {
+			$trafficsettings{'DRATE'} .= "$_," . int($scale{$_}->[0] * $mulfactor) / 100 . ',';
+			$trafficsettings{'DCEIL'} .= "$_," . int($scale{$_}->[1] * $mulfactor) / 100 . ',';
+		} else {
+			$trafficsettings{'DRATE'} .= "$_," . $scale{$_}->[0] . ',';
+			$trafficsettings{'DCEIL'} .= "$_," . $scale{$_}->[1] . ',';
+		}
 		# now uploads
-		$mulfactor = ($_ eq 'localtraffic' ? $settings{'INTERNAL_SPEED'} : 
-			$settings{'UPLOAD_SPEED'} * ((100 - $settings{'HEADROOM'})/100));
-		
-		$settings{'URATE'} .= "$_," . int($scale{$_}->[0] * $mulfactor) . ',';
-		$settings{'UCEIL'} .= "$_," . int($scale{$_}->[1] * $mulfactor) . ',';
+		$mulfactor = ($_ eq 'localtraffic'
+										? $trafficsettings{'INTERNAL_SPEED'}
+										: $trafficsettings{'UPLOAD_SPEED'});
+		# <=100 is %age, >100 is b/s
+		if ($scale{$_} <= 100) {
+			$trafficsettings{'URATE'} .= "$_," . int($scale{$_}->[0] * $mulfactor) / 100 . ',';
+			$trafficsettings{'UCEIL'} .= "$_," . int($scale{$_}->[1] * $mulfactor) / 100 . ',';
+		} else {
+			$trafficsettings{'URATE'} .= "$_," . $scale{$_}->[0] . ',';
+			$trafficsettings{'UCEIL'} .= "$_," . $scale{$_}->[1] . ',';
+		}
 	}
 
 	# now the rules - these need to be collected from class choices
@@ -97,26 +146,28 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 	# class is 5th part of rule def and only one that is changed on this screen.
 	for my $cgi (keys %cgiparams)
 	{
-		next unless $cgi =~ /^R_(\d+)_CLASS$/ && defined $classids{$cgiparams{$cgi}};
+		next unless $cgi =~ /^R_(\d+)_CLASS$/ && defined $classIDs{$cgiparams{$cgi}};
 		# we have a valid class to assign
 		my $rulenum = 'R_' . $1;
-		if(defined $settings{$rulenum}) 
+		if(defined $trafficsettings{$rulenum}) 
 		{
-			my($name,$tcp,$udp,$dir,$ports,$class,$comment) = split(/,/, $settings{$rulenum});
+			my($name,$tcp,$udp,$dir,$ports,$class,$comment) = split(/,/, $trafficsettings{$rulenum});
 
 			$class = $cgiparams{$cgi};
-			$settings{$rulenum} = join(',', $name,$tcp,$udp,$dir,$ports,$class,$comment);
+			$trafficsettings{$rulenum} = join(',', $name,$tcp,$udp,$dir,$ports,$class,$comment);
 		}
 	}
 		
 	unless ($errormessage)
 	{
-		&writehash("${swroot}/traffic/settings", \%settings);
+		&writehash("${swroot}/traffic/settings", \%trafficsettings);
 
 		my $success = message('trafficrestart');
 
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+		if (not defined $success)
+		{
+			$errormessage .= $tr{'smoothd failure'} ."<br />";
+		}
 	}
 }
 
@@ -129,15 +180,15 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 print "<form method='post'>";
 
 # deal with the green settings.
-&display_speeds( \%settings);
+&display_speeds( \%trafficsettings);
 
 # deal with the green settings.
-&display_rules( \%settings);
+&display_rules( \%trafficsettings);
 
-print qq{
-	<div style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></div>
-	</form>
-};
+print "
+ <div style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></div>
+ </form>
+";
 
 &alertbox('add','add');
 
@@ -145,118 +196,144 @@ print qq{
 
 &closepage();
 
+
+# Subroutine to deal with displayed bit rates.
+#
 sub display_speeds
 {
 	my ( $settings ) = @_;
-	my($upload_speed_block,$download_speed_block,$internal_speed_block,$headroom_block,$default_block);
+	my($upload_speed_block,$download_speed_block,$internal_speed_block,$default_block);
 	my %selected = ();
 	my %speed_labels = ( 
-		4096 => '32kbit',
-		8192 => '64kbit',
-		16384 => '128kbit',
-		32768 => '256kbit',
-		49408 => '386kbit', 
-		65536 => '512kbit',
-		131072 => '1mbit',
-		196608 => '1.5mbit',
-		262144 => '2mbit',
-		393216 => '3mbit',
-		524288 => '4mbit',
-		655360 => '5mbit',
-		786432 => '6mbit',
-		1048576 => '8mbit',
-		1310720 => '10mbit',
-		1572864 => '12mbit',
-		2097152 => '16mbit',
-		2621440 => '20mbit',
-		3145728 => '24mbit',
-		3276800 => '25mbit',
-		7208960 => '55mbit',
-		13107200 => '100mbit',
-		52428800 => '400mbit',
-		78643200 => '600mbit',
-		1342107200 => '1gbit');
-	my %headroom_labels = ();
-	$headroom_labels{$_} = "$_ %" for(1..35);
-	my %default_traffic_labels = ( 
-		high => $tr{'traffic high'}, 
-		low => $tr{'traffic low'}, 
-		slow => $tr{'traffic slow'}, 
-		normal => $tr{'traffic normal'});
-	my @speeds = sort {$a <=> $b} keys %speed_labels; 
-	my @ext_speeds = grep {$_ <= 78643200} @speeds; # up to 600mbit (in your dreams!)
-	my @int_speeds = grep {$_ >= 1310720} @speeds; # from 10mbit
-		
-	%selected = ($settings->{'UPLOAD_SPEED'} => ' selected');
-	$upload_speed_block = join('', 
-		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-			@ext_speeds);
-	%selected = ($settings->{'DOWNLOAD_SPEED'} => ' selected');
-	$download_speed_block = join('', 
-		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-			@ext_speeds);
-	%selected = ($settings->{'INTERNAL_SPEED'} => ' selected');
-	$internal_speed_block = join('', 
-		map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-		@int_speeds);
+			   32000 => '32kbit',
+			   64000 => '64kbit',
+			  125000 => '125kbit',
+			  250000 => '250kbit',
+			  500000 => '500kbit',
+			 1000000 => '1Mbit',
+			 1544000 => '1.544Mbit/DS0', # T1, DS0
+			 2000000 => '2Mbit',
+			 3000000 => '3Mbit',
+			 4000000 => '4Mbit',
+			 5000000 => '5Mbit',
+			 6000000 => '6Mbit',
+			 8000000 => '8Mbit',
+			10000000 => '10Mbit',
+			12000000 => '12Mbit',
+			16000000 => '16Mbit',
+			20000000 => '20Mbit',
+			24000000 => '24Mbit',
+			25000000 => '25Mbit',
+			27000000 => '27Mbit',
+			44736000 => '45Mbit/DS3', # DS3
+			54000000 => '54Mbit',
+		       100000000 => '100Mbit',
+		       350000000 => '400Mbit',
+		       600000000 => '600Mbit',
+		      1000000000 => '1Gbit');
 
-	%selected = ($settings->{'HEADROOM'} => ' selected');
-	$headroom_block = join('', 
-		map { "<option value='$_'" . ($selected{$_} || '') . ">$headroom_labels{$_}</option>\n" } 
-		(sort { $a <=> $b } keys %headroom_labels ));
+	my %default_traffic_labels = ( 
+		      high => $tr{'traffic high'}, 
+		       low => $tr{'traffic low'}, 
+		    normal => $tr{'traffic normal'},
+                  isochron => "isochronous",
+               smoothadmin => "smoothadmin",
+                  webcache => "webcache",
+);
+
+	my @speeds = sort {$a <=> $b} keys %speed_labels; 
+
+	my @ext_speeds = @speeds;
+	my @int_speeds = @speeds;
+		
+	# Set a few menu options
+	%selected = ($settings->{'UPLOAD_SPEED'} => ' selected');
+	$upload_speed_block = 
+		join('', 
+				 map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" }
+				 @ext_speeds
+				);
+
+	%selected = ($settings->{'DOWNLOAD_SPEED'} => ' selected');
+	$download_speed_block =
+		join('', 
+				 map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
+				 @ext_speeds
+				);
+
+	%selected = ($settings->{'INTERNAL_SPEED'} => ' selected');
+	$internal_speed_block = 
+		join('', 
+				 map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
+				 @int_speeds
+				);
 
 	%selected = ($settings->{'DEFAULT_TRAFFIC'} => ' selected');
-	$default_block = join('', 
-		map { "<option value='$_'" . ($selected{$_} || '') . ">$default_traffic_labels{$_}</option>\n" } 
-		(qw/normal high low slow/));
+	$default_block = 
+		join('', 
+				 map { "<option value='$_'" . ($selected{$_} || '') . ">$default_traffic_labels{$_}</option>\n" } 
+				 (qw/normal high low slow/)
+				);
 
+	# Draw the general options box.
 	&openbox($tr{'traffic general options'});
 	my $enable_bit = ($settings->{'ENABLE'} eq 'on' ? 'checked' : '');
-	print qq{
-		<table style='width: 100%;'>
-		<tr>
-			<td class='base' style='width: 25%; vertical-align:bottom'>$tr{'traffic enable'}</td>
-			<td style='width: 25%'><input name='ENABLE' type='checkbox' $enable_bit /></td>
-			<td class='base' style='width: 25%;'>$tr{'traffic internal speed'}</td>
-			<td style='width: 25%;'><select name='INTERNAL_SPEED'>$internal_speed_block</select></td>
-		</tr>
-		<tr>
-			<td class='base'>$tr{'traffic external up'}</td>
-			<td><select name='UPLOAD_SPEED'>$upload_speed_block</select></td>
-			<td class='base'>$tr{'traffic external down'}</td>
-			<td><select name='DOWNLOAD_SPEED'>$download_speed_block</select></td>
-		</tr>
-		<tr>
-			<td class='base'>$tr{'traffic headroom'}</td>
-			<td><select name='HEADROOM'>$headroom_block</select></td>
-			<td class='base'>$tr{'traffic default'}</td>
-			<td><select name='DEFAULT_TRAFFIC'>$default_block</select></td>
-		</tr>
-		</table>
-	};
+
+	print "
+    <table style='width:100%;'>
+      <tr>
+        <td class='base' style='width: 25%;'>$tr{'traffic enable'}</td>
+        <td style='width: 25%;'><input name='ENABLE' type='checkbox' $enable_bit /></td>
+        <td class='base' style='width: 25%;'>$tr{'traffic internal speed'}</td>
+        <td style='width: 25%;'><select name='INTERNAL_SPEED'>$internal_speed_block</select></td>
+      </tr>
+      <tr>
+        <td class='base' >$tr{'traffic external up'}</td>
+        <td><select name='UPLOAD_SPEED'>$upload_speed_block</select></td>
+        <td class='base' >$tr{'traffic external down'}</td>
+        <td><select name='DOWNLOAD_SPEED'>$download_speed_block</select></td>
+      </tr>
+      <tr>
+        <td class='base'>$tr{'traffic headroom'}</td>
+        <td><select name='HEADROOM'>$headroom_block</select></td>
+        <td class='base'>$tr{'traffic default'}</td>
+        <td><select name='DEFAULT_TRAFFIC'>$default_block</select></td>
+      </tr>
+    </table>
+";
 
 	&closebox();
 
 	return;
 }
 
+
+
+# Subroutine to display the rules
+#
 sub display_rules
 {
 	my ( $settings ) = @_;
+
 	my %class_labels = ( 
-		none => $tr{'traffic none'}, 
-		high => $tr{'traffic high'}, 
-		low => $tr{'traffic low'}, 
-		slow => $tr{'traffic slow'}, 
-		normal => $tr{'traffic normal'});
+	       none => $tr{'traffic none'}, 
+	       high => $tr{'traffic high'}, 
+	        low => $tr{'traffic low'}, 
+	     normal => $tr{'traffic normal'},
+           isochron => "isochronous",
+        smoothadmin => "smoothadmin",
+           webcache => "webcache",
+	);
 
 	my @rules = ();
+
 	&openbox($tr{'traffic rules'});
 
 	my %selected = ();
 
-	print qq{
-		<table style='width: 100%;'>};
+	print "
+		<table style='width: 100%;'>
+";
 
 	for my $rule (sort keys %{$settings}) 
 	{
@@ -264,20 +341,35 @@ sub display_rules
 		
 		my ($name, $class) = (split(',', $settings->{$rule}))[0,5];
 		%selected = ($class => ' selected');
-		my $class_block = join('', 
-		map { "<option value='$_'" . ($selected{$_} || '') . ">$class_labels{$_}</option>\n" } 
-		(qw/none normal high low slow/));
+		my $class_block =
+			join('', 
+					 map { "<option value='$_'" . ($selected{$_} || '') . ">$class_labels{$_}</option>\n" } 
+					 (qw/none normal high low isochron smoothadmin webcache/)
+					);
+
 		$name =~ s/_/ /g;
-		push @rules, qq[<td class='base' style='width: 25%;'>$name:</td><td style='width: 25%;'><select name='${rule}_CLASS'>$class_block</select></td>\n];
+		push @rules, "
+				<td class='base'style='width: 25%;'>$name:</td>
+				<td style='width: 25%;'>
+					<select name='${rule}_CLASS'>$class_block</select>
+				</td>
+";
 	}
-	# 2 colums
+
+	# 2 columns
 	for(my $r = 0; $r <= $#rules; $r += 2)
 	{
 		$rules[$r+1] = '&nbsp;' unless defined $rules[$r+1];
-		print "<tr>" . $rules[$r] . $rules[$r+1] . "</tr>\n";
+		print "
+			<tr>
+" . $rules[$r] . $rules[$r+1] . "
+			</tr>
+";
 	}
 
-	print qq{</table>};
+	print "
+		</table>
+";
 
 	&closebox();
 
@@ -286,8 +378,8 @@ sub display_rules
 
 sub is_running
 {
-    my $running = qx{/sbin/tc qdisc list | fgrep htb | wc -l};
-    chomp $running; # loose \n or 0\n is considered true!
-    return $running;
+		my $running = qx{/sbin/tc qdisc list | fgrep htb | wc -l};
+		chomp $running; # loose \n or 0\n is considered true!
+		return $running;
 }
 
