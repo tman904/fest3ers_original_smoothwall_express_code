@@ -68,7 +68,7 @@ clean:
 endif
 
 ifeq ($(BITS_64), yes)
-BASE_URL = http://downloads
+BASE_URL = http://downloads.smoothwall.org/buildmirror
 
 TARBALL = smoothwall-$(PACKAGE)-i686
 
