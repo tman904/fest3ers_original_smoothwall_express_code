@@ -1,62 +1,237 @@
 <P><FONT SIZE='3'><B><U>QoS</U></B></FONT></P>
 
-<p>Smoothwall is able to decide if some of the network traffic is more
-urgent than others. Imagine your network connection is like a multilane
-freeway or motorway. The faster the connection, the more lanes. However, a
-motorway is not very fast if every lane is blocked by a large lorry!</p>
+<p>
+<b>Welcome to Linux Traffic Control</b>
+</p>
 
-<p>Enabling QoS is like enforcing traffic regulations - such as Heavy Goods Vehicles(HGVs) are 
-only permitted in the inside lanes. Smoothwall QoS defines four such 'lanes':</p>
+<p>
+I'll first introduce you to priorities, classes and certain exceptions to the
+'norm' to give you an idea how the pieces fit together. Then you'll learn how
+to set the only three values you need to in order to get QoS working 'out of
+the box'.
+</p>
+
+<p>
+I'll close with a 'theoretical analogy' that might make it easier to
+understand just what Linux Traffic Control does. This analogy was large
+borrowed from the original Express 3.0 QoS help page.
+</p>
+
+<p>
+When traffic control (or QoS) is not enabled, the system deploys the
+Stochastic Fair Queuing queuing discipline. By itself, this keeps traffic
+flowing fairly smoothly. But, for example, should you find your VoIP calls
+becoming erratic or your internet gaming suffering, enabling QoS should solve
+the problem.
+</p>
+
+<p>
+Limitations: Linux Traffic Control can only do so much. It cannot predictably
+partition bandwidth and cannot limit individuals' bandwidth very well. But it
+does enforce sharing and does repress bandwidth hogs reasonably well.
+</p>
+
+
+<p><u>Priorities</u></p>
+
+<p>
+The high priority and isochronous levels are both level 0. 'High' handles DNS
+traffic by default. 'Isochronous' handles VoIP traffic. Because high priority
+flows could starve those at lower priorities, you are strongly cautioned to
+give only flows with limited bandwidth (like VoIP and DNS) high priority.
+</p>
+
+<p>
+The normal priority level (level 1) handles the vast majority of traffic. This
+is due, in part, to the difficulty of identifying different types of traffic
+on today's internet. The concept of 'port as service' is fading. Many services
+now operate over HTTP, they can't be identified without peering inside their
+packets. SSL/TLS encryption also prevents identification. But your Smoothwall
+has facilities to balance traffic without knowing what it is.
+</p>
+
+<p>
+The low priority level (level 2) handles traffic that is almost utterly
+insensitive to time constraints. Low priority traffic gets leftover bandwidth.
+</p>
+
+<p><u>Classes (Types) of Flows</u></p>
+
+<p>
+Each rule is a class (type) of flow. There are also classes for local
+(internal) traffic, Firewall admin traffic, squid (proxy) traffic, and
+small-ish packets.  With four exceptions, all classes with packets queued
+share available bandwidth equally.  With the same four exceptions, each class
+may use 100% of the available bandwidth when no other traffic is queued.  For
+this reason, you should assign high or isochronous priority only to classes
+you know with certainty will never use more than a small portion of bandwidth.
+All classes other than VoIP and DNS can be assigned low priority as desired.
+</p>
+
+<p><u>Exceptions</u></p>
+
+<p>
+VoIP traffic gets a 64kb/s share of bandwidth and may use up to 128kb/s. This
+guarantees that VoIP traffic will never hog the internet. DNS traffic gets a
+10% share of bandwidth and may use up to 10% of the bandwidth; this, too,
+prevents DNS (and other flows using port 53) from hogging the internet.
+Packets less than 100 bytes or so have their own class; they receive the same
+equal share as the classes in the previous paragraph, but are limited to 20%
+of the available bandwidth.
+</p>
+
+<p>
+Local traffic is a special case. It is all lumped together; it is assumed that
+the SFQ queueing discipline will enforce bandwidth sharing. Local traffic
+receives all of the 'internal' bandwidth less RED's download speed as its
+share and may use 100% in the absence of traffic from RED.
+</p>
+
+<p><u>Set the Bit Rates</u></p>
+
+<p>
+In order for QoS to work, you must determine the maximum observed long-term
+upload and download bit rates for your internet connection (RED). Ignore the
+short high-speed burst many ISP's give to their customers; it causes more
+problems than it's worth. Start a huge download (a few hundred MiB is good).
+Go to the bandwidthbars UI page and observe RED's incoming rate; wait for the
+high speed boost, if any, to end. Enter the displayed bit rate in the QoS
+page's form as a plain, unadorned integer; e.g. 3600000, 34300000, 123000,
+55400. <i>Remember that, in communication, multipliers are always decimal; 'k'
+is 1000, 'M' is 1 000 000, and 'G' is 1 000 000 000.</i> Now start a large
+upload and observe RED's outgoing bit rate. Wait for the 'courtesy burst' to
+end and enter that value in the QoS form.
+</p>
+
+<p>
+You must also enter the maximum observed maximum bit rates for each of your
+network interfaces; they are rarely the NIC's advertised speed. For example,
+most 100Mb/s NIC will max out at 90-95Mb/s on a Linux system. GigE NICs that
+connect to a PCI slot should max out at 150-250Mb/s (the limit of the PCI
+bus). GigE NICs that connect to PCI-E can top out at 600-960Mb/s. 10Mb/s NIC
+may have a hard time getting over 8-9Mb/s. Every system is different; thus the
+bit rates must be observed and manually entered. There are no predefined rates
+to select. If you cannot transfer data fast enough to find the limit, use one
+of the above 'defaults'; you can always adjust it later.
+</p>
+
+<p><u>Observe the Priorities</u></p>
+
+<p>
+The default priorities for the supplied rules should be adequate for most
+users. Again, be very careful when changing the priorities; you can easily
+starve many users of bandwidth.  Most traffic is in the normal priority
+because most flows are of the 'unlimited' variety.  HTTP and email may be
+bursty, but when they transfer files, they do so without limit. You'd think
+SSH would be safe at high priority, right? Bzzzt. SSH file transfer (scp,
+sftp) is unlimited and would starve other flows; git over ssh is also
+unlimited. So be vewy, vewy caweful!
+</p>
+
+<p><u>End Notes</u></p>
+
+<p>
+Avoid the temptation to set the observed bit rates too high. Once outgoing
+packets begin to pile up, it becomes very easy for any single flow to hog the
+bandwidth, regardless of how QoS is configured.
+</p>
+
+<p>
+The Voice over IP (VOIP) rule is special in that any traffic with the diffserv
+'EF' option set will also be caught by this rule. Other, 'unlimited' traffic
+might also have 'EF' option set. But this should be OK because isochronous
+traffic cannot use more than 128kb/s of upload or download.
+</p>
+
+<p>
+If you do not want any of the rules to be active then simply change the class
+to '(disabled)' for that rule. Such traffic will go into the default class
+(defined as 'Traffic that does not match the rules below....'
+</p>
+
+
+<p>
+<b>Traffic Control Theory By Way of Analog</b>
+</p>
+
+<p>
+Smoothwall is able to decide if some of the network traffic is more urgent
+than others. Imagine your network connection is like a multilane freeway or
+motorway. The faster the connection, the higher the speed limit.  However, a
+motorway is not very fast if every everyone in the land tries to get on and
+off the road at the same time.
+</p>
+
+<p>
+Enabling QoS is like enforcing traffic regulations and civility. Police, fire,
+ambulance and government bigwigs have top priority. They get the highway to
+themselves, but they rarely interfere with traffic because there aren't many
+of them. Tremendously oversize vehicles and (in a perfect world) Sunday
+drivers have the lowest priority, they must stay on the shoulder whenever
+there is any higher priority traffic. The rest of the traffic shares the road
+with smiling civility. In a perfect world. And even Linux Traffic Control is
+imperfect.
+</p>
+
+<p>
+Smoothwall QoS defines four 'priorities' of traffic, a number of types
+(classes) of traffic, and enforces discipline on each motorway.
+</p>
+
+<p>
+<u>Priorities</u>
+</p>
 
 <ul>
-<li><b>slow</b> - for traffic that you wish to force to go slow even if the motorway 
-(Internet connection) is otherwise empty.</li>
-<li><b>low</b> - for traffic that can use up to 40% of the available lanes but if there is
-other traffic on the road this is limited to 15%.</li>
-<li><b>normal</b> - can use 90% of the capacity of the road if the road is otherwise empty 
-and at least 40% in busier conditions.</li>
-<li><b>high</b> - also can use 90% of an otherwise empty road and is guaranteed 20% if the 
-road is busy, BUT has first call on any spare capacity, then normal then low.</li>
+<li>
+<b>low</b> - Sunday drivers; and oversize loads; can use 100% of the available
+lanes but must stay on the shoulder when there is any higher priority traffic
+on the road.
+</li>
+<li>
+<b>normal</b> - most day-to-day traffic; can use 100% of the capacity of the
+road when there is no higher priority traffic.
+</li>
+<li>
+<b>high</b> - Akin to maintenance crews and roadside assistance. They only use
+limited amounts of the capacity but take precedence over normal and low
+priority traffic. It shares the road equally with 'isochronous' traffic.
+</li>
+<li>
+<b>isochronous</b> - Akin to lawmakers going to and from their daily sessions.
+It is regular, periodic traffic that is sensitive to interruptions.  It shares
+the road equally with 'high' traffic.
+</li>
 </ul>
 
-<P>You will notice that the <i>promised</i> bandwidth to each lane does not 
-exceed 100% in total. If all classes of traffic want to use the network
-all the time they will each only get their allowed bandwidth. However,
-much traffic is 'bursty' such as loading web pages and sending emails
-so, in practice, there is often spare bandwidth to share about.</p>
+<p>
+<u>Types (classes)</u>
+</p>
 
-<p>In order for QoS to work we need to know what actual bandwidth corresponds
-to the 100% we have to share out. This is done by choosing an appropriate
-speed for your connection. If you can, try to test what speed your connection
-actually is rather than believing promises of the ISP.  Note that for ADSL
-connection speed can vary, so try to do speed tests at the busiest time of day,
-otherwise you may find that QoS will stop working if the line gets busier.</p>
+<p>
+In addition to priority levels, there are different type (classes) of
+traffic.  You've seen a few already--Sunday drivers and oversize loads in low
+priority; and police, fire, ambulance and bigwigs, maintenance crews and
+roadside assistance in high priority. Normal priority traffic consists of
+commuters, tourists, deliveries, couriers and long-haul commerce. Each of
+these types of traffic can use 100% of the road's capacity when there is no
+other traffic at their priority level and no higher priority traffic. When
+there is other traffic at their priority level, all traffic shares the
+bandwidth equally. For example, Sunday drivers and oversize loads get equal
+time. But the Sunday drivers use most of the capacity at that priority because
+there are few oversize loads. Likewise commuters, couriers, tourists and long
+haul truckers share the capacity. But when there are only commuters, they get
+to use the whole road.
+</p>
 
-<p>It is very important that the Smoothwall is the slowest part of the network
-(only by a few percent will do) - you may need to adjust the headroom parameter 
-so that you have the minimum headroom where QoS is actually working.
-How to tell if it's working? Try doing a low priority task such as p2p file sharing
-at the same time as a normal or high priority task. The low priority task
-should not impact on your other task in the same way it does without QoS.</P>
+<p>
+<u>Disciplinarian (Mad Max/Dirty Harry)</u>
+</p>
 
-<p>You can choose to assign different sorts of traffic to these different classes.
-The defaults are sensible, for example Peer to Peer traffic to the low class but 
-ssh high so that accessing a remote system can be done with minimal echo delay.</P>
-
-<p>The Voice over IP (VOIP) rule is special in that any traffic with the diffserv
-'EF' option set will also be caught by this rule.  If you assign high
-priority to VOIP - the default, be aware that you will only have 20% of the
-bandwidth guaranteed.  If good VOIP performance is paramount to you then it
-is best to change it to use 'normal' but make everything else either 'low'
-or 'slow'.</p>
-
-<p>If you do not want any of the rules to be active then simply change the class to 
-'none' for that rule. Such traffic will go into the class defined for 
-'Traffic that does not match below'.</p>
-
-<p>QoS as a whole can be turned off with the 'Enable traffic shaping'
-checkbox. Traffic shaping will always cost a small amount of bandwidth so if you
-are only doing one thing with your connection, e.g. a large file transfer,
-then you can turn traffic shaping off to get maximum speed for the single
-task.</p>
-
+<p>
+Finally, there is a last equalizer that smooths out traffic flows in each type
+of traffic, enforcing discipline. For instance, there might be a convoy of
+bully truckers from a single company hogging the motorway and driving slowly. 
+The equalizer periodically puts them at the rear of the queue of traffic
+behind them, thus opening the road to the rest of the traffic.
+</p>

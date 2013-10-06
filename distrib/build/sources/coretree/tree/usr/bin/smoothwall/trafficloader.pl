@@ -14,6 +14,16 @@ use Socket;
 
 my (%netsettings, %trafficsettings, %localsettings);
 readhash("${swroot}/ethernet/settings", \%netsettings);
+# And get current RED IP
+if (-f "${swroot}/red/active")
+{
+  if (open (FD, "<$swroot/red/local-ipaddress")) {
+    my $addr = <FD>;
+    close FD;
+    chomp $addr;
+    $netsettings{"RED_ADDRESS"} = $addr;
+  }
+}
 readhash("${swroot}/traffic/settings", \%trafficsettings);
 # Some day include localsettings
 #readhash("${swroot}/traffic/localsettings", \%localsettings);
@@ -60,7 +70,7 @@ foreach $i (sort(keys(%connmarkMasks))) {
 }
 my $markMask = $connmarkMasks{'tcMask'};
 my $markShift = $connmarkMasks{'tcShift'};
-print STDERR "\$markMask=$markMask \$markShift=$markShift\n";
+#print STDERR "\$markMask=$markMask \$markShift=$markShift\n";
 undef %connmarkMasks;
 
 # There can be 31 class IDs (1-31); they are used in the HTB classes.
@@ -141,7 +151,7 @@ my %urate = (
 	'normal' => 10,
 	'high' => 10,
 	'low' => 10,
-	'isochron' => 128000,
+	'isochron' => 64000,
 	'smoothadmin' => 10,
 	'webcache' => 10,
 	'localtraffic' => 10,
@@ -150,7 +160,7 @@ my %urate = (
 
 my %uceil = ( 
 	'normal' => 100,
-	'high' => 100,
+	'high' => 10,
 	'low' => 100,
 	'isochron' => 128000,
 	'smoothadmin' => 100,
@@ -193,6 +203,7 @@ my @classsortorder = ('total');
 # The mangle chains we use
 
 my $POSTR = 'trafficpostrouting';
+my $INPUT = 'trafficinput';
 my $OUTPUT = 'trafficoutput';
 my $FORWARD = 'trafficforward';
 
@@ -211,7 +222,7 @@ for(sort keys %trafficsettings) {
   next unless /^R_(\d+)/; # just looking for rules
   my $cm = $1;
   my($name, $tcp, $udp, $dir, $port, $class, $comment) = split(',', $trafficsettings{$_});
-print STDERR "cm=$1 name=$name tcp=$tcp udp=$udp dir=$dir port=$port class=$class\n      comment=$comment\n";
+#print STDERR "cm=$1 name=$name tcp=$tcp udp=$udp dir=$dir port=$port class=$class\n      comment=$comment\n";
   next if $class eq 'none'; # this one is being ignored
   my $protocol = [];
   push @{$protocol}, 'TCP' if $tcp eq 'on';
@@ -305,7 +316,7 @@ my %htbClassExtras = (
 # Create the classes and their SFQ qdiscs.
 for my $tag (sort { $classIDs{$a} <=> $classIDs{$b} } keys %classIDs) {
   next if $tag =~ /^(all|none|localtraffic)$/;
-print STDERR "# class '$tag'\n";
+#print STDERR "# class '$tag'\n";
   stdclass($external_interface, $tag, $htbClassExtras{$tag}, \%urate, \%uceil, $upload_speed); 
   # note can only extablish QOS for an interface that is up at the time.
   stdclass($_, $tag, $htbClassExtras{$tag}, \%drate, \%dceil, $download_speed)
@@ -336,15 +347,28 @@ if(defined $classIDs{'smoothadmin'}) {
         " -m connmark --mark 0/$markMask" .
 	" --match multiport --source-ports 81,441,222" .
 	" -j CONNMARK --set-mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask");
+  push @rulenumbers, $connmarks{'smoothadmin'};
 }
 
 # Webcache special rule - give squid something.
-# [NPN: dunno why squid gets 8080 and 8443.]
+# [NPN: dunno why squid gets 8080 and 8443. DG?]
 if (defined $classIDs{'webcache'}) {
   iptables("-A $OUTPUT -o $external_interface  --protocol TCP" .
            " -m connmark --mark 0/$markMask" .
 	   " --match multiport --destination-ports 80,8080,443,8443" .
 	   " -j CONNMARK --set-mark " . $connmarks{'webcache'}*2048 . "/$markMask");
+  push @rulenumbers, $connmarks{'webcache'};
+}
+# collect per rule stats if chosen; create named accounting tables for each RED rule.
+if(defined $trafficsettings{'PERIPSTATS'} && $trafficsettings{'PERIPSTATS'} eq 'on') {
+  iptables("-A $INPUT -m connmark --mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask" .
+    " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Smoothadmin");
+  iptables("-A $POSTR -m connmark --mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask" .
+    " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Smoothadmin");
+  iptables("-A $INPUT -m connmark --mark " . $connmarks{'webcache'}*2048 . "/$markMask" .
+    " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Squid");
+  iptables("-A $POSTR -m connmark --mark " . $connmarks{'webcache'}*2048 . "/$markMask" .
+    " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Squid");
 }
 
 
@@ -355,6 +379,10 @@ if(defined $classIDs{'localtraffic'}) {
 
 # Mark all other output destinations as localtraffic; if the traffic starts here e.g.
 #   from the web proxy and is going inwards it should run at full line speed.
+# FIXME: (fest3er,9/2013) No, it shouldn't; squid traffic to inside should be limited
+#   by RED's DL speed; likewise, squid traffic to the outside must be limited to RED's
+#   UL speed. (And even this isn't good enough because there's no easy way to share
+#   bandwidth among IFs; clients on GREEN and PURPLE could 'overcommit' RED's DL B/W.)
 
   iptables("-A $OUTPUT  -j CONNMARK --set-mark " . $connmarks{'localtraffic'}*2048 . "/$markMask");
 
@@ -499,13 +527,13 @@ exit(0);
 sub tcqdisc {
   my $args = shift;
   system(split(/\s+/,'/usr/sbin/tc qdisc add dev ' . $args));
-  print STDERR "/usr/sbin/tc qdisc add dev $args\n" if $? != 0;
+  #print STDERR "/usr/sbin/tc qdisc add dev $args\n" if $? != 0;
 }
 
 sub tcclass {
   my $args = shift;
   system(split(/\s+/,'/usr/sbin/tc class add dev ' . $args));
-  print STDERR "/usr/sbin/tc class add dev $args\n" if $? != 0;
+  #print STDERR "/usr/sbin/tc class add dev $args\n" if $? != 0;
 }
 
 sub stdclass {
@@ -513,22 +541,22 @@ sub stdclass {
   $extra = 'quantum 1500' unless defined $extra;
   return if $tag eq 'none';
 
-print STDERR "iface=$iface tag=$tag extra=$extra speed=$speed\n";
+#print STDERR "iface=$iface tag=$tag extra=$extra speed=$speed prio=$prio{$tag}\n";
   my ($myhash, $myceil);
   if ($ratehash->{$tag} <= 100) {
     $myrate = $speed * $ratehash->{$tag} / 100;
-print STDERR "  %age myrate=$myrate\n";
+#print STDERR "  %age myrate=$myrate\n";
   } else {
-print STDERR "  bitr myrate=$myrate\n";
+#print STDERR "  bitr myrate=$myrate\n";
     $myrate = $ratehash->{$tag};
   }
 
   if ($ceilhash->{$tag} <= 100) {
     $myceil = $speed * $ceilhash->{$tag} / 100;
-print STDERR "  %age myceil=$myceil\n";
+#print STDERR "  %age myceil=$myceil\n";
   } else {
     $myceil = $ceilhash->{$tag};
-print STDERR "  bitr myceil=$myceil\n";
+#print STDERR "  bitr myceil=$myceil\n";
   }
 
   tcclass("$iface parent 1:$classIDs{'all'} classid 1:$classIDs{$tag} htb " .
@@ -540,13 +568,13 @@ print STDERR "  bitr myceil=$myceil\n";
 sub iptables {
   my $args = shift;
   system(split(/\s+/,'/usr/sbin/iptables -t mangle ' . $args));
-  print STDERR "iptables -t mangle $args\n";
+  #print STDERR "iptables -t mangle $args\n";
   #print STDERR "iptables -t mangle $args\n" if $? != 0;
 }
 
 # clearing out traffic
 sub removetraffic {
-  for(qw/postrouting forward output/) {
+  for(qw/postrouting forward output input/) {
     iptables("-F traffic$_");
   }
   for my $if ($external_interface) {
@@ -556,11 +584,11 @@ sub removetraffic {
     }
     # and axe the qdiscs
     system(split(/\s+/,"/usr/sbin/tc qdisc del root dev $if"));
-    print STDERR "/usr/sbin/tc qdisc del root dev $if\n";
+    #print STDERR "/usr/sbin/tc qdisc del root dev $if\n";
   }
   for my $if (@internal_interface) {
     system(split(/\s+/,"/usr/sbin/tc qdisc del root dev $if"));
-    print STDERR "/usr/sbin/tc qdisc del root dev $if\n";
+    #print STDERR "/usr/sbin/tc qdisc del root dev $if\n";
   }
 }
 
@@ -616,7 +644,7 @@ sub writesettings {
     close(FD);
   }
   system(split(/\s+/,"/bin/chown -R nobody:nobody $settingsdir"));
-  print STDERR "/bin/chown -R nobody:nobody $settingsdir\n";
+  #print STDERR "/bin/chown -R nobody:nobody $settingsdir\n";
 
 }
 # Tests that the given parameter is up by using the SIOCGIFFLAGS ioctl on a socket.

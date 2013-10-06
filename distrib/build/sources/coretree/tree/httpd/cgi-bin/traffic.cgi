@@ -14,7 +14,7 @@ use smoothd qw(message);
 
 use Socket;
 
-my (%cgiparams, %selected, %checked);
+my (%cgiparams, %selected, %checked, $default_block);
 my $errormessage = '';
 
 &showhttpheaders();
@@ -48,7 +48,7 @@ my %netsettings;
 
 my %scale = (
 	      normal => [   10,     100],
-	        high => [   10,     100],
+	        high => [   10,      20],
 	         low => [   10,     100],
 	    isochron => [64000,  128000],
 	 smoothadmin => [   10,     100],
@@ -114,7 +114,7 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
 	$trafficsettings{'URATE'} = ('');
 	$trafficsettings{'UCEIL'} = ('');
 	for(keys %classIDs) {
-		next if /^(all|none)$/;
+		next if /^(all|(disabled))$/;
 		# first downloads
 		my $mulfactor = ($_ eq 'localtraffic' 
 		    ? $trafficsettings{'INTERNAL_SPEED'}
@@ -202,79 +202,14 @@ print "
 sub display_speeds
 {
 	my ( $settings ) = @_;
-	my($upload_speed_block,$download_speed_block,$internal_speed_block,$default_block);
+	my($upload_speed_block,$download_speed_block,$internal_speed_block);
 	my %selected = ();
-	my %speed_labels = ( 
-			   32000 => '32kbit',
-			   64000 => '64kbit',
-			  125000 => '125kbit',
-			  250000 => '250kbit',
-			  500000 => '500kbit',
-			 1000000 => '1Mbit',
-			 1544000 => '1.544Mbit/DS0', # T1, DS0
-			 2000000 => '2Mbit',
-			 3000000 => '3Mbit',
-			 4000000 => '4Mbit',
-			 5000000 => '5Mbit',
-			 6000000 => '6Mbit',
-			 8000000 => '8Mbit',
-			10000000 => '10Mbit',
-			12000000 => '12Mbit',
-			16000000 => '16Mbit',
-			20000000 => '20Mbit',
-			24000000 => '24Mbit',
-			25000000 => '25Mbit',
-			27000000 => '27Mbit',
-			44736000 => '45Mbit/DS3', # DS3
-			54000000 => '54Mbit',
-		       100000000 => '100Mbit',
-		       350000000 => '400Mbit',
-		       600000000 => '600Mbit',
-		      1000000000 => '1Gbit');
-
-	my %default_traffic_labels = ( 
-		      high => $tr{'traffic high'}, 
-		       low => $tr{'traffic low'}, 
-		    normal => $tr{'traffic normal'},
-                  isochron => "isochronous",
-               smoothadmin => "smoothadmin",
-                  webcache => "webcache",
-);
 
 	my @speeds = sort {$a <=> $b} keys %speed_labels; 
 
 	my @ext_speeds = @speeds;
 	my @int_speeds = @speeds;
 		
-	# Set a few menu options
-	%selected = ($settings->{'UPLOAD_SPEED'} => ' selected');
-	$upload_speed_block = 
-		join('', 
-				 map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" }
-				 @ext_speeds
-				);
-
-	%selected = ($settings->{'DOWNLOAD_SPEED'} => ' selected');
-	$download_speed_block =
-		join('', 
-				 map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-				 @ext_speeds
-				);
-
-	%selected = ($settings->{'INTERNAL_SPEED'} => ' selected');
-	$internal_speed_block = 
-		join('', 
-				 map { "<option value='$_'" . ($selected{$_} || '') . ">$speed_labels{$_}</option>\n" } 
-				 @int_speeds
-				);
-
-	%selected = ($settings->{'DEFAULT_TRAFFIC'} => ' selected');
-	$default_block = 
-		join('', 
-				 map { "<option value='$_'" . ($selected{$_} || '') . ">$default_traffic_labels{$_}</option>\n" } 
-				 (qw/normal high low slow/)
-				);
-
 	# Draw the general options box.
 	&openbox($tr{'traffic general options'});
 	my $enable_bit = ($settings->{'ENABLE'} eq 'on' ? 'checked' : '');
@@ -284,20 +219,20 @@ sub display_speeds
       <tr>
         <td class='base' style='width: 25%;'>$tr{'traffic enable'}</td>
         <td style='width: 25%;'><input name='ENABLE' type='checkbox' $enable_bit /></td>
-        <td class='base' style='width: 25%;'>$tr{'traffic internal speed'}</td>
-        <td style='width: 25%;'><select name='INTERNAL_SPEED'>$internal_speed_block</select></td>
+        <td class='base' style='width:25%'>$tr{'traffic external up'}</td>
+        <td style='width:25%'>
+		<input type='text' name='UPLOAD_SPEED' value='$settings->{'UPLOAD_SPEED'}'
+			size='11' style='text-align:right'/>&nbsp;bits/sec</td>
       </tr>
       <tr>
-        <td class='base' >$tr{'traffic external up'}</td>
-        <td><select name='UPLOAD_SPEED'>$upload_speed_block</select></td>
+        <td class='base'>$tr{'traffic internal speed'}</td>
+        <td>
+		<input type='text' name='INTERNAL_SPEED' value='$settings->{'INTERNAL_SPEED'}'
+			size='11' style='text-align:right'/>&nbsp;bits/sec</td>
         <td class='base' >$tr{'traffic external down'}</td>
-        <td><select name='DOWNLOAD_SPEED'>$download_speed_block</select></td>
-      </tr>
-      <tr>
-        <td class='base'>$tr{'traffic headroom'}</td>
-        <td><select name='HEADROOM'>$headroom_block</select></td>
-        <td class='base'>$tr{'traffic default'}</td>
-        <td><select name='DEFAULT_TRAFFIC'>$default_block</select></td>
+        <td>
+		<input type='text' name='DOWNLOAD_SPEED' value='$settings->{'DOWNLOAD_SPEED'}'
+			size='11' style='text-align:right'/>&nbsp;bits/sec</td>
       </tr>
     </table>
 ";
@@ -315,15 +250,28 @@ sub display_rules
 {
 	my ( $settings ) = @_;
 
-	my %class_labels = ( 
-	       none => $tr{'traffic none'}, 
-	       high => $tr{'traffic high'}, 
+	my %default_traffic_labels = ( 
 	        low => $tr{'traffic low'}, 
 	     normal => $tr{'traffic normal'},
+	       high => $tr{'traffic high'}, 
            isochron => "isochronous",
-        smoothadmin => "smoothadmin",
-           webcache => "webcache",
+);
+
+	my %class_labels = ( 
+	       none => $tr{'traffic none'}, 
+	        low => $tr{'traffic low'}, 
+	     normal => $tr{'traffic normal'},
+	       high => $tr{'traffic high'}, 
+           isochron => "isochronous",
 	);
+
+	# Set a few menu options
+	%selected = ($settings->{'DEFAULT_TRAFFIC'} => ' selected');
+	my $default_block = 
+		join('', 
+			map { "<option value='$_'" . ($selected{$_} || '') . ">$default_traffic_labels{$_}</option>\n" } 
+			(qw/low normal high isochron/)
+		);
 
 	my @rules = ();
 
@@ -333,6 +281,14 @@ sub display_rules
 
 	print "
 		<table style='width: 100%;'>
+      <tr>
+        <td class='base' colspan='3'>$tr{'traffic default'}</td>
+        <td><select name='DEFAULT_TRAFFIC'>$default_block</select></td>
+				<td colspan='2'></td>
+      </tr>
+      <tr>
+				<td colspan='4' style='height:.5em'></td>
+      </tr>
 ";
 
 	for my $rule (sort keys %{$settings}) 
@@ -344,7 +300,7 @@ sub display_rules
 		my $class_block =
 			join('', 
 					 map { "<option value='$_'" . ($selected{$_} || '') . ">$class_labels{$_}</option>\n" } 
-					 (qw/none normal high low isochron smoothadmin webcache/)
+					 (qw/none low normal high isochron/)
 					);
 
 		$name =~ s/_/ /g;
