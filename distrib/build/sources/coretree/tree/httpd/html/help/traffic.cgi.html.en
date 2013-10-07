@@ -7,13 +7,13 @@
 <p>
 I'll first introduce you to priorities, classes and certain exceptions to the
 'norm' to give you an idea how the pieces fit together. Then you'll learn how
-to set the only three values you need to in order to get QoS working 'out of
-the box'.
+to set the only three values you need to in order to get QoS (or Quality of 
+Service) working 'out of the box'.
 </p>
 
 <p>
 I'll close with a 'theoretical analogy' that might make it easier to
-understand just what Linux Traffic Control does. This analogy was large
+understand just what Linux Traffic Control does. This analogy was largely
 borrowed from the original Express 3.0 QoS help page.
 </p>
 
@@ -60,9 +60,9 @@ insensitive to time constraints. Low priority traffic gets leftover bandwidth.
 <p>
 Each rule is a class (type) of flow. There are also classes for local
 (internal) traffic, Firewall admin traffic, squid (proxy) traffic, and
-small-ish packets.  With four exceptions, all classes with packets queued
-share available bandwidth equally.  With the same four exceptions, each class
-may use 100% of the available bandwidth when no other traffic is queued.  For
+small-ish packets. With four exceptions, all classes with packets queued
+share available bandwidth equally. With the same four exceptions, each class
+may use 100% of the available bandwidth when no other traffic is queued. For
 this reason, you should assign high or isochronous priority only to classes
 you know with certainty will never use more than a small portion of bandwidth.
 All classes other than VoIP and DNS can be assigned low priority as desired.
@@ -72,12 +72,12 @@ All classes other than VoIP and DNS can be assigned low priority as desired.
 
 <p>
 VoIP traffic gets a 64kb/s share of bandwidth and may use up to 128kb/s. This
-guarantees that VoIP traffic will never hog the internet. DNS traffic gets a
-10% share of bandwidth and may use up to 10% of the bandwidth; this, too,
-prevents DNS (and other flows using port 53) from hogging the internet.
-Packets less than 100 bytes or so have their own class; they receive the same
-equal share as the classes in the previous paragraph, but are limited to 20%
-of the available bandwidth.
+guarantees that VoIP traffic will never hog the internet. DNS traffic gets the
+smae share of bandwidth that all 'normal' priority classes get and may use up
+to 10% of the bandwidth; this, too, prevents DNS (and other flows using port
+53) from hogging the internet. Packets of less than 100 bytes or so have their
+own class; they receive the same equal share as the classes in the previous
+paragraph, but are limited to 20% of the available bandwidth.
 </p>
 
 <p>
@@ -100,11 +100,12 @@ page's form as a plain, unadorned integer; e.g. 3600000, 34300000, 123000,
 55400. <i>Remember that, in communication, multipliers are always decimal; 'k'
 is 1000, 'M' is 1 000 000, and 'G' is 1 000 000 000.</i> Now start a large
 upload and observe RED's outgoing bit rate. Wait for the 'courtesy burst' to
-end and enter that value in the QoS form.
+end and enter that value in the QoS form. As an alternative, you can use
+any of the 'internet speed test' sites to perform these test transfers.
 </p>
 
 <p>
-You must also enter the maximum observed maximum bit rates for each of your
+You must also enter the maximum observed maximum bit rate of your
 network interfaces; they are rarely the NIC's advertised speed. For example,
 most 100Mb/s NIC will max out at 90-95Mb/s on a Linux system. GigE NICs that
 connect to a PCI slot should max out at 150-250Mb/s (the limit of the PCI
@@ -112,7 +113,11 @@ bus). GigE NICs that connect to PCI-E can top out at 600-960Mb/s. 10Mb/s NIC
 may have a hard time getting over 8-9Mb/s. Every system is different; thus the
 bit rates must be observed and manually entered. There are no predefined rates
 to select. If you cannot transfer data fast enough to find the limit, use one
-of the above 'defaults'; you can always adjust it later.
+of the above 'defaults'; you can always adjust it later. <i>Please note that
+this area of traffic control is suboptimal; traffic arriving from a gigE NIC
+could easily flood a destination 10Mb/s or 100Mb/s link. If you have a gigE
+NIC on one internal zone and a 100Mb/s NIC on another and a lot of interzone
+traffic, you may find it better to use the slower NIC's observed bitrate.</i>
 </p>
 
 <p><u>Observe the Priorities</u></p>
@@ -120,12 +125,14 @@ of the above 'defaults'; you can always adjust it later.
 <p>
 The default priorities for the supplied rules should be adequate for most
 users. Again, be very careful when changing the priorities; you can easily
-starve many users of bandwidth.  Most traffic is in the normal priority
-because most flows are of the 'unlimited' variety.  HTTP and email may be
-bursty, but when they transfer files, they do so without limit. You'd think
-SSH would be safe at high priority, right? Bzzzt. SSH file transfer (scp,
-sftp) is unlimited and would starve other flows; git over ssh is also
-unlimited. So be vewy, vewy caweful!
+starve many users of bandwidth. Most traffic is in the normal priority
+because most flows are of the 'unlimited' variety or cannot be distinguished
+from bursty or rate-limited data flows. For example, HTTP and email are
+typically bursty, but when they transfer large files, they do so without
+limit and can hog bandwidth. Interactive SSH is safe at high priority until a
+large amount of data are transferred across the link. SSH file transfer (scp,
+sftp), git over SSH and SSH tunnels are also unlimited, indistinguishable from
+interactive SSH and can starve other flows. 
 </p>
 
 <p><u>End Notes</u></p>
@@ -137,16 +144,17 @@ bandwidth, regardless of how QoS is configured.
 </p>
 
 <p>
-The Voice over IP (VOIP) rule is special in that any traffic with the diffserv
-'EF' option set will also be caught by this rule. Other, 'unlimited' traffic
-might also have 'EF' option set. But this should be OK because isochronous
-traffic cannot use more than 128kb/s of upload or download.
+The Voice over IP (VOIP) rule is special in that any traffic with the
+Differentiated Services (Diffserv) 'EF' option set will also be caught by this
+rule. Other, 'unlimited' traffic might also have 'EF' option set. But this
+should be OK because isochronous traffic cannot use more than 128kb/s of
+upload or download.
 </p>
 
 <p>
-If you do not want any of the rules to be active then simply change the class
-to '(disabled)' for that rule. Such traffic will go into the default class
-(defined as 'Traffic that does not match the rules below....'
+If you want to disable a rule, change the priority to '(disabled)' for that
+rule. Such traffic will go into the default class (defined as 'Traffic that
+does not match the rules below....'
 </p>
 
 
@@ -155,10 +163,10 @@ to '(disabled)' for that rule. Such traffic will go into the default class
 </p>
 
 <p>
-Smoothwall is able to decide if some of the network traffic is more urgent
+Smoothwall is able to determine if some of the network traffic is more urgent
 than others. Imagine your network connection is like a multilane freeway or
-motorway. The faster the connection, the higher the speed limit.  However, a
-motorway is not very fast if every everyone in the land tries to get on and
+motorway. The faster the connection, the more lanes there are. However, a
+motorway is not very fast if everyone in the land tries to get on and
 off the road at the same time.
 </p>
 
@@ -199,7 +207,7 @@ priority traffic. It shares the road equally with 'isochronous' traffic.
 </li>
 <li>
 <b>isochronous</b> - Akin to lawmakers going to and from their daily sessions.
-It is regular, periodic traffic that is sensitive to interruptions.  It shares
+It is regular, periodic traffic that is sensitive to interruptions. It shares
 the road equally with 'high' traffic.
 </li>
 </ul>
@@ -209,8 +217,8 @@ the road equally with 'high' traffic.
 </p>
 
 <p>
-In addition to priority levels, there are different type (classes) of
-traffic.  You've seen a few already--Sunday drivers and oversize loads in low
+In addition to priority levels, there are different types (classes) of
+traffic. You've seen a few already--Sunday drivers and oversize loads in low
 priority; and police, fire, ambulance and bigwigs, maintenance crews and
 roadside assistance in high priority. Normal priority traffic consists of
 commuters, tourists, deliveries, couriers and long-haul commerce. Each of
