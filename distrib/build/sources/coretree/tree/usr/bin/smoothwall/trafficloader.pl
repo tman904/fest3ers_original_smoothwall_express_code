@@ -457,15 +457,11 @@ for my $rule (@rules) {
   $connmarks{$name} = $mark;
   $connmark_to_class{$mark} = $class;
   if($name eq 'Peer_to_Peer') {
-    # leverage the ip2p iptables module, matches all p2p protocols known to ipp2p
-    for my $pp2pp (qw/edk dc kazaa gnu bit apple winmx soul ares mute waste xdcc/) {
       iptables("-A $POSTR -i $external_interface" .
         " -m connmark --mark 0/$markMask" .
-        " -m ipp2p --$pp2pp -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
-      iptables("-A $POSTR -o $external_interface" .
-        " -m connmark --mark 0/$markMask" .
-        " -m ipp2p --$pp2pp -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
-    }
+        " -m ipp2p --edk --dc --kazaa --gnu --bit --apple" .
+        " --winmx --soul --ares --mute --waste --xdcc" .
+        " -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
   }
   if($name eq 'Voice_Over_IP') {
     # also assume EF diffserv mark set wants to
@@ -525,55 +521,66 @@ exit(0);
 
 # wrappers to eliminate repeated typing
 sub tcqdisc {
+  # If the (optional) second arg is defined, debug info will be dumped
+  #   to STDERR (smoothderror log).
   my $args = shift;
   system(split(/\s+/,'/usr/sbin/tc qdisc add dev ' . $args));
-  #print STDERR "/usr/sbin/tc qdisc add dev $args\n" if $? != 0;
+  print STDERR "/usr/sbin/tc qdisc add dev $args\n" if defined $_[0];
 }
 
 sub tcclass {
+  # If the (optional) second arg is defined, debug info will be dumped
+  #   to STDERR (smoothderror log).
   my $args = shift;
   system(split(/\s+/,'/usr/sbin/tc class add dev ' . $args));
-  #print STDERR "/usr/sbin/tc class add dev $args\n" if $? != 0;
+  print STDERR "/usr/sbin/tc class add dev $args\n" if defined $_[0];
 }
 
 sub stdclass {
-  my($iface, $tag, $extra, $ratehash, $ceilhash, $speed) = @_;
+  # If the (optional) arg $print is defined, debug info will be dumped
+  #   to STDERR (smoothderror log).
+  my($iface, $tag, $extra, $ratehash, $ceilhash, $speed, $print) = @_;
   $extra = 'quantum 1500' unless defined $extra;
   return if $tag eq 'none';
 
-#print STDERR "iface=$iface tag=$tag extra=$extra speed=$speed prio=$prio{$tag}\n";
+print STDERR "iface=$iface tag=$tag extra=$extra speed=$speed prio=$prio{$tag}\n" if defined $print;
   my ($myhash, $myceil);
   if ($ratehash->{$tag} <= 100) {
     $myrate = $speed * $ratehash->{$tag} / 100;
-#print STDERR "  %age myrate=$myrate\n";
+print STDERR "  %age myrate=$myrate\n" if defined $print;
   } else {
-#print STDERR "  bitr myrate=$myrate\n";
+print STDERR "  bitr myrate=$myrate\n" if defined $print;
     $myrate = $ratehash->{$tag};
   }
 
   if ($ceilhash->{$tag} <= 100) {
     $myceil = $speed * $ceilhash->{$tag} / 100;
-#print STDERR "  %age myceil=$myceil\n";
+print STDERR "  %age myceil=$myceil\n" if defined $print;
   } else {
     $myceil = $ceilhash->{$tag};
-#print STDERR "  bitr myceil=$myceil\n";
+print STDERR "  bitr myceil=$myceil\n" if defined $print;
   }
 
   tcclass("$iface parent 1:$classIDs{'all'} classid 1:$classIDs{$tag} htb " .
-           "rate " . $myrate ." ceil " . $myceil ." prio $prio{$tag} $extra");
-  tcqdisc("$iface parent 1:$classIDs{$tag} handle $classIDs{$tag}: sfq perturb 1");
+           "rate " . $myrate ." ceil " . $myceil ." prio $prio{$tag} $extra", $print);
+  tcqdisc("$iface parent 1:$classIDs{$tag} handle $classIDs{$tag}: sfq perturb 1", $print);
 }
   
 
 sub iptables {
+  # If the (optional) second arg is defined, debug info will be dumped
+  #   to STDERR (smoothderror log).
   my $args = shift;
   system(split(/\s+/,'/usr/sbin/iptables -t mangle ' . $args));
-  #print STDERR "iptables -t mangle $args\n";
-  #print STDERR "iptables -t mangle $args\n" if $? != 0;
+  print STDERR "iptables -t mangle $args\n" if defined $_[0];
 }
 
 # clearing out traffic
 sub removetraffic {
+  # If the (optional) arg is defined, debug info will be dumped
+  #   to STDERR (smoothderror log).
+  $print = $_[0];
+
   for(qw/postrouting forward output input/) {
     iptables("-F traffic$_");
   }
@@ -584,11 +591,11 @@ sub removetraffic {
     }
     # and axe the qdiscs
     system(split(/\s+/,"/usr/sbin/tc qdisc del root dev $if"));
-    #print STDERR "/usr/sbin/tc qdisc del root dev $if\n";
+    print STDERR "/usr/sbin/tc qdisc del root dev $if\n" if defined $print;
   }
   for my $if (@internal_interface) {
     system(split(/\s+/,"/usr/sbin/tc qdisc del root dev $if"));
-    #print STDERR "/usr/sbin/tc qdisc del root dev $if\n";
+    print STDERR "/usr/sbin/tc qdisc del root dev $if\n" if defined $print;
   }
 }
 
