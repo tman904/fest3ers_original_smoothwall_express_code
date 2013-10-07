@@ -48,7 +48,7 @@ firewall.  Further information on your Smoothwall Express is available from <a h
 'backup.cgi' 		=> 'Monitor PnP or manual backup progress. Configure USB/eSATA/Firewire or other hot-plug drive for PnP backups.',
 'im.cgi'		=> 'Configure the IM logging proxy.',
 'outgoing.cgi' 		=> 'Add rules to control local machine\'s access to external services and set time frames for them.',
-'traffic.cgi'		=> 'Set the best speed which your network is capable of achieving. The headroom should be increased if traffic shaping is having no effect.',
+'traffic.cgi'		=> 'Configure Linux Traffic Control (QoS) for your network.',
 'sipproxy.cgi'		=> 'Configure the SIP proxy service. It can be used to transparently or non-transparently proxy SIP calls to and from the GREEN network.',
 'interfaces.cgi'	=> 'Configure the network interface IP addresses, as well as DNS and gateway settings.',
 'hosts.cgi'		=> 'Add static DNS entries to Smoothwall\'s inbuilt DNS server.',
