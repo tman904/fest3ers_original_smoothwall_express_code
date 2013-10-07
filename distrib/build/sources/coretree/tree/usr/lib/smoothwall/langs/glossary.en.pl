@@ -33,6 +33,7 @@
 	'NTP' => "<strong>Network Time Protocol</strong> A protocol for telling machines, accurately, what the time is on a network. It is used both on the Internet and on LANs.",
 	'VNC' => "<strong>Virtual Network Computing</strong> A set of programs, that allows the remote access of another computer\\'s desktop. Available for all major Operating Systems.",
 	'SSL' => "<strong>Secure Sockets Layer</strong> A layering protocol that can be used to add encryption and authentication to a lower-level protocol, such as POP3 or HTTP.",
+	'TLS' => "<strong>Transport Layer Security</strong> A layering protocol that can be used to add encryption and authentication to a lower-level protocol, such as POP3 or HTTP.",
 	'ClamAV' => "<strong>Clam AntiVirus</strong> An open source (GPL) anti-virus toolkit, designed especially for e-mail scanning on mail gateways.",
 	'DNS' => "<strong>Domain Name System</strong> A protocol and service for the resolution of human-understandable names, such as www.smoothwall.org, to IP addresses, and vica-versa.",
 	'DHCP' => "<strong>Dynamic Host Configuration Protocol</strong> A protocol and service for automatically configuring machines on a network. DHCP typically furnishes hosts with an IP address, DNS settings, and gateway information.",
