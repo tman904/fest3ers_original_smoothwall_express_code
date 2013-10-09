@@ -43,7 +43,7 @@ my $span = 0;
 $swroot = '/var/smoothwall';
 $thisscript = basename($ENV{'SCRIPT_NAME'});
 use Net::Domain qw(hostname hostfqdn hostdomain);
-my $hostname = hostname();
+my $hostname = hostfqdn();
 
 
 # customised settings (such as languages)
