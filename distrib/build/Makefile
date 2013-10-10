@@ -86,7 +86,7 @@ default:
 	@echo "    CONTINUE_DL=    if you have a slow conection, this will continue"
 	@echo "                    a previous, interrupted download instead of creating"
 	@echo "                    tarball.[1-n]"
-	@echo "    NO_CERT_CHECK=  do not check the veracity of SSL certs"
+	@echo "    NO_CHECK_CERT=  do not check the veracity of SSL certs"
 	@echo "    PASV=           use 'passive' FTP"
 	@echo "    MIRROR_UNO=hostA and/or MIRROR_DOS=hostB"
 	@echo "                    use hostA and/or hostB as sources for source packages."
