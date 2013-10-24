@@ -107,10 +107,11 @@ sub progress
 	my $log   = "$progress_store$file.log";
 	my $pid   = "$progress_store$file.pid";
 
-	unless( open ( $pid_file, "<$pid" ) ){
-		if ( -e "$download_store$file" ){
+	unless( open ( $pid_file, "<$pid" ) )
+	{
+		if ( -e "$download_store$file" )
+		{
 			# download is completed ...
-			print STDERR "Download is complete...\n";
 			return ( "", "100%", "-", "$download_store$file" );
 		}
 
@@ -132,6 +133,7 @@ sub progress
 	my ( $down, $percent, $speed, $complete ) = ( 0, "0px", 0, "" );
 
 	while ( $status = <$status_file> ) { 
+		chomp $status;
 		my ( $ddown, $dpercent, $dspeed ) = ( $status =~ /(\d+K|M)[^0-9]+(\d+%)\s+(\d*\.*\d*[KMG][ =]+\d*\.*\d*s)/ );
 		if ( defined $ddown ){
 			$down = $ddown;
@@ -140,21 +142,26 @@ sub progress
 		}
                 #print STDERR "down/speed/percent: $down/$speed/$percent\n";
 		if ( $percent eq "100%" ){
-			print STDERR "Checking for completion $status\n";
-			if ( $status =~ /`([^`]*)'/ ){
+			if ( $status =~ /'([^']*)'/ ){
+				#print STDERR "Verify completion: ($status)\n";
 				$complete = $1;
 			}
+			# Leave these print as a clue the next time wget changes its output
+			#   so it doesn't match the regex above.
+			#print STDERR "  'complete' must equal 'progress_store/file'\n";
+			#print STDERR "          complete: '$complete'\n";
+			#print STDERR "      progstorfile: '$progress_store$file'\n";
 		}	
 	};
 
-	# status should now be the last line of the status ...
+	# status should now be the last line of the log file ...
 
 	if ( $complete eq "$progress_store$file" ){
 		# download is complete, move the file to the download cache
 		# and then tidy up.
 		my $final = "$download_store$file";
-		move( "$progress_store$file", $final );
-		downloadtidy( $file );
+		&move( "$progress_store$file", $final );
+		&downloadtidy( $file );
 		return ( $down, $percent, $speed, $final );
 	}
 
