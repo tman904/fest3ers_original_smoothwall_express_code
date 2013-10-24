@@ -67,7 +67,7 @@ if ($snortsettings{'ACTION'} eq $tr{'save'} and
 {
   if ($formoink !~ /^([\da-f]){40}$/i)
   {
-    $errormessage = $tr{'oink code must be 40 hex digits'};
+    $errormessage .= $tr{'oink code must be 40 hex digits'} ."<br />";
   }
   else
   {
@@ -97,7 +97,7 @@ if ($snortsettings{'ACTION'} eq $tr{'save'} and
 
   if (not defined $success)
   {
-    $errormessage = $tr{'smoothd failure'};
+    $errormessage .= $tr{'smoothd failure'} ."<br />";
   }
 }
 
@@ -317,42 +317,76 @@ if (($snortsettings{'ACTION'} eq $tr{'save'}) &&
     ($formdownload eq 'on') &&
     !$errormessage)
 {
-  my $origsnortversion = &readvalue('/usr/lib/smoothwall/snortversion');
+  # Get available ruleset versions
+  my $tmp = `wget -O - http://www.snort.org/snort-rules -q|egrep "snortrules-snapshot[^.]*.tar.gz" | sed -e's/.*shot-//' -e 's/\.tar.*//' |sort -r |uniq`;
+  chomp $tmp;
+  my @rulesetversions = split("\n", $tmp);
 
+  # Get installed snort version
+  my $origsnortversion = &readvalue('/usr/lib/smoothwall/snortversion');
   my $snortversion = $origsnortversion;
-  
   $snortversion =~ s/\.//g;
-  
   while (length $snortversion < 4)
   {
     $snortversion = $snortversion.'0';
   }
+#$snortversion="2920";
   
-  &runoinkmaster($snortversion);
-  
+  # Find a ruleset version compatible (<=) with the installed version
+  # and try to fetch it
+  my $i, $useversion = "";
+  my $runmsg = '';
+  for ($i=0; $i<=$#rulesetversions; $i++)
+  {
+    next if ($rulesetversions[$i] > $snortversion);
+    $errormessage = '';
+    $useversion = $rulesetversions[$i];
+    &runoinkmaster($useversion);
+    if ($errormessage ne "")
+    {
+      $runmsg .= $errormessage;
+    }
+    else
+    {
+      last;
+    }
+  }
+
+  # Warn if no ruleset could be found or fetched
+  if ($i > $#rulesetversions)
+  {
+    # Display DL errors encountered
+    if ($runmsg ne "")
+    {
+      $errormessage .= $runmsg;
+    }
+    $errormessage .= "Could not fetch a ruleset compatible with snort version $origsnortversion.<br />";
+  }
+print STDERR $errormessage;
+
   if ($snortsettings{'ENABLE_SNORT'} eq 'on' and !$errormessage)
   {  
     my $success = &message('snortrestart');
 
     if (not defined $success)
     {
-      $errormessage = $tr{'smoothd failure'};
+      $errormessage .= $tr{'smoothd failure'} ."<br />";
     }
   }
 
   if ($errormessage)
   {
-	  #print "
-#<script language='javascript' type='text/javascript'>
-#document.getElementById('status').innerHTML = '$errormessage';
-#</script>
-#";
+	  print "
+<script language='javascript' type='text/javascript'>
+document.getElementById('status').innerHTML = '$errormessage';
+</script>
+";
   }
   else
   {
     print "
 <script language='javascript' type='text/javascript'>
-  document.getElementById('status').innerHTML = 'Installation complete';
+  document.getElementById('status').innerHTML = 'Installation complete (ruleset v$useversion)';
   document.getElementById('progress').style.width = '${maxwidth}em';
   document.getElementById('ENABLE_SNORT').disabled = '';
   //document.location = '/cgi-bin/ids.cgi';
@@ -382,11 +416,11 @@ sub runoinkmaster
   my $pid = open(FD, '-|');
   if (!defined $pid)
   {
-    $errormessage = $tr{'unable to fetch rules'};
+    $errormessage .= $tr{'unable to fetch rules'} ."<br />";
   }
   elsif ($pid)
   {
-    $errormessage = $tr{'rules not available'};
+    $errormessage .= $tr{'rules not available'} ."<br />";
 
 
     print "
@@ -457,7 +491,7 @@ print "
       }
       elsif (/.*403 Forbidden.*/)
       {
-        $errormessage = "You can't download now. Try again later.";
+        $errormessage .= "You can't download now. Try again later." ."<br />";
 print "
   <script language='javascript' type='text/javascript'>
     document.getElementById('status').innerHTML = 'You can\\'t download now; try later.';
@@ -466,7 +500,7 @@ print "
       }
       elsif (/.*404 Not Found.*/)
       {
-        $errormessage = "Rules version $v not found. Try again another day.";
+        $errormessage .= "Rules version $v not found. Try again another day." ."<br />";
 print "
   <script language='javascript' type='text/javascript'>
     document.getElementById('status').innerHTML = 'Rules $v not found; Try again another day.';
@@ -482,17 +516,17 @@ print "
 
     if ($?)
     {
-      $errormessage = $tr{'unable to fetch rules'};
-      if (not defined $attempt)
-      {
-        ($v1, $v2, $v3, $v4) = split(//, $v);
-        if ($v4 > 0)
-        {
-          # Try again, but once only.
-          $v4--;
-          &runoinkmaster (join('', $v1, $v2, $v3, $v4), 1);
-        }
-      }
+      $errormessage .= $tr{'unable to fetch rules'} ."<br />";
+#      if (not defined $attempt)
+#      {
+#        ($v1, $v2, $v3, $v4) = split(//, $v);
+#        if ($v4 > 0)
+#        {
+#          # Try again, but once only.
+#          $v4--;
+#          &runoinkmaster (join('', $v1, $v2, $v3, $v4), 1);
+#        }
+#      }
     }
     else
     {

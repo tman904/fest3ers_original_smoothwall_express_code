@@ -353,7 +353,7 @@ td.logo {
 	padding: 0px;
 }
 
-td.header {
+td.header,div.header {
 	border: none;
 	background-image: url( '/ui/img/banner.png' );
 	background-repeat: no-repeat;

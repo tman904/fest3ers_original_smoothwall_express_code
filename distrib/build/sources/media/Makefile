@@ -28,8 +28,8 @@ OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
 
 TARGET_DIR = /build/target
 
-ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr \
-	   subversion ntop iperf squidGuard
+ADV_PKGS = gdbm GeoIP Python libmnl openldap gperf attr \
+	   subversion ntop iperf
 KVM_PKGS = samba
 
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
@@ -51,7 +51,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
-	    $(UDEV) lm_sensors xz pcmciautils qemu sysfsutils \
+	    $(UDEV) lm_sensors xz pcmciautils qemu sysfsutils db squidGuard \
 	    coretree $(ADV_PKGS) device-ids
 
 # INST_PKGS notes.
