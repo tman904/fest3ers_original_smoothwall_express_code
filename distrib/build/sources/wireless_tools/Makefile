@@ -20,10 +20,12 @@ INSTALL = yes
 
 configure: patch
 	@find $(DIR) -type d -exec chmod +rx {} \;
+	@find $(DIR) -type f -exec chmod +r {} \;
+	cd $(DIR); sed -i -e 's/^\(XCFLAGS=.*\)/\1 $(CFLAGS)/' Makefile
 	@true
 
 compile: configure
-	@$(MAKE) $(JOBS) -C $(DIR) PREFIX=/usr
+	@$(MAKE) $(JOBS) -C $(DIR) PREFIX=$(PKG_DIR)
 
 install: compile
 	@mkdir -p $(PKG_ROOT)
