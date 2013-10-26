@@ -12,8 +12,10 @@ VERSION = 1.5.0
 BASE_URL = http://wiki.qemu-project.org/download
 EXTENSION = .tar.bz2
 
-#PATCH_FILE1 = configure.patch
+# Verbose build
+export V=1
 
 CONFIG_OPTS = --target-list=i386-softmmu
+
 include ../Makefile.rules
 
