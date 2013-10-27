@@ -14,21 +14,21 @@
 -#undef DEFAULT_CONFIGFILE
  #define DEFAULT_CONFIGFILE "@sg_config@"
 +#else
-+#define DEFAULT_CONFIGFILE "@prefix@/squidGuard/squidGuard.conf"
++#define DEFAULT_CONFIGFILE "/var/smoothwall/urlfilter/squidGuard.conf"
  #endif
  
  #ifdef ACLOGDIR
 -#undef DEFAULT_LOGDIR
  #define DEFAULT_LOGDIR "@sg_logdir@"
 +#else
-+#define DEFAULT_LOGDIR "@prefix@/squidGuard/log"
++#define DEFAULT_LOGDIR "/var/log/squidGuard"
  #endif
  
  #ifdef ACDBHOME
 -#undef DEFAULT_DBHOME
  #define DEFAULT_DBHOME "@sg_dbhome@"
 +#else
-+#define DEFAULT_DBHOME "@prefix@/squidGuard/db"
++#define DEFAULT_DBHOME "/var/smoothwall/urlfilter/blacklists"
  #endif
  
  #define INVALID_IP_ADDR 1

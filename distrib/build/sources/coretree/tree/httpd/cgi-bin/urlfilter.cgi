@@ -157,38 +157,63 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
     ($filtersettings{'ACTION'} eq $tr{'urlfilter restore'}))
 {
 
+	# Validate data
 	@clients = split(/\n/,$filtersettings{'UNFILTERED_CLIENTS'});
 	foreach (@clients)
 	{
 		s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
-		if (/.*-.*-.*/) { $errormessage = $tr{'urlfilter invalid ip or mask error'}; }
+		if (/.*-.*-.*/)
+		{
+			$errormessage .= $tr{'urlfilter invalid ip or mask error'};
+		}
 		@temp = split(/-/);
-		foreach (@temp) { unless ((&validipormask($_)) || (&validipandmask($_))) { $errormessage = $tr{'urlfilter invalid ip or mask error'}; } }
+		foreach (@temp)
+		{
+			unless ((&validipormask($_)) || (&validipandmask($_)))
+			{
+				$errormessage .= $tr{'urlfilter invalid ip or mask error'};
+			}
+		}
 	}
 	@clients = split(/\n/,$filtersettings{'BANNED_CLIENTS'});
 	foreach (@clients)
 	{
 		s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
-		if (/.*-.*-.*/) { $errormessage = $tr{'urlfilter invalid ip or mask error'}; }
+		if (/.*-.*-.*/)
+		{
+			$errormessage .= $tr{'urlfilter invalid ip or mask error'};
+		}
 		@temp = split(/-/);
-		foreach (@temp) { unless ((&validipormask($_)) || (&validipandmask($_))) { $errormessage = $tr{'urlfilter invalid ip or mask error'}; } }
+		foreach (@temp)
+		{
+			unless ((&validipormask($_)) || (&validipandmask($_)))
+			{
+				$errormessage .= $tr{'urlfilter invalid ip or mask error'};
+			}
+		}
 	}
 	if ($errormessage) { goto ERROR; }
 
 	if (!($filtersettings{'CHILDREN'} =~ /^\d+$/) || ($filtersettings{'CHILDREN'} < 1))
 	{
-		$errormessage = $tr{'urlfilter invalid num of children'};
+		$errormessage .= $tr{'urlfilter invalid num of children'};
 		goto ERROR;
 	}
 
+	# Make sure it's a proper URL
 	if ((!($filtersettings{'REDIRECT_PAGE'} eq '')) && (!($filtersettings{'REDIRECT_PAGE'} =~ /^https?:\/\//)))
 	{
 		$filtersettings{'REDIRECT_PAGE'} = "http://".$filtersettings{'REDIRECT_PAGE'};
 	}
 
+
+	# upload/download/file management
 	if ($filtersettings{'ACTION'} eq $tr{'urlfilter remove file'})
 	{
-		if (-e "$repository/$filtersettings{'ID'}") { unlink("$repository/$filtersettings{'ID'}"); }
+		if (-e "$repository/$filtersettings{'ID'}")
+		{
+			unlink("$repository/$filtersettings{'ID'}");
+		}
 		$filtersettings{'ACTION'} = $tr{'urlfilter manage repository'};
 	}
 
@@ -203,21 +228,13 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		if ($_) {
 			if (copy($filtersettings{'UPLOADFILE'}, "$repository/$_") != 1)
 			{
-				$errormessage = $!;
+				$errormessage .= $!;
 				goto ERROR;
 			}
 		}
 
 	}
 	
-	if ($filtersettings{'ACTION'} eq $tr{'urlfilter upload background'})
-	{
-		open(BG, ">/httpd/html/urlfilter/background.jpg");
-		flock BG,2;
-		print BG $filtersettings{'BACKGROUND'};
-		close BG;
-	}
-
 	if ($filtersettings{'ACTION'} eq $tr{'urlfilter upload blacklist'})
 	{
 		open(BL, ">${swroot}/urlfilter/blacklists.tar.gz");
@@ -225,13 +242,16 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		print BL $filtersettings{'UPDATEFILE'};
 		close BL;
 	
-		if (!(-d "${swroot}/urlfilter/update")) { mkdir("${swroot}/urlfilter/update"); }
+		if (!(-d "${swroot}/urlfilter/update"))
+		{
+			mkdir("${swroot}/urlfilter/update");
+		}
 
 		my $exitcode = system("/usr/bin/tar --no-same-owner -xzf ${swroot}/urlfilter/blacklists.tar.gz -C ${swroot}/urlfilter/update");
 		
 		if ($exitcode > 0)
 		{
-			$errormessage = $tr{'urlfilter tar error'};
+			$errormessage .= $tr{'urlfilter tar error'};
 		} else {
 
 			if (-d "${swroot}/urlfilter/update/category")
@@ -246,7 +266,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 
 			if (!(-d "${swroot}/urlfilter/update/blacklists"))
 			{
-				$errormessage = $tr{'urlfilter invalid content'};
+				$errormessage .= $tr{'urlfilter invalid content'};
 			} else {
 				system("cp -r ${swroot}/urlfilter/update/blacklists/* $dbdir");
 
@@ -260,8 +280,14 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 				system("logger -t installpackage[urlfilter] \"URL filter blacklist - Blacklist update from local source completed\"");
 			}
 		}
-		if (-d "${swroot}/urlfilter/update") { system("rm -rf ${swroot}/urlfilter/update"); }
-		if (-e "${swroot}/urlfilter/blacklists.tar.gz") { unlink("${swroot}/urlfilter/blacklists.tar.gz"); }
+		if (-d "${swroot}/urlfilter/update")
+		{
+			system("rm -rf ${swroot}/urlfilter/update");
+		}
+		if (-e "${swroot}/urlfilter/blacklists.tar.gz")
+		{
+			unlink("${swroot}/urlfilter/blacklists.tar.gz");
+		}
 		if ($errormessage) { goto ERROR; }
 	}
 	
@@ -270,7 +296,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		$blistbackup = ($filtersettings{'ENABLE_FULLBACKUP'} eq 'on') ? "blacklists" : "blacklists/custom";
 		if (system("/usr/bin/tar -C ${swroot}/urlfilter -czf ${swroot}/urlfilter/backup.tar.gz settings timeconst userquota autoupdate $blistbackup"))
 		{
-			$errormessage = $tr{'urlfilter backup error'};
+			$errormessage .= $tr{'urlfilter backup error'};
 			goto ERROR;
 		}
 		else
@@ -285,7 +311,10 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 			while (<FILE>) { print; }
 			close (FILE);
 
-			if (-e "${swroot}/urlfilter/backup.tar.gz") { unlink("${swroot}/urlfilter/backup.tar.gz"); }
+			if (-e "${swroot}/urlfilter/backup.tar.gz")
+			{
+				unlink("${swroot}/urlfilter/backup.tar.gz");
+			}
 			exit;
 		}
 	}
@@ -297,16 +326,19 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		print BU $filtersettings{'UPDATEFILE'};
 		close BU;
 
-		if (!(-d "${swroot}/urlfilter/restore")) { mkdir("${swroot}/urlfilter/restore"); }
+		if (!(-d "${swroot}/urlfilter/restore"))
+		{
+			mkdir("${swroot}/urlfilter/restore");
+		}
 
 		my $exitcode = system("/usr/bin/tar --no-same-owner --preserve-permissions -xzf ${swroot}/urlfilter/backup.tar.gz -C ${swroot}/urlfilter/restore");
 		if ($exitcode > 0)
 		{
-			$errormessage = $tr{'urlfilter tar error'};
+			$errormessage .= $tr{'urlfilter tar error'};
 		} else {
 			if (!(-e "${swroot}/urlfilter/restore/settings"))
 			{
-				$errormessage = $tr{'urlfilter invalid restore file'};
+				$errormessage .= $tr{'urlfilter invalid restore file'};
 			} else {
 				system("cp -rp ${swroot}/urlfilter/restore/* ${swroot}/urlfilter/");
 				&readblockcategories;
@@ -317,8 +349,14 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 			}
 		}
 
-		if (-e "${swroot}/urlfilter/backup.tar.gz") { unlink("${swroot}/urlfilter/backup.tar.gz"); }
-		if (-d "${swroot}/urlfilter/restore") { system("rm -rf ${swroot}/urlfilter/restore"); }
+		if (-e "${swroot}/urlfilter/backup.tar.gz")
+		{
+			unlink("${swroot}/urlfilter/backup.tar.gz");
+		}
+		if (-d "${swroot}/urlfilter/restore")
+		{
+			system("rm -rf ${swroot}/urlfilter/restore");
+		}
 		if ($errormessage) { goto ERROR; }
 	}
 
@@ -332,12 +370,12 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 	{
 		if ((!($proxysettings{'ENABLE'} eq 'on')) && (!($proxysettings{'ENABLE_PURPLE'} eq 'on')))
 		{
-			$errormessage = $tr{'urlfilter web proxy service required'};
+			$errormessage .= $tr{'urlfilter web proxy service required'};
 			goto ERROR;
 		}
 		if (!($proxysettings{'ENABLE_FILTER'} eq 'on'))
 		{
-			$errormessage = $tr{'urlfilter not enabled'};
+			$errormessage .= $tr{'urlfilter not enabled'};
 			goto ERROR;
 		}
 
@@ -346,10 +384,22 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 
 		system("chown -R nobody.nobody $dbdir");
 
-		if (-e "$dbdir/custom/allowed/domains.db") { unlink("$dbdir/custom/allowed/domains.db"); }
-		if (-e "$dbdir/custom/allowed/urls.db")    { unlink("$dbdir/custom/allowed/urls.db"); }
-		if (-e "$dbdir/custom/blocked/domains.db") { unlink("$dbdir/custom/blocked/domains.db"); }
-		if (-e "$dbdir/custom/blocked/urls.db")    { unlink("$dbdir/custom/blocked/urls.db"); }
+		if (-e "$dbdir/custom/allowed/domains.db")
+		{
+			unlink("$dbdir/custom/allowed/domains.db");
+		}
+		if (-e "$dbdir/custom/allowed/urls.db")
+		{
+			unlink("$dbdir/custom/allowed/urls.db");
+		}
+		if (-e "$dbdir/custom/blocked/domains.db")
+		{
+			unlink("$dbdir/custom/blocked/domains.db");
+		}
+		if (-e "$dbdir/custom/blocked/urls.db")
+		{
+			unlink("$dbdir/custom/blocked/urls.db");
+		}
 
 		&setpermissions ($dbdir);
 
@@ -361,7 +411,7 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter save schedule'})
 {
 	if (($filtersettings{'UPDATE_SOURCE'} eq 'custom') && ($filtersettings{'CUSTOM_UPDATE_URL'} eq ''))
 	{
-		$errormessage = $tr{'urlfilter custom url required'};
+		$errormessage .= $tr{'urlfilter custom url required'};
 	} else {
 		open (FILE, ">$updconffile");
 		print FILE "ENABLE_AUTOUPDATE=$filtersettings{'ENABLE_AUTOUPDATE'}\n";
@@ -374,21 +424,24 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter save schedule'})
 		if (-e $upd_cron_wly) { unlink($upd_cron_wly); }
 		if (-e $upd_cron_mly) { unlink($upd_cron_mly); }
 
-		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'daily'))
+		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') &&
+		    ($filtersettings{'UPDATE_SCHEDULE'} eq 'daily'))
 		{
 			symlink("../bin/autoupdate.pl",$upd_cron_dly)
 		} else {
 			symlink("/bin/false",$upd_cron_dly)
 		}
 
-		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'weekly'))
+		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') &&
+		    ($filtersettings{'UPDATE_SCHEDULE'} eq 'weekly'))
 		{
 			symlink("../bin/autoupdate.pl",$upd_cron_wly)
 		} else {
 			symlink("/bin/false",$upd_cron_wly)
 		}
 
-		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'monthly'))
+		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') &&
+		    ($filtersettings{'UPDATE_SCHEDULE'} eq 'monthly'))
 		{
 			symlink("../bin/autoupdate.pl",$upd_cron_mly)
 		} else {
@@ -403,7 +456,7 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter update now'})
 	{
 		if ($filtersettings{'CUSTOM_UPDATE_URL'} eq '')
 		{
-			$errormessage = $tr{'urlfilter custom url required'};
+			$errormessage .= $tr{'urlfilter custom url required'};
 		} else {
 			system("${swroot}/urlfilter/bin/autoupdate.pl $filtersettings{'CUSTOM_UPDATE_URL'} &");
 		}
@@ -413,14 +466,19 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter update now'})
 }
 
 
-if (-e "${swroot}/urlfilter/settings") { &readhash("${swroot}/urlfilter/settings", \%filtersettings); }
+if (-e "${swroot}/urlfilter/settings")
+{
+	&readhash("${swroot}/urlfilter/settings", \%filtersettings);
+}
 
 &readcustomlists;
 
 ERROR:
 
-if ($errormessage) { $filtersettings{'VALID'} = 'no'; }
-
+if ($errormessage)
+{
+	$filtersettings{'VALID'} = 'no';
+}
 $checked{'ENABLE_CUSTOM_BLACKLIST'}{'off'} = '';
 $checked{'ENABLE_CUSTOM_BLACKLIST'}{'on'} = '';
 $checked{'ENABLE_CUSTOM_BLACKLIST'}{$filtersettings{'ENABLE_CUSTOM_BLACKLIST'}} = "checked='checked'";
@@ -485,7 +543,8 @@ $checked{'ENABLE_CATEGORY_LOG'}{'off'} = '';
 $checked{'ENABLE_CATEGORY_LOG'}{'on'} = '';
 $checked{'ENABLE_CATEGORY_LOG'}{$filtersettings{'ENABLE_CATEGORY_LOG'}} = "checked='checked'";
 
-foreach $category (@filtergroups) {
+foreach $category (@filtergroups)
+{
 	$checked{$category}{'off'} = '';
 	$checked{$category}{'on'} = '';
 	$checked{$category}{$filtersettings{$category}} = "checked='checked'";
@@ -499,9 +558,13 @@ foreach $category (@filtergroups) {
 
 &alertbox($errormessage);
 
-if (($urlfilterversion lt $latest) && (-e $sysupdflagfile)) { unlink($sysupdflagfile); }
+if (($urlfilterversion lt $latest) && (-e $sysupdflagfile))
+{
+	unlink($sysupdflagfile);
+}
 
-if (!-e $sysupdflagfile) {
+if (!-e $sysupdflagfile)
+{
 	print "<p>\n";
         &openbox("<font color='red'>$tr{'urlfilter update notification'}</font>");
         print "<class name='base'><br>$tr{'urlfilter update information'}\n";
@@ -509,7 +572,8 @@ if (!-e $sysupdflagfile) {
         &closebox();
 }
 
-if ($updatemessage) {
+if ($updatemessage)
+{
 	print "<p>\n";
         &openbox("$tr{'urlfilter update results'}:");
         print "<class name='base'><br>$updatemessage\n";
@@ -517,7 +581,8 @@ if ($updatemessage) {
         &closebox();
 }
 
-if ($restoremessage) {
+if ($restoremessage)
+{
 	print "<p>\n";
 	&openbox("$tr{'urlfilter restore results'}:");
 	print "<class name='base'><br>$restoremessage\n";
@@ -529,9 +594,10 @@ print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-
 
 &openbox("$tr{'urlfilter block categories'}:");
 
-print "<table width='100%'>";
+print "<table width='100%' cellspacing='0' cellpadding='0'>";
 
-if (@categories == 0) {
+if (@categories == 0)
+{
 print <<END
 <tr>
         <td><i>$tr{'urlfilter no categories'}</i></td>
@@ -543,19 +609,45 @@ END
 ;
 }
 
-for ($n=0; $n<=@categories; $n = $n + $i) {
-	for ($i=0; $i<=3; $i++) {
-		if ($i eq 0) { print "<tr>\n"; }
-		if (($n+$i) < @categories) {
-			print "<td width='15%' class='base'>@categories[$n+$i]:<\/td>\n";
-			print "<td width='10%'><input type='checkbox' name=@filtergroups[$n+$i] $checked{@filtergroups[$n+$i]}{'on'} /></td>\n";
+my $totalCats = @categories;
+my $totalCols = 4;
+my $totalRows = int($totalCats/$totalCols);
+$totalRows++ if (($totalCats % $totalCols) > 0);
+
+for ($n=0; $n<$totalRows; $n++)
+{
+	print "<tr>\n";
+	for ($i=0; $i<$totalCols; $i++)
+	{
+		if (($n + $totalRows*$i) < @categories)
+		{
+			print "<td width='20%' cellspacing=0 class='base'>@categories[$n + $totalRows*$i]:<\/td>\n";
+			print "<td width='3%'><input type='checkbox' name=@filtergroups[$n + $totalRows*$i] $checked{@filtergroups[$n + $totalRows*$i]}{'on'} /></td>\n";
 		}
-		if ($i eq 3) { print "<\/tr>\n"; }
 	}
+	print "<\/tr>\n";
 }
 
 print "</table>";
 
+&closebox();
+
+&openbox('URL Filter Control:');
+print <<END;
+<!-- <div align='center'> -->
+<table style='width:100%'>
+<tr>
+  <td style='width:50%; text-align:center'>
+    <input type='submit' name='ACTION' value='$tr{'save'}' />
+  </td>
+  <td style='width:50%; text-align:center'>
+    <input type='submit' name='ACTION' value='$tr{'urlfilter save and restart'}' />
+  </td>
+</tr>
+</table>
+</div>
+</form>
+END
 &closebox();
 
 &openbox("$tr{'urlfilter custom blacklist'}:");
@@ -589,7 +681,8 @@ print <<END
 END
 ;
 
-if (-e "$dbdir/custom/blocked/domains") {
+if (-e "$dbdir/custom/blocked/domains")
+{
 	open(FILE,"$dbdir/custom/blocked/domains");
 	@data = <FILE>;
 	close(FILE);
@@ -604,7 +697,8 @@ print <<END
 END
 ;
 
-if (-e "$dbdir/custom/blocked/urls") {
+if (-e "$dbdir/custom/blocked/urls")
+{
 	open(FILE,"$dbdir/custom/blocked/urls");
 	@data = <FILE>;
 	close(FILE);
@@ -650,7 +744,8 @@ print <<END
 END
 ;
 
-if (-e "$dbdir/custom/allowed/domains") {
+if (-e "$dbdir/custom/allowed/domains")
+{
 	open(FILE,"$dbdir/custom/allowed/domains");
 	@data = <FILE>;
 	close(FILE);
@@ -665,7 +760,8 @@ print <<END
 END
 ;
 
-if (-e "$dbdir/custom/allowed/urls") {
+if (-e "$dbdir/custom/allowed/urls")
+{
 	open(FILE,"$dbdir/custom/allowed/urls");
 	@data = <FILE>;
 	close(FILE);
@@ -706,7 +802,8 @@ print <<END
 END
 ;
 
-if (-e "$dbdir/custom/blocked/expressions") {
+if (-e "$dbdir/custom/blocked/expressions")
+{
         open(FILE,"$dbdir/custom/blocked/expressions");
         @data = <FILE>;
         close(FILE);
@@ -719,6 +816,24 @@ print <<END
 </table>
 END
 ;
+&closebox();
+
+&openbox('URL Filter Control:');
+print <<END;
+<!-- <div align='center'> -->
+<table style='width:100%'>
+<tr>
+  <td style='width:50%; text-align:center'>
+    <input type='submit' name='ACTION' value='$tr{'save'}' />
+  </td>
+  <td style='width:50%; text-align:center'>
+    <input type='submit' name='ACTION' value='$tr{'urlfilter save and restart'}' />
+  </td>
+</tr>
+</table>
+</div>
+</form>
+END
 &closebox();
 
 &openbox("$tr{'urlfilter file ext block'}:");
@@ -773,7 +888,10 @@ $filtersettings{'UNFILTERED_CLIENTS'} =~ s/\s+/ /g;
 
 @clients = split(/ /,$filtersettings{'UNFILTERED_CLIENTS'});
 undef $filtersettings{'UNFILTERED_CLIENTS'};
-foreach (@clients) { $filtersettings{'UNFILTERED_CLIENTS'} .= "$_\n"; }
+foreach (@clients)
+{
+	$filtersettings{'UNFILTERED_CLIENTS'} .= "$_\n";
+}
 
 print $filtersettings{'UNFILTERED_CLIENTS'};
 
@@ -793,7 +911,10 @@ $filtersettings{'BANNED_CLIENTS'} =~ s/\s+/ /g;
 
 @clients = split(/ /,$filtersettings{'BANNED_CLIENTS'});
 undef $filtersettings{'BANNED_CLIENTS'};
-foreach (@clients) { $filtersettings{'BANNED_CLIENTS'} .= "$_\n"; }
+foreach (@clients)
+{
+	$filtersettings{'BANNED_CLIENTS'} .= "$_\n";
+}
 
 print $filtersettings{'BANNED_CLIENTS'};
 
@@ -833,34 +954,6 @@ print <<END
         <td><input type='text' name='MSG_TEXT_3' value='$filtersettings{'MSG_TEXT_3'}' size='45' /></td>
 </tr>
 </table>
-<table width='100%'>
-  <tr>
-    <td colspan='3'>
-	    <p style='margin:1em 0 0 2em'>
-        $tr{'urlfilter background text'}:
-      </p>
-    </td>
-</tr>
-<tr>
-        <td width='25%' class='base'>$tr{'urlfilter enable jpeg'}:</td>
-        <td width='10%'>
-          <input type='checkbox' name='ENABLE_JPEG'
-					       $checked{'ENABLE_JPEG'}{'on'} />
-        </td>
-        <td><input type='file' name='BACKGROUND' size='40' /></td>
-</tr>
-<tr>
-        <td colspan='2'></td>
-        <td class='base'><b>$tr{'urlfilter background image'}</b></td>
-</tr>
-<tr>
-        <td colspan='2'></td>
-        <td>
-          <input type='submit' name='ACTION'
-                 value='$tr{'urlfilter upload background'}' />
-        </td>
-</tr>
-</table>
 END
 ;
 &closebox();
@@ -869,10 +962,10 @@ END
 print <<END
 <table width='100%'>
 <tr>
-	<td width='25%' class='base'>$tr{'urlfilter enable expression lists'}:</td>
-	<td width='12%'><input type='checkbox' name='ENABLE_EXPR_LISTS' $checked{'ENABLE_EXPR_LISTS'}{'on'} /></td>
-	<td width='25%' class='base'>$tr{'urlfilter enable log'}:</td>
-	<td><input type='checkbox' name='ENABLE_LOG' $checked{'ENABLE_LOG'}{'on'} /></td>
+	<td width='40%' class='base'>$tr{'urlfilter enable expression lists'}:</td>
+	<td width='3%'><input type='checkbox' name='ENABLE_EXPR_LISTS' $checked{'ENABLE_EXPR_LISTS'}{'on'} /></td>
+	<td width='40%' class='base'>$tr{'urlfilter enable log'}:</td>
+	<td width=><input type='checkbox' name='ENABLE_LOG' $checked{'ENABLE_LOG'}{'on'} /></td>
 </tr>
 <tr>
 	<td class='base'>$tr{'urlfilter safesearch'}:</td>
@@ -904,18 +997,23 @@ END
 
 &closebox();
 
-print <<END
-<div align='center'>
-<table width='60%'>
+&openbox('URL Filter Control:');
+print <<END;
+<!-- <div align='center'> -->
+<table style='width:100%'>
 <tr>
-        <td align='center'><input type='submit' name='ACTION' value='$tr{'save'}' /></td>
-        <td align='center'><input type='submit' name='ACTION' value='$tr{'urlfilter save and restart'}' /></td>
+  <td style='width:50%; text-align:center'>
+    <input type='submit' name='ACTION' value='$tr{'save'}' />
+  </td>
+  <td style='width:50%; text-align:center'>
+    <input type='submit' name='ACTION' value='$tr{'urlfilter save and restart'}' />
+  </td>
 </tr>
 </table>
 </div>
 </form>
 END
-;
+&closebox();
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>";
 &openbox("$tr{'urlfilter blacklist update'}:");
@@ -923,10 +1021,20 @@ print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-
 print <<END
 <table width='100%'>
 <tr>
-	<td>$tr{'urlfilter upload information'}<p>$tr{'urlfilter upload text'}:</td>
+  <td>
+    <p style='margin:1em'>$tr{'urlfilter upload information'}</p>
+    <p style='margin:1em'>$tr{'urlfilter upload text'}:</p>
+  </td>
 </tr>
+</table>
+<table width='100%'>
 <tr>
-	<td><input type='file' name='UPDATEFILE' size='40' /> &nbsp; <input type='submit' name='ACTION' value='$tr{'urlfilter upload blacklist'}' /></td>
+  <td style='width:50%; text-align:center'>
+    <input type='file' name='UPDATEFILE' />
+  </td>
+  <td style='width:50%; text-align:center'>
+    <input type='submit' name='ACTION' value='$tr{'urlfilter upload blacklist'}' />
+  </td>
 </tr>
 </table>
 END
@@ -947,7 +1055,10 @@ END
 $updatesettings{'UPDATE_SCHEDULE'} = 'monthly';
 $updatesettings{'CUSTOM_UPDATE_URL'} = '';
 
-if (-e "$updconffile") { &readhash("$updconffile", \%updatesettings); }
+if (-e "$updconffile")
+{
+	&readhash("$updconffile", \%updatesettings);
+}
 
 $checked{'ENABLE_AUTOUPDATE'}{'off'} = '';
 $checked{'ENABLE_AUTOUPDATE'}{'on'} = '';
@@ -959,14 +1070,22 @@ $selected{'UPDATE_SOURCE'}{$updatesettings{'UPDATE_SOURCE'}} = "selected='select
 
 if (-e "$updflagfile")
 {
-$blacklistage = int(-M "$updflagfile");
-print "<tr><td colspan='4'><b>[</b> <small><i>$tr{'urlfilter blacklist age 1'} <b>$blacklistage</b> $tr{'urlfilter blacklist age 2'}</i></small> <b>]</b></td></tr>";
+	$blacklistage = int(-M "$updflagfile");
+	print <<END;
+<tr>
+  <td colspan='4'>
+    <p style='margin:0 0 1em 1em'>
+      <b>[</b> <small><i>$tr{'urlfilter blacklist age 1'} <b>$blacklistage</b> $tr{'urlfilter blacklist age 2'}</i></small> <b>]</b>
+    </p>
+  </td>
+</tr>
+END
 }
 
 print <<END
 <tr>
 	<td width='25%' class='base'>$tr{'urlfilter enable automatic blacklist update'}:</td>
-	<td width='75%'><input type='checkbox' name='ENABLE_AUTOUPDATE' $checked{'ENABLE_AUTOUPDATE'}{'on'} /></td>
+	<td width='65%'><input type='checkbox' name='ENABLE_AUTOUPDATE' $checked{'ENABLE_AUTOUPDATE'}{'on'} /></td>
 </tr>
 <tr>
 	<td class='base'>$tr{'urlfilter automatic update schedule'}:</td>
@@ -985,7 +1104,8 @@ print <<END
 END
 ;
 
-foreach (@source_urllist) {
+foreach (@source_urllist)
+{
 	chomp;
 	$source_name = substr($_,0,rindex($_,","));
 	$source_url = substr($_,index($_,",")+1);
@@ -999,34 +1119,17 @@ print <<END
 </tr>
 <tr>
 	<td class='base'>$tr{'urlfilter custom url'}:</td>
-	<td><input type='text' name='CUSTOM_UPDATE_URL' value='$updatesettings{'CUSTOM_UPDATE_URL'}' size='72' /></td>
+	<td><input type='text' name='CUSTOM_UPDATE_URL' value='$updatesettings{'CUSTOM_UPDATE_URL'}' size='65' /></td>
 </tr>
 </table>
 <table width='100%'>
 <tr>
-	<td align='center'><input type='submit' name='ACTION' value='$tr{'urlfilter save schedule'}'>&nbsp;&nbsp;&nbsp;<input type='submit' name='ACTION' value='$tr{'urlfilter update now'}'></td>
-</tr>
-</table>
-END
-;
-
-&closebox();
-
-print "</form>";
-
-print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
-&openbox("$tr{'urlfilter backup settings'}:");
-
-print <<END
-<table width='100%'>
-<tr>
-	 <td width='25%' class='base'>$tr{'urlfilter enable full backup'}:</td>
-        <td width='12%'><input type='checkbox' name='ENABLE_FULLBACKUP' $checked{'ENABLE_FULLBACKUP'}{'on'} /></td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-</tr>
-<tr>
-	<td colspan='4' align='center'><input type='submit' name='ACTION' value='$tr{'urlfilter backup'}' /></td>
+  <td style='text-align:center; width:50%'>
+    <input type='submit' name='ACTION' value='$tr{'urlfilter save schedule'}'>
+  </td>
+  <td style='text-align:center; width:50%'>
+    <input type='submit' name='ACTION' value='$tr{'urlfilter update now'}'>
+  </td>
 </tr>
 </table>
 END
@@ -1037,16 +1140,32 @@ END
 print "</form>";
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>";
-
-&openbox("$tr{'urlfilter restore settings'}:");
+&openbox("Backup and Restore Settings:");
 
 print <<END
-<table width='100%'>
+<table style='margin-top:1em; width:100%'>
 <tr>
-	<td>$tr{'urlfilter restore text'}:</td>
+  <td width='25%' class='base'>$tr{'urlfilter enable full backup'}:</td>
+  <td width='25%'><input type='checkbox' name='ENABLE_FULLBACKUP' $checked{'ENABLE_FULLBACKUP'}{'on'} /></td>
+  <td colspan='2' style='text-align:center; width:50%'><input type='submit' name='ACTION' value='$tr{'urlfilter backup'}' /></td>
 </tr>
 <tr>
-	<td align='center'><input type='file' name='UPDATEFILE' size='40' /> &nbsp; <input type='submit' name='ACTION' value='$tr{'urlfilter restore'}' /></td>
+  <td colspan='4' style='height:1em'</td>
+</tr>
+<tr>
+  <td colspan='4'>
+    <p style='margin:0 0 0 1em'>
+      Choose archive to restore:
+    </p>
+  </td>
+</tr>
+<tr>
+	<td colspan='2'style='text-align:center'>
+          <input type='file' name='UPDATEFILE' />
+        </td>
+        <td colspan='2' style='text-align:center'>
+          <input type='submit' name='ACTION' value='$tr{'urlfilter restore'}' />
+        </td>
 </tr>
 </table>
 END
@@ -1058,12 +1177,17 @@ print <<END
 </form>
 <table width='100%'>
 <tr>
-	<td><img src='/ui/img/blob.gif' align='top' alt='*' />&nbsp;
-	<font class='base'>$tr{'this field may be blank'}</font>
-	</td>
-	<td align='right'>
-	<sup><small><a href='http://www.urlfilter.net' target='_blank'>URL filter $urlfilterversion</a></small></sup>
-	</td>
+  <td>
+    <p style='margin:0 0 0 1em'>
+      <img src='/ui/img/blob.gif' align='top' alt='*' />&nbsp;$tr{'this field may be blank'}
+    </p>
+  </td>
+  <td align='right'>
+    <p style='font-size:8pt; margin:0 1em 0 0'>
+      <i>Adapted from <a href='http://www.urlfilter.net'
+                      target='_blank'>URL filter $urlfilterversion</a></i>
+    </p>
+  </td>
 </tr>
 </table>
 <br>
@@ -1092,7 +1216,10 @@ sub check4updates
 		{
 			print $remote "GET http://www.urlfilter.net/version/smoothwall3/latest HTTP/1.0\n";
 			print $remote "User-Agent: Mozilla/4.0 (compatible; SmoothWall Express 3.0; urlfilter)\n\n";
-			while (<$remote>) { push(@response,$_); }
+			while (<$remote>)
+			{
+				push(@response,$_);
+			}
 			close $remote;
 			if ($response[0] =~ /^HTTP\/\d+\.\d+\s200\sOK\s*$/)
 			{
@@ -1148,7 +1275,10 @@ sub readblockcategories
 
 	&getblockcategory ($dbdir);
 
-	foreach (@categories) { $_ = substr($_,length($dbdir)+1); }
+	foreach (@categories)
+	{
+		$_ = substr($_,length($dbdir)+1);
+	}
 
 	@filtergroups = @categories;
 
@@ -1166,11 +1296,15 @@ sub getblockcategory
 {
 	foreach $category (<$_[0]/*>)
 	{
+
 		if (-d $category)
 		{
 			if ((-e "$category/domains") || (-e "$category/urls"))
 			{
-				unless ($category =~ /\bcustom\b/) { push(@categories,$category); }
+				unless ($category =~ /\bcustom\b/)
+				{
+					push(@categories,$category);
+				}
 			}
 			$category =~ s/ /\\ /g;
 			&getblockcategory ($category);
@@ -1185,34 +1319,49 @@ sub readcustomlists
 	if (-e "$dbdir/custom/blocked/domains") {
 		open(FILE,"$dbdir/custom/blocked/domains");
 		delete $filtersettings{'CUSTOM_BLACK_DOMAINS'};
-		while (<FILE>) { $filtersettings{'CUSTOM_BLACK_DOMAINS'} .= $_ };
+		while (<FILE>)
+		{
+			$filtersettings{'CUSTOM_BLACK_DOMAINS'} .= $_
+		}
 		close(FILE);
 	}
 
 	if (-e "$dbdir/custom/blocked/urls") {
 		open(FILE,"$dbdir/custom/blocked/urls");
 		delete $filtersettings{'CUSTOM_BLACK_URLS'};
-		while (<FILE>) { $filtersettings{'CUSTOM_BLACK_URLS'} .= $_ };
+		while (<FILE>)
+		{
+			$filtersettings{'CUSTOM_BLACK_URLS'} .= $_
+		}
 		close(FILE);
 	}
 
 	if (-e "$dbdir/custom/blocked/expressions") {
 		open(FILE,"$dbdir/custom/blocked/expressions");
 		delete $filtersettings{'CUSTOM_EXPRESSIONS'};
-		while (<FILE>) { $filtersettings{'CUSTOM_EXPRESSIONS'} .= $_ };
+		while (<FILE>)
+		{
+			$filtersettings{'CUSTOM_EXPRESSIONS'} .= $_
+		}
 		close(FILE);
 	}
 
 	if (-e "$dbdir/custom/allowed/domains") {
 		open(FILE,"$dbdir/custom/allowed/domains");
 		delete $filtersettings{'CUSTOM_WHITE_DOMAINS'};
-		while (<FILE>) { $filtersettings{'CUSTOM_WHITE_DOMAINS'} .= $_ };
+		while (<FILE>)
+		{
+			$filtersettings{'CUSTOM_WHITE_DOMAINS'} .= $_
+		}
 		close(FILE);
 	}
 	if (-e "$dbdir/custom/allowed/urls") {
 		open(FILE,"$dbdir/custom/allowed/urls");
 		delete $filtersettings{'CUSTOM_WHITE_URLS'};
-		while (<FILE>) { $filtersettings{'CUSTOM_WHITE_URLS'} .= $_ };
+		while (<FILE>)
+		{
+			$filtersettings{'CUSTOM_WHITE_URLS'} .= $_
+		}
 		close(FILE);
 	}
 }
@@ -1246,7 +1395,10 @@ sub aggregatedconstraints
 				@tmp2 = split(/\,/);
 				if (($tmp1[15] eq 'on') && ($tmp2[15] eq 'on'))
 				{
-					if (($tmp1[0] eq $tmp2[0]) && ($tmp1[12] eq $tmp2[12]) && ($tmp1[13] eq $tmp2[13]) && ($tmp1[14] eq $tmp2[14]))
+					if (($tmp1[0] eq $tmp2[0]) &&
+					    ($tmp1[12] eq $tmp2[12]) &&
+					    ($tmp1[13] eq $tmp2[13]) &&
+					    ($tmp1[14] eq $tmp2[14]))
 					{
 						$aggregated = 1;
 						$tmp2[16] .= "    weekly ";
@@ -1292,12 +1444,19 @@ sub setpermissions
 
 	foreach $category (<$bldir/*>)
 	{
-        	 if (-d $category){
+        	 if (-d $category)
+		 {
 			system("chmod 755 $category &> /dev/null");
 			foreach $blacklist (<$category/*>)
 			{
-         			if (-f $blacklist) { system("chmod 644 $blacklist &> /dev/null"); }
-         			if (-d $blacklist) { system("chmod 755 $blacklist &> /dev/null"); }
+         			if (-f $blacklist)
+				{
+					system("chmod 644 $blacklist &> /dev/null");
+				}
+         			if (-d $blacklist)
+				{
+					system("chmod 755 $blacklist &> /dev/null");
+				}
 			}
         	 	system("chmod 666 $category/*.db &> /dev/null");
 			&setpermissions ($category);
@@ -1355,9 +1514,18 @@ sub writeconfigfile
 	}
 	close(FILE);
 	open(FILE, ">/$dbdir/custom/blocked/files");
-	if ($filtersettings{'BLOCK_EXECUTABLES'} eq 'on') { print FILE "$executables\n"; }
-	if ($filtersettings{'BLOCK_AUDIO-VIDEO'} eq 'on') { print FILE "$audiovideo\n"; }
-	if ($filtersettings{'BLOCK_ARCHIVES'} eq 'on') { print FILE "$archives\n"; }
+	if ($filtersettings{'BLOCK_EXECUTABLES'} eq 'on')
+	{
+		print FILE "$executables\n";
+	}
+	if ($filtersettings{'BLOCK_AUDIO-VIDEO'} eq 'on')
+	{
+		print FILE "$audiovideo\n";
+	}
+	if ($filtersettings{'BLOCK_ARCHIVES'} eq 'on')
+	{
+		print FILE "$archives\n";
+	}
 	close(FILE);
 	open(FILE, ">/$dbdir/custom/allowed/domains");
 	@temp = split(/\n/,$filtersettings{'CUSTOM_WHITE_DOMAINS'});
@@ -1380,18 +1548,35 @@ sub writeconfigfile
 
 	if ($filtersettings{'REDIRECT_PAGE'} eq '')
 	{
-		if (($filtersettings{'SHOW_CATEGORY'} eq 'on') || ($filtersettings{'SHOW_URL'} eq 'on') || ($filtersettings{'SHOW_IP'} eq 'on')) {
-			if ($filtersettings{'SHOW_CATEGORY'} eq 'on') { $redirect .= "&category=%t"; }
-			if ($filtersettings{'SHOW_URL'} eq 'on') { $redirect .= "&url=%u"; }
-			if ($filtersettings{'SHOW_IP'} eq 'on') { $redirect .= "&ip=%a"; }
+		if (($filtersettings{'SHOW_CATEGORY'} eq 'on') ||
+		    ($filtersettings{'SHOW_URL'} eq 'on') ||
+		    ($filtersettings{'SHOW_IP'} eq 'on'))
+		{
+			if ($filtersettings{'SHOW_CATEGORY'} eq 'on')
+			{
+				$redirect .= "&category=%t";
+			}
+			if ($filtersettings{'SHOW_URL'} eq 'on')
+			{
+				$redirect .= "&url=%u";
+			}
+			if ($filtersettings{'SHOW_IP'} eq 'on')
+			{
+				$redirect .= "&ip=%a";
+			}
 			$redirect  =~ s/^&/?/;
 			$redirect = "http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi".$redirect; 
 		} else {
 			$redirect="http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi";
 		}
-	} else { $redirect=$filtersettings{'REDIRECT_PAGE'}; }
+	} else {
+		$redirect=$filtersettings{'REDIRECT_PAGE'};
+	}
 
-	if ($filtersettings{'ENABLE_DNSERROR'} eq 'on') { $redirect  = "302:http://0.0.0.0"; }
+	if ($filtersettings{'ENABLE_DNSERROR'} eq 'on')
+	{
+		$redirect  = "302:http://0.0.0.0";
+	}
 
 	undef $defaultrule;
 
@@ -1409,7 +1594,8 @@ sub writeconfigfile
 		{
 			$defaultrule .= "!in-addr ";
 		}
-		for ($i=0; $i<=@filtergroups; $i++) {
+		for ($i=0; $i<=@filtergroups; $i++)
+		{
 			if ($filtersettings{@filtergroups[$i]} eq 'on')
 			{
 				$defaultrule .= "!@categories[$i] ";
@@ -1434,7 +1620,8 @@ sub writeconfigfile
 
 	$defaultrule =~ s/\//_/g;
 
-	open(FILE, ">${swroot}/urlfilter/squidGuard.conf") or die "Unable to write squidGuard.conf file";
+	open(FILE, ">${swroot}/urlfilter/squidGuard.conf")
+		or die "Unable to write squidGuard.conf file";
 	flock(FILE, 2);
 
 	print FILE "logdir /var/log/squidGuard\n";
@@ -1450,7 +1637,8 @@ sub writeconfigfile
 		}
 	}
 
-	if ((($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) || ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
+	if ((($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) ||
+	    ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
 	{
 		print FILE "rewrite rew-rule-1 {\n";
 
@@ -1475,7 +1663,9 @@ sub writeconfigfile
 
 		print FILE "}\n\n";
 
-		if ((!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) && ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on')) {
+		if ((!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) &&
+		    ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
+		{
 			print FILE "rewrite rew-rule-2 {\n";
 			if (($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles))
 			{
@@ -1491,12 +1681,14 @@ sub writeconfigfile
 		}
 	}
 
-	if (!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) {
+	if (!($filtersettings{'UNFILTERED_CLIENTS'} eq ''))
+	{
 		print FILE "src unfiltered {\n";
 		print FILE "    ip $filtersettings{'UNFILTERED_CLIENTS'}\n";
 		print FILE "}\n\n";
 	}
-	if (!($filtersettings{'BANNED_CLIENTS'} eq '')) {
+	if (!($filtersettings{'BANNED_CLIENTS'} eq ''))
+	{
 		print FILE "src banned {\n";
 		print FILE "    ip $filtersettings{'BANNED_CLIENTS'}\n";
 		if ($filtersettings{'ENABLE_LOG'} eq 'on')
@@ -1600,20 +1792,26 @@ sub writeconfigfile
 		}
 	}
 
-	foreach $category (@categories) {
+	foreach $category (@categories)
+	{
 		$blacklist = $category;
 		$category =~ s/\//_/g;
 		print FILE "dest $category {\n";
-		if (-e "$dbdir/$blacklist/domains") {
+		if (-e "$dbdir/$blacklist/domains")
+		{
 			print FILE "    domainlist     $blacklist\/domains\n";
 		}
-		if (-e "$dbdir/$blacklist/urls") {
+		if (-e "$dbdir/$blacklist/urls")
+		{
 			print FILE "    urllist        $blacklist\/urls\n";
 		}
-		if ((-e "$dbdir/$blacklist/expressions") && ($filtersettings{'ENABLE_EXPR_LISTS'} eq 'on')) {
+		if ((-e "$dbdir/$blacklist/expressions") &&
+		    ($filtersettings{'ENABLE_EXPR_LISTS'} eq 'on'))
+		{
 			print FILE "    expressionlist $blacklist\/expressions\n";
 		}
-		if ((($category eq 'ads') || ($category eq 'adv')) && ($filtersettings{'ENABLE_EMPTY_ADS'} eq 'on'))
+		if ((($category eq 'ads') || ($category eq 'adv')) &&
+		    ($filtersettings{'ENABLE_EMPTY_ADS'} eq 'on'))
 		{
 			print FILE "    redirect       http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/urlfilter/1x1.gif\n";
 		}
@@ -1676,7 +1874,8 @@ sub writeconfigfile
 	print FILE "}\n\n";
 
 	print FILE "acl {\n";
-	if (!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) {
+	if (!($filtersettings{'UNFILTERED_CLIENTS'} eq ''))
+	{
 		print FILE "    unfiltered {\n";
 		print FILE "        pass all\n";
 		if ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on')
@@ -1685,7 +1884,8 @@ sub writeconfigfile
 		}
 		print FILE "    }\n\n";
 	}
-	if (!($filtersettings{'BANNED_CLIENTS'} eq '')) {
+	if (!($filtersettings{'BANNED_CLIENTS'} eq ''))
+	{
 		print FILE "    banned {\n";
 		print FILE "        pass ";
 		if (($filtersettings{'ENABLE_CUSTOM_WHITELIST'} eq 'on') && ($filtersettings{'ENABLE_GLOBAL_WHITELIST'} eq 'on'))
@@ -1714,12 +1914,16 @@ sub writeconfigfile
 				$qredirect =~ s/\%t/\%q\%20-\%20\%i/;
 				print FILE "    quota-$idx {\n";
 				print FILE "        pass ";
-				if (($filtersettings{'ENABLE_CUSTOM_WHITELIST'} eq 'on') && ($filtersettings{'ENABLE_GLOBAL_WHITELIST'} eq 'on'))
+				if (($filtersettings{'ENABLE_CUSTOM_WHITELIST'} eq 'on') &&
+				    ($filtersettings{'ENABLE_GLOBAL_WHITELIST'} eq 'on'))
 				{
 					print FILE "custom-allowed ";
 				}
 				print FILE "none\n";
-				unless ($redirect eq $qredirect) { print FILE "        redirect $qredirect\n"; }
+				unless ($redirect eq $qredirect)
+				{
+					print FILE "        redirect $qredirect\n";
+				}
 				print FILE "    }\n\n";
 			}
 		}
@@ -1744,8 +1948,10 @@ sub writeconfigfile
 				{
 					if ($tc[14] eq 'block')
 					{
-						if ((@ec == 1) && ($ec[0] eq 'any')) {
-							if (($filtersettings{'ENABLE_CUSTOM_WHITELIST'} eq 'on') && ($filtersettings{'ENABLE_GLOBAL_WHITELIST'} eq 'on'))
+						if ((@ec == 1) && ($ec[0] eq 'any'))
+						{
+							if (($filtersettings{'ENABLE_CUSTOM_WHITELIST'} eq 'on') &&
+							    ($filtersettings{'ENABLE_GLOBAL_WHITELIST'} eq 'on'))
 							{
 								print FILE "custom-allowed ";
 							}
@@ -1764,11 +1970,16 @@ sub writeconfigfile
 					if ($tc[14] eq 'block')
 					{
 						$tcrule = $defaultrule;
-						if ($filtersettings{'ENABLE_CUSTOM_WHITELIST'} eq 'on') {
+						if ($filtersettings{'ENABLE_CUSTOM_WHITELIST'} eq 'on')
+						{
 							$tcrule =~ s/custom-allowed //;
-							print FILE "custom-allowed " unless ((@ec == 1) && ($ec[0] eq 'any') && ($filtersettings{'ENABLE_GLOBAL_WHITELIST'} eq 'off'));
+							print FILE "custom-allowed "
+								unless ((@ec == 1) &&
+									($ec[0] eq 'any') &&
+									($filtersettings{'ENABLE_GLOBAL_WHITELIST'} eq 'off'));
 						}
-						if ((@ec == 1) && ($ec[0] eq 'any')) {
+						if ((@ec == 1) && ($ec[0] eq 'any'))
+						{
 							print FILE "none";
 						} else {
 							foreach (@ec)
@@ -1811,7 +2022,8 @@ sub writeconfigfile
 			print FILE "        logfile".$ident." urlfilter.log\n";
 		}
 	}
-	if ((($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) || ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
+	if ((($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) ||
+	    ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
 	{
 		print FILE "        rewrite rew-rule-1\n";
 	}

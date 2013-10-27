@@ -17,13 +17,12 @@ my %mainsettings;
 &readhash("${swroot}/proxy/settings", \%proxysettings);
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 &readhash("${swroot}/main/settings", \%mainsettings);
-# Start of modification by URLfilter
+
 my %filtersettings;
 $filtersettings{'CHILDREN'} = '5';
 if (-e "${swroot}/urlfilter/settings") {
 	&readhash("${swroot}/urlfilter/settings", \%filtersettings);
 }
-# End of modification by URLfilter
 
 open(FILE, ">/${swroot}/proxy/squid.conf") or die "Unable to write squid.conf file";
 flock(FILE, 2);
@@ -144,6 +143,7 @@ if ($remotehost ne '')
 	print FILE "never_direct allow all\n";
 }
 
+# If URLfilter is active...
 if ($proxysettings{'ENABLE_FILTER'} eq 'on')
 {
 	print FILE <<END;

@@ -28,8 +28,8 @@ OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
 
 TARGET_DIR = /build/target
 
-ADV_PKGS = gdbm GeoIP Python libmnl db openldap gperf attr \
-	   subversion ntop iperf squidGuard
+ADV_PKGS = gdbm GeoIP Python libmnl openldap gperf attr \
+	   subversion ntop iperf
 KVM_PKGS = samba
 
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
