@@ -45,11 +45,6 @@ if ($category eq '') { $category = '&nbsp;'; } else { $category = '['.$category.
 
 &showhttpheaders();
 
-#print "Pragma: no-cache\n";
-#print "Cache-control: no-cache\n";
-#print "Connection: close\n";
-#print "Content-type: text/html\n\n";
-#
 print <<END
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
