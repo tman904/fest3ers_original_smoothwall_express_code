@@ -19,7 +19,7 @@ CONFIG_OPTS = --prefix=$(PKG_DIR)
 CONFIGURE = yes
 
 configure: patch
-	@true;
+	sed -i -e 's/^\(CFLAGS :=.*\)/\1 $(CFLAGS)/' $(DIR)/Make.Rules
 
 INSTALL = yes
 install: compile

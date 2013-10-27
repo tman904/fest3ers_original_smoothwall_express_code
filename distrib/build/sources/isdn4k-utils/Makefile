@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = isdn4k-utils
-VERSION = CVS-2007-01-06
+VERSION = CVS-2007-11-27
 
 BASE_URL = ftp://ftp.isdn4linux.de/pub/isdn4linux/CVS-Snapshots/
 
@@ -18,5 +18,6 @@ CONFIGURE = yes
 configure: patch
 	@cp -avR config $(DIR)/.config
 	@make -C $(DIR) subconfig
+	sed -i -e 's/\(\$(MAKE) -C \$\$i all\)/CFLAGS="$(CFLAGS)" \1/' $(DIR)/Makefile
 
 include ../Makefile.rules

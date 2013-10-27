@@ -22,12 +22,13 @@ ifeq ($(BUILD_PHASE), Stage_1)
 PATCH_FILE1 = glibc-2.14.1-gcc_fix-1.patch
 PATCH_FILE2 = glibc-2.14.1-cpuid-1.patch
 
-CONFIG_OPTS = --prefix=$(TOOLS_DIR) \
-	      --host=$(SWE_TGT) \
+CONFIG_OPTS = \
 	      --build=$$(../$(PACKAGE)-$(VERSION)/scripts/config.guess) \
+	      --host=$(SWE_TGT) \
+	      --prefix=$(TOOLS_DIR) \
 	      --disable-profile \
 	      --enable-add-ons \
-	      --enable-kernel=2.6.25  \
+	      --enable-kernel=2.6.32  \
 	      --with-headers=$(TOOLS_DIR)/include \
 	      libc_cv_forced_unwind=yes \
 	      libc_cv_ctors_header=yes \
@@ -38,8 +39,12 @@ PREPARE = yes
 $(DIR)/: download
 	tar -xvf $(DOWNLOADS_DIR)/$(DIR)$(EXTENSION)
 	mkdir -p $(COMPILE_DIR)
-ifeq ($(mARCH), i686)
-	echo "CFLAGS += -march=i486 -mtune=native" > $(COMPILE_DIR)/configparms
+ifeq ($(mARCH),$(ARCH32))
+ifeq ($(mARCH),i386)
+	echo "CFLAGS += -march=i486 -mtune=generic" > $(COMPILE_DIR)/configparms
+else
+	echo "CFLAGS += -march=$(mARCH) -mtune=generic" > $(COMPILE_DIR)/configparms
+endif
 endif
 
 
@@ -70,7 +75,7 @@ PATCH_FILE4 = glibc-2.14-reinstall-nis-rpc-headers.patch
 
 
 CONFIG_OPTS = --prefix=/usr --disable-profile --enable-add-ons \
-	      --enable-kernel-2.6.25 --libexecdir=/usr/lib/glibc \
+	      --enable-kernel-2.6.32 --libexecdir=/usr/lib/glibc \
 	      --enable-obsolete-rpc
 
 DOWNLOAD = yes
@@ -93,8 +98,13 @@ $(DIR)/: download
 	  sed -i '195,213 s/PRIVATE_FUTEX/FUTEX_CLOCK_REALTIME/' \
 	    nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timed{rd,wr}lock.S
 	mkdir -p $(COMPILE_DIR)
-	cd $(COMPILE_DIR); \
-	  echo "CFLAGS += $(CFLAGSPLUS) -O3 -pipe" > configparms;
+ifeq ($(mARCH),$(ARCH32))
+ifeq ($(mARCH),i386)
+	echo "CFLAGS += -march=i486 -mtune=generic -O3 -pipe" > $(COMPILE_DIR)/configparms
+else
+	echo "CFLAGS += -march=$(mARCH) -mtune=generic -O3 -pipe" > $(COMPILE_DIR)/configparms
+endif
+endif
 
 COMPILE = yes
 INSTALL = yes

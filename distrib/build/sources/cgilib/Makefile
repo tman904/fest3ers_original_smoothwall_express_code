@@ -13,7 +13,8 @@ configure: $(DIR)/
 	@true
 
 compile: configure
-	@cd $(DIR) && $(MAKE) $(JOBS)
+	cd $(DIR); sed -i -e 's/^\(CFLAGS.*\)/\1 $(CFLAGS)/' Makefile
+	@cd $(DIR) && CFLAGS="$(CFLAGS)" $(MAKE) $(JOBS)
 
 install: compile
 	@mkdir -p $(PKG_ROOT)

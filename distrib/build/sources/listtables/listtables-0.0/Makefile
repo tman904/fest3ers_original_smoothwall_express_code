@@ -5,7 +5,7 @@
 # This code is distributed under the terms of the GPL v2.
 
 CC=gcc 
-CFLAGS=-O2 -Wall
+CFLAGS += -O2 -Wall
 
 COMPILE=$(CC) $(CFLAGS)
 

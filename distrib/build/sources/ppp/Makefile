@@ -18,8 +18,17 @@ INSTALL = yes
 
 COMPILE_FLAGS = -DHAVE_PATHS_H -DIPX_CHANGE -DHAVE_MMAP -D_PATH_VARRUN=\\\"/var/run\\\"
 
+
 compile: configure
-	cat $(DIR)/pppstats/Makefile.linux
+	cd $(DIR); \
+	  sed -i -e 's/^\(COPT.*\)/\1 $(CFLAGS)/' chat/Makefile; \
+	  sed -i -e 's/^\(COPT.*\)/\1 $(CFLAGS)/' pppd/Makefile; \
+	  sed -i -e 's/^\(COPT.*\)/\1 $(CFLAGS)/' pppd/plugins/Makefile; \
+	  sed -i -e 's/^\(CFLAGS\s*=.*\)/\1 $(CFLAGS)/' pppd/plugins/rp-pppoe/Makefile; \
+	  sed -i -e 's/^\(CFLAGS\s*=.*\)/\1 $(CFLAGS)/' pppd/plugins/pppoatm/Makefile; \
+	  sed -i -e 's/^\(CFLAGS\s*=.*\)/\1 $(CFLAGS)/' pppd/plugins/radius/Makefile; \
+	  sed -i -e 's/^\(CFLAGS.*\)/export \1 $(CFLAGS)/' pppstats/Makefile; \
+	  sed -i -e 's/^\(CFLAGS.*\)/export \1 $(CFLAGS)/' pppdump/Makefile
 	@make $(JOBS) -C $(DIR) COMPILE_FLAGS="$(COMPILE_FLAGS)"
 
 install: compile

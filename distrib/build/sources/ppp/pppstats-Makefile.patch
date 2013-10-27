@@ -9,13 +9,12 @@
  COPTS = -O
  COMPILE_FLAGS = -I../include
  LIBS =
-@@ -26,7 +26,8 @@
+@@ -26,7 +26,7 @@
  	$(INSTALL) -c -m 444 pppstats.8 $(MANDIR)
  
  pppstats: $(PPPSTATSRCS)
 -	$(CC) $(CFLAGS) -o pppstats pppstats.c $(LIBS)
-+	cat Makefile; pwd
-+	$(CC) -O -I../include -o pppstats pppstats.c $(LIBS)
++	$(CC) $(CFLAGS) -O -I../include -o pppstats pppstats.c $(LIBS)
  
  clean:
  	rm -f pppstats *~ #* core

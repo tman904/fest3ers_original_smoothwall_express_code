@@ -12,7 +12,7 @@ COMPILE_DIR = $(DIR)-compile
 
 ifeq ($(BUILD_PHASE), Stage_3)
 
-CONFIG_OPTS = --prefix=$(TOOLS_DIR)
+CONFIG_OPTS += --prefix=$(TOOLS_DIR) --enable-verbose-makecmds
 
 INSTALL = yes
 install: compile
@@ -24,7 +24,8 @@ endif
 
 ifeq ($(BUILD_PHASE), Final)
 
-CONFIG_OPTS = --prefix=$(PKG_DIR) --with-root-prefix="" --enable-elf-shlibs
+CONFIG_OPTS = --prefix=$(PKG_DIR) --with-root-prefix="" --enable-elf-shlibs \
+	      --enable-verbose-makecmds
 
 PATCH = yes
 

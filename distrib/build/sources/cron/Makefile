@@ -21,7 +21,7 @@ CONFIGURE = yes
 INSTALL = yes
 
 configure: patch
-	@true;
+	cd $(COMPILE_DIR); sed -i -e 's/^\(CFLAGS.*\)/\1 $(CFLAGS)/' Makefile
 
 install: compile
 	@mkdir -p $(PKG_ROOT)

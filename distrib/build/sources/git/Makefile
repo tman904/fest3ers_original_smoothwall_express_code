@@ -16,7 +16,7 @@ INSTALL = yes
 CLEAN = yes
 
 compile: configure
-	make $(JOBS) -C $(COMPILE_DIR) PREFIX=$(PKG_DIR)
+	make $(JOBS) -C $(COMPILE_DIR) PREFIX=$(PKG_DIR) V=1
 
 install: compile
 	@mkdir -p $(PKG_ROOT)

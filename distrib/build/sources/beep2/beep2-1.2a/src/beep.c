@@ -52,7 +52,7 @@ void output_beep_sound(param_t *beepbuf)
     }
     fprintf(dest,"\033[10;%d]\033[11;%d]\a\033[10]\033[11]",
 	    beepbuf[parsedline].freq, beepbuf[parsedline].length);
-#endif OSTYPE_BSD
+#endif // OSTYPE_BSD
     fflush(dest);
     
     if (beepbuf[parsedline].length) {

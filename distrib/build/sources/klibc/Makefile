@@ -20,7 +20,7 @@ DOWNLOAD = yes
 download:
 	@$(DL_CMD) $(BASE_URL)/$(TARBALL)$(EXTENSION) $(MD5)
 
-CONFIGURE = YES
+CONFIGURE = yes
 configure: patch
 	true
 
@@ -33,6 +33,7 @@ compile: configure
 	cd $(DIR); \
 	  make mrproper; \
 	  ln -sf ../../linux$(KERNEL_TYPE)/linux-$(KERNEL_VER) linux; \
+	  sed -i -e 's/^\(export HOSTCFLAGS.*\)/\1 $(CFLAGS)/' Makefile; \
 	  make $(JOBS)
 
 INSTALL = yes

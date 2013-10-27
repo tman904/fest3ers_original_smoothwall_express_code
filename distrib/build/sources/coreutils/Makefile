@@ -12,11 +12,13 @@ VERSION = 8.19
 BASE_URL = ftp://ftp.gnu.org/gnu/coreutils/
 EXTENSION = .tar.xz
 
+CONFIG_OPTS = --disable-silent-rules
+
 CONFIGURE = yes
 
 configure: patch
 	@cd $(COMPILE_DIR); \
-	  ./configure --prefix=$(PKG_DIR) --enable-install-program=hostname;
+	  ./configure --prefix=$(PKG_DIR) --enable-install-program=hostname $(CONFIG_OPTS);
 
 ifeq ($(BUILD_PHASE), Final)
 

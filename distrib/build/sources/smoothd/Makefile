@@ -43,6 +43,7 @@ install: compile
 	@install -D $(COMPILE_DIR)/syssip.so $(PKG_ROOT)/usr/lib/smoothd/syssip.so 
 	@install -D $(COMPILE_DIR)/sysclamav.so $(PKG_ROOT)/usr/lib/smoothd/sysclamav.so 
 	@install -D $(COMPILE_DIR)/systimedaccess.so $(PKG_ROOT)/usr/lib/smoothd/systimedaccess.so 
+	@install -D $(COMPILE_DIR)/syssquidguard.so $(PKG_ROOT)/usr/lib/smoothd/syssquidguard.so
 
 all: install
 	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .

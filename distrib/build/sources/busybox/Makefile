@@ -15,11 +15,15 @@ PKG_DIR = /opt/busybox
 PATCH_FILE1 = libbb.h.patch
 
 CONFIGURE = yes
+COMPILE = yes
 INSTALL = yes
 
 configure: patch
 	@cp -avR config $(COMPILE_DIR)/.config
 #	@$(MAKE) $(JOBS) -C $(DIR) oldconfig
+
+compile: configure
+	+$(MAKE) ${JOBS} -C $(COMPILE_DIR) V=1
 
 install: compile
 	@mkdir -p $(PKG_ROOT)

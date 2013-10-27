@@ -107,11 +107,10 @@ sub progress
 	my $log   = "$progress_store$file.log";
 	my $pid   = "$progress_store$file.pid";
 
-	unless( open ( $pid_file, "<$pid" ) )
-	{
-		if ( -e "$download_store$file" )
-		{
+	unless( open ( $pid_file, "<$pid" ) ){
+		if ( -e "$download_store$file" ){
 			# download is completed ...
+			print STDERR "Download is complete...\n";
 			return ( "", "100%", "-", "$download_store$file" );
 		}
 

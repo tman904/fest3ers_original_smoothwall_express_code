@@ -25,6 +25,7 @@ configure: patch
 	@sed -i '/^TARGETS/s@ arpd@@g' $(COMPILE_DIR)/misc/Makefile
 
 compile: configure
+	cd $(COMPILE_DIR); sed -i -e 's/^CCOPTS.*/CCOPTS = -O2 $(CFLAGS)/' Makefile
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR) KERNEL_INCLUDE=/usr/include $(PATHS)
 	ln -s $(DIR) $(PACKAGE)
 

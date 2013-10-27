@@ -19,7 +19,7 @@ COMPILE = yes
 INSTALL = yes
 
 configure: $(DIR)/
-	cd $(DIR); ./configure --prefix=$(TOOLS_DIR)
+	cd $(DIR); ./configure $(CONFIG_OPTS) --prefix=$(TOOLS_DIR) 
 
 compile: configure
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR)/mount BLKID_LIBS="-lblkid -luuid" mount umount
@@ -35,7 +35,8 @@ endif
 ifeq ($(BUILD_PHASE), Final)
 
 PRE_CONFIGURE = LDFLAGS=-ltinfo
-CONFIG_OPTS = --enable-arch --enable-partx --enable-write --with-ncurses
+CFG_OPTS := $(CONFIG_OPTS)
+CONFIG_OPTS = $(CFG_OPTS) --enable-arch --enable-partx --enable-write --with-ncurses
 
 endif
 

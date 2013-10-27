@@ -19,7 +19,7 @@ CONFIGURE = yes
 INSTALL = yes
 
 configure: patch
-	@true
+	sed -i -e 's/^\(CFLAGS.*\)/\1 $(CFLAGS)/' $(DIR)/Makefile
 
 install: compile
 ifeq ($(BUILD_PHASE), Final)

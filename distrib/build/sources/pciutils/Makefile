@@ -16,7 +16,7 @@ COMPILE = yes
 INSTALL = yes
 
 configure: $(DIR)/
-	@true
+	sed -i -e 's/^\(OPT=.*\)/\1 $(CFLAGS)/' $(DIR)/Makefile
 
 compile: configure
 	@$(MAKE) $(JOBS) -C $(COMPILE_DIR) PREFIX=/$(PKG_DIR) ZLIB=no

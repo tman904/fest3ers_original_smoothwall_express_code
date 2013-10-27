@@ -13,17 +13,28 @@ VERSION = $(OPENSSL_VER)
 
 BASE_URL = http://www.openssl.org/source/
 
+# If building for 486, generate only 386 code. Otherwise, building
+#   'modern' code should be OK.
+ifeq ($(mARCH),i486)
+ONLY386 = 386
+endif
+
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
 
 configure: $(DIR)/
+	sed -i -e '/^  \*86-\*-linux2/i \
+  FUBAR\
+\toptions="$$options $(CFLAGS)";;' $(DIR)/config
+	sed -i -e '/^  \*86-\*-linux2/,+11d' $(DIR)/config
+	sed -i -e 's/  FUBAR$$/  *86-*-linux2) OUT="linux-elf"/' $(DIR)/config
 	@(cd $(DIR); \
-	./config shared --prefix=$(PKG_DIR) --openssldir=/$(PKG_DIR)/lib/ssl; \
+	./config shared --prefix=$(PKG_DIR) --openssldir=/$(PKG_DIR)/lib/ssl $(ONLY386); \
 	patch < ../Makefile-MANDIR.patch);
 
 compile: configure
-	@make -C $(PACKAGE)-$(VERSION)
+	@$(MAKE) -C $(PACKAGE)-$(VERSION)
 
 install: compile
 	@mkdir -p $(PKG_ROOT)

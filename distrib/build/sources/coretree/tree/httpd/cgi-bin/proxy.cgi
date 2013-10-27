@@ -16,6 +16,13 @@ my %mainsettings;
 
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 &readhash("${swroot}/main/settings", \%mainsettings);
+# Start of modification by URLfilter
+my %filtersettings;
+$filtersettings{'CHILDREN'} = '5';
+if (-e "${swroot}/urlfilter/settings") {
+        &readhash("${swroot}/urlfilter/settings", \%filtersettings);
+}
+# End of modification by URLfilter
 
 &showhttpheaders();
 
@@ -30,6 +37,9 @@ $proxysettings{'MAX_SIZE'} = '4096';
 $proxysettings{'MIN_SIZE'} = '0';
 $proxysettings{'MAX_OUTGOING_SIZE'} = '0';
 $proxysettings{'MAX_INCOMING_SIZE'} = '0';
+# Start of modification by URLfilter
+$proxysettings{'ENABLE_FILTER'} = 'off';
+# End of modification by URLfilter
 
 &getcgihash(\%proxysettings);
 
@@ -106,6 +116,11 @@ $checked{'ENABLE'}{$proxysettings{'ENABLE'}} = 'CHECKED';
 $checked{'TRANSPARENT'}{'off'} = '';
 $checked{'TRANSPARENT'}{'on'} = '';
 $checked{'TRANSPARENT'}{$proxysettings{'TRANSPARENT'}} = 'CHECKED';
+# Start of modification by URLfilter
+$checked{'ENABLE_FILTER'}{'off'} = '';
+$checked{'ENABLE_FILTER'}{'on'} = '';
+$checked{'ENABLE_FILTER'}{$proxysettings{'ENABLE_FILTER'}} = 'CHECKED';
+# End of modification by URLfilter
 
 &openpage($tr{'web proxy configuration'}, 1, '', 'services');
 
@@ -148,6 +163,17 @@ print <<END
 	<TD CLASS='base'>$tr{'enabled'}</TD>
 	<TD><INPUT TYPE='checkbox' NAME='ENABLE' $checked{'ENABLE'}{'on'}></TD>
 </TR>
+<!-- Start of modification by URLfilter -->
+</TABLE>
+<BR>
+<B>URL filter:</B>
+<TABLE WIDTH='100%'>
+<TR>
+	<TD CLASS='base'>$tr{'urlfilter enabled'}</TD>
+	<TD><INPUT TYPE='checkbox' NAME='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></TD>
+	<TD width='73%'>&nbsp;</TD>
+</TR>
+<!-- End of modification by URLfilter -->
 </TABLE>
 <BR>
 <IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;

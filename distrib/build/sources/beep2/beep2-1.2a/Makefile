@@ -28,7 +28,7 @@ JMANDIR = $(PREFIX)/man/$(JLOCALE)/man1
 #JMANDIR	= $(PREFIX)/share/man/$(JLOCALE)/man1
 
 CC	= gcc
-CFLAGS	= -c -Wall -O2 -fomit-frame-pointer
+CFLAGS	:= -c -Wall -O2 -fomit-frame-pointer $(CFLAGS)
 LDFLAGS	= -s
 MKDIR	= mkdir -p
 

@@ -11,7 +11,7 @@ VERSION = 4.1.2
 
 BASE_URL = ftp://ftp.isc.org/isc/dhcp/
 
-PRE_CONFIGURE = CFLAGS="-Wno-error"
+PRE_CONFIGURE = CFLAGS="-Wno-error $(CFLAGS)"
 
 CONFIGURE = yes
 INSTALL = yes

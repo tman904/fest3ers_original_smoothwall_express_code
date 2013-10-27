@@ -6,6 +6,7 @@ include sources/Makefile.flags-arch
 prep_env:
 	@( \
 	  echo -e "export SHELL=\"BASH\"\nexport mARCH=\"$(mARCH)\"\nexport SWE_TGT=\"$(SWE_TGT)\""; \
+	  echo -e "export CXXFLAGS=\"$(CFLAGS)\""; \
 	  echo -e "export CFLAGS=\"$(CFLAGS)\"\nexport SWE32_TGT=\"$(SWE32_TGT)\""; \
 	  echo -e "export HOME=\"$${HOME}\"\nexport TERM=\"$(TERM)\"\nexport PS1=\"\\u:\\w\$$ \""; \
 	  echo -e "export FORCE_UNSAFE_CONFIGURE=\"1\"\nexport ARCHset=\"$(ARCHset)\""; \
@@ -13,6 +14,7 @@ prep_env:
 	  echo -e "export PATH=\"/bin:/usr/bin:/sbin:/usr/sbin:./toolcrib:/tools/bin\""; \
 	  echo -e "export ROOT=\"\"\nexport KERNEL_TYPE=\"$(KERNEL_TYPE)\""; \
 	  echo -e "export BUILD_IN=\"$(BUILD_IN)\"\nexport BUILD_OUT=\"$(BUILD_OUT)\""; \
+	  echo -e "export ARCH32=\"$(ARCH32)\"\nexport ARCH64=\"$(ARCH64)\""; \
 	) | sort > crumbs/build_environment
 	@ # Also truncate the progress log (no-op if it's a tty)
 	@ exec > $(BUILD_OUT)

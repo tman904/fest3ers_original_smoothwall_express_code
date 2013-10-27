@@ -12,8 +12,13 @@ endif
 # There are some contortions here. But the ARCH must be set early so the build
 #   environment is correctly set and passed to all subprocedures.
 
+# Define the preferred x86 ARCHs. Change ARCH32 as desired
+export ARCH32 = i586
+export ARCH64 = x86_64
+
+# What ARCH do we seem to be?
 ifndef mARCH
-export mARCH = $(shell uname -m | sed -e 's/i[56]86/i686/')
+export mARCH = $(shell uname -m | sed -e 's/i.86/$(ARCH32)/')
 endif
 
 # See what we can build; that is, see if the chosen mARCH is possible.
@@ -24,26 +29,29 @@ export ARCHset =
 CANx86_64 = $(shell setarch x86_64 sh -c "exit" 2>/dev/null; echo $$?)
 CANi686 = $(shell setarch i686 sh -c "exit" 2>/dev/null; echo $$?)
 
-# Only i686 and x86_64 targets are supported, but only on hosts that can
-#   build them.
+# Only ARCH32 and ARCH64 targets are supported (see above), but only on hosts
+# that can build them.
 
-ifeq ($(mARCH), x86_64)
+ifeq ($(mARCH),$(ARCH64))
   export ARCH_OK = yes
   export BITS_64 = yes
-  export SWE_TGT = $(mARCH)-swe-linux-gnu
+  export SWE_TGT = $(mARCH)-linux-gnu
+  export FINAL_TGT = $(mARCH)-linux-gnu
   export CFLAGS = $(OPT_FLAGS) -m64 -fPIC
   ifeq ($(CANx86_64), 0)
     export ARCHset = linux64
   endif
   # This is for building 32-bit grub with a cross-compiler
-  export SWE32_TGT = i686-pc-linux-gnu
+  # It isn't presently used, as we don't build a 32-bit env on 64-bit.
+  export SWE32_TGT = $(ARCH32)-pc-linux-gnu
 endif
 
-ifeq ($(mARCH), i686)
+ifeq ($(mARCH),$(ARCH32))
   export ARCH_OK = yes
   export BITS_32 = yes
-  export SWE_TGT = $(mARCH)-swe-linux-gnu
-  export CFLAGS = $(OPT_FLAGS) -m32 -march=$(mARCH) -mtune=generic
+  export SWE_TGT = $(mARCH)-pc-linux-gnu
+  export FINAL_TGT = $(mARCH)-pc-linux-gnu
+  export CFLAGS = $(OPT_FLAGS) -m32 -march=$(ARCH32) -mtune=generic
   ifeq ($(CANi686), 0)
     export ARCHset = linux32
   endif

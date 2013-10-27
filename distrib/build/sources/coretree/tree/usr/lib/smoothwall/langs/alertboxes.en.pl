@@ -61,6 +61,7 @@ firewall.  Further information on your Smoothwall Express is available from <a h
 'trafficmonitor.cgi'	=> 'Shows realtime network bandwidth usage graphs.',
 'register.cgi'		=> 'Shows information about your Smoothwall Express system.',
 'smoothinfo.cgi'        => 'Use this page to generate a report about your Smoothwall Express 3.1. This will provide a base for forum support requests.',
-
+'urlfilter.cgi'     => 'Block unwanted content with the URL filter for the web proxy service.',
+'urlfilter.dat'     => 'Check logs for attempted access from clients to domains and URLs that have been blocked by the URL filter.',
 );
 

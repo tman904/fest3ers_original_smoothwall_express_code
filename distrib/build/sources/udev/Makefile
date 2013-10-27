@@ -14,7 +14,9 @@ BASE_URL = https://bitbucket.org/braindamaged/udev/downloads
 
 PATCH_FILE1 = udev-watch.c.patch
 
-CONFIG_OPTS = --prefix=/usr           \
+CONFIG_OPTS = \
+	      --disable-silent-rules  \
+	      --prefix=/usr           \
 	      --bindir=/sbin          \
 	      --sysconfdir=/etc       \
 	      --libexecdir=/lib       \

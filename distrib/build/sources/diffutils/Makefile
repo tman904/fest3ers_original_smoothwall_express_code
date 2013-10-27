@@ -15,6 +15,6 @@ CONFIGURE = yes
 
 configure: patch
 	cd $(DIR); sed -i -e '/gets is a/d' lib/stdio.in.h
-	cd $(DIR); ./configure --prefix=$(PKG_DIR)
+	cd $(DIR); ./configure --prefix=$(PKG_DIR) $(CONFIG_OPTS)
 
 include ../Makefile.rules

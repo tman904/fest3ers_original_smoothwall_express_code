@@ -22,7 +22,7 @@ BIN = smoothd
 MODULES = sysshutdown sysinstall sysim sysp3scan sysalcatel sysdhcpd sysdnsproxy \
 	sysntpd syssnort syssquid syssshd sysupnpd sysadvnet sysipblock \
 	sysxtaccess sysupdown sysipsec systimeset sysiptables systraffic syssip sysclamav \
-	systimedaccess syssmoothinfo
+	systimedaccess syssmoothinfo syssquidguard
 
 MODULEFLAGS = $(CXXFLAGS) -shared -Wl,-soname,$@.so -o $@.so $@.cpp $(LIBS)
 
@@ -90,4 +90,6 @@ sysupdown : libsmoothd.so $(OBJS)
 sysupnpd : libsmoothd.so $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 sysxtaccess : libsmoothd.so $(OBJS)
+	$(CXX) $(MODULEFLAGS)
+syssquidguard : libsmoothd.so $(OBJS)
 	$(CXX) $(MODULEFLAGS)

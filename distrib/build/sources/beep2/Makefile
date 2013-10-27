@@ -9,6 +9,7 @@ include ../Makefile.conf
 PACKAGE = beep2
 VERSION = 1.2a
 
+JOBS =
 BASE_URL =  http://www.kip.iis.toyama-u.ac.jp/~shingo/beep/package/src/
 
 DOWNLOAD = yes

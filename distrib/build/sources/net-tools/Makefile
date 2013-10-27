@@ -30,6 +30,7 @@ configure: patch
 	    lib/ec_hw.c
 	@cp -f config.h $(DIR)
 	@cp -f config.make $(DIR)
+	sed -i -e 's/\(^COPTS = \)/\1$(CFLAGS) /' $(DIR)/Makefile
 
 INSTALL = yes
 install: compile

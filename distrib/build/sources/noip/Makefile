@@ -15,7 +15,8 @@ $(DIR): download
 	@tar xfvj $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION)
 
 configure: $(DIR)
-	@true
+	cd $(DIR); [ -f noip ] && rm -f noip
+	sed -i -e 's/^\(ARCH.*\)/\1 $(CFLAGS)/' $(DIR)/Makefile
 
 install: compile
 	@install -D $(COMPILE_DIR)/noip $(PKG_ROOT)/$(PKG_DIR)/bin/noip

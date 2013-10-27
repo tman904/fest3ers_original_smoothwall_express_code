@@ -330,7 +330,6 @@ if (($snortsettings{'ACTION'} eq $tr{'save'}) &&
   {
     $snortversion = $snortversion.'0';
   }
-#$snortversion="2920";
   
   # Find a ruleset version compatible (<=) with the installed version
   # and try to fetch it
@@ -517,16 +516,6 @@ print "
     if ($?)
     {
       $errormessage .= $tr{'unable to fetch rules'} ."<br />";
-#      if (not defined $attempt)
-#      {
-#        ($v1, $v2, $v3, $v4) = split(//, $v);
-#        if ($v4 > 0)
-#        {
-#          # Try again, but once only.
-#          $v4--;
-#          &runoinkmaster (join('', $v1, $v2, $v3, $v4), 1);
-#        }
-#      }
     }
     else
     {

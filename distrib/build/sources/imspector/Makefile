@@ -22,7 +22,7 @@ export ADD_PLUGINS = dbfilterplugin.so censordfilterplugin.so catsloggingplugin.
 
 configure: patch
 	cd $(DIR); sed -i -e 's/LIBS = -ldl/& -lcrypto/' Makefile
-	@true
+	sed -i -e 's/^\(CXXFLAGS.*\)/\1 $(CFLAGS)/' $(DIR)/Makefile
 
 compile: configure
 	@$(MAKE) $(JOBS) -C $(DIR) $(OPTS)
