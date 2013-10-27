@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = db
-VERSION = 5.3.21
+VERSION = 4.6.21.NC
 
 BASE_URL = http://download.oracle.com/berkeley-db/
 
