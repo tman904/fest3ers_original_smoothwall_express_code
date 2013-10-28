@@ -21,6 +21,7 @@ CONFIG_OPTS = -des -Dprefix=/tools -Dcc=gcc -A ccflags="$${CFLAGS/486/586}"
 
 CONFIGURE = yes
 configure: patch
+	@cd $(COMPILE_DIR); sed -i -e 's/gdbm dbm db/dbm/' Configure
 	@cd $(COMPILE_DIR); sh Configure $(CONFIG_OPTS)
 
 COMPILE = yes
