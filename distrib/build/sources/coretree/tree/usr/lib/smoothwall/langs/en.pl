@@ -297,7 +297,7 @@
 # extensions manager
 
 'ssextensions'  => 'Extensions',
-'extensions description'  => "Extensions offer you the ability to customise and expand your Smoothwall firewall beyond it's original design.  This may mean simply adding a button, or a perhaps an entire new service.",
+'extensions description'  => "Extensions offer you the ability to customise and expand your Smoothwall firewall beyond its original design.  This may mean simply adding a button, or a perhaps an entire new service.",
 'refresh extensions list' => 'Check for more',
 'installed extensions'    => 'Installed:',
 'available extensions'    => 'Available:',
@@ -1283,7 +1283,7 @@
 'urlfilter msg text 2' => 'Message line 2',
 'urlfilter msg text 3' => 'Message line 3',
 'urlfilter advanced settings' => 'Advanced settings',
-'urlfilter block ip' => 'Block sites accessed by it\'s IP address',
+'urlfilter block ip' => 'Block sites accessed by their IP addresses',
 'urlfilter enable expression lists' => 'Enable expression lists',
 'urlfilter enable log' => 'Enable log',
 'urlfilter username log' => 'Log username',
