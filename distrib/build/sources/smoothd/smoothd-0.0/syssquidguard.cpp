@@ -100,9 +100,9 @@ int sg_autoupdate(std::vector<std::string> & parameters, std::string & response)
         fclose(updfile);
      }
 
-     if (settings["UPDATE_SCHEDULE"] == "daily") ||
+     if ((settings["UPDATE_SCHEDULE"] == "daily") ||
         (settings["UPDATE_SCHEDULE"] == "weekly") ||
-        (settings["UPDATE_SCHEDULE"] == "monthly")
+        (settings["UPDATE_SCHEDULE"] == "monthly"))
      {
        error = simplesecuresysteml("/bin/cp", "-f", updpath.c_str(), "/etc/cron."+settings["UPDATE_SCHEDULE"], NULL);
      }
