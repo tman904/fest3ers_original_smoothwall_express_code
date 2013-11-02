@@ -104,7 +104,8 @@ int sg_autoupdate(std::vector<std::string> & parameters, std::string & response)
         (settings["UPDATE_SCHEDULE"] == "weekly") ||
         (settings["UPDATE_SCHEDULE"] == "monthly"))
      {
-       error = simplesecuresysteml("/bin/cp", "-f", updpath.c_str(), "/etc/cron."+settings["UPDATE_SCHEDULE"], NULL);
+       std::string tmpFileName = "/etc/cron." + settings["UPDATE_SCHEDULE"];
+       error = simplesecuresysteml("/bin/cp", "-f", updpath.c_str(), tmpFileName.c_str(), NULL);
      }
    }
 
