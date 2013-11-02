@@ -32,9 +32,9 @@ compile-kernel: prepare
 	sed -e 's/^CONFIG_LOCALVERSION=.*$$/CONFIG_LOCALVERSION="$(KERNEL_TYPE)"/' ../linux.config$(KERNEL_TYPE)-$(mARCH) > linux/.config
 
 	make -C linux CC=$(COMPILER) clean
-	make $(JOBS) -C linux CC=$(COMPILER) oldconfig
-	make $(JOBS) -C linux CC=$(COMPILER) bzImage
-	make $(JOBS) -C linux CC=$(COMPILER) modules
+	make $(JOBS) V=1 -C linux CC=$(COMPILER) oldconfig
+	make $(JOBS) V=1 -C linux CC=$(COMPILER) bzImage
+	make $(JOBS) V=1 -C linux CC=$(COMPILER) modules
 
 
 package-kernel: compile-kernel
