@@ -276,7 +276,13 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 				&writeconfigfile;
 
 				$updatemessage = $tr{'urlfilter upload success'};
-				system("${swroot}/urlfilter/bin/prebuild.pl &");
+
+                           my $success = message('sgprebuild');
+
+                           if (not defined $success) {
+                             $errormessage .= "$tr{'smoothd failure'}<br \>";
+                           }
+
 				system("logger -t installpackage[urlfilter] \"URL filter blacklist - Blacklist update from local source completed\"");
 			}
 		}
@@ -420,32 +426,10 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter save schedule'})
 		print FILE "CUSTOM_UPDATE_URL=$filtersettings{'CUSTOM_UPDATE_URL'}\n";
 		close FILE;
 
-		if (-e $upd_cron_dly) { unlink($upd_cron_dly); }
-		if (-e $upd_cron_wly) { unlink($upd_cron_wly); }
-		if (-e $upd_cron_mly) { unlink($upd_cron_mly); }
+              my $success = message('sgautoupdate');
 
-		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') &&
-		    ($filtersettings{'UPDATE_SCHEDULE'} eq 'daily'))
-		{
-			symlink("../bin/autoupdate.pl",$upd_cron_dly)
-		} else {
-			symlink("/bin/false",$upd_cron_dly)
-		}
-
-		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') &&
-		    ($filtersettings{'UPDATE_SCHEDULE'} eq 'weekly'))
-		{
-			symlink("../bin/autoupdate.pl",$upd_cron_wly)
-		} else {
-			symlink("/bin/false",$upd_cron_wly)
-		}
-
-		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') &&
-		    ($filtersettings{'UPDATE_SCHEDULE'} eq 'monthly'))
-		{
-			symlink("../bin/autoupdate.pl",$upd_cron_mly)
-		} else {
-			symlink("/bin/false",$upd_cron_mly)
+              if (not defined $success) {
+                 $errormessage .= "$tr{'smoothd failure'} (sgautoupdate)<br \>";
 		}
 	}
 }
@@ -621,11 +605,11 @@ for ($n=0; $n<$totalRows; $n++)
 	{
 		if (($n + $totalRows*$i) < @categories)
 		{
-			print "<td width='20%' cellspacing=0 class='base'>@categories[$n + $totalRows*$i]:<\/td>\n";
+			print "<td width='20%' cellspacing=0 class='base'>@categories[$n + $totalRows*$i]:</td>\n";
 			print "<td width='3%'><input type='checkbox' name=@filtergroups[$n + $totalRows*$i] $checked{@filtergroups[$n + $totalRows*$i]}{'on'} /></td>\n";
 		}
 	}
-	print "<\/tr>\n";
+	print "</tr>\n";
 }
 
 print "</table>";
@@ -1565,9 +1549,9 @@ sub writeconfigfile
 				$redirect .= "&ip=%a";
 			}
 			$redirect  =~ s/^&/?/;
-			$redirect = "http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi".$redirect; 
+			$redirect = "http://$netsettings{'GREEN_ADDRESS'}:$http_port/redirect.cgi".$redirect; 
 		} else {
-			$redirect="http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/redirect.cgi";
+			$redirect="http://$netsettings{'GREEN_ADDRESS'}:$http_port/redirect.cgi";
 		}
 	} else {
 		$redirect=$filtersettings{'REDIRECT_PAGE'};
@@ -1799,21 +1783,21 @@ sub writeconfigfile
 		print FILE "dest $category {\n";
 		if (-e "$dbdir/$blacklist/domains")
 		{
-			print FILE "    domainlist     $blacklist\/domains\n";
+			print FILE "    domainlist     $blacklist/domains\n";
 		}
 		if (-e "$dbdir/$blacklist/urls")
 		{
-			print FILE "    urllist        $blacklist\/urls\n";
+			print FILE "    urllist        $blacklist/urls\n";
 		}
 		if ((-e "$dbdir/$blacklist/expressions") &&
 		    ($filtersettings{'ENABLE_EXPR_LISTS'} eq 'on'))
 		{
-			print FILE "    expressionlist $blacklist\/expressions\n";
+			print FILE "    expressionlist $blacklist/expressions\n";
 		}
 		if ((($category eq 'ads') || ($category eq 'adv')) &&
 		    ($filtersettings{'ENABLE_EMPTY_ADS'} eq 'on'))
 		{
-			print FILE "    redirect       http:\/\/$netsettings{'GREEN_ADDRESS'}:$http_port\/urlfilter/1x1.gif\n";
+			print FILE "    redirect       http://$netsettings{'GREEN_ADDRESS'}:$http_port/ui/img/urlfilter/1x1.gif\n";
 		}
 		if ($filtersettings{'ENABLE_LOG'} eq 'on')
 		{
@@ -1829,7 +1813,7 @@ sub writeconfigfile
 	}
 	
 	print FILE "dest files {\n";
-	print FILE "    expressionlist custom\/blocked\/files\n";
+	print FILE "    expressionlist custom/blocked/files\n";
 	if ($filtersettings{'ENABLE_LOG'} eq 'on')
 	{
 		if ($filtersettings{'ENABLE_CATEGORY_LOG'} eq 'on')
@@ -1842,13 +1826,13 @@ sub writeconfigfile
 	print FILE "}\n\n";
 
 	print FILE "dest custom-allowed {\n";
-	print FILE "    domainlist     custom\/allowed\/domains\n";
-	print FILE "    urllist        custom\/allowed\/urls\n";
+	print FILE "    domainlist     custom/allowed/domains\n";
+	print FILE "    urllist        custom/allowed/urls\n";
 	print FILE "}\n\n";
 
 	print FILE "dest custom-blocked {\n";
-	print FILE "    domainlist     custom\/blocked\/domains\n";
-	print FILE "    urllist        custom\/blocked\/urls\n";
+	print FILE "    domainlist     custom/blocked/domains\n";
+	print FILE "    urllist        custom/blocked/urls\n";
 	if ($filtersettings{'ENABLE_LOG'} eq 'on')
 	{
 		if ($filtersettings{'ENABLE_CATEGORY_LOG'} eq 'on')
@@ -1861,7 +1845,7 @@ sub writeconfigfile
 	print FILE "}\n\n";
 
 	print FILE "dest custom-expressions {\n";
-	print FILE "    expressionlist custom\/blocked\/expressions\n";
+	print FILE "    expressionlist custom/blocked/expressions\n";
 	if ($filtersettings{'ENABLE_LOG'} eq 'on')
 	{
 		if ($filtersettings{'ENABLE_CATEGORY_LOG'} eq 'on')

@@ -1,5 +1,4 @@
 /* Syssquidguard Module for the SmoothWall SUIDaemon                           */
-/* Contains functions relating to maintaining squidguard daemon         */
 /* (c) 2007 SmoothWall Ltd                                                */
 /* ----------------------------------------------------------------------  */
 /* Original Author  : Lawrence Manning                                     */
@@ -59,7 +58,16 @@ int sg_autoupdate(std::vector<std::string> & parameters, std::string & response)
 
    ConfigVAR settings("/var/smoothwall/urlfilter/autoupdate/autoupdate.conf");
 
-   FILE * exists;
+   std::string updsrc  = settings["UPDATE_SOURCE"];
+   std::string custsrc = settings["CUSTOM_UPDATE_URL"];
+   std::string updpath = "/var/smoothwall/urlfilter/bin/sgbl-autoupdate";
+   std::string filestr = "#!/bin/sh\n\n/var/smoothwall/urlfilter/bin/autoupdate.pl ";
+   std::string updfilestr  = filestr + updsrc;
+   std::string custfilestr = filestr + custsrc;
+   std::string url = "";
+
+   FILE *exists;
+   FILE *updfile;
 
    if ( exists = fopen("/etc/cron.daily/sgbl-autoupdate", "r") )
    {
@@ -81,14 +89,21 @@ int sg_autoupdate(std::vector<std::string> & parameters, std::string & response)
 
    if ( settings["ENABLE_AUTOUPDATE"] == "on" )
    {
-     if (settings["UPDATE_SCHEDULE"] == "daily")
-       error = simplesecuresysteml("/bin/cp", "-f", "/var/smoothwall/urlfilter/bin/sgbl-autoupdate", "/etc/cron.daily", NULL);
+     if (updsrc == "custom") 
+       url = custfilestr;
+     else
+       url = updfilestr;
 
-     if (settings["UPDATE_SCHEDULE"] == "weekly")
-       error = simplesecuresysteml("/bin/cp", "-f", "/var/smoothwall/urlfilter/bin/sgbl-autoupdate", "/etc/cron.weekly", NULL);
+     if (updfile = fopen( "/var/smoothwall/urlfilter/bin/sgbl-autoupdate", "w" ))
+     {
+        fputs( (char*) url.c_str(), updfile );
+        fclose(updfile);
+     }
 
-     if (settings["UPDATE_SCHEDULE"] == "monthly")
-       error = simplesecuresysteml("/bin/cp", "-f", "/var/smoothwall/urlfilter/bin/sgbl-autoupdate", "/etc/cron.monthly", NULL);
+     if (settings["UPDATE_SCHEDULE"] == "daily") ||
+        (settings["UPDATE_SCHEDULE"] == "weekly") ||
+        (settings["UPDATE_SCHEDULE"] == "monthly")
+       error = simplesecuresysteml("/bin/cp", "-f", updpath.c_str(), "/etc/cron."+settings["UPDATE_SCHEDULE"], NULL);
    }
 
    if (!error)
