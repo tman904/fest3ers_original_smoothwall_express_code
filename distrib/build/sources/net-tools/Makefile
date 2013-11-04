@@ -26,11 +26,11 @@ PKG_DIR =
 CONFIGURE = yes
 
 configure: patch
+	sed -i -e 's/\(^COPTS = \)/\1$(CFLAGS) /' $(DIR)/Makefile
 	cd $(DIR); sed -i 's@<net/if_arp.h>@<net/if_arp.h>\n#include <stdlib.h>@' \
 	    lib/ec_hw.c
-	@cp -f config.h $(DIR)
-	@cp -f config.make $(DIR)
-	sed -i -e 's/\(^COPTS = \)/\1$(CFLAGS) /' $(DIR)/Makefile
+	cp -f config.h $(DIR)
+	cp -f config.make $(DIR)
 
 INSTALL = yes
 install: compile
