@@ -49,6 +49,9 @@ foreach my $file ( sort @files ){
 
 &getcgihash(\%cgiparams);
 
+my %netsettings = "";
+&readhash("${swroot}/ethernet/settings", \%netsettings);
+
 &openpage($tr{'status information'}, 1, '', 'about your smoothie');
 
 &openbigbox('100%', 'LEFT');
@@ -136,9 +139,11 @@ sub isrunning
 	# qos is a special case
 	if ($cmd eq 'qos')
 	{
-		my $running = qx{/usr/sbin/tc qdisc list | fgrep -v "pfifo_fast 0:" | wc -l};
-    		chomp $running; # If only pfifo_fast with major #0 found, service is stopped.
-		$status = status_line( "running" ) if ($running gt 0);
+		my $running = `/usr/sbin/tc qdisc list dev $netsettings{'GREEN_DEV'} | wc -l`;
+    		chomp $running;
+		# The default is now to run SFQ, even when QoS is off.
+		# If only *one* line is returned, QoS is not running.
+		$status = status_line( "running" ) if ($running gt 1);
 	}
 	elsif (open(FILE, "/var/run/${cmd}.pid"))
 	{
