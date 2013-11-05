@@ -186,10 +186,26 @@ char *english_tr[] = {
 "Unable to remove temporary downloaded files.",
 /* TR_ERROR_WRITING_CONFIG */
 "Error writing configuration information.",
-/* TR_INSTALLING_GRUB */
-"Installing Grub...",
-/* TR_UNABLE_TO_INSTALL_GRUB */
-"Unable to install Grub.",
+/* TR_ADJUSTING_INITRAMFS */
+"Preparing initramfs...",
+/* TR_UNABLE_TO_ADJUST_INITRAMFS */
+"Unable to prepare bootloader.",
+/* TR_PREPARING_BOOTLOADER */
+"Preparing bootloader...",
+/* TR_UNABLE_TO_PREPARE_BOOTLOADER */
+"Unable to prepare bootloader.",
+/* TR_INSTALLING_BOOTLOADER */
+"Installing bootloader...",
+/* TR_UNABLE_TO_INSTALL_BOOTLOADER */
+"Unable to install bootloader.",
+/* TR_SETTING_UP_FSTAB */
+"Setting up file system mount table...",
+/* TR_UNABLE_TO_SETUP_FSTAB */
+"Unable to set up file system mount table.",
+/* TR_PREPARING_DRIVER_RULES */
+"Setting up driver rules...",
+/* TR_UNABLE_TO_PREPARE_DRIVER_RULES */
+"Unable to set up driver rules.",
 /* TR_SETTING_UP_BOOT_DRIVERS */
 "Setting up boot drivers...",
 /* TR_UNABLE_TO_SETUP_BOOT_DRIVERS */

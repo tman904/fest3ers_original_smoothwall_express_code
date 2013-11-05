@@ -135,9 +135,9 @@ int main(int argc, char *argv[])
 	snprintf(commandstring,
 		 STRING_SIZE,
 		 "/bin/installer/prepudevrules %s", hd.devnode);
-	if (runcommandwithstatus(commandstring, ctr[TR_MOUNTING_LOG_FILESYSTEM]))
+	if (runcommandwithstatus(commandstring, ctr[TR_PREPARING_DRIVER_RULES]))
 	{
-		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		errorbox(ctr[TR_UNABLE_TO_PREPARE_DRIVER_RULES]);
 		goto EXIT;
 	}
 
@@ -353,9 +353,9 @@ int main(int argc, char *argv[])
 	mysystem("/bin/cp /etc/udev/rules.d/*Smoothwall* /harddisk/etc/udev/rules.d");
 
 	// Create the new system's fstab
-	if (runcommandwithstatus("/harddisk/usr/bin/installer/writefstab", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	if (runcommandwithstatus("/harddisk/usr/bin/installer/writefstab", ctr[TR_SETTING_UP_FSTAB]))
 	{
-		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		errorbox(ctr[TR_UNABLE_TO_SETUP_FSTAB]);
 		goto EXIT;
 	}
 
@@ -384,16 +384,16 @@ int main(int argc, char *argv[])
 		goto EXIT;
 	}
 	
-	if (runcommandwithstatus("/harddisk/usr/bin/installer/adjustinitrd", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	if (runcommandwithstatus("/harddisk/usr/bin/installer/adjustinitrd", ctr[TR_ADJUSTING_INITRAMFS]))
 	{
-		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		errorbox(ctr[TR_UNABLE_TO_ADJUST_INITRAMFS]);
 		goto EXIT;
 	}
 
 	// Write the grub config, bind-mount sys stuff, install grub
-	if (runcommandwithstatus("/harddisk/usr/bin/installer/writegrubconf", ctr[TR_SETTING_UP_BOOT_DRIVERS]))
+	if (runcommandwithstatus("/harddisk/usr/bin/installer/writegrubconf", ctr[TR_PREPARING_BOOTLOADER]))
 	{
-		errorbox(ctr[TR_UNABLE_TO_SETUP_BOOT_DRIVERS]);
+		errorbox(ctr[TR_UNABLE_TO_PREPARE_BOOTLOADER]);
 		goto EXIT;
 	}
 	mysystem("/sbin/mount --rbind /proc /harddisk/proc");
@@ -401,9 +401,9 @@ int main(int argc, char *argv[])
 	mysystem("/sbin/mount --rbind /dev /harddisk/dev");
 
 	if (runcommandwithstatus("/harddisk/usr/bin/installer/installgrub",
-		ctr[TR_INSTALLING_GRUB]))
+		ctr[TR_INSTALLING_BOOTLOADER]))
 	{
-		errorbox(ctr[TR_UNABLE_TO_INSTALL_GRUB]);
+		errorbox(ctr[TR_UNABLE_TO_INSTALL_BOOTLOADER]);
 		goto EXIT;
 	}
 	
@@ -418,7 +418,7 @@ int main(int argc, char *argv[])
 		if (!(ejectcdrom(cdrom.devnode)))
 		{
 			errorbox(ctr[TR_UNABLE_TO_EJECT_CDROM]);
-			//goto EXIT;
+			//goto EXIT; // This shouldn't fail the install.
 		}
 	}
 
@@ -451,10 +451,6 @@ EXIT:
 			printf("Unable to run setup.\n");
 	}
 	
-	//mysystem("/bin/chroot /harddisk /sbin/umount -a");
-	
-	//reboot();
-
 	return 0;
 }
 
