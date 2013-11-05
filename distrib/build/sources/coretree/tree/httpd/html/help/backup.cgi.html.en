@@ -22,11 +22,20 @@ drive must contain a valid filesystem in partition 1; VFAT (MS-FAT), EXT-2&mdash
 and reiserfs are recognized. USB thumb drives are configured at the factory with a PC98
 partition table and a VFAT filesystem on partition #1.
 </p>
+<p style="padding:1em; margin:.5em; border:2pt dashed black"><i><b>
+<span style="color:#b00000">WARNING!</span></b> FAT filesystems cannot handle files larger
+than 4GiB. If you suspect that your compressed backup may be larger than 4GiB (for example,
+if you have the web proxy configured to cache a tremendous amount of data or you have years
+of log files saved), make an ext2 (non-journalled) filesystem on partition #1. Be sure you
+first back up any data that you want to save before reformatting.
+<br /><br />
+Always inspect or verify the backup before taking any destructive action on your firewall.</i>
+</p>
 
 <h3 style='margin:2em 0 0 0'>Configure (Add/Delete) Drives</h3>
 <p>
 When you install from a writable drive (flash or rotating), that drive will be
-configured for use as a PnP Backup drive. To configure other drives, click the
+automatically configured for use as a PnP Backup drive. To configure other drives, click the
 'Add Drive' button on the backup page and follow the prompts. Alternatively, you
 can run '/usr/bin/smoothwall/backup_sys -v' on a console or ssh command line; follow
 the prompts. To remove a configured drive, click that drive's checkbox and then
