@@ -174,7 +174,7 @@ print <<END
 
     <p style="margin:8pt 4pt 8pt 4pt; text-align:center">
       Smoothwall Express $displayVersion<br>
-      Copyright &copy; 2000 - 2007 the
+      Copyright &copy; 2000 - 2013 the
       <a href="http://smoothwall.org/team/" target="_breakoutWindow">
         Smoothwall Team</a>.
     </p>
