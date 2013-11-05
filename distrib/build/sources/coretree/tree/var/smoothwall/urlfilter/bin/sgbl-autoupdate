@@ -1,3 +1,0 @@
-#!/bin/sh
-
-/var/smoothwall/urlfilter/bin/autoupdate.pl http://www.shallalist.de/Downloads/shallalist.tar.gz

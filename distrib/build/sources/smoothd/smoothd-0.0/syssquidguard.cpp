@@ -22,7 +22,7 @@
 extern "C" {
 	int load( std::vector<CommandFunctionPair> &  );
 	int sg_prebuild(std::vector<std::string> & parameters, std::string & response);
-       int errrpt(const std::string & parameter);
+	int errrpt(const std::string & parameter);
 	int sg_autoupdate(std::vector<std::string> & parameters, std::string & response);
 }
 
@@ -42,14 +42,14 @@ int sg_prebuild(std::vector<std::string> & parameters, std::string & response)
 {
    int error = 0;
    response = "squidGuard: updating blacklists.";
-   error = simplesecuresysteml("/var/smoothwall/urlfilter/bin/prebuild.pl", NULL);
+   error = simplesecuresysteml("/usr/bin/smoothwall/prebuild.pl", NULL);
 
    if (!error)
      response = "squidGuard: blacklists updated.";
    else
      response = "squidGuard: unable to update blacklists!";
 	
-  return errrpt (response);
+   return errrpt (response);
 }
 
 int sg_autoupdate(std::vector<std::string> & parameters, std::string & response)
@@ -58,54 +58,28 @@ int sg_autoupdate(std::vector<std::string> & parameters, std::string & response)
 
    ConfigVAR settings("/var/smoothwall/urlfilter/autoupdate/autoupdate.conf");
 
-   std::string updsrc  = settings["UPDATE_SOURCE"];
-   std::string custsrc = settings["CUSTOM_UPDATE_URL"];
-   std::string updpath = "/var/smoothwall/urlfilter/bin/sgbl-autoupdate";
-   std::string filestr = "#!/bin/sh\n\n/var/smoothwall/urlfilter/bin/autoupdate.pl ";
-   std::string updfilestr  = filestr + updsrc;
-   std::string custfilestr = filestr + custsrc;
+   std::string updpath = "/usr/bin/smoothwall/sgbl-autoupdate";
    std::string url = "";
 
    FILE *exists;
    FILE *updfile;
 
-   if ( exists = fopen("/etc/cron.daily/sgbl-autoupdate", "r") )
-   {
-     error = simplesecuresysteml("/bin/rm", "-f", "/etc/cron.daily/sgbl-autoupdate", NULL);
-     fclose(exists);
-   }
-
-   if ( exists = fopen("/etc/cron.weekly/sgbl-autoupdate", "r") )
-   {
-     error = simplesecuresysteml("/bin/rm", "-f", "/etc/cron.weekly/sgbl-autoupdate", NULL);
-     fclose(exists);
-   }
-
-   if ( exists = fopen("/etc/cron.monthly/sgbl-autoupdate", "r") )
-   {
-     error = simplesecuresysteml("/bin/rm", "-f", "/etc/cron.monthly/sgbl-autoupdate", NULL);
-     fclose(exists);
-   }
+   // No need to check for existence; '-f' says to feign success if it isn't there.
+   // unlink() would be more efficient, but that doesn't matter in this case.
+   error = simplesecuresysteml("/bin/rm", "-f", "/etc/cron.daily/sgbl-autoupdate", NULL);
+   error = simplesecuresysteml("/bin/rm", "-f", "/etc/cron.weekly/sgbl-autoupdate", NULL);
+   error = simplesecuresysteml("/bin/rm", "-f", "/etc/cron.monthly/sgbl-autoupdate", NULL);
 
    if ( settings["ENABLE_AUTOUPDATE"] == "on" )
    {
-     if (updsrc == "custom") 
-       url = custfilestr;
-     else
-       url = updfilestr;
-
-     if (updfile = fopen( "/var/smoothwall/urlfilter/bin/sgbl-autoupdate", "w" ))
-     {
-        fputs( (char*) url.c_str(), updfile );
-        fclose(updfile);
-     }
-
+     // Check/vet the value; only these three can be used.
      if ((settings["UPDATE_SCHEDULE"] == "daily") ||
         (settings["UPDATE_SCHEDULE"] == "weekly") ||
         (settings["UPDATE_SCHEDULE"] == "monthly"))
      {
-       std::string tmpFileName = "/etc/cron." + settings["UPDATE_SCHEDULE"];
-       error = simplesecuresysteml("/bin/cp", "-f", updpath.c_str(), tmpFileName.c_str(), NULL);
+       // Prep the link name and make a symlink.
+       std::string tmpFileName = "/etc/cron." + settings["UPDATE_SCHEDULE"] + "/sgbl-autoupdate";
+       error = simplesecuresysteml("/bin/ln", "-s", updpath.c_str(), tmpFileName.c_str(), NULL);
      }
    }
 
