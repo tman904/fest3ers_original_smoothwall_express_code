@@ -13,8 +13,8 @@ use smoothd qw( message );
 
 use IO::Socket;
 
-my $urlfilterversion = `cat ${swroot}/urlfilter/version`;
-my $sysupdflagfile = "${swroot}/urlfilter/.up2date";
+my $swbin = '/usr/bin/smoothwall';
+
 my $http_port='81';
 my %netsettings=();
 my %mainsettings=();
@@ -48,9 +48,6 @@ my $hintcolour = '#FFFFCC';
 my $sourceurlfile = "${swroot}/urlfilter/autoupdate/autoupdate.urls";
 my $updconffile = "${swroot}/urlfilter/autoupdate/autoupdate.conf";
 my $updflagfile = "${swroot}/urlfilter/blacklists/.autoupdate.last";
-my $upd_cron_dly = "${swroot}/urlfilter/autoupdate/cron.daily";
-my $upd_cron_wly = "${swroot}/urlfilter/autoupdate/cron.weekly";
-my $upd_cron_mly = "${swroot}/urlfilter/autoupdate/cron.monthly";
 
 my $errormessage='';
 my $updatemessage='';
@@ -79,7 +76,6 @@ my $led='';
 my $ldesc='';
 my $gdesc='';
 
-my $latest=substr(&check4updates,0,length($urlfilterversion));
 
 if (! -d $dbdir) { mkdir("$dbdir"); }
 if (! -e $tcfile) { system("touch $tcfile"); }
@@ -442,10 +438,10 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter update now'})
 		{
 			$errormessage .= $tr{'urlfilter custom url required'};
 		} else {
-			system("${swroot}/urlfilter/bin/autoupdate.pl $filtersettings{'CUSTOM_UPDATE_URL'} &");
+			system("${swbin}/autoupdate.pl $filtersettings{'CUSTOM_UPDATE_URL'} &");
 		}
 	} else {
-		system("${swroot}/urlfilter/bin/autoupdate.pl $filtersettings{'UPDATE_SOURCE'} &");
+		system("${swbin}/autoupdate.pl $filtersettings{'UPDATE_SOURCE'} &");
 	}
 }
 
@@ -541,20 +537,6 @@ foreach $category (@filtergroups)
 &openbigbox('100%', 'left');
 
 &alertbox($errormessage);
-
-if (($urlfilterversion lt $latest) && (-e $sysupdflagfile))
-{
-	unlink($sysupdflagfile);
-}
-
-if (!-e $sysupdflagfile)
-{
-	print "<p>\n";
-        &openbox("<font color='red'>$tr{'urlfilter update notification'}</font>");
-        print "<class name='base'><br>$tr{'urlfilter update information'}\n";
-        print "&nbsp;</class>\n";
-        &closebox();
-}
 
 if ($updatemessage)
 {
@@ -1169,7 +1151,7 @@ print <<END
   <td align='right'>
     <p style='font-size:8pt; margin:0 1em 0 0'>
       <i>Adapted from <a href='http://www.urlfilter.net'
-                      target='_blank'>URL filter $urlfilterversion</a></i>
+                      target='_blank'>URL Filter 1.7.1</a></i>
     </p>
   </td>
 </tr>
@@ -1181,38 +1163,6 @@ END
 &closebigbox();
 
 &closepage();
-
-# -------------------------------------------------------------------
-
-sub check4updates
-{
-	if ((-e "${swroot}/red/active") && (-e $sysupdflagfile) && (int(-M $sysupdflagfile) > 7))
-	{
-		my @response=();;
-
-		my $remote = IO::Socket::INET->new(
-			PeerHost => 'www.urlfilter.net',
-			PeerPort => 'http(80)',
-			Timeout  => 1
-		);
-
-		if ($remote)
-		{
-			print $remote "GET http://www.urlfilter.net/version/smoothwall3/latest HTTP/1.0\n";
-			print $remote "User-Agent: Mozilla/4.0 (compatible; SmoothWall Express 3.0; urlfilter)\n\n";
-			while (<$remote>)
-			{
-				push(@response,$_);
-			}
-			close $remote;
-			if ($response[0] =~ /^HTTP\/\d+\.\d+\s200\sOK\s*$/)
-			{
-				system("touch $sysupdflagfile");
-				return "$response[$#response]";
-			}
-		}
-	}
-}
 
 # -------------------------------------------------------------------
 
