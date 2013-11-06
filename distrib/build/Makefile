@@ -28,10 +28,11 @@
 #     using the 'redo' function ala 'redo daq snort'.
 
 export SHELL = bash
-export SRC_TGZ = ../../smoothsrc.tar.gz
 
 include sources/Makefile
 include sources/Makefile.flags-arch
+
+export SRC_TGZ = ../../smoothsrc-$(mARCH).tar.gz
 
 ifndef ktype
 export ktype = 
@@ -201,14 +202,13 @@ mediaflash:
 	@echo -e "\nMaking FLASH content..."; sleep 1
 	@+sudo su -c "toolcrib/make_flash"
 
-# after a successful build, this will do everything
+# after a successful build, this will do everything including a tarball of the
+# sources and a tarball of the built toolchain.
 #
 package:
-	+@for i in clean savesources predownload build media; do \
+	+for i in clean savesources predownload build media; do \
 	    $(MAKE) $$i; \
 	done
-	@if [ `id -u` -eq 0 ]; then CMD="bash"; else CMD="sudo su"; fi \
-	   $$CMD -c "rm -f $(SRC_TGZ)"
 
 # Get tossed in the pokey with the proper environment
 #
@@ -218,7 +218,8 @@ chroot:
 # Pre-fetch source tarballs from internet
 #
 predownload:
-	@echo -e "\nPre-downloading source tarballs..."; sleep 1
+	@echo -e "\nPre-downloading source tarballs..." \
+	  <$(BUILD_IN) >>$(BUILD_OUT) 2>&1; sleep 1
 	@( \
 	  export BUILD_PHASE="PreDownload"; \
 	  . toolcrib/environment; \
@@ -244,14 +245,16 @@ predownload:
 	      fi \
 	    fi; \
 	  done \
-	); \
+	) <$(BUILD_IN) >>$(BUILD_OUT) 2>&1; \
 	echo
 
 # Save a copy of the build directory, sans downloads, for future replication
 #
 savesources:
-	@echo -e "\nArchiving sources..."; sleep 1
-	@tar cfz $(SRC_TGZ) -C .. --exclude build/downloads .
+	@echo -e "\nArchiving sources..." \
+	  <$(BUILD_IN) >>$(BUILD_OUT) 2>&1; sleep 1
+	@tar cfz $(SRC_TGZ) -C .. --exclude build/downloads . \
+	  <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
 
 packageinfos.html:
 	@+if [ `id -u` -ne 0 ]; then \
