@@ -1,3 +1,35 @@
+# 2013/11/10 - Document a piece of the toolchain philosophy. This is here
+#   because this file is used to determine the various bits and flags needed
+#   to build everything.
+#
+# The purpose of the toolchain is to build a set of build tools that contains
+# no trace of the host system's tools. This is done in three stages.
+#
+# Stage 1:
+#   PATH is set to the build's /tools dir(s) before the host's dirs; newly-
+#   built tools will be chosen over the host's tools.
+#   Build unique binutils and gcc such that the host's tools CANNOT be
+#   mistaken for them. When the host's tools are identified as
+#   i686-pc-linux-gnu-*, we build the stage 1 binutils and gcc so they are
+#   identified as i686-swe-linux-gnu-*. These are a form of cross-tools.
+# Stage 2:
+#   PATH is set to check host dir before the build's /tools dir(s).
+#   Build binutils and gcc using the i686-swe-linux-gnu-* tools; these
+#   names cannot accidentally pick up the host's build tools. The resulting
+#   tools will have no trace of the host; they will use only themselves and the
+#   glibc and kernel headers built in stage 1.
+# Stage 3:
+#   Like stage 2, build the minimal utilities to make the initial parts of the
+#   final stage.
+# Final Stage:
+#   Enter a chroot jail and build all the pkgs needed for the product. The jail
+#   ensure that none of the host's software is used, included, or referenced.
+
+# I think part of my build problems have involved cached paths, in that make
+# and the shell remember and use the host's tools instead of the tools
+# that have just been built, thus polluting the final product with some of
+# the build host.
+
 # Handle I/O redirection sanely.
 export BUILD_IN := $(shell if test -t 0; then echo "/proc/self/fd/0"; else echo "/dev/null"; fi)
 export BUILD_OUT := $(shell if test -t 0; then echo "/proc/self/fd/0"; else echo "crumbs/build-progress.out"; fi)
@@ -35,7 +67,7 @@ CANi686 = $(shell setarch i686 sh -c "exit" 2>/dev/null; echo $$?)
 ifeq ($(mARCH),$(ARCH64))
   export ARCH_OK = yes
   export BITS_64 = yes
-  export SWE_TGT = $(mARCH)-linux-gnu
+  export SWE_TGT = $(mARCH)-swe-linux-gnu
   export FINAL_TGT = $(mARCH)-linux-gnu
   export CFLAGS = $(OPT_FLAGS) -m64 -fPIC
   ifeq ($(CANx86_64), 0)
@@ -49,7 +81,7 @@ endif
 ifeq ($(mARCH),$(ARCH32))
   export ARCH_OK = yes
   export BITS_32 = yes
-  export SWE_TGT = $(mARCH)-pc-linux-gnu
+  export SWE_TGT = $(mARCH)-swe-linux-gnu
   export FINAL_TGT = $(mARCH)-pc-linux-gnu
   export CFLAGS = $(OPT_FLAGS) -m32 -march=$(ARCH32) -mtune=generic
   ifeq ($(CANi686), 0)
