@@ -17,6 +17,7 @@ TARBALL = $(FREESWAN_TYPE)-$(VERSION)
 
 PATCH_FILE1 = makefile.patch
 PATCH_FILE2 = setup.in.patch
+PATCH_FILE3 = ipsec_param2.h.patch
 
 KNL_SRC = $(SOURCES_DIR)/linux$(KERNEL_TYPE)/linux
 MOD_DEST = /lib/modules/$(K_RAW_VERSION)$(KERNEL_TYPE)/kernel/net/ipsec
@@ -34,10 +35,10 @@ configure: patch
 	chmod 555 /tools/bin/xmlto
 	@true
 	
-CFLAGS:=$(CFLAGS) -fno-strict-aliasing
+CFLAGS:=$(FLAGS) -fno-strict-aliasing
 compile: configure
-	@make $(JOBS) -C $(COMPILE_DIR) USERCOMPILE='$(CFLAGS)' INC_USRLOCAL=$(PKG_DIR) FINALCONFDIR=$(PKG_DIR)/etc FINALRCDIR=$(PKG_DIR)/bin KERNELSRC=$(KNL_SRC) programs
-	@make $(JOBS) -C $(COMPILE_DIR) USERCOMPILE='$(CFLAGS)' INC_USRLOCAL=$(PKG_DIR) FINALCONFDIR=$(PKG_DIR)/etc FINALRCDIR=$(PKG_DIR)/bin KERNELSRC=$(KNL_SRC) module
+	@make $(JOBS) -C $(COMPILE_DIR) V=1 USERCOMPILE='$(CFLAGS)' INC_USRLOCAL=$(PKG_DIR) FINALCONFDIR=$(PKG_DIR)/etc FINALRCDIR=$(PKG_DIR)/bin KERNELSRC=$(KNL_SRC) programs
+	@make $(JOBS) -C $(COMPILE_DIR) V=1 USERCOMPILE='$(CFLAGS)' INC_USRLOCAL=$(PKG_DIR) FINALCONFDIR=$(PKG_DIR)/etc FINALRCDIR=$(PKG_DIR)/bin KERNELSRC=$(KNL_SRC) module
 
 
 install: compile

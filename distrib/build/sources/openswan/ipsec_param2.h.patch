@@ -1,0 +1,11 @@
+--- openswan-2.6.38/linux/include/openswan/ipsec_param2.h-ORIG	2013-11-11 03:25:27.598198550 -0500
++++ openswan-2.6.38/linux/include/openswan/ipsec_param2.h	2013-11-11 03:25:45.857041377 -0500
+@@ -45,7 +45,7 @@
+ 
+ /* kernels > 2.4.2 */
+ #if defined(IP_SELECT_IDENT) && defined(IP_SELECT_IDENT_NEW)
+-#define KLIPS_IP_SELECT_IDENT(iph, skb) ip_select_ident(iph, skb_dst(skb), NULL)
++#define KLIPS_IP_SELECT_IDENT(iph, skb) __ip_select_ident(iph, skb_dst(skb), 0)
+ #endif
+ 
+ #endif /* SUSE_LINUX_2_4_19_IS_STUPID */
