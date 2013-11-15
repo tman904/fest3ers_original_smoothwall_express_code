@@ -44,6 +44,12 @@ setFiles () {
       # These should never change
       FILES_TO_SAVE="${HNAME}.tarhead"
       FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ./var ./usr/etc ./etc/shadow ./etc/passwd ./etc/group)
+      # Save URL Filter's symlink, if any
+      for i in daily weekly monthly; do
+        if [ -e /etc/cron.$i/sgbl-autoupdate ]; then
+          FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ./etc/cron.$i/sgbl-autoupdate)
+        fi
+      done
       FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ./etc/httpd/server.* ./etc/udev/rules.d/*)
       FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ./root)
       FILES_TO_SAVE=("${FILES_TO_SAVE[@]}" ${HNAME}.tarheel)
