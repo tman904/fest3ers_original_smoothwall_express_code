@@ -24,9 +24,13 @@ Pert near any medium that can be hot-plugged can be used for backup. Best
 tested are hot-plugged SATA drives and USB thumb drives. External USB, SATA,
 IDE, and FireWire drives should work well.
 
-Standard GNU/Linux filesystems should work well; EXTx and VFAT have been
+Standard GNU/Linux filesystems should work well; EXT[234] and VFAT have been
 tested. Be aware that NTFS can be problematic. Be sure you've installed
 NTFS-3G so the backup system will have read/write access to the filesystem.
+
+WARNING: VFAT limits maximum file size to 4GiB. If your archive will be larger,
+you are advised to use another filesystem; the EXT[234] family without journal
+works well.
 
 Cards that plug into a card reader may not be detected. Drives plugged into
 SATA interfaces that do not support hot plug (some Dell computers do this)
