@@ -1,4 +1,4 @@
-#! /tools/bin/bash
+#! /tools/bin/bash +h
 #
 # SmoothWall Build system.
 #
@@ -6,6 +6,9 @@
 # Parts (c) Neal P. Murphy, 2009
 #
 # This code is distributed under the terms of the GPL v2.
+
+# Turn off path caching
+set +h
 
 # First, look for /build. If it ain't found, this probably is not a chroot
 #   jail, it was probably run manually, so die.
@@ -78,14 +81,14 @@ else
   # The ISOs must be created in non-parallel mode
   JOBS=$JOBS_UP
   other_cmd "sources/media/$BUILD_PHASE.mediaISO.built" \
-            "Smoothwall Express ISO" \
+            "Smoothwall Express ISO ($mTUPLE)" \
             "make -C sources/media TYPE=-devel" \
             "sources/media/$BUILD_PHASE.mediaISO.out" \
             ""
   # Indicate success/failure here, too.
   if [ $? -eq 0 ]; then
-    echo "Smoothwall Express ISO media success"
+    echo "Smoothwall Express ISO ($mTUPLE) media success"
   else
-    echo "Smoothwall Express ISO media FAILED"
+    echo "Smoothwall Express ISO ($mTUPLE) media FAILED"
   fi
 fi

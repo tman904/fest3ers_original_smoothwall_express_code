@@ -1,4 +1,6 @@
-#! /bin/bash
+#! /bin/bash +h
+
+set +h
 
 # Get environs
 #
@@ -112,11 +114,11 @@ END
     FIN_TGT="x86_64-unknown-linux-gnu"
     echo "SEARCH_DIR(\"${TOOLS_DIR}/${FIN_TGT}/lib64\")" > /tmp/b.b
   else
-    FIN_TGT="i686-pc-linux-gnu"
+    FIN_TGT="${mTUPLE}-pc-linux-gnu"
     touch /tmp/b.b
   fi
+#SEARCH_DIR("${TOOLS_DIR}/${FIN_TGT}/lib")
   cat >>/tmp/b.b <<END
-SEARCH_DIR("${TOOLS_DIR}/${FIN_TGT}/lib")
 SEARCH_DIR("/usr/lib")
 SEARCH_DIR("/lib");
 END

@@ -26,6 +26,7 @@ else
 	(cd $(COMPILE_DIR); ./configure --prefix=$(PKG_DIR) $(CONFIG_OPTS))
 endif
 
+export V = 1
 compile: configure
 	make $(JOBS) -C $(COMPILE_DIR) COPT_FLAGS='$(CFLAGS)' PREFIX=$(PKG_DIR)
 

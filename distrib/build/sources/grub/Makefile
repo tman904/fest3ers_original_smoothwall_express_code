@@ -70,7 +70,7 @@ endif
 ifeq ($(BITS_64), yes)
 BASE_URL = http://downloads.smoothwall.org/buildmirror
 
-TARBALL = smoothwall-$(PACKAGE)-i686
+TARBALL = smoothwall-$(PACKAGE)-$(ARCH32)
 
 INSTALL = yes
 CLEAN = yes

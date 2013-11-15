@@ -33,8 +33,6 @@ ifeq ($(BUILD_PHASE), Stage_1)
 PATCH_FILE1 = binutils-2.22-build_fix-1.patch
 
 CONFIG_OPTS = \
-	      --build=$(shell ../../toolcrib/config.guess)        \
-	      --host=$(shell ../../toolcrib/config.guess)        \
 	      --target=$(SWE_TGT)        \
 	      --prefix=$(TOOLS_DIR)      \
 	      --with-sysroot=$(ROOT)     \
@@ -66,11 +64,9 @@ PRE_CONFIGURE = CC=$(SWE_TGT)-gcc \
 	        AR=$(SWE_TGT)-ar RANLIB=$(SWE_TGT)-ranlib
 
 CONFIG_OPTS = \
-	      --build=$(shell ../../toolcrib/config.guess) \
-	      --host=$(shell ../../toolcrib/config.guess) \
-	      --target=$(FINAL_TGT) \
 	      --prefix=$(TOOLS_DIR) \
 	      --disable-nls \
+	      --with-sysroot     \
 	      --with-lib-path=$(TOOLS_DIR)/lib
 
 COMPILE = yes

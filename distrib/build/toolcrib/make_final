@@ -1,4 +1,4 @@
-#! /tools/bin/bash
+#! /tools/bin/bash +h
 #
 # SmoothWall Build system.
 #
@@ -7,6 +7,8 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
+# Turn off path caching.
+set +h
 
 # First, look for /build. If it ain't found, this probably is not a chroot
 #   jail, it was probably run manually, so die.

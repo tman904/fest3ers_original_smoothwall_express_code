@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash +h
 #
 # SmoothWall Build system.
 #
@@ -7,6 +7,9 @@
 #
 # This code is distributed under the terms of the GPL v2.
 #
+
+# Turn off path caching
+set +h
  
 # When building the toolchain, use the host's sudo to become root. It may require
 #   entering a password or three, but that's preferable to clobbering the host's

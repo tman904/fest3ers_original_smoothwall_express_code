@@ -39,8 +39,6 @@ ifeq ($(BUILD_PHASE), Stage_1)
 
 # should target be FINAL_TGT?
 CONFIG_OPTS = \
-	      --build=$(shell ../../toolcrib/config.guess) \
-	      --host=$(shell ../../toolcrib/config.guess) \
 	      --target=$(SWE_TGT) \
 	      --prefix=$(TOOLS_DIR) \
 	      --with-sysroot=$(ROOT) \
@@ -129,9 +127,6 @@ PRE_CONFIGURE = CC=$(SWE_TGT)-gcc \
 	        AR=$(SWE_TGT)-ar RANLIB=$(SWE_TGT)-ranlib
 
 CONFIG_OPTS = \
-	      --build=$(shell ../../toolcrib/config.guess) \
-	      --host=$(shell ../../toolcrib/config.guess) \
-	      --target=$(FINAL_TGT) \
 	      --prefix=$(TOOLS_DIR)       \
 	      --with-local-prefix=$(TOOLS_DIR) \
 	      --with-native-system-header-dir=$(TOOLS_DIR)/include \

@@ -27,7 +27,7 @@
 #   - After completing the full build, you can rebuild bits and pieces by
 #     using the 'redo' function ala 'redo daq snort'.
 
-export SHELL = bash
+export SHELL = bash +h
 
 include sources/Makefile
 include sources/Makefile.flags-arch

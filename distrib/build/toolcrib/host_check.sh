@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/bash +h
+
+set +h
 
 # host_check.bash - A simple script to check and report version numbers of
 #   development tools required to build the LFS tool chain.

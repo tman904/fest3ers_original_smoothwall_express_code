@@ -1,4 +1,7 @@
-#! /bin/bash
+#! /bin/bash +h
+
+# turn off path caching
+set +h
 
 echo
 echo "Stage 2 GCC check"

@@ -1,4 +1,7 @@
-#! /bin/bash
+#! /bin/bash +h
+
+# Turn off path caching
+set +h
 
 # This script prepares the distrib root for the final build. It may be run once only.
 #   To re-do the setup, the final files must first be cleaned out. Then this script

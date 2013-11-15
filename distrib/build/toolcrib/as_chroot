@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash +h
 
   . crumbs/build_environment
 

@@ -165,7 +165,7 @@ endif
 	echo "  EXTRA='$(PRODUCT_EXTRA)'"; \
 	echo "  REVISION='$(REVISION)'"; \
 	echo "  UI_VERSION='$(UI_VERSION)'"; \
-	echo "  ARCH='$(mARCH)'"; \
+	echo "  ARCH='$(mTUPLE)'"; \
 	) | sed -u -e 's/^/  /'
 	
 	@mkdir -p distrib/var/smoothwall/main
@@ -175,7 +175,7 @@ endif
 	  echo "EXTRA='$(PRODUCT_EXTRA)'"; \
 	  echo "REVISION='$(REVISION)'" ; \
 	  echo "UI_VERSION='$(UI_VERSION)'" ; \
-	  echo "ARCH='$(mARCH)'" ; \
+	  echo "ARCH='$(mTUPLE)'" ; \
 	) > distrib/var/smoothwall/main/productdata
 	
 	@chown nobody:nobody distrib/var/smoothwall/main/productdata
@@ -264,7 +264,7 @@ extracontent:
 all: cdrom cdrom/smoothwall.tgz extracontent
 	@echo "      assemble full ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mARCH)"; \
+	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mTUPLE)"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
@@ -274,7 +274,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	)
 	@echo "      assemble dev ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mARCH)"; \
+	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mTUPLE)"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-dev.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \
@@ -284,7 +284,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 	)
 	@echo "      assemble offRoad ISO ..." >>$(MEDIA_BUILD_OUT)
 	@( \
-	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mARCH)"; \
+	  RELEASE="$(BASENAME)$(PRODUCT_EXTRA)-$(mTUPLE)"; \
 	  ISONAME=$(TARGET_DIR)/isos/$${RELEASE}-offroad.iso; \
 	  /sbin/mkisofs -o $${ISONAME} \
 	    -b boot/grub/stage2_eltorito -J -R \

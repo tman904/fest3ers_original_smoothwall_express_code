@@ -1,4 +1,4 @@
-#! /tools/bin/bash
+#! /tools/bin/bash +h
 
 # SmoothWall Build system.
 #
@@ -6,6 +6,9 @@
 # Parts (c) Neal P. Murphy 2009
 #
 # This code is distributed under the terms of the GPL v2.
+
+# Turn off path caching
+set +h
 
 # Creates files needed to start the building of the tree.
 

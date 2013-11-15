@@ -22,9 +22,10 @@ ifeq ($(BUILD_PHASE), Stage_1)
 PATCH_FILE1 = glibc-2.14.1-gcc_fix-1.patch
 PATCH_FILE2 = glibc-2.14.1-cpuid-1.patch
 
+# Phase 1 glibc builds with phase 1 binutils/gcc (SWE_TGT)
 CONFIG_OPTS = \
-	      --build=$$(../$(PACKAGE)-$(VERSION)/scripts/config.guess) \
-	      --host=$(SWE_TGT) \
+	      --build=$(shell ../../toolcrib/config.guess)        \
+	      --host=$(SWE_TGT)        \
 	      --prefix=$(TOOLS_DIR) \
 	      --disable-profile \
 	      --enable-add-ons \
