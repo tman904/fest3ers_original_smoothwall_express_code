@@ -112,7 +112,8 @@ END
 
   if [ "$BITS_64" == "yes" ]; then
     FIN_TGT="x86_64-unknown-linux-gnu"
-    echo "SEARCH_DIR(\"${TOOLS_DIR}/${FIN_TGT}/lib64\")" > /tmp/b.b
+    #echo "SEARCH_DIR(\"${TOOLS_DIR}/${FIN_TGT}/lib64\")" > /tmp/b.b
+    touch /tmp/b.b
   else
     FIN_TGT="${mTUPLE}-pc-linux-gnu"
     touch /tmp/b.b
