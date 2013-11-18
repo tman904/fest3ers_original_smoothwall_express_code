@@ -35,7 +35,7 @@ configure: patch
 	chmod 555 /tools/bin/xmlto
 	@true
 	
-CFLAGS:=$(FLAGS) -fno-strict-aliasing
+CFLAGS:=$(CFLAGS) -fno-strict-aliasing
 compile: configure
 	@make $(JOBS) -C $(COMPILE_DIR) V=1 USERCOMPILE='$(CFLAGS)' INC_USRLOCAL=$(PKG_DIR) FINALCONFDIR=$(PKG_DIR)/etc FINALRCDIR=$(PKG_DIR)/bin KERNELSRC=$(KNL_SRC) programs
 	@make $(JOBS) -C $(COMPILE_DIR) V=1 USERCOMPILE='$(CFLAGS)' INC_USRLOCAL=$(PKG_DIR) FINALCONFDIR=$(PKG_DIR)/etc FINALRCDIR=$(PKG_DIR)/bin KERNELSRC=$(KNL_SRC) module
