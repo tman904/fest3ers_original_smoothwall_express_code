@@ -53,34 +53,50 @@ default:
 	@echo "When building on a host GNU/Linux distrib, build as a non-root user. The"
 	@echo "system will become root as needed via 'sudo'."
 	@echo
-	@echo "The SWE3.1 build system is very robust, and very unlikely to"
-	@echo "hose your host system. But you must still know what you are doing!"
+	@echo "The build system is very robust, and very unlikely to hose your host"
+	@echo "system. But you must still know what you are doing!"
 	@echo
 	@echo "Useful commands:"
+	@echo "  . toolcrib/handy_utils"
+	@echo "  make predownload"
 	@echo "  make build"
-	@echo "  make rebuild"
 	@echo "  make media"
-	@echo "  make package"
 	@echo
-	@echo "To build 32-bit on x86_64:"
+	@echo "To build 32-bit on an x86_64 GNU/Linux distro:"
 	@echo "  linux32"
 	@echo "  make build"
-	@echo "This is the only method known to produce consisten results."
+	@echo "This is the only method known to produce consistent results."
 	@echo
 	@echo "Useful targets:"
+	@echo "  savesources       Make a tarball of the sources used to build."
+	@echo
+	@echo "  clean             Clean all but downloads to build from scratch."
+	@echo "  predownload       Download sourcecode packages in advance."
 	@echo "  toolchain         Build the toolchain and archive it for re-use."
-	@echo "  build             Build SWE3.1 or continue building from an error."
-	@echo "  media             Make ISO and prepare bootable flash drive."
-	@echo "  rebuild           Build SWE3.1 from scratch."
+	@echo "  build             Build everything or continue building from an error"
+	@echo "                    or an interruption."
+	@echo "  media             Make ISOs."
+	@echo "  reprep-final      Prepare to rebuild final stage *only*."
 	@echo "  package           Clean, archive sources, pre-fetch tarballs, build,"
 	@echo "                    and make media with matching source tarball."
 	@echo
-	@echo "  predownload       Download sourcecode packages in advance."
-	@echo "  savesources       Make a tarball of the sources used to build."
-	@echo "  reprep-final      Prepare to rebuild final stage *only*."
-	@echo "  clean:            Clean everything in preparation to build from scratch."
+	@echo "Help:"
+	@echo "  help-arch         How to select a different 32-bit ARCH"
+	@echo "  help-dl           How to customize 'make predownload'"
+	@echo "  help-utils        Handy build utilities"
+	@echo "  help-env          Display environment used during the build"
 	@echo
 	@echo "Please view Makefile for other targets."
+	@echo
+
+help-arch:
+	@echo
+	@echo "Choose a different 32-bit ARCH"
+	@echo "  ARCH32=i586 make build"
+	@echo "  ARCH32=i686 make build"
+	@echo
+
+help-dl:
 	@echo
 	@echo "Predownload/download helpers"
 	@echo "  Options to control downloads:"
@@ -92,7 +108,7 @@ default:
 	@echo "    MIRROR_UNO=hostA and/or MIRROR_DOS=hostB"
 	@echo "                    use hostA and/or hostB as sources for source packages."
 	@echo "                    hostA defaults to \"\", and hostB defaults to"
-	@echo "                    \"roadster.agcl.us/downloads\". This helps when you"
+	@echo "                    \"downloads.smoothwall.org/buildmirror/\". This helps when you"
 	@echo "                    have a local web site containing the source tarballs"
 	@echo "                    or want to verify the URLs in the pkg makefiles."
 	@echo "  Example showing all four options:"
@@ -100,17 +116,24 @@ default:
 	@echo "      MIRROR_DOS=\"\" make build"
 	@echo "    Continue a previously started DL, don't check SSL certs, use FTP's"
 	@echo "    PASSIVE facility, use the local 'downloads' web host, and do not"
-	@echo "    use the roadster.agcl.us collection (skip right to internet sources)."
+	@echo "    use the smoothwall downloads mirror (skip right to internet sources)."
+	@echo
+
+help-env:
+	@echo
+	@echo "This is the basic environment used during the build:"
+	@sed -e 's/^/  /' crumbs/build_environment
+	@echo
+
+help-utils:
 	@echo
 	@echo "There are useful functions in .../build/toolcrib/handy_utils:"
 	@echo "  - monbuild: monitor the progress of a package's build"
 	@echo "  - monloop: monbuild in a shell-like loop"
 	@echo "  - redo: rebuild one or more packages in the final build stage"
-	@echo "To use them: '. .../build/toolcrib/handy_utils' or read the file"
-	@echo "into your ~/.bashrc so they're always ready."
+	@echo "To use them: '. toolcrib/handy_utils' or source the file"
+	@echo "in your ~/.bashrc so they're always ready."
 	@echo
-	@echo "This is the basic environment to be used to build:"
-	@sed -e 's/^/  /' crumbs/build_environment
 
 
 # Host check
