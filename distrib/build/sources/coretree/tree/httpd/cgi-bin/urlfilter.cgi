@@ -558,6 +558,30 @@ if ($restoremessage)
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>\n";
 
+if (($proxysettings{'ENABLE_FILTER'} eq 'on'))
+{
+	if (($proxysettings{'ENABLE'} eq 'on'))
+	{
+		&openbox("$tr{'urlfilter enabled msg'} $tr{'urlfilter proxy enabled msg'}");
+	}
+	else
+	{
+		&openbox("$tr{'urlfilter enabled msg'} $tr{'urlfilter proxy disabled msg'}");
+	}
+}
+else
+{
+	if (($proxysettings{'ENABLE'} eq 'on'))
+	{
+		&openbox("$tr{'urlfilter disabled msg'} $tr{'urlfilter proxy enabled msg'}");
+	}
+	else
+	{
+		&openbox("$tr{'urlfilter disabled msg'} $tr{'urlfilter proxy disabled msg'}");
+	}
+}
+&closebox();
+
 &openbox("$tr{'urlfilter block categories'}:");
 
 print "<table width='100%' cellspacing='0' cellpadding='0'>";

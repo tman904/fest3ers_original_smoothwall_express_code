@@ -134,6 +134,21 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
+	<TD CLASS='base'>$tr{'enabled'}</TD>
+	<TD><INPUT TYPE='checkbox' NAME='ENABLE' $checked{'ENABLE'}{'on'}></TD>
+	<TD CLASS='base'>$tr{'urlfilter enabled'}</TD>
+	<TD><INPUT TYPE='checkbox' NAME='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></TD>
+</TR>
+<TR>
+	<TD CLASS='base'>$tr{'transparent'}</TD>
+	<TD><INPUT TYPE='checkbox' NAME='TRANSPARENT' $checked{'TRANSPARENT'}{'on'}></TD>
+	<td></td>
+	<td></td>
+</TR>
+<TR>
+	<td colspan='4'>&nbsp;</td>
+</TR>
+<TR>
 	<TD WIDTH='25%' CLASS='base'>$tr{'cache size'}</TD>
 	<TD WIDTH='25%'><INPUT TYPE='text' NAME='CACHE_SIZE' VALUE='$proxysettings{'CACHE_SIZE'}' SIZE='5'></TD>
 	<TD WIDTH='25%' CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'remote proxy'}</TD>
@@ -157,23 +172,6 @@ print <<END
 	<TD CLASS='base'>$tr{'max incoming size'}</TD>
 	<TD><INPUT TYPE='text' NAME='MAX_INCOMING_SIZE' VALUE='$proxysettings{'MAX_INCOMING_SIZE'}' SIZE='5'></TD>
 </TR>
-<TR>
-	<TD CLASS='base'>$tr{'transparent'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='TRANSPARENT' $checked{'TRANSPARENT'}{'on'}></TD>
-	<TD CLASS='base'>$tr{'enabled'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='ENABLE' $checked{'ENABLE'}{'on'}></TD>
-</TR>
-<!-- Start of modification by URLfilter -->
-</TABLE>
-<BR>
-<B>URL filter:</B>
-<TABLE WIDTH='100%'>
-<TR>
-	<TD CLASS='base'>$tr{'urlfilter enabled'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></TD>
-	<TD width='73%'>&nbsp;</TD>
-</TR>
-<!-- End of modification by URLfilter -->
 </TABLE>
 <BR>
 <IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
