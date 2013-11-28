@@ -44,9 +44,13 @@ endif
 # There are some contortions here. But the ARCH must be set early so the build
 #   environment is correctly set and passed to all subprocedures.
 
-# Define the preferred x86 ARCHs. Change ARCH32 as desired
-export ARCH32 = i586
+# Define the default ARCHs.
+ifndef ARCH32
+export ARCH32 = i486
+endif
+ifndef ARCH64
 export ARCH64 = x86_64
+endif
 
 # What ARCH do we seem to be?
 ifndef mARCH
@@ -78,7 +82,7 @@ ifeq ($(mARCH),$(ARCH64))
   endif
   # This is for building 32-bit grub with a cross-compiler
   # It isn't presently used, as we don't build a 32-bit env on 64-bit.
-  export SWE32_TGT = $(mTUPLE)-pc-linux-gnu
+  export SWE32_TGT = $(ARCH32)-pc-linux-gnu
 endif
 
 ifeq ($(mARCH),$(ARCH32))
