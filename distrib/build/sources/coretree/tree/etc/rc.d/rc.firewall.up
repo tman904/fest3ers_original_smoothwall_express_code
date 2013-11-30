@@ -97,7 +97,7 @@ fi
 # Setup timed access chains.
 /sbin/iptables -N timedaccess
 /sbin/iptables -N timedaction
-/sbin/iptables -A timedaction -j LOG --log-prefix " Denied-by-filter:timed-access "
+/sbin/iptables -A timedaction -j LOG --log-prefix " Denied-by-filter:timed-acc "
 /sbin/iptables -A timedaction -j REJECT
 
 # Apply the time rules to deny the traffic.
@@ -375,6 +375,12 @@ fi
 if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -t nat -A PREROUTING -i $RED_DEV -j MINIUPNPD
 fi
+
+# Drop INVALID packets early
+iptables -t mangle -N invdrop
+iptables -t mangle -A invdrop -j LOG --log-prefix "Denied-by-mangle:invdrop "
+iptables -t mangle -A invdrop -j DROP
+iptables -t mangle -I PREROUTING -m state --state INVALID -j invdrop
 
 # Portforward bouncing
 /sbin/iptables -t mangle -N portfwb
