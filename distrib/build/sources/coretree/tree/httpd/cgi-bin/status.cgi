@@ -124,6 +124,21 @@ sub status_line
 	return "<img src='/ui/img/service_$status.png' alt='$status'>";
 }
 
+sub running_since
+{
+	my $age = time - (stat( $_[0] ))[9];
+	my ( $days, $hours, $minutes, $seconds ) = (gmtime($age))[7,2,1,0];
+
+	if ( $days != 0 ){
+		$howlong = "$days days";
+	} elsif ( $hours != 0 ){
+		$howlong = sprintf( "%d hours, %.2d minutes", $hours, $minutes );
+	} else {
+		$howlong = sprintf( "%.d:%.2d", $minutes, $seconds );
+	}
+	return $howlong;
+}
+
 sub isrunning
 {
 	my $cmd = $_[0];
@@ -143,7 +158,11 @@ sub isrunning
     		chomp $running;
 		# The default is now to run SFQ, even when QoS is off.
 		# If only *one* line is returned, QoS is not running.
-		$status = status_line( "running" ) if ($running gt 1);
+		if ($running gt 1)
+		{
+			$status = status_line( "running" );
+			$howlong = &running_since("/var/smoothwall/traffic/settings");
+		}
 	}
 	elsif (open(FILE, "/var/run/${cmd}.pid"))
 	{
@@ -160,22 +179,13 @@ sub isrunning
 			if ($testcmd =~ /$exename/)
 			{
 				$status = status_line( "running" );
-
-				my $age = time - (stat( "/var/run/${cmd}.pid" ))[9];
-				my ( $days, $hours, $minutes, $seconds ) = (gmtime($age))[7,2,1,0];
-
-				if ( $days != 0 ){
-					$howlong = "$days days";
-				} elsif ( $hours != 0 ){
-                                        $howlong = sprintf( "%d hours, %.2d minutes", $hours, $minutes );
-				} else {
-                                        $howlong = sprintf( "%.d:%.2d", $minutes, $seconds );
-				}
+				$howlong = &running_since("/var/run/${cmd}.pid");
 
 				if (open(FILE, "/proc/${pid}/cmdline"))
 				{
 					my $cmdline = <FILE>;
-					if (!$cmdline) {
+					if (!$cmdline)
+					{
 						$status = status_line( "swapped" );
 					}
 				}
