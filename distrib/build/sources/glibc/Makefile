@@ -140,9 +140,9 @@ ifeq ($(BITS_64), yes)
 endif
 
 	touch $(PKG_ROOT)/etc/ld.so.conf
-	cd $(DIR); cp -v ../glibc-2.18/sunrpc/rpc/*.h $(PKG_ROOT) /usr/include/rpc
-	cd $(DIR); cp -v ../glibc-2.18/sunrpc/rpcsvc/*.h $(PKG_ROOT) /usr/include/rpcsvc
-	cd $(DIR); cp -v ../glibc-2.18/nis/rpcsvc/*.h $(PKG_ROOT) /usr/include/rpcsvc
+	cd $(DIR); cp -v ../glibc-2.18/sunrpc/rpc/*.h $(PKG_ROOT)/usr/include/rpc
+	cd $(DIR); cp -v ../glibc-2.18/sunrpc/rpcsvc/*.h $(PKG_ROOT)/usr/include/rpcsvc
+	cd $(DIR); cp -v ../glibc-2.18/nis/rpcsvc/*.h $(PKG_ROOT)/usr/include/rpcsvc
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR) install_root=$(PKG_ROOT) install
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR) localedata/install-locales
 	( \
