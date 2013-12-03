@@ -33,7 +33,7 @@ PATCH_FILE3 = builtins.c.patch
 #PATCH_FILE4 = stage2.c.patch
 
 PRE_CONFIGURE = LDFLAGS=-static CFLAGS="$(CFLAGS) -Os -Wall -fno-reorder-functions"
-CONFIG_OPTS = --prefix=$(PKG_DIR)
+CONFIG_OPTS += --prefix=$(PKG_DIR)
 
 reconf: patch
 	cd $(DIR); autoreconf --force

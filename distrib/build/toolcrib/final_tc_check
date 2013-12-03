@@ -73,8 +73,8 @@ grep -B3 '^ /usr/include' dummy.log >/tmp/a.a
 case $mARCH in
   $ARCH32) cat >/tmp/b.b <<END
 #include <...> search starts here:
- /usr/lib/gcc/i686-pc-linux-gnu/${VERSION}/include
- /usr/lib/gcc/i686-pc-linux-gnu/${VERSION}/include-fixed
+ /usr/lib/gcc/${ARCH32}-pc-linux-gnu/${VERSION}/include
+ /usr/lib/gcc/${ARCH32}-pc-linux-gnu/${VERSION}/include-fixed
  /usr/include
 END
     ;;
@@ -89,8 +89,10 @@ END
 esac
 diff /tmp/a.a /tmp/b.b >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-  echo "gcc is searching for the wrong header files!"
+  echo "gcc is searching for the wrong header files:"
   sed -e 's/^/    /' /tmp/a.a
+  echo "gcc should search for:"
+  sed -e 's/^/    /' /tmp/b.b
   STATUS=1
 fi
 rm /tmp/a.a /tmp/b.b
@@ -100,7 +102,7 @@ rm /tmp/a.a /tmp/b.b
 grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g' >/tmp/a.a
 case $mARCH in
   $ARCH32) cat >/tmp/b.b <<END
-SEARCH_DIR("/usr/i686-pc-linux-gnu/lib")
+SEARCH_DIR("/usr/${ARCH32}-pc-linux-gnu/lib")
 SEARCH_DIR("/usr/local/lib")
 SEARCH_DIR("/lib")
 SEARCH_DIR("/usr/lib");
@@ -123,6 +125,8 @@ diff /tmp/a.a /tmp/b.b >/dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "Loader is using incorrect search paths:"
   sed -e 's/^/    /' /tmp/a.a
+  echo "Loader should use:"
+  sed -e 's/^/    /' /tmp/b.b
   STATUS=1
 fi
 rm /tmp/a.a /tmp/b.b

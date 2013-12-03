@@ -13,7 +13,7 @@ EXTENSION = .tar.xz
 
 BASE_URL = http://ftp.gnome.org/pub/GNOME/sources/$(PACKAGE)/$(VER_MM)
 
-CONFIG_OPTS = --prefix=/usr --without-x
+CONFIG_OPTS += --prefix=/usr --without-x
 INSTALL = yes
 install: compile
 	mkdir -p $(PKG_ROOT)

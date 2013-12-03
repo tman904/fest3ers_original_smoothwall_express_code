@@ -15,7 +15,7 @@ TARBALL = $(PACKAGE)_$(VERSION).orig
 
 DIR =  $(PACKAGE)-$(VERSION).orig
 
-CONFIG_OPTS = --mandir=/$(PKG_DIR)/man
+CONFIG_OPTS += --mandir=/$(PKG_DIR)/man
 
 PATCH_FILE1 = config.h.patch
 

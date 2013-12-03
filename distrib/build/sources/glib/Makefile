@@ -13,6 +13,6 @@ EXTENSION = .tar.xz
 
 BASE_URL =  http://ftp.gtk.org/pub/glib/$(VER_MM)
 
-CONFIG_OPTS = --without-ffi
+CONFIG_OPTS += --without-ffi
 include ../Makefile.rules
 

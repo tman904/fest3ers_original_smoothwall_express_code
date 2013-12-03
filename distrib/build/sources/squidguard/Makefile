@@ -11,7 +11,7 @@ VERSION = 1.5-beta
 
 BASE_URL = http://www.squidguard.org/Downloads/Devel
 
-CONFIG_OPTS = --prefix=$(PKG_DIR) --exec_prefix=$(PKG_DIR) \
+CONFIG_OPTS += --prefix=$(PKG_DIR) --exec_prefix=$(PKG_DIR) \
 	      --with-sg-config=/var/smoothwall/urlfilter/squidGuard.conf \
 	      --with-sg-logdir=/var/log/squidGuard \
 	      --with-sg-dbhome=/var/smoothwall/urlfilter/blacklists \

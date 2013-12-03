@@ -11,7 +11,7 @@ VERSION = 1.4.8
 
 BASE_URL = http://www.maxmind.com/download/geoip/api/c
 
-CONFIG_OPTS = --with-gnu-ld
+CONFIG_OPTS += --with-gnu-ld
 CONFIGURE = yes
 configure: patch
 	cd $(COMPILE_DIR); \

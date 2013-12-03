@@ -5,16 +5,22 @@ include ../Makefile.conf
 PACKAGE = cpio
 VERSION = 2.11
 
-LICENCE_FILE = $(DIR)/COPYING
+BASE_URL = http://ftp.gnu.org/gnu/cpio/
 
-#PATCH_FILE1 = cpio-2.9-gcc4_3.patch
+LICENCE_FILE = $(DIR)/COPYING
 
 PRE_CONFIGURE = CFLAGS="$(CFLAGS)"
 
-CONFIG_OPTS = --prefix=/usr \
+CONFIG_OPTS += --prefix=/usr \
 	      --bindir=/bin \
 	      --libexecdir=/tmp \
 	      --disable-silent-rules \
 	      --with-rmt=/usr/sbin/rmt
+
+PREPARE = yes
+
+$(DIR)/: download
+	tar -xvf $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION)
+	cd $(DIR); sed -i -e '/gets is a/d' gnu/stdio.in.h
 
 include ../Makefile.rules

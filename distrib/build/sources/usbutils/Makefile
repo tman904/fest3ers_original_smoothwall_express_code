@@ -12,7 +12,7 @@ EXTENSION = .tar.bz2
 
 BASE_URL = http://www.kernel.org/pub/linux/kernel/people/gregkh/usbutils/
 
-CONFIG_OPTS = --disable-zlib
+CONFIG_OPTS += --disable-zlib
 
 include ../Makefile.rules
 

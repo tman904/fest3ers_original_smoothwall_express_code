@@ -127,6 +127,9 @@ PRE_CONFIGURE = CC=$(SWE_TGT)-gcc \
 	        AR=$(SWE_TGT)-ar RANLIB=$(SWE_TGT)-ranlib
 
 CONFIG_OPTS = \
+	      --host=$(FINAL_TGT) \
+	      --build=$(FINAL_TGT) \
+	      --target=$(FINAL_TGT) \
 	      --prefix=$(TOOLS_DIR)       \
 	      --with-local-prefix=$(TOOLS_DIR) \
 	      --with-native-system-header-dir=$(TOOLS_DIR)/include \
@@ -168,6 +171,9 @@ endif
 	cd $(DIR); sed -i -e '/autogen/d' -e '/check.sh/d' fixincludes/Makefile.in
 
 CONFIG_OPTS =  \
+	        --host=$(FINAL_TGT) \
+	        --build=$(FINAL_TGT) \
+	        --target=$(FINAL_TGT) \
 		--prefix=$(PKG_DIR) \
 		--libexecdir=/usr/lib    \
 		--enable-shared          \

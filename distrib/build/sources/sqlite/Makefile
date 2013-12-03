@@ -11,6 +11,6 @@ VERSION = 3071300
 
 BASE_URL = http://www.sqlite.org/
 
-CONFIG_OPTS = --enable-threadsafe --enable-cross-thread-connections
+CONFIG_OPTS += --enable-threadsafe --enable-cross-thread-connections
 
 include ../Makefile.rules

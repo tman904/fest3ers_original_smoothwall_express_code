@@ -12,9 +12,9 @@ VERSION = 3.1.8
 BASE_URL = ftp://ftp.gnu.org/gnu/gawk
 
 ifeq ($(BUILD_PHASE), Stage_3)
-CONFIG_OPTS = --prefix=/tools ac_cv_func_working_mktime=yes
+CONFIG_OPTS += --prefix=/tools ac_cv_func_working_mktime=yes
 else
-CONFIG_OPTS = ac_cv_func_working_mktime=yes
+CONFIG_OPTS += ac_cv_func_working_mktime=yes
 endif
 
 

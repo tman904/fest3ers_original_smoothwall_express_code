@@ -13,6 +13,6 @@ EXTENSION = .tgz
 BASE_URL = ftp://invisible-island.net/$(PACKAGE)
 
 PRECONFIGURE = LDFLAGS=-ltinfo
-CONFIG_OPTS = --with-ncurses=tinfo
+CONFIG_OPTS += --with-ncurses=tinfo
 
 include ../Makefile.rules

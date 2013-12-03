@@ -11,7 +11,7 @@ VERSION = 2.4.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/bison/
 
-CONFIG_OPTS = --prefix=${PKG_DIR}
+CONFIG_OPTS += --prefix=${PKG_DIR}
 
 PATCH = yes
 patch: $(DIR)/

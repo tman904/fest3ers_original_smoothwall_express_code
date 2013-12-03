@@ -11,7 +11,7 @@ VERSION = 1.10.2
 
 BASE_URL = http://cairographics.org/releases/
 
-CONFIG_OPTS = --enable-script --enable-tee --enable-xml
+CONFIG_OPTS += --enable-script --enable-tee --enable-xml
 
 include ../Makefile.rules
 

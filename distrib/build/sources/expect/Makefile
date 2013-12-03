@@ -23,7 +23,7 @@ ifeq ($(BUILD_PHASE), Stage_3)
 PATCH_FILE1 = expect-5.43.0-spawn-1.patch
 PATCH_FILE2 = expect-5.43.0-tcl_8.5.5_fix-1.patch
 
-CONFIG_OPTS = --prefix=$(TOOLS_DIR) --with-tcl=/$(TOOLS_DIR)/lib \
+CONFIG_OPTS += --prefix=$(TOOLS_DIR) --with-tcl=/$(TOOLS_DIR)/lib \
 	--with-tclinclude=$(TOOLS_DIR)/include --with-x=no
 
 CONFIGURE = yes

@@ -1,4 +1,4 @@
-# 2013/11/10 - Document a piece of the toolchain philosophy. This is here
+# 2013/11/10, NPMurphy - Document a piece of the toolchain philosophy. This is here
 #   because this file is used to determine the various bits and flags needed
 #   to build everything.
 #
@@ -6,24 +6,34 @@
 # no trace of the host system's tools. This is done in three stages.
 #
 # Stage 1:
-#   PATH is set to the build's /tools dir(s) before the host's dirs; newly-
-#   built tools will be chosen over the host's tools.
+#   PATH is set to check the build's /tools dir(s) before the host's dirs;
+#   newly-built tools will be chosen over the host's tools.
 #   Build unique binutils and gcc such that the host's tools CANNOT be
-#   mistaken for them. When the host's tools are identified as
-#   i686-pc-linux-gnu-*, we build the stage 1 binutils and gcc so they are
-#   identified as i686-swe-linux-gnu-*. These are a form of cross-tools.
+#   mistaken for them. For example, regardless of the host, we want to build
+#   binutils and gcc cross-tools for $(mARCH)-tc-linux-gnu for both 32- and
+#   64-bit; $(SWE_TGT) is set appropriately. Glibc is built on 'host' SWE_TGT
+#   to run on FINAL_TGT targetting FINAL_TGT.
 # Stage 2:
-#   PATH is set to check host dir before the build's /tools dir(s).
-#   Build binutils and gcc using the i686-swe-linux-gnu-* tools; these
+#   PATH is set to the build's /tools dir(s) before the host's dirs.
+#   Build binutils and gcc using the $(SWE_TGT)-* tools; these
 #   names cannot accidentally pick up the host's build tools. The resulting
 #   tools will have no trace of the host; they will use only themselves and the
-#   glibc and kernel headers built in stage 1.
+#   glibc and kernel headers built in stage 1. Binutils and gcc are built with
+#   host/build/target=$(FINAL_TGT).
 # Stage 3:
 #   Like stage 2, build the minimal utilities to make the initial parts of the
 #   final stage.
 # Final Stage:
 #   Enter a chroot jail and build all the pkgs needed for the product. The jail
 #   ensure that none of the host's software is used, included, or referenced.
+#   PATH is set to read the jail's */bin before /tools/bin so that newly-built
+#   pkgs replace those in the toolchain. Glibc, binutils and gcc are built with
+#   host/build/target=$(FINAL_TGT).
+#
+# In addition, a number of pkgs check host and build system types. Adding
+#   "--host=$(FINAL_TGT) --build=$(FINAL_TGT)" to CONFIG_OPTS (other than
+#   binutils/gcc/glibc) should get pkgs to stop guessing that the
+#   host is the target.
 
 # I think part of my build problems have involved cached paths, in that make
 # and the shell remember and use the host's tools instead of the tools

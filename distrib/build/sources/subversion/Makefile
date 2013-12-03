@@ -13,7 +13,6 @@ BASE_URL = http://archive.apache.org/dist/subversion
 
 EXTENSION = .tar.bz2
 
-#CONFIG_OPTS = --with-neon --with-apr=/usr/apache2 --with-apr-util=/usr/apache2
-CONFIG_OPTS = --with-neon
+CONFIG_OPTS += --with-neon
 
 include ../Makefile.rules

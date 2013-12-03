@@ -17,7 +17,7 @@ BASE_URL = http://www.snort.org
 
 PATCH_FILE1 = snort-pidfix.patch
 
-CONFIG_OPTS = --enable-gre --enable-targetbased --enable-ppm \
+CONFIG_OPTS += --enable-gre --enable-targetbased --enable-ppm \
 	      --enable-perfprofiling --enable-zlib --enable-non-ether-decoders
 
 # You're looking in here because the build system failed to find

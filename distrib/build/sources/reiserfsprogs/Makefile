@@ -16,7 +16,7 @@ BASE_URL = http://fossies.org/linux/misc/
 
 ifeq ($(BUILD_PHASE), Final)
 
-CONFIG_OPTS = --prefix=$(PKG_DIR) --sbindir=/sbin
+CONFIG_OPTS += --prefix=$(PKG_DIR) --sbindir=/sbin
 
 
 INSTALL = yes

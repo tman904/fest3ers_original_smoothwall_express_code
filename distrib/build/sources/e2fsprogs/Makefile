@@ -24,7 +24,7 @@ endif
 
 ifeq ($(BUILD_PHASE), Final)
 
-CONFIG_OPTS = --prefix=$(PKG_DIR) --with-root-prefix="" --enable-elf-shlibs \
+CONFIG_OPTS += --prefix=$(PKG_DIR) --with-root-prefix="" --enable-elf-shlibs \
 	      --enable-verbose-makecmds
 
 PATCH = yes

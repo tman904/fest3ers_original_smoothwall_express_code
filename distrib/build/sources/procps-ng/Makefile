@@ -15,7 +15,7 @@ BASE_URL = http://sourceforge.net/projects/procps-ng/files/Production/
 CONFIGURE = yes
 INSTALL = yes
 
-CONFIG_OPTS = --prefix=/ --includedir=/usr/include --datarootdir=/usr/share
+CONFIG_OPTS += --prefix=/ --includedir=/usr/include --datarootdir=/usr/share
 configure: $(DIR)/
 	cd $(DIR); LIBS=-ltinfo ./configure $(CONFIG_OPTS)
 	#cd $(DIR); sed -i -e 's/-lncurses/& -ltinfo/' Makefile

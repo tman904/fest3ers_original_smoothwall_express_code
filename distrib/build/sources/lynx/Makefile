@@ -11,6 +11,6 @@ TARBALL = $(PACKAGE)$(VERSION)
 
 DIR = $(PACKAGE)$(subst .,-,$(VERSION))
 
-CONFIG_OPTS = --with-screen=ncurses
+CONFIG_OPTS += --with-screen=ncurses
 
 include ../Makefile.rules

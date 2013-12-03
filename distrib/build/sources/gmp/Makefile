@@ -18,6 +18,6 @@ endif
 
 EXTENSION = .tar.bz2
 
-CONFIG_OPTS = --prefix=$(PKG_DIR) --enable-cxx --enable-mpbsd
+CONFIG_OPTS += --prefix=$(PKG_DIR) --enable-cxx --enable-mpbsd
 
 include ../Makefile.rules

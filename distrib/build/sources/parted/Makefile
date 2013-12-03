@@ -8,6 +8,6 @@ EXTENSION = .tar.xz
 
 BASE_URL = http://ftp.gnu.org/gnu/parted/
 
-CONFIG_OPTS = --disable-nls --disable-device-mapper --disable-silent-rules
+CONFIG_OPTS += --disable-nls --disable-device-mapper --disable-silent-rules
 
 include ../Makefile.rules

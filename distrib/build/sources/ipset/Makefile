@@ -30,7 +30,7 @@ EXTENSION = .tar.bz2
 BASE_URL = http://ipset.netfilter.org
 
 KERNEL_DIR = $(SOURCES_DIR)/linux$(KERNEL_TYPE)/linux
-CONFIG_OPTS = --prefix=/usr --mandir=/usr/man --docdir=/usr/doc \
+CONFIG_OPTS += --prefix=/usr --mandir=/usr/man --docdir=/usr/doc \
 	      --with-kbuild=$(KERNEL_DIR) --with-ksource=$(KERNEL_DIR)
 
 COMPILE = yes

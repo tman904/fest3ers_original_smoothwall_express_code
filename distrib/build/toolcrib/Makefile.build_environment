@@ -6,7 +6,8 @@ include sources/Makefile.flags-arch
 prep_env:
 	@( \
 	  echo -e "set +h"; \
-	  echo -e "export SHELL=\"BASH\"\nexport mARCH=\"$(mARCH)\"\nexport SWE_TGT=\"$(SWE_TGT)\""; \
+	  echo -e "export SHELL=\"BASH\"\nexport mARCH=\"$(mARCH)\""; \
+	  echo -e "export SWE_TGT=\"$(SWE_TGT)\"\nexport FINAL_TGT=\"$(FINAL_TGT)\""; \
 	  echo -e "export mTUPLE=\"$(mTUPLE)\"\nexport CXXFLAGS=\"$(CFLAGS)\""; \
 	  echo -e "export CFLAGS=\"$(CFLAGS)\"\nexport SWE32_TGT=\"$(SWE32_TGT)\""; \
 	  echo -e "export HOME=\"$${HOME}\"\nexport TERM=\"$(TERM)\"\nexport PS1=\"\\u:\\w\$$ \""; \

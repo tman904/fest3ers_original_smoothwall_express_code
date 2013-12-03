@@ -64,6 +64,9 @@ PRE_CONFIGURE = CC=$(SWE_TGT)-gcc \
 	        AR=$(SWE_TGT)-ar RANLIB=$(SWE_TGT)-ranlib
 
 CONFIG_OPTS = \
+	      --host=$(FINAL_TGT) \
+	      --build=$(FINAL_TGT) \
+	      --target=$(FINAL_TGT) \
 	      --prefix=$(TOOLS_DIR) \
 	      --disable-nls \
 	      --with-sysroot     \
@@ -87,8 +90,11 @@ endif # Stage 2
 # Final Build Stage
 #
 ifeq ($(BUILD_PHASE), Final)
-#CONFIG_OPTS = --prefix=$(PKG_ROOT)$(PKG_DIR) --enable-shared
-CONFIG_OPTS = --prefix=$(PKG_DIR) --enable-shared
+CONFIG_OPTS = \
+	      --host=$(FINAL_TGT) \
+	      --build=$(FINAL_TGT) \
+	      --target=$(FINAL_TGT) \
+	      --prefix=$(PKG_DIR) --enable-shared
 
 DOWNLOAD = yes
 download:

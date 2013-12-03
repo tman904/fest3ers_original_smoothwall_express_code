@@ -14,7 +14,7 @@ BASE_URL = ftp://ftp.gnu.org/gnu/bash/
 BUILD = --build=$(SWE_TGT)
 
 ifeq ($(BUILD_PHASE), Stage_3)
-CONFIG_OPTS = --prefix=${TOOLS_DIR} --without-bash-malloc
+CONFIG_OPTS += --prefix=${TOOLS_DIR} --without-bash-malloc
 
 INSTALL = yes
 install: compile
@@ -23,7 +23,7 @@ install: compile
 endif
 
 ifeq ($(BUILD_PHASE), Final)
-CONFIG_OPTS = --bindir=/bin $(BUILD)
+CONFIG_OPTS += --bindir=/bin $(BUILD)
 
 INSTALL = yes
 

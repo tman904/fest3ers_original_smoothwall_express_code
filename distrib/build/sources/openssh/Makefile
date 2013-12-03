@@ -11,8 +11,7 @@ VERSION = 6.4p1
 
 BASE_URL = ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/
 
-#CONFIG_OPTS = --with-ssl-dir=/usr/ssl --with-md5-passwords --with-pid-dir=/var/run
-CONFIG_OPTS = --with-md5-passwords --with-pid-dir=/var/run
+CONFIG_OPTS += --with-md5-passwords --with-pid-dir=/var/run
 
 INSTALL = yes
 

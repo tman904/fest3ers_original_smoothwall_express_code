@@ -13,7 +13,7 @@ LICENCE_FILE = $(DIR)/COPYING
 
 BASE_URL = http://archive.apache.org/dist/httpd/
 
-CONFIG_OPTS = --enable-ssl --with-ssl=/usr \
+CONFIG_OPTS += --enable-ssl --with-ssl=/usr \
 	--with-included-apr --enable-mods-shared=all --enable-layout=RedHat
 
 CONFIGURE = yes

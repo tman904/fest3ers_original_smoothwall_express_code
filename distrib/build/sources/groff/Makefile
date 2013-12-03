@@ -13,7 +13,7 @@ BASE_URL = ftp://ftp.gnu.org/gnu/groff
 
 PRE_CONFIGURE = PAGE=letter
 
-CONFIG_OPTS = --prefix=$(PKG_DIR) --enable-multibyte
+CONFIG_OPTS += --prefix=$(PKG_DIR) --enable-multibyte
 
 #PATCH_URL1 = http://www.linuxfromscratch.org/patches/lfs/6.4/groff-1.18.1.4-debian_fixes-1.patch
 #PATCH_FILE1 = groff-1.18.1.4-debian_fixes-1.patch

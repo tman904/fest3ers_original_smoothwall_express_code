@@ -13,7 +13,12 @@ DIR = $(PACKAGE)-$(VERSION)
 
 BASE_URL = http://www.openinfosecfoundation.org/download/
 
-CONFIG_OPTS = --disable-nls --prefix=/usr --enable-nfqueue --sysconfdir=/etc --localstatedir=/var
+CONFIG_OPTS += \
+	--disable-nls \
+	--prefix=/usr \
+	--enable-nfqueue \
+	--sysconfdir=/etc \
+	--localstatedir=/var
 
 INSTALL = yes
 install: compile

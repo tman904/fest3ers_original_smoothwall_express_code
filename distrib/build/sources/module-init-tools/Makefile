@@ -16,6 +16,6 @@ PKG_DIR =
 
 PRE_CONFIGURE = DOCBOOKTOMAN=/bin/true
 
-CONFIG_OPTS = --datarootdir=/usr/share
+CONFIG_OPTS += --datarootdir=/usr/share
 
 include ../Makefile.rules

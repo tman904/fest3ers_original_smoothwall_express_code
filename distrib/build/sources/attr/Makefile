@@ -15,7 +15,7 @@ DIR = $(PACKAGE)-$(VERSION)
 TARBALL = $(PACKAGE)_$(VERSION).orig
 EXTENSION = .tar.bz2
 
-CONFIG_OPTS = --prefix=$(PKG_DIR)
+CONFIG_OPTS += --prefix=$(PKG_DIR)
 
 INSTALL = yes
 install: compile

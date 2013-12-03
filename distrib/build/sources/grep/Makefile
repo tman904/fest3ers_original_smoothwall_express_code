@@ -13,9 +13,9 @@ BASE_URL = ftp://ftp.gnu.org/gnu/grep/
 
 
 ifeq ($(BUILD_PHASE), Stage_3)
-CONFIG_OPTS = --disable-perl-regexp --with-included-regex
+CONFIG_OPTS += --disable-perl-regexp --with-included-regex
 else
-CONFIG_OPTS = --bindir=/bin --with-included-regex
+CONFIG_OPTS += --bindir=/bin --with-included-regex
 endif
 
 include ../Makefile.rules

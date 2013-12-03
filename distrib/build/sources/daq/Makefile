@@ -17,7 +17,7 @@ BASE_URL = http://www.snort.org
 
 DIR = $(PACKAGE)-$(VERSION)
 
-CONFIG_OPTS = --disable-bundled-modules --enable-nfq-module \
+CONFIG_OPTS += --disable-bundled-modules --enable-nfq-module \
 	      --enable-pcap-module --enable-dump-module 
 
 # You're looking in here because the build system failed to find

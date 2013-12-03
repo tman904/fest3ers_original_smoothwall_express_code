@@ -14,7 +14,7 @@ BASE_URL = http://http.us.debian.org/debian/pool/main/libc/libcap2/
 DIR = $(PACKAGE)-$(VERSION)
 TARBALL = $(PACKAGE)2_$(VERSION).orig
 
-CONFIG_OPTS = --prefix=$(PKG_DIR)
+CONFIG_OPTS += --prefix=$(PKG_DIR)
 
 CONFIGURE = yes
 

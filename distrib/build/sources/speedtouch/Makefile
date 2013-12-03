@@ -11,7 +11,7 @@ VERSION = 1.3.1
 
 BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/speedtouch/
 
-CONFIG_OPTS =
+#CONFIG_OPTS =
 
 INSTALL = yes
 

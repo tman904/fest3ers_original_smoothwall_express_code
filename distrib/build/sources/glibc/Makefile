@@ -7,11 +7,14 @@
 include ../Makefile.conf
 
 PACKAGE = glibc
-VERSION = 2.14.1
+VERSION = 2.18
 
 EXTENSION = .tar.bz2
 
 BASE_URL =  ftp://ftp.gnu.org/gnu/glibc
+TZ_VERSION = 2013h
+TZ_TARBALL = tzdata$(TZ_VERSION).tar.gz
+TZ_URL =  http://www.iana.org/time-zones/repository/releases/$(TZ_TARBALL)
 
 COMPILE_DIR = $(DIR)-compile
 
@@ -19,21 +22,22 @@ COMPILE_DIR = $(DIR)-compile
 #
 ifeq ($(BUILD_PHASE), Stage_1)
 
-PATCH_FILE1 = glibc-2.14.1-gcc_fix-1.patch
-PATCH_FILE2 = glibc-2.14.1-cpuid-1.patch
+#PATCH_FILE1 = glibc-2.14.1-gcc_fix-1.patch
+#PATCH_FILE2 = glibc-2.14.1-cpuid-1.patch
 
 # Phase 1 glibc builds with phase 1 binutils/gcc (SWE_TGT)
 CONFIG_OPTS = \
-	      --build=$(shell ../../toolcrib/config.guess)        \
-	      --host=$(SWE_TGT)        \
+	      --host=$(SWE_TGT) \
+              --build=$(FINAL_TGT) \
+              --target=$(FINAL_TGT) \
 	      --prefix=$(TOOLS_DIR) \
 	      --disable-profile \
-	      --enable-add-ons \
 	      --enable-kernel=2.6.32  \
 	      --with-headers=$(TOOLS_DIR)/include \
 	      libc_cv_forced_unwind=yes \
 	      libc_cv_ctors_header=yes \
 	      libc_cv_c_cleanup=yes
+#	      --enable-add-ons \
 
 PREPARE = yes
 # Prepare
@@ -47,6 +51,7 @@ else
 	echo "CFLAGS += -march=$(mARCH) -mtune=generic" > $(COMPILE_DIR)/configparms
 endif
 endif
+	cd $(DIR); sed -i -e 's/static __m128i/inline &/' sysdeps/x86_64/multiarch/strstr.c
 
 
 COMPILE = yes
@@ -69,19 +74,22 @@ ifeq ($(BUILD_PHASE), Final)
 
 BUILD = --build=$(SWE_TGT)
 
-PATCH_FILE1 = glibc-2.14.1-fixes-1.patch
-PATCH_FILE2 = glibc-2.14.1-gcc_fix-1.patch
-PATCH_FILE3 = glibc-2.14-reexport-rpc-interface.patch
-PATCH_FILE4 = glibc-2.14-reinstall-nis-rpc-headers.patch
-
-
-CONFIG_OPTS = --prefix=/usr --disable-profile --enable-add-ons \
-	      --enable-kernel-2.6.32 --libexecdir=/usr/lib/glibc \
+CONFIG_OPTS = \
+              --host=$(FINAL_TGT) \
+              --build=$(FINAL_TGT) \
+              --target=$(FINAL_TGT) \
+	      --prefix=$(PKG_DIR) \
+	      --disable-profile \
+	      --enable-kernel=2.6.32 \
+	      --libexecdir=/usr/lib/glibc \
 	      --enable-obsolete-rpc
+
+#	      --enable-add-ons \
 
 DOWNLOAD = yes
 download:
 	$(DL_CMD) $(BASE_URL)/$(PACKAGE)-$(VERSION)$(EXTENSION)
+	$(DL_CMD) $(TZ_URL)
 
 PREPARE = yes
 # Prepare
@@ -106,6 +114,8 @@ else
 	echo "CFLAGS += -march=$(mARCH) -mtune=generic -O3 -pipe" > $(COMPILE_DIR)/configparms
 endif
 endif
+	cd $(DIR); sed -i -e 's/static __m128i/inline &/' sysdeps/x86_64/multiarch/strstr.c
+
 
 COMPILE = yes
 INSTALL = yes
@@ -130,8 +140,26 @@ ifeq ($(BITS_64), yes)
 endif
 
 	touch $(PKG_ROOT)/etc/ld.so.conf
+	cd $(DIR); cp -v ../glibc-2.18/sunrpc/rpc/*.h $(PKG_ROOT) /usr/include/rpc
+	cd $(DIR); cp -v ../glibc-2.18/sunrpc/rpcsvc/*.h $(PKG_ROOT) /usr/include/rpcsvc
+	cd $(DIR); cp -v ../glibc-2.18/nis/rpcsvc/*.h $(PKG_ROOT) /usr/include/rpcsvc
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR) install_root=$(PKG_ROOT) install
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR) localedata/install-locales
+	( \
+	  cd $(COMPILE_DIR); \
+	  tar -xf $(DOWNLOADS_DIR)/$(TZ_TARBALL); \
+	  ZONEINFO=$(PKG_ROOT)/usr/share/zoneinfo; \
+	  mkdir -pv $$ZONEINFO/{posix,right}; \
+	  for tz in etcetera southamerica northamerica europe africa antarctica \
+	      asia australasia backward pacificnew solar87 solar88 solar89 \
+	      systemv; do \
+	    zic -L /dev/null   -d $$ZONEINFO       -y "sh yearistype.sh" $${tz}; \
+	    zic -L /dev/null   -d $$ZONEINFO/posix -y "sh yearistype.sh" $${tz}; \
+	    zic -L leapseconds -d $$ZONEINFO/right -y "sh yearistype.sh" $${tz}; \
+	  done; \
+	  cp -v zone.tab iso3166.tab $$ZONEINFO; \
+	  zic -d $$ZONEINFO -p America/New_York; \
+	)
 endif
 
 BUILDTARBALL = yes

@@ -13,6 +13,6 @@ EXTENSION = .tgz
 
 BASE_URL = ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/
 
-CONFIG_OPTS = --with-tls=openssl
+CONFIG_OPTS += --with-tls=openssl
 
 include ../Makefile.rules

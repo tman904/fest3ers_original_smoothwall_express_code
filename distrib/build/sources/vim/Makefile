@@ -16,7 +16,7 @@ EXTENSION = .tar.bz2
 
 DIR = $(PACKAGE)$(MAJ)$(MIN)
 
-CONFIG_OPTS = --prefix=/usr --with-tlib=tinfo
+CONFIG_OPTS += --prefix=${PKG_DIR} --with-tlib=tinfo
 
 INSTALL = yes
 
@@ -28,8 +28,8 @@ install: compile
 	  sed -i -e 's/mouse=a/mouse=/' $(PKG_ROOT)$(PKG_DIR)/share/vim/vimrc
 	cd $(PKG_ROOT)/usr/bin; ln -s vim vi;
 	cd $(PKG_ROOT)/usr/share/man; \
-	  for L in {,*/}/man1/vim.1; do \
-	    ln -sv vim.1 `dirname $$L`/vi.1; \
+	  find . -name vim.1 -print | while read a; do \
+	    ln -sv `basename $$a` `dirname $$a`/vi.1; \
 	  done
 	cd $(PKG_ROOT)/usr/share; \
 	  mkdir doc; \

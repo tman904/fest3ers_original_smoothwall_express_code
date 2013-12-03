@@ -21,7 +21,7 @@ TARBALL = $(PACKAGE)$(VERSION)-src
 DIR = $(PACKAGE)$(VERSION)
 
 ifeq ($(BITS_64), yes)
-CONFIG_OPTS = --enable-64bit
+CONFIG_OPTS += --enable-64bit
 endif
 
 CONFIGURE = yes

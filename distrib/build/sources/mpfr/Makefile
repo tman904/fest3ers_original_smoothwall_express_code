@@ -14,7 +14,7 @@ BASE_URL = http://www.mpfr.org/
 
 EXTENSION = .tar.bz2
 
-CONFIG_OPTS = --prefix=$(PKG_DIR) \
+CONFIG_OPTS += --prefix=$(PKG_DIR) \
 	      --enable-thread-safe \
 	      --docdir=/usr/share/doc/mpfr-3.1.1
 

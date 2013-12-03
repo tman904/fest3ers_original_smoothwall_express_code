@@ -13,7 +13,7 @@ BASE_URL = http://baud123.free.fr/eagle-usb/eagle-usb-2.3/
 
 EXTENSION = .tar.bz2
 
-CONFIG_OPTS = --disable-module --disable-eagleconnect --disable-hotplug
+CONFIG_OPTS += --disable-module --disable-eagleconnect --disable-hotplug
 
 INSTALL = yes
 

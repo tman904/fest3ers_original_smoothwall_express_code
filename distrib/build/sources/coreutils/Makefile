@@ -12,7 +12,7 @@ VERSION = 8.19
 BASE_URL = ftp://ftp.gnu.org/gnu/coreutils/
 EXTENSION = .tar.xz
 
-CONFIG_OPTS = --disable-silent-rules
+CONFIG_OPTS += --disable-silent-rules
 
 CONFIGURE = yes
 

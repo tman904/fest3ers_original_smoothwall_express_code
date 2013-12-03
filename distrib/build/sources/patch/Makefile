@@ -12,7 +12,7 @@ VERSION = 2.6.1
 BASE_URL = ftp://ftp.gnu.org/gnu/patch
 
 ifeq ($(BUILD_PHASE), Phase_3)
-CONFIG_OPTS = --prefix=$(TOOLS_DIR)
+CONFIG_OPTS += --prefix=$(TOOLS_DIR)
 endif
 
 INSTALL = yes
