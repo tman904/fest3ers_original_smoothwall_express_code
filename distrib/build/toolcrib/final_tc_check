@@ -73,15 +73,15 @@ grep -B3 '^ /usr/include' dummy.log >/tmp/a.a
 case $mARCH in
   $ARCH32) cat >/tmp/b.b <<END
 #include <...> search starts here:
- /usr/lib/gcc/${ARCH32}-pc-linux-gnu/${VERSION}/include
- /usr/lib/gcc/${ARCH32}-pc-linux-gnu/${VERSION}/include-fixed
+ /usr/lib/gcc/${FINAL_TGT}/${VERSION}/include
+ /usr/lib/gcc/${FINAL_TGT}/${VERSION}/include-fixed
  /usr/include
 END
     ;;
   $ARCH64) cat >/tmp/b.b <<END
 #include <...> search starts here:
- /usr/lib/gcc/x86_64-unknown-linux-gnu/${VERSION}/include
- /usr/lib/gcc/x86_64-unknown-linux-gnu/${VERSION}/include-fixed
+ /usr/lib/gcc/${FINAL_TGT}/${VERSION}/include
+ /usr/lib/gcc/${FINAL_TGT}/${VERSION}/include-fixed
  /usr/include
 END
     ;;
@@ -102,18 +102,18 @@ rm /tmp/a.a /tmp/b.b
 grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g' >/tmp/a.a
 case $mARCH in
   $ARCH32) cat >/tmp/b.b <<END
-SEARCH_DIR("/usr/${ARCH32}-pc-linux-gnu/lib")
+SEARCH_DIR("/usr/${FINAL_TGT}/lib")
 SEARCH_DIR("/usr/local/lib")
 SEARCH_DIR("/lib")
 SEARCH_DIR("/usr/lib");
 END
     ;;
   $ARCH64) cat >/tmp/b.b <<END
-SEARCH_DIR("/usr/x86_64-unknown-linux-gnu/lib64")
+SEARCH_DIR("/usr/${FINAL_TGT}/lib64")
 SEARCH_DIR("/usr/local/lib64")
 SEARCH_DIR("/lib64")
 SEARCH_DIR("/usr/lib64")
-SEARCH_DIR("/usr/x86_64-unknown-linux-gnu/lib")
+SEARCH_DIR("/usr/${FINAL_TGT}/lib")
 SEARCH_DIR("/usr/local/lib")
 SEARCH_DIR("/lib")
 SEARCH_DIR("/usr/lib");

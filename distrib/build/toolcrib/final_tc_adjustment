@@ -100,8 +100,10 @@ if [ $STATUS -eq 0 ]; then
 END
   diff /tmp/a.a /tmp/b.b >/dev/null 2>&1
   if [ $? -ne 0 ]; then
-    echo "gcc is searching for the wrong header files!"
+    echo "gcc is searching for the wrong header files:"
     sed -e 's/^/    /' /tmp/a.a
+    echo "gcc should search in:"
+    sed -e 's/^/    /' /tmp/b.b
     STATUS=1
   fi
   rm /tmp/a.a /tmp/b.b
@@ -110,15 +112,6 @@ END
   #
   grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g' >/tmp/a.a
 
-  if [ "$BITS_64" == "yes" ]; then
-    FIN_TGT="x86_64-unknown-linux-gnu"
-    #echo "SEARCH_DIR(\"${TOOLS_DIR}/${FIN_TGT}/lib64\")" > /tmp/b.b
-    touch /tmp/b.b
-  else
-    FIN_TGT="${mTUPLE}-pc-linux-gnu"
-    touch /tmp/b.b
-  fi
-#SEARCH_DIR("${TOOLS_DIR}/${FIN_TGT}/lib")
   cat >>/tmp/b.b <<END
 SEARCH_DIR("/usr/lib")
 SEARCH_DIR("/lib");
@@ -127,6 +120,8 @@ END
   if [ $? -ne 0 ]; then
     echo "Loader is using incorrect search paths:"
     sed -e 's/^/    /' /tmp/a.a
+    echo "Loader should search in:"
+    sed -e 's/^/    /' /tmp/b.b
     STATUS=1
   fi
   rm /tmp/a.a /tmp/b.b
