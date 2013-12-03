@@ -2,7 +2,7 @@
 
 REPO=git
 BRANCH=stable
-DIR=smoothwall
+DIR=/usr/src/smoothwall
 
 case $1 in
   -?|-h|--help)
