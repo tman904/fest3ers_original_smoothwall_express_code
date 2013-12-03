@@ -21,6 +21,6 @@ configure: $(DIR)/
 COMPILE = yes
 
 compile: configure
-	@make -C $(COMPILE_DIR)
+	@$(MAKE) ${JOBS} -C $(COMPILE_DIR)
 
 include ../Makefile.rules
