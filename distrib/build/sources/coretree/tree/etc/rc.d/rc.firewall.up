@@ -377,10 +377,10 @@ if [ "$RED_DEV" != "" ]; then
 fi
 
 # Drop INVALID packets early
-iptables -t mangle -N invdrop
-iptables -t mangle -A invdrop -j LOG --log-prefix "Denied-by-mangle:invdrop "
-iptables -t mangle -A invdrop -j DROP
-iptables -t mangle -I PREROUTING -m state --state INVALID -j invdrop
+/sbin/iptables -t mangle -N invdrop
+/sbin/iptables -t mangle -A invdrop -j LOG --log-prefix "Denied-by-mangle:invdrop "
+/sbin/iptables -t mangle -A invdrop -j DROP
+/sbin/iptables -t mangle -I PREROUTING -m state --state INVALID -j invdrop
 
 # Portforward bouncing
 /sbin/iptables -t mangle -N portfwb
