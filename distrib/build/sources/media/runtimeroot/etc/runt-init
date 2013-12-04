@@ -45,9 +45,10 @@ udevadm control --exit
 
 echo "1 4 1 7" >/proc/sys/kernel/printk
 
+/bin/umount /dev/pts
 /bin/mount -n -o move /dev /harddisk/dev
 /bin/mkdir -p /harddisk/dev/pts
-/bin/mount -t devpts devpts /harddisk/dev/pts
+/bin/mount -t devpts -o gid=5,mode=620 devpts /harddisk/dev/pts
 
 /usr/lib/klibc/bin/nuke /dev
 /bin/ln -s /harddisk/dev /dev
