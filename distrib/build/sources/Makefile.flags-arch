@@ -56,7 +56,7 @@ endif
 
 # Define the default ARCHs.
 ifndef ARCH32
-export ARCH32 = i486
+export ARCH32 = i586
 endif
 ifndef ARCH64
 export ARCH64 = x86_64
