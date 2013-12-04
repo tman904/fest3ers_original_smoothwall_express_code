@@ -69,11 +69,11 @@ if [ "$RED_TYPE" == "DHCP" ]; then
 		#   enough or the system halts, it might not matter.
 
 		logger -t updatered "DHCP lease lost; clearing RED info"
-		writeRed
+		writeRED
 		rm -f $redDIR/active
 
 		# This might could get annoying if the lease changes often
-		/usr/bin/sounds/offinesound
+		/usr/bin/sounds/offlinesound
 
 		exit 0
 	fi
