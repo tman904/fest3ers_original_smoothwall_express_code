@@ -31,15 +31,20 @@ echo 360 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_last_ack
 echo 630 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_close_wait
 echo 360 > /proc/sys/net/ipv4/netfilter/ip_conntrack_tcp_timeout_close
 
-# IPV6: Set default policy to ACCEPT local stuff, but reject forwarding
+# IPV6: Set default policy to DROP everything
 /usr/sbin/ip6tables -F
 /usr/sbin/ip6tables -X
+for j in INPUT FORWARD OUTPUT; do
+  /usr/sbin/ip6tables -P $j DROP
+done
 
-/usr/sbin/ip6tables -P INPUT ACCEPT
-/usr/sbin/ip6tables -P FORWARD DROP
-/usr/sbin/ip6tables -P OUTPUT ACCEPT
+/usr/sbin/ip6tables -t mangle -F
+/usr/sbin/ip6tables -t mangle -X
+for j in PREROUTING INPUT FORWARD OUTPUT POSTROUTING; do
+  /usr/sbin/ip6tables -t mangle -P $j DROP
+done
 
-# And reject DNS
+# But reject DNS to avoid timeout delays
 /usr/sbin/ip6tables -A FORWARD -p udp --destination-port 53 -j REJECT
 /usr/sbin/ip6tables -A INPUT -p udp --destination-port 53 -j REJECT
 /usr/sbin/ip6tables -A OUTPUT -p udp --destination-port 53 -j REJECT
