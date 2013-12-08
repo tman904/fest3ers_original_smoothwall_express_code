@@ -146,6 +146,7 @@ sub isrunning
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;
+	my $qosPidFile = "/var/run/qos.pid";
 
 	$cmd =~ /(^[a-z]+)/;
 	$exename = $1;
@@ -154,19 +155,15 @@ sub isrunning
 	# qos is a special case
 	if ($cmd eq 'qos')
 	{
-		my $running = `/usr/sbin/tc qdisc list dev $netsettings{'GREEN_DEV'} | wc -l`;
-    		chomp $running;
-		# The default is now to run SFQ, even when QoS is off.
-		# If only *one* line is returned, QoS is not running.
-		if ($running gt 1)
+		if (-f $qosPidFile)
 		{
 			$status = status_line( "running" );
-			$howlong = &running_since("/var/smoothwall/traffic/settings");
+			$howlong = &running_since($qosPidFile);
 		}
 	}
 	elsif (open(FILE, "/var/run/${cmd}.pid"))
 	{
- 		$pid = <FILE>; chomp $pid;
+		$pid = <FILE>; chomp $pid;
 		close FILE;
 		if (open(FILE, "/proc/${pid}/status"))
 		{

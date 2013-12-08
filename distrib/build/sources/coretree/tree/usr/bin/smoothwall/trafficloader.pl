@@ -28,6 +28,8 @@ readhash("${swroot}/traffic/settings", \%trafficsettings);
 # Some day include localsettings
 #readhash("${swroot}/traffic/localsettings", \%localsettings);
 
+# Faux PID file for status display
+my $qosPidFile = "/var/run/qos.pid";
 
 my @internal_interface = ();
 my %internal_netaddress = ();
@@ -513,6 +515,10 @@ for my $cm (sort keys %connmark_to_class, 0) {
 
 # so can use trafficmon etc. - SmoothTraffic compatible descriptions of what is in iptables
 writesettings();
+
+# Create faux PID file for status
+open(PF, ">$qosPidFile") && close(PF);
+
 exit(0);
 }
 # end of main program....
@@ -597,6 +603,9 @@ sub removetraffic {
     system(split(/\s+/,"/usr/sbin/tc qdisc del root dev $if"));
     print STDERR "/usr/sbin/tc qdisc del root dev $if\n" if defined $print;
   }
+
+  # remove the PID file to simulate 'off'
+  unlink($qosPidFile);
 }
 
 # this is needed to make trafficmon and trafficlogger pick up per rule info
