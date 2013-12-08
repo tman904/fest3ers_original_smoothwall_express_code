@@ -1,5 +1,5 @@
---- p3scan-2.3.2.orig/p3scan.c	2005-12-12 15:00:00.000000000 +0000
-+++ p3scan-2.3.2/p3scan.c	2007-02-06 14:13:30.413488752 +0000
+--- p3scan-2.3.2/p3scan.c	2005-12-12 15:00:00.000000000 +0000
++++ p3scan-2.3.2-patched/p3scan.c	2013-12-08 02:58:33.375279837 +0000
 @@ -154,7 +154,7 @@
     vsnprintf(puffer, 4000, fmt, az);
     strcpy(timenow,ctime(&now)+ 11);
@@ -92,7 +92,51 @@
              break;
           case 'L': /* SSL port */
              i=strtol(arg, &rest, 10);
-@@ -2853,7 +2866,7 @@
+@@ -2788,20 +2801,29 @@
+             if (cf->line[0]!='#' && cf->line[0]!=';' && !(cf->line[0]=='/' && cf->line[1]=='/') && cf->line[0]!='='){
+                /* copy to pseudo argv, change
+                * 'x = y' or 'x y' to 'x='
+-               * This code is the horror, but it seems to work */
+-               line=w_malloc(strlen(cf->line)+3);
+-               line[0]='-'; line[1]='-'; line[2]='\0';
+-               strcat(line, cf->line);
+-               pargv[pargc]=line;
+-               if ((i=strcspn(line, " =\t"))>1){
+-                  if (i<strlen(line)){
+-                     line[i]='\0';
+-                     if ((ii=strspn(line+i+1," =\t"))>=0){
+-                        rest=line+i+ii+1;
+-                        if (rest && strlen(rest)>0 ){
+-                           pargv[pargc][strlen(pargv[pargc])]='=';
+-                           memcpy(pargv[pargc]+i+1, rest, strlen(rest)+1); //TODO: Source and destination overlap in memcpy
+-                        }
++	       * Original code *was* a horror. And broke with 64-bit optimization.
++	       * Rewrote it to safely copy spans from cf->line */
++
++	       // get mem for arg and save pointer
++               line = w_malloc(strlen(cf->line)+3);
++               pargv[pargc] = line;
++
++	       // prepend '--'
++               line[0] = '-'; line[1] = '-'; line[2] = '\0';
++
++	       // Find the opt name (doesn't contain <SP>, =, or <TAB>) and copy it over
++               if ((i = strcspn(cf->line, " =\t")) > 0){
++		  strncat (line, cf->line, i);
++		  ii = i;
++		  // skip past 'assignment' chars, if any
++                  if ((i = strspn(cf->line+ii, " =\t")) >= 0){
++		    // 'rest' is the value to assign
++                    rest = cf->line + i + ii;
++                    if (strlen(rest)>0 ){
++		      // Append "="
++		      strcat (line, "=");
++		      // Append value; cf->line *is* NULL-terminated
++		      strcat (line, rest);
+                      }
+                   }
+                }
+@@ -2853,7 +2875,7 @@
        config->scanner->uninit1();
        do_log(LOG_DEBUG, "uninit1 done");
     }
@@ -101,7 +145,7 @@
     do_log(LOG_NOTICE, PROGNAME " terminates now");
     exit(0);
  }
-@@ -2919,6 +2932,7 @@
+@@ -2919,6 +2941,7 @@
        fprintf(fp, "%i\n", getpid());
        fclose(fp);
     }else do_log(LOG_CRIT, "ERR: Can't write PID to %s", PID_FILE);
@@ -109,7 +153,7 @@
     len=strlen(CHOWNCMD)+1+strlen(config->runasuser)+1+strlen(config->runasuser)+1+strlen(config->pidfile)+1;
     snprintf(chownit, len, "%s %s:%s %s", CHOWNCMD, config->runasuser, config->runasuser, config->pidfile);
     if ((chowncmd=popen(chownit, "r"))==NULL){
-@@ -2926,6 +2940,7 @@
+@@ -2926,6 +2949,7 @@
        return SCANNER_RET_ERR;
     }
     ret=pclose(chowncmd);
