@@ -29,6 +29,30 @@ function compute_swap () {
   fi
 }
 
+function tidyBackupDir () {
+  restoreType=$1
+
+  # Get the name of the restore medium
+  restoreIsLink=`/usr/lib/klibc/bin/readlink /restore`
+  if [ ! -z "$restoreIsLink" ]; then
+    mediumName="install"
+  else
+    OIFS=$IFS; IFS=","
+    set `grep "${rd_dev[$rd]}" /harddisk/var/smoothwall/backup/config`
+    IFS=$OIFS
+    mediumName=$2
+  fi
+  # Set flag and history
+  restoreDate=`chroot /harddisk date "+%Y-%m-%d; %H:%M:%S"`
+  echo "Last restore: AUTO; date=$restoreDate; type=$restoreType; medium=$mediumName" > /harddisk/var/smoothwall/backup/flag
+  cat /harddisk/var/smoothwall/backup/flag >> /harddisk/var/smoothwall/backup/history
+  # Clear tmp files/dirs
+  (
+    cd /harddisk/var/smoothwall/backup
+    rm -rf `ls -C1 | egrep -v "config|docs|flag|history|settings"` backup.flag
+  )
+}
+
 # sed changes this to the currently used kernel version
 #
 KERNEL_VER=KeRnElVeRsIoN
@@ -251,7 +275,7 @@ fi
 # Mount the restore drive if restoring anything
 if [ $restore -eq 2 -o $restore -eq 3 ]; then
   rm -rf /restore
-  if grep "${rd_dev[$rd]}" /proc/mounts; then
+  if grep "${rd_dev[$rd]}" /proc/mounts >/dev/null 2>&1; then
     echo "Linking cdrom to restore"
     # backups are on the source medium
     ln -s /cdrom /restore
@@ -507,6 +531,8 @@ END
     echo "  Restoring variable data from backup"
     do_or_die "tar -C /harddisk -zxvf /restore/${archive_id[$archive]}"
 
+    tidyBackupDir var
+
     echo "  Upgrading variable data files"
     # upgrade main
     (
@@ -603,6 +629,8 @@ else
   # Performing a total restore
   echo "  Restoring complete system from backup"
   do_or_die "tar -C /harddisk -zxvf /restore/${archive_id[$archive]}"
+
+  tidyBackupDir total
 
   # Adjust the initramfs as needed (different disk, NICs or FS, etc.)
   KERNEL_VER=`ls -C1 /harddisk/boot/initrd* | tail -1 | sed -e 's/.*initrd-//' -e 's/'${KERNEL_TYPE}'.*//'`

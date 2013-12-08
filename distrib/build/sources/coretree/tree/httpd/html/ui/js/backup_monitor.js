@@ -15,6 +15,7 @@ function handleFlag(flagText) {
 
   } else if ((backupState == 'start') && 
              ((flagText.indexOf('Last backup') == 0  || 
+               flagText.indexOf('Last restore') == 0  || 
                flagText.indexOf('Backup scheduled') == 0))) {
     // Wait longer; change isn't imminent
     delay = 1000;
@@ -22,6 +23,7 @@ function handleFlag(flagText) {
 
   } else if ((backupState == 'start') && 
              ((flagText.indexOf('Last backup') == -1 || 
+               flagText.indexOf('Last restore') == -1 || 
                flagText.indexOf('Backup scheduled') == -1))) {
     // Look lively, changing to state 'run'
     delay = 1;
