@@ -198,8 +198,6 @@ echo "  sshd (if enabled)"
 /usr/bin/smoothcom sshdrestart
 echo "  time service (if enabled)"
 /usr/bin/smoothcom ntpdrestart
-echo "  squid (if enabled)"
-/usr/bin/smoothcom squidrestart
 echo "  IMSpector (if enabled)"
 /usr/bin/smoothcom imrestart
 echo "  SIP proxy (if enabled)"
@@ -227,6 +225,8 @@ echo "1 4 1 7" >/proc/sys/kernel/printk
 # Services here depend on the IFs being up.
 echo "  dhcpd (if enabled)"
 /usr/bin/smoothcom dhcpdrestart
+echo "  squid (if enabled)"
+/usr/bin/smoothcom squidrestart
 
 #echo "  ntop"
 #/usr/bin/ntop -w 8080 -i eth0 -a /usr/var/ntop/access_log -m "$GREEN_NETWORK/$GREEN_NETMASK" -n 2 --w3c -d -L --skip-version-check --known-networks=$RED_NETWORK/$RED_NETMASK
