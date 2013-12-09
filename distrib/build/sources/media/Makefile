@@ -212,6 +212,8 @@ endif
 	@#rm -f distrib/etc/resolv.conf
 	@find distrib -name .gitignore -exec rm -f {} \;
 	@ln -s /var/smoothwall/vpn/ipsec.conf distrib/etc/ipsec.conf
+	@cd distrib; chown -R root:root usr/share/ntop usr/etc/ntop
+	@cd distrib-doc; chown -R root:root usr/share/ntop usr/etc/ntop
 	
 	@echo "      copy to Dev ..." >>$(MEDIA_BUILD_OUT)
 	@mkdir cdrom-dev
@@ -223,7 +225,7 @@ endif
 	@cd cdrom; cp -av . ../offroad
 	@sed -i \
 	     -e '/Install Smoothwall/,+4d' \
-             -e '/Convert ISO/,+9d' \
+	     -e '/Convert ISO/,+9d' \
 	     -e '$d' \
 	     offroad/boot/grub/grub.conf
 	

@@ -28,11 +28,11 @@ ROOTDIRS = cdrom dev etc harddisk proc sys tmp usr run
 
 # Stuff that shouldn't be needed in the initramfs
 NOT_DRIVERS = drivers/gpu drivers/parport drivers/gpio drivers/scsi/fcoe \
-              drivers/scsi/fnic drivers/scsi/osd drivers/scsi/libfc \
+	      drivers/scsi/fnic drivers/scsi/osd drivers/scsi/libfc \
 	      drivers/scsi/cxgbi drivers/scsi/be2iscsi drivers/scsi/bfa \
-              drivers/scsi/lpfc drivers/hwmon drivers/media \
+	      drivers/scsi/lpfc drivers/hwmon drivers/media \
 	      drivers/watchdog drivers/edac drivers/cpufreq drivers/regulator \
-              drivers/video net/netfilter net/ipsec \
+	      drivers/video net/netfilter net/ipsec \
 	      net/sched net/wireless net/bridge net/sctp net/bluetooth \
 	      net/ax25 net/wimax net/cfrm
 NOT_SHARE = locales/[a-d]* locales/e[o-z]* locales/[e-z]* doc info man readline
