@@ -213,7 +213,7 @@ endif
 	@find distrib -name .gitignore -exec rm -f {} \;
 	@ln -s /var/smoothwall/vpn/ipsec.conf distrib/etc/ipsec.conf
 	@cd distrib; chown -R root:root usr/share/ntop usr/etc/ntop
-	@cd distrib-doc; chown -R root:root usr/share/ntop usr/etc/ntop
+	@cd distrib-doc; chown -R root:root .
 	
 	@echo "      copy to Dev ..." >>$(MEDIA_BUILD_OUT)
 	@mkdir cdrom-dev
