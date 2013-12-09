@@ -215,7 +215,7 @@ rebuild:
 # prepare the installation media
 #
 media:
-	+@(echo -e "\nMaking ISO image with linux$(KERNEL_TYPE)..."; sleep 1; \
+	+@(echo -e "\nMaking ISO images with linux$(KERNEL_TYPE)..."; sleep 1; \
 	    $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media") \
 	    <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
 
