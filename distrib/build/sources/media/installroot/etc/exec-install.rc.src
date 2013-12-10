@@ -34,14 +34,10 @@ function tidyBackupDir () {
 
   # Get the name of the restore medium
   restoreIsLink=`/usr/lib/klibc/bin/readlink /restore`
-  if [ ! -z "$restoreIsLink" ]; then
-    mediumName="install"
-  else
-    OIFS=$IFS; IFS=","
-    set `grep "${rd_id[$rd]}" /harddisk/var/smoothwall/backup/config || echo "restore"`
-    IFS=$OIFS
-    mediumName=$2
-  fi
+  OIFS=$IFS; IFS=","
+  set `grep "${rd_id[$rd]}" /harddisk/var/smoothwall/backup/config || echo "${rd_id[$rd]}"`
+  IFS=$OIFS
+  mediumName=$1
   # Set flag and history
   restoreDate=`chroot /harddisk date "+%Y-%m-%d; %H:%M:%S"`
   echo "Last restore: AUTO; date=$restoreDate; type=$restoreType; medium=$mediumName" > /harddisk/var/smoothwall/backup/flag
