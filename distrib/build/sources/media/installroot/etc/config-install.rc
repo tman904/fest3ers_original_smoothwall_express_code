@@ -146,12 +146,12 @@ ls -C1 | while read a; do
   if [ -e $a/device/vendor ]; then
     VNDNO=`cat $a/device/vendor | sed -e 's/0x//'`
     VND=`egrep "^$VNDNO  " $PCI_IDS | head -1 | sed -e 's/'"$VNDNO  "'//'`
-    if [ "x$VND" == "x" ]; then VND="0x$VNDNO"; fi
+    if [ "$VND" == "" ]; then VND="0x$VNDNO"; fi
   fi
   if [ -e $a/device/device ]; then
     DEVNO=`cat $a/device/device | sed -e 's/0x//'`
     DEV=`egrep "$VNDNO	$DEVNO|$VNDNO		$VNDNO $DEVNO" $PCI_IDS | head -1 | sed -e 's/.*'"$DEVNO  "'//'`
-    if [ "x$DEV" == "x" ]; then DEV="0x$DEVNO"; fi
+    if [ "$DEV" == "" ]; then DEV="0x$DEVNO"; fi
   fi
   MAC=`cat $a/address | sed -e 's/://g'`
   if [ "$MAC" != "000000000000" -a "$MAC" != "" ]; then
@@ -187,7 +187,7 @@ while [ 1 -eq 1 ]; do
 
   rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
   hd=${rsp/\./}
-  if [ x$hd != "x" ]; then driveMiB="${hd_size[$hd]}"; break; fi
+  if [ "$hd" != "" ]; then driveMiB="${hd_size[$hd]}"; break; fi
 done
 
 # Get the by-id name
@@ -231,7 +231,7 @@ while [ 1 -eq 1 ]; do
 
   rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
   CD=${rsp/\./}
-  if [ x$CD != "x" ]; then break; fi
+  if [ "$CD" != "" ]; then break; fi
 done
 
 while [ 1 -eq 1 ]; do
@@ -248,7 +248,7 @@ while [ 1 -eq 1 ]; do
 
   rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
   restore=${rsp/\./}
-  if [ x$restore != "x" ]; then break; fi
+  if [ "$restore" != "" ]; then break; fi
 done
 
 # Get the medium and tarball only if restoring
@@ -263,7 +263,7 @@ if [ $restore -gt 1 ]; then
     typeset -i i b h
     i=1
     while read a b c d; do
-      if [ $a != ${hd_dev[$hd]} ]; then
+      if [ "$a" != "${hd_dev[$hd]}" ]; then
         b=b/2/1024
         rd_dev[$i]=$a
         rd_size[$i]=$b
@@ -277,7 +277,7 @@ if [ $restore -gt 1 ]; then
 
     rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
     rd=${rsp/\./}
-    if [ x$rd != "x" ]; then break; fi
+    if [ "$rd" != "" ]; then break; fi
   done
   # Get the list of tarballs
   if [ "${rd_dev[$rd]}" == "$cd_dev[$CD]}" ]; then
@@ -316,7 +316,7 @@ if [ $restore -gt 1 ]; then
 
     rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
     archive=${rsp/\./}
-    if [ x$archive != "x" ]; then break; fi
+    if [ "$archive" != "" ]; then break; fi
   done
 fi
 
@@ -358,7 +358,7 @@ while [ 1 -eq 1 ]; do
 
   rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
   dev=${rsp/\./}
-  if [ x$dev != "x" ]; then break; fi
+  if [ "$dev" != "" ]; then break; fi
 done
 
 while [ 1 -eq 1 ]; do
@@ -415,7 +415,7 @@ while [ 1 -eq 1 ]; do
   rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
   filesys=${rsp/\./}
 
-  if [ x$filesys != x ]; then break; fi
+  if [ "$filesys" != "" ]; then break; fi
 done
 
 while [ 1 -eq 1 ]; do
@@ -429,7 +429,7 @@ while [ 1 -eq 1 ]; do
   dlgCmd="$dlgCmd 4. 'Do Not Use'"
   rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
   serialport=${rsp/\./}
-  if [ x$serialport != x ]; then break; fi
+  if [ "$serialport" != "" ]; then break; fi
 done
 
 if [ $serialport -ne 4 ]; then
@@ -443,7 +443,7 @@ if [ $serialport -ne 4 ]; then
     dlgCmd="$dlgCmd 3. 9600"
     rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
     serialbaud=${rsp/\./}
-    if [ x$serialbaud != x ]; then break; fi
+    if [ "$serialbaud" != "" ]; then break; fi
   done
 fi
 
@@ -495,10 +495,10 @@ while [ 1 -eq 1 ]; do
 
   echo -n "           Selection: "
   read nic #</dev/tty
-  if [ x$nic == x ]; then continue; fi
+  if [ "$nic" == "" ]; then continue; fi
   if [ $nic -gt $nic_cnt ]; then continue; fi
   if [ $nic -lt 1 ]; then continue; fi
-  if [ x$nic == xF ]; then break; fi
+  if [ "$nic" == "F" ]; then break; fi
   echo -n "                Name: "
   read CLR[$nic] #</dev/tty
 done
@@ -530,12 +530,12 @@ while [ 1 == 1 ]; do
   else
     echo -e "  ${BO}Installing${NO} development packages"
   fi
-  if [ $maxMiB == "0" ]; then
+  if [ "maxMiB" == "0" ]; then
     echo -e "  Using ${BO}whole disk${NO} (${hd_size[$hd]}MiB)"
   else
     echo -e "  Using first ${BO}${maxMiB}MiB${NO} of hard drive"
   fi
-  if [ $filesys == "1" ]; then
+  if [ "filesys" == "1" ]; then
     echo -e "  Making ${BO}EXT4${NO} filesystems"
   else
     echo -e "  Making ${BO}ReiserFS${NO} filesystems"
@@ -576,10 +576,10 @@ while [ 1 == 1 ]; do
   echo -en "\033[21;0fTo restart, type no."
   echo -en "\033[23;0fOK? "
   read a #</dev/tty
-  if [ x$a == "xyes" ]; then
+  if [ "$a" == "yes" ]; then
     export hd CD dev maxMiB filesys loader noatime restore archive_id archive
     break;
-  elif [ x$a == "xno" ]; then
+  elif [ "$a" == "no" ]; then
     echo "Restarting installation configuration..."
     sleep 1
     exit
