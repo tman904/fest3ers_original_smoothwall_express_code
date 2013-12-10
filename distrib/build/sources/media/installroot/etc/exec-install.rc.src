@@ -38,7 +38,7 @@ function tidyBackupDir () {
     mediumName="install"
   else
     OIFS=$IFS; IFS=","
-    set `grep "${rd_dev[$rd]}" /harddisk/var/smoothwall/backup/config`
+    set `grep "${rd_id[$rd]}" /harddisk/var/smoothwall/backup/config || echo "restore"`
     IFS=$OIFS
     mediumName=$2
   fi
@@ -603,13 +603,15 @@ END
     (
       cd /harddisk/var/smoothwall/main
       . settings-RESTORED
+      LANGUAGErestored=$LANGUAGE
       HOSTNAMErestored=$HOSTNAME
+      KEYMAPrestored=$KEYMAP
       OPENNESSrestored=$OPENNESS
       . settings-FRESH
       cat<<END > settings
-LANGUAGE=$LANGUAGE
+LANGUAGE=$LANGUAGErestored
 HOSTNAME=$HOSTNAMErestored
-KEYMAP=$KEYMAP
+KEYMAP=$KEYMAPrestored
 OPENNESS=$OPENNESSrestored
 END
       chown nobody:nobody /harddisk/$CONFIG_ROOT/main/settings
