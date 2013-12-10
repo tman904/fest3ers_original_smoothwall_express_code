@@ -25,8 +25,8 @@ nicsToUp=""
 # GREEN
 if [ "$1" != "NOTGREEN" ]; then
 	if [ "$GREEN_DEV" != "" ]; then
-    /usr/sbin/ip addr add $GREEN_ADDRESS/$GREEN_NETMASK dev $GREEN_DEV
-    nicsToUp="$nicsToUp $GREEN_DEV"
+		/usr/sbin/ip addr add $GREEN_ADDRESS/$GREEN_NETMASK dev $GREEN_DEV
+		nicsToUp="$nicsToUp $GREEN_DEV"
 	else
 		echo "WARNING: No driver set for GREEN"
 	fi
@@ -35,8 +35,8 @@ fi
 # ORANGE
 if [ "$CONFIG_TYPE" == "1" -o "$CONFIG_TYPE" == "3" -o "$CONFIG_TYPE" == "5" -o "$CONFIG_TYPE" == "7" ]; then
 	if [ "$ORANGE_DEV" != "" ]; then
-    /usr/sbin/ip addr add $ORANGE_ADDRESS/$ORANGE_NETMASK dev $ORANGE_DEV
-    nicsToUp="$nicsToUp $ORANGE_DEV"
+		/usr/sbin/ip addr add $ORANGE_ADDRESS/$ORANGE_NETMASK dev $ORANGE_DEV
+		nicsToUp="$nicsToUp $ORANGE_DEV"
 	else
 		echo "WARNING: No driver set for ORANGE"
 	fi
@@ -45,8 +45,8 @@ fi
 # PURPLE
 if [ "$CONFIG_TYPE" == "4" -o "$CONFIG_TYPE" == "5" -o "$CONFIG_TYPE" == "6" -o "$CONFIG_TYPE" == "7" ]; then
 	if [ "$PURPLE_DEV" != "" ]; then
-    /usr/sbin/ip addr add $PURPLE_ADDRESS/$PURPLE_NETMASK dev $PURPLE_DEV
-    nicsToUp="$nicsToUp $PURPLE_DEV"
+		/usr/sbin/ip addr add $PURPLE_ADDRESS/$PURPLE_NETMASK dev $PURPLE_DEV
+		nicsToUp="$nicsToUp $PURPLE_DEV"
 	else
 		echo "WARNING: No driver set for PURPLE"
 	fi
@@ -55,34 +55,34 @@ fi
 # RED
 if [ "$CONFIG_TYPE" == "2" -o "$CONFIG_TYPE" == "3" -o "$CONFIG_TYPE" == "6" -o "$CONFIG_TYPE" == "7" ]; then
 	if [ "$RED_DEV" != "" ]; then
-    rm -f /var/lib/dhcpcd/*.info
+		rm -f /var/lib/dhcpcd/*.info
 
-    if [ "$RED_TYPE" == "DHCP" ]; then
-      # DHCPCD handles everything
-      if [ "$RED_IGNOREMTU" == "on" ]; then
-        IGNOREMTU=" -M"
-      else
-        IGNOREMTU=""
-      fi
-      /usr/sbin/dhcpcd -h $RED_DHCP_HOSTNAME -R $RED_DEV -c /etc/rc.d/rc.updatered${IGNOREMTU}
+		if [ "$RED_TYPE" == "DHCP" ]; then
+			# DHCPCD handles everything
+			if [ "$RED_IGNOREMTU" == "on" ]; then
+				IGNOREMTU=" -M"
+			else
+				IGNOREMTU=""
+			fi
+			/usr/sbin/dhcpcd -h $RED_DHCP_HOSTNAME -R $RED_DEV -c /etc/rc.d/rc.updatered${IGNOREMTU}
 
-    elif [ "$RED_TYPE" == "STATIC" ]; then
-      # We do it when static
-      /usr/sbin/ip addr add $RED_ADDRESS/$RED_NETMASK dev $RED_DEV
-      nicsToUp="$nicsToUp $RED_DEV"
-      if [ "$DEFAULT_GATEWAY" != "" ]; then
-        nicsToUp="$nicsToUp $DEFAULT_GATEWAY"
-      fi
-    else
-      # Must be PPPoX; link must be up, but needs no addressing
-      nicsToUp="$nicsToUp $RED_DEV"
-    fi
-  else
-    echo "WARNING: No driver set for RED"
-  fi
+		elif [ "$RED_TYPE" == "STATIC" ]; then
+			# We do it when static
+			/usr/sbin/ip addr add $RED_ADDRESS/$RED_NETMASK dev $RED_DEV
+			nicsToUp="$nicsToUp $RED_DEV"
+			if [ "$DEFAULT_GATEWAY" != "" ]; then
+				nicsToUp="$nicsToUp $DEFAULT_GATEWAY"
+			fi
+		else
+			# Must be PPPoX; link must be up, but needs no addressing
+			nicsToUp="$nicsToUp $RED_DEV"
+		fi
+	else
+		echo "WARNING: No driver set for RED"
+	fi
 fi
 
 # Bring the links up now if during operation. Otherwise, rc.sysinit handles it
 if [ "x$STARTSTOP" == "x" ]; then
-  . /etc/rc.d/inc.links-up
+	. /etc/rc.d/inc.links-up
 fi
