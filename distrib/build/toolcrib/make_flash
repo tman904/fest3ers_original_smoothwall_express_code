@@ -204,11 +204,11 @@ echo
 echo "Wrenching..."
 
 # Stuff needed for grub
-PRT=`echo "find /smoothwall.tgz" | ${ORIG_DIR}/../usr/sbin/grub --batch 2>&- | egrep "\([^ ]*\)"`
+PRT=`echo "find /smoothwall.tgz" | ${GRUB}/usr/sbin/grub --batch 2>&- | egrep "\([^ ]*\)"`
 DRV=`echo $PRT | sed -e 's/,[0-9]*//'`
 sed -i -e "s/(cd)/(hd0,0)/" -e 's/115200/'$BAUD'/' ${FL}/boot/grub/*.conf
 sed -i -e '/Install Smoothwall Express$/,/^$/d' ${FL}/boot/grub/main.conf
-echo -e "root ${PRT}\nsetup ${DRV}" | ${ORIG_DIR}/../usr/sbin/grub --batch
+echo -e "root ${PRT}\nsetup ${DRV}" | ${GRUB}/usr/sbin/grub --batch
 
 echo
 echo "Finishing..."
