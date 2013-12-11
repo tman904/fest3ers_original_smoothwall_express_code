@@ -530,12 +530,12 @@ while [ 1 == 1 ]; do
   else
     echo -e "  ${BO}Installing${NO} development packages"
   fi
-  if [ "maxMiB" == "0" ]; then
+  if [ "$maxMiB" == "0" ]; then
     echo -e "  Using ${BO}whole disk${NO} (${hd_size[$hd]}MiB)"
   else
     echo -e "  Using first ${BO}${maxMiB}MiB${NO} of hard drive"
   fi
-  if [ "filesys" == "1" ]; then
+  if [ "$filesys" == "1" ]; then
     echo -e "  Making ${BO}EXT4${NO} filesystems"
   else
     echo -e "  Making ${BO}ReiserFS${NO} filesystems"
