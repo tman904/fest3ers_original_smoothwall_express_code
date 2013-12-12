@@ -283,13 +283,13 @@ if [ $restore -gt 1 ]; then
   if [ "${rd_dev[$rd]}" == "$cd_dev[$CD]}" ]; then
     # Using source medium
     mount /dev/${rd_dev[$rd]}1 /cdrom
-    (cd /cdrom; ls -C1r *.tar.* >/tmp/archive.list)
+    (cd /cdrom; ls -C1tr *.tar.* >/tmp/archive.list)
     umount /cdrom
   else
     # Using separate medium
     mkdir -p /restore
     mount /dev/${rd_dev[$rd]}1 /restore
-    (cd /restore; ls -C1r *.tar.* >/tmp/archive.list)
+    (cd /restore; ls -C1tr *.tar.* >/tmp/archive.list)
     umount /restore
   fi
   while [ 1 -eq 1 ]; do
