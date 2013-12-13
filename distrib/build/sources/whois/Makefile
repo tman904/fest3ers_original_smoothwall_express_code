@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = whois
-VERSION = 5.0
+VERSION = 5.5
 
 EXTENSION = .tgz
 
