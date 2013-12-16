@@ -35,13 +35,13 @@ if ($filtersettings{'MSG_TEXT_1'} eq '') {
 	$msgtext1 = "ACCESS DENIED";
 } else { $msgtext1 = $filtersettings{'MSG_TEXT_1'}; }
 if ($filtersettings{'MSG_TEXT_2'} eq '') {
-	$msgtext2 = "Access to the requested page has been denied.";
+	$msgtext2 = "Access to the requested page has been blocked.";
 } else { $msgtext2 = $filtersettings{'MSG_TEXT_2'}; }
 if ($filtersettings{'MSG_TEXT_3'} eq '') {
-	$msgtext3 = "Please contact the Network Administrator if you think there has been an error.";
+	$msgtext3 = "Please contact your Network Administrator if you believe access to this URL should be allowed.";
 } else { $msgtext3 = $filtersettings{'MSG_TEXT_3'}; }
 
-if ($category eq '') { $category = '&nbsp;'; } else { $category = '['.$category.']'; }
+if ($category eq '') { $category = '&nbsp;'; }
 
 &showhttpheaders();
 
@@ -84,7 +84,7 @@ print <<END
 	  </td>
 	    <td>
 
-<div style='margin:0'>
+<div style='margin:0; width:800px'>
   <div class='header'
        style='background-image:url(http://$netsettings{'GREEN_ADDRESS'}:81/ui/img/banner.png);
               width:800px; height:64px; margin 45px 10em 0 20em'>
@@ -95,24 +95,34 @@ print <<END
                           href="http://www.squidguard.org"><b>SquidGuard</b></a>
     </p>
   </div>
-  <div style="padding:5px; background-color:#C0C0C0; text-align:center;
-              font-weight:bold; font-family:verdana,arial,'sans serif';
-	      margin:0; color:#000000; font-size:60%;">
-		$category
-  </div>
+
 	<div style="background-color:#F4F4F4; text-align:center; padding:20px;">
-    <div style="letter-spacing:0.5em; word-spacing:1em; padding:20px; background-color:#FF0000; text-align:center; color:#FFFFFF; font-size:200%; font-weight: bold;">
+    <div style="padding:5px; background-color:#E2E2E2; align:center; color:#000000; font-size:200%; font-weight: bold;">
       $msgtext1
     </div>
-    <div style="padding:20px; margin-top:20px; background-color:#E2E2E2; text-align:center; color:#000000; font-family:verdana, arial, 'sans serif'; font-size:80%;">
-      <p style="font-weight:bold; font-size:150%;">$msgtext2</p>
+    <div style="padding:5px; margin-top:20px; background-color:#E2E2E2; text-align:center; color:#000000; font-family:verdana, arial, 'sans serif'; font-size:100%;">
+      <p style="font-weight:bold; font-size:125%; margin-bottom:.5em">$msgtext2</p>
 END
 ;
 
 if (!($url eq ""))
 {
 print <<END
-      <p>URL: <a href="$url">$url</a></p>
+      <div style="margin:0; min-width:100%;text-align:left; vertical-align:middle">
+        <p style="font-size:110%; margin:0; width:50%; text-align:right; vertical-align:middle; display:inline-block"><i>URL:</i></p>
+        <p style="font-size:110%; margin:0 0 0 1.5em; text-indent:-1em; width:45%; display:inline-block; vertical-align:middle"><b><i><a href="$url">$url</a></i></b></p>
+      </div>
+END
+;
+}
+
+if (!($category eq "&nbsp;"))
+{
+print <<END
+      <div style="margin:0; min-width:100%;text-align:left">
+        <p style="font-size:110%; margin:0; width:50%; text-align:right; display:inline-block"><i>Filter category:</i></p>
+        <p style="font-size:110%; margin:0 0 0 .5em; width:50%; display:inline"><b><i>$category</i></b></p>
+      </div>
 END
 ;
 }
@@ -120,13 +130,16 @@ END
 if (!($ip eq ""))
 {
 print <<END
-      <p>Client IP address: <span style="font-style:italic;">$ip</span></p>
+      <div style="margin:0; min-width:100%;text-align:left">
+        <p style="font-size:110%; margin:0; width:50%; text-align:right; display:inline-block"><i>Client IP address:</i></p>
+        <p style="font-size:110%; margin:0 0 0 .5em; width:50%; display:inline"><b><i>$ip</i></b></p>
+      </div>
 END
 ;
 }
 
 print <<END
-      <p>$msgtext3</p>
+      <p style="margin-top:2em">$msgtext3</p>
     </div>
 	</div>
 </div>
