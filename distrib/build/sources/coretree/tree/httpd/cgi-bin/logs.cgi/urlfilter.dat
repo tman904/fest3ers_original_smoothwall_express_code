@@ -10,6 +10,7 @@
 #
 #
 use POSIX();
+use URI::Escape;
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
@@ -360,6 +361,7 @@ if ($lines)
 					$site = substr($dsturl,0,69);
 					if (length($dsturl) > 69) { $site .= "..."; }
 				}
+				$dsturl =~ s/'/%27/g;
 				print "<td><a href='$dsturl' title='$dsturl' target='_blank'>$site</a></td>\n";
 			}
 			print "</tr>\n";
