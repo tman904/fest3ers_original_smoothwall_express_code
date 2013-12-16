@@ -23,7 +23,19 @@ PCI_IDS="/etc/filled.pci.ids"
 
 # Uber title
 BACKTITLE="Smoothwall Express 3.1 Installation"
-TITLE="${CLS}            ${BOUL}$BACKTITLE${NO}"
+TITLE="${CLS}                      ${BOUL}$BACKTITLE${NO}"
+
+dlgCmd="--backtitle '$BACKTITLE' --title 'Begin Advanced Installation'"
+dlgCmd="${dlgCmd} --msgbox '\n\\ZbConnect all hot-plugged drives (especially archives) \\Z1NOW\\Zn.\n"
+dlgCmd="${dlgCmd}\nThis is the sequence of operations:\n"
+dlgCmd="${dlgCmd}  - Enter all installation parameters\n"
+dlgCmd="${dlgCmd}  - Verify selections\n"
+dlgCmd="${dlgCmd}  - Install software & prepare system\n"
+dlgCmd="${dlgCmd}  - Configure the new system (if a fresh install) or\n"
+dlgCmd="${dlgCmd}  - Reconfigure the restored system (if the NICs changed)\n"
+dlgCmd="${dlgCmd}  - Reboot & start the firewall\n"
+dlgCmd="${dlgCmd}\nHit <ENTER> to continue...' 0 0"
+rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
 
 echo -e "$TITLE"; echo
 #echo "Preparing lists of CDROM and hard drives and NICs"
@@ -236,20 +248,34 @@ done
 
 while [ 1 -eq 1 ]; do
   # restore selection
-  menuMsg="Choose to perform a fresh, clean install or to perform a config or"
-  menuMsg="$menuMsg a complete, full restore.\n\nIf restoring, be sure the backup"
-  menuMsg="$menuMsg medium is already connected (it can be the install medium.)"
+  if [ `wc -l </tmp/hd.list` -gt 1 ]; then
+    menuMsg="Choose to perform a fresh, clean install or to perform a config or"
+    menuMsg="$menuMsg a complete, full restore.\n\nIf restoring, be sure the backup"
+    menuMsg="$menuMsg medium is already connected (it can be the install medium.)"
+  else
+    menuMsg="\\ZbOnly one writable drive found; cannot restore.\\ZB\n"
+    menuMsg="$menuMsg\nPerform a fresh, clean install."
+  fi
   dlgCmd="--backtitle '$BACKTITLE' --title 'Install or Restore'"
   dlgCmd="$dlgCmd --default-item '1.' --menu '$menuMsg' 0 0 0"
 
   dlgCmd="$dlgCmd 1. 'Fresh install \\ZbONLY\\ZB'"
-  dlgCmd="$dlgCmd 2. 'Restore \\Zbvariable\\ZB data'"
-  dlgCmd="$dlgCmd 3. '\\ZbComplete\\ZB restoration'"
+  if [ `wc -l </tmp/hd.list` -gt 1 ]; then
+    dlgCmd="$dlgCmd 2. 'Restore \\Zbvariable\\ZB data'"
+    dlgCmd="$dlgCmd 3. '\\ZbComplete\\ZB restoration'"
+  fi
 
   rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
   restore=${rsp/\./}
   if [ "$restore" != "" ]; then break; fi
 done
+
+# Set the restore type
+case "$restore" in
+  "2") backupType="var";;
+  "3") backupType="total";;
+  *) backupType="";;
+esac
 
 # Get the medium and tarball only if restoring
 if [ $restore -gt 1 ]; then
@@ -279,30 +305,40 @@ if [ $restore -gt 1 ]; then
     rd=${rsp/\./}
     if [ "$rd" != "" ]; then break; fi
   done
+
   # Get the list of tarballs
   if [ "${rd_dev[$rd]}" == "$cd_dev[$CD]}" ]; then
     # Using source medium
     mount /dev/${rd_dev[$rd]}1 /cdrom
-    (cd /cdrom; ls -C1tr *.tar.* >/tmp/archive.list)
+    (cd /cdrom; ls -C1tr *.tar.* >/tmp/archive.list 2>/dev/null)
     umount /cdrom
   else
     # Using separate medium
     mkdir -p /restore
     mount /dev/${rd_dev[$rd]}1 /restore
-    (cd /restore; ls -C1tr *.tar.* >/tmp/archive.list)
+    (cd /restore; ls -C1tr *.tar.* >/tmp/archive.list 2>/dev/null)
     umount /restore
   fi
+
+  # If no archives were found, notify the user and reboot
+  egrep "_${backupType}.tar.gz" /tmp/archive.list >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    dlgCmd="--backtitle '$BACKTITLE' --title '\\Z1Archive not found\\Zn'"
+    dlgCmd="${dlgCmd} --msgbox '\nNo archives of type \"${backupType}\" were found on the"
+    dlgCmd="${dlgCmd} selected drive. Be sure"
+    dlgCmd="${dlgCmd} the backup medium is plugged in before the installer"
+    dlgCmd="${dlgCmd} starts.\n\nHit <ENTER> to reboot and try again.' 0 0"
+    rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
+    umount -a >/dev/null 2>&1
+    reboot
+  fi
+
   while [ 1 -eq 1 ]; do
     # Select the disk to restore from
     menuMsg="Choose the archive to restore from."
     dlgCmd="--backtitle '$BACKTITLE' --title 'Archive selection (5 latest)'"
     dlgCmd="$dlgCmd --default-item '1.' --menu '$menuMsg' 0 0 0"
 
-    if [ $restore -eq 2 ]; then
-      backupType="var"
-    else
-      backupType="total"
-    fi
     unset b
     typeset -i i b h
     i=1
