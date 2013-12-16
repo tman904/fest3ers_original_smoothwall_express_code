@@ -17,6 +17,23 @@ function crEcho {
 	echo $crOpts "$*\r"
 }
 
+# readRED: read the data files in .../red/*
+function readRED {
+	case $RED_TYPE in
+	  DHCP)
+	    RED_ADDRESS=`cat $redDIR/local-ipaddress`
+	    RED_GATEWAY=`cat $redDIR/remote-ipaddress`
+	    RED_NETMASK=`cat $redDIR/dhcp-netmask`
+	    RED_DNS1=`cat $redDIR/dns1`
+	    RED_DNS2=`cat $redDIR/dns2`
+	    ;;
+	  *)
+	    logger -t updatered "readRED called for invalid red type '$RED_TYPE'"
+	    exit 1
+	    ;;
+	esac
+}
+
 # writeRED: write the data files in .../red/*
 function writeRED {
 	echo -n $1 >$redDIR/iface
@@ -46,6 +63,7 @@ if [ "$RED_TYPE" == "DHCP" ]; then
 	DNSMASQ_DNS1=`/usr/bin/smoothwall/getdnsfromdhcpc.pl 1`
 	DNSMASQ_DNS2=`/usr/bin/smoothwall/getdnsfromdhcpc.pl 2`
 	. /var/lib/dhcpcd/dhcpcd-${RED_DEV}.info
+	readRED DHCP
 
 	# Can't use if-else here; 'up' appears in first and default
 
@@ -53,9 +71,9 @@ if [ "$RED_TYPE" == "DHCP" ]; then
 	if [ "$2" == "up" -a \
 	     "$IPADDR" == "$RED_ADDRESS" -a \
 	     "$NETMASK" == "$RED_NETMASK" -a \
-	     "$GATEWAYS" == "$DEFAULT_GATEWAY" -a \
-	     "$DNSMASQ_DNS1" == "$DNS1" -a \
-	     "$DNSMASQ_DNS2" == "$DNS2" ]; then
+	     "$GATEWAYS" == "$RED_GATEWAY" -a \
+	     "$DNSMASQ_DNS1" == "$RED_DNS1" -a \
+	     "$DNSMASQ_DNS2" == "$RED_DNS2" ]; then
 	  # Nothing changed, nothing to do
 	  logger -t updatered "DHCP lease renewed; no changes"
 	  exit 0
@@ -82,7 +100,7 @@ if [ "$RED_TYPE" == "DHCP" ]; then
 	logger -t updatered "DHCP lease changed; updating RED info"
 	rm -f ${ethDIR}/bootUP
 
-	writeRED $RED_DEV $IPADDR "$GATEWAYS" \
+	writeRED $INTERFACE $IPADDR "$GATEWAYS" \
 	         $NETMASK $DNSMASQ_DNS1 $DNSMASQ_DNS2
 
 	# This might could get annoying if the lease changes often
