@@ -148,9 +148,9 @@ echo "Executing installer"
 if [ $mustRunSetup -eq 1 ]; then
   # NICs changed, so force setup, but not auto mode
   restore=1
-  autoSetup=""
+  autoSetup=" auto"
   echo "    network devices have changed"
-  echo "      press <ENTER> to run setup and update NIC assignments"
+  echo "      press <ENTER> to run setup"
   read ans
 fi
 
