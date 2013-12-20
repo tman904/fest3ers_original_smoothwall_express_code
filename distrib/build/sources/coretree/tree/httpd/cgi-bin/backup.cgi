@@ -16,8 +16,6 @@ my $filename = "${swroot}/backup/config";
 my $flagfile = "${swroot}/backup/flag";
 my $maxwidth = 20;
 
-&showhttpheaders();
-
 $cgiparams{'ENABLED'} = 'off';
 
 $cgiparams{'COLUMN'} = 1;
@@ -35,7 +33,62 @@ if ($ENV{'QUERY_STRING'} &&
 }
 
 my $errormessage = '';
+my $extramessage = '';
 my @service = ();
+
+my @temp;
+my $count; my $command;
+my @selectedui; my @selectedsetup; my @selectedmodules;
+
+
+if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'} || 
+	$cgiparams{'ACTION'} eq $tr{'create backup floppy image file'})
+{ 
+	unless ($errormessage)
+	{
+		system('/etc/rc.d/backupscript');
+
+		if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'})
+		{
+			if (system('/usr/bin/tar', '-C', "${swroot}/backup", '-cWf', '/dev/fd0', 'backup.dat', 'version')) {
+				$errormessage = $tr{'unable to create backup floppy'}; }
+			else {
+				$extramessage = $tr{'backup disk created successfully'}; }
+			unlink "${swroot}/backup/backup.dat";
+			unlink "${swroot}/backup/version";
+		}
+		else
+		{
+			if (system('/usr/bin/tar', '-C', "${swroot}/backup", '-cf', "${swroot}/tmp/backup.img", 'backup.dat', 'version')) {
+				$errormessage = $tr{'unable to create floppy image file'}; }
+			else
+			{
+				print "Content-type: application/octect-stream\n";
+				print "Content-length: " . 1440 * 1024 . "\n\n";
+
+				undef $/;
+				open (FILE, "${swroot}/tmp/backup.img");
+				$_= <FILE>;
+				print $_;
+				$l = length;
+				
+				close (FILE);
+
+				print '\0' x ((1440 * 1024) - $l);
+
+				unlink "${swroot}/tmp/backup.img";
+				unlink "${swroot}/backup/backup.dat";
+				unlink "${swroot}/backup/version";
+
+				exit;
+			}
+		}		
+	}
+}
+
+&showhttpheaders();
+
+my %checked;
 
 # There is no action for 'Add Drive'; it is handled in javascript
 
@@ -158,9 +211,9 @@ END
 ;
 &closebox();
 
-&openbox();
+&openbox($tr{'bu media mgmtc'});
 
-&openbox($tr{'bu known mediac'});
+&openbox();
 
 my %render_settings =
 (
@@ -244,6 +297,36 @@ END
   
 
 &closebox();
+
+&closebox();
+
+&openbox($tr{'bu legacy backupc'});
+
+print "<FORM METHOD='POST'>\n";
+
+&openbox($tr{'backup floppy instructions'});
+print <<END
+$tr{'backup floppy instructions long'}
+END
+;
+
+print "<FONT SIZE='5' CLASS='base'><DIV ALIGN='center'>$extramessage</DIV></FONT>\n";
+
+&closebox();
+
+print <<END
+<DIV ALIGN='CENTER'>
+<TABLE WIDTH='80%'>
+<TR>
+	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'create backup floppy disk'}'></TD>
+	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'create backup floppy image file'}'></TD>
+</TR>
+</TABLE>
+</DIV>
+END
+;
+
+print "</FORM>\n";
 
 &closebox();
 
