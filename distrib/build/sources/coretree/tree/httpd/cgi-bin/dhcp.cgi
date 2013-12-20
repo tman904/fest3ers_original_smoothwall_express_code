@@ -5,14 +5,21 @@
 # This code is distributed under the terms of the GPL
 #
 # (c) The SmoothWall Team
-
+#
+# Time Zone conversion script borrowed from perlmonks.org
+#
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
 use smoothtype qw( :standard );
 
+use Time::Local;
+
 my %dhcpsettings;
 my %netsettings;
+my $dhcptmpfile = "${swroot}/dhcp/leasesconfig";
+my $display_dhcplease = 'yes';
+my $subnet;
 
 &showhttpheaders();
 
@@ -46,16 +53,22 @@ $dhcpsettings{'BOOT_FILE'} = '';
 $dhcpsettings{'BOOT_ROOT'} = '';
 $dhcpsettings{'BOOT_ENABLE'} = 'off';
 
-$dhcpsettings{'COLUMN'} = 1;
-$dhcpsettings{'ORDER'} = $tr{'log ascending'};
+$dhcpsettings{'COLUMN_ONE'} = 1;
+$dhcpsettings{'ORDER_ONE'} = $tr{'log ascending'};
+$dhcpsettings{'COLUMN_TWO'} = 2;
+$dhcpsettings{'ORDER_TWO'} = $tr{'log descending'};
 
 &getcgihash(\%dhcpsettings);
 
 if ($ENV{'QUERY_STRING'} && ( not defined $dhcpsettings{'ACTION'} or $dhcpsettings{'ACTION'} eq "" ))
 {
 	my @temp = split(',',$ENV{'QUERY_STRING'});
-	$dhcpsettings{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
-	$dhcpsettings{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+  	$subnet = $temp[4] if ( defined $temp[ 4 ] and $temp[ 4 ] ne "" );
+  	$dhcpsettings{'SUBNET'}  = $subnet;
+  	$dhcpsettings{'ORDER_TWO'}  = $temp[3] if ( defined $temp[ 3 ] and $temp[ 3 ] ne "" );
+  	$dhcpsettings{'COLUMN_TWO'} = $temp[2] if ( defined $temp[ 2 ] and $temp[ 2 ] ne "" );
+  	$dhcpsettings{'ORDER_ONE'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+	$dhcpsettings{'COLUMN_ONE'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
 }
 
 my $errormessage = '';
@@ -352,13 +365,20 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 
 if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
 {
-	my $c = $dhcpsettings{'COLUMN'};
-	my $o = $dhcpsettings{'ORDER'};
+	my $c = $dhcpsettings{'COLUMN_ONE'};
+	my $o = $dhcpsettings{'ORDER_ONE'};
+	my $d = $dhcpsettings{'COLUMN_TWO'};
+	my $p = $dhcpsettings{'ORDER_TWO'};
 
 	if ($dhcpsettings{'ACTION'} eq '') {
-		$subnet = "green"; }
+		if ($subnet eq '') {
+			$subnet = "green";
+		}
+	}
 	else {
-		$subnet = $dhcpsettings{'SUBNET'}; }
+		$subnet = $dhcpsettings{'SUBNET'};
+	}
+
 	undef %dhcpsettings;
 
  	$dhcpsettings{'ENABLE'} = 'off';
@@ -366,12 +386,19 @@ if ($dhcpsettings{'ACTION'} eq '' || $dhcpsettings{'ACTION'} eq $tr{'select'})
 	$dhcpsettings{'MAX_LEASE_TIME'} = '120';
 	$dhcpsettings{'DEFAULT_ENABLE_STATIC'} = 'on';
 
-	$dhcpsettings{'COLUMN'} = $c;
-	$dhcpsettings{'ORDER'} = $o;
-	
+	$dhcpsettings{'COLUMN_ONE'} = $c;
+	$dhcpsettings{'ORDER_ONE'} = $o;
+	$dhcpsettings{'COLUMN_TWO'} = $d;
+	$dhcpsettings{'ORDER_TWO'} = $p;
+
 	&readhash("${swroot}/dhcp/global", \%dhcpsettings);
 	&readhash("${swroot}/dhcp/settings-$subnet", \%dhcpsettings);
 	$dhcpsettings{'SUBNET'} = $subnet;
+}
+
+if ($display_dhcplease eq 'yes')
+{
+  &dhcp_lease_table
 }
 
 $checked{'ENABLE'}{'off'} = '';
@@ -531,6 +558,60 @@ END
 
 &closebox();
 
+if ($display_dhcplease eq 'yes'){
+  &openbox("Current dynamic leases:");
+
+  my %render_settings =
+  (
+	'url'     => "/cgi-bin/dhcp.cgi?$dhcpsettings{'COLUMN_ONE'},$dhcpsettings{'ORDER_ONE'},[%COL%],[%ORD%],$subnet",
+	'columns' =>
+	[
+    {
+			column => '2',
+			title  => "IP Address",
+			size   => 15,
+			sort   => \&ipcompare,
+		},
+		{
+			column => '3',
+			title  => "Lease Started",
+			size   => 20,
+			sort   => 'cmp'
+		},
+		{
+			column => '4',
+			title  => "Lease Expires",
+ 			size   => 20,
+			align  => 'cmp',
+		},
+		{
+			column => '5',
+			title  => "MAC Address",
+			size   => 20,
+			align  => 'cmp',
+		},
+		{
+			column => '6',
+			title  => "Hostname",
+			size   => 20,
+			align  => 'cmp',
+		},
+		{
+			column => '7',
+			title  => "Active",
+			size   => 10,
+			tr     => 'onoff',
+			align  => 'center',
+		},
+	]
+  );
+
+  &displaytable("$dhcptmpfile", \%render_settings, $dhcpsettings{'ORDER_TWO'}, $dhcpsettings{'COLUMN_TWO'} );
+  unlink ($dhcptmpfile);
+
+  &closebox();
+}
+
 &openbox($tr{'add a new static assignment'});
 print <<END
 <table class='centered'>
@@ -561,7 +642,7 @@ END
 
 my %render_settings =
 (
-	'url'     => "/cgi-bin/dhcp.cgi?[%COL%],[%ORD%]",
+	'url'     => "/cgi-bin/dhcp.cgi?[%COL%],[%ORD%],$dhcpsettings{'COLUMN_TWO'},$dhcpsettings{'ORDER_TWO'},$subnet",
 	'columns' => 
 	[
 		{ 
@@ -605,7 +686,7 @@ my %render_settings =
 	]
 );
 
-&displaytable( "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}", \%render_settings, $dhcpsettings{'ORDER'}, $dhcpsettings{'COLUMN'} );
+&displaytable( "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}", \%render_settings, $dhcpsettings{'ORDER_ONE'}, $dhcpsettings{'COLUMN_ONE'} );
 
 print <<END
 <table class='blank'>
@@ -646,4 +727,137 @@ sub ip2number
 		return 0; }
 	else {
 		return ($1*(256*256*256))+($2*(256*256))+($3*256)+($4); }
+}
+
+sub dhcp_lease_table
+{
+### Simple DHCP Lease Viewer (2007-0905) put together by catastrophe
+# - Borrowed "dhcpLeaseData" subroutine from dhcplease.pl v0.2.5 (DHCP Pack v1.3) for SWE2.0
+# by Dane Robert Jones and Tiago Freitas Leal
+# - Borrowed parts of "displaytable" subroutine from smoothtype.pm
+# (SmoothWall Express "Types" Module) from SWE3.0 by the SmoothWall Team
+# - Josh DeLong - 09/15/07 - Added unique filter
+# - Josh DeLong - 09/16/07 - Fixed sort bug and added ability to sort columns
+# - Josh DeLong - 10/1/07 - Rewrote complete dhcp.cgi to use this code
+###
+
+my $leaseCount = -1;
+my $dhcpstart = substr($dhcpsettings{'START_ADDR'}, 0, rindex($dhcpsettings{'START_ADDR'}, ".") + 1);
+
+$dhcplIPAddy = " ";
+$dhcplStart = " ";
+$dhcplEnd = " ";
+$dhcplBinding = " ";
+$dhcplMACAddy = " ";
+$dhcplHostName = " ";
+
+# Location of DHCP Lease File
+my $datfile = "/usr/etc/dhcpd.leases";
+@catleasesFILENAME = `cat $datfile`;
+chomp (@catleasesFILENAME);
+for ($i=1; $i <= $#catleasesFILENAME; $i++){
+  $datLine = $catleasesFILENAME[$i];
+
+  if ($datLine =~ /^#/) {
+  # Ignores comments
+  } else {
+      for ($datLine) {
+      # Filter out leading & training spaces, double quotes, and remove end ';'
+      s/^\s+//;
+      s/\s+$//;
+      s/\;//;
+      s/\"//g;
+      }
+      if ($datLine =~ /^lease/) {
+
+        $leaseCount++;      # Found start of lease
+        @lineSplit = split(/ /,$datLine);       # Extract IP Address
+        $dhcplIPAddy[$leaseCount] = $lineSplit[1];
+
+      } elsif ($datLine =~ /^starts/) {
+
+        @lineSplit = split(/ /,$datLine);     # Extract Lease Start Date
+        $dhcplStart[$leaseCount] = "$lineSplit[2] $lineSplit[3]";
+
+      } elsif ($datLine =~ /^ends/) {
+
+        @lineSplit = split(/ /,$datLine);     # Extract Lease End Date
+        $dhcplEnd[$leaseCount] = "$lineSplit[2] $lineSplit[3]";
+
+      } elsif ($datLine =~ /^binding state active/) {
+
+        $dhcplBinding[$leaseCount] = "on";    # Set 'on'
+
+      } elsif ($datLine =~ /^binding state free/) {
+
+        $dhcplBinding[$leaseCount] = "off";    # Set 'off'
+
+      } elsif ($datLine =~ /^hardware ethernet/) {
+
+        @lineSplit = split(/ /,$datLine);     # Extract MAC Address
+        $dhcplMACAddy[$leaseCount] = uc($lineSplit[2]); # Make MAC Address All Upper Case for page consistancy.
+
+      } elsif ($datLine =~ /^client-hostname/ || $datLine =~ /^hostname/) {
+
+        @lineSplit = split(/ /,$datLine);     # Extract Host Name
+        $dhcplHostName[$leaseCount] = $lineSplit[1];
+      }
+    }
+}
+
+open(FILE, ">$dhcptmpfile") or die 'Unable to open dhcp leasesconfig file.';
+flock FILE, 2;
+
+  for ($i = $#dhcplIPAddy; $i >= 0; $i--) {
+    $catLINEnumber = $i+1;
+    $dhcpprintvar = "True";
+
+    if ($i == $#dhcplIPAddy){
+        push(@dhcptemparray, $dhcplIPAddy[$i]);
+    }
+    else {
+        foreach $IP (@dhcptemparray) {
+            if ($IP =~ $dhcplIPAddy[$i]) {
+                $dhcpprintvar = "False";
+            }
+        }
+    }
+
+    if (index($dhcplIPAddy[$i], $dhcpstart) == -1 )
+    {
+      $dhcpprintvar = "False"
+    }
+
+    # Printing values to temp file
+    if ($dhcpprintvar =~ "True"){
+      my $leaseStart = UTC2LocalString($dhcplStart[$i]);
+      my $leaseEnd   = UTC2LocalString($dhcplEnd[$i]);
+
+      push(@dhcptemparray, $dhcplIPAddy[$i]);
+      print FILE "$catLINEnumber,$dhcplIPAddy[$i],$leaseStart,$leaseEnd,$dhcplMACAddy[$i],$dhcplHostName[$i],$dhcplBinding[$i],\n";
+    }
+  }
+close(FILE);
+}
+
+sub UTC2LocalString
+{
+  my $t = shift;
+  my ($lDate, $lTime) = split(/ /,$t,2);
+  my ($year, $month, $day) = split(/\//,$lDate);
+  my ($hour, $minute, $sec) = split(/:/,$lTime);
+  
+  #  proto: $time = timegm($sec,$min,$hour,$mday,$mon,$year);
+  my $UTCtime = timegm ($sec,$minute,$hour,$day,$month-1,$year);
+  
+  #  proto: ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+  #          localtime(time);
+  my ($lsec,$lminute,$lhour,$lmday,$lmonth,$lyear,$lwday,$lyday,$lisdst) =
+            (localtime($UTCtime));
+  
+  $lyear += 1900;  # year is 1900 based
+  $lmonth++;       # month number is zero based
+  #print "isdst: $isdst\n"; #debug flag day-light-savings time
+  return ( sprintf("%4.4d/%2.2d/%2.2d %2.2d:%2.2d:%2.2d",
+           $lyear,$lmonth,$lmday,$lhour,$lminute,$lsec) );
 }
