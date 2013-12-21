@@ -223,11 +223,11 @@ endif
 	@echo -e "\nCopying to OffRoad ..."
 	@mkdir -p offroad
 	@cd cdrom; cp -av . ../offroad
-	@sed -i \
+	@for i in main other; do sed -i \
 	     -e '/Install Smoothwall/,+4d' \
 	     -e '/Convert ISO/,+9d' \
 	     -e '$d' \
-	     offroad/boot/grub/grub.conf
+	     offroad/boot/grub/$${i}.conf; done
 	
 	@echo "      build final tarballs ..." >>$(MEDIA_BUILD_OUT)
 	@echo "        main ..." >>$(MEDIA_BUILD_OUT)
