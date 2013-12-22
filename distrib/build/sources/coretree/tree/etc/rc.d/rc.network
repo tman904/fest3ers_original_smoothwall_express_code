@@ -65,7 +65,7 @@ echo "Loading MASQ helper modules"
 /sbin/modprobe ip_nat_pptp
 
 # Prepare red files
-. /etc/rc.d/rc.clearRED
+. /etc/rc.d/inc.clearRED
 
 # Forwarding.  This is set here to shutup warnings from ipchains.
 echo "Configuring IPv4 for firewall/router"

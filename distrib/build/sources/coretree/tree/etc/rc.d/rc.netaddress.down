@@ -38,6 +38,6 @@ for i in /var/run/dhcpcd-*.pid; do
 done
 
 # Prepare red files
-. /etc/rc.d/in.clearRED
+. /etc/rc.d/inc.clearRED
 
 /usr/bin/smoothcom dnsproxystop
