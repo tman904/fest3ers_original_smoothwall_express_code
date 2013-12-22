@@ -112,9 +112,11 @@ chgrp nobody /dev/tty13 >/dev/null 2>&1
 
 chmod 1777 /tmp
 find /var/run -name '*.pid' -type f -exec rm -f '{}' \;
-rm -f /var/smoothwall/red/*
 rm -f /var/lock/LCK..ttyS*
 rm -f /var/run/pppd*.tdb
+
+# Prepare red files
+. /etc/rc.d/inc.clearRED
 
 echo "Starting klogd"
 /usr/sbin/klogd

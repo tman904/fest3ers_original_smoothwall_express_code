@@ -37,5 +37,7 @@ for i in /var/run/dhcpcd-*.pid; do
   kill `cat $i` >/dev/null 2>&1
 done
 
-rm -f /var/smoothwall/red/*
+# Prepare red files
+. /etc/rc.d/in.clearRED
+
 /usr/bin/smoothcom dnsproxystop

@@ -64,8 +64,8 @@ echo "Loading MASQ helper modules"
 /sbin/modprobe ip_conntrack_pptp
 /sbin/modprobe ip_nat_pptp
 
-# Remove possible leftover files
-rm -f /var/smoothwall/red/*
+# Prepare red files
+. /etc/rc.d/rc.clearRED
 
 # Forwarding.  This is set here to shutup warnings from ipchains.
 echo "Configuring IPv4 for firewall/router"
