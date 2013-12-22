@@ -143,7 +143,8 @@ endif
 	
 	@echo "        move docs to distrib-doc" >>$(MEDIA_BUILD_OUT)
 	@echo "Moving docs to distrib-doc:"
-	for I in man info share/man share/info share/doc examples; do \
+	for I in man info share/man share/info share/doc share/gtk-doc \
+	      share/ntop/html share/slsh/help examples; do \
 	  if [ -d distrib/usr/$$I ]; then \
 	    mkdir -p distrib-doc/usr/$$I; \
 	    mv distrib/usr/$$I/* distrib-doc/usr/$$I/; fi; \
