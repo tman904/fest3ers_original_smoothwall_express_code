@@ -16,7 +16,7 @@ system('/usr/bin/tar', '-zcf', 'backup/backup.dat', 'adsl', 'advnet', 'auth',
 	'modem', 'portfw', 'ppp', 'proxy', 'remote', 'snort',
 	'time', 'vpn', 'xtaccess', 'clamav', 'hosts', 'im', 'outgoing',
 	'p3scan', 'sipproxy', 'timedaccess', 'traffic',
-	'urlfilter/settings', 'urlfilter/squidGuard.conf');
+	'urlfilter' '--exclude=urlfilter/blacklists');
 
 open (FILE, '>backup/version');
 print FILE "$version\n";
