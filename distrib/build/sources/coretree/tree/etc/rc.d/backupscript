@@ -6,11 +6,17 @@ use header qw( :standard );
 chdir '/var/smoothwall';
 
 system('/usr/bin/tar', '-zcf', 'backup/backup.dat', 'adsl', 'advnet', 'auth',
-	'backup', 'ddns', 'dhcp', 'dmzholes', 'ethernet', 'ipblock', 'isdn',
+	'backup/settings', 'backup/flag', 'backup/history', 'backup/config',
+	'ddns', 'dhcp', 'dmzholes',
+	'/etc/cron.daily/sgbl-autoupdate',
+	'/etc/cron.weekly/sgbl-autoupdate',
+	'/etc/cron.monthly/sgbl-autoupdate',
+	'ethernet', 'ipblock', 'isdn',
 	'main/hostname.conf', 'main/settings', 'main/proxy',
 	'modem', 'portfw', 'ppp', 'proxy', 'remote', 'snort',
 	'time', 'vpn', 'xtaccess', 'clamav', 'hosts', 'im', 'outgoing',
-	'p3scan', 'sipproxy', 'timedaccess', 'traffic', 'urlfilter');
+	'p3scan', 'sipproxy', 'timedaccess', 'traffic',
+	'urlfilter/settings', 'urlfilter/squidGuard.conf');
 
 open (FILE, '>backup/version');
 print FILE "$version\n";
