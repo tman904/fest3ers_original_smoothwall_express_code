@@ -23,8 +23,7 @@ if ($backupversion =~ /^3.1/)
 		'ddns', 'dhcp', 'dmzholes', 'ethernet', 'ipblock', 'isdn',
 		'modem', 'portfw', 'ppp', 'proxy', 'remote', 'snort',
 		'time', 'vpn', 'xtaccess', 'clamav', 'hosts', 'im', 'outgoing',
-		'p3scan', 'sipproxy', 'timedaccess', 'traffic', 'urlfilter');
-	system('/bin/cp', '-av', '/var/smoothwall/urlfilter.old/blacklists', '/var/smoothwall/urlfilter/');
+		'p3scan', 'sipproxy', 'timedaccess', 'traffic');
 	system('/usr/bin/tar', '-zxf', 'restore/backup.dat');
 }
 elsif ($backupversion =~ /^3.0/)
