@@ -64,7 +64,8 @@ if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'} ||
 			else
 			{
 				print "Content-type: application/octect-stream\n";
-				print "Content-length: " . 1440 * 1024 . "\n\n";
+				print "Content-length: " . 1440 * 1024 . "\n";
+				print "Content-disposition: attachment; filename=\"backup.img\"\n\n";
 
 				undef $/;
 				open (FILE, "${swroot}/tmp/backup.img");
