@@ -865,7 +865,7 @@ print <<END
 </tr>
 <tr>
 	<td colspan='2' style='text-align:center'>
-	  <textarea name='UNFILTER_CLIENTS' cols='36' rows='6' wrap='off'
+	  <textarea name='UNFILTERED_CLIENTS' cols='36' rows='6' wrap='off'
               style='margin:0 2em 0 0'>
 END
 ;
