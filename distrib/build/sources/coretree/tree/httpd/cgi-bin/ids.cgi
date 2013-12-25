@@ -432,6 +432,7 @@ sub runoinkmaster
     {
       print "<p style='background:white; border:solid black 2pt; padding:2pt'>\n";
     }
+    my $percent = 0;
     while(<FD>)
     {
       if ($formdebug ne "")
@@ -440,9 +441,9 @@ sub runoinkmaster
       }
       print STDERR $_;
       $errormessage = '';
-      if (/(\d{1,3})%/)
+      if ($percent < 100 && /(\d{1,3})%/)
       {
-        my $percent = $1;
+        $percent = $1;
         my $message;
         if ($percent == 100)
         {
