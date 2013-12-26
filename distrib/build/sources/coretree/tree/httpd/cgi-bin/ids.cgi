@@ -232,11 +232,14 @@ print "
     $tr{'ids download label'}
   </div>
   <div style='margin-right:.2em; display:inline-block; width:20%; '>
-    <input type='checkbox' name='DOWNLOAD'
-           onchange='tmp=getElementById(\"OINK-input\").style.display;
-                     tmpNot=getElementById(\"OINK-text\").style.display;
-                     getElementById(\"OINK-input\").style.display=tmpNot;
-                     getElementById(\"OINK-text\").style.display=tmp;
+    <input id='dlCheckBox' type='checkbox' name='DOWNLOAD'
+           onchange='if (getElementById(\"dlCheckBox\").checked) {
+                       getElementById(\"OINK-input\").style.display=\"inline-block\";
+                       getElementById(\"OINK-text\").style.display=\"none\";
+                     } else {
+                       getElementById(\"OINK-input\").style.display=\"none\";
+                       getElementById(\"OINK-text\").style.display=\"inline-block\";
+                     }
                      return true;'
            style='margin:0' $checked{'DOWNLOAD'}{'on'}>
     <span style='margin-left:18pt; margin-right:.5em'>$tr{'ids debug'}</span>
