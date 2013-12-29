@@ -24,5 +24,7 @@ endif
 COMPILE = yes
 compile: configure
 	$(MAKE) $(JOBS) -C $(COMPILE_DIR)
+	echo "ca_certificate = /usr/lib/ssl/certs/ca-certificates.crt" \
+	  >> $(COMPILE_DIR)/doc/sample.wgetrc
 
 include ../Makefile.rules
