@@ -34,7 +34,9 @@ done
 
 # Kill RED's DHCP client daemon and any others that might (still) be running
 for i in /var/run/dhcpcd-*.pid; do
-  kill `cat $i` >/dev/null 2>&1
+  # Pid files could be deleted *just then* and/or pid file could be empty; also
+  #   `cmd`s don't inherit stderr. So thoroughly mute the kill.
+  kill `cat $i 2>/dev/null` >/dev/null 2>&1
 done
 
 # Prepare red files
