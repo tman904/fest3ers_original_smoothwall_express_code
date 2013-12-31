@@ -6,7 +6,7 @@
 
 include ../Makefile.conf
 
-PACKAGE = cacert_bundle
+PACKAGE = cacert-bundle
 VERSION = 0.0
 
 INSTALL = yes
