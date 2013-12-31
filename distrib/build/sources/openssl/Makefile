@@ -47,7 +47,6 @@ clean:
 	@echo -n " $(PACKAGE)"
 	@rm -rf $(DIR)
 	@rm -rf $(COMPILE_DIR)
-	@rm -f certdata.txt
 ifeq ($(BUILD_PHASE), Final)
 	@rm -rf $(PKG_ROOT); mkdir $(PKG_ROOT)
 	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
