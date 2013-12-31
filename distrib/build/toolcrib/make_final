@@ -191,10 +191,7 @@ fi
       build tar
       build util-linux
       build joe
-      # cacert-bundle depends on perl-mods which depends on openssl.
       build openssl
-      build perl-mods
-      build cacert-bundle
       build libmnl
       build db
       build openldap
@@ -264,6 +261,10 @@ fi
       build dosfstools
 
       build rrdtool
+      # cacert-bundle depends on openssl and on perl-mods which depends
+      #   on rrdtool.
+      build perl-mods
+      build cacert-bundle
       build sqlite
 
       touch crumbs/Final.grp4.compiled
