@@ -15,7 +15,8 @@ PACKAGE = perl-mods
 VERSION = 0.0
 
 # List of all mods to be built. Add here, then add dir and makefile in
-#   version dir below.
+#   version dir below. IO-Socket-SSL seems to depend on Net-SSLeay; both
+#   are moved to the end of the list.
 export PERL_MODS = \
 	    App-Control \
 	    Authen-NTLM \
@@ -25,25 +26,25 @@ export PERL_MODS = \
 	    GD \
 	    HTML-Parser \
 	    HTML-Tagset \
-	    IO-Socket-SSL \
 	    Log-Log4perl \
 	    Net-CIDR \
 	    Net-Netmask \
-	    Net-SSLeay \
 	    NetAddr-IP \
 	    RRD-Simple \
 	    Set-IntSpan \
 	    URI \
 	    libnet \
 	    libwww-perl \
-	    local-lib
+	    local-lib \
+	    Net-SSLeay \
+	    IO-Socket-SSL
 
 DOWNLOAD = yes
 download:
 	@+$(MAKE) -C $(PACKAGE)-$(VERSION) download
 
 COMPILE = yes
-compile: 
+compile: download
 	@+$(MAKE) $(JOBS) -C $(COMPILE_DIR)
 
 INSTALL = yes

@@ -25,7 +25,7 @@ PATH=$PATH:${PWD}/toolcrib
 #   the exit status of the shell (only an explicit exit would do that).
 #   This is needed so the host OS doesn't complain when shutting down.
 #
-trap "echo; echo \"Unmounting /proc\"; umount /proc" EXIT
+trap "echo; echo \"Unmounting /proc\"; /tools/bin/umount /proc" EXIT
 
 # If an argument specified, build only that item. Otherwise, build everything.
 #
@@ -45,6 +45,11 @@ fi
 cd /build
 export BUILD_PHASE="Final"
 
+# Be sure /proc is mounted
+#
+if grep proc /etc/mtab; then umount /proc >/dev/null 2>&1; fi
+/tools/bin/mount -t proc proc /proc
+
 # Get our functions
 #
 source toolcrib/environment
@@ -52,17 +57,11 @@ source toolcrib/functions
 
 set_build_environment
 
-# Be sure /proc is mounted
-#
-if grep proc /etc/mtab; then umount /proc >/dev/null 2>&1; fi
-mount -t proc proc /proc
-
 # Set up parallel make
 #
 export JOBS_UP="-j 1"
 export JOBS_MP
 cpu_count
-
 
 # If unwinding, do so and exit
 #
@@ -137,6 +136,7 @@ fi
       build inetutils
       build libxml2
       build libxslt
+      build gd
       touch crumbs/Final.grp1.compiled
     fi
 
@@ -191,7 +191,10 @@ fi
       build tar
       build util-linux
       build joe
+      # cacert-bundle depends on perl-mods which depends on openssl.
       build openssl
+      build perl-mods
+      build cacert-bundle
       build libmnl
       build db
       build openldap
@@ -249,7 +252,6 @@ fi
       build popt
       build dialog
       build newt
-      build gd
 
       build usbutils
       build pciutils
@@ -262,7 +264,6 @@ fi
       build dosfstools
 
       build rrdtool
-      build perl-mods
       build sqlite
 
       touch crumbs/Final.grp4.compiled

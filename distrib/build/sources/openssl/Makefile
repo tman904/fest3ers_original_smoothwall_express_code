@@ -42,7 +42,6 @@ compile: configure
 install: compile
 	@mkdir -p $(PKG_ROOT)
 	@make -C $(PACKAGE)-$(OPENSSL_VER) INSTALL_PREFIX=$(PKG_ROOT) install
-	@./mk-ca-bundle.pl $(PKG_ROOT)/$(OPENSSLDIR)/certs/ca-certificates.crt
 
 clean:
 	@echo -n " $(PACKAGE)"
