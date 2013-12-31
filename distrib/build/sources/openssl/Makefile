@@ -19,11 +19,10 @@ ifeq ($(mARCH),i486)
 ONLY386 = 386
 endif
 
-OPENSSLDIR = $(PKG_DIR)/lib/ssl
-
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
+CLEAN = yes
 
 configure: $(DIR)/
 	sed -i -e '/^  \*86-\*-linux2/i \
@@ -32,7 +31,7 @@ configure: $(DIR)/
 	sed -i -e '/^  \*86-\*-linux2/,+11d' $(DIR)/config
 	sed -i -e 's/  FUBAR$$/  *86-*-linux2) OUT="linux-elf"/' $(DIR)/config
 	@(cd $(DIR); \
-	./config shared --prefix=$(PKG_DIR) --openssldir=/$(OPENSSLDIR) $(ONLY386); \
+	./config shared --prefix=$(PKG_DIR) --openssldir=/$(PKG_DIR)/lib/ssl $(ONLY386); \
 	patch < ../Makefile-MANDIR.patch);
 
 compile: configure
@@ -41,6 +40,15 @@ compile: configure
 install: compile
 	@mkdir -p $(PKG_ROOT)
 	@make -C $(PACKAGE)-$(OPENSSL_VER) INSTALL_PREFIX=$(PKG_ROOT) install
-	@./mk-ca-bundle.pl $(PKG_ROOT)/$(OPENSSLDIR)/certs/ca-certificates.crt
+
+clean:
+	@echo -n " $(PACKAGE)"
+	@rm -rf $(DIR)
+	@rm -rf $(COMPILE_DIR)
+	@rm -f certdata.txt
+ifeq ($(BUILD_PHASE), Final)
+	@rm -rf $(PKG_ROOT); mkdir $(PKG_ROOT)
+	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
+endif
 
 include ../Makefile.rules
