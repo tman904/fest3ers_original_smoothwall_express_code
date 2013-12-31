@@ -9,8 +9,12 @@ include ../Makefile.conf
 PACKAGE = cacert-bundle
 VERSION = 0.0
 
+DOWNLOAD = yes
 INSTALL = yes
 CLEAN = yes
+
+download:
+	@true
 
 install:
 	@mkdir -p $(PKG_ROOT)
