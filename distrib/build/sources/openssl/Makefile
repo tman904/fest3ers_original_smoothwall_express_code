@@ -19,6 +19,8 @@ ifeq ($(mARCH),i486)
 ONLY386 = 386
 endif
 
+OPENSSLDIR = $(PKG_DIR)/lib/ssl
+
 CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
@@ -30,7 +32,7 @@ configure: $(DIR)/
 	sed -i -e '/^  \*86-\*-linux2/,+11d' $(DIR)/config
 	sed -i -e 's/  FUBAR$$/  *86-*-linux2) OUT="linux-elf"/' $(DIR)/config
 	@(cd $(DIR); \
-	./config shared --prefix=$(PKG_DIR) --openssldir=/$(PKG_DIR)/lib/ssl $(ONLY386); \
+	./config shared --prefix=$(PKG_DIR) --openssldir=/$(OPENSSLDIR) $(ONLY386); \
 	patch < ../Makefile-MANDIR.patch);
 
 compile: configure
@@ -39,5 +41,6 @@ compile: configure
 install: compile
 	@mkdir -p $(PKG_ROOT)
 	@make -C $(PACKAGE)-$(OPENSSL_VER) INSTALL_PREFIX=$(PKG_ROOT) install
+	@./mk-ca-bundle.pl $(PKG_ROOT)/$(OPENSSLDIR)/certs/ca-certificates.crt
 
 include ../Makefile.rules
