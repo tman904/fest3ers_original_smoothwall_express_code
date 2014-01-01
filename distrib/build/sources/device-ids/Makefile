@@ -15,7 +15,7 @@ VERSION = 0.0
 
 PCI_URL = http://pciids.sourceforge.net/v2.2/
 PCI_FILE = pci.ids.bz2
-USB_URL = http://usb-ids.gowdy.us/
+USB_URL = http://www.linux-usb.org/
 USB_FILE = usb.ids.bz2
 
 # Force fetching from upstream origin every time.
