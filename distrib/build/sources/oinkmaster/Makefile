@@ -11,8 +11,6 @@ VERSION = 2.0
 
 BASE_URL = http://heanet.dl.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)/$(VERSION)
 
-PATCH_FILE1 = wget-no-check-certificate.patch
-
 INSTALL = yes
 
 PATCH_FILE1 = oinkmaster.pl.patch

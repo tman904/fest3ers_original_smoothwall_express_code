@@ -31,8 +31,7 @@ INSTALL = yes
 
 download:
 	@if [ ! -e ../../downloads/$(TARBALL)$(EXTENSION).done ]; then \
-	  wget --no-check-certificate \
-	       -O ../../downloads/$(TARBALL)$(EXTENSION) $(BASE_URL)$(URL); \
+	  wget -O ../../downloads/$(TARBALL)$(EXTENSION) $(BASE_URL)$(URL); \
 	  if [ $$? -eq 0 ]; then \
 	    touch ../../downloads/$(TARBALL)$(EXTENSION).done; \
 	  fi; \

@@ -13,6 +13,4 @@ EXTENSION = .tar.gz
 
 BASE_URL = http://voxel.dl.sourceforge.net/project/$(PACKAGE)
 
-export NO_CHECK_CERT=yes
-
 include ../Makefile.rules
