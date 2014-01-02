@@ -273,7 +273,7 @@ END
 	$span++;
 
 	print <<END
-	<td width='${remaining}px;' class='endtab'>&nbsp;</td>
+	<td width='${remaining}px' class='endtab'>&nbsp;</td>
 	<td class='topend'></td>
 </tr>
 <tr>
