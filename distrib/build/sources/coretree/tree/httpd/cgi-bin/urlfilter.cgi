@@ -624,7 +624,6 @@ print "</table>";
 
 &openbox('URL Filter Control:');
 print <<END;
-<!-- <div align='center'> -->
 <table style='width:100%'>
 <tr>
   <td style='width:50%; text-align:center'>
@@ -635,8 +634,6 @@ print <<END;
   </td>
 </tr>
 </table>
-</div>
-</form>
 END
 &closebox();
 
@@ -810,7 +807,6 @@ END
 
 &openbox('URL Filter Control:');
 print <<END;
-<!-- <div align='center'> -->
 <table style='width:100%'>
 <tr>
   <td style='width:50%; text-align:center'>
@@ -821,8 +817,6 @@ print <<END;
   </td>
 </tr>
 </table>
-</div>
-</form>
 END
 &closebox();
 
@@ -989,7 +983,6 @@ END
 
 &openbox('URL Filter Control:');
 print <<END;
-<!-- <div align='center'> -->
 <table style='width:100%'>
 <tr>
   <td style='width:50%; text-align:center'>
@@ -1000,10 +993,10 @@ print <<END;
   </td>
 </tr>
 </table>
-</div>
-</form>
 END
 &closebox();
+
+print "</form>\n";
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>";
 &openbox("$tr{'urlfilter blacklist update'}:");
@@ -1140,7 +1133,7 @@ print <<END
   <td colspan='2' style='text-align:center; width:50%'><input type='submit' name='ACTION' value='$tr{'urlfilter backup'}' /></td>
 </tr>
 <tr>
-  <td colspan='4' style='height:1em'</td>
+  <td colspan='4' style='height:1em'></td>
 </tr>
 <tr>
   <td colspan='4'>
