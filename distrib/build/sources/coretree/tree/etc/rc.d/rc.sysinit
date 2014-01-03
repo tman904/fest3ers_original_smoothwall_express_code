@@ -127,7 +127,7 @@ if readlink /dev/harddisk | egrep "hd."; then
 fi
 
 echo "Setting the clock"
-/sbin/hwclock --hctosys
+/sbin/hwclock --hctosys --localtime
 
 if [ ! -e /usr/etc/pango/pango.modules ]; then
 	echo "Collecting pango modules"
