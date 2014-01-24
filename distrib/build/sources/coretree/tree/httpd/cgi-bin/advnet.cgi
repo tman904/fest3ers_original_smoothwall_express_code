@@ -15,9 +15,9 @@ my (%advnetsettings,%checked);
 &showhttpheaders();
 
 $advnetsettings{'ENABLE_NOPING'} = 'off';
-$advnetsettings{'ENABLE_COOKIES'} = 'on';
-$advnetsettings{'ENABLE_NOIGMP'} = 'on';
-$advnetsettings{'ENABLE_NOMULTICAST'} = 'on';
+$advnetsettings{'ENABLE_COOKIES'} = 'off';
+$advnetsettings{'ENABLE_NOIGMP'} = 'off';
+$advnetsettings{'ENABLE_NOMULTICAST'} = 'off';
 $advnetsettings{'ENABLE_UPNP'} = 'off';
 $advnetsettings{'BAD_TRAFFIC'} = 'REJECT';
 $advnetsettings{'ACTION'} = '';
