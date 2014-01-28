@@ -15,8 +15,6 @@ URL := $(shell ../../toolcrib/get-snort-ver.sh -u $(PACKAGE))
 
 BASE_URL = http://www.snort.org
 
-PATCH_FILE1 = snort-pidfix.patch
-
 CONFIG_OPTS += --enable-gre --enable-targetbased --enable-ppm \
 	      --enable-perfprofiling --enable-zlib --enable-non-ether-decoders
 
