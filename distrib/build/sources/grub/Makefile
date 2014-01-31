@@ -81,7 +81,7 @@ install: download
 	@tar -xvf $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION) -C $(PKG_ROOT)
 
 clean:
-	@echo -n "$(PACKAGE) "
+	@echo -n " $(PACKAGE)"
 	@rm -rf $(PACKAGE)-$(VERSION)
 	@rm -rf $(PKG_ROOT)
         
