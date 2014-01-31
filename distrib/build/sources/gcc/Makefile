@@ -8,7 +8,7 @@ include ../Makefile.conf
 include ../Makefile.versions
 
 PACKAGE = gcc
-VERSION = 4.7.2
+VERSION = 4.7.3
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gcc/gcc-$(VERSION)
 EXTENSION = .tar.bz2
