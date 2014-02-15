@@ -17,8 +17,8 @@ download:
 	@true
 
 install:
-	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)/lib/openssl/certs
-	@./mk-ca-bundle.pl $(PKG_ROOT)/$(PKG_DIR)/lib/openssl/certs/ca-certificates.crt
+	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)/lib/ssl/certs
+	@./mk-ca-bundle.pl $(PKG_ROOT)/$(PKG_DIR)/lib/ssl/certs/ca-certificates.crt
 	@rm -f certdata.txt
 
 clean:
