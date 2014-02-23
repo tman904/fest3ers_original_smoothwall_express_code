@@ -94,14 +94,14 @@ if(defined $trafficsettings{CLASSIDS} && $trafficsettings{CLASSIDS} ne '') {
 }
 
 my %prio = (
-	         'high' => 0,
-	       'normal' => 1,
-	          'low' => 2,
+	         'high' => 1,
+	       'normal' => 2,
+	          'low' => 3,
 	     'isochron' => 0,
-	  'smoothadmin' => 1,
-	     'webcache' => 1,
-	 'localtraffic' => 1,
-	     'smallpkt' => 1,
+	  'smoothadmin' => 2,
+	     'webcache' => 2,
+	 'localtraffic' => 2,
+	     'smallpkt' => 2,
 );
 # optional override - needed if want extra classes or to change the prorities of those already here
 if(defined $trafficsettings{PRIO} && $trafficsettings{PRIO} ne '') {
