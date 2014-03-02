@@ -220,7 +220,7 @@ if (($netsettings{'RED_TYPE'} eq 'DHCP' ||
   if ($netsettings{'RED_ADDRESS'} ne $redIP) { $redIP_tag = "$string"; }
   $netsettings{'RED_ADDRESS'} = $redIP;
   open (REMOTEIP, "/var/smoothwall/red/remote-ipaddress")
-    or warn "Could not open /var/smoothwall/red/local-ipaddress: $!";
+    or warn "Could not open /var/smoothwall/red/remote-ipaddress: $!";
   chomp($remoteIP = <REMOTEIP>);
   close (REMOTEIP);
   if ($netsettings{'DEFAULT_GATEWAY'} ne $remoteIP) { $remoteIP_tag = "$string"; }
@@ -292,7 +292,7 @@ my @chains = split (/,/,$smoothinfosettings{'CHAINS'});
 
 # MODS
 my %modlist = ();
-my $dir = "${swroot}";
+my $dir = "${swroot}/mods";
 find(\&list, $dir);
 # Deal with some "non-standard" mods
 open (BASE, "</usr/lib/smoothwall/langs/en.pl") || die "Couldn't open $base: $!";
@@ -454,9 +454,12 @@ if ($smoothinfosettings{'CONFIG'} eq 'on') {
 
 # Generate the ASCII schematic (ugly but works)
 my $purple;
+if ($orangedev) {$orange = '(orange)';} else {$orange = '        ';}
 if ($purpledev) {$purple = '(purple)';} else {$purple = '        ';}
 if (-e "${SIdir}/etc/schematic") {
   print FILE "[info=\"$tr{'smoothinfo-ascii-schematic'}\"][code\]";
+
+  # RED
   print FILE "                                  Internet\n";
   print FILE "                                     |\n";
   if ($smoothinfosettings{'MODEM'} eq 'on') {
@@ -468,233 +471,71 @@ if (-e "${SIdir}/etc/schematic") {
     print FILE "                                     |\n";
   }
   print FILE "                                   (red)\n";
+
+  # ORANGE
   if ($smoothinfosettings{'SWITCH2'} eq 'on') {
-    print FILE "W/Lan <=== Switch <=== (orange)";
-    print FILE "[SMOOTHWALL](green)";
-  } elsif ($smoothinfosettings{'WAP2'} eq 'on') {
-    print FILE "    WLan <=== WAP <=== (orange)";
-    print FILE "[SMOOTHWALL](green)";
+    if ($smoothinfosettings{'WAP2'} eq 'on') {
+
+print FILE "  WAP <=== Switch <=== $orange ";
+
+    } else {
+
+print FILE "           Switch <=== $orange ";
+
+    }
+    print FILE "[SMOOTHWALL] (green)";
+  } elsif ($smoothinfosettings{'WAP3'} eq 'on') {
+
+print FILE "    WLan <=== WAP <=== $orange ";
+
+    print FILE "[SMOOTHWALL] (green)";
+
   } else {
-    print FILE "                               [SMOOTHWALL](green)";}
-    if ($smoothinfosettings{'SWITCH1'} eq 'on') {
-      print FILE " ===> Switch ===> W/Lan";
+
+print FILE "                       $orange [SMOOTHWALL] (green)";
+
+  }
+
+
+  # GREEN
+  if ($smoothinfosettings{'SWITCH1'} eq 'on') {
+    if ($smoothinfosettings{'WAP1'} eq 'on') {
+
+print FILE " ===> Switch ===> WAP";
+
+    } else {
+
+print FILE " ===> Switch";
+
     }
-    elsif ($smoothinfosettings{'WAP1'} eq 'on') {
-      print FILE " ===> WAP ===> WLan";
-    }
 
-  if ($smoothinfosettings{'WAP3'} eq 'on' && 
-      $smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} ne 'on' &&
-      $smoothinfosettings{'WAP5'} ne 'on' &&
-      $smoothinfosettings{'WAP6'} ne 'on' &&
-      $smoothinfosettings{'SWITCH3'} ne 'on') {
-    print FILE "\n              |                  $purple\n";
-    print FILE "             WAP\n";
-    print FILE "              |\n";
-    print FILE "            WLan";
+  } elsif ($smoothinfosettings{'WAP4'} eq 'on') {
+    print FILE " ===> WAP ===> WLan";
   }
 
-  if ($smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'SWITCH2'} ne 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on' &&
-      $smoothinfosettings{'WAP5'} ne 'on' &&
-      $smoothinfosettings{'SWITCH3'} ne 'on' &&
-      $smoothinfosettings{'WAP6'} ne 'on') {
-    print FILE "\n                                 $purple                 |\n";
-    print FILE "                                                         WAP\n";
-    print FILE "                                                          |\n";
-    print FILE "                                                        WLan";
-  }
-
-  if ($smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on' &&
-      $smoothinfosettings{'WAP5'} ne 'on' &&
-      $smoothinfosettings{'SWITCH3'} ne 'on' &&
-      $smoothinfosettings{'WAP6'} ne 'on') {
-    print FILE "\n                                 $purple                 |\n";
-    print FILE "                                                         WAP\n";
-    print FILE "                                                          |\n";
-    print FILE "                                                        WLan";
-  }
-
-
-  if ($smoothinfosettings{'WAP3'} eq 'on' &&
-      $smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} ne 'on' &&
-      $smoothinfosettings{'WAP6'} eq 'on') {
-    print FILE "\n              |                  (purple)\n";
-    print FILE "             WAP                     |\n";
-    print FILE "              |                     WAP\n";
-    print FILE "             WLan                    |\n";
-    print FILE "                                    WLan";
-  }
-
-  if ($smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on' &&
-      $smoothinfosettings{'WAP6'} eq 'on') {
-    print FILE "\n                                 (purple)                  |\n";
-    print FILE "                                     |                    WAP\n";
-    print FILE "                                    WAP                    |\n";
-    print FILE "                                     |                    WLan\n";
-    print FILE "                                    WLan";
-  }
-
-  if ($smoothinfosettings{'WAP3'} eq 'on' &&
-      $smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on' &&
-      $smoothinfosettings{'SWITCH3'} ne 'on' &&
-      $smoothinfosettings{'WAP6'} ne 'on') {
-    print FILE "\n              |                  $purple                 |\n";
-    print FILE "             WAP                                         WAP\n";
-    print FILE "              |                                           |\n";
-    print FILE "             WLan                                        WLan";
-    print FILE "";
-  }
-
+  # PURPLE
   if ($smoothinfosettings{'WAP6'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'WAP4'} ne 'on') {
-    print FILE "\n                                 (purple)\n";
+      $smoothinfosettings{'SWITCH3'} eq 'on') {
+    print FILE "\n                                  $purple\n";
+    print FILE "                                     |\n";
+    print FILE "                                   Switch\n";
     print FILE "                                     |\n";
     print FILE "                                    WAP\n";
     print FILE "                                     |\n";
-    print FILE "                                    WLan";
-  }
-
-  if ($smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'WAP4'} ne 'on' &&
-      $smoothinfosettings{'WAP5'} ne 'on') {
-    print FILE "\n                                 (purple)\n";
+    print FILE "                                   W/LAN";
+  } elsif ($smoothinfosettings{'WAP6'} ne 'on' &&
+      $smoothinfosettings{'SWITCH3'} eq 'on') {
+    print FILE "\n                                  $purple\n";
     print FILE "                                     |\n";
-    print FILE "                                  Switch\n";
+    print FILE "                         Switch";
+  } elsif ($smoothinfosettings{'WAP5'} eq 'on') {
+    print FILE "\n                                  $purple\n";
     print FILE "                                     |\n";
-    print FILE "                                   W/Lan";
-  }
-
-  if ($smoothinfosettings{'WAP5'} ne 'on' &&
-      $smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} eq 'on' &&
-      $smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on') {
-    print FILE "\n              |                  (purple)                |\n";
-    print FILE "             WAP                     |                   WAP\n";
-    print FILE "              |                   Switch                  |\n";
-    print FILE "             WLan                    |                   WLan\n";
-    print FILE "                                   W/Lan";
-    print FILE "";
-  }
-
-  if ($smoothinfosettings{'WAP6'} eq 'on' &&
-      $smoothinfosettings{'SWITCH3'} ne 'on' &&
-      $smoothinfosettings{'WAP3'} eq 'on' &&
-      $smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on') {
-    print FILE "\n              |                  (purple)                 |\n";
-    print FILE "             WAP                     |                   WAP\n";
-    print FILE "              |                     WAP                   |\n";
-    print FILE "             WLan                    |                   WLan\n";
-    print FILE "                                   WLan";
-    print FILE "";
-  }
-
-  if ($smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'WAP4'} ne 'on' &&
-      $smoothinfosettings{'WAP5'} eq 'on') {
-    print FILE "\n                                 (purple)\n";
+    print FILE "                                    WAP\n";
     print FILE "                                     |\n";
-    print FILE "                          WAP <== Switch\n";
-    print FILE "                           |         |\n";
-    print FILE "                         WLan      W/Lan";
+    print FILE "                                   W/LAN";
   }
 
-  if ($smoothinfosettings{'WAP5'} eq 'on' &&
-      $smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} eq 'on' &&
-      $smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on') {
-    print FILE "\n              |                  (purple)                 |\n";
-    print FILE "             WAP                     |                   WAP\n";
-    print FILE "              |           WAP <== Switch                  |\n";
-    print FILE "             WLan          |         |                   WLan\n";
-    print FILE "                         WLan      W/Lan";
-    print FILE "";
-  }
-
-  if ($smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} eq 'on' &&
-      $smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} ne 'on' &&
-      $smoothinfosettings{'WAP5'} eq 'on') {
-    print FILE "\n              |                  (purple)\n";
-    print FILE "             WAP                     |\n";
-    print FILE "              |           WAP <== Switch\n";
-    print FILE "             WLan          |         |\n";
-    print FILE "                         WLan      W/Lan";
-  }
-
-  if ($smoothinfosettings{'SWITCH2'} ne 'on' &&
-      $smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on' &&
-      $smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'WAP5'} ne 'on') {
-    print FILE "\n                                 (purple)                 |\n";
-    print FILE "                                     |                   WAP\n";
-    print FILE "                                  Switch                  |\n";
-    print FILE "                                     |                   WLan\n";
-    print FILE "                                   W/Lan";
-  }
-
-  if ($smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on' &&
-      $smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'WAP5'} ne 'on') {
-    print FILE "\n                                 (purple)                 |\n";
-    print FILE "                                     |                   WAP\n";
-    print FILE "                                  Switch                  |\n";
-    print FILE "                                     |                   WLan\n";
-    print FILE "                                   W/Lan";
-  }
-
-  if ($smoothinfosettings{'SWITCH2'} ne 'on' &&
-      $smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on' &&
-      $smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'WAP5'} eq 'on') {
-    print FILE "\n                                 (purple)                 |\n";
-    print FILE "                                     |                   WAP\n";
-    print FILE "                          WAP <== Switch                  |\n";
-    print FILE "                           |         |                   WLan\n";
-    print FILE "                         WLan      W/Lan";
-  }
-
-  if ($smoothinfosettings{'SWITCH2'} eq 'on' &&
-      $smoothinfosettings{'WAP3'} ne 'on' &&
-      $smoothinfosettings{'SWITCH1'} eq 'on' &&
-      $smoothinfosettings{'SWITCH3'} eq 'on' &&
-      $smoothinfosettings{'WAP4'} eq 'on' &&
-      $smoothinfosettings{'WAP5'} eq 'on') {
-    print FILE "\n                                 (purple)                 |\n";
-    print FILE "                                     |                   WAP\n";
-    print FILE "                          WAP <== Switch                  |\n";
-    print FILE "                           |         |                   WLan\n";
-    print FILE "                         WLan      W/Lan";
-  }
 
   print FILE "\[/code\]\[/info\]";
 }

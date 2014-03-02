@@ -45,7 +45,7 @@ unless (-e "$filename") { system ("/bin/touch","$filename"); }
 my $success = message('smoothinfogetchains');
 
 if (not defined $success) {
-$errormessage = $tr{'smoothd failure'};
+$errormessage .= $tr{'smoothd failure'}. "<br />\n";
 }
 
 open (FILE, "<$MODDIR/chains");
@@ -90,20 +90,20 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
   # ERROR CHECKING
   if ($smoothinfosettings{'LINES2'} eq '' &&
       $smoothinfosettings{'STRING2'} eq '' &&
-      $smoothinfosettings{'APACHE'} eq 'on') { 
+      $smoothinfosettings{'APACHE'} eq 'on') {
 
-    $errormessage = $tr{'smoothinfo-define-number-of-lines'};
+    $errormessage .= $tr{'smoothinfo-define-number-of-lines'}. "<br />\n";
   }
 
-  if ($smoothinfosettings{'LINES3'} eq '' && 
-      $smoothinfosettings{'STRING3'} eq '' && 
+  if ($smoothinfosettings{'LINES3'} eq '' &&
+      $smoothinfosettings{'STRING3'} eq '' &&
       $smoothinfosettings{'MESSAGES'} eq 'on') {
 
-    $errormessage = $tr{'smoothinfo-define-number-of-lines'};
+    $errormessage .= $tr{'smoothinfo-define-number-of-lines'}. "<br />\n";
   }
 
   if ($smoothinfosettings{'SCREENSHOTS'} =~ /a href/i) {
-    $errormessage = $tr{'smoothinfo-bad-link'};
+    $errormessage .= $tr{'smoothinfo-bad-link'}. "<br />\n";
   }
 
   unlink ("$MODDIR/schematic");
@@ -120,7 +120,7 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
       $smoothinfosettings{'MODEM'} eq 'on' ||
       $smoothinfosettings{'ROUTER'} eq 'on') {
 
-    system("/bin/touch $MODDIR/schematic"); 
+    system("/bin/touch $MODDIR/schematic");
   }
 
   unless ($smoothinfosettings{'MEMORY'} eq 'on' &&
@@ -161,7 +161,7 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
 
   if ($smoothinfosettings{'OTHER'} ne '') {
     if ($smoothinfosettings{'SECTIONTITLE'} eq '') {
-      $errormessage = $tr{'smoothinfo-no-section-title'}; 
+      $errormessage .= $tr{'smoothinfo-no-section-title'}. "<br />\n";
     }
     open (TMP,">$MODDIR/otherinfo") || die 'Unable to open file';
     print TMP "$smoothinfosettings{'SECTIONTITLE'}\n";
@@ -183,7 +183,7 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
     my $success = message('smoothinfogenerate');
 
     if (not defined $success) {
-      $errormessage = $tr{'smoothd failure'};
+      $errormessage .= $tr{'smoothd failure'}. "<br />\n";
     }
   }
 }
@@ -251,52 +251,52 @@ print <<END
 
     if ( document.getElementById('1').style.display == 'none' ) {
       document.myform.SCHEMATIC.style.backgroundImage = downUrl;
-      document.myform.SCHEMATIC.style.backgroundPosition = '93% 50%';
+      document.myform.SCHEMATIC.style.backgroundPosition = '97% 50%';
       document.myform.SCHEMATIC.style.backgroundRepeat = 'no-repeat';
       document.myform.SCHEMATIC.style.backgroundColor = '#cdcdcd';
       document.myform.SCHEMATIC.style.textAlign = 'left';
     } else {
       document.myform.SCHEMATIC.style.backgroundImage = upUrl;
-      document.myform.SCHEMATIC.style.backgroundPosition = '93% 50%';
+      document.myform.SCHEMATIC.style.backgroundPosition = '97% 50%';
       document.myform.SCHEMATIC.style.backgroundRepeat = 'no-repeat';
       document.myform.SCHEMATIC.style.backgroundColor = '#cdcdcd';
       document.myform.SCHEMATIC.style.textAlign = 'left';
     }
     if ( document.getElementById('2').style.display == 'none' ) {
       document.myform.CLIENT.style.backgroundImage = downUrl;
-      document.myform.CLIENT.style.backgroundPosition = '93% 50%';
+      document.myform.CLIENT.style.backgroundPosition = '97% 50%';
       document.myform.CLIENT.style.backgroundRepeat = 'no-repeat';
       document.myform.CLIENT.style.backgroundColor = '#cdcdcd';
       document.myform.CLIENT.style.textAlign = 'left';
     } else {
       document.myform.CLIENT.style.backgroundImage = upUrl;
-      document.myform.CLIENT.style.backgroundPosition = '93% 50%';
+      document.myform.CLIENT.style.backgroundPosition = '97% 50%';
       document.myform.CLIENT.style.backgroundRepeat = 'no-repeat';
       document.myform.CLIENT.style.backgroundColor = '#cdcdcd';
       document.myform.CLIENT.style.textAlign = 'left';
     }
     if ( document.getElementById('3').style.display == 'none' ) {
       document.myform.IPTABLES.style.backgroundImage = downUrl;
-      document.myform.IPTABLES.style.backgroundPosition = '93% 50%';
+      document.myform.IPTABLES.style.backgroundPosition = '97% 50%';
       document.myform.IPTABLES.style.backgroundRepeat = 'no-repeat';
       document.myform.IPTABLES.style.backgroundColor = '#cdcdcd';
       document.myform.IPTABLES.style.textAlign = 'left';
     } else {
       document.myform.IPTABLES.style.backgroundImage = upUrl;
-      document.myform.IPTABLES.style.backgroundPosition = '93% 50%';
+      document.myform.IPTABLES.style.backgroundPosition = '97% 50%';
       document.myform.IPTABLES.style.backgroundRepeat = 'no-repeat';
       document.myform.IPTABLES.style.backgroundColor = '#cdcdcd';
       document.myform.IPTABLES.style.textAlign = 'left';
     }
     if ( document.getElementById('4').style.display == 'none' ) {
       document.myform.EXTRA.style.backgroundImage = downUrl;
-      document.myform.EXTRA.style.backgroundPosition = '93% 50%';
+      document.myform.EXTRA.style.backgroundPosition = '97% 50%';
       document.myform.EXTRA.style.backgroundRepeat = 'no-repeat';
       document.myform.EXTRA.style.backgroundColor = '#cdcdcd';
       document.myform.EXTRA.style.textAlign = 'left';
     } else {
       document.myform.EXTRA.style.backgroundImage = upUrl;
-      document.myform.EXTRA.style.backgroundPosition = '93% 50%';
+      document.myform.EXTRA.style.backgroundPosition = '97% 50%';
       document.myform.EXTRA.style.backgroundRepeat = 'no-repeat';
       document.myform.EXTRA.style.backgroundColor = '#cdcdcd';
       document.myform.EXTRA.style.textAlign = 'left';
@@ -304,8 +304,8 @@ print <<END
   }
 
   window.onload = function() { ToggleImage(); }
-  
-  function CheckAll() 
+
+  function CheckAll()
   {
     var netState;
     var checkBoxes = ${JSitems};
@@ -323,8 +323,8 @@ print <<END
       CheckDef();
     }
   }
-  
-  function CheckDef() 
+
+  function CheckDef()
   {
     var checkBoxes = ['MEMORY', 'DISKSPACE', 'CONNTYPE', 'NETCONF1', 'NETCONF2',
                     'CONFIG', 'SERVICES'];
@@ -337,8 +337,8 @@ print <<END
       document.myform[checkBoxes[myCheck]].checked = newState;
     }
   }
-  
-  function CheckAllChains() 
+
+  function CheckAllChains()
   {
     var checkBoxes = ${JSchains};
 
@@ -349,33 +349,90 @@ print <<END
       document.myform[checkBoxes[myChain]].checked = newState;
     }
   }
-  
-  function SwitchOrWAP() 
+
+  function SwitchOrWAP()
   {
     var newState;
+    var dmf = document.myform;
+    // Schematic labels shortcuts
+    var schLbls = {};
+    schLbls.WAP1lbl = document.getElementById('WAP1lbl');
+    schLbls.WAP2lbl = document.getElementById('WAP2lbl');
+    schLbls.WAP3lbl = document.getElementById('WAP3lbl');
+    schLbls.WAP4lbl = document.getElementById('WAP4lbl');
+    schLbls.WAP5lbl = document.getElementById('WAP5lbl');
+    schLbls.WAP6lbl = document.getElementById('WAP6lbl');
+    schLbls.SWITCH1lbl = document.getElementById('SWITCH1lbl');
+    schLbls.SWITCH2lbl = document.getElementById('SWITCH2lbl');
+    schLbls.SWITCH3lbl = document.getElementById('SWITCH3lbl');
 
-    newState = document.myform.WAP1.checked;
-    document.myform.SWITCH1.disabled = newState;
-    document.myform.WAP4.disabled = newState;
-    
-    newState = document.myform.SWITCH1.checked;
-    document.myform.WAP1.disabled = newState;
+    // GREEN
+    if (!(dmf.SWITCH1.checked) && !(dmf.WAP4.checked)) {
+      dmf.SWITCH1.disabled = false;
+      schLbls.SWITCH1lbl.style.color='#000000';
+      dmf.WAP1.disabled = true;
+      schLbls.WAP1lbl.style.color='#888888';
+      dmf.WAP1.checked = false;
+      dmf.WAP4.disabled = false;
+      schLbls.WAP4lbl.style.color='#000000';
+    } else if (dmf.SWITCH1.checked) {
+      dmf.WAP1.disabled = false;
+      schLbls.WAP1lbl.style.color='#000000';
+      dmf.WAP4.disabled = true;
+      schLbls.WAP4lbl.style.color='#888888';
+    } else if (dmf.WAP4.checked) {
+      dmf.SWITCH1.disabled = true;
+      schLbls.SWITCH1lbl.style.color='#888888';
+      dmf.WAP1.disabled = true;
+      schLbls.WAP1lbl.style.color='#888888';
+      dmf.WAP1.checked = false;
+    }
 
-    newState = document.myform.WAP2.checked;
-    document.myform.SWITCH2.disabled = newState;
-    document.myform.WAP3.disabled = newState;
+    // ORANGE
+    if (!(dmf.SWITCH2.checked) && !(dmf.WAP3.checked)) {
+      dmf.SWITCH2.disabled = false;
+      schLbls.SWITCH2lbl.style.color='#000000';
+      dmf.WAP2.disabled = true;
+      schLbls.WAP2lbl.style.color='#888888';
+      dmf.WAP2.checked = false;
+      dmf.WAP3.disabled = false;
+      schLbls.WAP3lbl.style.color='#000000';
+    } else if (dmf.SWITCH2.checked) {
+      dmf.WAP2.disabled = false;
+      schLbls.WAP2lbl.style.color='#000000';
+      dmf.WAP3.disabled = true;
+      schLbls.WAP3lbl.style.color='#888888';
+    } else if (dmf.WAP3.checked) {
+      dmf.SWITCH2.disabled = true;
+      schLbls.SWITCH2lbl.style.color='#888888';
+      dmf.WAP2.disabled = true;
+      schLbls.WAP2lbl.style.color='#888888';
+      dmf.WAP2.checked = false;
+    }
 
-    newState = document.myform.SWITCH2.checked;
-    document.myform.WAP2.disabled = newState;
-
-    newState = document.myform.WAP6.checked;
-    document.myform.SWITCH3.disabled = newState;
-    document.myform.WAP5.disabled = newState;
-
-    newState = document.myform.SWITCH3.checked;
-    document.myform.WAP6.disabled = newState;
+    // PURPLE
+    if (!(dmf.SWITCH3.checked) && !(dmf.WAP5.checked)) {
+      dmf.SWITCH3.disabled = false;
+      schLbls.SWITCH3lbl.style.color='#000000';
+      dmf.WAP6.disabled = true;
+      schLbls.WAP6lbl.style.color='#888888';
+      dmf.WAP6.checked = false;
+      dmf.WAP5.disabled = false;
+      schLbls.WAP5lbl.style.color='#000000';
+    } else if (dmf.SWITCH3.checked) {
+      dmf.WAP6.disabled = false;
+      schLbls.WAP6lbl.style.color='#000000';
+      dmf.WAP5.disabled = true;
+      schLbls.WAP5lbl.style.color='#888888';
+    } else if (dmf.WAP5.checked) {
+      dmf.SWITCH3.disabled = true;
+      schLbls.SWITCH3lbl.style.color='#888888';
+      dmf.WAP6.disabled = true;
+      schLbls.WAP6lbl.style.color='#888888';
+      dmf.WAP6.checked = false;
+    }
   }
-  
+
   function selectAll(field)
   {
     var tempval=eval("document."+field);
@@ -404,76 +461,117 @@ print <<END
 END
 ;
 
+&openbox("Prepare Report");
+
+print<<END;
+    <p class='base' style='vertical-align:middle; margin:1em 1em 0 1em; padding:4px;'>
+      $tr{'smoothinfo-checkdefault'}
+      <input type='checkbox' name='CHECKDEFAULT' $checked{'CHECKDEFAULT'}{'on'}
+             style='display:inline-block; vertical-align:middle; margin:0'
+             onClick='javaScript:CheckDef();'>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      $tr{'smoothinfo-checkall'}
+      <input type='checkbox' name='CHECKALL' $checked{'CHECKALL'}{'on'}
+             style='display:inline-block; vertical-align:middle; margin:0'
+             onClick='javaScript:CheckAll();'>
+      <span style='margin-left:10em'>
+        $tr{'smoothinfo-wrap-prefix'}
+        <input type='text' name='WRAP' value='$smoothinfosettings{'WRAP'}'
+               size='5' style='display:inline-block;vertical-align:middle;margin:0'>
+        $tr{'smoothinfo-wrap-suffix'}
+      <span>
+    </p>
+END
+
 &openbox($tr{'smoothinfo-include'});
 
-print <<END
-<TABLE WIDTH='100%'>
+print <<END;
+<TABLE WIDTH='90%' align='center' style='margin-top:1em'>
+  <TR>
+    <th style='width:33%; padding:2px' colspan=2>Smoothwall</th>
+    <th style='width:33%; padding:2px' colspan=2>Linux</th>
+    <th style='width:33%; padding:2px' colspan=2>Mods</th>
+  </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-config-tip'}'>$tr{'smoothinfo-config'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONFIG' VALUE='on' $checked{'CONFIG'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-connection-tip'}'>$tr{'smoothinfo-connection'}:</TD>
-    <TD><INPUT TYPE='checkbox' NAME='CONNTYPE' VALUE='on' $checked{'CONNTYPE'}{'on'}></TD>
-  </TR>
-  <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-adapters-tip'}'>$tr{'smoothinfo-adapters'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ADAPTERS' $checked{'ADAPTERS'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-ifconfig-tip'}'>$tr{'smoothinfo-ifconfig'}:</TD>
-    <TD><INPUT TYPE='checkbox' NAME='NETCONF1' VALUE='on' $checked{'NETCONF1'}{'on'}></TD>
-  </TR>
-    <TD  WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-net settings-tip'}">$tr{'smoothinfo-net settings'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='NETCONF2' $checked{'NETCONF2'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ROUTE' $checked{'ROUTE'}{'on'}></TD>
-    <TR>
-    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-dhcpinfo-tip'}'>$tr{'smoothinfo-dhcpinfo'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DHCPINFO' $checked{'DHCPINFO'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-portfw'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='PORTFW' $checked{'PORTFW'}{'on'}></TD>
-  </TR>
-  <TR>
-    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-cpu'}:</TD>
-    <TD><INPUT TYPE='checkbox' NAME='CPU' $checked{'CPU'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-irqs-tip'}'>$tr{'smoothinfo-irqs'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='IRQs' $checked{'IRQs'}{'on'}></TD>
-  </TR>
-  <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-memory-tip'}'>$tr{'smoothinfo-memory'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='MEMORY' $checked{'MEMORY'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-diskspace'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DISKSPACE' $checked{'DISKSPACE'}{'on'}></TD>
-  </TR>
-  <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-mods-tip'}'>$tr{'smoothinfo-installed-mods'}:</TD>
-    <TD><INPUT TYPE='checkbox' NAME='MODLIST' $checked{'MODLIST'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONFIG' VALUE='on' $checked{'CONFIG'}{'on'}></TD>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-modules-tip'}'>$tr{'smoothinfo-modules'}:</TD>
-    <TD><INPUT TYPE='checkbox' NAME='LOADEDMODULES' $checked{'LOADEDMODULES'}{'on'}></TD>
-  </TR>
-  <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-top-tip'}">$tr{'smoothinfo-top'}:</TD>
-    <TD><INPUT TYPE='checkbox' NAME='TOP' $checked{'TOP'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-conntracks-tip'}'>$tr{'smoothinfo-conntracks'}:</TD>
-    <TD><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONNTRACKS' $checked{'CONNTRACKS'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='LOADEDMODULES' $checked{'LOADEDMODULES'}{'on'}></TD>
+    <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-mod-services-status-tip'}">$tr{'smoothinfo-mod-services-status'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='MODSERVICES' $checked{'MODSERVICES'}{'on'}></TD>
   </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-services-status-tip'}'>$tr{'smoothinfo-services-status'}:</TD>
-    <TD><INPUT TYPE='checkbox' NAME='SERVICES' $checked{'SERVICES'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-mod-services-status-tip'}">$tr{'smoothinfo-mod-services-status'}:</TD>
-    <TD><INPUT TYPE='checkbox' NAME='MODSERVICES' $checked{'MODSERVICES'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='SERVICES' $checked{'SERVICES'}{'on'}></TD>
+    <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-top-tip'}">$tr{'smoothinfo-top'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='TOP' $checked{'TOP'}{'on'}></TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-mods-tip'}'>$tr{'smoothinfo-installed-mods'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='MODLIST' $checked{'MODLIST'}{'on'}></TD>
+  </TR>
+  <TR>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-connection-tip'}'>$tr{'smoothinfo-connection'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='CONNTYPE' VALUE='on' $checked{'CONNTYPE'}{'on'}></TD>
+    <td></td>
+    <td></td>
+  </TR>
+  <TR>
+    <th style='padding:2px' colspan=4>Hardware</th>
+  </TR>
+  <TR>
+    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-cpu'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='CPU' $checked{'CPU'}{'on'}></TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-memory-tip'}'>$tr{'smoothinfo-memory'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='MEMORY' $checked{'MEMORY'}{'on'}></TD>
+  </TR>
+  <TR>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-irqs-tip'}'>$tr{'smoothinfo-irqs'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='IRQs' $checked{'IRQs'}{'on'}></TD>
+    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-diskspace'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DISKSPACE' $checked{'DISKSPACE'}{'on'}></TD>
+  </TR>
+  <TR>
+    <td></td>
+    <td></td>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-adapters-tip'}'>$tr{'smoothinfo-adapters'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ADAPTERS' $checked{'ADAPTERS'}{'on'}></TD>
+  </TR>
+  <TR>
+    <th style='padding:2px' colspan=4>Networking</th>
+  </TR>
+  <TR>
+    <TD  WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-net settings-tip'}">$tr{'smoothinfo-net settings'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='NETCONF2' $checked{'NETCONF2'}{'on'}></TD>
+    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-dhcpinfo-tip'}'>$tr{'smoothinfo-dhcpinfo'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DHCPINFO' $checked{'DHCPINFO'}{'on'}></TD>
+  </TR>
+  <TR>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-ifconfig-tip'}'>$tr{'smoothinfo-ifconfig'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='NETCONF1' VALUE='on' $checked{'NETCONF1'}{'on'}></TD>
+    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-portfw'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='PORTFW' $checked{'PORTFW'}{'on'}></TD>
+  </TR>
+  <TR>
+    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ROUTE' $checked{'ROUTE'}{'on'}></TD>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-conntracks-tip'}'>$tr{'smoothinfo-conntracks'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONNTRACKS' $checked{'CONNTRACKS'}{'on'}></TD>
+  </TR>
+  <TR>
   </TR>
 </TABLE>
-<HR WIDTH='50%'>
 END
-;
 
+&closebox();
 
-print <<END
-    <b>Logs:</b> &nbsp;
-    <A href='#'>
-      <IMG SRC='/ui/img/help.gif' ALT='?' TITLE='$tr{'smoothinfo-log-help'}'
-           VALIGN='top' onclick="javascript:toggle('help'); return false;">
-    </A>
+&openbox("Include logs:&nbsp;&nbsp;&nbsp;
+    <a href='#'><img src='/ui/img/help.gif' alt='?'
+                     title='$tr{'smoothinfo-log-help'}'
+                     valign='top'
+                     onclick=\"javascript:toggle('help'); return false;\">
+    </a>");
 
-<TABLE WIDTH='100%' border='$border' cellpadding='0' cellspacing='0'>
+print <<END;
+<TABLE WIDTH='100%' border='$border' cellpadding='0' cellspacing='0' style='margin-top:1em'>
   <TR>
     <TD class='tightbase' TITLE='$tr{'smoothinfo-dmesg-tip'}'>$tr{'smoothinfo-dmesg'}</TD>
     <TD><INPUT TYPE='checkbox' NAME='DMESG' $checked{'DMESG'}{'on'}></TD>
@@ -525,7 +623,7 @@ print <<END
   <TD colspan='4' >
     <p CLASS='base' style='margin:1em 0 0 1em'>
     <IMG SRC='/ui/img/blob.gif' ALT='*' VALIGN='top'>
-      &nbsp $tr{'this field may be blank'}
+      &nbsp;$tr{'this field may be blank'}
     </p>
   </TD>
 </TR>
@@ -534,13 +632,14 @@ print <<END
     <p CLASS='base' style='margin:.25em 0 0 1em'>
     <IMG SRC='/ui/img/blob.gif' ALT='*' VALIGN='top'>
     <IMG SRC='/ui/img/blob.gif' ALT='*' VALIGN='top'>
-      &nbsp $tr{'smoothinfo-both-fields-cannot-be-blank'}
+      &nbsp;$tr{'smoothinfo-both-fields-cannot-be-blank'}
     </p>
   </td>
 </tr>
 </TABLE>
-</FIELDSET>
+END
 
+print <<END;
 <DIV ALIGN='CENTER' Id='help' style='display: none'>
 <table style='width: 99%; border:dotted 1px; background-color:#ffee88; margin:0px; padding:4px;'>
 <TR>
@@ -552,7 +651,7 @@ print <<END
   <TD style='font-size:100%;'>$tr{'smoothinfo-apache-error-help1'}</TD>
 </TR>
 <TR>
-  <TD width='15%'>&nbsp</TD>
+  <TD width='15%'>&nbsp;</TD>
   <TD style='font-size:100%;'>$tr{'smoothinfo-apache-error-help2'}</TD>
 </TR>
 <TR>
@@ -564,79 +663,140 @@ print <<END
 END
 ;
 
-print <<END
-<TABLE WIDTH='100%'>
-  <TR>
-  <TD>&nbsp</TD>
-  </TR>
-</TABLE>
-<TABLE style='width:100%; vertical-align:middle;border-spacing:0 0; border:none; margin:0px; padding:4px;'>
-  <TR style='vertical-align:middle'>
-    <TD WIDTH='15%' CLASS='base'
-        style='vertical-align:middle; margin:0; background-color:lightgrey'>
-      $tr{'smoothinfo-checkdefault'}
-      <INPUT TYPE='checkbox' NAME='CHECKDEFAULT' $checked{'CHECKDEFAULT'}{'on'}
-             style='display:inline-block; vertical-align:middle; margin:0'
-             onClick='javaScript:CheckDef();'>
-    </TD>
-    <TD WIDTH='15%' CLASS='base'
-        style='vertical-align:middle; margin:0; background-color:lightgrey'>
-      $tr{'smoothinfo-checkall'}
-      <INPUT TYPE='checkbox' NAME='CHECKALL' $checked{'CHECKALL'}{'on'}
-             style='display:inline-block; vertical-align:middle; margin:0'
-             onClick='javaScript:CheckAll();'>
-    </TD>
-    <TD WIDTH='60%' TITLE='$tr{'smoothinfo-wrap-tip'}'
-        style='text-align:right; vertical-align:middle; margin:0'>
-      $tr{'smoothinfo-wrap-prefix'}
-      <INPUT TYPE='text' NAME='WRAP' VALUE='$smoothinfosettings{'WRAP'}'
-             size='5' style='display:inline-block;vertical-align:middle;margin:0'>
-      $tr{'smoothinfo-wrap-suffix'}</TD>
-  </TR>
-</TABLE>
-<BR>
-<TABLE>
-  <TR>
-  <TD WIDTH='20%' CLASS='base'>Link(s) to screenshot(s):</TD>
-  <TD WIDTH='25%'><INPUT TYPE='text' NAME='SCREENSHOTS' VALUE='$smoothinfosettings{'SCREENSHOTS'}' size='80' TITLE='$tr{'smoothinfo-screenshots-tip'}'></TD>
-  <TD></TD>
-  <TD></TD>
-  </TR>
-</TABLE>
-<BR>
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='95%' CELLSPACING='0'>
-  <TR>
-    <TD WIDTH='25%' ALIGN='CENTER' CLASS='base'><INPUT TYPE='button' NAME='SCHEMATIC' Id='schematic' value='&nbsp $tr{'smoothinfo-schematic'}' &nbsp" style="width: 160px;"  onClick="javascript:toggle('1');javascript:ToggleImage();" /></TD>
-    <TD WIDTH='25%' ALIGN='CENTER'><INPUT TYPE='button' NAME='CLIENT' Id='client' VALUE='$tr{'smoothinfo-clientinfo'}' &nbsp" style="width: 160px;"  onClick="javascript:toggle('2');javascript:ToggleImage();" /></TD>
-    <TD WIDTH='25%' ALIGN='CENTER'><INPUT TYPE='button' NAME='IPTABLES' Id='iptables' VALUE='&nbsp &nbsp $tr{'smoothinfo-iptables'}' &nbsp" style="width: 160px;"  onClick="javascript:toggle('3');javascript:ToggleImage();" /></TD>
-        <TD WIDTH='25%' ALIGN='CENTER'><INPUT TYPE='button' NAME='EXTRA' Id='other' VALUE='&nbsp &nbsp $tr{'smoothinfo-other'}' style="width: 160px;"  onClick="javascript:toggle('4');javascript:ToggleImage();" /></TD>
-  </TR>
-</TABLE>
-</DIV>
+&closebox();
+
+&openbox("Include screenshots:");
+
+print <<END;
+  <p style='margin:1em 0 0 1em'>
+    Link(s) to screenshot(s):<br />
+    <input type='text' name='SCREENSHOTS' value='$smoothinfosettings{'SCREENSHOTS'}'
+           style='margin:.2em 0 0 2em'
+           size='80' TITLE='$tr{'smoothinfo-screenshots-tip'}'>
+  </p>
+END
+
+&closebox();
+
+&openbox("Other information:");
+
+print<<END;
+<div style='text-align:center; margin:1em 1em .2em 1em'>
+  <input type='button' name='SCHEMATIC' id='schematic'
+         value='$tr{'smoothinfo-schematic'}&nbsp;&nbsp;&nbsp;&nbsp;'
+         style='margin:0 .1em'
+         onClick="javascript:toggle('1');javascript:ToggleImage();" />
+  <input type='button' name='CLIENT' id='client'
+         value='$tr{'smoothinfo-clientinfo'}&nbsp;&nbsp;&nbsp;&nbsp;'
+         style='margin:0 .1em'
+         onClick="javascript:toggle('2');javascript:ToggleImage();" />
+  <input type='button' name='IPTABLES' id='iptables'
+         value='$tr{'smoothinfo-iptables'}&nbsp;&nbsp;&nbsp;&nbsp;'
+         style='margin:0 .1em'
+         onClick="javascript:toggle('3');javascript:ToggleImage();" />
+  <input type='button' name='EXTRA' id='other'
+         value='$tr{'smoothinfo-other'}&nbsp;&nbsp;&nbsp;&nbsp;'
+         style='margin:0 .1em'
+         onClick="javascript:toggle('4');javascript:ToggleImage();" />
+</div>
 END
 ;
-&closebox();
 
 print <<END
 <DIV Id='1' style="display:none;">
 END
 ;
 &openbox();
+
+#RED '#ffaaaa'; }
+#"Green") {$bgcolor = "#bbffbb";}
+#"Purple") {$bgcolor = "#ddaaff";}
+#"Orange") {$bgcolor = "#ffaa77";}
+
 print <<END
 <b>$tr{'smoothinfo-shematic-items'}</b>
-<CENTER>
-<BR><b>Internet</b>
-<BR>|<BR>
-Modem <INPUT TYPE='checkbox' NAME='MODEM' $checked{'MODEM'}{'on'}>
-<BR>|<BR>
-Router <INPUT TYPE='checkbox' NAME='ROUTER' $checked{'ROUTER'}{'on'}>
-<BR>|<BR>
-(<font color='red'><b>red</b></font>)
-<BR>|<BR><b>W<code>/</code>Lan</b> 
-<=== Switch<INPUT TYPE='checkbox' NAME='SWITCH2' $checked{'SWITCH2'}{'on'} onClick='javaScript:SwitchOrWAP();' />WAP<INPUT TYPE='checkbox' NAME='WAP2' $checked{'WAP2'}{'on'} onClick='javaScript:SwitchOrWAP();' /<=== (<font color='orange'><b>Orange</b></font>)-<big><b>[SMOOTHWALL]</b></big>-(<font color='green'><b>green</b></font>) ===> WAP<INPUT TYPE='checkbox' NAME='WAP1' $checked{'WAP1'}{'on'} onClick='javaScript:SwitchOrWAP();' />Switch<INPUT TYPE='checkbox' NAME='SWITCH1' $checked{'SWITCH1'}{'on'} onClick='javaScript:SwitchOrWAP();' /> ===> <b>W<code>/</code>Lan</b><BR>|&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp|&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp|<BR><INPUT TYPE='checkbox' NAME='WAP3' $checked{'WAP3'}{'on'} onClick='javaScript:SwitchOrWAP();' />&nbsp WAP &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp(<font color='purple'><b>Purple</b></font>)&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp WAP <INPUT TYPE='checkbox' NAME='WAP4' $checked{'WAP4'}{'on'} onClick='javaScript:SwitchOrWAP();' /><BR>|&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp|&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp|<BR>
-<b>WLan</b>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp WAP <INPUT TYPE='checkbox' NAME='WAP5' $checked{'WAP5'}{'on'}><=== Switch<INPUT TYPE='checkbox' NAME='SWITCH3' $checked{'SWITCH3'}{'on'} onClick='javaScript:SwitchOrWAP();' />WAP<INPUT TYPE='checkbox' NAME='WAP6' $checked{'WAP6'}{'on'} onClick='javaScript:SwitchOrWAP();' />&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp<b>WLan</b><BR>|&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp|&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <BR><b>&nbsp WLan</b>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <b>W<code>/</code>Lan</b>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <BR>
-</CENTER>
+
+<table width='inherit' style='margin:1em 2em 0 2em'>
+  <tr>
+    <td rowspan='7' style='margin:0; width:8.6em; text-align:center; background-color:white; border:solid black .2em'>
+      <b>SMOOTHWALL</b>
+    </td>
+
+    <td style='margin:0; padding:.3em; height:3em; background-color:#bbffbb; vertical-align:middle; border: solid black .2em'>
+      <div style='vertical-align:middle; text-align:left; margin:0'>
+        <span style='color:#bbffbb'><i>(GREEN)</i> &harr;</span>
+        <input type='checkbox'
+               name='WAP4' $checked{'WAP4'}{'on'}
+               onClick='javaScript:SwitchOrWAP();' /><b><span id='WAP4lbl'>WAP</span></b> &harr; W/Lan<br />
+        <i>(GREEN)</i> &harr;
+        <input type='checkbox'
+               name='SWITCH1' $checked{'SWITCH1'}{'on'}
+               onClick='javaScript:SwitchOrWAP();' /><b><span id='SWITCH1lbl'>Switch</span></b> &harr; LAN
+        &harr;
+        <input type='checkbox'
+               name='WAP1' $checked{'WAP1'}{'on'}
+               onClick='javaScript:SwitchOrWAP();' /><b><span id='WAP1lbl'>WAP</span></b> &harr; W/Lan
+      </div>
+    </td>
+  </tr>
+
+  <tr><td style='font-size:18pt'>&nbsp;</td></tr>
+
+  <tr>
+    <td style='margin:0; padding:.3em; height:3em; background-color:#ffaa77; vertical-align:middle; border: solid black .2em'>
+      <div style='vertical-align:middle; text-align:left; margin:0'>
+      <span style='color:#ffaa77'><i>(ORANGE)</i> &harr;</span>
+      <input type='checkbox'
+             name='WAP3' $checked{'WAP3'}{'on'}
+             onClick='javaScript:SwitchOrWAP();' /><b><span id='WAP3lbl'>WAP</span></b> &harr; W/Lan<br />
+      <i>(ORANGE)</i> &harr;
+      <input type='checkbox'
+             name='SWITCH2' $checked{'SWITCH2'}{'on'}
+             onClick='javaScript:SwitchOrWAP();' /><b><span id='SWITCH2lbl'>Switch</span></b> &harr; LAN &harr;
+      <input type='checkbox'
+             name='WAP2' $checked{'WAP2'}{'on'}
+             onClick='javaScript:SwitchOrWAP();' /><b><span id='WAP2lbl'>WAP</span></b> &harr; W/LAN
+      </div>
+    </td>
+  </tr>
+
+  <tr><td style='font-size:18pt'>&nbsp;</td></tr>
+
+  <tr>
+    <td style='margin:0; padding:.3em; height:3em; background-color:#ddaaff; vertical-align:middle; border: solid black .2em'>
+      <div style='vertical-align:middle; text-align:left; margin:0'>
+      <span style='color:#ddaaff'><i>(PURPLE)</i> &harr;</span>
+      <input type='checkbox'
+             name='WAP5' $checked{'WAP5'}{'on'}
+             onClick='javaScript:SwitchOrWAP();' /><b><span id='WAP5lbl'>WAP</span></b> &harr; W/Lan<br />
+      <i>(PURPLE)</i> &harr;
+      <input type='checkbox'
+             name='SWITCH3' $checked{'SWITCH3'}{'on'}
+             onClick='javaScript:SwitchOrWAP();' /><b><span id='SWITCH3lbl'>Switch</span></b> &harr; LAN &harr;
+      <input type='checkbox'
+             name='WAP6' $checked{'WAP6'}{'on'}
+             onClick='javaScript:SwitchOrWAP();' /><b><span id='WAP6lbl'>WAP</span></b> &harr; W/LAN
+      </div>
+    </td>
+  </tr>
+
+  <tr><td style='font-size:18pt'>&nbsp;</td></tr>
+
+  <tr>
+    <td style='margin:0; padding:.3em; height:3em; background-color:#ffaaaa; vertical-align:middle; border: solid black .2em'>
+      <div style='vertical-align:middle; text-align:left; margin:0'>
+      <i>(RED)</i> &harr;
+      <input type='checkbox'
+             name='ROUTER' $checked{'ROUTER'}{'on'}><b>Router</b> &harr; LAN &harr;
+      <input type='checkbox'
+             name='MODEM' $checked{'MODEM'}{'on'}><b>Modem</b> &harr; Internet
+      </div>
+    </td>
+  </tr>
+</table>
+<script language="javascript" type="text/javascript">
+  SwitchOrWAP();
+</script>
 END
 ;
 &closebox();
@@ -675,7 +835,7 @@ END
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-  <TD WIDTH='9%'><b>$tr{'smoothinfo-other-title'}</b></TD><TD WIDTH='91%'><INPUT TYPE='text' NAME='SECTIONTITLE' Id='sectiontitle' VALUE='$smoothinfosettings{'SECTIONTITLE'}'  @{[jsvalidregex('sectiontitle','^[a-zA-Z0-9-_., ]+$')]} size='20'>&nbsp <i>(required)</i></TD>
+  <TD WIDTH='9%'><b>$tr{'smoothinfo-other-title'}</b></TD><TD WIDTH='91%'><INPUT TYPE='text' NAME='SECTIONTITLE' Id='sectiontitle' VALUE='$smoothinfosettings{'SECTIONTITLE'}'  @{[jsvalidregex('sectiontitle','^[a-zA-Z0-9-_., ]+$')]} size='20'>&nbsp;<i>(required)</i></TD>
 </TR>
 </TABLE>
 <TABLE WIDTH='100%'>
@@ -700,7 +860,7 @@ print "$tr{'smoothinfo-chains'}";
 my @rows = ();
   print "<table style='width: 100%;'>";
   $id = -1;
-  foreach (@chains) 
+  foreach (@chains)
   {
     $id++;
     if (/All chains/) {
@@ -723,6 +883,10 @@ print <<END
 END
 ;
 
+&closebox();
+
+&closebox();
+
 print <<END
 <DIV ALIGN='CENTER'>
 <TABLE WIDTH='60%'>
@@ -736,12 +900,12 @@ END
 
 if ($smoothinfosettings{'EDIT'} eq 'on')
 {
-$textarea = "<TD ALIGN='CENTER' WIDTH='50%'><TEXTAREA NAME='data' ROWS='30' COLS='70' WRAP='off'>";
-$bbcodehelp = "<TD ALIGN='RIGHT'><sup><small><i><A HREF='http://community.smoothwall.org/forum/faq.php?mode=bbcode' onclick=\"window.open(this.href,'popup','height=600 ,width=800, scrollbars=yes, left=150,top=150,screenX=150,screenY=150');return false;\" TITLE='$tr{'smoothinfo-connected'}'>$tr{'smoothinfo-bbcode'}&nbsp</a></i></small></sup></TD>";
+$textarea = "<TD ALIGN='CENTER' WIDTH='50%'><TEXTAREA NAME='data' ROWS='30' COLS='85' WRAP='off'>";
+$bbcodehelp = "<TD ALIGN='RIGHT'><sup><small><i><A HREF='http://community.smoothwall.org/forum/faq.php?mode=bbcode' onclick=\"window.open(this.href,'popup','height=600 ,width=800, scrollbars=yes, left=150,top=150,screenX=150,screenY=150');return false;\" TITLE='$tr{'smoothinfo-connected'}'>$tr{'smoothinfo-bbcode'}&nbsp;</a></i></small></sup></TD>";
 }
 else
 {
-$textarea = "<TD ALIGN='CENTER' WIDTH='50%'><TEXTAREA NAME='data' ROWS='30' COLS='70' WRAP='off' READONLY='yes' TITLE='$tr{'smoothinfo-report-tip'}' onclick='this.select();' style='background:#ecece8;'>";
+$textarea = "<TD ALIGN='CENTER' WIDTH='50%'><TEXTAREA NAME='data' ROWS='30' COLS='85' WRAP='off' READONLY='yes' TITLE='$tr{'smoothinfo-report-tip'}' onclick='this.select();' style='background:#ecece8;'>";
 $bbcodehelp = '';
 }
 
@@ -750,7 +914,7 @@ print <<END
 <DIV ALIGN='CENTER'>
 <TABLE WIDTH='60%'>
 <TR>
-  <TD CLASS='base' ALIGN='LEFT' TITLE='$tr{'smoothinfo-edit-tip'}'>$tr{'smoothinfo-edit'}&nbsp<INPUT TYPE='checkbox' NAME='EDIT' $checked{'EDIT'}{'on'}></TD>
+  <TD CLASS='base' ALIGN='LEFT' TITLE='$tr{'smoothinfo-edit-tip'}'>$tr{'smoothinfo-edit'}&nbsp;<INPUT TYPE='checkbox' NAME='EDIT' $checked{'EDIT'}{'on'}></TD>
 $bbcodehelp
 </TR>
 </TABLE>
