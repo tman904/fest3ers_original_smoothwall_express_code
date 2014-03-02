@@ -1,79 +1,180 @@
-<p><FONT SIZE='3'><STRONG><U>Backup</U></STRONG></FONT></P>
+<h1>Backup Function</h1>
 
-<h3 style='margin:2em 0 0 0'>Overview</h3>
+<h3>Overview</h3>
 
 <p>
-The backup page is used to invoke a backup of Smoothwall Express's
-configuration information to a hot-plugged USB, eSATA or Firewire drive.
-During the process, two archives are made. The 'var' archive contains all of
-the variable data (settings, configs, mods, logs, et al.). The 'total' archive
-contains a complete total backup of the entire filesystem.
+Smoothwall's backup function allows the administrator to back up system configuration 
+settings using a properly formatted device to include most USB, eSATA, Firewire, 
+or floppy disk drives. This feature in Smoothwall makes it very easy to migrate 
+the existing Smoothwall program, data and configuration to a new software version on 
+the same hardware or migrate the existing Smoothwall file system, program, 
+configuration and data to new hardware.
 </p>
 
 <p>
-This backup system is Plug-n-Play. If the drive has been configured for use, plugging
-it in will trigger the backup process. If running a manual backup, the drive need not
-be configured; the script will prompt you to plug in and unplug the drive.
+The backup function is 'Plug-n-Play' (PnP). If the prospective backup drive has been 
+properly configured for use, plugging it into the appropriate port will trigger the 
+backup process. However, when performing a manual backup, the candidate drive need 
+not be in the list of drives known to the PnP Backup admin UI. The manual backup process
+will prompt the user when to plug in or unplug the drive.
 </p>
 
 <p>
-The drive must contain a valid partition table (MSDOS, PC98 and GPT are recognised). The
-drive must contain a valid filesystem in partition 1; VFAT (MS-FAT), EXT-2&mdash;EXT-4
-and reiserfs are recognized. USB thumb drives are configured at the factory with a PC98
-partition table and a VFAT filesystem on partition #1.
+Two archives, 'Variable' (var) and 'Total' (total), are always created during
+the backup process.
 </p>
+
+<ul>
+<li>
+Var contains all of the system's variable data including: 
+system configuration settings, modifications, logs, and all other user changeable settings
+or program stored data. The var archive is used for periodic system backups and restore and 
+to reapply the system configuration settings to the Smoothwall when upgrading the program 
+version on the same hardware.
+</li>
+
+<li>
+Total contains a complete backup of the entire file system and user settings and data. 
+Total is used when moving the entire file system, configuration settings, and program/user
+data to new hardware. Total may also be used when cloning a system.
+</li>
+</ul>
+
+<h3>Portable Drive Requirements</h3>
+
+<p>
+The drive to be used for backup must already contain a valid partition table using 
+one of the following formats: MSDOS, PC98 or GPT. The drive must also contain a valid 
+file-system in partition 1 and must be in one of the following formats: VFAT, MS-FAT, 
+EXT-2&mdash;EXT-4 or reiserfs. 
+</p>
+
+<p>
+Note: USB thumb drives are configured at the factory with a PC98 partition table and
+a VFAT file-system on partition #1.
+</p>
+
 <p style="padding:1em; margin:.5em; border:2pt dashed black"><i><b>
-<span style="color:#b00000">WARNING!</span></b> FAT filesystems cannot handle files larger
-than 4GiB. If you suspect that your compressed backup may be larger than 4GiB (for example,
-if you have the web proxy configured to cache a tremendous amount of data or you have years
-of log files saved), make an ext2 (non-journalled) filesystem on partition #1. Be sure you
-first back up any data that you want to save before reformatting.
-<br /><br />
-Always inspect or verify the backup before taking any destructive action on your firewall.</i>
+<span style="color:#b00000">WARNING!</span></b></i>
+FAT file systems cannot handle files larger than 4GiB. If you suspect that 
+your compressed backup may be larger than 4GiB (for example, if you have the web proxy 
+configured to cache a tremendous amount of data or you have years of log files saved), 
+back up any data that you want to save on that device and then make an ext2 
+(non-journalled) file system on partition #1.
+</p>
+ 
+<p style="padding:1em; margin:.5em; border:2pt dashed black"><i><b>
+<span style="color:#b00000">WARNING!</span></b></i>
+Always inspect or verify the backup before taking any destructive action on
+your firewall system. (hint: if you are cautious, back up to two separate drives)
 </p>
 
-<h3 style='margin:2em 0 0 0'>Configure (Add/Delete) Drives</h3>
+<h3>Configure Drives on Smoothwall's Backup Window (add or delete drives)</h3>
+
+<ul>
+<li>
+When you install Smoothwall Express from a writable drive (flash or rotating device), 
+that installation drive will be automatically configured and added to the inventory of 
+configured drives for use as a PnP Backup drive. 
+</li>
+
+<li>To configure additional drives, click the 'Add Drive' button on the backup page and 
+follow the prompts. Alternatively, you can run the 
+command: '/usr/bin/smoothwall/backup_sys -v' on a console or ssh command line and follow 
+the prompts. 
+</li>
+
+<li>
+To remove a previously configured drive from the inventory, click that drive's check-box 
+and then click 'Remove Drive'. To remove a drive via command line, open and edit the 
+file '/var/smoothwall/backup/config' to delete the line containing the device name that is
+to be removed. After deleting the line, run the command: '/usr/bin/smoothwall/backup_sys -S' 
+to finish the removal.
+</li>
+</ul>
+
+<h3>Performing Backups</h3>
+
+<ul>
+<li>
+Automatic. Backups (both var and total) are PnP and are created when the user plugs 
+in a configured drive shown on Smoothwall's Backup Screen.
+</li>
+
+<li>
+Manual. You can manually run backups by running the command: '/usr/bin/smoothwall/backup_sys' 
+on a console or ssh command line and then follow the prompts to plug in and unplug the drive. 
+You can monitor a backup's progress via the Status box of the backup page or you can run 
+the command: '/usr/bin/smoothwall/backup_mon' on the command line.
+</li>
+</ul>
+
+<h3>Restoration and Version Upgrade (on the Same Computer Hardware)</h3>
+
 <p>
-When you install from a writable drive (flash or rotating), that drive will be
-automatically configured for use as a PnP Backup drive. To configure other drives, click the
-'Add Drive' button on the backup page and follow the prompts. Alternatively, you
-can run '/usr/bin/smoothwall/backup_sys -v' on a console or ssh command line; follow
-the prompts. To remove a configured drive, click that drive's checkbox and then
-click 'Remove'. Via command line, edit '/var/smoothwall/backup/config' and delete
-the line containing the drive you wish to delete; then run
-'/usr/bin/smoothwall/backup_sys -S' to finish the removal.
+Restoration of Smoothwall archives must be accomplished during an installation using the Advanced 
+Installer on the installation program. The process used for both restoration and upgrade of the 
+software version is the same:
 </p>
 
-<h3 style='margin:2em 0 0 0'>Manual Operation</h3>
-<p>
-You can manually run backups by running '/usr/bin/smoothwall/backup_sys'; follow
-the prompts to plug in and unplug the drive. You can monitor a backup's progress via
-the Status box of the backup page or you can run '/usr/bin/smoothwall/backup_mon'
-on the command line.
+<ul>
+<li>
+Restore Or Upgrade:
 
-<h3 style='margin:2em 0 0 0'>Restoration</h3>
-<p>
-These archives can be restored during an installation using the Advanced Installer.
-They make upgrading and migrating to new hardware very easy. If upgrading to a new
-version of Smoothwall Express, boot the install drive (be it read-only optical, or
-writable flash or rotating disk). Also connect the archive drive if it is separate.
-Select the advanced installer, choose the 'var'
-restore and follow the prompts. To move your Smoothwall Express to new hardware or
-to clone the system, boot the install drive, choose the 'total' restore, and follow
-the prompts. If the ethernet interfaces (NICs) are different, setup will be run and
-you will have to assign the new NICs to the correct GREEN, ORANGE, PURPLE and/or RED
-zones.
-</p>
+<ul>
+<li>With the computer off, plug-in the backup drive unless it is on the same drive as the 
+installation program.
+</li>
+<li>
+Boot the system to the installation drive (be it read-only optical, writable flash or 
+rotating disk). When the install program prompts you to 'select the basic or advanced 
+installation', select the 'advanced installer'. 
+</li>
+<li>
+When prompted, choose the 'var' restore option and follow the prompts to restore the settings. 
+</li>
+</ul>
+
+</li>
+
+<li>
+Migrate To New Hardware, Clone the System, Or Restore After a Drive Failure:
+
+<ul>
+<li>
+With the computer off, plug-in the backup drive unless it is on the same drive as the 
+installation program.
+</li>
+
+<li>
+Boot to the install drive. When the install program prompts you to 'select the basic 
+or advanced installation' select the 'advanced installer' option. When prompted, choose the 'total' 
+restore and follow the prompts. 
+</li>
+</ul>
+Note: During a migration operation, if the Ethernet interfaces (NICs) are different, setup 
+will be run and you must assign the new NICs to the correct GREEN, ORANGE, PURPLE and/or 
+RED zones as appropriate. 
+</li>
+</ul>
 
 <h3>Caveats</h3>
-<p>The Iomega Rev drive identifies itself to the host as a CD drive; it will
-not work with this system. <i>With proper udev rules, the Rev drive could be made to
-work.</i>
-</p>
+
+<ul>
+<li>
+The Iomega Rev drive identifies itself to the host as a CD drive; it will not work with this 
+system. (With proper udev rules, the Rev drive could be made to work but that procedure 
+is beyond this topic.) 
+</li>
+
+<li>
+'total' archive contains all files on all mounted file-systems. The installer cannot know 
+about any file-systems you may add to unused space. If you set up a build system, you may 
+want to put the build directory on a separate drive and unmount it before backing up the system. 
+</li>
+</ul>
 
 <p>
-A 'total' archive contains all files on all mounted filesystems. The installer
-cannot know about any filesystems you may add to unused space. If you set up a
-build system, you may want to put the build directory on a separate drive and
-unmount it before backing up the system.
+Last Update: 16FEB2014, John Bell
 </p>
+
