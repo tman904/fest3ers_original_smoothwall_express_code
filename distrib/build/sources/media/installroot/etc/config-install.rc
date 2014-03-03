@@ -441,6 +441,20 @@ while [ 1 -eq 1 ]; do
 done
 
 while [ 1 -eq 1 ]; do
+  # Select partition scheme
+  dlgCmd="--backtitle '$BACKTITLE' --title 'Partition Sizing'"
+  dlgCmd="$dlgCmd --default-item '1.' --menu '$menuMsg' 0 0 0"
+
+  dlgCmd="$dlgCmd 1. 'Traditional \\Zb⅓ logs &⅔ /\\ZB split'"
+  dlgCmd="$dlgCmd 2. 'Maximize \\Zb/var/log\\ZB space for logs'"
+  dlgCmd="$dlgCmd 3. 'Maximize / (root) space for \\Zbdevelopment\\ZB'"
+
+  rsp=`eval dialog --colors $dlgCmd 2>&1 >/dev/tty`
+  partSplit=${rsp/\./}
+  if [ "$partSplit" != "" ]; then break; fi
+done
+
+while [ 1 -eq 1 ]; do
   # Filesystem
   menuMsg="Choose the filesystem to use."
   dlgCmd="--backtitle '$BACKTITLE' --title 'Filesystem'"
@@ -571,6 +585,11 @@ while [ 1 == 1 ]; do
   else
     echo -e "  Using first ${BO}${maxMiB}MiB${NO} of hard drive"
   fi
+  case $partSplit in
+    1) echo -e "  Using ${BO}traditional${NO} ⅔ / (root) & ⅓ /var/log split";;
+    2) echo -e "  Maximizing ${BO}/var/log{${NO} space";;
+    3) echo -e "  Maximizing space for ${BO}development${NO}";;
+  esac
   if [ "$filesys" == "1" ]; then
     echo -e "  Making ${BO}EXT4${NO} filesystems"
   else

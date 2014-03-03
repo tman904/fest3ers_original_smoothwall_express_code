@@ -160,19 +160,43 @@ echo
   swapend=swapstart+swapsize-1
   echo "  ${hdd}2  ${swapMiB}MiB -> swap"
 
-  # log partition: 1/3 remainder
+  # Conditional /var/log sizing
   remainder=remainder-bootsize-swapsize
-  logMiB=remainder/3
-  # crowbar the log partition to 20MiB-20000MiB
-  if [ $logMiB -lt 20 ]; then
-    logMiB=20
-  elif [ $logMiB -gt 20000 ]; then
-    logMiB=20000
-  fi
-  logsize=logMiB
-  logstart=swapend+1
-  logend=logstart+logsize-1
-  echo "  ${hdd}3  ${logMiB}MiB -> /log"
+  case $partSplit in
+    1)
+      # Traditional 2/3-1/3 split
+      # log partition: 1/3 remainder
+      logMiB=remainder/3
+      # crowbar the log partition to 20MiB-20000MiB
+      if [ $logMiB -lt 20 ]; then
+        logMiB=20
+      elif [ $logMiB -gt 20000 ]; then
+        logMiB=20000
+      fi
+      logsize=logMiB
+      logstart=swapend+1
+      logend=logstart+logsize-1
+      echo "  ${hdd}3  ${logMiB}MiB -> /log"
+      ;;
+    2)
+      # Maximize /var/log
+      logMiB=remainder-1024
+      logsize=logMiB
+      logstart=swapend+1
+      logend=logstart+logsize-1
+      echo "  ${hdd}3  ${logMiB}MiB -> /log"
+      ;;
+    3)
+      # Minimize /var/log (1024miB)
+      logMiB=1024
+      logsize=logMiB
+      logstart=swapend+1
+      logend=logstart+logsize-1
+      echo "  ${hdd}3  ${logMiB}MiB -> /log"
+
+      # Maximize / (root)
+      ;;
+  esac
 
   # root partition: remainder
   remainder=remainder-logsize

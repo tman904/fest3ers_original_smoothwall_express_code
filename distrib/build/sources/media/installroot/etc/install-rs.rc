@@ -116,9 +116,26 @@ while [ -e /tmp/trigger-lock ]; do
   usleep 100000
 done
 
+typeset -i i tries
+tries=0
+WORKING[0]="|"
+WORKING[1]="/"
+WORKING[2]="-"
+WORKING[3]="\\\\"
+WORK_IDX=0
+TIME_START=`date +"%s"`
+
+# Time out, for rare times when udev doesn't create the file
+PersistentNetRule="/etc/udev/rules.d/70-persistent-net.rules"
 echo -e "${BOUL}Wait for persistent net rules to appear${NO}"
-while [ ! -e /etc/udev/rules.d/70-persistent-net.rules ]; do
+while [ ! -e ${PersistentNetRule} ]; do
+  echo -en "${WORKING[$WORK_IDX]}\r"
+  WORK_IDX=WORK_IDX+1
+  [ $WORK_IDX -eq 4 ] && WORK_IDX=0
+
   usleep 100000
+  tries=tries+1
+  if [ $i -gt 60 ]; then touch ${PersistentNetRule}; fi
 done
 
 # Sort and rename NICs
