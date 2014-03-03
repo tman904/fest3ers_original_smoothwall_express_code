@@ -441,7 +441,7 @@ while [ 1 -eq 1 ]; do
 done
 
 menuMsg="Choose how to size the partitions: traditional split, 1GiB for / (root) and"
-menumsg="$menuMsg the rest for logs, or 1GiB for logs and the rest for / (root)."
+menuMsg="$menuMsg the rest for logs, or 1GiB for logs and the rest for / (root)."
 while [ 1 -eq 1 ]; do
   # Select partition scheme
   dlgCmd="--backtitle '$BACKTITLE' --title 'Partition Sizing'"
