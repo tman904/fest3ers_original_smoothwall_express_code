@@ -137,6 +137,7 @@ while [ ! -e ${PersistentNetRule} ]; do
   tries=tries+1
   if [ $i -gt 60 ]; then touch ${PersistentNetRule}; fi
 done
+unset i tries
 
 # Sort and rename NICs
 . /etc/eth-addr-sort
