@@ -59,6 +59,7 @@ install: compile
 	cd $(PKG_ROOT)/lib/udev/rules.d; \
 	    sed -i -e 's/\(^ENV{MATCHADDR}=="52:54:00:.*generator_end"\)/#\1/' \
 	           -e 's/\(^SUBSYSTEMS=="xen"\)/#\1/' \
+	           -e 's/\(^ENV{MATCHADDR}=="\?\[2367abef\]:\*".*\)/#\1/' \
 	           -e 's/\(^ENV{MATCHADDR}=="00:0c:29:.*generator_end"\)/#\1/' \
 	           -e 's/\(^ENV{MATCHADDR}=="00:15:5d:.*generator_end"\)/#\1/' \
 	       75-persistent-net-generator.rules
