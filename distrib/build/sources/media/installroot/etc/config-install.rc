@@ -586,8 +586,8 @@ while [ 1 == 1 ]; do
     echo -e "  Using first ${BO}${maxMiB}MiB${NO} of hard drive"
   fi
   case $partSplit in
-    1) echo -e "  Using ${BO}traditional${NO} ⅔ / (root) & ⅓ /var/log split";;
-    2) echo -e "  Maximizing ${BO}/var/log{${NO} space";;
+    1) echo -e "  Using ${BO}traditional${NO} 2/3 (root) & 1/3 /var/log split";;
+    2) echo -e "  Maximizing ${BO}/var/log${NO} space";;
     3) echo -e "  Maximizing space for ${BO}development${NO}";;
   esac
   if [ "$filesys" == "1" ]; then
