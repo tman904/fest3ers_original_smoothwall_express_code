@@ -447,7 +447,7 @@ while [ 1 -eq 1 ]; do
   dlgCmd="--backtitle '$BACKTITLE' --title 'Partition Sizing'"
   dlgCmd="$dlgCmd --default-item '1.' --menu '$menuMsg' 0 0 0"
 
-  dlgCmd="$dlgCmd 1. '\\ZbTraditional\\ZB' split"
+  dlgCmd="$dlgCmd 1. '\\ZbTraditional\\ZB split'"
   dlgCmd="$dlgCmd 2. 'Maximize \\Zb/var/log\\ZB space for logs'"
   dlgCmd="$dlgCmd 3. 'Maximize / (root) space for \\Zbdevelopment\\ZB'"
 
