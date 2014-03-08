@@ -17,6 +17,8 @@ TARBALL = $(FREESWAN_TYPE)-$(VERSION)
 
 PATCH_FILE1 = makefile.patch
 PATCH_FILE2 = setup.in.patch
+PATCH_FILE3 = klips_proc_net.patch
+PATCH_FILE4 = nat_payload.patch
 
 KNL_SRC = $(SOURCES_DIR)/linux$(KERNEL_TYPE)/linux
 MOD_DEST = /lib/modules/$(K_RAW_VERSION)$(KERNEL_TYPE)/kernel/net/ipsec
