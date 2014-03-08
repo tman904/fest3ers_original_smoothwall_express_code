@@ -1,5 +1,5 @@
---- a/include/constants.c.orig    2014-02-28 15:37:00.000000000 +0100
-+++ b/include/constants.c 2014-02-28 15:37:45.000000000 +0100
+--- a/lib/libopenswan/constants.c.orig    2014-02-28 15:37:00.000000000 +0100
++++ b/lib/libopenswan/constants.c 2014-02-28 15:37:45.000000000 +0100
 @@ -167,9 +167,18 @@
      NULL    /* termination for bitnamesof() */
  };
