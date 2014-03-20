@@ -198,8 +198,6 @@ echo "  httpd"
 /usr/sbin/httpd -DSSL
 echo "  sshd (if enabled)"
 /usr/bin/smoothcom sshdrestart
-echo "  time service (if enabled)"
-/usr/bin/smoothcom ntpdrestart
 echo "  IMSpector (if enabled)"
 /usr/bin/smoothcom imrestart
 echo "  SIP proxy (if enabled)"
@@ -225,6 +223,10 @@ echo "1 4 1 7" >/proc/sys/kernel/printk
 /usr/bin/smoothcom trafficrestart
 
 # Services here depend on the IFs being up.
+echo "  time service (if enabled)"
+ntpdate pool.ntp.org
+/sbin/hwclock --systohc --localtime
+/usr/bin/smoothcom ntpdrestart
 echo "  dhcpd (if enabled)"
 /usr/bin/smoothcom dhcpdrestart
 echo "  squid (if enabled)"
