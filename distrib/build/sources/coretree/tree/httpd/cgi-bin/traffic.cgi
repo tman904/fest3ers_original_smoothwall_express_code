@@ -283,7 +283,7 @@ sub display_rules
 		<table style='width: 100%;'>
       <tr>
         <td class='base' colspan='3'>$tr{'traffic default'}</td>
-        <td><select name='DEFAULT_TRAFFIC'>$default_block</select></td>
+        <td><select name='DEFAULT_TRAFFIC' title='Default Traffic: normal priority'>$default_block</select></td>
 				<td colspan='2'></td>
       </tr>
       <tr>
