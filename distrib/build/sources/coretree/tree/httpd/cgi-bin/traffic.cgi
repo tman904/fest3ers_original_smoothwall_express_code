@@ -295,7 +295,8 @@ sub display_rules
 	{
 		next unless $rule =~ /R_(\d+)$/;
 		
-		my ($name, $class) = (split(',', $settings->{$rule}))[0,5];
+		my ($name, $class, $title) = (split(',', $settings->{$rule}))[0,5,6];
+		$title =~ s/'/&rsquo;/;
 		%selected = ($class => ' selected');
 		my $class_block =
 			join('', 
@@ -307,7 +308,7 @@ sub display_rules
 		push @rules, "
 				<td class='base'style='width: 25%;'>$name:</td>
 				<td style='width: 25%;'>
-					<select name='${rule}_CLASS'>$class_block</select>
+					<select name='${rule}_CLASS' title='$title'>$class_block</select>
 				</td>
 ";
 	}
