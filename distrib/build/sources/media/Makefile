@@ -136,7 +136,7 @@ endif
 	  mkdir -p distrib-dev/usr/include; \
 	  cp -a distrib/usr/include distrib-dev/usr/; \
 	  rm -rf distrib/usr/include/*; \
-	  mv distrib-dev/usr/python2.7 distrib/usr/include; fi
+	  mv distrib-dev/usr/include/python2.7 distrib/usr/include; fi
 	
 	@echo "        move static libs to distrib-dev" >>$(MEDIA_BUILD_OUT)
 	@echo "Moving static libs to distrib-dev:"
