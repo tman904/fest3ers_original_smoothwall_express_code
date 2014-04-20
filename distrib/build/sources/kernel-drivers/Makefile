@@ -123,17 +123,18 @@ $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: prepare $(PACKAGES)
 	)
 
 clean:
-	rm -rf pulsar-$(PULSAR_VER)
-#	rm -rf tg3-$(TG3_VER)
-#	rm -rf bnx2-$(BNX2_VER)
-	rm -rf e1000-$(E1000_VER)
-	rm -rf igb-$(IGB_VER)
-	rm -rf igbvf-$(IGBVF_VER)
-	rm -rf ixgbe-$(IXGBE_VER)
-	rm -rf ixgbevf-$(IXGBEVF_VER)
-	rm -rf e1000e-$(E1000E_VER)
-	rm -rf r8168-$(R8169_VER)
-	rm -rf $(PKG_ROOT)
+	@echo -n " $(PACKAGE)"
+	@rm -rf pulsar-$(PULSAR_VER)
+#	@rm -rf tg3-$(TG3_VER)
+#	@rm -rf bnx2-$(BNX2_VER)
+	@rm -rf e1000-$(E1000_VER)
+	@rm -rf igb-$(IGB_VER)
+	@rm -rf igbvf-$(IGBVF_VER)
+	@rm -rf ixgbe-$(IXGBE_VER)
+	@rm -rf ixgbevf-$(IXGBEVF_VER)
+	@rm -rf e1000e-$(E1000E_VER)
+	@rm -rf r8168-$(R8169_VER)
+	@rm -rf $(PKG_ROOT)
 
 all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 
