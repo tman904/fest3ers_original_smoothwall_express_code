@@ -1,0 +1,16 @@
+# SmoothWall Build system.
+#
+# (c) SmoothWall Ltd 2005
+#
+# This code is distributed under the terms of the GPL v2.
+
+include ../Makefile.conf
+
+PACKAGE = apcupsd
+VERSION = 3.14.12
+
+BASE_URL = http://downloads.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)%20-%20Stable/$(VERSION)
+
+CONFIG_OPTS = --enable-usb
+
+include ../Makefile.rules

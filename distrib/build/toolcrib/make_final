@@ -198,6 +198,7 @@ fi
       build wget
       build sudo
       build linux
+      build kernel-drivers
       build iptables
       build ipset
       build xtables-addons
@@ -360,6 +361,7 @@ fi
       build qemu
       build ntop
       build iperf
+      build apcupsd
 
       touch crumbs/Final.grp6.compiled
     fi
