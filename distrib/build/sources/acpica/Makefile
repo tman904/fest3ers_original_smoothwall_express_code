@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = acpica
-VERSION = unix2-20110922
+VERSION = unix2-20140214
 
-BASE_URL = http://acpica.org/download
+BASE_URL = https://acpica.org/sites/acpica/files/
 
 CONFIGURE = yes
 configure: $(DIR)/
