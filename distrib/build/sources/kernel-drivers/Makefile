@@ -133,7 +133,7 @@ clean:
 	@rm -rf ixgbe-$(IXGBE_VER)
 	@rm -rf ixgbevf-$(IXGBEVF_VER)
 	@rm -rf e1000e-$(E1000E_VER)
-	@rm -rf r8168-$(R8169_VER)
+	@rm -rf r8168-$(R8168_VER)
 	@rm -rf $(PKG_ROOT)
 
 all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
