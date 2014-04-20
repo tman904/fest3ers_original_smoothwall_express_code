@@ -10,8 +10,8 @@ UI_VERSION = 3.1
 
 PRODUCT_EXTRA =
 
-BASENAME = $(PRODUCT_NAME)-$(PRODUCT_VERSION)-rc5
-REVISION = polar-rc5
+BASENAME = $(PRODUCT_NAME)-$(PRODUCT_VERSION)-rc6
+REVISION = polar-rc6
 
 
 # - NAME, VERSION and UI_VERSION: meaning should be fairly obvious
