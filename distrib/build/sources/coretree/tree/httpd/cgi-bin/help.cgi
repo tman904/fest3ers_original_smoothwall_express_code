@@ -14,7 +14,7 @@ use header qw( :standard );
 # included in it, (it could do with replacing anyhow)
 
 require "/usr/lib/smoothwall/langs/glossary.en.pl";
-if (${language} ne "en")
+if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
 {
   foreach $key (sort keys %baseglossary)
   {
