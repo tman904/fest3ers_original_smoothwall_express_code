@@ -110,6 +110,12 @@ td[class=tightbase] {
 	padding: 4pt .5em 4pt 1em;
 }
 
+td[class=help],th[class=help] {
+	text-align: left;
+	padding: 2pt;
+	border: solid grey 1px;
+}
+
 
 td {
         font-size : 11px;
@@ -579,4 +585,27 @@ p.menuitem {
 }
 p.menuitem:hover {
         background-color: #cfcfcf;
+}
+ul.help,ol.help {
+	text-indent:0;
+	margin:0 0 .5em 0;
+}
+li.help {
+	text-indent:0;
+	margin-left:0;
+}
+h2.help {
+	margin: .5em 0 0 0;
+	text-align: center;
+}
+h3.help {
+	font-size: 1.3em;
+	margin: 2em 0 0 0;
+}
+h4.help {
+	margin: 2em 0 0 0;
+}
+p.help {
+	margin: 0 0 .5em 0;
+	text-indent: 2em;
 }

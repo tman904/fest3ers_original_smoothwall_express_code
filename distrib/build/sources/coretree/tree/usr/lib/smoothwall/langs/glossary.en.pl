@@ -51,6 +51,7 @@
 	'USB' => "<strong>Universal Serial Bus</strong> A serial bus standard for interfacing devices such as cameras, printers and modems to computers.",
 	'Java' => "<strong>Java</strong> A platform-independent programming language and engine for running such programs.",
 	'IGMP' => "<strong>Internet Group Management Protocol</strong> This is a communications protocol used to manage the membership of Internet Protocol multicast groups. It should generally be ignored unless a machine is part of such a group.",
+	'Isochronous' => "Things that happen at regular intervals, such as the packets of an active VoIP channel.",
 );
 
 1;
