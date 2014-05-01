@@ -38,12 +38,12 @@ download:
 #	$(DL_CMD) http://sotonfs/tg3-$(TG3_VER).tar.gz
 #	$(DL_CMD) http://sotonfs/bnx2-$(BNX2_VER).tar.gz
 #	$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz
-	$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/igb-$(IGB_VER).tar.gz
-	$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/igbvf-$(IGBVF_VER).tar.gz
-	$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/ixgbe-$(IXGBE_VER).tar.gz
-	$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/ixgbevf-$(IXGBEVF_VER).tar.gz
-	$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/e1000e-$(E1000E_VER).tar.gz
-	$(DL_CMD) http://r8168dl.appspot.com/files/r8168-8.038.00.tar.bz2
+	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/igb-$(IGB_VER).tar.gz
+	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/igbvf-$(IGBVF_VER).tar.gz
+	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/ixgbe-$(IXGBE_VER).tar.gz
+	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/ixgbevf-$(IXGBEVF_VER).tar.gz
+	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/e1000e-$(E1000E_VER).tar.gz
+	@$(DL_CMD) http://r8168dl.appspot.com/files/r8168-8.038.00.tar.bz2
 
 prepare: download
 #	tar -xvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
