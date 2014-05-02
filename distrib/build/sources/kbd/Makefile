@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = kbd
 VERSION = 1.15.3
 
-EXTENSION = .tar.bz2
+EXTENSION = .tar.xz
 
 BASE_URL = http://slackware.cs.utah.edu/pub/slackware/slackware_source/a/kbd/sources/
 
