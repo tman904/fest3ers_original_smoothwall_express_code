@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = sqlite-autoconf
-VERSION = 3071300
+VERSION = 3080403
 
 BASE_URL = http://www.sqlite.org/
 
