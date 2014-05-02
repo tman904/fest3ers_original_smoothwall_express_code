@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = pcre
-VERSION = 8.30
+VERSION = 8.35
 
 BASE_URL = ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/
 
