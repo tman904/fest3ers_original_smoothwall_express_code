@@ -7,10 +7,10 @@
 include ../Makefile.conf
 
 PACKAGE = usbutils
-VERSION = 004
-EXTENSION = .tar.bz2
+VERSION = 007
+EXTENSION = .tar.xz
 
-BASE_URL = http://www.kernel.org/pub/linux/kernel/people/gregkh/usbutils/
+BASE_URL = http://ftp.kernel.org/pub/linux/utils/usb/usbutils
 
 CONFIG_OPTS += --disable-zlib
 
