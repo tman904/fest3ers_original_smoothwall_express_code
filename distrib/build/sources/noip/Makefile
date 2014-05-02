@@ -3,7 +3,7 @@ include ../Makefile.conf
 PACKAGE = noip
 VERSION = 1.6.0
 
-BASE_URL = http://www.ramereth.net/openwrt/src/distfiles/
+BASE_URL = http://downloads.smoothwall.org/buildmirror
 
 EXTENSION = .tbz2
 
