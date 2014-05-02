@@ -7,10 +7,10 @@
 include ../Makefile.conf
 
 PACKAGE = at
-VERSION = 3.1.14.1
+VERSION = 3.1.14
 
 BASE_URL = http://ftp.debian.org/debian/pool/main/a/at
-TARBALL = $(PACKAGE)_$(VERSION)
+TARBALL = $(PACKAGE)_$(VERSION).orig
 DIR = $(PACKAGE)-$(VERSION)
 
 PATCH_FILE1 = no-sendmail.patch
