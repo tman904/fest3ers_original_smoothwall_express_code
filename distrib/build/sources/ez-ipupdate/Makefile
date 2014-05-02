@@ -3,7 +3,7 @@ include ../Makefile.conf
 PACKAGE = ez-ipupdate
 VERSION = 3.0.11b8
 
-BASE_URL = http://gentoo.blueyonder.co.uk/distfiles/
+BASE_URL = http://downloads.smoothwall.org/buildmirror
 
 INSTALL = yes
 
