@@ -7,12 +7,12 @@
 include ../Makefile.conf
 
 PACKAGE = dev86
-VERSION = 0.16.19
+VERSION = 0.16.21
 TARBALL = Dev86src-$(VERSION)
 DIR = $(PACKAGE)-$(VERSION)
 COMPILE_DIR = $(DIR)
 
-BASE_URL = http://www.debath.co.uk/dev86
+BASE_URL = http://v3.sk/~lkundrak/dev86
 
 PATCH_FILE1 = copt.c.patch
 
