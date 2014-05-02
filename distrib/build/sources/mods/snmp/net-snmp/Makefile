@@ -1,7 +1,7 @@
 include ../../../Makefile.conf
 
 PACKAGE = net-snmp
-VERSION = 5.3.1
+VERSION = 5.7.2.1
 
 LICENCE_FILE = $(DIR)/COPYING
 
