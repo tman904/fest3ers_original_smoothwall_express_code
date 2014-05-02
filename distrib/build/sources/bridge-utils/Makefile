@@ -13,7 +13,7 @@ VERSION = 1.5
 
 EXTENSION = .tar.gz
 
-BASE_URL = http://downloads.sourceforge.net/project/bridge/bridge
+BASE_URL = http://sourceforge.net/projects/bridge/files/bridge
 
 PRE_CONFIGURE = autoconf;
 
