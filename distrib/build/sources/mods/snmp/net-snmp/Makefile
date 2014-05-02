@@ -5,7 +5,7 @@ VERSION = 5.7.2.1
 
 LICENCE_FILE = $(DIR)/COPYING
 
-BASE_URL = http://kent.dl.sourceforge.net/sourceforge/net-snmp/
+BASE_URL = http://sourceforge.net/projects/net-snmp/files/net-snmp/5.7.2.1
 
 CONFIG_OPTS = --with-defaults --disable-applications --disable-manuals --disable-scripts
 
