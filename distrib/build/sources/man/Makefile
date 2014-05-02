@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = man
 VERSION = 1.6f
 
-BASE_URL = http://primates.ximian.com/~flucifredi/man/
+BASE_URL = ftp://metalab.unc.edu/pub/Linux/apps/doctools/man
 
 PATCH_FILE1 = man-utf8-nroff-fix.patch
 
