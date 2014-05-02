@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = speedtouch
 VERSION = 1.3.1
 
-BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/speedtouch/
+BASE_URL = http://prdownloads.sourceforge.net/speedtouch
 
 #CONFIG_OPTS =
 
