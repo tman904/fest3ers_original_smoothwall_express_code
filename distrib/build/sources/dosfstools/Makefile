@@ -11,7 +11,7 @@ VERSION = 3.0.26
 
 BASE_URL = http://daniel-baumann.ch/files/software/dosfstools
 
-TARBALL = $(PACKAGE)-$(VERSION).src
+TARBALL = $(PACKAGE)-$(VERSION)
 
 DIR = $(PACKAGE)-$(VERSION)
 
