@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = dosfstools
-VERSION = 2.11
+VERSION = 3.0.26
 
-BASE_URL = ftp://ftp.uni-erlangen.de/pub/Linux/LOCAL/dosfstools/
+BASE_URL = http://daniel-baumann.ch/files/software/dosfstools
 
 TARBALL = $(PACKAGE)-$(VERSION).src
 
