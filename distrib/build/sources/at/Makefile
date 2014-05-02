@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = at
-VERSION = 3.1.10.2
+VERSION = 3.1.14.1
 
 BASE_URL = http://ftp.debian.org/debian/pool/main/a/at
 TARBALL = $(PACKAGE)_$(VERSION)
