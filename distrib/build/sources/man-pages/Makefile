@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = man-pages
-VERSION = 3.38
+VERSION = 3.65
 
 EXTENSION = .tar.xz
 
