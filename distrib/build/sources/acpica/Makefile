@@ -7,9 +7,11 @@
 include ../Makefile.conf
 
 PACKAGE = acpica
-VERSION = unix2-20140214
+VERSION = unix2-20140325
 
 BASE_URL = https://acpica.org/sites/acpica/files/
+
+export NO_CHECK_CERT
 
 CONFIGURE = yes
 configure: $(DIR)/
@@ -17,11 +19,11 @@ configure: $(DIR)/
 
 COMPILE = yes
 compile: configure
-	cd $(COMPILE_DIR)/compiler; sed -i -e '/Werror/d' Makefile; make $(JOBS)
+	$(MAKE) $(JOBS) -C $(COMPILE_DIR)/generate/unix
 
 INSTALL = yes
 install: compile
 	mkdir -p $(PKG_ROOT)$(PKG_DIR)/bin
-	cd $(COMPILE_DIR)/compiler; make INSTALLDIR=$(PKG_ROOT)$(PKG_DIR)/bin install
+	$(MAKE) INSTALLDIR=$(PKG_ROOT)$(PKG_DIR)/bin install -C $(COMPILE_DIR)/generate/unix
 
 include ../Makefile.rules
