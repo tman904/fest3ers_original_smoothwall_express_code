@@ -11,7 +11,7 @@ VERSION = 3.65
 
 EXTENSION = .tar.xz
 
-BASE_URL = http://www.kernel.org/pub/linux/docs/man-pages/
+BASE_URL = https://www.kernel.org/pub/linux/docs/man-pages/
 
 INSTALL = yes
 
