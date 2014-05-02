@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = sqlite-autoconf
 VERSION = 3080403
 
-BASE_URL = http://www.sqlite.org/
+BASE_URL = http://www.sqlite.org/2014
 
 CONFIG_OPTS += --enable-threadsafe --enable-cross-thread-connections
 
