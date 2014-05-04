@@ -480,7 +480,7 @@ char *english_tr[] = {
 /* TR_DNS_AND_GATEWAY_SETTINGS */
 "DNS and Gateway settings",
 /* TR_RESTART_REQUIRED */
-"\n\nWhen configuration is complete, a network restart will be requrired.",
+"\n\nWhen configuration is complete, a network restart will be required.",
 /* TR_CURRENT_CONFIG (first %s is type, second is restart message (or not) */
 "Current config: %s%s",
 /* TR_NETWORK_CONFIGURATION_MENU */
