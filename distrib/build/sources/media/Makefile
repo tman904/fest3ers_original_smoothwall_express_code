@@ -21,10 +21,11 @@ endif
 export UDEV = udev
 export UDEVunused = eudev
 
-# Document these pkgs, don't install
+# Document these pkgs, don't install.
+# Some of these are retirees.
 TOOLCHAIN_PKGS = expect
 OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
-	     libart_lgpl procps procinfo
+	     libart_lgpl procps procinfo dev86
 
 TARGET_DIR = /build/target
 
@@ -68,7 +69,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 
 DEV_PKGS = kernel-headers patch make autoconf automake bison dejagnu gcc \
 	   gdb tcl m4 neon git screen lynx groff man man-pages \
-	   klibc pkg-config sudo texinfo dev86 busybox \
+	   klibc pkg-config sudo texinfo busybox \
 	   libtool nasm acpica
 
 NOT_DRIVERS = drivers/video
