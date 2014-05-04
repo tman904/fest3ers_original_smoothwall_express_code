@@ -172,7 +172,6 @@ fi
       build GeoIP
       build Python
       JOBS=$JOBS_UP
-      build dev86
       build acpica
       JOBS=$JOBS_MP
       build nasm
