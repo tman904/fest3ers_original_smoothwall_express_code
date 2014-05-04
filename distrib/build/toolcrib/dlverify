@@ -20,25 +20,23 @@ function git2tgz () {
   #   gitCommitID=$(VERSION)
 
   # Prep the dir
-  rm -rf ${pkgName}-${gitCommitID}
-  mkdir ${pkgName}-${gitCommitID}
+  rm -rf ${pkgName}-${gitBranch}
 
   # Go 'n' git
-  cd ${pkgName}-${gitCommitID}
   echo "git from ${gitURL}"
-  git init -q || exit 101
-  git pull "${gitURL}" "${gitBranch}" || exit 102
+  git clone "${gitURL}" "${pkgName}-${gitBranch}" || exit 102
+  cd ${pkgName}-${gitBranch}
   echo "git checkout ${gitCommitID}"
   git checkout -q ${gitCommitID} || exit 103
 
   # tar it
   cd ..
   echo "tar"
-  tar cfz "${DIRECTORY}/${pkgName}-${gitCommitID}.tar.gz" \
-      --exclude=".git*" ${pkgName}-${gitCommitID} || exit 104
+  tar cfz "${DIRECTORY}/${pkgName}-${gitBranch}.tar.gz" \
+      --exclude=".git*" ${pkgName}-${gitBranch} || exit 104
 
   # remove the dir
-  rm -rf ${pkgName}-${gitCommitID} || exit 105
+  rm -rf ${pkgName}-${gitBranch} || exit 105
 }
 
 
