@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = Mako
 VERSION = 0.7.2
 
-BASE_URL = http://www.makotemplates.org/downloads/
+BASE_URL = https://pypi.python.org/packages/source/M/Mako
 
 CONFIGURE = yes
 
