@@ -14,11 +14,14 @@ my (%advnetsettings,%checked);
 
 &showhttpheaders();
 
+# These defaults must be 'off'; the system defaults must be set in
+#   the advnet settings file.
 $advnetsettings{'ENABLE_NOPING'} = 'off';
 $advnetsettings{'ENABLE_COOKIES'} = 'off';
 $advnetsettings{'ENABLE_NOIGMP'} = 'off';
 $advnetsettings{'ENABLE_NOMULTICAST'} = 'off';
 $advnetsettings{'ENABLE_UPNP'} = 'off';
+$advnetsettings{'LOG_INVALID'} = 'off';
 $advnetsettings{'BAD_TRAFFIC'} = 'REJECT';
 $advnetsettings{'ACTION'} = '';
 &getcgihash(\%advnetsettings);
@@ -66,6 +69,10 @@ $checked{'ENABLE_UPNP'}{'off'} = '';
 $checked{'ENABLE_UPNP'}{'on'} = '';
 $checked{'ENABLE_UPNP'}{$advnetsettings{'ENABLE_UPNP'}} = 'CHECKED';
 
+$checked{'LOG_INVALID'}{'off'} = '';
+$checked{'LOG_INVALID'}{'on'} = '';
+$checked{'LOG_INVALID'}{$advnetsettings{'LOG_INVALID'}} = 'CHECKED';
+
 $selected{'BAD_TRAFFIC'}{'REJECT'} = '';
 $selected{'BAD_TRAFFIC'}{'DROP'} = '';
 $selected{'BAD_TRAFFIC'}{$advnetsettings{'BAD_TRAFFIC'}} = 'SELECTED';
@@ -82,22 +89,27 @@ print "<FORM METHOD='POST'>\n";
 print <<END
 <TABLE WIDTH='100%'>
 <TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'block icmp ping'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOPING' $checked{'ENABLE_NOPING'}{'on'}></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'enable syn cookies'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_COOKIES' $checked{'ENABLE_COOKIES'}{'on'}></TD>
+	<TD WIDTH='38%' CLASS='base'>$tr{'block icmp ping'}</TD>
+	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOPING' $checked{'ENABLE_NOPING'}{'on'}></TD>
+	<TD WIDTH='38%' CLASS='base'>$tr{'enable syn cookies'}</TD>
+	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_COOKIES' $checked{'ENABLE_COOKIES'}{'on'}></TD>
 </TR>
 <TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'block and ignore igmp packets'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOIGMP' $checked{'ENABLE_NOIGMP'}{'on'}></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'block and ignore multicast traffic'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOMULTICAST' $checked{'ENABLE_NOMULTICAST'}{'on'}></TD>
+	<TD WIDTH='38%' CLASS='base'>$tr{'block and ignore igmp packets'}</TD>
+	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOIGMP' $checked{'ENABLE_NOIGMP'}{'on'}></TD>
+	<TD WIDTH='38%' CLASS='base'>$tr{'block and ignore multicast traffic'}</TD>
+	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOMULTICAST' $checked{'ENABLE_NOMULTICAST'}{'on'}></TD>
 </TR>
 <TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'upnp support'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_UPNP' $checked{'ENABLE_UPNP'}{'on'}></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'action to perform on bad external traffic'}</TD>
-	<TD WIDTH='25%'>
+	<TD WIDTH='38%' CLASS='base'>$tr{'upnp support'}</TD>
+	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_UPNP' $checked{'ENABLE_UPNP'}{'on'}></TD>
+	<TD WIDTH='38%' CLASS='base'>$tr{'log invalid'}</TD>
+	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='LOG_INVALID' $checked{'LOG_INVALID'}{'on'}></TD>
+</TR>
+<TR>
+        <td></td>
+	<TD WIDTH='38%' CLASS='base'>$tr{'action to perform on bad external traffic'}</TD>
+	<TD WIDTH='12%'>
 	<SELECT NAME='BAD_TRAFFIC'>
 	<OPTION VALUE='REJECT' $selected{'BAD_TRAFFIC'}{'REJECT'}>$tr{'reject'}
 	<OPTION VALUE='DROP' $selected{'BAD_TRAFFIC'}{'DROP'}>$tr{'drop'}

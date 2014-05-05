@@ -383,7 +383,7 @@ fi
 
 # Drop INVALID packets early
 /sbin/iptables -t mangle -N invdrop
-/sbin/iptables -t mangle -A invdrop -j LOG --log-prefix "Denied-by-mangle:invdrop "
+# Don't log here; soon enough, advnet will add logging if it's set
 /sbin/iptables -t mangle -A invdrop -j DROP
 /sbin/iptables -t mangle -I PREROUTING -m state --state INVALID -j invdrop
 
