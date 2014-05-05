@@ -108,6 +108,7 @@ print <<END
 </TR>
 <TR>
         <td></td>
+        <td></td>
 	<TD WIDTH='38%' CLASS='base'>$tr{'action to perform on bad external traffic'}</TD>
 	<TD WIDTH='12%'>
 	<SELECT NAME='BAD_TRAFFIC'>
