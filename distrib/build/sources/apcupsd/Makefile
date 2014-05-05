@@ -13,4 +13,8 @@ BASE_URL = http://downloads.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)%20-%20
 
 CONFIG_OPTS = --enable-usb
 
+COMPILE = yes
+compile: configure
+	+$(PRE_COMPILE) $(MAKE) ${JOBS} -C $(COMPILE_DIR) VERBOSE=1
+
 include ../Makefile.rules
