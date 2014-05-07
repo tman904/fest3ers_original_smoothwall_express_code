@@ -28,8 +28,10 @@ INSTALL = yes
 install: download
 	rm -rf $(PKG_ROOT)
 	mkdir -p $(PKG_ROOT)/lib/firmware
-	tar xvf $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION) -C $(PKG_ROOT)/lib/firmware
-	chown -R root:root $(PKG_ROOT)
-	chmod -R 444 $(PKG_ROOT)
+	tar xvf $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION)
+	cd $(PACKAGE)-$(VERSION); cp -avr . $(PKG_ROOT)/lib/firmware
+	chown -R root:root $(PKG_ROOT)/lib/firmware/*
+	find $(PKG_ROOT)/lib/firmware -type f -exec chmod 444 {} \;
+	find $(PKG_ROOT)/lib/firmware -type d -exec chmod 555 {} \;
 
 include ../Makefile.rules
