@@ -1,0 +1,4 @@
+Update info file format:
+  MD5:      The md5sum of the complete update tarball.
+  Size:     The size in bytes of the patch tarball inside the update archive.
+  Info URL: Typically an URL to the forum describing the update.
