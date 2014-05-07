@@ -70,4 +70,4 @@ cpu_count
   else
     echo "Update${UPDATE} preparation FAILED"
   fi
-) <${BUILD_IN} >"sources/updates/update$(UPDATE)/Update.out" 2>&1
+) <${BUILD_IN} >"sources/updates/update${UPDATE}/Update.out" 2>&1
