@@ -219,6 +219,12 @@ media:
 	    $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media") \
 	    <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
 
+# prepare the specified update
+#
+update:
+	@echo -e "\nPreparing update '$(UPDATE)'..."
+	+@$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_update $(UPDATE)"
+
 # prepare a bootable flash drive
 #
 mediaflash:

@@ -1,8 +1,0 @@
-./etc/ppp/ip-up
-./etc/logrotate.d/snort
-./etc/rc.d/rc.firewall.up
-./etc/snort.conf
-./etc/threshold.conf
-./httpd/cgi-bin/help.cgi
-./httpd/cgi-bin/iptools.cgi
-./etc/logrotate.d/smoothd

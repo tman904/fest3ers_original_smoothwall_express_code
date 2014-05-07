@@ -1,9 +1,0 @@
-./usr/lib/smoothwall/header.pm
-./usr/lib/smoothwall/langs/alertboxes.base.pl
-./usr/bin/installer/makeinitrd
-./etc/nicdevices
-./etc/modprobe.conf
-./etc/lilo.conf
-./etc/rc.d/rc.sysinit
-./etc/rc.d/rc.firewall.up
-./httpd/cgi-bin/ids.cgi

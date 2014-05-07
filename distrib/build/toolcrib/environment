@@ -135,6 +135,12 @@ function set_build_environment() {
       echo "      ROOT=$ROOT; "
       ;;
 
+    Update)
+      # preparing an update
+      echo "    Environment:"
+      echo "      Build Phase: $BUILD_PHASE; mARCH=$mARCH"
+      ;;
+
     *)
       echo "Not in a building phase. Gruffly refusing to proceed."
       exit 1

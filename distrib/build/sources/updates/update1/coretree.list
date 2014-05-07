@@ -1,0 +1,8 @@
+./etc/rc.d/rc.firewall.up
+./httpd/cgi-bin/advnet.cgi
+./httpd/cgi-bin/help.cgi
+./httpd/html/help/traffic.cgi.html.en
+./httpd/html/ui/css/style.css
+./var/smoothwall/advnet/settings
+./usr/lib/smoothwall/langs/en.pl
+./usr/lib/smoothwall/langs/glossary.en.pl

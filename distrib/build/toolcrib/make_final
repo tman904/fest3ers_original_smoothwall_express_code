@@ -197,6 +197,7 @@ fi
       build wget
       build sudo
       build linux
+      build linux-firmware
       build kernel-drivers
       build iptables
       build ipset

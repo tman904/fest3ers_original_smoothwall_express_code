@@ -1,4 +1,4 @@
-UPDATE_PACKAGES = coretree clamav smoothd trafficstats miniupnpd
+UPDATE_PACKAGES = linux-firmware smoothd coretree
 
 UPDATE_ID = 001
 UPDATE_NAME = update1
