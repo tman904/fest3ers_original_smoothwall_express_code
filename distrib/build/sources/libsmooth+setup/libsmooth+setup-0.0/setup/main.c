@@ -47,8 +47,13 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	
-	if (argc >= 3)
-		automode = 1;
+	if (argc >= 3) {
+		if (strncmp(argv[2], "networkingOnly", 15) == 0) {
+			automode = 2;
+		} else {
+			automode = 1;
+		}
+	}
 	
 	fprintf(flog, "Setup program started.\n");
 
@@ -163,6 +168,10 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+	else if (automode == 2) {
+		handlenetworking();
+		autook = 2;
+	}
 	else
 	{
 		
@@ -238,12 +247,27 @@ int main(int argc, char *argv[])
 	}
 
 EXIT:	
-	if (automode != 0)
+	if (automode == 1)
 	{
 		if (autook)
 			newtWinMessage(TITLE, ctr[TR_OK], ctr[TR_SETUP_FINISHED]);
 		else
 			newtWinMessage(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_SETUP_NOT_COMPLETE]);
+	}
+	else if (automode == 2)
+	{
+		if (autook == 2)
+		{
+			fprintf(flog, "Setup program ended.\n");
+			fflush(flog);
+			fclose(flog);
+			newtFinished();
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
 	}
 	else
 	{
