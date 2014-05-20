@@ -843,6 +843,10 @@ close(FILE);
 sub UTC2LocalString
 {
   my $t = shift;
+
+  # Return it unchanged if it does not start with a date
+  return $t unless $t =~ /[0-9][0-9][0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]/;
+
   my ($lDate, $lTime) = split(/ /,$t,2);
   my ($year, $month, $day) = split(/\//,$lDate);
   my ($hour, $minute, $sec) = split(/:/,$lTime);
