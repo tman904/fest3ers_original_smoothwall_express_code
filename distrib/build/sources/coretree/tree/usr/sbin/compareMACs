@@ -66,8 +66,14 @@ if ! diff /tmp/oldMACs /tmp/curMACs >/dev/null 2>&1; then
   lastNIC=$j
 
   # Append current NIC rules file to persistent file in /tmp
-  sed -e '1,5d' $custNICRules \
-    >> /tmp/$persNetRules
+  if [ -e /tmp/$persNetRules ]; then
+    # NIC(s) added
+    sed -e '1,5d' $custNICRules \
+      >> /tmp/$persNetRules
+  else
+    #NIC(s) removed
+    cp $custNICRules /tmp/$persNetRules
+  fi
   # Change all 'ethN' to 'FRESHNIC'
   sed -i -e 's/, NAME=".*/, NAME="FRESHNIC"/' /tmp/$persNetRules
 
