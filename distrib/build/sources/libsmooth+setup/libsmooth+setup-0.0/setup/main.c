@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	else if (automode == 2) {
-		handlenetworking();
+		drivermenu();
 		autook = 2;
 	}
 	else
