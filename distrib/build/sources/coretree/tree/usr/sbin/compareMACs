@@ -42,7 +42,7 @@ if [ -e /tmp/$persNetRules ]; then
     sort > /tmp/oldMACs
 
   # Gather the current MAC addrs (NICs only)
-  pushd /sys/class/net
+  cd /sys/class/net
   NICS=`/bin/ls -C1 | egrep -v "ipsec|tun|tap|mast|teq"`
   for i in $NICS; do
     addr=`cat $i/address`
@@ -52,7 +52,7 @@ if [ -e /tmp/$persNetRules ]; then
       echo "$addr";
     fi
   done | sort >/tmp/curMACs
-  popd
+  cd /
 
   # Different?
   declare -A NICs
