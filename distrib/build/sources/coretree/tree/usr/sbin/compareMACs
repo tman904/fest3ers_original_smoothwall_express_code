@@ -36,7 +36,6 @@ custNICRules=/etc/udev/rules.d/70-Smoothwall-custom-NIC.rules
 
 # Gather the previous MAC addrs (NICs only)
 grep SUBSYSTEM $custNICRules | \
-  sed -e 's/00:/01:/' | \
   sed -e 's/.*ATTR{address}=="//' -e 's/".*//' | \
   sort > /tmp/oldMACs
 
