@@ -74,6 +74,13 @@ if ! diff /tmp/oldMACs /tmp/curMACs >/dev/null 2>&1; then
     #NIC(s) removed
     cp $custNICRules /tmp/$persNetRules
   fi
+
+  # Yank the drivers
+  DRIVERS=`egrep "^# PCI device 0x" /tmp/$persNetRules | sed -e 's/.*(\([^)]*\))/\1/' | sort | uniq`
+  for i in $DRIVERS; do
+    rmmod $i
+  done
+
   # Change all 'ethN' to 'FRESHNIC'
   sed -i -e 's/, NAME=".*/, NAME="FRESHNIC"/' /tmp/$persNetRules
 
@@ -86,11 +93,6 @@ if ! diff /tmp/oldMACs /tmp/curMACs >/dev/null 2>&1; then
   # Delete unset (removed) NICs)
   sed -e '/^$/N; N; /FRESHNIC/d;' /tmp/$persNetRules >$custNICRules
 
-  # Yank the drivers
-  DRIVERS=`egrep "^# PCI device 0x" $custNICRules | sed -e 's/.*(\([^)]*\))/\1/' | sort | uniq`
-  for i in $DRIVERS; do
-    rmmod $i
-  done
   # Trigger udev to INS the drivers, thus changing the names
   /sbin/udevadm trigger
   /sbin/udevadm settle
