@@ -30,70 +30,69 @@ custNICRules=/etc/udev/rules.d/70-Smoothwall-custom-NIC.rules
 
 ###
 # If there are any changes, handle them.
+# A new persisent-net.rules files is a poor choice for change flag, since it
+#   does not detect removed NICs.
 ###
 
-# If it exists, there are new NICs/NADs; integrate them
-if [ -e /tmp/$persNetRules ]; then
+# Gather the previous MAC addrs (NICs only)
+grep SUBSYSTEM $custNICRules | \
+  sed -e 's/00:/01:/' | \
+  sed -e 's/.*ATTR{address}=="//' -e 's/".*//' | \
+  sort > /tmp/oldMACs
 
-  # Gather the previous MAC addrs (NICs only)
-  grep SUBSYSTEM $custNICRules | \
-    sed -e 's/00:/01:/' | \
-    sed -e 's/.*ATTR{address}=="//' -e 's/".*//' | \
-    sort > /tmp/oldMACs
+# Gather the current MAC addrs (NICs only)
+cd /sys/class/net
+NICS=`/bin/ls -C1 | egrep -v "ipsec|tun|tap|mast|teq"`
+for i in $NICS; do
+  addr=`cat $i/address`
+  if [ "$addr" != "" -a \
+       "$addr" != "00:00:00:00:00:00" -a \
+       -e $i/device ]; then
+    echo "$addr";
+  fi
+done | sort >/tmp/curMACs
+cd /
 
-  # Gather the current MAC addrs (NICs only)
-  cd /sys/class/net
-  NICS=`/bin/ls -C1 | egrep -v "ipsec|tun|tap|mast|teq"`
-  for i in $NICS; do
-    addr=`cat $i/address`
-    if [ "$addr" != "" -a \
-         "$addr" != "00:00:00:00:00:00" -a \
-         -e $i/device ]; then
-      echo "$addr";
-    fi
-  done | sort >/tmp/curMACs
-  cd /
-
-  # Different?
+# Different?
+if ! diff /tmp/oldMACs /tmp/curMACs >/dev/null 2>&1; then
   declare -A NICs
   declare -i j
-  if ! diff /tmp/oldMACs /tmp/curMACs >/dev/null 2>&1; then \
-    # Prep new names in MAC addr order
-    j=0
-    while read MAC; do
-      NICs["eth$j"]=$MAC
-      j=j+1
-    done < /tmp/curMACs
-    lastNIC=$j
 
-    # Append current NIC rules file to persistent file in /tmp
-    sed -e '1,5d' $custNICRules \
-      >> /tmp/$persNetRules
-    # Change all 'ethN' to 'FRESHNIC'
-    sed -i -e 's/, NAME=".*/, NAME="FRESHNIC"/' /tmp/$persNetRules
+  # Prep new names in MAC addr order
+  j=0
+  while read MAC; do
+    NICs["eth$j"]=$MAC
+    j=j+1
+  done < /tmp/curMACs
+  lastNIC=$j
 
-    # Set name sfor current NICs
-    j=0
-    while [ $j -lt $lastNIC ]; do
-      sed -i -e '/'${NICs["eth$j"]}'/s/FRESHNIC/eth'$j'/' /tmp/$persNetRules
-      j=j+1
-    done
-    # Delete unset (removed) NICs)
-    sed -e '/^$/N; N; /FRESHNIC/d;' /tmp/$persNetRules >$custNICRules
+  # Append current NIC rules file to persistent file in /tmp
+  sed -e '1,5d' $custNICRules \
+    >> /tmp/$persNetRules
+  # Change all 'ethN' to 'FRESHNIC'
+  sed -i -e 's/, NAME=".*/, NAME="FRESHNIC"/' /tmp/$persNetRules
 
-    # Yank the drivers
-    DRIVERS=`egrep "^# PCI device 0x" $custNICRules | sed -e 's/.*(\([^)]*\))/\1/' | sort | uniq`
-    for i in $DRIVERS; do
-      rmmod $i
-    done
-    # Trigger udev to INS the drivers, thus changing the names
-    /sbin/udevadm trigger
-    /sbin/udevadm settle
+  # Set names for current NICs
+  j=0
+  while [ $j -lt $lastNIC ]; do
+    sed -i -e '/'${NICs["eth$j"]}'/s/FRESHNIC/eth'$j'/' /tmp/$persNetRules
+    j=j+1
+  done
+  # Delete unset (removed) NICs)
+  sed -e '/^$/N; N; /FRESHNIC/d;' /tmp/$persNetRules >$custNICRules
 
-    # Set flag file, clean up other files
-    touch /var/smoothwall/ethernet/NICS-changed
-    rm -f /tmp/$persNetRules /dev/$persNetRules /tmp/oldMACs /tmp/curMACs
-  fi
+  # Yank the drivers
+  DRIVERS=`egrep "^# PCI device 0x" $custNICRules | sed -e 's/.*(\([^)]*\))/\1/' | sort | uniq`
+  for i in $DRIVERS; do
+    rmmod $i
+  done
+  # Trigger udev to INS the drivers, thus changing the names
+  /sbin/udevadm trigger
+  /sbin/udevadm settle
+
+  # Set flag file, clean up other files
+  touch /var/smoothwall/ethernet/NICS-changed
+  rm -f /tmp/$persNetRules /dev/$persNetRules /tmp/oldMACs /tmp/curMACs
 fi
 
 ###
