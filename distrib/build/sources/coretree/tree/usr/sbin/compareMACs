@@ -129,15 +129,16 @@ if [ -e  /var/smoothwall/ethernet/NICS-changed ]; then
   # If we make it here, setup ran and exited with success.
   # Update the initramfs
   mkdir -p /root/tmp
-  pushd /root/tmp
+  OLDPWD=${PWD}
+  cd /root/tmp
   INITRAMFS="/boot/initrd-`uname -r`.gz"
   if [ ! -e ${INITRAMFS}-ORIG ]; then
-    cp -av ${INITRAMFS} ${INITRAMFS}-ORIG
+    cp -a ${INITRAMFS} ${INITRAMFS}-ORIG
   fi
   gunzip < $INITRAMFS | cpio -id
-  cp ${custNICRules} ${custNICRules/\//}
+  cp -a ${custNICRules} ${custNICRules/\//}
   find . | cpio -o -H newc | gzip > $INITRAMFS
-  popd
+  cd ${OLDPWD}
   rm -rf /root/tmp
 
   # Remove the flag file
