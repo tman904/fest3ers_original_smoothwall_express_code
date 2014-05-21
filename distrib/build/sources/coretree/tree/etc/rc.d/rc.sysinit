@@ -49,6 +49,13 @@ fi
 echo "Mounting root read/write"
 mount -n -o remount,rw /
 
+# Did the NICs change?
+PNR="70-persistent-net.rules"
+if [ -e /dev/${PNR} ]; then
+  mv /dev/${PNR} /tmp
+fi
+/usr/sbin/compareMACs
+
 # Re-run udevd
 /sbin/udevd --daemon
 /sbin/udevadm trigger

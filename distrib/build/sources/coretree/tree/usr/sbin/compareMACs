@@ -33,10 +33,7 @@ custNICRules=/etc/udev/rules.d/70-Smoothwall-custom-NIC.rules
 ###
 
 # If it exists, there are new NICs/NADs; integrate them
-if [ -e /dev/$persNetRules ]; then
-
-  # Move the new persistent rules file
-  mv /dev/$persNetRules /tmp
+if [ -e /tmp/$persNetRules ]; then
 
   # Gather the previous MAC addrs (NICs only)
   grep SUBSYSTEM $custNICRules | \
@@ -95,8 +92,7 @@ if [ -e /dev/$persNetRules ]; then
 
     # Set flag file, clean up other files
     touch /var/smoothwall/ethernet/NICS-changed
-    rm -f /tmp/$persNetRules /dev/$persNetRules
-    rm -f /tmp/oldMACs /tmp/curMACs
+    rm -f /tmp/$persNetRules /dev/$persNetRules /tmp/oldMACs /tmp/curMACs
   fi
 fi
 
