@@ -135,7 +135,7 @@ if [ -e  /var/smoothwall/ethernet/NICS-changed ]; then
     cp -av ${INITRAMFS} ${INITRAMFS}-ORIG
   fi
   gunzip < $INITRAMFS | cpio -id
-  cp /etc/udev/rules.d/70-smoothwall-custom-NIC.rules etc/udev/rules.d
+  cp ${custNICRules} etc/udev/rules.d/${custNICRules}
   find . | cpio -o -H newc | gzip > $INITRAMFS
   popd
   rm -rf /root/tmp
