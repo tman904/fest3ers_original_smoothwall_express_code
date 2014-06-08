@@ -19,6 +19,18 @@ our @_validation_items;
 		);
 
 
+# Conditional require
+
+sub requireConditional
+{
+  my ($incFile) = @_;
+  if (-f $incFile)
+  {
+    require $incFile;
+  }
+}
+
+
 $|=1; # line buffering
 
 # Work out some various details from the various system files.
@@ -53,34 +65,49 @@ $uisettings{'ALWAYS_ENGLISH'} = 'on';
 &readhash("${swroot}/main/uisettings", \%uisettings);
 my $languages = $ENV{HTTP_ACCEPT_LANGUAGE} || 'en';
 my ($language, @junk) = split(/,/, $languages);
+$language =~ tr/A-Z/a-z/;
 
+# Pull in the stock en.pl and all the mods' en.pl files.
 require "/usr/lib/smoothwall/langs/en.pl";
+while (<"/var/smoothwall/mods/*/usr/lib/smoothwall/langs/en.pl">)
+{
+  requireConditional $_;
+}
+
 if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
 {
   foreach $key (sort keys %basetr)
   {
     $basetr{$key} = "[$basetr{$key}]"
   }
-  if (-f "/usr/lib/smoothwall/langs/${language}.pl")
+  requireConditional "/usr/lib/smoothwall/langs/${language}.pl";
+  while (<"/var/smoothwall/mods/*/usr/lib/smoothwall/langs/${language}.pl">)
   {
-    require "/usr/lib/smoothwall/langs/${language}.pl";
+    requireConditional $_;
   }
 }
 require "/usr/lib/smoothwall/langs/base.pl";
 
+# Pull in the stock alertboxes.en.pl and all the mods' alertboxes.en.pl files.
 require "/usr/lib/smoothwall/langs/alertboxes.en.pl";
+while (<"/var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.en.pl">)
+{
+  requireConditional $_;
+}
 if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
 {
   foreach $key (sort keys %baseabouttext)
   {
     $baseabouttext{$key} = "[$baseabouttext{$key}]"
   }
-  if (-f "/usr/lib/smoothwall/langs/alertboxes.${language}.pl")
+  requireConditional "/usr/lib/smoothwall/langs/alertboxes.${language}.pl";
+  while (<"/var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.${language}.pl">)
   {
-    require "/usr/lib/smoothwall/langs/alertboxes.${language}.pl";
+    requireConditional $_;
   }
 }
 require "/usr/lib/smoothwall/langs/alertboxes.base.pl";
+
 
 # Display the page HTTP header
 
