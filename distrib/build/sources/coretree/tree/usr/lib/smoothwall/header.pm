@@ -98,30 +98,37 @@ sub showhttpheaders
 
 sub showmenu
 {
-	my $menuprefix = '/usr/lib/smoothwall/menu/';
 	$scriptname = $_[0];
 
-	# load the list of sections from the relevant location.
-        opendir(DIR, "$menuprefix/");
-        my @files = grep {!/\./} readdir(DIR);
+	# load the list of sections from the relevant locations.
+	my @rawfiles = <"/var/smoothwall/mods/*/usr/lib/smoothwall/menu/*" "/usr/lib/smoothwall/menu/*">;
+
+	# Strip the path off; use that as a hash key to store the full paths.
+	foreach my $rawfile (@rawfiles) {
+		my $idx = $rawfile;
+		$idx =~ s=.*/==;
+		$files{$idx} = $rawfile;
+	}
 
 	my $first = "";
 
 	my $menu_html;
 	my @clear_sections;
 
-	foreach my $file ( sort @files ){
-		if ( -d "$menuprefix/$file" ){
+	foreach my $filekey ( sort(keys(%files)) ){
+		my $file = $files{$filekey};
+		chomp $file;
+		if ( -d "$file/" ){
 			# this is a section ....
-		        opendir(DIR2, "$menuprefix/$file/");
-		        my @pages = grep {/\.list/} readdir(DIR2);
+			opendir(DIR2, "$file/");
+			my @pages = grep {/\.list/} readdir(DIR2);
 
 			my $section = "no";
 			my @tempmenu;
 
 			foreach my $page ( sort @pages ){
 				my $detail;
-				open $detail, "<$menuprefix/$file/$page" or next;
+				open $detail, "<$file/$page" or next;
 				my ( $title, $link ) = split /:/, <$detail>;
 				chomp $link;
 				my ( $menu, $pos ) = ( $file =~ /(\d{2})(\d{2}).*/ );
@@ -277,7 +284,7 @@ END
 	<td class='topend'></td>
 </tr>
 <tr>
-	<td class='mainbody' colspan='$span'> 
+	<td class='mainbody' colspan='$span'>
 END
 ;
 
@@ -337,7 +344,7 @@ END
 <td style="width: 450px;"></td>
 <td>
 <p style="margin: 0 0 2pt 9pt; font-size:8pt; color:white; font-family:Arial,sans-serif">system: $hostname</p>
-</td> 
+</td>
 </tr>
 </table>
 
@@ -348,7 +355,7 @@ END
 		print <<END
 END
 		;
-	} else { 
+	} else {
 		print <<END
 <body onLoad="window.focus()" style="background:white">
 END
@@ -389,7 +396,7 @@ sub closepage
 			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://www.smoothwall.org/download/sources/'>original authors</a>
 		</div>
 	</td>
-</tr> 
+</tr>
 </table>
   </td>
   <td style="background-image:url(/ui/img/right.png); max-width:6px; width:6px; min-width:6px; background-repeat:repeat-y">
@@ -404,7 +411,7 @@ sub closepage
   </td>
 </tr>
 </table>
-  
+
 END
 		;
 	}
@@ -451,8 +458,8 @@ sub openbox
 	<td>
 END
 	;
-	if ($caption) { 
-		print "<span class='caption'>$caption</span><br/>\n"; 
+	if ($caption) {
+		print "<span class='caption'>$caption</span><br/>\n";
 	}
 }
 
@@ -482,7 +489,7 @@ sub alertbox
 	}
 }
 
-sub pageinfo 
+sub pageinfo
 {
 	my $thisalerttype = $_[0];
 	my $thisboxmessage = $_[1];
@@ -496,7 +503,7 @@ END
 		print "<table class='note'>";
 		print "<tr>";
 		print "<td class='note'>$thisboxmessage</td>";
-	}  else { 
+	}  else {
 		print "<table class='warning'>";
 		print "<tr>";
 		print "<td class='warningimg'><img src='/ui/img/warning.jpg' alt='$tr{'error'}'></td><td class='warning'><strong>$tr{'error'}</strong>$thisboxmessage</td>";
@@ -516,7 +523,7 @@ sub readvalue
 	my ( $filename, $value ) = @_;
 
 	unless ( open(FILE, $filename) ){
-		return undef;   
+		return undef;
 	}
 
 	while (<FILE>)
@@ -547,7 +554,7 @@ sub writehash
 	# write cgi vars to the file.
 	open(FILE, ">${filename}") or die "Unable to write file $filename";
 	flock FILE, 2;
-	foreach $var (keys %$hash) 
+	foreach $var (keys %$hash)
 	{
 		$val = $hash->{$var};
 		if ($val =~ / /) {
@@ -587,7 +594,7 @@ sub getcgihash
 	my $hash = $_[0];
 	my $buffer = '';
 	my $length = $ENV{'CONTENT_LENGTH'};
-	my ($name, $value); 
+	my ($name, $value);
 	my ($pair, @pairs, $read);
 	my %hash;
 	my $boundary;
@@ -628,7 +635,7 @@ sub getcgihash
 			&log("Referral $ENV{'HTTP_REFERER'} is not a Smoothwall page.");
 			return;
 		}
-	}        
+	}
 	
 	$read = 0;
 	$buffer = "";
@@ -711,7 +718,7 @@ sub validip
 
 	if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
 		return 0; }
-	else 
+	else
 	{
 		@octets = ($1, $2, $3, $4);
 		foreach $_ (@octets)
@@ -791,7 +798,7 @@ sub validport
 sub validportrange
 {
         my $ports = $_[0];
-        my $left; my $right;    
+        my $left; my $right;
 
         if (&validport($ports)) {
                 return 1; }
