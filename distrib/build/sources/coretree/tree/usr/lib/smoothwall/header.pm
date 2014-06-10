@@ -69,7 +69,7 @@ $language =~ tr/A-Z/a-z/;
 
 # Pull in the stock en.pl and all the mods' en.pl files.
 require "/usr/lib/smoothwall/langs/en.pl";
-while (<"/var/smoothwall/mods/*/usr/lib/smoothwall/langs/en.pl">)
+while (</var/smoothwall/mods/*/usr/lib/smoothwall/langs/en.pl>)
 {
   requireConditional $_;
 }
@@ -81,7 +81,7 @@ if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
     $basetr{$key} = "[$basetr{$key}]"
   }
   requireConditional "/usr/lib/smoothwall/langs/${language}.pl";
-  while (<"/var/smoothwall/mods/*/usr/lib/smoothwall/langs/${language}.pl">)
+  while (</var/smoothwall/mods/*/usr/lib/smoothwall/langs/${language}.pl>)
   {
     requireConditional $_;
   }
@@ -90,7 +90,7 @@ require "/usr/lib/smoothwall/langs/base.pl";
 
 # Pull in the stock alertboxes.en.pl and all the mods' alertboxes.en.pl files.
 require "/usr/lib/smoothwall/langs/alertboxes.en.pl";
-while (<"/var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.en.pl">)
+while (</var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.en.pl>)
 {
   requireConditional $_;
 }
@@ -101,7 +101,7 @@ if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
     $baseabouttext{$key} = "[$baseabouttext{$key}]"
   }
   requireConditional "/usr/lib/smoothwall/langs/alertboxes.${language}.pl";
-  while (<"/var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.${language}.pl">)
+  while (</var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.${language}.pl>)
   {
     requireConditional $_;
   }
