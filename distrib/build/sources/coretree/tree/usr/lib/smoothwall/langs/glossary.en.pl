@@ -5,8 +5,11 @@
 # (c) The SmoothWall Team
 
 %baseglossary = (
-	'De-Militarized Zone'  => "<strong>De-Militarized Zone</strong> A common term for a logically isolated network used to house machines which expose services to the internet (such as HTTP or mail servers) and are therefor isolated from the locally protected network.",
-	'DMZ'  => "<strong>De-Militarized Zone</strong> A common term for a logically isolated network used to house machines which expose services to the internet (such as HTTP or mail servers) and are therefor isolated from the locally protected network.",
+
+%baseglossary,
+
+	'De-Militarized Zone'  => "<strong>De-Militarized Zone</strong> A common term for a logically isolated network used to house machines which expose services to the internet (such as HTTP or mail servers) and are therefore isolated from the locally protected networks.",
+	'DMZ'  => "<strong>De-Militarized Zone</strong> A common term for a logically isolated network used to house machines which expose services to the internet (such as HTTP or mail servers) and are therefore isolated from the locally protected networks.",
 	'ORANGE' => "<strong>ORANGE</strong> The name usually given for the interface on a Smoothwall system which provides the De-Militarized Zone.",
 	'GREEN' => "<strong>GREEN</strong> The local network usually reserved for desktop machines and servers. It can access all the other internal networks.",
 	'PURPLE' => "<strong>PURPLE</strong> An optional additional network intended to be used for wireless laptops and other devices. Machines on PURPLE can access ORANGE but not GREEN.",
