@@ -21,7 +21,7 @@ and sending email only:</strong></p>
 
 <p>
 <ol>
-<li>Select <strong>GREEEN</strong> under <strong>Interface defaults</strong> and select <strong>Allowed with exceptions</strong> and click on <strong>Save</strong></li>
+<li>Select <strong>GREEN</strong> under <strong>Interface defaults</strong> and select <strong>Allowed with exceptions</strong> and click on <strong>Save</strong></li>
 <li>Select <strong>GREEN</strong> for <i>Interface</i>, enter '80' for the <i>destination port</i> and click on the <strong>Add</strong> button.</li>
 <li>Select <strong>GREEN</strong> for <i>Interface</i>, enter '25' for the <i>destination port</i> and click on the <strong>Add</strong> button.</li>
 </ol>
