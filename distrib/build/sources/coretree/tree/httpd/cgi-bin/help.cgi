@@ -10,7 +10,19 @@ use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
 # What do we need help with?
-my $needhelpwith = $ENV{'QUERY_STRING'};
+(my $tmp, $modname, $needhelpwith) = split("/", $ENV{'QUERY_STRING'});
+
+if ($tmp ne "mods")
+{
+	$needhelpwith = $tmp;
+	$tmp = "";
+	$modname = "";
+	$helpPath = "";
+}
+else
+{
+	$helpPath = "/var/smoothwall/mods/$modname";
+}
 
 unless ($needhelpwith =~ /^[A-Za-z0-9\.]+$/) {
 	$needhelpwith = 'index.cgi';
@@ -37,15 +49,13 @@ unless ($needhelpwith =~ /^[A-Za-z0-9\.]+$/) {
 if ($uisettings{'ALWAYS_ENGLISH'} ne 'off')
 {
   # Read the help file, if any
-  # Mods (checked first) can replace the stock help (checked last)
-  while (</var/smoothwall/mods/*/httpd/html/help/$needhelpwith.html.en /httpd/html/help/$needhelpwith.html.en>)
+  while (<$helpPath/httpd/html/help/$needhelpwith.html.en>)
   {
     if (-f $_)
     {
       open (FILE, $_);
       # include all English glossaries
-      # mods can override/supplement stock glossaries
-      while (</usr/lib/smoothwall/langs/glossary.en.pl /var/smoothwall/mods/*/usr/lib/smoothwall/langs/glossary.en.pl>)
+      while (<$helpPath/usr/lib/smoothwall/langs/glossary.en.pl>)
       {
         if (-f $_)
         {
@@ -55,17 +65,18 @@ if ($uisettings{'ALWAYS_ENGLISH'} ne 'off')
       last;
     }
   }
-} else {
+}
+else
+{
   # Read the help file, if any
-  # Mods (checked first) can replace the stock help (checked last)
-  while (</var/smoothwall/mods/*/httpd/html/help/$needhelpwith.html.$language /httpd/html/help/$needhelpwith.html.$language >)
+  while (<$helpPath/httpd/html/help/$needhelpwith.html.$language>)
   {
     if (-f $_)
     {
       open (FILE, $_);
       # include all $language glossaries
       # mods can override/supplement stock glossaries
-      while (</usr/lib/smoothwall/langs/glossary.${language}.pl /var/smoothwall/mods/*/usr/lib/smoothwall/langs/glossary.${language}.pl>)
+      while (<$helpPath/usr/lib/smoothwall/langs/glossary.${language}.pl>)
       {
         if (-f $_)
         {

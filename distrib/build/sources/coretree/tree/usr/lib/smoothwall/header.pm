@@ -6,6 +6,7 @@
 
 package header;
 require Exporter;
+use Data::Dumper;
 @ISA = qw(Exporter);
 
 # define the Exportlists.
@@ -27,6 +28,11 @@ sub requireConditional
   if (-f $incFile)
   {
     require $incFile;
+    return true;
+  }
+  else
+  {
+    return false;
   }
 }
 
@@ -54,6 +60,7 @@ my $span = 0;
 
 $swroot = '/var/smoothwall';
 $thisscript = basename($ENV{'SCRIPT_NAME'});
+
 use Net::Domain qw(hostname hostfqdn hostdomain);
 my $hostname = hostfqdn();
 
@@ -90,9 +97,20 @@ require "/usr/lib/smoothwall/langs/base.pl";
 
 # Pull in the stock alertboxes.en.pl and all the mods' alertboxes.en.pl files.
 require "/usr/lib/smoothwall/langs/alertboxes.en.pl";
+%abouttext = %baseabouttext;
+undef %baseabouttext;
 while (</var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.en.pl>)
 {
-  requireConditional $_;
+  if (requireConditional $_)
+  {
+    my $modPath = $_;
+    $modPath =~ s=/var/smoothwall/(mods/[^/]+)/usr/lib/smoothwall/langs/.*=\1=;
+    foreach $idx (%baseabouttext)
+    {
+      $abouttext{"$modPath/$idx"} = $baseabouttext{$idx};
+    }
+    undef $baseabouttext;
+  }
 }
 if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
 {
@@ -101,12 +119,22 @@ if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
     $baseabouttext{$key} = "[$baseabouttext{$key}]"
   }
   requireConditional "/usr/lib/smoothwall/langs/alertboxes.${language}.pl";
+  %abouttext = ( %abouttext, %baseabouttext);
+  undef %baseabouttext;
   while (</var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.${language}.pl>)
   {
-    requireConditional $_;
+    if (requireConditional $_)
+    {
+      my $modPath = $_;
+      $modPath =~ s=/var/smoothwall/(mods/[^/]+)/usr/lib/.*=\1=;
+      foreach $idx (%baseabouttext)
+      {
+        $abouttext{"$modPath/$idx"} = $baseabouttext{$idx};
+      }
+      undef $baseabouttext;
+    }
   }
 }
-require "/usr/lib/smoothwall/langs/alertboxes.base.pl";
 
 
 # Display the page HTTP header
@@ -128,84 +156,146 @@ sub showmenu
 	$scriptname = $_[0];
 
 	# load the list of sections from the relevant locations.
-	my @rawfiles = <"/var/smoothwall/mods/*/usr/lib/smoothwall/menu/*" "/usr/lib/smoothwall/menu/*">;
+	my @rawsections = <"/var/smoothwall/mods/*/usr/lib/smoothwall/menu/*" "/usr/lib/smoothwall/menu/*">;
 
-	# Strip the path off; use that as a hash key to store the full paths.
-	foreach my $rawfile (@rawfiles) {
-		my $idx = $rawfile;
+	# Strip the path off to get the section name; use that as a hash key to store unique sections
+print STDERR "Fetch unique section indices...\n";
+	foreach my $rawsection (@rawsections) {
+		my $idx = $rawsection;
+		chomp $idx;
 		$idx =~ s=.*/==;
-		$files{$idx} = $rawfile;
+print STDERR "  section idx = $idx\n";
+		$sections{$idx} = 1;
 	}
 
 	my $first = "";
 
 	my $menu_html;
 	my @clear_sections;
+	my $file;
 
-	foreach my $filekey ( sort(keys(%files)) ){
-		my $file = $files{$filekey};
-		chomp $file;
-		if ( -d "$file/" ){
-			# this is a section ....
-			opendir(DIR2, "$file/");
-			my @pages = grep {/\.list/} readdir(DIR2);
+        # For each unique section
+	foreach my $sectionkey ( sort(keys(%sections)) )
+	{
+print STDERR "                    \n==========          \nBuild menus for section $sectionkey\n";
+		my %pages;
+		my @tempmenu;
+		my $section = "no";
 
-			my $section = "no";
-			my @tempmenu;
+		# Get all .list files in them
+print STDERR "  Fetch .list files for $sectionkey\n";
+                my @lists = </usr/lib/smoothwall/menu/$sectionkey/*.list>;
+		@lists = (@lists, </var/smoothwall/mods/*/usr/lib/smoothwall/menu/$sectionkey/*.list>);
+#print STDERR Dumper @lists;
 
-			foreach my $page ( sort @pages ){
-				my $detail;
-				open $detail, "<$file/$page" or next;
-				my ( $title, $link ) = split /:/, <$detail>;
-				chomp $link;
-				my ( $menu, $pos ) = ( $file =~ /(\d{2})(\d{2}).*/ );
-				my $active;
-				my ( $link2 ) = ( $link =~/([^\/]*)$/ );
-				if ( $link2 eq $thisscript ){
-					$section = "yes";
-					$active = "true" 
-				}
-				push @tempmenu, { 'title' => $title, 'href' => $link, 'active' => $active };
+		# Store the full paths by .list filename in assoc. array.
+		foreach my $list (@lists)
+		{
+			my $idx = basename($list);
+			$pages{$idx} = dirname($list);
+		}
+			
+		# Traverse through the UI pages (*.list)
+print STDERR "  Prepare menu items for $sectionkey\n";
+		foreach my $page ( sort(keys(%pages)))
+		{
+print STDERR "    page = $page\n";
+			# Set $menuprefix and $file (used to be set differently in SWE3.0)
+			my $menuprefix = dirname($pages{$page});
+print STDERR "    menuprefix = $menuprefix\n";
+			my $urlPath = $menuprefix;
+			if ( $urlPath =~ /^\/var\/smoothwall\/mods/ )
+			{
+				$urlPath =~ s=/var/smoothwall/mods/==;
+				$urlPath =~ s=/.*==;
+				$urlPath = "/cgi-bin/mods/".$urlPath."/";
 			}
+			else
+			{
+				$urlPath = "/cgi-bin/";
+			}
+			$file = basename($pages{$page});
+#print STDERR "    file=$file\n";
+			open DETAIL, "<$menuprefix/$file/$page" or next;
+			my $listLine = <DETAIL>;
+			close DETAIL;
+			chomp $listLine;
+			# next if the file is empty or conains a bare ':', or contains '#erase stock'
+			next if ($listLine eq "" or $listLine eq ":" or $listLine eq "#erase stock");
+			my ( $title, $link ) = split(/:/, $listLine);
+			my ( $menu, $pos ) = ( $file =~ /(\d{2})(\d{2}).*/ );
+			my $active = "";
+			#my ( $link2 ) = ( $link =~/([^\/]*)$/ );
+#print STDERR "    menu script=$urlPath$link\n    this script=$ENV{'SCRIPT_NAME'}\n";
+			if ( $urlPath.$link eq $ENV{'SCRIPT_NAME'} )
+			{
+print STDERR "      this menu is ACTIVE\n";
+				$section = "yes";
+				$active = "true";
+				$helpPath = $urlPath;
+				if ($helpPath =~ m=.*/mods/.*=)
+				{
+					$helpPath =~ s=/cgi-bin/==;
+				}
+				else
+				{
+					$helpPath = "";
+				}
+			}
+			push @tempmenu, { 'title' => $title, 'href' => $link, 'active' => $active, 'urlPath' => $urlPath };
+		}
+print STDERR "  Prepared menu data\n  ----------\n";
+print STDERR Dumper @tempmenu;
+print STDERR "  ----------\n";
 
-			if ( scalar @pages > 0 ){
-				my ( $section_title ) = ( $file =~/\d{4}_(.*)/ );
+		if ( scalar(@tempmenu) > 0 )
+		{
+print STDERR "  Build drop-down menu...\n";
+print STDERR "    file = $file\n";
+			my ( $section_title ) = ( $file =~/\d{4}_(.*)/ );
+print STDERR "    section_title=$section_title\n";
 
-				if ( $section eq "yes" ){
-					@menu = @tempmenu;
-					$menu_html .= "<td>$first<a class='activemenu' href='/cgi-bin/$menu[ 0 ]->{'href'}'>$section_title</a></td>";
+print STDERR "    ACTIVE=$section\n";
+			if ( $section eq "yes" )
+			{
+print STDERR "    helpPath=$helpPath\n";
+				@menu = @tempmenu;
+				$menu_html .= "<td>$first<a class='activemenu' href='$menu[ 0 ]->{'urlPath'}$menu[ 0 ]->{'href'}'>$section_title</a></td>";
+			} else {
+				unless ( defined $uisettings{'MENU'} and $uisettings{'MENU'} eq "off")
+				{
+					$menu_html .= qq |
+    <td>
+      <div class='menushaddow' id='${section_title}shadow'>
+|;
+					$menu_html .= &showhovermenu( @tempmenu );
+					$menu_html .= qq |
+      </div>
+|;
+					$menu_html .= qq |
+      <div class='menu' id='$section_title'
+           onMouseOver="menu_show('$section_title')"
+           onMouseOut="menu_clear();">
+|;
+					$menu_html .= &showhovermenu( @tempmenu );
+					$menu_html .= qq |
+      </div>
+    </td>
+    <td onMouseOver="menu_show('$section_title');"
+        onMouseOut="menu_clear();">
+      $first<a class='menu' href="$tempmenu[ 0 ]->{'urlPath'}$tempmenu[ 0 ]->{'href'}">$section_title</a>
+    </td>
+|;
 				} else {
-					unless ( defined $uisettings{'MENU'} and $uisettings{'MENU'} eq "off"){
-						$menu_html .= qq { 
-							<td><div class='menushaddow' id='${section_title}shadow'> 
-						};
-						$menu_html .= &showhovermenu( @tempmenu );
-						$menu_html .= qq { 
-							</div>
-						};
-						$menu_html .= qq { <div class='menu' id='$section_title' 
-							onMouseOver="menu_show('$section_title')" 
-							onMouseOut="menu_clear();"> 
-						};
-						$menu_html .= &showhovermenu( @tempmenu );
-						$menu_html .= qq { 
-							</div></td>	
-							<td 	onMouseOver="menu_show('$section_title')" 
-								onMouseOut="menu_clear();">
-								$first<a class='menu' href='/cgi-bin/$tempmenu[ 0 ]->{'href'}'>$section_title</a>
-							</td>
-						};
-					} else {
-						$menu_html .= qq { 
-							<td>
-								$first<a class='menu' href='/cgi-bin/$tempmenu[ 0 ]->{'href'}'>$section_title</a>
-							</td>
-						};
-					}
-					push @clear_sections, $section_title;
+					$menu_html .= qq |
+    <td>
+      $first<a class='menu' href="$tempmenu[ 0 ]->{'urlPath'}$tempmenu[ 0 ]->{'href'}">$section_title</a>
+    </td>
+|;
 				}
+				push @clear_sections, $section_title;
 			}
-
+			# Set the displayed separator between items
 			$first = " | ";
 		}
 	}
@@ -246,7 +336,7 @@ END
 	<td colspan='2' class='quicklink'>
 		<!-- Quicklink Section -->
 		<p style="margin:2px; vertical-align:middle">
-		<a href='/cgi-bin/shutdown.cgi'>$tr{'ssshutdown'}</a> | <a href="javascript:displayHelp('$thisscript');" title="This will popup a new window with the requested help file">help <img src="/ui/img/help.gif" alt="" ></a></p>
+		<a href='/cgi-bin/shutdown.cgi'>$tr{'ssshutdown'}</a> | <a href="javascript:displayHelp('$helpPath$thisscript');" title="This will popup a new window with the requested help file">help <img src="/ui/img/help.gif" alt="" ></a></p>
 	</td>
 </tr>
 
@@ -271,9 +361,9 @@ sub showhovermenu
 	foreach my $item ( @tempmenu ){
 		my $width = 8 + (8 * length( $tr{ $item->{'title'} } ));
 		if ( defined $item->{'active'} and $item->{'active'} eq "true" ){
-			$html .= "<a class='menushade' href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
+			$html .= "<a class='menushade' href='$item->{'urlPath'}$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
 		} else {
-			$html .= "<a class='menushade' href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
+			$html .= "<a class='menushade' href='$item->{'urlPath'}$item->{'href'}'>$tr{$item->{'title'}}</a><br/>";
 		}
 		$span++;
 		$remaining -= $width;
@@ -284,11 +374,11 @@ sub showhovermenu
 sub showsection
 {
 	my @menu = @_;
-	print <<END
+	print <<END;
 <table class='mainmenu'>
 <tr>
 END
-;
+
 	my $remaining = 795;
 
 	$span = 0;
@@ -296,9 +386,9 @@ END
 	foreach my $item ( @menu ){
 		my $width = 8 + (8 * length( $tr{ $item->{'title'} } ));
 		if ( defined $item->{'active'} and $item->{'active'} eq "true" ){
-			print "<td class='activetab' style='width: ".( $width + 16 )."px;'><a href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a> </td>";
+			print "<td class='activetab' style='width: ".( $width + 16 )."px;'><a href='$item->{'urlPath'}$item->{'href'}'>$tr{$item->{'title'}}</a> </td>";
 		} else {
-			print "<td  class='inactivetab' style='width: ${width}px;'><a href='/cgi-bin/$item->{'href'}'>$tr{$item->{'title'}}</a> </td>";
+			print "<td  class='inactivetab' style='width: ${width}px;'><a href='$item->{'urlPath'}$item->{'href'}'>$tr{$item->{'title'}}</a> </td>";
 		}
 		$span++;
 		$remaining -= $width;
@@ -306,14 +396,13 @@ END
 
 	$span++;
 
-	print <<END
+	print <<END;
 	<td width='${remaining}px' class='endtab'>&nbsp;</td>
 	<td class='topend'></td>
 </tr>
 <tr>
 	<td class='mainbody' colspan='$span'>
 END
-;
 
 }
 
@@ -346,7 +435,7 @@ END
 
 	if ( $thissection ne "help" ) {
 		$cellwidth = $pagewidth / 2;
-		print <<END
+		print <<END;
 <body>
 <table class='frame' cellpadding='0' cellspacing='0'>
 <tr style="margin:0">
@@ -377,16 +466,14 @@ END
 
 </td>
 END
-		;
+
 		&showmenu($thissection);
-		print <<END
+		print <<END;
 END
-		;
 	} else {
-		print <<END
+		print <<END;
 <body onLoad="window.focus()" style="background:white">
 END
-		;
 	}
 
 }
@@ -891,6 +978,16 @@ sub validhostname
 sub basename {
 	my ($filename) = @_;
 	$filename =~ m!.*/(.*)!;
+	if ($1) {
+		return $1;
+	} else {
+		return $filename;
+	}
+}
+
+sub dirname {
+	my ($filename) = @_;
+	$filename =~ s=(.*)/.*=\1=;
 	if ($1) {
 		return $1;
 	} else {
