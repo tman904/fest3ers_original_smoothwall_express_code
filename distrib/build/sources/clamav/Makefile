@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 PACKAGE = clamav
-VERSION = 0.98.3
+VERSION = 0.98.4
 
 BASE_URL = http://heanet.dl.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)/$(VERSION)
 
