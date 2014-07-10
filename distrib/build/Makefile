@@ -271,6 +271,11 @@ predownload:
 	          echo -e "\n$$I predownload failed.\n"; \
 	          exit 1; \
 	        fi \
+	      else \
+		if [ $$I == "./daq" -o $$I == "./snort" ]; then \
+		  echo -e "\ntoolcrib/get-snort-ver.sh could not get current $${I/.\//} version or URL" >&2; \
+		  exit 1; \
+		fi \
 	      fi \
 	    fi; \
 	  done \
