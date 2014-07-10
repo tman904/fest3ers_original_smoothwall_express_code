@@ -11,7 +11,7 @@ if [ $# -ne 2 ]; then
 fi
 
 # Deal with snort's eccentricity. Look up the latest version and return it.
-ANCHOR=`wget -q -O- "http://www.snort.org/snort-downloads/" \
+ANCHOR=`wget -q -O- "http://www.snort.org/downloads/" \
        | egrep "${2}-[0-9.]*tar\.gz" \
        | head -1`
 
