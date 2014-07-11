@@ -11,7 +11,15 @@ PACKAGE = snort
 # Deal with snort: get the latest version number dynamically. :)
 #
 VERSION := $(shell ../../toolcrib/get-snort-ver.sh -v $(PACKAGE))
+ifeq ($(VERSION),)
+  $(shell echo "get-snort-ver.sh cannot get current $(PACKAGE) version" >&2)
+  $(error get-snort-ver.sh cannot get current $(PACKAGE) version)
+endif
 URL := $(shell ../../toolcrib/get-snort-ver.sh -u $(PACKAGE))
+ifeq ($(URL),)
+  $(shell echo "get-snort-ver.sh cannot get current $(PACKAGE) URL" >&2)
+  $(error get-snort-ver.sh cannot get current $(PACKAGE) URL)
+endif
 
 BASE_URL = http://www.snort.org
 
