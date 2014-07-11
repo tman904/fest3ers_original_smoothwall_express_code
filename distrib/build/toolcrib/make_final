@@ -232,7 +232,6 @@ fi
       #build libart_lgpl  # 1/2/2012: no longer needed?
       build libpng
       build libdnet
-      build daq
       build pixman
       build libffi
       build glib
@@ -262,10 +261,16 @@ fi
       build dosfstools
 
       build rrdtool
+
+      # As more of the internet changes to SSL, openssl, perl-mods and
+      #   cacert_bundle will have to be built sooner.
+
       # cacert-bundle depends on openssl and on perl-mods which depends
       #   on rrdtool.
       build perl-mods
       build cacert-bundle
+      # daq (and snort) version check depend on cacert-bundle
+      build daq
       build sqlite
 
       touch crumbs/Final.grp4.compiled
