@@ -8,7 +8,7 @@ include ../Makefile.conf
 
 PACKAGE = rrdtool
 
-VERSION = 1.4.5
+VERSION = 1.4.8
 
 BASE_URL = http://oss.oetiker.ch/rrdtool/pub/
 
