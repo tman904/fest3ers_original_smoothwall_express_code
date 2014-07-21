@@ -35,10 +35,15 @@ my $url_limit = 8124;
 # and turn on some optimisations ? )
 
 open(CPU, "/proc/cpuinfo") or die "Could not open /proc/cpuinfo";
-my ($junk,$mhz,$model,$vid);
+my ($junk,$mhz,$model,$vid,$tmp,$coreCount);
+$mhz = 0;
 while(<CPU>)
 {
-	if($_ =~ m/^cpu MH/) { ($junk,$mhz) = split(/\:/,$_,-1); }
+	$coreCount++ if($_ =~ m/^processor/);
+	if($_ =~ m/^cpu MH/) {
+		($junk,$tmp) = split(/\:/,$_,-1);
+       		$mhz = $tmp if ($tmp > $mhz);
+	}
 	if($_ =~ m/^vendor_id/) { ($junk,$vid) = split(/\:/,$_,-1); }
 	if($_ =~ m/^model\sna/) { ($junk,$model) = split(/\:/,$_,-1); }
 }
@@ -78,7 +83,7 @@ while(<DISK>)
 	foreach $item (@test)
 	{
 		unless($item eq "") { push(@this,$item); }
-		if($this[3] eq "hda") { $disk = $this[2]; }
+		if($this[3] =~ /[hsv]da$|cciss$/) { $disk = $this[2]; }
 	}
 }
 close(DISK);
@@ -88,7 +93,7 @@ close(DISK);
 # support.
 my $lspci;
 
-open(PIPE, '-|') || exec( '/usr/sbin/lspci' );
+open(PIPE, '-|') || exec( '/usr/sbin/lspci -nn' );
 while ( my $line = <PIPE>) { 
 	chomp $line;
 	my ( $busid, $type, $name ) = ( $line =~ /([^\s]+)\s+([^:]+):\s+(.*)/ );
@@ -102,21 +107,38 @@ close(PIPE);
 
 my $usbbus;
 
-if (open(USB, "/proc/bus/usb/devices"))
-{
-	while( my $line = <USB>)
-	{
-		chomp $line;
-		$line =~s/#//g;
-		$usbbus .= "$line|";
-	}
-	close(USB);
+if (! open(USB, "/proc/bus/usb/devices")) {
+	open(USB, '-|') || exec( '/usr/bin/lsusb' );
 }
+while( my $line = <USB>)
+{
+	chomp $line;
+	$line =~s/#//g;
+	$usbbus .= "$line|";
+}
+close(USB);
 
+# construct the regular information
+print "
+  cpu_vid = $vid
+  cpu_model = $model ($coreCount cores)
+  cpu_mhz = $mhz
+  mem = $mem
+  hdd = $disk
+  inst_type = $eth{'CONFIG_TYPE'}
+  isdn = $pppsettings{'COMPORT'}
+  version = $version
+  ADSL_DEVICE = $adslsettings{'DEVICE'}
+  ADSL_ECITYPE = $adslsettings{'ECITYPE'}
+  ISDN_TYPE = $isdnsettings{'TYPE'}
+  LSPCI = $lspci
+  USBBUS = $usbbus
+";
+exit;
 # construct the regular information
 my $nonextra = join('&', 
 	'cpu_vid=' . &_urlencode($vid),
-	'cpu_model=' . &_urlencode($model),
+	'cpu_model=' . &_urlencode($model.' ($coreCount cores)'),
 	'cpu_mhz=' . &_urlencode($mhz),
 	'mem=' . &_urlencode($mem),
 	'hdd=' . &_urlencode($disk),
