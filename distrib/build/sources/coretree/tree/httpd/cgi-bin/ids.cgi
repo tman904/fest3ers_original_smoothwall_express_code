@@ -320,51 +320,28 @@ if (($snortsettings{'ACTION'} eq $tr{'save'}) &&
     ($formdownload eq 'on') &&
     !$errormessage)
 {
-  # Get available ruleset versions
-  my $tmp = `wget -O - http://www.snort.org/snort-rules -q|egrep "snortrules-snapshot[^.]*.tar.gz" | sed -e's/.*shot-//' -e 's/\.tar.*//' |sort -r |uniq`;
-  chomp $tmp;
-  my @rulesetversions = split("\n", $tmp);
-
   # Get installed snort version
-  my $origsnortversion = &readvalue('/usr/lib/smoothwall/snortversion');
-  my $snortversion = $origsnortversion;
+  my $snortversion = &readvalue('/usr/lib/smoothwall/snortversion');
   $snortversion =~ s/\.//g;
   while (length $snortversion < 4)
   {
     $snortversion = $snortversion.'0';
   }
   
-  # Find a ruleset version compatible (<=) with the installed version
-  # and try to fetch it
-  my $i, $useversion = "";
-  my $runmsg = '';
-  for ($i=0; $i<=$#rulesetversions; $i++)
+  # Try to fetch the ruleset
+  &runoinkmaster($snortversion);
+  if ($errormessage ne "")
   {
-    next if ($rulesetversions[$i] > $snortversion);
-    $errormessage = '';
-    $useversion = $rulesetversions[$i];
-    &runoinkmaster($useversion);
-    if ($errormessage ne "")
-    {
-      $runmsg .= $errormessage;
-    }
-    else
-    {
-      last;
-    }
+    $runmsg .= $errormessage;
   }
 
-  # Warn if no ruleset could be found or fetched
-  if ($i > $#rulesetversions)
+  # Display DL errors encountered
+  if ($runmsg ne "")
   {
-    # Display DL errors encountered
-    if ($runmsg ne "")
-    {
-      $errormessage .= $runmsg;
-    }
-    $errormessage .= "Could not fetch a ruleset compatible with snort version $origsnortversion.<br />";
+    $errormessage .= $runmsg;
+    $errormessage .= "Could not fetch the $snortversion ruleset.<br />";
+    print STDERR $errormessage;
   }
-print STDERR $errormessage;
 
   if ($snortsettings{'ENABLE_SNORT'} eq 'on' and !$errormessage)
   {  
@@ -388,7 +365,7 @@ document.getElementById('status').innerHTML = '$errormessage';
   {
     print "
 <script language='javascript' type='text/javascript'>
-  document.getElementById('status').innerHTML = 'Installation complete (ruleset v$useversion)';
+  document.getElementById('status').innerHTML = 'Installation complete (ruleset v$snortversion)';
   document.getElementById('progress').style.width = '${maxwidth}em';
   document.getElementById('ENABLE_SNORT').disabled = '';
   //document.location = '/cgi-bin/ids.cgi';
