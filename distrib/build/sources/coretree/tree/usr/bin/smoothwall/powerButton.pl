@@ -11,8 +11,8 @@ $structSize = 24 if ($sysType =~ "x86_64");
 $structSize = 16 if ($sysType =~ "i.86");
 
 # Variables named as used by linux kernel; see linux/input.h
-$EV_KEY = 1
-$KEY_POWER = 116
+$EV_KEY = 1;
+$KEY_POWER = 116;
 # The event value wanted is '1'; (pressed, I think)
 
 # Find which input device is the power button
