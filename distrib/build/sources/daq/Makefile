@@ -21,7 +21,7 @@ ifeq ($(URL),)
   $(error get-snort-ver.sh cannot get current $(PACKAGE) URL)
 endif
 
-BASE_URL = http://www.snort.org
+BASE_URL = https://www.snort.org/downloads/snort
 
 DIR = $(PACKAGE)-$(VERSION)
 
@@ -33,15 +33,5 @@ CONFIG_OPTS += --disable-bundled-modules --enable-nfq-module \
 #
 # This makefile should always get the latest version of snort, whatever it is.
 # However, the build might fail if the pidfile fix patch is no longer correct.
-
-DOWNLOAD = yes
-download:
-	@if [ ! -e ../../downloads/$(TARBALL)$(EXTENSION).done ]; then \
-	  wget -O ../../downloads/$(TARBALL)$(EXTENSION) $(BASE_URL)$(URL); \
-	  if [ $$? -eq 0 ]; then \
-	    touch ../../downloads/$(TARBALL)$(EXTENSION).done; \
-	  fi; \
-	fi
-
 
 include ../Makefile.rules
