@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use File::Basename;
 
 my %cgiparams;
 # Maps a nice printable name to the changing part of the pid file, which
@@ -26,18 +27,25 @@ if (open(FILE, "${swroot}/red/iface"))
 my %servicenames;
 my %coreservices;
 
-opendir(DIR, "/usr/lib/smoothwall/services/");
-my @files = grep {!/\./} readdir(DIR);
+# Adapted from Steve McNeill's ModInstall
+# Find all services and prepare them.
+my @files = <"/usr/lib/smoothwall/services" "/var/smoothwall/mods/*/usr/lib/smoothwall/services">;
+chomp @files;
 
 foreach my $file ( sort @files ){
-	open ( my $line, "</usr/lib/smoothwall/services/$file" ) or next;
-	my ( $name, $rel ) = split /,/, <$line>;
-	close $line;
+        my $dirname  = dirname($file);
+        my $basename = basename($file);
+
+        open (SERVICE, "<$dirname/$basename" ) or next;
+	my ( $name, $rel ) = split /,/, <SERVICE>;
+	close SERVICE;
+
 	chomp $name;
-	my $servicename = $file;
+        my $servicename = $basename;
 	$servicename =~s/\[RED\]/$iface/ig;
 	$servicename =~s/-/\//g;
-	chomp $rel;
+
+        if ($rel) {chomp $rel; };
 	if ( defined $rel and $rel eq "core" ){
 		$coreservices{ $tr{ $name } } = $servicename;
 	} else {	

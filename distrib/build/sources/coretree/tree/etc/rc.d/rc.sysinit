@@ -182,6 +182,12 @@ echo "Loading filesystems"
 /sbin/modprobe msdos
 /sbin/modprobe vfat
 /sbin/modprobe nls_cp437
+# Adapted from Steve McNeill's ModInstall
+echo "Loading mods' modules"
+# if any; limited to .../mods/*/etc/rc.d
+find /var/smoothwall/mods/*/etc/rc.d -name 0[0-9]rc.sysinit | sort | while read i; do
+  $i;
+done
 
 echo "Loading IPSEC"
 /sbin/modprobe ipsec
@@ -191,6 +197,11 @@ echo "Starting smoothd"
 
 echo "Rotating logs"
 /usr/sbin/logrotate /etc/logrotate.conf
+# Adapted from Steve McNeill's ModInstall
+# and mods' log files, if any
+find /var/smoothwall/mods/*/etc/logrotate.d -type f | while read i; do
+  /usr/sbin/logrotate "$i"
+done
 
 echo
 echo "Initializing  networking"
@@ -215,6 +226,13 @@ echo "  POP3 scanner (if enabled)"
 /usr/bin/smoothcom p3scanrestart
 #echo "  Guardian (if enabled)"
 #/usr/bin/smoothcom guardianrestart
+
+# Adapted from Steve McNeill's ModInstall
+echo "Running mods' run level scripts"
+# if any; limited to .../mods/*/etc/rc.d
+find /var/smoothwall/mods/*/etc/rc.d -name [1-9][0-9]rc.sysinit | sort | while read i; do
+  $i;
+done
 
 echo
 echo "Finishing startup"
