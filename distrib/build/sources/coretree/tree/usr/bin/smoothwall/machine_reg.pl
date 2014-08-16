@@ -119,23 +119,6 @@ while( my $line = <USB>)
 close(USB);
 
 # construct the regular information
-print "
-  cpu_vid = $vid
-  cpu_model = $model ($coreCount cores)
-  cpu_mhz = $mhz
-  mem = $mem
-  hdd = $disk
-  inst_type = $eth{'CONFIG_TYPE'}
-  isdn = $pppsettings{'COMPORT'}
-  version = $version
-  ADSL_DEVICE = $adslsettings{'DEVICE'}
-  ADSL_ECITYPE = $adslsettings{'ECITYPE'}
-  ISDN_TYPE = $isdnsettings{'TYPE'}
-  LSPCI = $lspci
-  USBBUS = $usbbus
-";
-exit;
-# construct the regular information
 my $nonextra = join('&', 
 	'cpu_vid=' . &_urlencode($vid),
 	'cpu_model=' . &_urlencode($model.' ($coreCount cores)'),
