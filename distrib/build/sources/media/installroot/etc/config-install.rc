@@ -65,6 +65,10 @@ while [ 1 -eq 1 ]; do
     if [ -e "${device}/device" ]; then
       UDEVINFO="/sbin/udevadm info --path=${PWD}/${device} --query=all"
       ID_TYPE=`$UDEVINFO | grep ID_TYPE | sed -e 's/.*=//'`
+      # virtio disks don't follow the custom
+      if [ -z "$ID_TYPE" ]; then
+        $UDEVINFO | egrep "DEVPATH.*virtio" >/dev/null 2>&1 && ID_TYPE="disk"
+      fi
       DEVNAM=`$UDEVINFO | grep DEVNAM | sed -e 's|.*=/dev/||'`
       set `cat ${device}/size`
       if [ $1 -gt 0 ]; then
@@ -76,7 +80,12 @@ while [ 1 -eq 1 ]; do
       [ -z "$model" ] && model=`cat ${device}/device/model 2>&1 | sed -e 's/ /-/g'`
       [ -z "$model" ] && model="UNK_MODEL"
       serial=`$UDEVINFO | grep ID_SERIAL_SHORT | sed -e 's/.*=//'`
-      [ -z "$serial" ] && serial=`cat ${device}/device/serial 2>&1 | sed -e 's/ /-/g'`
+      if [ -z "$serial" ]; then
+        # non-virtio disks
+        [ -f "${device}/device/serial" ] && serial=`cat ${device}/device/serial 2>&1 | sed -e 's/ /-/g'`
+        # virtio disks don't follow the custom
+        [ -f "${device}/serial" ] && serial=`cat ${device}/serial 2>&1 | sed -e 's/ /-/g'`
+      fi
       [ -z "$serial" ] && serial="UNK_SERIAL"
       case $ID_TYPE in
         cd)
