@@ -185,9 +185,11 @@ echo "Loading filesystems"
 # Adapted from Steve McNeill's ModInstall
 echo "Loading mods' modules"
 # if any; limited to .../mods/*/etc/rc.d
-find /var/smoothwall/mods/*/etc/rc.d -name 0[0-9]rc.sysinit | sort | while read i; do
-  $i;
+shopt -s nullglob
+for i in /var/smoothwall/mods/*/etc/rc.d/0[0-9]rc.sysinit; do
+  $i
 done
+shopt -u nullglob
 
 echo "Loading IPSEC"
 /sbin/modprobe ipsec
@@ -199,7 +201,7 @@ echo "Rotating logs"
 /usr/sbin/logrotate /etc/logrotate.conf
 # Adapted from Steve McNeill's ModInstall
 # and mods' log files, if any
-find /var/smoothwall/mods/*/etc/logrotate.d -type f | while read i; do
+find /var/smoothwall/mods/*/etc/logrotate.d -type f 2>/dev/null | while read i; do
   /usr/sbin/logrotate "$i"
 done
 
@@ -230,9 +232,11 @@ echo "  POP3 scanner (if enabled)"
 # Adapted from Steve McNeill's ModInstall
 echo "Running mods' run level scripts"
 # if any; limited to .../mods/*/etc/rc.d
-find /var/smoothwall/mods/*/etc/rc.d -name [1-9][0-9]rc.sysinit | sort | while read i; do
+shopt -s nullglob
+for i in /var/smoothwall/mods/*/etc/rc.d/[1-9][0-9]rc.sysinit; do
   $i;
 done
+shopt -u nullglob
 
 echo
 echo "Finishing startup"
