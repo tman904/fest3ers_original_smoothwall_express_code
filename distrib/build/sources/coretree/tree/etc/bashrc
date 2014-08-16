@@ -34,11 +34,9 @@ locate () { su nobody -c "/usr/bin/locate $*"; }
 
 # Adapted from Steve McNeill's ModInstall
 # Include mods' /bin directories in PATH; but only add each one once.
-for i in `find /var/smoothwall/mods -maxdepth 1 -mindepth 1 -type d`; do
-  if [ -d "$i/bin" ]; then
-    if [[ ":$PATH:" == *":$i/bin:"* ]]; then
-      continue
-    fi
-    PATH=$PATH:$i/bin
-  fi
+# FM: trailing / matches only dirs; nullglob says return nothing when there's nothing.
+shopt -s nullglob
+for i in /var/smoothwall/mods/*/bin/; do
+    [[ ":$PATH:" == *":${i/bin\//bin}:"* ]] || PATH=$PATH:$i
 done
+shopt -u nullglob
