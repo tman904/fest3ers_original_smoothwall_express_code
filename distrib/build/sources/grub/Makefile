@@ -60,7 +60,7 @@ $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: install
 
 CLEAN = yes
 clean:
-	@echo -n "$(PACKAGE) "
+	@echo -n " $(PACKAGE)"
 	@rm -rf $(PACKAGE)-$(VERSION)
 	@rm -rf $(COMPILE_DIR)
 	@rm -rf $(PKG_ROOT)
