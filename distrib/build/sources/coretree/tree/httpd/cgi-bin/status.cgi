@@ -29,7 +29,7 @@ my %coreservices;
 
 # Adapted from Steve McNeill's ModInstall
 # Find all services and prepare them.
-my @files = <"/usr/lib/smoothwall/services" "/var/smoothwall/mods/*/usr/lib/smoothwall/services">;
+my @files = <"/usr/lib/smoothwall/services/*" "/var/smoothwall/mods/*/usr/lib/smoothwall/services/*">;
 chomp @files;
 
 foreach my $file ( sort @files ){
