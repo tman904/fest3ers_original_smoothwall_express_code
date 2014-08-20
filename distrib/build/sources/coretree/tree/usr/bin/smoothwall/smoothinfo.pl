@@ -17,17 +17,22 @@ use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use File::Find;
 use File::Basename;
+use Net::Netmask;
+
+# Data::Dumper is great for displaying arrays and hashes.
+#use Data::Dumper;
+
 
 $SIdir="${swroot}/smoothinfo";
 require "${SIdir}/about.ph";
 
-my (%productdata, %pppsettings, %modemsettings, %netsettings, %smoothinfosettings, %defseclevelsettings, %green_dhcpsettings, %purple_dhcpsettings, %imsettings, %p3scansettings, %sipproxysettings, %proxysettings, %advproxysettings, %filteringsettings, %SSHsettings);
+my (%productdata, %pppsettings, %modemsettings, %netsettings, %smoothinfosettings, %defseclevelsettings, %green_dhcpsettings, %purple_dhcpsettings, %imsettings, %p3scansettings, %sipproxysettings, %proxysettings, %filteringsettings, %SSHsettings);
 
 &readhash("${swroot}/main/productdata", \%productdata);
 &readhash("${swroot}/ppp/settings", \%pppsettings);
 &readhash("${swroot}/modem/settings", \%modemsettings);
-&readhash("${swroot}/ethernet/settings", \%netsettings);
 &readhash("${SIdir}/etc/settings", \%smoothinfosettings);
+&readhash("${swroot}/ethernet/settings", \%netsettings);
 &readhash("${swroot}/main/settings", \%defseclevelsettings);
 # stock services
 &readhash("${swroot}/im/settings", \%imsettings);
@@ -37,9 +42,6 @@ my (%productdata, %pppsettings, %modemsettings, %netsettings, %smoothinfosetting
 &readhash("${swroot}/snort/settings", \%snortsettings);
 &readhash("${swroot}/remote/settings", \%SSHsettings);
 # mod services
-if (-e "${swroot}/proxy/advanced/settings") {
-  &readhash("${swroot}/proxy/advanced/settings", \%advproxysettings);
-}
 if (-e "${swroot}/filtering/settings") {
   &readhash("${swroot}/filtering/settings", \%filteringsettings);
 }
@@ -67,7 +69,7 @@ my $outputfile = "${SIdir}/etc/report.txt";
 #}
 
 # MEMORY
-my $memory = &pipeopen( '/usr/bin/free', '-ot' );
+my $memory = system( '/usr/bin/free', '-ot' );
 chomp ($memory);
 
 # CPU
@@ -134,6 +136,9 @@ foreach (<LSPCI>){
 }
 close (LSPCI);
 
+
+# IF statuses, addrs, pegs, etc.
+
 # Get the 'real' red iface when connected
 if (-e "${swroot}/red/active") {
   open (IFACE, "/var/smoothwall/red/iface")
@@ -143,60 +148,53 @@ if (-e "${swroot}/red/active") {
   close (IFACE);
 }
 
-# IFCONFIG
 my @netconf;
-my @netconf_red = &pipeopen( "/sbin/ifconfig", "$netsettings{'RED_DEV'}" )
-  if ($netsettings{'RED_DEV'});
-foreach (@netconf_red) {
-  $_ =~ s/(\d+)\.(\d+)\.(\d+)\.(\d+)/\[\/b]\[\/color][color=#000000][b]$1\.$2\.$3\.$4\[\/b][\/color\][color=red\][b\]/g;
-}
-@netconf_red = ("[b][color=red]", @netconf_red, "[/color][/b]");
-my @netconf_green = &pipeopen( "/sbin/ifconfig", "$netsettings{'GREEN_DEV'}" ) if ($netsettings{'GREEN_DEV'});
-foreach (@netconf_green) {
-  $_ =~ s/(\d+)\.(\d+)\.(\d+)\.(\d+)/\[\/b]\[\/color][color=#000000][b]$1\.$2\.$3\.$4\[\/b][\/color\][color=green\][b\]/g;
-}
-@netconf_green = ("[b][color=green]", @netconf_green, "[/color][/b]");
-my @netconf_purple = &pipeopen( "/sbin/ifconfig", "$netsettings{'PURPLE_DEV'}" ) if ($netsettings{'PURPLE_DEV'});
-foreach (@netconf_purple) {
-  $_ =~ s/(\d+)\.(\d+)\.(\d+)\.(\d+)/\[\/b]\[\/color][color=#000000][b]$1\.$2\.$3\.$4\[\/b][\/color\][color=purple\][b\]/g;
-}
-@netconf_purple = ("[b][color=purple]", @netconf_purple, "[/color][/b]");
-my @netconf_orange = &pipeopen( "/sbin/ifconfig", "$netsettings{'ORANGE_DEV'}" ) if ($netsettings{'ORANGE_DEV'});
-foreach (@netconf_orange) {
-  $_ =~ s/(\d+)\.(\d+)\.(\d+)\.(\d+)/\[\/b]\[\/color][color=#000000][b]$1\.$2\.$3\.$4\[\/b][\/color\][color=orange\][b\]/g;
-}
-@netconf_orange = ("[b][color=orange]", @netconf_orange, "[/color][/b]");
 
-# Get the active ipsec connections
-open (DEV, "/proc/net/dev");
+# Get the link, addrs and stats for each active IF. GREEN must always be done first
+if ($netsettings{'GREEN_DEV'})  { push (@netconf, &getLinkData($netsettings{"GREEN_DEV"}, "green")); }
+if ($netsettings{'ORANGE_DEV'}) { push (@netconf, &getLinkData($netsettings{"ORANGE_DEV"}, "orange")); }
+if ($netsettings{'PURPLE_DEV'}) { push (@netconf, &getLinkData($netsettings{"PURPLE_DEV"}, "purple")); }
+if ($netsettings{'RED_DEV'})    { push (@netconf, &getLinkData($netsettings{"RED_DEV"}, "red")); }
+
+# Get all IFs that have peg counts
+open (DEV, "proc/net/dev");
 @dev = <DEV>;
+close DEV;
+
+# Tidy up
 chomp @dev;
 shift @dev;
 shift @dev;
+
+# Check 'em all
 foreach (@dev) {
-  next if /eth/;
-  next if /lo/;
-  if (/ipsec/) {
-    ($if,$traffic) = split /:/;
-    ($rx,$tx) = (split /\s+/, $traffic)[1,9];
-    if ($rx > 0 || $tx > 0) { push (@other_interfaces, $if);}
-  }
-}
-my @netconf_lo = &pipeopen( "/sbin/ifconfig", "lo" );
-foreach (@netconf_lo) { $_ =~ s/(\d+)\.(\d+)\.(\d+)\.(\d+)/[b][color=#000000]$1\.$2\.$3\.$4\[\/color\][\/b]/g; }
-@netconf = (@netconf, @netconf_lo);
-if (@other_interfaces){
-  foreach (@other_interfaces) {
-  @ifconfig = &pipeopen( "/sbin/ifconfig", "$_" );
-  foreach (@ifconfig) { $_ =~ s/(\d+)\.(\d+)\.(\d+)\.(\d+)/[b][color=#000000]$1\.$2\.$3\.$4\[\/color\][\/b]/g; }
-  push (@netconf, @ifconfig);
+
+  # Split and trim
+  my @tmp = split;
+  $tmp[0] =~ s/://;
+
+  # Skip the obvious; we don't want repeats
+  next if ($netsettings{'GREEN_DEV'} && $tmp[0] =~ /$netsettings{'GREEN_DEV'}/);
+  next if ($netsettings{'ORANGE_DEV'} && $tmp[0] =~ /$netsettings{'ORANGE_DEV'}/);
+  next if ($netsettings{'PURPLE_DEV'} && $tmp[0] =~ /$netsettings{'PURPLE_DEV'}/);
+  next if ($netsettings{'RED_DEV'} && $tmp[0] =~ /$netsettings{'RED_DEV'}/);
+
+  # If an IF saw traffic, get its info
+  if ($tmp[1] > 0 || $tmp[2] > 0 || $tmp[9] > 0 || $tmp[10] > 0 ) {
+    push (@netconf, &getLinkData($tmp[0], "gray"));
   }
 }
 
+
 # 'LIVE' NET SETTINGS
-# Define the tag that shows in the 'Network settings 2' report when there is a discrepancy
-# between the settings and the actual values on a live connection
-my $string = " [/b][/size][size=85][i]<not applicable>[/i][/color][color=#FF0000][b]";
+
+my ($line, @newarray, $block, $netmask, $bcast, $bcast_tag, $netmask_tag, @livered);
+
+# Define the 'not used' tags that show when values in net settings are no used.
+my $orange_notused = " [/b][/color][/size][size=85][color=grey][i]<not used>[/i][/color][/size][size=90][color=orange][b]";
+my $purple_notused = " [/b][/color][/size][size=85][color=grey][i]<not used>[/i][/color][/size][size=90][color=purple][b]";
+my $red_notused = " [/b][/color][/size][size=85][color=grey][i]<not used>[/i][/color][/size][size=90][color=red][b]";
+
 # Define the actual values on a pppoX connected system
 my ($dns1_tag, $dns2_tag, $redIP_tag, $remoteIP_tag, $bcast_tag, $netmask_tag);
 if (($netsettings{'RED_TYPE'} eq 'DHCP' || 
@@ -205,39 +203,48 @@ if (($netsettings{'RED_TYPE'} eq 'DHCP' ||
   open (DNS1, "</var/smoothwall/red/dns1")
     or warn "Could not open /var/smoothwall/red/dns1: $!";
   chomp($redDNS1 = <DNS1>);
-  if ($netsettings{'DNS1'} ne $redDNS1) { $dns1_tag = "$string"; }
+  if ($netsettings{'DNS1'} ne $redDNS1) { $dns1_tag = "$red_notused"; }
   $netsettings{'DNS1'} = $redDNS1;
   open (DNS2, "</var/smoothwall/red/dns2")
     or warn "Could not open /var/smoothwall/red/dns2: $!";
   chomp($redDNS2 = <DNS2>);
-  if ($netsettings{'DNS2'} ne $redDNS2) { $dns2_tag = "$string"; }
+  if ($netsettings{'DNS2'} ne $redDNS2 || $netsettings{'DNS2'} eq "" ) { $dns2_tag = "$red_notused"; }
   $netsettings{'DNS2'} = $redDNS2;
   close (DNS1); close (DNS2);
   open (LOCALIP, "/var/smoothwall/red/local-ipaddress")
     or warn "Could not open /var/smoothwall/red/local-ipaddress: $!";
   chomp($redIP = <LOCALIP>);
   close (LOCALIP);
-  if ($netsettings{'RED_ADDRESS'} ne $redIP) { $redIP_tag = "$string"; }
+  if ($netsettings{'RED_ADDRESS'} ne $redIP) { $redIP_tag = "$red_notused"; }
   $netsettings{'RED_ADDRESS'} = $redIP;
   open (REMOTEIP, "/var/smoothwall/red/remote-ipaddress")
     or warn "Could not open /var/smoothwall/red/remote-ipaddress: $!";
   chomp($remoteIP = <REMOTEIP>);
   close (REMOTEIP);
-  if ($netsettings{'DEFAULT_GATEWAY'} ne $remoteIP) { $remoteIP_tag = "$string"; }
+  if ($netsettings{'DEFAULT_GATEWAY'} ne $remoteIP) { $remoteIP_tag = "$red_notused"; }
   $netsettings{'DEFAULT_GATEWAY'} = $remoteIP;
 
   # Let's get the broadcast and netmask of the red iface when up
-  open (IFCONFIG_RED, "-|") or exec ("ifconfig $netsettings{'RED_DEV'}");
-  @temp = <IFCONFIG_RED>;
-  close (IFCONFIG_RED);
-  shift (@temp);
-  chomp ($line = shift (@temp));
-  @newarray = split /\s+/, $line;
-  (undef, $bcast) = split /:/, $newarray[3];
-  (undef, $netmask) = split /:/, $newarray[4];
-  if ($netsettings{'RED_BROADCAST'} ne $bcast) { $bcast_tag = "$string"; }
+# IP ADDR
+  open (IPADDR_RED, "-|") or exec ("/usr/sbin/ip addr show $netsettings{'RED_DEV'}");
+  @temp = <IPADDR_RED>;
+  close (IPADDR_RED);
+  foreach $line (@temp) {
+    chomp $line;
+    if ($line =~ /inet /) {
+      chomp $line;
+      @newarray = split / /, $line;
+      for (my $i=1; $i<=4; $i++) {
+        shift @newarray;
+      }
+      $block = new Net::Netmask($newarray[1]);
+      $netmask = $block->mask();
+      $bcast = $newarray[3];
+    }
+  }
+  if ($netsettings{'RED_BROADCAST'} ne $bcast) { $bcast_tag = "$red_notused"; }
   $netsettings{'RED_BROADCAST'} = $bcast;
-  if ($netsettings{'RED_NETMASK'} ne $netmask) { $netmask_tag = "$string"; }
+  if ($netsettings{'RED_NETMASK'} ne $netmask) { $netmask_tag = "$red_notused"; }
   $netsettings{'RED_NETMASK'} = $netmask;
   &writehash("/tmp/livesettings", \%netsettings);
   open (LIVESETTINGS,"</tmp/livesettings");
@@ -245,7 +252,7 @@ if (($netsettings{'RED_TYPE'} eq 'DHCP' ||
     if (/RED|DNS|GATEWAY/) { push (@livered, $_); }
   }
   @live_red = sort @livered;
-  @live_red = ("[color=red][b]", @live_red, "[/b][/color]\n");
+  @live_red = ("[color=red][b]", @live_red, "[/b][/color]");
   close (LIVESETTINGS);
 }
 
@@ -255,37 +262,41 @@ if (($netsettings{'RED_TYPE'} eq 'DHCP' ||
 open (NETSETTINGS,"<${swroot}/ethernet/settings") || die "Unable to open $!";
 while (<NETSETTINGS>) {
   chomp;
-  if (/DNS1/) { push (@red, "$_" . $dns1_tag . "\n"); }
-  elsif (/DNS2/) { push (@red, "$_" . $dns2_tag . "\n"); }
+  if (/DNS1[^_]/) { push (@red, "$_" . $dns1_tag . "\n"); }
+  elsif (/DNS2[^_]/) { push (@red, "$_" . $dns2_tag . "\n"); }
+  elsif (/DNS[12]_/) { push (@red, "$_\n"); }
   elsif (/GATEWAY/) { push (@red, "$_" . $remoteIP_tag . "\n"); }
   elsif (/RED_ADDRESS/) { push (@red, "$_" . $redIP_tag . "\n"); }
   elsif (/RED_BROADCAST/) { push (@red, "$_" . $bcast_tag . "\n"); }
   elsif (/RED_NETMASK/) { push (@red, "$_" . $netmask_tag . "\n"); }
   elsif (/RED_D.*/) { push (@red, "$_\n"); }
+  elsif (/RED_IGNORE.*/) { push (@red, "$_\n"); }
   elsif (/RED_N.*/) { push (@red, "$_\n"); }
   elsif (/RED_T.*/) { push (@red, "$_\n"); }
   elsif (/GREEN/) { push (@green, "$_\n"); }
-  elsif (/PURPLE/) { push (@purple, "$_\n"); }
-  elsif (/ORANGE/) { push (@orange, "$_\n"); }
+  elsif ($netsettings{'PURPLE_DEV'} eq "" && /PURPLE/) { push (@purple, "$_" . $purple_notused . "\n"); }
+  elsif ($netsettings{'PURPLE_DEV'} ne "" && /PURPLE/) { push (@purple, "$_\n"); }
+  elsif ($netsettings{'ORANGE_DEV'} eq "" && /ORANGE/) { push (@orange, "$_" . $orange_notused . "\n"); }
+  elsif ($netsettings{'ORANGE_DEV'} ne "" && /ORANGE/) { push (@orange, "$_\n"); }
   else { push (@other, "$_\n\n"); }
 }
 close (NETSETTINGS);
 @green = sort @green;
 @green = ("[color=green][b]", @green, "[/b][/color]\n");
 @red = sort @red;
-@red = ("[color=red][b]", @red, "[/b][/color]\n");
+@red = ("[color=red][b]", @red, "[/b][/color]");
 @purple = sort @purple;
 @purple = ("[color=purple][b]", @purple, "[/b][/color]\n");
 @orange = sort @orange;
-@orange = ("[color=orange][b]", @orange, "[/b][/color]");
+@orange = ("[color=orange][b]", @orange, "[/b][/color]\n");
 @other = sort @other;
 my $note = '';
 if ($netsettings{'RED_TYPE'} eq 'DHCP' || $netsettings{'RED_TYPE'} eq 'PPPOE') { $note = "$tr{'smoothinfo-note'}\n\n"; }
-my @ethernet_settings = ("[size=90]", @other,@red,@green,@purple,@orange, "[/size]");
-my @live_settings = ("[color=\#400000][i]$note\[/i]\[/color]", "[size=90]", @other,@live_red,@green,@purple,@orange, "[/size]");
+my @ethernet_settings = ("[size=90]", @other,@green,@orange,@purple,@red, "[/size]");
+my @live_settings = ("[color=\#400000][i]$note\[/i]\[/color]", "[size=90]", @other,@green,@orange,@purple,@live_red, "[/size]");
 
 # ROUTING
-my $route = &pipeopen( '/sbin/route', '-n' );
+my $route = &pipeopen( '/usr/sbin/ip', 'route' );
 
 # IPTABLES CHAINS
 my @chains = split (/,/,$smoothinfosettings{'CHAINS'});
@@ -394,20 +405,6 @@ if (-e "/usr/bin/nmap") {
   chomp ($nmapversion);
   $modlist{'nmap'} = "Nmap v. $nmapversion";
 }
-# ADVANCED WEB PROXY
-if (-e "${swroot}/proxy/advanced/version") {
-  open (AWPVERSION, "${swroot}/proxy/advanced/version");
-  my $awpversion = <AWPVERSION>;
-  close (AWPVERSION);
-  $modlist{'awp'} = "Advanced Web Proxy v. $awpversion";
-}
-# URL FILTER
-if (-e "${swroot}/urlfilter/version") {
-  open (URLFILTER, "${swroot}/urlfilter/version");
-  my $urlfilterversion = <URLFILTER>;
-  close (URLFILTER);
-  $modlist{'urlfilter'} = "URL Filter v. $urlfilterversion";
-}
 # COMPACT FLASH MOD
 if (grep /Compact Flash/,@sysinit) {
   $modlist{'compactflash'} = "Compact Flash based Smoothwall V3.0";
@@ -437,8 +434,13 @@ open (ETHERSETTINGS,"<${swroot}/ethernet/settings") || die "Unable to open $!";
 my @ethersettings = <ETHERSETTINGS>;
 close (ETHERSETTINGS);
 my $reddev = (grep /RED_DEV=eth/, @ethersettings)[0];
+if ($netsettings{'ORANGE_DEV'}) {
 my $orangedev = (grep /ORANGE_DEV=eth/, @ethersettings)[0];
+}
+
+if ($netsettings{'PURPLE_DEV'}) {
 my $purpledev = (grep /PURPLE_DEV=eth/, @ethersettings)[0];
+}
 
 # WRITING OUTPUT
 open (FILE,">$outputfile") || die 'Unable to open file';
@@ -540,69 +542,25 @@ print FILE " ===> Switch";
   print FILE "\[/code\]\[/info\]";
 }
 
-if ($defseclevelsettings{'OPENNESS'} eq 'halfopen') {
-  $smoothinfosettings{'SECPOLICY'} = 'Half-open';
-}
-if ($defseclevelsettings{'OPENNESS'} eq 'open') {
-  $smoothinfosettings{'SECPOLICY'} = 'Open';
-}
-if ($defseclevelsettings{'OPENNESS'} eq 'closed') {
-  $smoothinfosettings{'SECPOLICY'} = 'Closed'
- }
-print FILE "[info=\"$tr{'smoothinfo-default-secpol'}\"]\[code\]$smoothinfosettings{'SECPOLICY'}\[/code\]\[/info\]";
+if ($smoothinfosettings{'NETCONF1'} eq "on" or $smoothinfosettings{'NETCONF2'} eq "on") {
+  # Get the DNS info for Red, Green, Purple
+  print FILE "[info=\"$tr{'smoothinfo-dns'}\"]\[code\]";
+  open (DNS1, "</var/smoothwall/red/dns1");
+  chomp($redDNS1 = (<DNS1>)[0]);
+  open (DNS2, "</var/smoothwall/red/dns2");
+  chomp($redDNS2 = (<DNS2>)[0]);
+  print FILE "DNS servers for RED:\nDNS1: $redDNS1\nDNS2: $redDNS2\n";
+  close (DNS1);
+  close (DNS2);
 
-open (OUTGOING, "<${swroot}/outgoing/settings") || die "Unable to open ${swroot}/outgoing/settings: $!";
-print FILE "[info=\"$tr{'smoothinfo-outgoing'}\"]\[code\]";
-foreach (<OUTGOING>) {
-  if (grep /GREEN=REJECT/, $_) {
-    $rule_green = "$tr{'smoothinfo-traffic-originating'} GREEN is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_green\n"
+  unless (-z "${swroot}/dhcp/settings-green") {
+    print FILE "DNS servers for GREEN:\nDNS1: $green_dhcpsettings{'DNS1'}\nDNS2: $green_dhcpsettings{'DNS2'}\n";
   }
-  if (grep /GREEN=ACCEPT/, $_) {
-    $rule_green = "$tr{'smoothinfo-traffic-originating'} GREEN is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_green\n"
-  }
-  if (grep /ORANGE=REJECT/, $_) {
-    $rule_orange = "$tr{'smoothinfo-traffic-originating'} ORANGE is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_orange\n"
-  }
-  if (grep /ORANGE=ACCEPT/, $_) {
-    $rule_orange = "$tr{'smoothinfo-traffic-originating'} ORANGE is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_orange\n"
-  }
-  if (grep /PURPLE=REJECT/, $_) {
-    $rule_purple = "$tr{'smoothinfo-traffic-originating'} PURPLE is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_purple\n"
-  }
-  if (grep /PURPLE=ACCEPT/, $_) {
-    $rule_purple = "$tr{'smoothinfo-traffic-originating'} PURPLE is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_purple\n"
-  }
-}
-print FILE "\[/code\]\[/info\]";
-unless (-z "${swroot}/outgoing/config") {
-  open (CONFIG, "${swroot}/outgoing/config") || die "Unable to open config file $!";
-  print FILE "[info=\"Current exceptions\"]\[code\]";
-  foreach (<CONFIG>) {
-    chomp;
-    $_ =~ s/,/\t\t/g;
-    $_ =~ s/\ton\t/\tEnabled\t/g;
-    print FILE "$_\n";
+  unless (-z "${swroot}/dhcp/settings-purple") {
+    print FILE "DNS servers for PURPLE:\nDNS1: $purple_dhcpsettings{'DNS1'}\nDNS2: $purple_dhcpsettings{'DNS2'}\n";
   }
   print FILE "\[/code\]\[/info\]";
 }
-
-# Get the DNS info for Red, Green, Purple
-print FILE "[info=\"$tr{'smoothinfo-dns'}\"]\[code\]";
-open (DNS1, "</var/smoothwall/red/dns1");
-chomp($redDNS1 = (<DNS1>)[0]);
-open (DNS2, "</var/smoothwall/red/dns2");
-chomp($redDNS2 = (<DNS2>)[0]);
-print FILE "DNS servers for RED:\nDNS1: $redDNS1\nDNS2: $redDNS2\n";
-close (DNS1);
-close (DNS2);
-
-unless (-z "${swroot}/dhcp/settings-green") {
-  print FILE "DNS servers for GREEN:\nDNS1: $green_dhcpsettings{'DNS1'}\nDNS2: $green_dhcpsettings{'DNS2'}\n";
-}
-unless (-z "${swroot}/dhcp/settings-purple") {
-  print FILE "DNS servers for PURPLE:\nDNS1: $purple_dhcpsettings{'DNS1'}\nDNS2: $purple_dhcpsettings{'DNS2'}\n";
-}
-print FILE "\[/code\]\[/info\]";
 
 if ($smoothinfosettings{'CONNTYPE'} eq 'on') {
   my $conntype = '';
@@ -671,6 +629,7 @@ if ($smoothinfosettings{'NETCONF2'} eq 'on') {
 }
 
 # Status of core services
+if ($smoothinfosettings{'SERVICES'} eq 'on') {
 my $process_status;
 print FILE "[info=\"$tr{'smoothinfo-core-services'}\"]\[code\]";
 my @coreservices = ('cron', 'dnsmasq', 'httpd', 'klogd', 'smoothd');
@@ -702,6 +661,7 @@ foreach my $service (@coreservices) {
   }
 }
 print FILE "\[/code\]\[/info\]";
+}
 
 if ($smoothinfosettings{'SERVICES'} eq 'on') {
   print FILE "[info=\"$tr{'smoothinfo-services-status'}\"]\[code\]";
@@ -723,33 +683,28 @@ if ($smoothinfosettings{'SERVICES'} eq 'on') {
   if ($sipproxysettings{'ENABLE'}) {
     print FILE "SIP Proxy: $sipproxysettings{'ENABLE'}\n";
   }
-  unless (-e "${swroot}/proxy/advanced/version") {
-    if ($proxysettings{'ENABLE'}) {
-      print FILE "Web Proxy: $proxysettings{'ENABLE'}";
-      if ($proxysettings{'TRANSPARENT'} eq 'on') {
-        print FILE ", in transparent mode\n";
-      } else {
-        print FILE ", not in transparent mode\n";
-      }
-    }
-  }
   if ($snortsettings{'ENABLE_SNORT'}) {
     print FILE "IDS (Snort): $snortsettings{'ENABLE_SNORT'}\n";
   }
   print FILE "\[/code\]\[/info\]";
 }
 
+if ($smoothinfosettings{'SQUID'} eq 'on' and $proxysettings{'ENABLE'} eq 'on') {
+  print FILE "[info=\"$tr{'smoothinfo-proxy'}\"]\[code\]";
+  print FILE "Squid Web proxy\n===========================\n";
+  print FILE "Transparent: $proxysettings{'TRANSPARENT'}\n";  
+  print FILE "Cache size (MB): $proxysettings{'CACHE_SIZE'}\n";
+  print FILE "Remote proxy: $proxysettings{'UPSTREAM_PROXY'}\n";
+  print FILE "Max object size (KB): $proxysettings{'MAX_SIZE'}\n";
+  print FILE "Min object size (KB): $proxysettings{'MIN_SIZE'}\n";
+  print FILE "Max outgoing size (KB): $proxysettings{'MAX_OUTGOING_SIZE'}\n";
+  print FILE "Max incoming size (KB): $proxysettings{'MAX_INCOMING_SIZE'}\n";
+  print FILE "\[/code\]\[/info\]";
+}
+
 if ($smoothinfosettings{'MODSERVICES'} eq 'on') {
   my @modservices;
   push (@modservices, "[info=\"$tr{'smoothinfo-mod-services-status'}\"]\[code\]");
-  if ($advproxysettings{'ENABLE'}) {
-    push (@modservices, "Advanced Web Proxy: $advproxysettings{'ENABLE'}");
-    if ($advproxysettings{'TRANSPARENT'} eq 'on') {
-      push (@modservices, ", in transparent mode\n");
-    } else {
-     push (@modservices, ", not in transparent mode\n"); 
-    }
-  }
   if ($filteringsettings{'DGAV'}) {
     push (@modservices, "Dansguardian Web Content Filter (DGAV): $filteringsettings{'DGAV'}\n");
   }
@@ -763,33 +718,6 @@ if ($smoothinfosettings{'MODSERVICES'} eq 'on') {
   $test = @modservices;
   # If at least one mod is found create the section
   if ($test > 2)  { print FILE "@modservices"; }
-}
-
-if ($advproxysettings{'ENABLE'} eq 'on' || $advproxysettings{'ENABLE_PURPLE'} eq 'on') {
-  print FILE "[info=\"$tr{'smoothinfo-proxy'}\"]\[code\]";
-  print FILE "Advanced Web proxy\n===========================\n";
-  print FILE "Enabled on green: $advproxysettings{'ENABLE'}\n";
-  print FILE "Transparent on green: $advproxysettings{'TRANSPARENT'}\n";
-  print FILE "Enabled on purple: $advproxysettings{'ENABLE_PURPLE'}\n";
-  print FILE "Transparent on purple: $advproxysettings{'TRANSPARENT_PURPLE'}\n";
-  print FILE "Cache size (MB): $advproxysettings{'CACHE_SIZE'}\n";
-  print FILE "Remote proxy: $advproxysettings{'UPSTREAM_PROXY'}\n";
-  print FILE "Max object size (KB): $advproxysettings{'MAX_SIZE'}\n";
-  print FILE "Min object size (KB): $advproxysettings{'MIN_SIZE'}\n";
-  print FILE "Max outgoing size (KB): $advproxysettings{'MAX_OUTGOING_SIZE'}\n";
-  print FILE "Max incoming size (KB): $advproxysettings{'MAX_INCOMING_SIZE'}\n";
-  print FILE "\[/code\]\[/info\]";
-} elsif ($proxysettings{'ENABLE'} eq 'on') {
-  print FILE "[info=\"$tr{'smoothinfo-proxy'}\"]\[code\]";
-  print FILE "Standard Web proxy\n===========================\n";
-  print FILE "Transparent: $proxysettings{'TRANSPARENT'}\n";  
-  print FILE "Cache size (MB): $proxysettings{'CACHE_SIZE'}\n";
-  print FILE "Remote proxy: $proxysettings{'UPSTREAM_PROXY'}\n";
-  print FILE "Max object size (KB): $proxysettings{'MAX_SIZE'}\n";
-  print FILE "Min object size (KB): $proxysettings{'MIN_SIZE'}\n";
-  print FILE "Max outgoing size (KB): $proxysettings{'MAX_OUTGOING_SIZE'}\n";
-  print FILE "Max incoming size (KB): $proxysettings{'MAX_INCOMING_SIZE'}\n";
-  print FILE "\[/code\]\[/info\]";
 }
 
 if ($smoothinfosettings{'DHCPINFO'} eq 'on' && -e "${swroot}/dhcp/enable") {
@@ -956,17 +884,76 @@ if ($smoothinfosettings{'ROUTE'} eq 'on') {
 }
 
 if (($smoothinfosettings{'PORTFW'} eq 'on') && (! -z "${swroot}/portfw/config")) {
-  open (PORTFW, "<${swroot}/portfw/config") || die "Unable to open $!";
-  while (<PORTFW>) {
-    chomp;
-    $_ =~ s/,/\t\t/g;
-    $_ =~ s/\t0\t/\tN.A.\t/g;
-    $_ =~ s/\ton\t/\tEnabled\t/g;
-    $_ =~ s/\toff\t/\tDisabled\t/g;
-    push (@portfw, "$_\n");
+  my @portfw = `/bin/cat /var/smoothwall/portfw/config`;
+  my @rules = `/usr/sbin/iptables -nvL portfwf`;
+  my @rules2 = `/usr/sbin/iptables -t nat -nvL portfw`;
+
+  print FILE "[info=\"$tr{'smoothinfo-portfw'}\"]\[code\]Config File:\n @portfw\n@rules\n@rules2\[/code\]\[/info\]";
+}
+
+if ($smoothinfosettings{'OUTGOING'} eq 'on') {
+  if ($defseclevelsettings{'OPENNESS'} eq 'halfopen') {
+    $smoothinfosettings{'SECPOLICY'} = 'Half-open';
   }
-  close (PORTFW);
-  print FILE "[info=\"$tr{'smoothinfo-portfw'}\"]\[code\]@portfw\[/code\]\[/info\]";
+  if ($defseclevelsettings{'OPENNESS'} eq 'open') {
+    $smoothinfosettings{'SECPOLICY'} = 'Open';
+  }
+  if ($defseclevelsettings{'OPENNESS'} eq 'closed') {
+    $smoothinfosettings{'SECPOLICY'} = 'Closed'
+  }
+  print FILE "[info=\"$tr{'smoothinfo-default-secpol'}\"]\[code\]$smoothinfosettings{'SECPOLICY'}\[/code\]\[/info\]";
+
+  open (OUTGOING, "<${swroot}/outgoing/settings") || die "Unable to open ${swroot}/outgoing/settings: $!";
+  print FILE "[info=\"$tr{'smoothinfo-outgoing'}\"]\[code\]";
+  foreach (<OUTGOING>) {
+    if (grep /GREEN=REJECT/, $_) {
+      $rule_green = "$tr{'smoothinfo-traffic-originating'} GREEN is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_green\n"
+    }
+    if (grep /GREEN=ACCEPT/, $_) {
+      $rule_green = "$tr{'smoothinfo-traffic-originating'} GREEN is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_green\n"
+    }
+    if (grep /ORANGE=REJECT/, $_) {
+      $rule_orange = "$tr{'smoothinfo-traffic-originating'} ORANGE is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_orange\n"
+    }
+    if (grep /ORANGE=ACCEPT/, $_) {
+      $rule_orange = "$tr{'smoothinfo-traffic-originating'} ORANGE is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_orange\n"
+    }
+    if (grep /PURPLE=REJECT/, $_) {
+      $rule_purple = "$tr{'smoothinfo-traffic-originating'} PURPLE is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_purple\n"
+    }
+    if (grep /PURPLE=ACCEPT/, $_) {
+      $rule_purple = "$tr{'smoothinfo-traffic-originating'} PURPLE is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_purple\n"
+    }
+  }
+  close OUTGOING;
+  print FILE "\[/code\]\[/info\]";
+
+  unless (-z "${swroot}/outgoing/config") {
+    my @config = `/bin/cat /var/smoothwall/outgoing/config`;
+
+    my @chaingreen = `/usr/sbin/iptables -nvL outgreen`;
+    my @chainpurple = `/usr/sbin/iptables -nvL outpurple`;
+    my @chainorange = `/usr/sbin/iptables -nvL outorange`;
+    my @chainallows = `/usr/sbin/iptables -nvL allows`;
+    print FILE "[info=\"Outgoing exceptions\"]\[code\]Config file:\n@config\n@chaingreen\n@chainpurple\n@chainorange\n@chainallows\[/code\]\[/info\]";
+    close CONFIG;
+  }
+}
+
+if (($smoothinfosettings{'XTACCESS'} eq 'on') && (! -z "${swroot}/xtaccess/config")) {
+  my @xtaccess = `/bin/cat /var/smoothwall/xtaccess/config`;
+
+  my @rules = `/usr/sbin/iptables -nvL xtaccess`;
+
+  print FILE "[info=\"External access\"]\[code\]Config file:\n @xtaccess\n@rules\[/code\]\[/info\]";
+}
+
+if (($smoothinfosettings{'PINHOLES'} eq 'on') && (! -z "${swroot}/dmzholes/config")) {
+  my @dmzholes = `/bin/cat /var/smoothwall/dmzholes/config`;
+
+  my @rules = `/usr/sbin/iptables -nvL dmzholes`;
+
+  print FILE "[info=\"Internal pinholes\"]\[code\]Config file:\n @dmzholes\n@rules\[/code\]\[/info\]";
 }
 
 if ($smoothinfosettings{'CHAINS'} ne '') {
@@ -1302,4 +1289,66 @@ sub list {
       $modlist{basename($File::Find::name)} = ucfirst $modinfo{'MOD_NAME'} . " v. " . $modinfo{'MOD_VERSION'};
     }
   }
+}
+
+
+
+# This function fetches the link and addr info for the specified IF. It is assumed that
+#   the caller has verified the IF's existence. It returns BBcode of the desired color.
+#
+sub getLinkData {
+  my ($iface, $color) = @_;
+
+  my (@netconf, @netconf1, @netconf2);
+
+  # Get the link info and RX/TX counts; note that splitting loses the newlines
+  @netconf1 = split(/\n/, &pipeopen( "/usr/sbin/ip", "-s", "link", "show", "$iface" ));
+
+  # Get the ip address(es); note that splitting loses the newlines
+  @netconf2 = split(/\n/, &pipeopen( "/usr/sbin/ip", "addr", "show", "$iface" ));
+
+  my $getStats = 0;
+  foreach (@netconf1, @netconf2) {
+
+    # Make the IP addr/masks black
+    $_ =~ s/(\d+\.\d+\.\d+\.\d+\/\d+)/\[\/b]\[\/color][color=#000000][b]$1\[\/b][\/color\][color=$color\][b\]/g;
+    $_ =~ s/([0-9a-f:]+\/\d+)/\[\/b]\[\/color][color=#000000][b]$1\[\/b][\/color\][color=$color\][b\]/g;
+
+    # Restore the newlines that were split out above
+    $_ =~ s/$/\n/;
+
+    # Add labels to the RX stats line
+    if ($getStats == 1) {
+      my @tmp = split(/ +/);
+      $_ = "RX: bytes:$tmp[1] packets:$tmp[2] errors:$tmp[3] dropped:$tmp[4] overrun:$tmp[5] multicast:$tmp[6]\n";
+      $getStats = 0;
+    }
+
+    # Add labels to the TX stats line
+    if ($getStats == 2) {
+      my @tmp = split(/ +/);
+      $_ = "TX: bytes:$tmp[1] packets:$tmp[2] errors:$tmp[3] dropped:$tmp[4] carrier:$tmp[5] collisions:$tmp[6]\n";
+      $getStats = 0;
+    }
+
+    # The RX: and TX: stats lines trigger the operation on the next line and 'delete' themselves
+    if ($_ =~ /^ +RX:/) { $getStats = 1; $_ = undef; }
+    if ($_ =~ /^ +TX:/) { $getStats = 2; $_ = undef; }
+  }
+
+  # Dump the interface 'number'
+  $netconf1[0] =~ s/^[0-9]+: +//;
+
+  # Prepare the final text (build a new list)
+  # Use the first two lines of 'ip link' output, lines 2... of 'ip addr', then lines 2... of 'ip link'
+  @netconf = ("[b][color=$color]", @netconf1[0..1], @netconf2[2..$#netconf2], @netconf1[2..$#netconf1], "[/color][/b]");
+  #print stderr "$iface IF Info\n". Dumper @netconf;
+
+  # oss in a newline if not the first (RED)
+  if ($color ne "green" ) {
+    $netconf[0] = "\n".$netconf[0];
+  }
+
+  # And return it
+  return @netconf;
 }
