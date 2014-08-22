@@ -49,6 +49,12 @@ fi
 echo "Mounting root read/write"
 mount -n -o remount,rw /
 
+# Are there one or more new NICs?
+PNR="70-persistent-net.rules"
+if [ -e /dev/${PNR} ]; then
+  mv /dev/${PNR} /etc/udev/rules.d/${PNR}
+fi
+
 # Re-run udevd
 /sbin/udevd --daemon
 /sbin/udevadm trigger
@@ -90,11 +96,7 @@ echo "Mounting other filesystems"
 mount /boot
 mount /var/log
 
-# Did the NICs change?
-PNR="70-persistent-net.rules"
-if [ -e /dev/${PNR} ]; then
-  mv /dev/${PNR} /tmp
-fi
+# Deal with potentially changed NICs
 /usr/sbin/compareMACs
 
 echo "Directing core dumps to /var/log"

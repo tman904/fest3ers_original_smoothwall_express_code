@@ -30,7 +30,7 @@ custNICRules=/etc/udev/rules.d/70-Smoothwall-custom-NIC.rules
 
 ###
 # If there are any changes, handle them.
-# A new persisent-net.rules files is a poor choice for change flag, since it
+# A new persistent-net.rules files is a poor choice for change flag, since it
 #   does not detect removed NICs.
 ###
 
@@ -66,17 +66,18 @@ if ! diff /tmp/oldMACs /tmp/curMACs >/dev/null 2>&1; then
   lastNIC=$j
 
   # Append current NIC rules file to persistent file in /tmp
-  if [ -e /tmp/$persNetRules ]; then
-    # NIC(s) added
-    sed -e '1,5d' $custNICRules \
+  if [ -e /etc/udev/rules.d/$persNetRules ]; then
+    # If exists, then NIC(s) added and maybe removed
+    mv /etc/udev/rules.d/$persNetRules /tmp
+    sed -e '1,6d' $custNICRules \
       >> /tmp/$persNetRules
   else
-    #NIC(s) removed
+    # No persNetRules, then NIC(s) removed
     cp $custNICRules /tmp/$persNetRules
   fi
 
   # Yank the drivers
-  DRIVERS=`egrep "^# PCI device 0x" /tmp/$persNetRules | sed -e 's/.*(\([^)]*\))/\1/' | sort | uniq`
+  DRIVERS=`echo /sys/class/net/*/device/driver/module/drivers/* | sed -e 's/.*://' | sort | uniq`
   for i in $DRIVERS; do
     rmmod $i
   done
@@ -93,14 +94,19 @@ if ! diff /tmp/oldMACs /tmp/curMACs >/dev/null 2>&1; then
   # Delete unset (removed) NICs)
   sed -e '/^$/N; N; /FRESHNIC/d;' /tmp/$persNetRules >$custNICRules
 
+  # Sleep; maybe udev needs to rest
+  sleep 2
+
   # Trigger udev to INS the drivers, thus changing the names
+  /sbin/udevadm control --reload
   /sbin/udevadm trigger
   /sbin/udevadm settle
 
   # Set flag file, clean up other files
   touch /var/smoothwall/ethernet/NICS-changed
-  rm -f /tmp/$persNetRules /dev/$persNetRules /tmp/oldMACs /tmp/curMACs
+  rm -f /tmp/$persNetRules /dev/$persNetRules
 fi
+rm -f /tmp/oldMACs /tmp/curMACs
 
 ###
 # If there are unhandled changes, insist on running setup
