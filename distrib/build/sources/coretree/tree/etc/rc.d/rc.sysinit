@@ -254,6 +254,20 @@ echo "1 4 1 7" >/proc/sys/kernel/printk
 /usr/bin/smoothcom trafficrestart
 
 # Services here depend on the IFs being up.
+
+# ntpdate depends on dnsmasq resolving. So wait for it.
+# This solves a problem when RED is static; the NICs are brought up in the
+#   background, but not fast enough. This could fail if RED is ppp; so only
+#   wait up to three seconds, then let ntpdate kvetch.
+typeset -i i; i=0
+while [ $i -lt 15 ]; do
+  ps -ef | grep "/usr/bin/\dnsmasq" >/dev/null 2>&1
+  case $? in
+    0) break;;
+    *) echo -e -n "o^H"; sleep .1; echo -e -n " ^H"; sleep .1;;
+  esac
+  i=i+1
+done
 echo "  time service (if enabled)"
 ntpdate pool.ntp.org
 /sbin/hwclock --systohc --localtime
