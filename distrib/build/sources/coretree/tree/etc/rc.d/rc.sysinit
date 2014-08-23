@@ -264,7 +264,7 @@ while [ $i -lt 15 ]; do
   ps -ef | grep "/usr/bin/\dnsmasq" >/dev/null 2>&1
   case $? in
     0) break;;
-    *) echo -e -n "o^H"; sleep .1; echo -e -n " ^H"; sleep .1;;
+    *) echo -e -n "o"; sleep .1; echo -e -n " "; sleep .1;;
   esac
   i=i+1
 done
