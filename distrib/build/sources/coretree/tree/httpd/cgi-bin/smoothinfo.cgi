@@ -27,7 +27,7 @@ my $version = $modinfo{'MOD_LONG_NAME'} . " v. " . $modinfo{'MOD_VERSION'};
 my $filename = "$MODDIR/report.txt";
 my $settingsfile = "$MODDIR/settings";
 my @chains = ('All chains');
-my @items = ('MEMORY', 'TOP', 'LOADEDMODULES', 'CPU', 'IRQs', 'DISKSPACE', 'CONNTYPE', 'ADAPTERS', 'NETCONF1', 'NETCONF2', 'ROUTE', 'CONNTRACKS', 'MODLIST', 'DHCPINFO', 'PORTFW', 'CONFIG', 'DMESG', 'APACHE', 'MESSAGES', 'SERVICES', 'MODSERVICES');
+my @items = ('MEMORY', 'TOP', 'LOADEDMODULES', 'CPU', 'IRQs', 'DISKSPACE', 'CONNTYPE', 'ADAPTERS', 'NETCONF1', 'NETCONF2', 'ROUTE', 'CONNTRACKS', 'MODLIST', 'DHCPINFO', 'PORTFW', 'OUTGOING', 'XTACCESS', 'PINHOLES', 'CONFIG', 'DMESG', 'APACHE', 'MESSAGES', 'SERVICES', 'MODSERVICES', 'SQUID');
 my @ASCII_items = ('SWITCH1', 'SWITCH2', 'SWITCH3', 'WAP1', 'WAP2', 'WAP3', 'WAP4', 'WAP5', 'WAP6', 'MODEM', 'ROUTER');
 my $errormessage = '';
 
@@ -77,6 +77,7 @@ $smoothinfosettings{'HEADORTAIL3'} ='TAIL3';
 $smoothinfosettings{'LINES'} = '';
 $smoothinfosettings{'LINES2'} = '';
 $smoothinfosettings{'WRAP'} = '100';
+$smoothinfosettings{'NOSELECT'} = 'off';
 
 &getcgihash(\%smoothinfosettings);
 
@@ -134,6 +135,10 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
           $smoothinfosettings{'NETCONF2'} eq 'on' &&
           $smoothinfosettings{'DHCPLEASES'} eq 'on' &&
           $smoothinfosettings{'PORTFW'} eq 'on' &&
+          $smoothinfosettings{'OUTGOING'} eq 'on' &&
+          $smoothinfosettings{'XTACCESS'} eq 'on' &&
+          $smoothinfosettings{'PINHOLES'} eq 'on' &&
+          $smoothinfosettings{'SQUID'} eq 'on' &&
           $smoothinfosettings{'ROUTE'} eq 'on' &&
           $smoothinfosettings{'MODLIST'} eq 'on' &&
           $smoothinfosettings{'CONFIG'} eq 'on' &&
@@ -142,6 +147,32 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
           $smoothinfosettings{'MESSAGES'} eq 'on') {
 
     $smoothinfosettings{'CHECKALL'} = 'off';
+  }
+
+  unless ($smoothinfosettings{'MEMORY'} eq 'on' or
+          $smoothinfosettings{'LOADEDMODULES'} eq 'on' or
+          $smoothinfosettings{'TOP'} eq 'on' or
+          $smoothinfosettings{'CPU'} eq 'on' or
+          $smoothinfosettings{'DISKSPACE'} eq 'on' or
+          $smoothinfosettings{'CONNTYPE'} eq 'on' or
+          $smoothinfosettings{'ADAPTERS'} eq 'on' or
+          $smoothinfosettings{'NETCONF1'} eq 'on' or
+          $smoothinfosettings{'NETCONF2'} eq 'on' or
+          $smoothinfosettings{'DHCPLEASES'} eq 'on' or
+          $smoothinfosettings{'PORTFW'} eq 'on' or
+          $smoothinfosettings{'OUTGOING'} eq 'on' or
+          $smoothinfosettings{'XTACCESS'} eq 'on' or
+          $smoothinfosettings{'PINHOLES'} eq 'on' or
+          $smoothinfosettings{'SQUID'} eq 'on' or
+          $smoothinfosettings{'ROUTE'} eq 'on' or
+          $smoothinfosettings{'MODLIST'} eq 'on' or
+          $smoothinfosettings{'CONFIG'} eq 'on' or
+          $smoothinfosettings{'DMESG'} eq 'on' or
+          $smoothinfosettings{'APACHE'} eq 'on' or
+          $smoothinfosettings{'MESSAGES'} eq 'on') {
+
+    $smoothinfosettings{'NOSELECT'} = 'on';
+    $errormessage .= "Nothing selected for report.<br />";
   }
 
   if ($smoothinfosettings{'CLIENTIP'} ne '') {
@@ -180,11 +211,18 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
     foreach (@chains) { delete ($smoothinfosettings{$_}) }
     &writehash("$settingsfile", \%smoothinfosettings);
 
+   unless ($smoothinfosettings{'NOSELECT'} eq 'on') {
     my $success = message('smoothinfogenerate');
 
     if (not defined $success) {
       $errormessage .= $tr{'smoothd failure'}. "<br />\n";
     }
+   }
+  }
+
+  if ($smoothinfosettings{'NOSELECT'} eq 'on') {
+    open(FILE, ">/var/smoothwall/smoothinfo/etc/report.txt") or warn "Unable to open report file.";
+    close FILE;
   }
 }
 
@@ -515,13 +553,43 @@ print <<END;
     <td></td>
   </TR>
   <TR>
-    <th style='padding:2px' colspan=4>Hardware</th>
+    <th style='padding:2px' colspan=6>Networking</th>
+  </TR>
+  <TR>
+    <TD  WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-net settings-tip'}">$tr{'smoothinfo-net settings'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='NETCONF2' $checked{'NETCONF2'}{'on'}></TD>
+    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-dhcpinfo-tip'}'>$tr{'smoothinfo-dhcpinfo'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DHCPINFO' $checked{'DHCPINFO'}{'on'}></TD>
+    <TD  WIDTH='30%' CLASS='base'>External access:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='XTACCESS' $checked{'XTACCESS'}{'on'}></TD>
+  </TR>
+  <TR>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-ifconfig-tip'}'>$tr{'smoothinfo-ifconfig'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' NAME='NETCONF1' VALUE='on' $checked{'NETCONF1'}{'on'}></TD>
+    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-portfw'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='PORTFW' $checked{'PORTFW'}{'on'}></TD>
+  </TR>
+  <TR>
+    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ROUTE' $checked{'ROUTE'}{'on'}></TD>
+    <TD  WIDTH='30%' CLASS='base'>Outgoing exceptions:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='OUTGOING' $checked{'OUTGOING'}{'on'}></TD>
+  </TR>
+  <TR>
+    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-conntracks-tip'}'>$tr{'smoothinfo-conntracks'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONNTRACKS' $checked{'CONNTRACKS'}{'on'}></TD>
+    <TD  WIDTH='30%' CLASS='base'>Internal pinholes:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='PINHOLES' $checked{'PINHOLES'}{'on'}></TD>  </TR>
+  <TR>
+    <th style='width:67%; padding:2px' colspan=4>Hardware</th><th style='width:33%; padding:2px' colspan=2>Services</th>
   </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-cpu'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' NAME='CPU' $checked{'CPU'}{'on'}></TD>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-memory-tip'}'>$tr{'smoothinfo-memory'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='MEMORY' $checked{'MEMORY'}{'on'}></TD>
+    <TD WIDTH='30%' CLASS='base'>Web proxy:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='SQUID' $checked{'SQUID'}{'on'}></TD>
   </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-irqs-tip'}'>$tr{'smoothinfo-irqs'}:</TD>
@@ -534,27 +602,6 @@ print <<END;
     <td></td>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-adapters-tip'}'>$tr{'smoothinfo-adapters'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ADAPTERS' $checked{'ADAPTERS'}{'on'}></TD>
-  </TR>
-  <TR>
-    <th style='padding:2px' colspan=4>Networking</th>
-  </TR>
-  <TR>
-    <TD  WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-net settings-tip'}">$tr{'smoothinfo-net settings'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='NETCONF2' $checked{'NETCONF2'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-dhcpinfo-tip'}'>$tr{'smoothinfo-dhcpinfo'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DHCPINFO' $checked{'DHCPINFO'}{'on'}></TD>
-  </TR>
-  <TR>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-ifconfig-tip'}'>$tr{'smoothinfo-ifconfig'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' NAME='NETCONF1' VALUE='on' $checked{'NETCONF1'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-portfw'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='PORTFW' $checked{'PORTFW'}{'on'}></TD>
-  </TR>
-  <TR>
-    <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ROUTE' $checked{'ROUTE'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-conntracks-tip'}'>$tr{'smoothinfo-conntracks'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONNTRACKS' $checked{'CONNTRACKS'}{'on'}></TD>
   </TR>
   <TR>
   </TR>
