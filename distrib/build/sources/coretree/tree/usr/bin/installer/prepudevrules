@@ -6,7 +6,12 @@ cd /sys/block
 
 UDEVINFO="/sbin/udevadm info --path=${PWD}/${device} --query=all"
 serial=`$UDEVINFO | grep ID_SERIAL_SHORT | sed -e 's/.*=//'`
-[ -z "$serial" ] && serial=`cat ${device}/device/serial 2>&1 | sed -e 's/ /-/g'`
+if [ -z "$serial" ]; then
+  # non-virtio disks
+  [ -f "${device}/device/serial" ] && serial=`cat ${device}/device/serial 2>&1 | sed -e 's/ /-/g'`
+  # virtio disks don't follow the custom
+  [ -f "${device}/serial" ] && serial=`cat ${device}/serial 2>&1 | sed -e 's/ /-/g'`
+fi
 [ -z "$serial" ] && serial="UNK_SERIAL"
 
 
