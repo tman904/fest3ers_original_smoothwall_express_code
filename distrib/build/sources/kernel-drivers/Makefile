@@ -24,7 +24,7 @@ I40EVF_VER = 1.0.5
 I40E_VER = 1.0.15
 R8168_VER = 8.038.00
 
-PACKAGES = package-igb package-igbvf package-ixgbe package-ixgbevf package-e1000e package_i40evf package_i40e
+PACKAGES = package-igb package-igbvf package-ixgbe package-ixgbevf package-e1000e package-i40evf package-i40e
 BROKEN_PKGS = package-e1000
 
 #ifeq ($(mARCH), $(ARCH32))
@@ -127,6 +127,14 @@ package-e1000e: compile-e1000e
 	install -D $(DRIVER_DIR)/e1000e-$(E1000E_VER)/src/e1000e.ko \
 		$(PKG_ROOT)/lib/modules/$(K_SWE_VERSION)/kernel/drivers/net/ethernet/intel/e1000e/e1000e.ko
 
+package-i40evf: compile-i40evf
+	install -D $(DRIVER_DIR)/i40evf-$(I40EVF_VER)/src/i40evf.ko \
+		$(PKG_ROOT)/lib/modules/$(K_SWE_VERSION)/kernel/drivers/net/ethernet/intel/i40evf/i40evf.ko
+
+package-i40e: compile-i40e
+	install -D $(DRIVER_DIR)/i40e-$(I40E_VER)/src/i40e.ko \
+		$(PKG_ROOT)/lib/modules/$(K_SWE_VERSION)/kernel/drivers/net/ethernet/intel/i40e/i40e.ko
+
 $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: prepare $(PACKAGES)
 	@( \
 	  cd $(PKG_ROOT); \
@@ -145,6 +153,8 @@ clean:
 	@rm -rf ixgbe-$(IXGBE_VER)
 	@rm -rf ixgbevf-$(IXGBEVF_VER)
 	@rm -rf e1000e-$(E1000E_VER)
+	@rm -rf i40evf-$(I40EVF_VER)
+	@rm -rf i40e-$(I40E_VER)
 	@rm -rf r8168-$(R8168_VER)
 	@rm -rf $(PKG_ROOT)
 
