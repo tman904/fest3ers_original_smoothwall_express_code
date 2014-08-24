@@ -90,6 +90,16 @@ int findharddiskorcdrom(struct blockdevice *bd, int type)
 			bd->present = 1;
 			result = 1;
 		}
+		else
+		{	
+			if ((fd = open("/dev/vda", O_RDONLY|O_NONBLOCK)) != -1)
+			{
+				close(fd);
+				strncpy(bd->devnode, "/dev/vda", STRING_SIZE - 1);
+				bd->present = 1;
+				result = 1;
+			}
+		}
 	}
 	
 	return result;
