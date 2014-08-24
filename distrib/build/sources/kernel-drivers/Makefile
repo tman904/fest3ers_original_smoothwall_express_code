@@ -15,14 +15,16 @@ export DRIVER_DIR = $(SOURCES_DIR)/${PACKAGE}
 #TG3_VER = 3.92n
 #BNX2_VER = 1.5.10c
 #E1000_VER = 8.0.35
-IGB_VER = 5.2.5
-IXGBE_VER = 3.21.2
-E1000E_VER = 3.0.4.1
+IGB_VER = 5.2.9.4
+IXGBE_VER = 3.22.3
+E1000E_VER = 3.1.0.2
 IGBVF_VER = 2.3.5
-IXGBEVF_VER = 2.14.2
+IXGBEVF_VER = 2.15.3
+I40EVF_VER = 1.0.5
+I40E_VER = 1.0.15
 R8168_VER = 8.038.00
 
-PACKAGES = package-igb package-igbvf package-ixgbe package-ixgbevf package-e1000e
+PACKAGES = package-igb package-igbvf package-ixgbe package-ixgbevf package-e1000e package_i40evf package_i40e
 BROKEN_PKGS = package-e1000
 
 #ifeq ($(mARCH), $(ARCH32))
@@ -43,7 +45,9 @@ download:
 	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/ixgbe-$(IXGBE_VER).tar.gz
 	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/ixgbevf-$(IXGBEVF_VER).tar.gz
 	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/e1000e-$(E1000E_VER).tar.gz
-	@$(DL_CMD) http://r8168dl.appspot.com/files/r8168-8.038.00.tar.bz2
+	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/i40evf-$(I40EVF_VER).tar.gz
+	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/i40e-$(I40E_VER).tar.gz
+	@$(DL_CMD) http://r8168dl.appspot.com/files/r8168-$(R8168_VER).tar.bz2
 
 prepare: download
 #	tar -xvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
@@ -55,6 +59,8 @@ prepare: download
 	tar -xvf $(DOWNLOADS_DIR)/ixgbe-$(IXGBE_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/ixgbevf-$(IXGBEVF_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/e1000e-$(E1000E_VER).tar.gz
+	tar -xvf $(DOWNLOADS_DIR)/i40evf-$(I40EVF_VER).tar.gz
+	tar -xvf $(DOWNLOADS_DIR)/i40e-$(I40E_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/r8168-$(R8168_VER).tar.bz2
 
 #compile-pulsar:
@@ -77,6 +83,12 @@ compile-ixgbevf:
 
 compile-e1000e:
 	$(MAKE) $(JOBS) V=1 -C e1000e-$(E1000E_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.4
+
+compile-i40evf:
+	$(MAKE) $(JOBS) V=1 -C i40evf-$(I40EVF_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.4
+
+compile-i40e:
+	$(MAKE) $(JOBS) V=1 -C i40e-$(I40E_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.4
 
 
 #package-pulsar: compile-pulsar
