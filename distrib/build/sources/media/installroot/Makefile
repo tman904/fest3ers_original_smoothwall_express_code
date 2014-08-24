@@ -112,6 +112,7 @@ all: clean bin lib klibc
 	  cp -aR ../etc/halt etc; chmod 755 etc/halt; \
 	  cp -aR ../etc/modules.conf etc; \
 	  cp -aR ../etc/storagedevices etc; \
+	  cp -aR ../etc/gpt2mbr bin; chmod 755 bin/gpt2mbr; \
 	) #> /dev/null 2>&1
 	(cd tmp; \
 	  mkdir usr/lib/gconv; \
