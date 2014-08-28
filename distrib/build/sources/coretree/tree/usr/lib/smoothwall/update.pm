@@ -30,23 +30,26 @@ use header qw(:standard);
 
 sub downloadlist
 {
-        use LWP;
+	use LWP;
 
-        my %proxy;
-        &readhash("${swroot}/main/proxy", \%proxy);
+	my %proxy;
+	&readhash("${swroot}/main/proxy", \%proxy);
 
-        my $infoURL = "http://sourceforge.net/projects/smoothwall/files/updateInfo/$version/info";
-        $req = HTTP::Request->new(GET => $infoURL);
-        $ua = LWP::UserAgent->new;
-        $ua->agent("Smoothwall/3.0");
+	# From header.pm:
+	#$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
 
-        if ($proxy{'SERVER'})
-        {
-                $ua->proxy(http => "http://$proxy{'SERVER'}:$proxy{'PORT'}");
-        }
+	my $infoURL = "http://sourceforge.net/projects/smoothwall/files/updateInfo/$version/info";
+	$req = HTTP::Request->new(GET => $infoURL);
+	$ua = LWP::UserAgent->new;
+	$ua->agent("Smoothwall/3.0");
 
-        $rsp = $ua->request($req);
-        return $rsp->status_line()."\n".$rsp->content();
+	if ($proxy{'SERVER'})
+	{
+		$ua->proxy(http => "http://$proxy{'SERVER'}:$proxy{'PORT'}");
+	}
+
+	$rsp = $ua->request($req);
+	return $rsp->status_line()."\n".$rsp->content();
 }
 
 1;

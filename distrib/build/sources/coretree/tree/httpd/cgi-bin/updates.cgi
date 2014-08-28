@@ -198,21 +198,21 @@ my $height = 250;
 
 print qq|<br/>
 	<div style='height: ${height}px; overflow: auto;'>
-	<table class='blank'>
+	<table class='blank' style='margin:0 0 0 1em; width:95%'>
 	|;
 
 foreach my $update ( sort keys %updates )
 {
 	next if ( defined $updates{$update}{'installed'} );
-	print <<END
+	print <<END;
 	<tr>
 		<td style='width: 15%;' ><a href='$updates{$update}{'info'}' target='_new'>$updates{$update}{'name'}</a></td>
-		<td onClick="toggle('update-$update');" class='expand'>$updates{$update}{'summary'}...</td>
-		<td style='width: 10%; text-align: right;'>$updates{$update}{'date'}</td>
+		<td onClick="toggle('update-$update');" class='expand' title='Click to expand/hide'>$updates{$update}{'summary'}...</td>
+		<td style='width: 10%; text-align:right'>$updates{$update}{'date'}</td>
 	</tr>
 	<tr>
-		<td colspan='3'>
-		<table class='expand' id='update-$update'>
+		<td colspan='3' style='padding-left:2em'>
+		<table class='expand' id='update-$update' style='display:none'>
 		<tr>
 			<td>$updates{$update}{'description'}</td>
 		</tr>	
@@ -220,7 +220,6 @@ foreach my $update ( sort keys %updates )
 		</td>
 	</tr>
 END
-	;
 }
 
 print qq{
@@ -234,16 +233,16 @@ foreach my $update ( sort keys %updates ){
 }
 
 if ( $installed_count > 0 ){
-	print qq{
-		<strong>$tr{'installed updates'}</strong><br>
-		<span style='color: #808080;'>The following updates have already been applied to your SmoothWall Express system</span>
-		<br/>
-		<br/>
-	};
+	print <<END;
+		<p style='margin:0 0 0 1em'><strong>$tr{'installed updates'}</strong></p>
+		<p style='margin:.5em 0 0 0; color: #808080; text-align:center'>
+                  The following updates have already been applied to your Smoothwall Express system.
+		</p>
+END
 }
 
 print qq{
-	<table class='blank'>
+	<table class='blank' style='margin:0 0 0 1.5em; width:95%'>
 };
 
 foreach my $update ( sort keys %updates ){
@@ -251,17 +250,17 @@ foreach my $update ( sort keys %updates ){
 	print <<END
 	<tr>
 		<td style='width: 15%;' ><a style='color: #808080;' href='$updates{$update}{'info'}' target='_new'>$updates{$update}{'name'}</a></td>
-		<td onClick="toggle('update-$update');" class='expand' style='color: #8080ff;'>$updates{$update}{'summary'}</td>
-		<td style='width: 10%; text-align: right;' style='color: #805080;' >$updates{$update}{'date'}</td>
+		<td onClick="toggle('update-$update');" class='expand' style='color: #8080ff;' title='Click to expand/hide'>$updates{$update}{'summary'}...</td>
+		<td style='width: 10%; text-align: right; color:#808080' >$updates{$update}{'date'}</td>
 	</tr>
 	<tr>
-		<td colspan='3'>
-		<table class='expand' id='update-$update'>
+		<td colspan='3' style='padding-left:2em'>
+		<table class='expand' id='update-$update' style='display:none'>
 		<tr>
 			<td style='color: #808080;' >$updates{$update}{'description'}</td>
 		</tr>	
 		</table>
-		<script>toggle('update-$update');</script>
+		<!-- <script>toggle('update-$update');</script> -->
 		</td>
 	</tr>
 END
@@ -365,7 +364,9 @@ if ($uploadsettings{'ACTION'} eq "$tr{'update'}" )
 		$required{ $update } = $updates{$update};
 	}
 
-	if ( scalar( keys %required ) == 0 ){
+	# Get the # of updates to fetch
+	my $updatesNeeded = scalar(keys %required);
+	if ( $updatesNeeded == 0 ){
 		print <<END
 <script>
 	document.getElementById('status').innerHTML = "All updates installed";
@@ -373,7 +374,8 @@ if ($uploadsettings{'ACTION'} eq "$tr{'update'}" )
 END
 ;		
 	} else {
-		my $status = "System requires ".scalar( keys %required )." updates";
+		my $status = "System requires ".$updatesNeeded." update(s)";
+		print STDERR "System requires ".$updatesNeeded." update(s)\n";
 
 		print <<END
 <script>
@@ -387,7 +389,7 @@ END
 		# the progress bar is 600pixels wide
 		# hence we need the following bits of information.
 
-		my $width_per_update = ( 400 / (scalar( keys %required )) );
+		my $width_per_update = ( 600 / ($updatesNeeded) );
 		my $complete = 0;
 
 		sub update
@@ -406,9 +408,10 @@ END
 	
 		my $error;
 
+		# Fetch each in turn
 		foreach my $req ( sort keys %required ){
-			print STDERR "going for download of $req ($required{$req}{'name'})\n";
-			$status = "Downloading update $required{$req}{'name'}";
+			print STDERR "Download update #$req ($required{$req}{'name'})\n";
+			$status = "Download update #$req ($required{$req}{'name'})";
 
 			print <<END
 <script>
@@ -419,14 +422,17 @@ END
 
 			my ( $down, $percent, $speed );
 		
-			my $uri = "http://downloads.smoothwall.org/updates/3.0/";
-			my $filename = "3.0-$required{$req}{'name'}.tar.gz";
+			my $uri = "http://downloads.smoothwall.org/updates/3.1/";
+			my $filename = "3.1-$required{$req}{'name'}.tar.gz";
 	
-			download( $uri, $filename );
+			# Start the DL in the background, logging to /var/patches/pending/*.log
+			&download( $uri, $filename );
 
 			my $stop = 0;
 
+			# Monitor the download.
 			do { 
+				# Get wget's progress
 				( $down, $percent, $speed, $required{$req}{'file'} ) = &progress( $filename );
 
 				my $distance = ( $complete * $width_per_update ) + int( ( $width_per_update / 100 ) * $percent );
@@ -439,8 +445,6 @@ END
 END
 ;
 
-				print STDERR "Returned a rather happy $percent\n";
-
 				if ( $percent eq "100%" ){
 					$stop = 1;
 				} elsif( not defined $percent or $percent eq "" ){
@@ -449,11 +453,14 @@ END
 					$stop = 0;
 				}
 				
-				sleep( 1 ); 
+				sleep( .25 ); 
 			} while ( $stop == 0 );
 
+			# Get wget's final progress
 			( $down, $percent, $speed, $required{$req}->{'file'} ) = &progress( $filename );
+			print STDERR "Update #$req fetched ($percent):\n    $required{$req}->{'md5'}\n    ($required{$req}->{'size'})\n$required{$req}->{'file'}\n";
 
+			# Bump completed count
 			$complete++;
 			my $comp = $width_per_update * $complete; 
 
@@ -464,10 +471,9 @@ END
 END
 ;
 
-			print STDERR "Completion progress is $complete for $req - $required{$req}->{'md5'} ($required{$req}->{'size'}) - $required{$req}->{'file'}\n";
 		}
 
-		print STDERR "Completed downloading\n";
+		print STDERR "$complete of $updatesNeeded fetched\n";
 
 		if ( $error eq "" ){
 			foreach my $req ( sort keys %required ){

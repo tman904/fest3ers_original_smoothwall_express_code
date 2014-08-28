@@ -10,11 +10,11 @@ my @this;
 my $return = &downloadlist();
 if ($return =~ m/^200 OK/) {
 	unless(open(LIST, ">${swroot}/patches/available")) {
-		die "Could not open available lists database."; }
+		die "Could not open available updates file."; }
 	flock LIST, 2;
 	@this = split(/----START LIST----\n/,$return);
 	print LIST $this[1];
 	close(LIST);
 } else {
-	die "Could not download patches list.";
+	die "Could not download updates list.";
 }
