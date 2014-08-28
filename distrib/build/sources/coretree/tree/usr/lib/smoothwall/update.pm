@@ -30,38 +30,23 @@ use header qw(:standard);
 
 sub downloadlist
 {
-	my %proxy;
-	&readhash("${swroot}/main/proxy", \%proxy);
+        use LWP;
 
-	my $host; my $port;
-        unless ($proxy{'SERVER'})
+        my %proxy;
+        &readhash("${swroot}/main/proxy", \%proxy);
+
+        my $infoURL = "http://sourceforge.net/projects/smoothwall/files/updateInfo/$version/info";
+        $req = HTTP::Request->new(GET => $infoURL);
+        $ua = LWP::UserAgent->new;
+        $ua->agent("Smoothwall/3.0");
+
+        if ($proxy{'SERVER'})
         {
-                $host = 'downloads.smoothwall.org';
-                $port = 80;
+                $ua->proxy(http => "http://$proxy{'SERVER'}:$proxy{'PORT'}");
         }
-        else
-        {
-                $host = $proxy{'SERVER'};
-                $port = $proxy{'PORT'};
-        }
-	my $sock;
-	unless ($sock = new IO::Socket::INET (PeerAddr => $host, PeerPort => $port,
-		Proto => 'tcp', Timeout => 5))
-	{
-		print STDERR "unable to connect\n";
-		$errormessage = $tr{'could not connect to smoothwall org'};
-		return 0;
-	}
 
-	# From header.pm:
-	#$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
-
-	print $sock "GET http://downloads.smoothwall.org/updates/$version/info HTTP/1.1\r\nHost: downloads.smoothwall.org\r\nConnection: close\r\n\r\n";
-	my $ret = '';
-	while (<$sock>) {
-		$ret .= $_; }
-	close($sock);
-	return $ret;
+        $rsp = $ua->request($req);
+        return $rsp->status_line()."\n".$rsp->content();
 }
 
 1;
