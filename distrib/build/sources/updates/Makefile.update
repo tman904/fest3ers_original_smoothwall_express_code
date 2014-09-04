@@ -4,27 +4,23 @@ include ../../Makefile.conf
 
 include ../../Makefile.flags-arch
 
-TARGET_DIR = /build/target
+TARGET_DIR = ../../../target
 
 OUTPUT_FILENAME = $(BASENAME)-$(UPDATE_NAME)-$(mARCH).tar.gz
 
 all: clean $(OUTPUT_FILENAME) updateinfo
 
 patch.tar.gz:
+	cd ../../..; toolcrib/redo.sh $(UPDATE_PACKAGES)
 	mkdir distrib
 	(for I in \
 		$(UPDATE_PACKAGES) \
 	; do \
-		[ -f ${TARGET_DIR}/smoothwall-$$I.tar.gz ] || make -C ../../$$I clean all; \
-		if [ $$? -ne 0 ]; then \
-			echo "$$I FAILED"; \
-			exit 1; \
-		fi; \
  		echo "Unpacking $$I ..."; \
 		if [ "$$I" = "coretree" ]; then \
-			tar -zxvf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib -T coretree.list; \
+			tar -zxvf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib -T coretree.list; \
 		else \
-			tar -zxf /$(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
+			tar -zxf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
 		fi; \
 	done; \
 	);
@@ -38,7 +34,7 @@ patch.tar.gz:
 	fi;
 	#
 	@echo "Cleaning tree ..."
-	/build/toolcrib/striptree distrib/$(UPDATE_DIR)
+	../../../toolcrib/striptree distrib/$(UPDATE_DIR)
 	#
 	@echo "Building patch.tar.gz, stand by ..."
 	tar -zcf patch.tar.gz -C distrib .
