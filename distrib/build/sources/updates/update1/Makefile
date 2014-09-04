@@ -1,4 +1,4 @@
-UPDATE_PACKAGES = linux-firmware smoothd coretree
+UPDATE_PACKAGES = squid
 
 UPDATE_ID = 001
 UPDATE_NAME = update1
