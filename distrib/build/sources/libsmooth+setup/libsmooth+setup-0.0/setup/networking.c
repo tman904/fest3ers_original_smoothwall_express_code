@@ -96,9 +96,13 @@ int handlenetworking(void)
 
 	if (automode == 0)
 	{
-		/* Restart netowrking!  Reboot?  BAH! */	
+		/* Restart networking!  Reboot?  BAH! */	
 		if (netaddresschange)
 		{
+			/* If the addresses changed, rewrite squid.conf */
+			mysystem("/usr/bin/smoothwall/writeproxy.pl");
+
+			/* Then bounce the links */
 			runcommandwithstatus("/etc/rc.d/rc.netaddress.down",
 				ctr[TR_PUSHING_NETWORK_DOWN]);
 			runcommandwithstatus("/etc/rc.d/rc.netaddress.up",
