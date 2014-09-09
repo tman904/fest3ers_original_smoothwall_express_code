@@ -173,8 +173,11 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
     }
 
     # cyclenetworking flushes iptables, which will make some services
-    # inaccessible. Restart all services which depend on firewall rules.
+    # inaccessible.
+    #   - Rewrite configs that need to know about the change.
+    #   - Restart all services which depend on firewall rules.
     system('/usr/bin/smoothwall/writedhcp.pl');
+    system('/usr/bin/smoothwall/writeproxy.pl');
 
     foreach my $service (qw(dhcpd p3scan squid im sip))
     {
