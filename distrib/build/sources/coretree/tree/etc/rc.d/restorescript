@@ -34,6 +34,10 @@ elsif ($backupversion =~ /^3.0/)
 		'time', 'vpn', 'xtaccess', 'clamav', 'hosts', 'im', 'outgoing',
 		'p3scan', 'sipproxy', 'timedaccess', 'traffic');
 	system('/usr/bin/tar', '-zxf', 'restore/backup.dat');
+	system('/usr/bin/smoothwall/writeproxy.pl');
+	system('/usr/bin/smoothwall/writedhcp.pl');
+	system('/usr/bin/smoothwall/writeim.pl');
+	system('/usr/bin/smoothwall/writehosts.pl');
 }
 elsif ($backupversion =~ /^2.0/)
 {
