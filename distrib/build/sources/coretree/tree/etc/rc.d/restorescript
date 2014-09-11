@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# 9/11/2014: SecNewbie's testing revealed 3.0 conf files need to be rewritten after
+#   restoring a 3.0 backup to 3.1.
+
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
