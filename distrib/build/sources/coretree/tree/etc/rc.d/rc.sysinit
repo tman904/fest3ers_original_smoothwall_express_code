@@ -276,8 +276,6 @@ echo "  dhcpd (if enabled)"
 /usr/bin/smoothcom dhcpdrestart
 echo "  squid (if enabled)"
 /usr/bin/smoothcom squidrestart
-echo "  timed access machines (if enabled)"
-/usr/bin/smoothcom settimedaccess
 
 #echo "  ntop"
 #/usr/bin/ntop -w 8080 -i eth0 -a /usr/var/ntop/access_log -m "$GREEN_NETWORK/$GREEN_NETMASK" -n 2 --w3c -d -L --skip-version-check --known-networks=$RED_NETWORK/$RED_NETMASK
