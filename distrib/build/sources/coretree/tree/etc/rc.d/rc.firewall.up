@@ -102,7 +102,7 @@ fi
 # Setup timed access chains.
 /sbin/iptables -N timedaccess
 /sbin/iptables -N timedaction
-/sbin/iptables -A timedaction -j LOG --log-prefix " Denied-by-filter:timed-acc "
+/sbin/iptables -A timedaction -j LOG --log-prefix "Denied-by-filter:timed-acc "
 /sbin/iptables -A timedaction -j REJECT
 
 # Apply the time rules to deny the traffic.
