@@ -2,6 +2,7 @@
 
 # 9/11/2014: SecNewbie's testing revealed 3.0 conf files need to be rewritten after
 #   restoring a 3.0 backup to 3.1.
+# 9/13/2014: SecNewbie found another needed restore tweak.
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
@@ -41,6 +42,7 @@ elsif ($backupversion =~ /^3.0/)
 	system('/usr/bin/smoothwall/writedhcp.pl');
 	system('/usr/bin/smoothwall/writeim.pl');
 	system('/usr/bin/smoothwall/writehosts.pl');
+	system('/usr/bin/sed -i -e \'s=share/kbd/keymaps=share/keymaps=\' /var/smoothwall/main/settings');
 }
 elsif ($backupversion =~ /^2.0/)
 {
