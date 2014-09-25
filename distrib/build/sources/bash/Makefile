@@ -11,6 +11,8 @@ VERSION = 4.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/bash/
 
+PATCH_FILE1 = patch01-12.patch
+
 BUILD = --build=$(SWE_TGT)
 
 ifeq ($(BUILD_PHASE), Stage_3)
