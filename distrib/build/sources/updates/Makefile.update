@@ -18,15 +18,15 @@ patch.tar.gz:
 	; do \
  		echo "Unpacking $$I ..."; \
 		if [ "$$I" = "coretree" ]; then \
-			tar -zxvf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib -T coretree.list; \
+			tar -xvf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib -T coretree.list; \
 		else \
-			tar -zxf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
+			tar -xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
 		fi; \
 	done; \
 	);
 	#
 	if [ "$(KERNEL)" != "" ]; then \
-		tar -zxf /$(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
+		tar -xf /$(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
 	fi;
 	#
 	if [ "$(CLAMAV)" != "" ]; then \
@@ -37,15 +37,17 @@ patch.tar.gz:
 	../../../toolcrib/striptree distrib/$(UPDATE_DIR)
 	#
 	@echo "Building patch.tar.gz, stand by ..."
-	tar -zcf patch.tar.gz -C distrib .
+	tar -cf patch.tar.gz -C distrib .
+	#
 
 updateinfo:
 	@echo "Building update information file ..."	
 	@echo "$(UPDATE_ID)|$(UPDATE_NAME)-$(mARCH)" >information
+	#
 
 $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 	@echo "Making update file ..."
-	tar -zcf $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
+	tar -cf $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
 
 clean:
 	@rm -rf distrib

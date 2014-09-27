@@ -25,7 +25,7 @@ PATH=$PATH:${PWD}/toolcrib
 #   the exit status of the shell (only an explicit exit would do that).
 #   This is needed so the host OS doesn't complain when shutting down.
 #
-trap "echo; echo \"Unmounting /proc\"; umount /proc" EXIT
+trap "echo; echo \"Unmounting /proc\"; umount /proc >/dev/null 2>&1" EXIT
 
 # If an argument specified, build only that item. Otherwise, build everything.
 #
@@ -65,9 +65,8 @@ cpu_count
   retCode=$?
   if [ $retCode -eq 0 ]; then
     echo "Update${UPDATE} preparation success"
-    exit $retCode
-
   else
     echo "Update${UPDATE} preparation FAILED"
   fi
-) <${BUILD_IN} >"sources/updates/update${UPDATE}/Update.out" 2>&1
+  exit $retCode
+) <${BUILD_IN} >"/build/sources/updates/update${UPDATE}/Update.out" 2>&1

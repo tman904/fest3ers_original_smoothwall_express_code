@@ -1,4 +1,4 @@
-UPDATE_PACKAGES = squid
+UPDATE_PACKAGES = squid bash coretree
 
 UPDATE_ID = 001
 UPDATE_NAME = update1

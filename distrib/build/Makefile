@@ -219,11 +219,12 @@ media:
 	    $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media") \
 	    <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
 
-# prepare the specified update
+# prepare the specified update; the Final phase must have been built first.
 #
-update:
+update: crumbs/Final.built
+	@if [ -z "$(UPDATE)" ]; then echo "Example: UPDATE=1 make update"; exit 234; fi;
 	@echo -e "\nPreparing update '$(UPDATE)'..."
-	+@$(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_update $(UPDATE)"
+	+@ $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_update $(UPDATE)"
 
 # prepare a bootable flash drive
 #

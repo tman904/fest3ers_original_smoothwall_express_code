@@ -1,8 +1,10 @@
+./etc/rc.d/restorescript
+./etc/rc.d/rc.firewall.down
 ./etc/rc.d/rc.firewall.up
-./httpd/cgi-bin/advnet.cgi
-./httpd/cgi-bin/help.cgi
-./httpd/html/help/traffic.cgi.html.en
-./httpd/html/ui/css/style.css
-./var/smoothwall/advnet/settings
-./usr/lib/smoothwall/langs/en.pl
-./usr/lib/smoothwall/langs/glossary.en.pl
+./etc/rc.d/rc.netaddress.up
+./etc/rc.d/rc.sysinit
+./httpd/cgi-bin/interfaces.cgi
+./httpd/cgi-bin/updates.cgi
+./usr/bin/smoothwall/updatelists.pl
+./usr/bin/smoothwall/writeim.pl
+./usr/lib/smoothwall/update.pm
