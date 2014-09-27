@@ -68,5 +68,4 @@ cpu_count
   else
     echo "Update${UPDATE} preparation FAILED"
   fi
-  exit $retCode
 ) <${BUILD_IN} >"/build/sources/updates/update${UPDATE}/Update.out" 2>&1
