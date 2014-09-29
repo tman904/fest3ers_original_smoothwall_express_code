@@ -9,6 +9,8 @@
 /* 09-07-08         : Steven L. Pittman                                    */
 /* 10-06-26  add check for red interface active                            */
 /*                  : Steven L. Pittman                                    */
+/* 14-09-25 Convert to use netfilter's '-m time' feature                   */
+/*                  : Neal Murphy                                          */
 
 /* include the usual headers.  iostream gives access to stderr (cerr)      */
 /* module.h includes vectors and strings which are important               */
@@ -16,7 +18,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <fcntl.h>
 #include <syslog.h>
@@ -28,179 +36,117 @@
 
 extern "C" {
 	int load(std::vector<CommandFunctionPair> & );
-	int timed_access(std::vector<std::string> & parameters, std::string & response);
 	int set_timed_access(std::vector<std::string> & parameters, std::string & response);
-	
-	bool indaterange(ConfigVAR &settings);
-	int setallowed(bool allowed, bool logging);
 }
 
 int load(std::vector<CommandFunctionPair> & pairs)
 {
 	/* CommandFunctionPair name("command", "function"); */
-	CommandFunctionPair timed_access_function(1, "timed_access", 0, 4);
 	CommandFunctionPair set_timed_access_function("settimedaccess", "set_timed_access", 0, 4);
 	
-	pairs.push_back(timed_access_function);
 	pairs.push_back(set_timed_access_function);
 	
 	return (0);
 }
 
-int timed_access(std::vector<std::string> & parameters, std::string & response)
-{
-	int error = 0;
-	bool logging = false;
-	static bool modeset = true;
-	static bool setmode = true;
-	static bool firstset = false;
-
-	/* Let's check to see if the red IP is active, if it is not, no need to set */
-	if (!firstset)
-	{
-		FILE *varhandle;
-		if (!(varhandle = fopen("/var/smoothwall/red/active", "r")))
-		{
-			response = "The red interface is inactive, aborting making changes.";
-			syslog(LOG_INFO, "Timed access: %s", response.c_str());
-			return error;
-		}
-		fclose(varhandle);
-	}
-
-	ConfigVAR settings("/var/smoothwall/timedaccess/settings");
-
-	std::string mode = settings["MODE"];
-
-	if (settings["LOGGING"] == "on") logging = true;
-	else logging = false;
-
-	if (settings["ENABLE"] != "on")
-	{
-		setmode = true;
-	}
-	else
-	{
-		/* Check the schedule, determine current status */
-		setmode = indaterange(settings);
-		/* Complement for REJECT mode */
-		if (mode == "REJECT") setmode = !setmode;
-	}
-
-	/* If not set correctly, or current setting unknown, set now */
-	if (modeset != setmode || !firstset)
-	{
-		error = setallowed(setmode, logging);
-		if (!error) {
-			modeset = setmode;
-			firstset = true;
-		}
-	}
-
-	if (error) {
-		response = "Error when setting chain timedaction";
-		syslog(LOG_INFO, "Timed access: %s", response.c_str());
-	} else {
-		response = "Timed Access mode set";
-	}
-
-	return error;
-}
-
 int set_timed_access(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
+	ConfigVAR settings("/var/smoothwall/timedaccess/settings");
 	ConfigCSV config("/var/smoothwall/timedaccess/machines");
 	std::vector<std::string>ipb;
 	std::string::size_type n;
+        std::string daysOfWeek = "";
 	
+	// Send 'em to John
 	ipb.push_back("iptables -F timedaccess\n");
 
-	for (int line = config.first(); line == 0; line = config.next())
+	// If enabled, generate the rules
+	if (settings["ENABLE"] == "on")
 	{
-		const std::string &ip = config[0];
-		
-		if ((n = ip.find_first_not_of(IP_NUMBERS)) != std::string::npos) 
+		// Days of the week the rule applies
+		if (settings["DAY_0"]  == "on") daysOfWeek += ",Mon";
+		if (settings["DAY_1"]  == "on") daysOfWeek += ",Tue";
+		if (settings["DAY_2"]  == "on") daysOfWeek += ",Wed";
+		if (settings["DAY_3"]  == "on") daysOfWeek += ",Thu";
+		if (settings["DAY_4"]  == "on") daysOfWeek += ",Fri";
+		if (settings["DAY_5"]  == "on") daysOfWeek += ",Sat";
+		if (settings["DAY_6"]  == "on") daysOfWeek += ",Sun";
+		if (daysOfWeek.length() > 0)
 		{
-			// illegal characters
-			response = "Bad IP: " + ip;
-			error = 1;
-			return error;
+			daysOfWeek[0] = ' ';
+			daysOfWeek = " --weekdays" + daysOfWeek;
 		}
+
+		// For each IP, generate the rules
+		for (int line = config.first(); line == 0; line = config.next())
+		{
+			const std::string &ip = config[0];
+			
+			if ((n = ip.find_first_not_of(IP_NUMBERS)) != std::string::npos) 
+			{
+				// illegal characters
+				response = "Bad IP: " + ip;
+				error = 1;
+				return error;
+			}
+			if (settings["MODE"] == "ALLOW")
+			{
+				int startTime, stopTime;
+				std::ostringstream ssStartHour, ssStartMin, ssStopHour, ssStopMin;
+
+				// Convert the times to decimal; a day has 1440 minutes (0-1439).
+				startTime = (strtol (settings["START_HOUR"].c_str(), NULL, 10)*60 +
+					strtol (settings["START_MIN"].c_str(), NULL, 10)) - 1;
+				if (startTime < 0) startTime = 0;
+				stopTime = (strtol (settings["END_HOUR"].c_str(), NULL, 10)*60 +
+					strtol (settings["END_MIN"].c_str(), NULL, 10)) + 1;
+				if (stopTime > 1439) stopTime = 1439;
+				// startTime and stopTime can now be used as end and start times when ALLOW must
+				// be inverted to make two pairs of rules.
+				ssStartHour << startTime/60;
+				ssStartMin << startTime%60;
+				ssStopHour << stopTime/60;
+				ssStopMin << stopTime%60;
 		
-		ipb.push_back("iptables -A timedaccess -s " + ip + " -j timedaction");
-		ipb.push_back("iptables -A timedaccess -d " + ip + " -j timedaction");
+				if (startTime > 0)
+				{
+			ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
+						" --timestart 00:00:00" +
+						" --timestop " + ssStartHour.str() + ":" + ssStartMin.str() + ":59" +
+						daysOfWeek + " -j timedaction");
+			ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
+						" --timestart 00:00:00" +
+						" --timestop " + ssStartHour.str() + ":" + ssStartMin.str() + ":59" +
+						daysOfWeek + " -j timedaction");
+		}
+				if (stopTime < 1439)
+				{
+					ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" + 
+						" --timestart " + ssStopHour.str() + ":" + ssStopMin.str() +
+						" --timestop 23:59:59" +
+						daysOfWeek + " -j timedaction");
+					ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" + 
+						" --timestart " + ssStopHour.str() + ":" + ssStopMin.str() +
+						" --timestop 23:59:59" +
+						daysOfWeek + " -j timedaction");
+				}
+			} else {
+				ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
+					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] +
+					" --timestop " + settings["END_HOUR"] + ":" + settings["END_MIN"] + ":59" +
+					daysOfWeek + " -j timedaction");
+				ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
+					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] +
+					" --timestop " + settings["END_HOUR"] + ":" + settings["END_MIN"] + ":59" +
+					daysOfWeek + " -j timedaction");
+			}
+		}
 	}
 	
 	error = ipbatch(ipb);
 	if (error) response = "ipbatch failure when setting chain timedaccess";
 	else response = "timed access set";
-
-	return error;
-}
-
-bool indaterange(ConfigVAR &settings)
-{
-	unsigned int starthour = atol(settings["START_HOUR"].c_str());
-	unsigned int endhour = atol(settings["END_HOUR"].c_str());
-	unsigned int startmin = atol(settings["START_MIN"].c_str());
-	unsigned int endmin = atol(settings["END_MIN"].c_str());
-
-	time_t tnow;  // to hold the result from time()
-	struct tm *tmnow;  // to hold the result from localtime()
-	unsigned int hour, min, wday;
-
-	time(&tnow);  // get the time after the lock so all entries in order
-	tmnow = localtime(&tnow);  // convert to local time (BST, etc)
-
-	hour = tmnow->tm_hour;
-	min = tmnow->tm_min;
-	wday = tmnow->tm_wday;
-
-	/* Wrap week to start on Monday. */
-	if (wday == 0) wday = 7;
-	wday--;
-	
-	bool matchday = false;
-
-	std::string key = "DAY_" + stringprintf("%d", wday);
-
-	if (settings[key.c_str()] == "on") matchday = true;
-
-	if (!matchday) return false;
-	if (hour < starthour || hour > endhour) return false;
-	if (hour == starthour && min < startmin) return false;
-	if (hour == endhour && min >= endmin) return false;
-	
-	/* if we get to here then we are within the selected window of time. */
-	return true;
-}
-
-int setallowed(bool allowed, bool logging)
-{
-	std::vector<std::string> ipb;
-	int error = 0;
-
-	if (allowed)
-	{
-		syslog(LOG_INFO, "Timed access: Ok, allowing");
-		ipb.push_back("iptables -R timedaction 1 -j RETURN");
-	}
-	else
-	{
-		// Rule number 2 in timedaccess is set to REJECT by rc.firewall.up and is static
-		syslog(LOG_INFO, "Timed access: Not allowing");
-	   	if (!logging)
-	   	{
-	   		ipb.push_back("iptables -R timedaction 1 -j REJECT");
-		}
-		else
-		{
-			ipb.push_back("iptables -R timedaction 1 -j LOG --log-prefix \"Denied-by-filter:timed-acc \"");
-		}
-	}
-	
-	error = ipbatch(ipb);
 
 	return error;
 }

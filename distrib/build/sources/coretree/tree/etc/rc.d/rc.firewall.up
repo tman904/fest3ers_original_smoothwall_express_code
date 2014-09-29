@@ -102,8 +102,9 @@ fi
 # Setup timed access chains.
 /sbin/iptables -N timedaccess
 /sbin/iptables -N timedaction
-/sbin/iptables -A timedaction -j LOG --log-prefix "Denied-by-filter:timed-acc "
-/sbin/iptables -A timedaction -j REJECT
+#/sbin/iptables -A timedaction -j LOG --log-prefix "Denied-by-filter:tim-act "
+/sbin/iptables -A timedaction -p tcp -m state --state ESTABLISHED -j REJECT --reject-with tcp-reset
+/sbin/iptables -A timedaction -j REJECT --reject-with icmp-admin-prohibited
 
 # Apply the time rules to deny the traffic.
 /sbin/iptables -A INPUT -j timedaccess
