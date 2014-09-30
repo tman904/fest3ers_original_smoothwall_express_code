@@ -261,16 +261,15 @@ endif
 	  fi \
 	)
 
-extracontent:
-	cp extracontent/* cdrom -avR
+extracontent: cdrom
+	cp -avR extracontent/* cdrom
 	(for I in README.txt README.html; do \
 		cat templates/$$I | \
 			sed "s@\%PRODUCT_NAME\%@$(PRODUCT_NAME)@g" | \
 			sed "s@\%BASENAME\%@$(BASENAME)@g" \
 		> cdrom/$$I; \
 	done);
-	find cdrom -name CVS -exec rm -rf {} \;
-	find cdrom -name .svn -exec rm -rf {} \;
+	find cdrom -name .git -exec rm -rf {} \;
 
 all: cdrom cdrom/smoothwall.tgz extracontent
 	@echo "      assemble full ISO ..." >>$(MEDIA_BUILD_OUT)

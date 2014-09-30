@@ -10,7 +10,7 @@ Please read the available documentation before attempting an installation
 of Smoothwall %PRODUCT_NAME%.  The Administration Guide provides post-
 installation instructions for further configuration and administration.  
 These documents are provided in Adobe Acrobat PDF format, and can be found
-in the 'docs' subdirectory.  The filenames is as follows:
+in the 'docs' subdirectory.  The filenames are as follows:
 
     Installation Guide - %BASENAME%-installation.pdf
 
@@ -25,8 +25,8 @@ subdirectory, in the GPL.html and GPL.txt files.
 Installation
 ------------
 
-This disc can be booted from with compatible drives and BIOS - please be
-aware that installing Smoothwall WILL COMPLETELY ERASE ALL DATA ON THE HARD 
+This disc can be booted with compatible drives and BIOS - please be aware
+that installing Smoothwall WILL COMPLETELY ERASE ALL DATA ON THE HARD 
 DRIVE OF THE TARGET MACHINE!  Please be vigilant when using this disc.
 
 Please read the Installation Guide for more details installation 
@@ -34,7 +34,7 @@ instructions.
 
 
 Smoothwall %PRODUCT_NAME% 
-(c) Copyright 2001 - 2013 Smoothwall Team (www.smoothwall.org)
+(c) Copyright 2001 - 2014 Smoothwall Team (www.smoothwall.org)
 Portions (c) Copyright Original Authors.
 
 Smoothwall (tm) is a trademark of Smoothwall Ltd. (www.smoothwall.net)
