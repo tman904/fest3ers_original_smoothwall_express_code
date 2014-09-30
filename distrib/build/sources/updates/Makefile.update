@@ -11,7 +11,9 @@ OUTPUT_FILENAME = $(BASENAME)-$(UPDATE_NAME)-$(mARCH).tar.gz
 all: clean $(OUTPUT_FILENAME) updateinfo
 
 patch.tar.gz:
+	# Build the packages
 	cd ../../..; toolcrib/redo.sh $(UPDATE_PACKAGES)
+	# Prep the tree
 	mkdir distrib
 	(for I in \
 		$(UPDATE_PACKAGES) \
@@ -24,20 +26,23 @@ patch.tar.gz:
 		fi; \
 	done; \
 	);
-	#
+	# Bump kernel version as needed
 	if [ "$(KERNEL)" != "" ]; then \
 		tar -xf /$(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
 	fi;
-	#
+	# Clear ClamAV files as needed
 	if [ "$(CLAMAV)" != "" ]; then \
 		rm -f distrib/var/clamav/*; \
 	fi;
-	#
+	# Other special prep's on the tree as needed
+	@echo "Special file handling, if needed ..."
+	@if [ -e pre-tar-setup ]; then . ./pre-tar-setup; fi
+	# Strip most binaries
 	@echo "Cleaning tree ..."
 	../../../toolcrib/striptree distrib/$(UPDATE_DIR)
-	#
+	# Build the patchball
 	@echo "Building patch.tar.gz, stand by ..."
-	tar -cf patch.tar.gz -C distrib .
+	tar cfz patch.tar.gz -C distrib .
 	#
 
 updateinfo:
@@ -47,7 +52,7 @@ updateinfo:
 
 $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 	@echo "Making update file ..."
-	tar -cf $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
+	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
 
 clean:
 	@rm -rf distrib

@@ -1,9 +1,7 @@
-UPDATE_PACKAGES = coretree acpica apcupsd at bash clamav dosfstools httpd iperf \
-		  kbd kernel-drivers libsmooth+setup linux-firmware \
-		  openssl perl-mods smoothd squid
-
+UPDATE_PACKAGES = acpica apcupsd at bash clamav coretree daq dosfstools httpd \
+		  iperf kbd libsmooth+setup openssl perl-mods smoothd snort squid
 
 UPDATE_ID = 001
-UPDATE_NAME = update1
+UPDATE_NAME = rc5/6 test update
 
 include ../Makefile.update
