@@ -5,10 +5,11 @@ alias gitstat='git status|egrep -v -- "\.built|\.out|\-compile/$|\.so$|\.o$"|mor
 function monbuild ()
 {
   if [ $# -eq 0 -o `basename "$PWD"` != "build" ]; then
-    echo "Usage: monbuild [ -1 | -2 | -3 | -f -m ] package"
-    echo "  View the build output file in stage 1, 2, 3, the final stage or media."
+    echo "Usage: monbuild [ -1 | -2 | -3 | -f | -m | -u ] package"
+    echo "  View the build output file in stage 1, 2, 3, the final stage, media or update."
     echo "  '-f' is the default."
     echo "  'package' is the name of the package being built."
+    echo "  Use '-m media' or '-u updates' to monitor media or update preparation."
     echo
     echo " You must be in the build dir."
     return
@@ -21,6 +22,7 @@ function monbuild ()
     -3) stage="Stage_3"; shift;;
     -f) stage="Final"; shift;;
     -m) stage="Media.*"; shift;;
+    -u) stage="Update*"; shift;;
   esac
   (
     trap "echo; exit" INT
@@ -38,7 +40,9 @@ function monloop ()
   if [ $# -ne 0 -o `basename "$PWD"` != "build" ]; then
     echo "Usage: monloop"
     echo "  At the prompt, enter monbuild's arg(s) ([stage] package)."
-    echo "  'stage' can be one of -1, -2, -3, -f, or -m}"
+    echo "  'stage' can be one of -1, -2, -3, -f, -m or -u."
+    echo "  '-f' is the default."
+    echo "  Use '-m media' or '-u updates' to monitor media or update preparation."
     echo "  One <CTRL/C> terminates the monbuild and displays the prompt."
     echo "  A second <CTRL/C> terminates monloop."
     echo
