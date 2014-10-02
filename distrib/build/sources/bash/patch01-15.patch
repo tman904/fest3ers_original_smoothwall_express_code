@@ -1000,6 +1000,23 @@ Patch (apply with `patch -p0'):
 ! #define PATCHLEVEL 14
   
   #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release:	4.1
+Patch-ID:	bash41-015
+
+Bug-Reported-by:	Florian Weimer <fweimer@redhat.com>
+Bug-Reference-ID:
+Bug-Reference-URL:
+
+Bug-Description:
+
+There are two local buffer overflows in parse.y that can cause the shell
+to dump core when given many here-documents attached to a single command
+or many nested loops.
+
+Patch (apply with `patch -p0'):
 
 *** bash-4.1.14/parse.y	2014-09-27 12:18:25.000000000 -0400
 --- parse.y	2014-09-30 19:36:03.000000000 -0400
