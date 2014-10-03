@@ -275,13 +275,13 @@ echo
 if [ $restore -eq 1 -o $restore -eq 2 ]; then
   # Confuser: First try to mount the whole medium as an ISO9660 CD-/DVD-ROM;
   # failing that, try mounting it as type 'isofs'. Failing that, try mounting
-  # partition #1 as VFAT.
-  echo "Mounting source media"
+  # partition #1 as any known FS.
+  echo "Mounting source medium"
   CDMNTLOG="/cdmount.log"
   > $CDMNTLOG
   mount -t iso9660  /dev/${cd_dev[$CD]}  /cdrom -o ro >> $CDMNTLOG 2>&1 \
   || mount -t isofs /dev/${cd_dev[$CD]}  /cdrom -o ro >> $CDMNTLOG 2>&1 \
-  || mount -t vfat  /dev/${cd_dev[$CD]}1 /cdrom -o rw >> $CDMNTLOG 2>&1
+  || mount /dev/${cd_dev[$CD]}1 /cdrom -o rw >> $CDMNTLOG 2>&1
   if [ $? -ne 0 ]; then
     echo "Couldn't mount source medium:"
     sed -e 's/^/  /' $CDMNTLOG
