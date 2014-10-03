@@ -11,7 +11,7 @@ VERSION = 4.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/bash/
 
-PATCH_FILE1 = patch01-15.patch
+PATCH_FILE1 = gnu-patches.patch
 
 BUILD = --build=$(SWE_TGT)
 
