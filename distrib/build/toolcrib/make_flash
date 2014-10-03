@@ -188,10 +188,10 @@ mkdir -p $FL || \
 /sbin/modprobe loop || \
     { echo "Couldn't modprobe loop device!"; exit 1; }
 
-# Mount the ISO and flash
+# Mount the ISO and flash; allow any known FS for flash
 mount -t iso9660 ${isoname} $CD ${MOUNT_OPT} || \
     { echo "Couldn't mount the CD or ISO image!"; exit 1; }
-mount -t vfat /dev/${fldev}1 $FL || \
+mount /dev/${fldev}1 $FL || \
     { echo "Couldn't mount flash partition #1!"; exit 1; }
 
 echo
