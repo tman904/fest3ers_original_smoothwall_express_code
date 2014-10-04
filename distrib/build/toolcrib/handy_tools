@@ -21,7 +21,7 @@ function monbuild ()
     -2) stage="Stage_2"; shift;;
     -3) stage="Stage_3"; shift;;
     -f) stage="Final"; shift;;
-    -m) stage="Media.*"; shift;;
+    -m) stage="Media.mediaISO"; shift;;
     -u) stage="Update*"; shift;;
   esac
   (
