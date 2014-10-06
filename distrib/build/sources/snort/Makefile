@@ -23,7 +23,7 @@ endif
 
 BASE_URL = https://www.snort.org/downloads/snort
 
-CONFIG_OPTS += --enable-gre --enable-targetbased --enable-ppm \
+CONFIG_OPTS += --enable-gre --enable-targetbased --enable-ppm --enable-sourcefire \
 	      --enable-perfprofiling --enable-zlib --enable-non-ether-decoders
 
 # You're looking in here because the build system failed to find
