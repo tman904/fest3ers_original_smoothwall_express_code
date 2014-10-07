@@ -13,9 +13,9 @@ BASE_URL = ftp://ftp.gnu.org/gnu/bash/
 
 PATCH_FILE1 = gnu-patches.patch
 
+ifeq ($(BUILD_PHASE), Stage_3)
 BUILD = --build=$(SWE_TGT)
 
-ifeq ($(BUILD_PHASE), Stage_3)
 CONFIG_OPTS += --prefix=${TOOLS_DIR} --without-bash-malloc
 
 INSTALL = yes
