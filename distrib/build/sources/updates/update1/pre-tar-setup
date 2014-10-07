@@ -1,0 +1,7 @@
+#! /bin/bash
+
+cd distrib
+for i in usr/doc usr/man usr/share/doc usr/share/man usr/share/info \
+         usr/include share/doc share/man; do
+  rm -rf $i &
+done
