@@ -22,6 +22,7 @@
 ./usr/bin/installer/prepudevrules
 ./usr/bin/smoothwall/machine_reg.pl
 ./usr/bin/smoothwall/powerButton.pl
+./usr/bin/smoothwall/restore_sys
 ./usr/bin/smoothwall/rrdtool.pl
 ./usr/bin/smoothwall/smoothinfo.pl
 ./usr/bin/smoothwall/updatelists.pl
