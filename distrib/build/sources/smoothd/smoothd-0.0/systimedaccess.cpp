@@ -112,10 +112,12 @@ int set_timed_access(std::vector<std::string> & parameters, std::string & respon
 				if (startTime > 0)
 				{
 			ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
+						" --kerneltz" +
 						" --timestart 00:00:00" +
 						" --timestop " + ssStartHour.str() + ":" + ssStartMin.str() + ":59" +
 						daysOfWeek + " -j timedaction");
 			ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
+						" --kerneltz" +
 						" --timestart 00:00:00" +
 						" --timestop " + ssStartHour.str() + ":" + ssStartMin.str() + ":59" +
 						daysOfWeek + " -j timedaction");
@@ -123,20 +125,24 @@ int set_timed_access(std::vector<std::string> & parameters, std::string & respon
 				if (stopTime < 1439)
 				{
 					ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" + 
+						" --kerneltz" +
 						" --timestart " + ssStopHour.str() + ":" + ssStopMin.str() +
 						" --timestop 23:59:59" +
 						daysOfWeek + " -j timedaction");
 					ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" + 
+						" --kerneltz" +
 						" --timestart " + ssStopHour.str() + ":" + ssStopMin.str() +
 						" --timestop 23:59:59" +
 						daysOfWeek + " -j timedaction");
 				}
 			} else {
 				ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
+					" --kerneltz" +
 					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] +
 					" --timestop " + settings["END_HOUR"] + ":" + settings["END_MIN"] + ":59" +
 					daysOfWeek + " -j timedaction");
 				ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
+					" --kerneltz" +
 					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] +
 					" --timestop " + settings["END_HOUR"] + ":" + settings["END_MIN"] + ":59" +
 					daysOfWeek + " -j timedaction");
