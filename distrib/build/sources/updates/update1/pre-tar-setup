@@ -1,0 +1,11 @@
+#! /bin/bash
+
+cd distrib
+for i in usr/doc usr/man usr/share/doc usr/share/man usr/share/info \
+         usr/include share/doc share/man; do
+  rm -rf $i &
+done
+
+# Delete all but the plugin(s) that changed
+cd usr/lib/smoothd
+rm -f `ls -C1|grep -v systimedaccess.so`
