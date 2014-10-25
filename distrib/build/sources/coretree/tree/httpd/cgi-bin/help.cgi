@@ -55,7 +55,8 @@ if ($uisettings{'ALWAYS_ENGLISH'} ne 'off')
     {
       open (FILE, $_);
       # include all English glossaries
-      while (<$helpPath/usr/lib/smoothwall/langs/glossary.en.pl>)
+      while (</usr/lib/smoothwall/langs/glossary.en.pl
+              $helpPath/usr/lib/smoothwall/langs/glossary.en.pl >)
       {
         if (-f $_)
         {
@@ -76,7 +77,8 @@ else
       open (FILE, $_);
       # include all $language glossaries
       # mods can override/supplement stock glossaries
-      while (<$helpPath/usr/lib/smoothwall/langs/glossary.${language}.pl>)
+      while (</usr/lib/smoothwall/langs/glossary.$language.pl
+              $helpPath/usr/lib/smoothwall/langs/glossary.${language}.pl>)
       {
         if (-f $_)
         {
