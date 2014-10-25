@@ -5,11 +5,11 @@ HOME=/
 
 # run-parts
 # Adapted from Steve McNeill's ModInstall
-*/5 * * * * root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex \'.*/etc/cron.often\'` >/dev/null
-01 * * * * root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex \'.*/etc/cron.hourly\'` >/dev/null
-02 4 * * * root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex \'.*/etc/cron.daily\'` >/dev/null
-22 4 * * 0 root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex \'.*/etc/cron.weekly\'` >/dev/null
-42 4 1 * * root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex \'.*/etc/cron.monthly\'` >/dev/null
+*/5 * * * * root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex '.*/etc/cron.often'` >/dev/null
+01 * * * * root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex '.*/etc/cron.hourly'` >/dev/null
+02 4 * * * root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex '.*/etc/cron.daily'` >/dev/null
+22 4 * * 0 root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex '.*/etc/cron.weekly'` >/dev/null
+42 4 1 * * root /usr/bin/smoothwall/run-parts `find /etc /var/smoothwall/mods -regex '.*/etc/cron.monthly'` >/dev/null
 
 # Update time
 30 * * * * root /usr/bin/smoothwall/gettime.pl >/dev/null
