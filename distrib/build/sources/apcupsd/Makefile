@@ -11,7 +11,7 @@ VERSION = 3.14.12
 
 BASE_URL = http://downloads.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)%20-%20Stable/$(VERSION)
 
-CONFIG_OPTS = --enable-usb
+CONFIG_OPTS = --enable-usb --with-pid-dir=/var/run
 
 COMPILE = yes
 compile: configure
