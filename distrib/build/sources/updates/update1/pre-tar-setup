@@ -8,4 +8,4 @@ done
 
 # Delete all but the plugin(s) that changed
 cd usr/lib/smoothd
-rm -f `ls -C1|grep -v systimedaccess.so`
+rm -rf `ls -C1|grep -v systimedaccess.so`
