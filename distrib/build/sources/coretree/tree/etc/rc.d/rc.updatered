@@ -142,12 +142,12 @@ else
 	if [ "$DNS" == "Automatic" ]; then
 		case $COMPORT in
 			isdn*)
-				DNSMASQ_DNS1=$MS_DNS1
-				DNSMASQ_DNS2=$MS_DNS2
-				;;
-			*)
 				DNSMASQ_DNS1=$dns1ENV
 				DNSMASQ_DNS2=$dns2ENV
+				;;
+			*)
+				DNSMASQ_DNS1=$MS_DNS1
+				DNSMASQ_DNS2=$MS_DNS2
 				;;
 		esac
 	fi
