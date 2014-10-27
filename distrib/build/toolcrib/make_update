@@ -67,5 +67,6 @@ cpu_count
     echo "Update${UPDATE} preparation success"
   else
     echo "Update${UPDATE} preparation FAILED"
+    exit 123
   fi
 ) <${BUILD_IN} >"/build/sources/updates/update${UPDATE}/Update.out" 2>&1
