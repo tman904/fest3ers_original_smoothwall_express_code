@@ -69,7 +69,7 @@ my $outputfile = "${SIdir}/etc/report.txt";
 #}
 
 # MEMORY
-my $memory = system( '/usr/bin/free', '-ot' );
+my $memory = `/usr/bin/free -ot`;
 chomp ($memory);
 
 # CPU
