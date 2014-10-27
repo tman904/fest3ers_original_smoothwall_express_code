@@ -1,11 +1,18 @@
 #! /bin/bash
 
 cd distrib
+
+# delete the docs
 for i in usr/doc usr/man usr/share/doc usr/share/man usr/share/info \
          usr/include share/doc share/man; do
   rm -rf $i &
 done
 
-# Delete all but the plugin(s) that changed
-cd usr/lib/smoothd
-rm -rf `ls -C1|grep -v systimedaccess.so`
+# delete the static libs.
+for i in lib usr/lib; do
+  find $i -name \*.a -delete &
+  find $i -name \*.la -delete &
+done
+
+# Wait for all children to die 
+wait
