@@ -24,11 +24,12 @@ patch.tar.gz:
 		$(UPDATE_PACKAGES) \
 	; do \
  		echo "Unpacking $$I ..."; \
-		if [ "$$I" = "coretree" ]; then \
-			tar -xvf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib -T coretree.list; \
+		if [ -f "$$I.list" ]; then \
+			Toption=" -T $$I.list"; \
 		else \
-			tar -xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib; \
+			Toption=""; \
 		fi; \
+		tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib$$Toption; \
 	done; \
 	);
 	# Bump kernel version as needed
