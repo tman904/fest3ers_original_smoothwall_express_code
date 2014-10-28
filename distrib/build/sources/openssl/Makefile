@@ -33,7 +33,7 @@ configure: $(DIR)/
 	sed -i -e '/^  \*86-\*-linux2/,+11d' $(DIR)/config
 	sed -i -e 's/  FUBAR$$/  *86-*-linux2) OUT="linux-elf"/' $(DIR)/config
 	@(cd $(DIR); \
-	  ./config shared --prefix=$(PKG_DIR) --openssldir=/$(OPENSSLDIR) $(ONLY386); \
+	  ./config shared --prefix=$(PKG_DIR) --libdir=lib --openssldir=/$(OPENSSLDIR) $(ONLY386); \
 	  patch < ../Makefile-MANDIR.patch);
 
 compile: configure
