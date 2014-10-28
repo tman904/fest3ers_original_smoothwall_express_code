@@ -10,8 +10,8 @@ done
 
 # delete the static libs.
 for i in lib usr/lib; do
-  find $i -name \*.a -delete &
-  find $i -name \*.la -delete &
+  find $i -name \*.a -delete >/dev/null 2>&1 &
+  find $i -name \*.la -delete >/dev/null 2>&1 &
 done
 
 # Wait for all children to die 
