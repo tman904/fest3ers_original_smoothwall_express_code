@@ -3,4 +3,5 @@
 ./etc/rc.d/rc.updatered
 ./httpd/cgi-bin/help.cgi
 ./httpd/cgi-bin/logs.cgi/log.dat
+./usr/bin/smoothwall/smoothinfo.pl
 ./usr/lib/smoothwall/services/apcupsd
