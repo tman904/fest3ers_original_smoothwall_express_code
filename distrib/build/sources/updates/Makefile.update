@@ -19,7 +19,7 @@ patch.tar.gz:
 	# Build the packages
 	cd ../../..; toolcrib/redo.sh $(UPDATE_PACKAGES)
 	# Prep the tree
-	mkdir distrib
+	mkdir distrib review
 	(for I in \
 		$(UPDATE_PACKAGES) \
 	; do \
@@ -30,6 +30,17 @@ patch.tar.gz:
 			Toption=""; \
 		fi; \
 		tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib$$Toption; \
+		mkdir review/$$I; \
+		tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C review/$$I$$Toption; \
+		( find review/$$I -name \*.la -print; \
+		  find review/$$I -name \*.a -print; \
+		  find review/$$I -name include -print ; \
+		  find review/$$I -name doc -print ; \
+		  find review/$$I -name man -print ; \
+		  find review/$$I -name info -exec rm -rf {} \;) | while read filnam; do \
+		    rm -rf $$filnam; done; \
+		tar cfz review/$$I-$(mARCH).tar.gz -C review/$$I .; \
+		rm -rf review/$$I; \
 	done; \
 	);
 	# Bump kernel version as needed
@@ -50,6 +61,7 @@ patch.tar.gz:
 	@echo "Building patch.tar.gz, stand by ..."
 	tar cfz patch.tar.gz -C distrib .
 	# ----
+	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz review
 
 updateinfo:
 	@echo "Building update information file ..."	
@@ -61,7 +73,7 @@ $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
 
 clean:
-	@rm -rf distrib
+	@rm -rf distrib review
 	@rm -f patch.tar.gz
 	@rm -f $(OUTPUT_FILENAME)
 	@rm -f updateinfo
