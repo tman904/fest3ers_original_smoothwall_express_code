@@ -51,3 +51,4 @@ HOME=/
 0 3 * * * nobody /var/smoothwall/urlfilter/autoupdate/cron.daily
 0 3 * * 0 nobody /var/smoothwall/urlfilter/autoupdate/cron.weekly
 0 3 1 * * nobody /var/smoothwall/urlfilter/autoupdate/cron.monthly
+
