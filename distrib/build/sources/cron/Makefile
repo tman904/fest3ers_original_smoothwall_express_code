@@ -16,6 +16,7 @@ TARBALL = $(PACKAGE)_$(VERSION).orig
 
 PATCH_FILE1 = cron_3.0pl1-87.diff.gz
 PATCH_FILE2 = smoothwall-pid.patch
+PATCH_FILE3 = smoothinstall.patch
 
 CONFIGURE = yes
 INSTALL = yes
