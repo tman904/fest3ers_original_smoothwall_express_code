@@ -82,9 +82,3 @@ sysctl net.netfilter.nf_conntrack_acct=1 >/dev/null 2>&1
 echo
 echo "Bringing network up"
 . /etc/rc.d/rc.netaddress.up
-
-. /var/smoothwall/ppp/settings
-if [ "$AUTOCONNECT" = "on" ]; then
-	echo "Bringing up modem/ISDN link"
-	/usr/bin/smoothcom updown UP
-fi

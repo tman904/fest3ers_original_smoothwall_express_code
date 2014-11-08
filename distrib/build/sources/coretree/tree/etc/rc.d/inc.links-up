@@ -28,3 +28,12 @@ for i in $nicsToUp; do
       ;;
   esac
 done
+
+# If RED_TYPE is neither DHCP nor STATIC, it is PPP; so up it.
+if [ $RED_TYPE != "DHCP" -a $RED_TYPE != "STATIC" ]; then
+  . /var/smoothwall/ppp/settings
+  if [ "$AUTOCONNECT" = "on" ]; then
+    echo "  Bringing up modem/ISDN link"
+    /usr/bin/smoothcom updown UP
+  fi
+fi
