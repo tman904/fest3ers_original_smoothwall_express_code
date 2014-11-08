@@ -1,5 +1,7 @@
 ./etc/crontab
 ./etc/httpd/conf/httpd.conf
+./etc/rc.d/inc.links-up
+./etc/rc.d/rc.network
 ./etc/rc.d/rc.updatered
 ./httpd/cgi-bin/help.cgi
 ./httpd/cgi-bin/logs.cgi/log.dat
