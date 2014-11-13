@@ -71,8 +71,6 @@ $thisscript = $ENV{'SCRIPT_NAME'};
 $thisscript =~ s/^\/cgi-bin\///;
 print STDERR "script: $thisscript";
 
-use Data::Dumper;
-
 use Net::Domain qw(hostname hostfqdn hostdomain);
 my $hostname = hostfqdn();
 
@@ -125,7 +123,7 @@ print STDERR "mod's alert: $_";
     {
       $abouttext{$thisscript} = $baseabouttext{$thisscript};
 my $mod = $_;
-$mod =~ s/.*\/mods\///;
+$mod =~ s/\/mods\///;
 $mod =~ s/\/.*//;
 print STDERR "mod: $mod; text: $baseabouttext{$thisscript}\n";
     }
@@ -136,9 +134,9 @@ else
 {
 print STDERR "get mod's EN alertboxes\n";
   # Pull in the mod's alertboxes.en.pl.
-  my $mod = $thisscript;
-  $mod =~ s/mods\///;
-  $mod =~ s/\/.*//;
+my $mod = $thisscript;
+$mod =~ s/\/mods\///;
+$mod =~ s/\/.*//;
 print STDERR "mod: $mod; script: $thisscript\n";
   $_ = "/var/smoothwall/mods/$mod/usr/lib/smoothwall/langs/alertboxes.en.pl";
   if (requireConditional $_)
@@ -165,7 +163,7 @@ if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
   {
     # Pull in the stock alertbox.'lang'.pl and each mod's alertbox.'lang'.pl file.
     # Only need the *one* text.
-    # The last mod that provids one wins. If none, stock wins.
+    # The last mod that provides one wins. If none, stock wins.
     requireConditional "/usr/lib/smoothwall/langs/alertboxes.$language.pl";
     if (defined $baseabouttext{$thisscript})
     {
@@ -185,9 +183,9 @@ if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
   else
   {
     # Pull in the mod's alertboxes.'lang'.pl.
-    my $mod = $thisscript;
-    $mod =~ s/mods\///;
-    $mod =~ s/\/.*//;
+my $mod = $thisscript;
+$mod =~ s/\/mods\///;
+$mod =~ s/\/.*//;
 print STDERR "mod: $mod; script: $thisscript\n";
     $_ = "/var/smoothwall/mods/$mod/usr/lib/smoothwall/langs/alertboxes.$language.pl";
     if (requireConditional $_)
@@ -274,7 +272,7 @@ print STDERR "    menuprefix = $menuprefix\n";
 			{
 				$urlPath =~ s=/var/smoothwall/mods/==;
 				$urlPath =~ s=/.*==;
-				$urlPath = "/cgi-bin/mods/".$urlPath."/";
+				$urlPath = "/mods/".$urlPath."/cgi-bin/";
 			}
 			else
 			{
