@@ -9,11 +9,14 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
+my $modbase = "/var/smoothwall/mods";
+
 # What do we need help with?
 (my $tmp, $modname, $needhelpwith) = split("/", $ENV{'QUERY_STRING'});
 
 if ($tmp ne "mods")
 {
+	# This is a stock help file.
 	$needhelpwith = $tmp;
 	$tmp = "";
 	$modname = "";
@@ -21,6 +24,7 @@ if ($tmp ne "mods")
 }
 else
 {
+	# This is a mod's help file.
 	$helpPath = "/var/smoothwall/mods/$modname";
 }
 
@@ -48,6 +52,10 @@ unless ($needhelpwith =~ /^[A-Za-z0-9\.]+$/) {
 
 if ($uisettings{'ALWAYS_ENGLISH'} ne 'off')
 {
+  # English only. But include all mods' glossaries
+  $enGlob = "/usr/lib/smoothwall/langs/glossary.en.pl";
+  $enGlob .= " $modbase/*/usr/lib/smoothwall/langs/glossary.en.pl";
+
   # Read the help file, if any
   while (<$helpPath/httpd/html/help/$needhelpwith.html.en>)
   {
@@ -55,8 +63,8 @@ if ($uisettings{'ALWAYS_ENGLISH'} ne 'off')
     {
       open (FILE, $_);
       # include all English glossaries
-      while (</usr/lib/smoothwall/langs/glossary.en.pl
-              $helpPath/usr/lib/smoothwall/langs/glossary.en.pl >)
+      # mods can override/supplement stock glossaries
+      while (glob $enGlob)
       {
         if (-f $_)
         {
@@ -69,6 +77,10 @@ if ($uisettings{'ALWAYS_ENGLISH'} ne 'off')
 }
 else
 {
+  # Other language only. But include all mods' glossaries for that language.
+  $nonEnGlob = "/usr/lib/smoothwall/langs/glossary.$language.pl";
+  $nonEnGlob .= " $modbase/*/usr/lib/smoothwall/langs/glossary.$language.pl";
+
   # Read the help file, if any
   while (<$helpPath/httpd/html/help/$needhelpwith.html.$language>)
   {
@@ -77,8 +89,7 @@ else
       open (FILE, $_);
       # include all $language glossaries
       # mods can override/supplement stock glossaries
-      while (</usr/lib/smoothwall/langs/glossary.$language.pl
-              $helpPath/usr/lib/smoothwall/langs/glossary.${language}.pl>)
+      while (glob $nonEnGlob)
       {
         if (-f $_)
         {
