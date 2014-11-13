@@ -4,3 +4,5 @@ echo "Update 1 installing."
 
 tar xvf patch.tar.gz -C /
 
+# Change the mode of logrotate conf files; logrotate silently fails.
+chmod 644 /etc/logrotate.conf /etc/logrotate.d/*
