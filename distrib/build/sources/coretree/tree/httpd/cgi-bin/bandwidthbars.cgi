@@ -29,18 +29,32 @@ open (HDL, "/usr/sbin/ip link | egrep 'ppp[0-9]+:' | sed -e 's/^[0-9]*: //' -e '
 my @PPPdevices = <HDL>;
 close (HDL);
 chomp @PPPdevices;
+
+# Get NIC bit rates
 my @devices;
-{
-	my $i = 0;
-	if ( $netsettings{'GREEN_DEV'}) { $devices[$i++] = $netsettings{'GREEN_DEV'}; }
-	if ( $netsettings{'ORANGE_DEV'}) { $devices[$i++] = $netsettings{'ORANGE_DEV'}; }
-	if ( $netsettings{'PURPLE_DEV'}) { $devices[$i++] = $netsettings{'PURPLE_DEV'}; }
+my %deviceRates;
+if ( $netsettings{'GREEN_DEV'}) {
+	$devices[$i++] = $netsettings{'GREEN_DEV'};
+	$deviceRates{$netsettings{'GREEN_DEV'}} = &getLinkSpeed($netsettings{'GREEN_DEV'}, "string");
+}
+if ( $netsettings{'ORANGE_DEV'}) {
+	$devices[$i++] = $netsettings{'ORANGE_DEV'};
+	$deviceRates{$netsettings{'ORANGE_DEV'}} = &getLinkSpeed($netsettings{'ORANGE_DEV'}, "string");
+}
+if ( $netsettings{'PURPLE_DEV'}) {
+	$devices[$i++] = $netsettings{'PURPLE_DEV'};
+	$deviceRates{$netsettings{'PURPLE_DEV'}} = &getLinkSpeed($netsettings{'PURPLE_DEV'}, "string");
+}
 	if ($netsettings{'RED_TYPE'} eq 'STATIC' or $netsettings{'RED_TYPE'} eq 'DHCP')
 	{
 		$devices[$i++] = $netsettings{'RED_DEV'};
+	$deviceRates{$netsettings{'RED_DEV'}} = &getLinkSpeed($netsettings{'RED_DEV'}, "string");
 	} else {
 		# Must be PPP; get from PPPdevices (ppp0 or ippp0)
-		$devices[$i++] = $PPPdevices[0] if ($PPPdevices[0]);
+	if ($PPPdevices[0])
+	{
+		$devices[$i] = $PPPdevices[0];
+		$deviceRates{$devices[$i++]} = "";
   }
 }
 
@@ -138,7 +152,7 @@ sub realtime_graphs
         <tr>
           <td colspan='6' style='background-color:#c3d1e5; height:2px'></td>
         </tr>
-          <td colspan='2' style='width: 85px; text-align: left; background-color:#c3d1e5;'>&nbsp;<strong>$iftitle</strong></td>
+          <td colspan='2' style='width: 85px; text-align: left; background-color:#c3d1e5;'>&nbsp;<strong>$iftitle</strong>$deviceRates{$interface}</td>
           <td style='width:400px; background-color:#c3d1e5'>
             <table style='width: 100% border: 0; border-collapse: collapse;' cellpadding='0' cellspacing='0'>
               <tr>

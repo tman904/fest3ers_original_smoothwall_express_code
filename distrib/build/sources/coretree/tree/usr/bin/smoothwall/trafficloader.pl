@@ -59,6 +59,42 @@ my $internal_speed = $trafficsettings{'INTERNAL_SPEED'} || 100000000; # 100Mb sa
 my $upload_speed = $trafficsettings{'UPLOAD_SPEED'} || 250000; # 250 kbit sanity default
 my $download_speed =  $trafficsettings{'DOWNLOAD_SPEED'} || 500000; # 500 kbit
 
+# Get NIC bit rates
+my @devices;
+my %deviceRates;
+if ( $netsettings{'GREEN_DEV'}) {
+	$devices[$i++] = $netsettings{'GREEN_DEV'};
+	my $tmp = &getLinkSpeed($netsettings{'GREEN_DEV'}, "number") * 10**6;
+	if ($tmp == 0) { $tmp = $download_speed + 1; }
+	$deviceRates{$netsettings{'GREEN_DEV'}} = $tmp;
+}
+if ( $netsettings{'ORANGE_DEV'}) {
+	$devices[$i++] = $netsettings{'ORANGE_DEV'};
+	my $tmp = &getLinkSpeed($netsettings{'ORANGE_DEV'}, "number") * 10**6;
+	if ($tmp == 0) { $tmp = $download_speed + 1; }
+	$deviceRates{$netsettings{'ORANGE_DEV'}} = $tmp;
+}
+if ( $netsettings{'PURPLE_DEV'}) {
+	$devices[$i++] = $netsettings{'PURPLE_DEV'};
+	my $tmp = &getLinkSpeed($netsettings{'PURPLE_DEV'}, "number") * 10**6;
+	if ($tmp == 0) { $tmp = $download_speed + 1; }
+	$deviceRates{$netsettings{'PURPLE_DEV'}} = $tmp;
+}
+if ($netsettings{'RED_TYPE'} eq 'STATIC' or $netsettings{'RED_TYPE'} eq 'DHCP')
+{
+	$devices[$i++] = $netsettings{'RED_DEV'};
+	my $tmp = &getLinkSpeed($netsettings{'RED_DEV'}, "number") * 10**6;
+	if ($tmp == 0) { $tmp = $upload_speed; }
+	$deviceRates{$netsettings{'RED_DEV'}} = $tmp;
+} else {
+	# Must be PPP; get from PPPdevices (ppp0 or ippp0)
+	if ($PPPdevices[0])
+	{
+		$devices[$i] = $PPPdevices[0];
+		$deviceRates{$devices[$i++]} = $upload_speed;
+	}
+}
+
 
 # which class to use for things not otherwise classified
 my $default_traffic = $trafficsettings{'DEFAULT_TRAFFIC'} || 'normal';
@@ -145,8 +181,12 @@ if(defined $trafficsettings{DCEIL} && $trafficsettings{DCEIL} ne '') {
 }
 
 # add these even after import
-$drate{$_} = $internal_speed for @internal_interface;
-$dceil{$_} = $internal_speed for @internal_interface;
+foreach (@internal_interface)
+{
+	#print STDERR "_:$_ deviceRates:$deviceRates{$_}\n";
+	$drate{$_} = $deviceRates{$_};
+	$dceil{$_} = $deviceRates{$_};
+}
 
 # max rate we can send data
 my %urate = (
@@ -278,24 +318,30 @@ tcclass("$external_interface parent 1:feed classid 1:$classIDs{'all'}" .
         " htb rate $upload_speed ceil $upload_speed quantum 6000");
 # RED localtraffic class, share=internal speed - RED DL; cap=internal
 # This isn't used yet, but could be deployed when a smoothie is used inside on fast net.
-my $int_up = $internal_speed - $upload_speed;
-#print STDERR "INT=$internal_speed UPL=$upload_speed SUB=$int_up\n";
+
+my $ext_up = $deviceRates{$external_interface} - $upload_speed;
+if ($ext_up < $upload_speed) { $ext_up = $upload_speed; }
+#print STDERR "IF=$external_interface EXT=$deviceRates{$external_interface} UPL=$upload_speed SUB=$ext_up\n";
+
 tcclass("$external_interface parent 1:feed classid 1:$classIDs{'localtraffic'} htb" .
-        " rate $int_up ceil $internal_speed quantum 24000");
+        " rate $ext_up ceil $deviceRates{$external_interface} quantum 24000");
 tcqdisc("$external_interface parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
 
 for (@internal_interface) {
   # internal root class
   tcclass("$_ parent 1:0 classid 1:feed htb" .
-          " rate $internal_speed quantum 12000");
+          " rate $deviceRates{$_} quantum 12000");
+
   # RED DL class capped at RED DL speed
   tcclass("$_ parent 1:feed classid 1:$classIDs{'all'}" .
           " htb rate $download_speed ceil $download_speed quantum 6000");
   # Localtraffic class, share=internal speed; cap=internal - RED DL
-my $int_dn = $internal_speed - $download_speed;
-#print STDERR "INT=$internal_speed UPL=$download_speed SUB=$int_dn\n";
+  my $int_dn = $deviceRates{$_} - $download_speed;
+  if ($int_dn <= $download_speed) { $int_dn = $download_speed; }
+  #print STDERR "IF=$_ INT=$deviceRates{$_} UPL=$download_speed SUB=$int_dn\n";
+
   tcclass("$_ parent 1:feed classid 1:$classIDs{'localtraffic'} htb" .
-          " rate $int_dn ceil $internal_speed quantum 24000");
+          " rate $int_dn ceil $deviceRates{$_} quantum 24000");
   tcqdisc("$_ parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
 }
 
@@ -616,7 +662,7 @@ sub writesettings {
     print FD "red_download=${download_speed}bps\n";
     print FD "red_upload=${upload_speed}bps\n";
     for(@internal_interface) {
-      print FD "$_=${internal_speed}bps\n";
+      print FD "$_=$deviceRates{$_}bps\n";
     }
     close(FD);
   }
