@@ -51,12 +51,26 @@ int load(std::vector<CommandFunctionPair> & pairs)
 
 int set_timed_access(std::vector<std::string> & parameters, std::string & response)
 {
-	int error = 0;
+	int error = 0, preStartTime, postStopTime;
 	ConfigVAR settings("/var/smoothwall/timedaccess/settings");
 	ConfigCSV config("/var/smoothwall/timedaccess/machines");
 	std::vector<std::string>ipb;
 	std::string::size_type n;
-        std::string daysOfWeek = "";
+	std::string daysOfWeek = "";
+	std::ostringstream ssPreStartHour, ssPreStartMin, ssPostStopHour, ssPostStopMin;
+
+	// Convert the times to decimal; a day has 1440 minutes (0-1439).
+	preStartTime = (strtol (settings["START_HOUR"].c_str(), NULL, 10)*60 +
+		strtol (settings["START_MIN"].c_str(), NULL, 10)) - 1;
+	postStopTime = (strtol (settings["END_HOUR"].c_str(), NULL, 10)*60 +
+		strtol (settings["END_MIN"].c_str(), NULL, 10)) + 1;
+	// preStartTime and postStopTime are used as end and start times, respectively,
+	// when the start time>00:00 and/or the end time<23:59:59.
+	ssPreStartHour << preStartTime/60;
+	ssPreStartMin << preStartTime%60;
+	ssPostStopHour << postStopTime/60;
+	ssPostStopMin << postStopTime%60;
+
 	
 	// Send 'em to John
 	ipb.push_back("iptables -F timedaccess\n");
@@ -90,62 +104,98 @@ int set_timed_access(std::vector<std::string> & parameters, std::string & respon
 				error = 1;
 				return error;
 			}
+
 			if (settings["MODE"] == "ALLOW")
 			{
-				int startTime, stopTime;
-				std::ostringstream ssStartHour, ssStartMin, ssStopHour, ssStopMin;
 
-				// Convert the times to decimal; a day has 1440 minutes (0-1439).
-				startTime = (strtol (settings["START_HOUR"].c_str(), NULL, 10)*60 +
-					strtol (settings["START_MIN"].c_str(), NULL, 10)) - 1;
-				if (startTime < 0) startTime = 0;
-				stopTime = (strtol (settings["END_HOUR"].c_str(), NULL, 10)*60 +
-					strtol (settings["END_MIN"].c_str(), NULL, 10)) + 1;
-				if (stopTime > 1439) stopTime = 1439;
-				// startTime and stopTime can now be used as end and start times when ALLOW must
-				// be inverted to make two pairs of rules.
-				ssStartHour << startTime/60;
-				ssStartMin << startTime%60;
-				ssStopHour << stopTime/60;
-				ssStopMin << stopTime%60;
-		
-				if (startTime > 0)
+				// Allowing
+
+				if (preStartTime >= 0)
 				{
-			ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
+					// There is time before the start time
+					ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
 						" --kerneltz" +
 						" --timestart 00:00:00" +
-						" --timestop " + ssStartHour.str() + ":" + ssStartMin.str() + ":59" +
+						" --timestop " + ssPreStartHour.str() + ":" + ssPreStartMin.str() + ":59" +
 						daysOfWeek + " -j timedaction");
-			ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
+					ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
 						" --kerneltz" +
 						" --timestart 00:00:00" +
-						" --timestop " + ssStartHour.str() + ":" + ssStartMin.str() + ":59" +
+						" --timestop " + ssPreStartHour.str() + ":" + ssPreStartMin.str() + ":59" +
 						daysOfWeek + " -j timedaction");
-		}
-				if (stopTime < 1439)
+				}
+
+				// The time interval
+				ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
+					" --kerneltz" +
+					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] + ":00" +
+					" --timestop " + settings["END_HOUR"] + ":" + settings["END_MIN"] + ":59" +
+					daysOfWeek + " -j RETURN");
+				ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
+					" --kerneltz" +
+					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] + ":00" +
+					" --timestop " + settings["END_HOUR"] + ":" + settings["END_MIN"] + ":59" +
+					daysOfWeek + " -j RETURN");
+
+				if (postStopTime <= 1439)
 				{
-					ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" + 
+					// There is time after the stop time
+					ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
 						" --kerneltz" +
-						" --timestart " + ssStopHour.str() + ":" + ssStopMin.str() +
+						" --timestart " + ssPostStopHour.str() + ":" + ssPostStopMin.str() + ":00" +
 						" --timestop 23:59:59" +
 						daysOfWeek + " -j timedaction");
-					ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" + 
+					ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
 						" --kerneltz" +
-						" --timestart " + ssStopHour.str() + ":" + ssStopMin.str() +
+						" --timestart " + ssPostStopHour.str() + ":" + ssPostStopMin.str() + ":00" +
 						" --timestop 23:59:59" +
 						daysOfWeek + " -j timedaction");
 				}
 			} else {
+
+				// Rejecting
+
+				if (preStartTime >= 0)
+				{
+					// There is time before the start time
+					ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
+						" --kerneltz" +
+						" --timestart 00:00:00" +
+						" --timestop " + ssPreStartHour.str() + ":" + ssPreStartMin.str() + ":59" +
+						daysOfWeek + " -j RETURN");
+					ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
+						" --kerneltz" +
+						" --timestart 00:00:00" +
+						" --timestop " + ssPreStartHour.str() + ":" + ssPreStartMin.str() + ":59" +
+						daysOfWeek + " -j RETURN");
+				}
+
+				// The time interval
 				ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
 					" --kerneltz" +
-					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] +
+					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] + ":00" +
 					" --timestop " + settings["END_HOUR"] + ":" + settings["END_MIN"] + ":59" +
 					daysOfWeek + " -j timedaction");
 				ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
 					" --kerneltz" +
-					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] +
+					" --timestart " + settings["START_HOUR"] + ":" + settings["START_MIN"] + ":00" +
 					" --timestop " + settings["END_HOUR"] + ":" + settings["END_MIN"] + ":59" +
 					daysOfWeek + " -j timedaction");
+
+				if (postStopTime <= 1439)
+				{
+					// There is time after the stop time
+					ipb.push_back("iptables -A timedaccess -s " + ip + " -m time" +
+						" --kerneltz" +
+						" --timestart " + ssPostStopHour.str() + ":" + ssPostStopMin.str() + ":00" +
+						" --timestop 23:59:59" +
+						daysOfWeek + " -j RETURN");
+					ipb.push_back("iptables -A timedaccess -d " + ip + " -m time" +
+						" --kerneltz" +
+						" --timestart " + ssPostStopHour.str() + ":" + ssPostStopMin.str() + ":00" +
+						" --timestop 23:59:59" +
+						daysOfWeek + " -j RETURN");
+				}
 			}
 		}
 	}
