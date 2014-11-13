@@ -3,7 +3,10 @@
 ./etc/rc.d/inc.links-up
 ./etc/rc.d/rc.network
 ./etc/rc.d/rc.updatered
+./httpd/cgi-bin/bandwidthbars.cgi
 ./httpd/cgi-bin/help.cgi
 ./httpd/cgi-bin/logs.cgi/log.dat
 ./usr/bin/smoothwall/smoothinfo.pl
+./usr/bin/smoothwall/trafficloader.pl
+./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/services/apcupsd
