@@ -151,7 +151,7 @@ print <<END
 	<OPTION $selected{'SECTION'}{'ntp'} VALUE='ntp'>NTP
 	<OPTION $selected{'SECTION'}{'im'} VALUE='im'>$tr{'logsec im'}
 	<OPTION $selected{'SECTION'}{'sip'} VALUE='sip'>$tr{'logsec sip'}
-	<OPTION $selected{'SECTION'}{'apcuspd'} VALUE='apcuspd'>APCupsd
+	<OPTION $selected{'SECTION'}{'apcupsd'} VALUE='apcupsd'>APCupsd
 	<OPTION $selected{'SECTION'}{'miniupnpd'} VALUE='miniupnpd'>UPNP
 	<OPTION $selected{'SECTION'}{'squid'} VALUE='squid'>$tr{'logsec web'}
 	<OPTION $selected{'SECTION'}{'smoothd'} VALUE='smoothd'>SmoothD
