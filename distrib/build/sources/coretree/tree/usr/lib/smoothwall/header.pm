@@ -68,7 +68,8 @@ my $span = 0;
 
 $swroot = '/var/smoothwall';
 $thisscript = $ENV{'SCRIPT_NAME'};
-$thisscript =~ s/^\/cgi-bin\///;
+$thisscript =~ s/^\///;
+$thisscript =~ s/^cgi-bin\///;
 print STDERR "script: $thisscript";
 
 use Net::Domain qw(hostname hostfqdn hostdomain);
@@ -123,7 +124,7 @@ print STDERR "mod's alert: $_";
     {
       $abouttext{$thisscript} = $baseabouttext{$thisscript};
 my $mod = $_;
-$mod =~ s/\/mods\///;
+$mod =~ s/mods\///;
 $mod =~ s/\/.*//;
 print STDERR "mod: $mod; text: $baseabouttext{$thisscript}\n";
     }
@@ -135,7 +136,7 @@ else
 print STDERR "get mod's EN alertboxes\n";
   # Pull in the mod's alertboxes.en.pl.
 my $mod = $thisscript;
-$mod =~ s/\/mods\///;
+$mod =~ s/mods\///;
 $mod =~ s/\/.*//;
 print STDERR "mod: $mod; script: $thisscript\n";
   $_ = "/var/smoothwall/mods/$mod/usr/lib/smoothwall/langs/alertboxes.en.pl";
@@ -184,7 +185,7 @@ if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
   {
     # Pull in the mod's alertboxes.'lang'.pl.
 my $mod = $thisscript;
-$mod =~ s/\/mods\///;
+$mod =~ s/mods\///;
 $mod =~ s/\/.*//;
 print STDERR "mod: $mod; script: $thisscript\n";
     $_ = "/var/smoothwall/mods/$mod/usr/lib/smoothwall/langs/alertboxes.$language.pl";
