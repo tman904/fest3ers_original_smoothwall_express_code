@@ -223,12 +223,12 @@ sub showmenu
 	my @rawsections = <"/var/smoothwall/mods/*/usr/lib/smoothwall/menu/*" "/usr/lib/smoothwall/menu/*">;
 
 	# Strip the path off to get the section name; use that as a hash key to store unique sections
-print STDERR "Fetch unique section indices...\n";
+#print STDERR "Fetch unique section indices...\n";
 	foreach my $rawsection (@rawsections) {
 		my $idx = $rawsection;
 		chomp $idx;
 		$idx =~ s=.*/==;
-print STDERR "  section idx = $idx\n";
+#print STDERR "  section idx = $idx\n";
 		$sections{$idx} = 1;
 	}
 
@@ -241,16 +241,16 @@ print STDERR "  section idx = $idx\n";
         # For each unique section
 	foreach my $sectionkey ( sort(keys(%sections)) )
 	{
-print STDERR "                    \n==========          \nBuild menus for section $sectionkey\n";
+#print STDERR "                    \n==========          \nBuild menus for section $sectionkey\n";
 		my %pages;
 		my @tempmenu;
 		my $section = "no";
 
 		# Get all .list files in them
-print STDERR "  Fetch .list files for $sectionkey\n";
+#print STDERR "  Fetch .list files for $sectionkey\n";
                 my @lists = </usr/lib/smoothwall/menu/$sectionkey/*.list>;
 		@lists = (@lists, </var/smoothwall/mods/*/usr/lib/smoothwall/menu/$sectionkey/*.list>);
-print STDERR Dumper @lists;
+#print STDERR Dumper @lists;
 
 		# Store the full paths by .list filename in assoc. array.
 		foreach my $list (@lists)
@@ -260,14 +260,14 @@ print STDERR Dumper @lists;
 		}
 			
 		# Traverse through the UI pages (*.list)
-print STDERR "  Prepare menu items for $sectionkey\n";
+#print STDERR "  Prepare menu items for $sectionkey\n";
 		foreach my $page ( sort(keys(%pages)))
 		{
-print STDERR "    page = $page\n";
+#print STDERR "    page = $page\n";
 			# Set $menuprefix and $file (used to be set differently in SWE3.0)
 			my $menuprefix = dirname($pages{$page});
-print STDERR "    script name = $ENV{'SCRIPT_NAME'}\n";
-print STDERR "    menuprefix = $menuprefix\n";
+#print STDERR "    script name = $ENV{'SCRIPT_NAME'}\n";
+#print STDERR "    menuprefix = $menuprefix\n";
 			my $urlPath = $menuprefix;
 			if ( $urlPath =~ /^\/var\/smoothwall\/mods/ )
 			{
@@ -292,7 +292,7 @@ print STDERR "    menuprefix = $menuprefix\n";
 			#my ( $link2 ) = ( $link =~/([^\/]*)$/ );
 			if ( $urlPath.$link eq $ENV{'SCRIPT_NAME'} )
 			{
-print STDERR "      this menu is ACTIVE\n";
+#print STDERR "      this menu is ACTIVE\n";
 				$section = "yes";
 				$active = "true";
 				$helpPath = $urlPath;
@@ -308,21 +308,21 @@ print STDERR "      this menu is ACTIVE\n";
 			}
 			push @tempmenu, { 'title' => $title, 'href' => $link, 'active' => $active, 'urlPath' => $urlPath };
 		}
-print STDERR "  Prepared menu data\n  ----------\n";
-print STDERR Dumper @tempmenu;
-print STDERR "  ----------\n";
+#print STDERR "  Prepared menu data\n  ----------\n";
+#print STDERR Dumper @tempmenu;
+#print STDERR "  ----------\n";
 
 		if ( scalar(@tempmenu) > 0 )
 		{
-print STDERR "  Build drop-down menu...\n";
-print STDERR "    file = $file\n";
+#print STDERR "  Build drop-down menu...\n";
+#print STDERR "    file = $file\n";
 			my ( $section_title ) = ( $file =~/\d{4}_(.*)/ );
-print STDERR "    section_title=$section_title\n";
+#print STDERR "    section_title=$section_title\n";
 
-print STDERR "    ACTIVE=$section\n";
+#print STDERR "    ACTIVE=$section\n";
 			if ( $section eq "yes" )
 			{
-print STDERR "    helpPath=$helpPath\n";
+#print STDERR "    helpPath=$helpPath\n";
 				@menu = @tempmenu;
 				$menu_html .= "<td>$first<a class='activemenu' href='$menu[ 0 ]->{'urlPath'}$menu[ 0 ]->{'href'}'>$section_title</a></td>";
 			} else {
