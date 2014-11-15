@@ -18,6 +18,7 @@ distrib:
 	@chmod -v 700 distrib/root
 	@chmod -v 1777 distrib/tmp
 	@chmod -v 600 distrib/etc/shadow
+	@chmod -v 644 distrib/etc/crontab
 
 	@chown -R nobody:nobody distrib/var/smoothwall
 	@chown -R nobody:nobody distrib/var/smoothwall-*
