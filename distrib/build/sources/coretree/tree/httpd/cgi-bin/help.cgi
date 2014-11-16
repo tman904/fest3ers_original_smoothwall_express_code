@@ -12,7 +12,9 @@ use header qw( :standard );
 my $modbase = "/var/smoothwall/mods";
 
 # What do we need help with?
-(my $tmp, $modname, $needhelpwith) = split("/", $ENV{'QUERY_STRING'});
+print STDERR "Help GET:$ENV{'QUERY_STRING'}\n";
+
+(my $tmp, $modname) = split("/", $ENV{'QUERY_STRING'});
 
 if ($tmp ne "mods")
 {
@@ -21,16 +23,21 @@ if ($tmp ne "mods")
 	$tmp = "";
 	$modname = "";
 	$helpPath = "";
+print STDERR "stk: helpwith=$needhelpwith tmp=$tmp name=$modname path=$helpPath\n";
 }
 else
 {
 	# This is a mod's help file.
 	$helpPath = "/var/smoothwall/mods/$modname";
+	$needhelpwith = $ENV{'QUERY_STRING'};
+	$needhelpwith =~ s=.*/==;
+print STDERR "mod: helpwith=$needhelpwith tmp=$tmp name=$modname path=$helpPath\n";
 }
 
 unless ($needhelpwith =~ /^[A-Za-z0-9\.]+$/) {
 	$needhelpwith = 'index.cgi';
 }
+print STDERR "final: helpwith=$needhelpwith tmp=$tmp name=$modname path=$helpPath\n";
 
 # Prepare to display
 &showhttpheaders();
