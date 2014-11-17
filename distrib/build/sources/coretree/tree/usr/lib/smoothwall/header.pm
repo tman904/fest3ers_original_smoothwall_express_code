@@ -118,7 +118,7 @@ print STDERR "get stock EN alertboxes\n";
   $abouttext{$thisscript} = $baseabouttext{$thisscript};
   while (</var/smoothwall/mods/*/usr/lib/smoothwall/langs/alertboxes.en.pl>)
   {
-print STDERR "mod's alert: $_";
+print STDERR "thisscr:$thisscript mod's alert: $_";
     requireConditional $_;
     if (defined $baseabouttext{$thisscript})
     {
@@ -135,9 +135,9 @@ else
 {
 print STDERR "get mod's EN alertboxes\n";
   # Pull in the mod's alertboxes.en.pl.
-my $mod = $thisscript;
-$mod =~ s/mods\///;
-$mod =~ s/\/.*//;
+  my $mod = $thisscript;
+  $mod =~ s/mods\///;
+  $mod =~ s/\/.*//;
 print STDERR "mod: $mod; script: $thisscript\n";
   $_ = "/var/smoothwall/mods/$mod/usr/lib/smoothwall/langs/alertboxes.en.pl";
   if (requireConditional $_)
@@ -184,9 +184,9 @@ if (${language} ne "en" && $uisettings{'ALWAYS_ENGLISH'} eq 'off')
   else
   {
     # Pull in the mod's alertboxes.'lang'.pl.
-my $mod = $thisscript;
-$mod =~ s/mods\///;
-$mod =~ s/\/.*//;
+    my $mod = $thisscript;
+    $mod =~ s/mods\///;
+    $mod =~ s/\/.*//;
 print STDERR "mod: $mod; script: $thisscript\n";
     $_ = "/var/smoothwall/mods/$mod/usr/lib/smoothwall/langs/alertboxes.$language.pl";
     if (requireConditional $_)
