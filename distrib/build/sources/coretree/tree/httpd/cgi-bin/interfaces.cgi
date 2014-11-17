@@ -29,6 +29,10 @@ my %settings;
 &getcgihash(\%cgiparams);
 
 &readhash("${swroot}/ethernet/settings", \%settings );
+if ($settings{'RED_IGNOREMTU'} ne "off")
+{
+  $settings{'RED_IGNOREMTU'} = "on";
+}
 
 # Action a "Save" request ...
 
@@ -72,6 +76,8 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
     if ( defined $cgiparams{'DNS1_OVERRIDE'} );
   $settings{'DNS2_OVERRIDE'} = $cgiparams{'DNS2_OVERRIDE'}
     if ( defined $cgiparams{'DNS2_OVERRIDE'} );
+  $settings{'RED_MAC'} = $cgiparams{'RED_MAC'}
+    if ( defined $cgiparams{'RED_MAC'} );
 
   # now some sanity checks of the settings we've just tried
   
@@ -119,6 +125,11 @@ if ( defined $cgiparams{'ACTION'} and $cgiparams{'ACTION'} eq $tr{'save'} )
     {
       ( $settings{'PURPLE_NETADDRESS'}, $settings{'PURPLE_BROADCAST'} ) = &bcast_and_net( $settings{'PURPLE_ADDRESS'}, $settings{'PURPLE_NETMASK'} ); 
     }
+  }
+
+  if ( defined $settings{'RED_MAC'} and $settings{'RED_MAC'} ne "" and not &validmac( $settings{'RED_MAC'} ))
+  {
+    $errormessage .= $tr{'the spoofed mac address for the red interface is invalid'}."<br />\n";
   }
 
   if ( defined $settings{'RED_TYPE'} and $settings{'RED_TYPE'} ne "" )
@@ -524,6 +535,15 @@ print <<END;
                      type='text' name='DNS2_OVERRIDE'
                      style='display:none'
                      value='$settings{"DNS2_OVERRIDE"}'>
+            </td>
+          </tr>
+          <tr>
+            <td class='base' style='width: 25%;'>$tr{'mac spoof'}</td>
+            <td style='width: 25%;'>
+              <input id='macspoof'
+                     @{[jsvalidmac('macspoof','true')]}
+                     type='text' name='RED_MAC'
+                     value='$settings{"RED_MAC"}'>
             </td>
           </tr>
         </table>

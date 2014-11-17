@@ -1033,6 +1033,7 @@
 'the ip ddress for the red interface is invalid' => 'The IP Address for the Red interface is invalid.',
 'the netmask for the red interface is invalid' => 'The Netmask for the Red interface is invalid.',
 'the default gateway is invalid' => 'The Default Gateway is invalid.',
+'the spoofed mac address for the red interface is invalid' => 'The MAC address override for the Red interface is invalid.',
 'physical interface' => 'Physical interface:',
 'nic type' => 'NIC type:',
 'netmaskc' => 'Netmask:',
@@ -1041,6 +1042,7 @@
 'dhcp hostname' => 'DHCP hostname:',
 'dns and gateway settings' => 'DNS and Gateway settings:',
 'default gateway' => 'Default gateway:',
+'mac spoof' => 'MAC Address Override:',
 
 # traffic.cgi
 'traffic configuration' => 'Traffic configuration',

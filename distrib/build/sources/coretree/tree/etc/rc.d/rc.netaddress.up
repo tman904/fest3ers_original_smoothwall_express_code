@@ -61,11 +61,19 @@ if [ "$CONFIG_TYPE" == "2" -o "$CONFIG_TYPE" == "3" -o "$CONFIG_TYPE" == "6" -o 
 
 		if [ "$RED_TYPE" == "DHCP" ]; then
 			# DHCPCD handles everything
-			if [ "$RED_IGNOREMTU" == "on" ]; then
+			if [ "$RED_IGNOREMTU" != "off" ]; then
 				IGNOREMTU=" -M"
 			else
 				IGNOREMTU=""
 			fi
+                        # If a MAC address is specified, set it. (ap.: check this if bridges are used!*)
+                        if [ ! -z "$RED_MAC" ]; then
+                                /usr/sbin/ip link set dev $RED_DEV address $RED_MAC
+			else
+				nativeMAC=`grep "NAME=\"$RED_DEV\"" /etc/udev/rules.d/70-Smoothwall-custom-NIC.rules |
+				  sed -e 's/.*address.=="//' -e 's/".*//'`
+                                /usr/sbin/ip link set dev $RED_DEV address $nativeMAC
+                        fi
 			/usr/sbin/dhcpcd -h $RED_DHCP_HOSTNAME -R $RED_DEV -c /etc/rc.d/rc.updatered${IGNOREMTU}
 
 		elif [ "$RED_TYPE" == "STATIC" ]; then
