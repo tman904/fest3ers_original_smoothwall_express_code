@@ -26,7 +26,10 @@ if (-f "${swroot}/red/active")
 }
 readhash("${swroot}/traffic/settings", \%trafficsettings);
 # Some day include localsettings
-#readhash("${swroot}/traffic/localsettings", \%localsettings);
+if (-e "${swroot}/traffic/localsettings")
+{
+  readhash("${swroot}/traffic/localsettings", \%localsettings);
+}
 
 # Faux PID file for status display
 my $qosPidFile = "/var/run/qos.pid";
@@ -64,28 +67,28 @@ my @devices;
 my %deviceRates;
 if ( $netsettings{'GREEN_DEV'}) {
 	$devices[$i++] = $netsettings{'GREEN_DEV'};
-	my $tmp = &getLinkSpeed($netsettings{'GREEN_DEV'}, "number") * 10**6;
+	my $tmp = &getLinkSpeed($netsettings{'GREEN_DEV'}, "number") * 10**6 * 0.95;
 	if ($tmp == 0) { $tmp = $download_speed + 1; }
-	$deviceRates{$netsettings{'GREEN_DEV'}} = $tmp;
+	$deviceRates{$netsettings{'GREEN_DEV'}} = int ($tmp + 0.5);
 }
 if ( $netsettings{'ORANGE_DEV'}) {
 	$devices[$i++] = $netsettings{'ORANGE_DEV'};
-	my $tmp = &getLinkSpeed($netsettings{'ORANGE_DEV'}, "number") * 10**6;
+	my $tmp = &getLinkSpeed($netsettings{'ORANGE_DEV'}, "number") * 10**6 * 0.95;
 	if ($tmp == 0) { $tmp = $download_speed + 1; }
-	$deviceRates{$netsettings{'ORANGE_DEV'}} = $tmp;
+	$deviceRates{$netsettings{'ORANGE_DEV'}} = int ($tmp + 0.5);
 }
 if ( $netsettings{'PURPLE_DEV'}) {
 	$devices[$i++] = $netsettings{'PURPLE_DEV'};
-	my $tmp = &getLinkSpeed($netsettings{'PURPLE_DEV'}, "number") * 10**6;
+	my $tmp = &getLinkSpeed($netsettings{'PURPLE_DEV'}, "number") * 10**6 * 0.95;
 	if ($tmp == 0) { $tmp = $download_speed + 1; }
-	$deviceRates{$netsettings{'PURPLE_DEV'}} = $tmp;
+	$deviceRates{$netsettings{'PURPLE_DEV'}} = int ($tmp + 0.5);
 }
 if ($netsettings{'RED_TYPE'} eq 'STATIC' or $netsettings{'RED_TYPE'} eq 'DHCP')
 {
 	$devices[$i++] = $netsettings{'RED_DEV'};
-	my $tmp = &getLinkSpeed($netsettings{'RED_DEV'}, "number") * 10**6;
+	my $tmp = &getLinkSpeed($netsettings{'RED_DEV'}, "number") * 10**6 * 0.95;
 	if ($tmp == 0) { $tmp = $upload_speed; }
-	$deviceRates{$netsettings{'RED_DEV'}} = $tmp;
+	$deviceRates{$netsettings{'RED_DEV'}} = int ($tmp + 0.5);
 } else {
 	# Must be PPP; get from PPPdevices (ppp0 or ippp0)
 	if ($PPPdevices[0])
@@ -147,14 +150,14 @@ if(defined $trafficsettings{PRIO} && $trafficsettings{PRIO} ne '') {
 # Default ratios for data coming into the smoothie
 #   These match 512/256 ADSL
 my %drate = (
-	'high' => 10,
-	'normal' => 10,
-	'low' => 10,
-	'isochron' => 64000,
-	'smoothadmin' => 10,
-	'webcache' =>  10,
-	'localtraffic' => 10,
-	'smallpkt' => 10,
+	'high' => 1,
+	'normal' => 1,
+	'low' => 1,
+	'isochron' => 128000,
+	'smoothadmin' => 1,
+	'webcache' =>  1,
+	'localtraffic' => 1,
+	'smallpkt' => 1,
 );
 
 
@@ -166,7 +169,7 @@ my %dceil = (
 	'smoothadmin' => 100,
 	'webcache' => 100,
 	'localtraffic' => 100,
-	'smallpkt' => 20,
+	'smallpkt' => 100,
 );
 
 
@@ -179,6 +182,11 @@ if(defined $trafficsettings{DRATE} && $trafficsettings{DRATE} ne '') {
 if(defined $trafficsettings{DCEIL} && $trafficsettings{DCEIL} ne '') {
   %dceil = split(',', $trafficsettings{DCEIL});
 }
+if ( defined $localsettings{'isochron'})
+{
+  $drate{'isochron'} = $localsettings{'isochron'};
+  $dceil{'isochron'} = $localsettings{'isochron'};
+}
 
 # add these even after import
 foreach (@internal_interface)
@@ -190,14 +198,14 @@ foreach (@internal_interface)
 
 # max rate we can send data
 my %urate = (
-	'normal' => 10,
-	'high' => 10,
-	'low' => 10,
-	'isochron' => 64000,
-	'smoothadmin' => 10,
-	'webcache' => 10,
-	'localtraffic' => 10,
-	'smallpkt' => 10,
+	'normal' => 1,
+	'high' => 1,
+	'low' => 1,
+	'isochron' => 128000,
+	'smoothadmin' => 1,
+	'webcache' => 1,
+	'localtraffic' => 1,
+	'smallpkt' => 1,
 );
 
 my %uceil = ( 
@@ -208,7 +216,7 @@ my %uceil = (
 	'smoothadmin' => 100,
 	'webcache' => 100,
 	'localtraffic' => 100,
-	'smallpkt' => 20,
+	'smallpkt' => 100,
 );
 
 # Override with UI settings
@@ -217,6 +225,13 @@ if(defined $trafficsettings{URATE} && $trafficsettings{URATE} ne '') {
 }
 if(defined $trafficsettings{UCEIL} && $trafficsettings{UCEIL} ne '') {
   %uceil = split(',', $trafficsettings{UCEIL});
+}
+
+# local overrides
+if ( defined $localsettings{'isochron'})
+{
+  $urate{'isochron'} = $localsettings{'isochron'};
+  $uceil{'isochron'} = $localsettings{'isochron'};
 }
 
 $urate{$external_interface} = $upload_speed;
@@ -324,7 +339,7 @@ if ($ext_up < $upload_speed) { $ext_up = $upload_speed; }
 #print STDERR "IF=$external_interface EXT=$deviceRates{$external_interface} UPL=$upload_speed SUB=$ext_up\n";
 
 tcclass("$external_interface parent 1:feed classid 1:$classIDs{'localtraffic'} htb" .
-        " rate $ext_up ceil $deviceRates{$external_interface} quantum 24000");
+        " rate $ext_up ceil $deviceRates{$external_interface} prio $prio{'localtraffic'} quantum 24000");
 tcqdisc("$external_interface parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
 
 for (@internal_interface) {
@@ -341,7 +356,7 @@ for (@internal_interface) {
   #print STDERR "IF=$_ INT=$deviceRates{$_} UPL=$download_speed SUB=$int_dn\n";
 
   tcclass("$_ parent 1:feed classid 1:$classIDs{'localtraffic'} htb" .
-          " rate $int_dn ceil $deviceRates{$_} quantum 24000");
+          " rate $int_dn ceil $deviceRates{$_} prio $prio{'localtraffic'} quantum 24000");
   tcqdisc("$_ parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
 }
 
@@ -615,7 +630,15 @@ print STDERR "  bitr myceil=$myceil\n" if defined $print;
 
   tcclass("$iface parent 1:$classIDs{'all'} classid 1:$classIDs{$tag} htb " .
            "rate " . $myrate ." ceil " . $myceil ." prio $prio{$tag} $extra", $print);
-  tcqdisc("$iface parent 1:$classIDs{$tag} handle $classIDs{$tag}: sfq perturb 1", $print);
+  if ($prio{$tag} != 0) {
+    # isochron gets default (pfifo-fast); all others get sfq.
+    tcqdisc("$iface parent 1:$classIDs{$tag} handle $classIDs{$tag}: sfq perturb 1", $print);
+  }
+#  print STDERR <<END;
+#tcclass("$iface parent 1:$classIDs{'all'} classid 1:$classIDs{$tag} htb " .
+#         "rate " . $myrate ." ceil " . $myceil ." prio $prio{$tag} $extra", $print);
+#tcqdisc("$iface parent 1:$classIDs{$tag} handle $classIDs{$tag}: sfq perturb 1", $print);
+#END
 }
   
 
