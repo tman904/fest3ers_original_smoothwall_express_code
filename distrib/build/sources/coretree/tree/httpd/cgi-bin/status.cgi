@@ -76,7 +76,7 @@ END
 
 my $lines = 0;
 
-foreach my $key (keys %coreservices)
+foreach my $key (sort keys %coreservices)
 {
 	if ($lines % 2) {
 		print "<tr class='light'>\n"; }
@@ -100,7 +100,7 @@ END
 
 $lines = 0;
 
-foreach my $key (keys %servicenames)
+foreach my $key (sort keys %servicenames)
 {
 	if ($lines % 2) {
 		print "<tr class='light'>\n"; }
