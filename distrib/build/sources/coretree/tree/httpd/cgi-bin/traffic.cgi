@@ -255,7 +255,7 @@ sub display_rules
 	        low => $tr{'traffic low'}, 
 	     normal => $tr{'traffic normal'},
 	       high => $tr{'traffic high'}, 
-           isochron => $tr{'isochronous'},
+           isochron => $tr{'traffic isochronous'},
 );
 
 	my %class_labels = ( 
@@ -263,7 +263,7 @@ sub display_rules
 	        low => $tr{'traffic low'}, 
 	     normal => $tr{'traffic normal'},
 	       high => $tr{'traffic high'}, 
-           isochron => $tr{'isochronous'},
+           isochron => $tr{'traffic isochronous'},
 	);
 
 	# Set a few menu options
