@@ -70,7 +70,6 @@ $swroot = '/var/smoothwall';
 $thisscript = $ENV{'SCRIPT_NAME'};
 $thisscript =~ s/^\///;
 $thisscript =~ s/^cgi-bin\///;
-print STDERR "script: $thisscript";
 
 use Net::Domain qw(hostname hostfqdn hostdomain);
 my $hostname = hostfqdn();
