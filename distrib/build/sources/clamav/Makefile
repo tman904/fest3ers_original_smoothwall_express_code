@@ -9,6 +9,7 @@ PRE_CONFIGURE = LIBS=-ltinfo
 CONFIG_OPTS += --sysconfdir=/usr/lib/smoothwall --with-dbdir=/var/clamav --disable-clamav --disable-ltdl-install --without-included-ltdl
 
 PATCH_FILE1 = clamav-pidperms.patch
+PATCH_FILE2 = clam0985version.patch
 
 INSTALL = yes
 
