@@ -156,6 +156,10 @@ if [ ! -e /usr/etc/ssh_host_ecdsa_key ]; then
         echo "  SSH ECDSA key.  This may take several minutes."
 	/usr/bin/ssh-keygen -t ecdsa -f /usr/etc/ssh_host_ecdsa_key -N "" 
 fi
+if [ ! -e /usr/etc/ssh_host_ed25519_key ]; then
+        echo "  SSH ED25519 key.  This may take several minutes."
+	/usr/bin/ssh-keygen -t ed25519 -f /usr/etc/ssh_host_ed25519_key -N "" 
+fi
 
 if [ ! -e /etc/httpd/server.key ]; then
         echo "  https server key."
