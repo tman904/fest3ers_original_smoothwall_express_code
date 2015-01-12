@@ -56,17 +56,18 @@ my $modversion = $modinfo{'MOD_LONG_NAME'} . " v. " . $modinfo{'MOD_VERSION'};
 my $outputfile = "${SIdir}/etc/report.txt";
 
 # checking for installed updates
-#if (! -z "${swroot}/patches/installed") {
-#open (INSTALLED,"<${swroot}/patches/installed") || die "Unable to open $!";
-#my @installed = (<INSTALLED>);
-#my $patch = pop (@installed);
-#my @update = split (/\|/, $patch);
-#my $updatenumber = $update[1];
-#$updatenumber =~ s/-i386//;
-#$swe_version = "$productdata{'PRODUCT'} $productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}-$updatenumber";
-#} else {
-#$swe_version = "$productdata{'PRODUCT'} $productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
-#}
+if (! -z "${swroot}/patches/installed") {
+  open (INSTALLED,"<${swroot}/patches/installed") || die "Unable to open $!";
+  my @installed = (<INSTALLED>);
+  my $patch = pop (@installed);
+  my @update = split (/\|/, $patch);
+  my $updatenumber = $update[1];
+  $updatenumber =~ s/-i586//;
+  $updatenumber =~ s/-x86_64//;
+  $swe_version = "$productdata{'PRODUCT'} $productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}-$updatenumber";
+} else {
+  $swe_version = "$productdata{'PRODUCT'} $productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
+}
 
 # MEMORY
 my $memory = `/usr/bin/free -ot`;
@@ -445,7 +446,7 @@ my $purpledev = (grep /PURPLE_DEV=eth/, @ethersettings)[0];
 # WRITING OUTPUT
 open (FILE,">$outputfile") || die 'Unable to open file';
 print FILE "[color=purple][u][b][i]$tr{'smoothinfo-generated'} $modversion:[/i][/b][/u][/color]\n\n";
-print FILE "[info=\"$tr{'smoothinfo-smoothwall-version'}\"]\[code\]$productdata{'VERSION'}\[/code\]\[/info\]";
+print FILE "[info=\"$tr{'smoothinfo-smoothwall-version'}\"]\[code\]$swe_version\[/code\]\[/info\]";
 
 if ($smoothinfosettings{'CONFIG'} eq 'on') {
   if ($reddev) {$RED = 'RED'} else { $RED = 'RED(modem)'}
