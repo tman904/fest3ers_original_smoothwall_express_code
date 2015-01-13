@@ -1,4 +1,5 @@
 /var/log/snort/alert {
+    su snort snort
     weekly
     rotate 1
     copytruncate
@@ -7,6 +8,7 @@
     missingok
 }
 /var/log/snort/portscan.log {
+    su snort snort
     weekly
     rotate 1
     copytruncate

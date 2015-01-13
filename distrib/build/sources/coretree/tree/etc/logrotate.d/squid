@@ -1,4 +1,5 @@
 /var/log/squid/access.log {
+    su squid squid
     weekly
     rotate 4
     copytruncate
@@ -7,6 +8,7 @@
     nocompress
 }
 /var/log/squid/cache.log {
+    su squid squid
     weekly
     rotate 4
     copytruncate
