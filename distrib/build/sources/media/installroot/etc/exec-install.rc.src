@@ -509,16 +509,16 @@ root (hd0,0)
 kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet console=ttyS0,$BAUD
 initrd /initrd-${KERNEL_VER}${KERNEL_TYPE}.gz
 
-# Single-user using VESA console
-title Smoothwall Express (VESA Console, Single-User)
+# Try to boot VESA console using kernel params to work around odd hardware/firmware
+title Smoothwall Express (VESA Console, Odd Hardware)
 root (hd0,0)
-kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet single
+kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet iommu=soft nomodeset
 initrd /initrd-${KERNEL_VER}${KERNEL_TYPE}.gz
 
-# Single-user using serial console
-title Smoothwall Express (Serial Console, Single-User)
+# Try to boot serial console using kernel params to work around odd hardware/firmware
+title Smoothwall Express (Serial Console, Odd Hardware)
 root (hd0,0)
-kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet console=ttyS0,$BAUD single
+kernel /vmlinuz-${KERNEL_VER}${KERNEL_TYPE} root=/dev/harddisk4 ro quiet console=ttyS0,$BAUD iommu=soft
 initrd /initrd-${KERNEL_VER}${KERNEL_TYPE}.gz
 END
 
