@@ -89,10 +89,12 @@ foreach (@chains) {
 
 if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
   # ERROR CHECKING
+  my $msgOnce = 0;
   if ($smoothinfosettings{'LINES2'} eq '' &&
       $smoothinfosettings{'STRING2'} eq '' &&
       $smoothinfosettings{'APACHE'} eq 'on') {
 
+    $msgOnce = 1;
     $errormessage .= $tr{'smoothinfo-define-number-of-lines'}. "<br />\n";
   }
 
@@ -100,7 +102,10 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
       $smoothinfosettings{'STRING3'} eq '' &&
       $smoothinfosettings{'MESSAGES'} eq 'on') {
 
-    $errormessage .= $tr{'smoothinfo-define-number-of-lines'}. "<br />\n";
+    if ($msgOnce == 0)
+    {
+      $errormessage .= $tr{'smoothinfo-define-number-of-lines'}. "<br />\n";
+    }
   }
 
   if ($smoothinfosettings{'SCREENSHOTS'} =~ /a href/i) {
