@@ -141,8 +141,8 @@ foreach (@files) {
 
 #CONNTRACKS
 my $conntracks = `/bin/cat /proc/net/ip_conntrack|/usr/bin/wc -l`;
-$conntracks .= "\n";
-$conntracks .= `/bin/cat /proc/net/ip_conntrack`;
+#$conntracks .= "\n";
+#$conntracks .= `/bin/cat /proc/net/ip_conntrack`;
 chomp ($conntracks);
 
 # DISKSPACE
