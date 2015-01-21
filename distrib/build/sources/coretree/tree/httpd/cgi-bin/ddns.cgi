@@ -36,15 +36,16 @@ my @service = ();
 
 if ($cgiparams{'ACTION'} eq $tr{'add'})
 {
-	unless ($cgiparams{'SERVICE'} =~ /^(dhs|dyndns-custom|dyndns|dyns|hn|no-ip|zoneedit|easydns|ods)$/) { $errormessage = $tr{'invalid input'}; }
-	unless ($cgiparams{'LOGIN'} =~ /^[^\"\']*$/) { $errormessage = $tr{'invalid username'}; }
-	unless ($cgiparams{'LOGIN'} ne '') { $errormessage = $tr{'username not set'}; }
-	unless ($cgiparams{'PASSWORD'} ne '') { $errormessage = $tr{'password not set'}; }
-	unless ($cgiparams{'PASSWORD'} =~ /^[^\s\"\']*$/) { $errormessage = $tr{'invalid username'}; }
-	unless ($cgiparams{'DOMAIN'} ne '') { $errormessage = $tr{'domain not set'}; }
-	unless ($cgiparams{'DOMAIN'} =~ /^[a-zA-Z_0-9.-]+$/) { $errormessage = $tr{'invalid domain name'}; }
-	unless ($cgiparams{'DOMAIN'} =~ /[.]/) { $errormessage = $tr{'invalid domain name'}; }
-	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'};  }
+	my $domOnce = 0;
+	unless ($cgiparams{'SERVICE'} =~ /^(dhs|dyndns-custom|dyndns|dyns|hn|no-ip|zoneedit|easydns|ods)$/) { $errormessage .= $tr{'invalid input'} ."<br />"; }
+	unless ($cgiparams{'LOGIN'} =~ /^[^\"\']*$/) { $errormessage .= $tr{'invalid username'} ."<br />"; }
+	unless ($cgiparams{'LOGIN'} ne '') { $errormessage .= $tr{'username not set'} ."<br />"; }
+	unless ($cgiparams{'PASSWORD'} ne '') { $errormessage .= $tr{'password not set'} ."<br />"; }
+	unless ($cgiparams{'PASSWORD'} =~ /^[^\s\"\']*$/) { $errormessage .= $tr{'invalid username'} ."<br />"; }
+	unless ($cgiparams{'DOMAIN'} ne '') { $errormessage .= $tr{'domain not set'} ."<br />"; }
+	unless ($cgiparams{'DOMAIN'} =~ /^[a-zA-Z_0-9.-]+$/) { $domOnce = 1; $errormessage .= $tr{'invalid domain name'} ."<br />"; }
+	unless ($cgiparams{'DOMAIN'} =~ /[.]/) { $errormessage .= $tr{'invalid domain name'} ."<br />" unless ($domOnce); }
+	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage .= $tr{'invalid comment'} ."<br />";  }
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -55,7 +56,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 		if($cgiparams{'HOSTNAME'} eq $temp[1] &&
 			$cgiparams{'DOMAIN'} eq $temp[2])
 		{
-			 $errormessage = $tr{'hostname and domain already in use'};
+			 $errormessage .= $tr{'hostname and domain already in use'} ."<br />";
 		}
 	}
 	unless ($errormessage)
@@ -87,9 +88,9 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 			$count++; }
 	}
 	if ($count == 0) {
-		$errormessage = $tr{'nothing selected'}; }
+		$errormessage .= $tr{'nothing selected'} ."<br />"; }
 	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-		$errormessage = $tr{'you can only select one item to edit'}; }
+		$errormessage .= $tr{'you can only select one item to edit'} ."<br />"; }
 	unless ($errormessage)
 	{
 		open(FILE, ">$filename") or die 'Unable to open config file.';
@@ -157,6 +158,7 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
+$errormessage = "<br />". $errormessage if ($errormessage);
 &alertbox($errormessage);
 
 print "<FORM METHOD='POST'>\n";
