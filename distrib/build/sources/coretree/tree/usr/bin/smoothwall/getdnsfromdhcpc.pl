@@ -56,7 +56,7 @@ if ($settings{'DNS1_OVERRIDE'} ne "" or $settings{'DNS2_OVERRIDE'} ne "")
     }
     else
     {
-      %alldns = ();
+      @alldns = ();
     }
   }
 
