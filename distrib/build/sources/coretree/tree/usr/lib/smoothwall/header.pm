@@ -543,7 +543,7 @@ sub closepage
 			Smoothwall&trade; is a trademark of <a href='http://www.smoothwall.net/'>Smoothwall Limited</a>.
 		</div>
 		<div style="width:49%; text-align:right; margin:2px; display:inline-block">
-		    	&copy; 2000 - 2013 <a href='http://smoothwall.org/about/team/'>The Smoothwall Team</a><br/>
+		    	&copy; 2000 - 2015 <a href='http://smoothwall.org/about/team/'>The Smoothwall Team</a><br/>
 			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://www.smoothwall.org/download/sources/'>original authors</a>
 		</div>
 	</td>
