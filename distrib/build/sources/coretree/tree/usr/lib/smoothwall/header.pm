@@ -990,26 +990,34 @@ sub validcomment
 
 sub validhostname
 {
-        my $hostname = $_[0];
-        my $part;
+	my $hostname = $_[0];
+	my $part;
 
-        if ($hostname eq '') {
-                return 0; }
-        if (length($hostname) > 255) {
-                return 0; }
-        @parts = split(/\./, $hostname);
-        foreach $part (@parts)
-        {
-                if (length($part) > 64) {
-                        return 0; }
-                unless ($part =~ /^[a-zA-Z\d\-]+$/) {
-                        return 0; }
-                if ($part =~ /^\-/) {
-                        return 0; }
-                if ($part =~ /\-$/) {
-                return 0; }
-        }
-        return 1;
+	# Sanity checks
+	if (length($hostname) > 254)
+	{
+		return 0;
+	}
+	unless ($hostname =~ /^[0-9A-Za-z.-]+$/)
+	{
+		return 0;
+	}
+
+	my @parts = split(/\./, $hostname);
+	# validate each label
+	foreach $part (@parts)
+	{
+		if (length($part) > 63)
+		{
+			return 0;
+		}
+		unless (($part =~ /^[A-Za-z]$/) or
+		        ($part =~ /^[A-Za-z][A-Za-z0-9-]*[A-Za-z0-9]$/))
+	       	{
+			return 0;
+		}
+	}
+	return 1;
 }
 
 sub basename {
