@@ -22,30 +22,31 @@ my $errormessage = '';
 if ($cgiparams{'ACTION'} eq $tr{'add'})
 {
 	unless ($cgiparams{'NAME'} =~ /^[a-zA-Z]+$/) {
-		$errormessage = $tr{'name must only contain characters'}; }
-	unless (&validip($cgiparams{'LEFT'})) { 
-		$errormessage = $tr{'left ip is invalid'}; }
+		$errormessage .= $tr{'name must only contain characters'} ."<br />"; }
+	unless (&validip($cgiparams{'LEFT'}) or &validhostname($cgiparams{'LEFT'})) { 
+		$errormessage .= $tr{'left ip is invalid'} ."<br />"; }
 	unless (&validipandmask($cgiparams{'LEFT_SUBNET'})) {
-		$errormessage = $tr{'left subnet is invalid'}; }
-	unless (&validip($cgiparams{'RIGHT'})) { 
-		$errormessage = $tr{'right ip is invalid'}; }
+		$errormessage .= $tr{'left subnet is invalid'} ."<br />"; }
+	unless (&validip($cgiparams{'RIGHT'}) or &validhostname($cgiparams{'RIGHT'})) { 
+		$errormessage .= $tr{'right ip is invalid'} ."<br />"; }
 	unless (&validipandmask($cgiparams{'RIGHT_SUBNET'})) {
-		$errormessage = $tr{'right subnet is invalid'}; }
+		$errormessage .= $tr{'right subnet is invalid'} ."<br />"; }
 
-	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'};  }
+	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){
+		$errormessage .= $tr{'invalid comment'} ."<br />"; }
 
-	unless ($timesettings{'SECRET1'} and ($timesettings{'SECRET1'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-		$errormessage = $tr{'bad password'};
+	unless ($cgiparams{'SECRET1'} and ($cgiparams{'SECRET1'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage .= "$tr{'invalid password'}: $tr{'secretc'}<br />";
 	}
 
-	unless ($timesettings{'SECRET2'} and ($timesettings{'SECRET2'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-		$errormessage = $tr{'bad password'};
+	unless ($cgiparams{'SECRET2'} and ($cgiparams{'SECRET2'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage .= "$tr{'invalid password'}: $tr{'again'}<br />";
 	}
 
 	if ($cgiparams{'SECRET1'} ne $cgiparams{'SECRET2'}) {
-		$errormessage = $tr{'passwords do not match'}; }
-	unless ($cgiparams{'SECRET1'}) {
-		$errormessage = $tr{'password not set'}; } 
+		$errormessage .= $tr{'passwords do not match'} ."<br />"; }
+	unless ($cgiparams{'SECRET1'} and $cgiparams{'SECRET2'}) {
+		$errormessage .= $tr{'password not set'} ."<br />"; } 
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
