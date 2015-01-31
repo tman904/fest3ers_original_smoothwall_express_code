@@ -9,25 +9,37 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
-my %netsettings;
+my %netsettings, %timesettings;
 
 &readhash("${swroot}/ethernet/settings", \%netsettings);
+&readhash("${swroot}/time/settings", \%timesettings);
 
 open (FILE, ">${swroot}/time/ntpd.conf");
-print FILE <<END
+
+# Listen on lo and GREEN
+print FILE <<END;
+listen on 127.0.0.1
 listen on $netsettings{'GREEN_ADDRESS'}
 END
-;
 if ($netsettings{'PURPLE_DEV'})
 {
-	print FILE <<END
+	# Listen on PURPLE
+	print FILE <<END;
 listen on $netsettings{'PURPLE_ADDRESS'}
 END
-	;
 }
-print FILE <<END
-listen on 127.0.0.1
-server 127.0.0.1
+
+# Query the upstream
+if ($timesettings{'NTP_SERVER_TYPE'} eq "USERDEFINED")
+{
+	print FILE <<END;
+server $timesettings{'NTP_SERVER_USERDEFINED'}
 END
-;
+} else
+{
+	print FILE <<END;
+server $timesettings{'NTP_SERVER_SELECTED'}
+END
+}
+
 close (FILE);
