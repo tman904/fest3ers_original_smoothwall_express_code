@@ -523,8 +523,8 @@ sub dispaliastab
     while( my $line = <$input> ){
       chomp $line;
       my @cols = ( $position++, (split /,/, $line) );
-      if ($cols[3] =~ /-/) {
-        $cols[3] =~ s/-/,/g;
+      if ($cols[4] =~ /-/) {
+        $cols[4] =~ s/-/,/g;
       }
       push @lines, \@cols;
     }
