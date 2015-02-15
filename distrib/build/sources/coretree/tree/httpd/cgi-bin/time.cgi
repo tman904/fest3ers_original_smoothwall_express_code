@@ -17,9 +17,13 @@ my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
 my (%timesettings, %netsettings, $errormessage, my %timeservers);
 my $found;
 my @temp;
-my $temp; my $tempsettings;
+my $temp;
 
 my $tzroot = '/usr/share/zoneinfo/posix';
+open(FILE, "${swroot}/time/timezones");
+@timezones = <FILE>;
+close(FILE);
+
 
 &showhttpheaders();
 
@@ -31,129 +35,191 @@ $timesettings{'ENABLE'} = 'off';
 $timesettings{'NTP_RTC'} = 'off';
 $timesettings{'NTPD'} = 'off';
 
-open(FILE, "${swroot}/time/timeservers") or die "Unable to open timeservers file.";
-while (<FILE>)
-{
-	chomp;
-	@temp = split(/\|/);
-	$timeservers{$temp[0]} = $temp[2];
-}
-close FILE;
-
-&getcgihash(\%timesettings);
-
+# Get stored and submitted settings
+&getcgihash(\%cgitimesettings);
+&readhash("${swroot}/time/settings", \%timesettings);
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 
-open(FILE, "${swroot}/time/timezones");
-@timezones = <FILE>;
-close(FILE);
-
 $errormessage = '';
-if ($timesettings{'ACTION'} eq $tr{'save'})
+if ($cgitimesettings{'ACTION'} eq $tr{'save'})
 {
-	unless ($timesettings{'HOUR'} =~ /\d+/) {
-		$errormessage = $tr{'invalid input'};
-		goto ERROR; }
-	unless ($timesettings{'MINUTE'} =~ /\d+/) {
-		$errormessage = $tr{'invalid input'}; 
-		goto ERROR; }
-	unless ($timesettings{'SECOND'} =~ /\d+/) {
-		$errormessage = $tr{'invalid input'}; 
-		goto ERROR; }
-	unless ($timesettings{'DAY'} =~ /\d+/) {
-		$errormessage = $tr{'invalid input'}; 
-		goto ERROR; }
-	unless ($timesettings{'MONTH'} =~ /\d+/) {
-		$errormessage = $tr{'invalid input'};
-		goto ERROR; }
-	unless ($timesettings{'YEAR'} =~ /\d+/) {
-		$errormessage = $tr{'invalid input'};
-		goto ERROR; }
-	unless ($timesettings{'NTP_SERVER_TYPE'} =~ /^(RANDOM|SELECTED|USERDEFINED)$/) {
-		$errormessage = $tr{'invalid input'};
-		goto ERROR; }
+	my ($method, $year, $month, $day, $hour, $minute, $second);
+	$method = $cgitimesettings{'NTP_METHOD'};
+	$year = $cgitimesettings{'YEAR'};
+	$month = $cgitimesettings{'MONTH'};
+	$day = $cgitimesettings{'DAY'};
+	$hour = $cgitimesettings{'HOUR'};
+	$minute = $cgitimesettings{'MINUTE'};
+	$second = $cgitimesettings{'SECOND'};
+        my ($manual, $periodic, $automatic);
+	$manual = $tr{'time method manual'};
+	$periodic = $tr{'time method periodic'};
+	$automatic = $tr{'time method automatic'};
+
+#print STDERR "method:$method year:$year month:$month day:$day hour:$hour minute:$minute second:$second\n";
+
+	# Validate date/time values
+	unless ( ($method eq $manual and
+                  ($year =~ /\d+/ and
+	 	   $year >= 1970 and
+		   $year <= 2037)) or
+	         ($method ne $manual and
+		  (($year eq "") or
+		   ($year =~ /\d+/ and
+		    $year >= 1970 and
+		    $year <= 2037))))
+	{
+		$errormessage .= $tr{'time invalid year'} ."<br />";
+	}
+	unless ( ($method eq $manual and
+                  ($month =~ /\d+/ and
+	 	   $month >= 1 and
+		   $month <= 12)) or
+	         ($method ne $manual and
+		  (($month eq "") or
+		   ($month =~ /\d+/ and
+		    $month >= 1 and
+		    $month <= 12))))
+	{
+		$errormessage .= $tr{'time invalid month'} ."<br />";
+	}
+	unless ( ($method eq $manual and
+                  ($day =~ /\d+/ and
+	 	   $day >= 1 and
+		   $day <= 32)) or
+	         ($method ne $manual and
+		  (($day eq "") or
+		   ($day =~ /\d+/ and
+		    $day >= 1 and
+		    $day <= 32))))
+	{
+		$errormessage .= $tr{'time invalid day'} ."<br />";
+	}
+	unless ( ($method eq $manual and
+                  ($hour =~ /\d+/ and
+	 	   $hour >= 0 and
+		   $hour <= 23)) or
+	         ($method ne $manual and
+		  (($hour eq "") or
+		   ($hour =~ /\d+/ and
+		    $hour >= 0 and
+		    $hour <= 23))))
+	{
+		$errormessage .= $tr{'time invalid hour'} ."<br />";
+	}
+	unless ( ($method eq $manual and
+                  ($minute =~ /\d+/ and
+	 	   $minute >= 0 and
+		   $minute <= 59)) or
+	         ($method ne $manual and
+		  (($minute eq "") or
+		   ($minute =~ /\d+/ and
+		    $minute >= 0 and
+		    $minute <= 59))))
+	{
+		$errormessage .= $tr{'time invalid minute'} ."<br />";
+	}
+	unless ( ($method eq $manual and
+                  ($second =~ /\d+/ and
+	 	   $second >= 0 and
+		   $second <= 59)) or
+	         ($method ne $manual and
+		  (($second eq "") or
+		   ($second =~ /\d+/ and
+		    $second >= 0 and
+		    $second <= 59))))
+	{
+		$errormessage .= $tr{'time invalid second'} ."<br />";
+	}
+
+	# Validate method, interval, and zone
+	unless ($cgitimesettings{'NTP_METHOD'} =~ /^($manual|$periodic|$automatic)$/) {
+		$errormessage .= $tr{'time invalid method'} ."<br />";
+	}
+	unless ($cgitimesettings{'NTP_INTERVAL'} =~ /^(1|2|3|6|12|24|48|72)$/) {
+		$errormessage .= $tr{'time invalid interval'} ."<br />";
+	}
+
 	$found = 0;
 	foreach (@timezones)
 	{
 		chomp;
-		if ($_ eq $timesettings{'TIMEZONE'}) {
-			$found = 1; }
+		if ($_ eq $cgitimesettings{'TIMEZONE'}) {
+			$found = 1;
+			last;
+		}
 	}
 	if ($found == 0) {
-		$errormessage = $tr{'invalid input'};
-		goto ERROR; }
+		$errormessage .= $tr{'time invalid zone'} ."<br />";
+	}
 
-	if ($timesettings{'NTP_SERVER_TYPE'} eq 'USERDEFINED')
+	# Validate server
+	if ( !(validip($cgitimesettings{'NTP_SERVER'}) or validhostname($cgitimesettings{'NTP_SERVER'})))
 	{
-		unless ($timesettings{'NTP_SERVER_USERDEFINED'} and ($timesettings{'NTP_SERVER_USERDEFINED'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-			$errormessage = $tr{'bad ntp host'};
-			goto ERROR; }
+		$errormessage .= $tr{'time invalid server'} ."<br />";
 	}	
 
-	if ($timesettings{'TIME_CHANGE'} eq 'on')
+	if ($cgitimesettings{'NTP_METHOD'} eq 'MANUAL')
 	{
-		$year = $timesettings{'YEAR'} + 1900;
-		$month = $timesettings{'MONTH'} + 1;
-		$day = $timesettings{'DAY'};
+		my ($year, $month, $day, $hour, $minute, $second);
+		$year = $cgitimesettings{'YEAR'};
+		$month = $cgitimesettings{'MONTH'};
+		$day = $cgitimesettings{'DAY'};
+		$hour = $cgitimesettings{'HOUR'};
+		$minute = $cgitimesettings{'MINUTE'};
+		$second = $cgitimesettings{'SECOND'};
 
-		$timedate = "$timesettings{'HOUR'}:$timesettings{'MINUTE'}:$timesettings{'SECOND'} $year/$month/$day";
-		system('/usr/bin/smoothcom', 'settime', $timedate);
+		system('/usr/bin/smoothcom', 'settime', "$hour:$minute:$second $year/$month/$day");
 		&log($tr{'setting time'});
 	}
+	# End of validations
 
-
-	foreach $temp ('TIMEZONE', 'ENABLED', 'NTP_INTERVAL', 'NTP_RTC',
-		'NTP_SERVER_TYPE', 'NTP_SERVER_SELECTED', 'NTP_SERVER_USERDEFINED', 'NTPD')
-	{
-		$tempsettings{$temp} = $timesettings{$temp};
-	}
-
+	# Update time zone, whether or not it's needed
 	unlink("${swroot}/time/localtime");
-	system('/bin/ln', '-s', "${tzroot}/$timesettings{'TIMEZONE'}", "${swroot}/time/localtime");
+	system('/bin/ln', '-s', "${tzroot}/$cgitimesettings{'TIMEZONE'}", "${swroot}/time/localtime");
 
-ERROR:
+	# If there are errors, mark the data invalid. Otherwise mark them valid, store them,
+	#   write the new ntpd.conf, and restart ntpd.
 	if ($errormessage) {
-		$timeettings{'VALID'} = 'no'; }
-	else {
-		$timesettings{'VALID'} = 'yes'; }
+		$cgitimesettings{'VALID'} = 'no';
+	} else {
+		my $tempsettings;
 
-	&writehash("${swroot}/time/settings", \%tempsettings);
-	
-	if ($timesettings{'VALID'} eq 'yes')
-	{	
+		$cgitimesettings{'VALID'} = 'yes';
+
+		foreach $temp ('TIMEZONE', 'ENABLED', 'NTP_INTERVAL', 'NTP_METHOD', 'NTP_SERVER')
+		{
+			$tempsettings{$temp} = $cgitimesettings{$temp};
+		}
+
+		&writehash("${swroot}/time/settings", \%tempsettings);
 		system('/usr/bin/smoothwall/writentpd.pl');
 	
 		my $success = message('ntpdrestart');
 		
 		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; 
+			$errormessage .= $tr{'smoothd failure'} ."<br />";
 		}
+
 	}
+	%timesettings = (
+		%timesettings,
+		%cgitimesettings,
+	);
 }
+# End of 'SAVE'
 
-if ($timesettings{'VALID'} eq '')
-{
-	$timesettings{'TIMEZONE'} = 'Europe/London';
-	$timesettings{'ENABLE'} = 'off';
-	$timesettings{'NTP_INTERVAL'} = 24;
-	$timesettings{'NTP_RTC'} = 'on';
-	$timesettings{'NTP_SERVER_TYPE'} = 'RANDOM';
-	$timesettings{'NTPD'} = 'off';
-}
 
-&readhash("${swroot}/time/settings", \%timesettings);
+# Set defaults as needed
+$timesettings{'TIMEZONE'} = 'Europe/London' if ($timesettings{'TIMEZONE'} eq "");
+$timesettings{'ENABLED'} = 'off' if ($timesettings{'ENABLED'} eq "");
+$timesettings{'NTP_INTERVAL'} = 6 if ($timesettings{'NTP_INTERVAL'} eq "");
+$timesettings{'NTP_METHOD'} = $tr{'time method automatic'} if ($timesettings{'NTP_METHOD'} eq "");
+$timesettings{'NTP_SERVER'} = 'pool.ntp.org' if ($timesettings{'NTP_SERVER'} eq "");
 
 $checked{'ENABLED'}{'on'} = '';
 $checked{'ENABLED'}{'off'} = '';
 $checked{'ENABLED'}{$timesettings{'ENABLED'}} = 'CHECKED';
-
-$checked{'NTP_RTC'}{'on'} = '';
-$checked{'NTP_RTC'}{'off'} = '';
-$checked{'NTP_RTC'}{$timesettings{'NTP_RTC'}} = 'CHECKED';
-
-$checked{'NTPD'}{'on'} = '';
-$checked{'NTPD'}{'off'} = '';
-$checked{'NTPD'}{$timesettings{'NTPD'}} = 'CHECKED';
 
 $selected{'TIMEZONE'}{$timesettings{'TIMEZONE'}} = 'SELECTED';
 
@@ -167,16 +233,16 @@ $selected{'NTP_INTERVAL'}{'48'} = '';
 $selected{'NTP_INTERVAL'}{'72'} = '';
 $selected{'NTP_INTERVAL'}{$timesettings{'NTP_INTERVAL'}} = 'SELECTED';
 
-$selected{'NTP_SERVER_TYPE'}{'RANDOM'} = '';
-$selected{'NTP_SERVER_TYPE'}{'SELECTED'} = '';
-$selected{'NTP_SERVER_TYPE'}{'USERDEFINED'} = '';
-$selected{'NTP_SERVER_TYPE'}{$timesettings{'NTP_SERVER_TYPE'}} = 'CHECKED';
-
-$selected{'NTP_SERVER_SELECTED'}{$timesettings{'NTP_SERVER_SELECTED'}} = 'SELECTED';
+$selected{'NTP_METHOD'}{$tr{'time method manual'}} = '';
+$selected{'NTP_METHOD'}{$tr{'time method periodic'}} = '';
+$selected{'NTP_METHOD'}{$tr{'time method automatic'}} = '';
+$selected{'NTP_METHOD'}{$timesettings{'NTP_METHOD'}} = 'CHECKED';
 
 my @now = localtime(time);
 
-&openpage($tr{'time settings'}, 1, '', 'services');
+
+# Now render
+&openpage($tr{'time regulation title'}, 1, '', 'services');
 
 &openbigbox('100%', 'LEFT');
 
@@ -184,17 +250,26 @@ my @now = localtime(time);
 
 print "<form method='post'>\n";
 
-&openbox($tr{'timezonec'});
-print <<END
-  <table width='100%'>
+&openbox($tr{'time timeboxc'});
+
+print <<END;
+  <table width='100%' style='margin:0 0 0 2em'>
     <tr>
-      <td width='25%' class='base'>
+      <td width='10%' class='base'>
+        $tr{'enabledc'}
+      </td>
+      <td>
+        <input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}>
+      </td>
+    </tr>
+    <tr>
+      <td width='10%' class='base'>
         $tr{'timezonec'}
       </td>
-      <td width='75%'>
+      <td>
         <select name='TIMEZONE'>
 END
-;
+
 foreach (@timezones)
 {
 	chomp;
@@ -202,112 +277,77 @@ foreach (@timezones)
 	s/_/ /g;
 	print "          <option value='$file' $selected{'TIMEZONE'}{$file}>$_\n";
 }
-print <<END
+print <<END;
         </select>
       </td>
-      <td width='10%'>&nbsp;</td>
-      <td width='35%'>&nbsp;</td>
     </tr>
   </table>
 END
-;
+
 &closebox();
 
-&openbox($tr{'time and datec'});
-print <<END
-  <table width='100%'>
+&openbox($tr{'time methodc'});
+
+print <<END;
+  <table width='100%' style='margin:0 0 0 2em'>
     <tr>
-      <td width='10%' class='base'>
-        <span style='margin:0 .5em 0 0'>$tr{'setc'}</span>
-        <input type='checkbox' name='TIME_CHANGE'>
-      </td>
-      <td width='10%' class='base'>$tr{'timec'}</td>
-      <td width='35%'>
-        <select name='HOUR'>
-END
-;
-	for ($hour = 0; $hour < 24; $hour++)
-	{
-		if ($hour == $now[2]) { $sel = 'selected'; }
-		else { $sel = ''; }
-		print "        <option valuE='$hour' $sel>$hour\n";
-	}
-print <<END
-        </select>
-	:
-	<select name='MINUTE'>
-END
-;
-	for ($minute = 0; $minute < 60; $minute++)
-	{
-		if ($minute < 10) { $minutestr = "0$minute"; }
-		else { $minutestr = $minute; }
-		if ($minute == $now[1]) { $sel = 'selected'; }
-		else { $sel = ''; }
-		print "          <option value='$minute' $sel>$minutestr\n";
-	}
-print <<END
-        </select>
-	:
-        <select name='SECOND'>
-END
-;
-	for ($second = 0; $second < 60; $second++)
-	{
-		if ($second < 10) { $secondstr = "0$second"; }
-		else { $secondstr = $second; }
-		if ($second == $now[0]) { $sel = 'selected'; }
-		else { $sel = ''; }
-		print "          <option value='$second' $sel>$secondstr\n";
-	}
-print <<END
-	</select>
-      </td>
-      <td width='10%' class='base'>$tr{'datec'}</td>
-      <td width='35%'>
-        <select name='DAY'>
-END
-;
-	for ($day = 1; $day <= 31; $day++)
-	{
-		if ($day == $now[3]) { $sel = 'selected'; }
-		else { $sel = ''; }
-		print "          <option value='$day' $sel>$day\n";
-	}
-print <<END
-        </select>
-	<select name='MONTH'>
-END
-;
-	for ($month = 0; $month < 12; $month++)
-	{
-		if ($month == $now[4]) { $sel = 'selected'; }
-		else { $sel = ''; }
-		print "          <option value='$month' $sel>$shortmonths[$month]\n";
-	}
-	print <<END
-        </select>
-        <select name='YEAR'>
-END
-	;
-	for ($year = 101; $year < 130; $year++)
-	{
-		if ($year == $now[5]) { $sel = 'selected'; }
-		else { $sel = ''; }
-		$yearstr = $year + 1900;
-		print "          <option value='$year' $sel>$yearstr\n";
-	}
-	print <<END
-        </select>
+      <td width='100%'>
+        <input type='radio' name='NTP_METHOD' value='$tr{'time method manual'}' $selected{'NTP_METHOD'}{$tr{'time method manual'}}>
+        $tr{'time method manual'}
       </td>
     </tr>
-  </table>
+    <tr>
+      <td>
+        <table width="100%">
+          <tr>
+            <td width="10%" class="base">
+              $tr{'time datec'}
+            </td>
+            <td>
+              <input type="text" name="YEAR" value="$timesettings{'YEAR'}" size="4">
+              /
+              <input type="text" name="MONTH" value="$timesettings{'MONTH'}" size="2">
+              /
+              <input type="text" name="DAY" value="$timesettings{'DAY'}" size="2">
+              $tr{'time date ymd'}
+            </td>
+          </tr>
+          <tr>
+            <td width="10%" class="base">
+              $tr{'time timec'}
+            </td>
+            <td>
+              <input type="text" name="HOUR" value="$timesettings{'HOUR'}" size="2">
+              :
+              <input type="text" name="MINUTE" value="$timesettings{'MINUTE'}" size="2">
+              :
+              <input type="text" name="SECOND" value="$timesettings{'SECOND'}" size="2">
+              $tr{'time time hms'}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td width='100%'>
+        <input type='radio' name='NTP_METHOD' value='$tr{'time method periodic'}' $selected{'NTP_METHOD'}{$tr{'time method periodic'}}>
+        $tr{'time method periodic'}
+      </td>
+    </tr>
+    <tr>
+      <td width='100%'>
+        <table width="100%">
+          <tr>
+            <td width="10%" class="base">
+              $tr{'time intervalc'}
+            </td>
+            <td>
 END
-;
-
-&closebox();
-
-&openbox($tr{'network time retrieval'});
 
 my $timecount;
 my $nextupdate;
@@ -317,117 +357,76 @@ $timecount = <FILE>; chomp $timecount;
 close(FILE);
 
 if (($timesettings{'NTP_INTERVAL'} - $timecount) > 1) {
-	$nextupdate = $timesettings{'NTP_INTERVAL'} - $timecount . " $tr{'hours'}"; }
-else {
-	$nextupdate = $tr{'less than one hour'}; }
+	$nextupdate = $timesettings{'NTP_INTERVAL'} - $timecount . " $tr{'hours'}";
+} else {
+	$nextupdate = $tr{'less than one hour'};
+}
 
-print <<END
-  <table width='100%'>
-    <tr>
-      <td width='25%' class='base'>$tr{'enabled'}</td>
-      <td width='25%'>
-        <input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}>
-      </td>
-      <td width='25%' class='base'>$tr{'interval'}</td>
-      <td width='25%'>
-        <select name='NTP_INTERVAL'>
-          <option value='1' $selected{'NTP_INTERVAL'}{'1'}>$tr{'one hour'}
-          <option value='2' $selected{'NTP_INTERVAL'}{'2'}>$tr{'two hours'}
-          <option value='3' $selected{'NTP_INTERVAL'}{'3'}>$tr{'three hours'}
-          <option value='6' $selected{'NTP_INTERVAL'}{'6'}>$tr{'six hours'}
-          <option value='12' $selected{'NTP_INTERVAL'}{'12'}>$tr{'twelve hours'}
-          <option value='24' $selected{'NTP_INTERVAL'}{'24'}>$tr{'one day'}
-          <option value='48' $selected{'NTP_INTERVAL'}{'48'}>$tr{'two days'}
-          <option value='72' $selected{'NTP_INTERVAL'}{'72'}>$tr{'three days'}
-        </select>
+print <<END;
+              <select name='NTP_INTERVAL'>
+                <option value='1' $selected{'NTP_INTERVAL'}{'1'}>$tr{'time one hour'}
+                <option value='2' $selected{'NTP_INTERVAL'}{'2'}>$tr{'time two hours'}
+                <option value='3' $selected{'NTP_INTERVAL'}{'3'}>$tr{'time three hours'}
+                <option value='6' $selected{'NTP_INTERVAL'}{'6'}>$tr{'time six hours'}
+                <option value='12' $selected{'NTP_INTERVAL'}{'12'}>$tr{'time twelve hours'}
+                <option value='24' $selected{'NTP_INTERVAL'}{'24'}>$tr{'time one day'}
+                <option value='48' $selected{'NTP_INTERVAL'}{'48'}>$tr{'time two days'}
+                <option value='72' $selected{'NTP_INTERVAL'}{'72'}>$tr{'time three days'}
+              </select>
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
     <tr>
-      <td class='base'>$tr{'save time to rtc'}</td>
       <td>
-        <input type='checkbox' name='NTP_RTC' $checked{'NTP_RTC'}{'on'}>
+        &nbsp;
       </td>
-      <td class='base'>$tr{'next update in'}</td>
-      <td>$nextupdate</td>
+    </tr>
+    <tr>
+      <td width='100%'>
+        <input type='radio' name='NTP_METHOD' value='$tr{'time method automatic'}' $selected{'NTP_METHOD'}{$tr{'time method automatic'}}>
+        $tr{'time method automatic'}
+      </td>
     </tr>
   </table>
 END
-;
 
-&closebox();
+&closebox;
 
-&openbox($tr{'network time servers'});
 
-print <<END
+# Time server name or address
+&openbox($tr{'time network serverc'});
+
+print <<END;
   <table>
     <tr>
-      <td class='base' style='text-align:left; padding-left:5em'>
-        <input type='radio' name='NTP_SERVER_TYPE'
-               value='RANDOM' $selected{'NTP_SERVER_TYPE'}{'RANDOM'}>
-$tr{'multiple random public servers'}
-      </td>
-    </tr>
-    <tr>
-      <td class='base' style='text-align:left; padding-left:5em'>
-        <input type='radio' name='NTP_SERVER_TYPE'
-               value='SELECTED' $selected{'NTP_SERVER_TYPE'}{'SELECTED'}>
-        $tr{'selected single public server'}
+      <td class='base'>
+        $tr{'time ip or domainc'}
       </td>
       <td>
-        <select name='NTP_SERVER_SELECTED'>
-END
-;
-foreach $desc (sort keys %timeservers) {
-	print "<option value='$timeservers{$desc}' $selected{'NTP_SERVER_SELECTED'}{$timeservers{$desc}}>$desc\n"; }
-print <<END
-        </select>
-      </td>
-    </tr>
-    <tr>
-      <td class='base' style='text-align:left; padding-left:5em'>
-        <input type='radio' name='NTP_SERVER_TYPE'
-               value='USERDEFINED' $selected{'NTP_SERVER_TYPE'}{'USERDEFINED'}>
-        $tr{'user defined single public or local server'}
-      </td>
-      <td>
-        <input type='text' SIZE='35' name='NTP_SERVER_USERDEFINED'
-               value='$timesettings{'NTP_SERVER_USERDEFINED'}'
-               id='ntp_server_userdefined'
-               @{[jsvalidregex('ntp_server_userdefined','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}>
+        <input type='text' name='NTP_SERVER' size=60
+               value='$timesettings{'NTP_SERVER'}'>
       </td>
     </tr>
   </table>
 END
-;
 
 &closebox();
 
-&openbox('Time server:');
-print <<END
+# Action button
+
+print <<END;
   <table width='100%'>
     <tr>
-      <td width='25%' class='base'>$tr{'enabled'}</td>
-      <td width='25%'><input type='checkbox' name='NTPD' $checked{'NTPD'}{'on'}></td>
-      <td width='25%'>&nbsp;</td>
-      <td width='25%'>&nbsp;</td>
+      <td style='text-align:center'>
+        <input type='submit' name='ACTION' value='$tr{'save'}'>
+      </td>
     </tr>
   </table>
 END
-;
-&closebox();
 
-print <<END
-  <div style='text-align:center'>
-    <table width='60%'>
-      <tr>
-        <td style='text-align:center'>
-          <input type='submit' name='ACTION' value='$tr{'save'}'>
-        </td>
-      </tr>
-    </table>
-  </div>
-END
-;
+
 
 print "</form>\n";
 

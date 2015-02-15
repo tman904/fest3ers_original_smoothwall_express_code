@@ -30,16 +30,8 @@ END
 }
 
 # Query the upstream
-if ($timesettings{'NTP_SERVER_TYPE'} eq "USERDEFINED")
-{
 	print FILE <<END;
-server $timesettings{'NTP_SERVER_USERDEFINED'}
+server $timesettings{'NTP_SERVER'}
 END
-} else
-{
-	print FILE <<END;
-server $timesettings{'NTP_SERVER_SELECTED'}
-END
-}
 
 close (FILE);

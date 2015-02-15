@@ -10,16 +10,16 @@ my $count;
 
 &readhash("${swroot}/time/settings", \%timesettings);
 
-if ($timesettings{'ENABLED'} ne 'on') {
-	exit 0; }
+if ($timesettings{'ENABLED'} ne 'on' and $timesettings{'NTP_METHOD'} ne $tr{'time method periodic'})
+{
+	exit 0;
+}
 
 if ($ARGV[0] eq 'FORCE')
 {
 	&ntpgettime();
 	&resetcount();
-}
-else
-{
+} else {
 	$count = &inccount();
 
 	if ($count >= $timesettings{'NTP_INTERVAL'})
@@ -31,6 +31,7 @@ else
 
 exit 0;
 
+
 sub ntpgettime
 {
 	my @allservers; my $totalallservers;
@@ -41,39 +42,17 @@ sub ntpgettime
 	unless (-e "${swroot}/red/active") {
 		return; }
 
-	if ($timesettings{'NTP_SERVER_TYPE'} eq 'RANDOM')
-	{
-		open (FILE, "${swroot}/time/timeservers") or die "Unable to open timeservers.";
-		while (<FILE>)
-		{
-		        chomp;
-		        @temp = split(/\|/);
-			push(@allservers, $temp[2]);
-		}
-
-		$totalallservers = scalar @allservers;
-
-		for ($count = 0; $count < 5; $count++)
-		{
-			$i = int (rand $totalallservers);
-			push(@servers, $allservers[$i]);
-		}
-	}
-	elsif ($timesettings{'NTP_SERVER_TYPE'} eq 'SELECTED') {
-		push(@servers, $timesettings{'NTP_SERVER_SELECTED'}); }
-	else {
-		push(@servers, $timesettings{'NTP_SERVER_USERDEFINED'}); }
+	push(@servers, $timesettings{'NTP_SERVER'});
 
 	@command = ('/usr/sbin/ntpdate', '-su', @servers);
 
 	if (system(@command) == 0)
 	{
-		&log("System clock successfully updated; using server(s) @servers.");
-		if ($timesettings{'NTP_RTC'} eq 'on') {
-			system('/sbin/hwclock', '--systohc', '--localtime'); }
+		&log("System clock successfully updated using server @servers.");
+		system('/sbin/hwclock', '--systohc', '--localtime');
+	} else {
+		&log("Unable to update system clock using server @servers");
 	}
-	else {
-		&log("Unable to update system clock; using server(s) @servers"); }
 }
 
 sub inccount

@@ -10,35 +10,36 @@
 
 # common
 
-'user defined' => 'User defined',
-'invalid input' => 'Invalid input',
-'save' => 'Save', # button
-'refresh' => 'Refresh', # button
-'restore' => 'Restore', # button
-'proceed' => 'Proceed', # button
-'upload' => 'Upload', # button
-'error messages' => 'Error messages:',
 'back' => 'BACK',
+'dhcp server' => 'DHCP server',
+'enabled' => 'Enabled:',
+'enabledc' => 'Enabled:',
+'error messages' => 'Error messages:',
 'help' => 'Help',
-'primary dns' => 'Primary DNS:',
-'secondary dns' => 'Secondary DNS:',
-'primary dns override' => 'Primary DNS Override:',
-'secondary dns override' => 'Secondary DNS Override:',
 'ignore mtu' => 'Ignore ISP\'s MTU:',
+'invalid comment' => 'Invalid comment.',
+'invalid input' => 'Invalid input',
+'invalid password' => 'Invalid password.',
 'invalid primary dns' => 'Invalid primary DNS.',
 'invalid secondary dns' => 'Invalid secondary DNS.',
 'invalid username' => 'Invalid username.',
-'invalid password' => 'Invalid password.',
-'invalid comment' => 'Invalid comment.',
-'dhcp server' => 'DHCP server',
-'username' => 'Username:',
-'password' => 'Password:',
-'enabled' => 'Enabled:',
-'this field may be blank' => 'This field may be blank.',
-'these fields may be blank' => 'These fields may be blank.',
-'smoothd failure' => 'Unable to run command.',
 'log ascending' => 'ascending',
 'log descending' => 'descending',
+'password' => 'Password:',
+'primary dns override' => 'Primary DNS Override:',
+'primary dns' => 'Primary DNS:',
+'proceed' => 'Proceed', # button
+'refresh' => 'Refresh', # button
+'restore' => 'Restore', # button
+'save' => 'Save', # button
+'secondary dns override' => 'Secondary DNS Override:',
+'secondary dns' => 'Secondary DNS:',
+'smoothd failure' => 'Unable to run command.',
+'these fields may be blank' => 'These fields may be blank.',
+'this field may be blank' => 'This field may be blank.',
+'upload' => 'Upload', # button
+'user defined' => 'User defined',
+'username' => 'Username:',
 
 # header.pl
 'sshome' => 'home',
@@ -933,6 +934,42 @@
 'next update in' => 'Next update in:',
 'hours' => ' hours',
 'less than one hour' => 'Less than one hour',
+# New time.cgi; the old strings above are to be removed.
+'time datec' => 'Date:',
+'time date ymd' => ' <i>(YYYY MM DD)</i>',
+'time intervalc' => 'Interval:',
+'time invalid day' => 'the specified day is invalid',
+'time invalid hour' => 'the specified hour is invalid',
+'time invalid interval' => 'the specified interval is invalid',
+'time invalid method' => 'the specified method is invalid',
+'time invalid minute' => 'the specified minute is invalid',
+'time invalid month' => 'the specified month is invalid',
+'time invalid second' => 'the specified second is invalid',
+'time invalid server' => 'the specified time server is invalid',
+'time invalid year' => 'the specified year is invalid',
+'time invalid zone' => 'the specified time zone is invalid',
+'time ip or domainc' => 'IP or Domain Name:',
+'time method automatic' => 'Automatic',
+'time method manual' => 'Manual',
+'time method periodic' => 'Periodic',
+'time methodc' => 'Method:',
+'time network serverc' => 'Network time server:',
+'time next update in' => 'Next update in',
+'time regulation title' => 'System Time Regulation',
+'time timeboxc' => 'System time regulation:',
+'time timec' => 'Time:',
+'time time hms' => ' <i>(HH MM SS)</i>',
+'time update hours' => ' hours',
+'time update less than one hour' => ' less than one hour',
+'time zonec' => 'Timezone:',
+'time one hour' => '1 hour',
+'time two hours' => '2 hours',
+'time three hours' => '3 hours',
+'time six hours' => '6 hours',
+'time twelve hours' => '12 hours',
+'time one day' => '1 day',
+'time two days' => '2 days',
+'time three days' => '3 days',
 
 # advnet.cgi
 'restarting advanced networking features' => 'Restarting advanced networking features.',
