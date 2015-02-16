@@ -74,7 +74,7 @@ int start_ntpd( std::vector<std::string> & parameters, std::string & response )
 	ConfigVAR settings("/var/smoothwall/time/settings");
 	int error = 0;
 
-	if (settings["NTP_METHOD"] == "Automatic")
+	if (settings["ENABLED"] == "on" and settings["NTP_METHOD"] == "Automatic")
 	{
 		error = simplesecuresysteml("/usr/sbin/ntpd", NULL);
 		
