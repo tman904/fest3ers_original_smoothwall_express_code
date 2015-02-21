@@ -6,7 +6,7 @@
 
 include ../Makefile.conf
 
-PACKAGE = libusb
+PACKAGE = libusb0
 VER_MM = 0.1
 VERSION = $(VER_MM).12
 EXTENSION = .tar.gz
