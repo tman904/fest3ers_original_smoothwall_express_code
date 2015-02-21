@@ -20,12 +20,12 @@ function git2tgz () {
   #   gitCommitID=$(VERSION)
 
   # Prep the dir
-  rm -rf ${pkgName}-${gitBranch}
+  rm -rf "${pkgName}-${gitBranch}"
 
   # Go 'n' git
   echo "git from ${gitURL}"
   git clone "${gitURL}" "${pkgName}-${gitBranch}" || exit 102
-  cd ${pkgName}-${gitBranch}
+  cd "${pkgName}-${gitBranch}"
   echo "git checkout ${gitCommitID}"
   git checkout -q ${gitCommitID} || exit 103
 
@@ -33,10 +33,10 @@ function git2tgz () {
   cd ..
   echo "tar"
   tar cfz "${DIRECTORY}/${pkgName}-${gitBranch}.tar.gz" \
-      --exclude=".git*" ${pkgName}-${gitBranch} || exit 104
+      --exclude=".git*" "${pkgName}-${gitBranch}" || exit 104
 
   # remove the dir
-  rm -rf ${pkgName}-${gitBranch} || exit 105
+  rm -rf "${pkgName}-${gitBranch}" || exit 105
 }
 
 
@@ -47,7 +47,7 @@ function try_DL () {
   if [ "$1" != "" ]; then
     if [ "$1" != "$2" -o "$1" == "$2" -a "${gitURL}" == "" ]; then
       # It's a normal HTTP URL; try this source
-      wget ${PASV}${CONTINUE_DL}${NO_CHECK_CERT}--directory $DIRECTORY $2
+      wget ${PASV}${CONTINUE_DL}${NO_CHECK_CERT}--directory "$DIRECTORY" "$2"
       return $?
     else
       # Internet source is git
@@ -89,16 +89,16 @@ fi
 set | grep "MIRROR_UNO=" >/dev/null 2>&1 || MIRROR_UNO=""
 set | grep "MIRROR_DOS=" >/dev/null 2>&1 || MIRROR_DOS="http://downloads.smoothwall.org/buildmirror"
 
-DIRECTORY=$1
-URL=$2
-EXPECTED_MD5=$3
+DIRECTORY="$1"
+URL="$2"
+EXPECTED_MD5="$3"
 
 if [ "$DIRECTORY" = "" -o "$URL" = "" ]; then
   echo "Usage: $0 <directory> <url> [expected md5]"
   exit 0
 fi
 
-FILENAME=`basename $URL`
+FILENAME=`basename "$URL"`
 
 # If we don't already have the tar ball
 if [ ! -e "$DIRECTORY/$FILENAME.done" ]; then
@@ -116,16 +116,16 @@ if [ ! -e "$DIRECTORY/$FILENAME.done" ]; then
 
   # Historic checksum
   if [ "$EXPECTED_MD5" != "" ]; then
-    MD5=`md5sum $DIRECTORY/$FILENAME | cut -d " " -f 1`
+    MD5=`md5sum "$DIRECTORY/$FILENAME" | cut -d " " -f 1`
     if [ "$MD5" != "$EXPECTED_MD5" ]; then
       echo "MD5 missmatch.  Was $MD5, meant to be $EXPECTED_MD5"
-      rm -f $DIRECTORY/$FILENAME
+      rm -f "$DIRECTORY/$FILENAME"
       exit 1
     fi
   fi
 
   # If DL and optional checksum succeed, touch the .done file.
-  touch $DIRECTORY/$FILENAME.done
+  touch "$DIRECTORY/$FILENAME.done"
 fi
 
 exit 0
