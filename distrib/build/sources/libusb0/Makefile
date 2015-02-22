@@ -16,8 +16,8 @@ BASE_URL = http://heanet.dl.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)-$(VER_
 
 BUILDTARBALL = yes
 $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz: install
-        tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz -C $(PKG_ROOT) .
-        tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz -C /
+	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz -C $(PKG_ROOT) .
+	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz -C /
 
 include ../Makefile.rules
 
