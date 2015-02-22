@@ -11,10 +11,8 @@ VERSION = 3.14.13
 
 BASE_URL = http://downloads.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)%20-%20Stable/$(VERSION)
 
-CONFIG_OPTS = --enable-modbus-usb --enable-usb --with-pid-dir=/var/run
+CONFIG_OPTS = --enable-modbus-usb --enable-usb --with-generic-usb --with-pid-dir=/var/run
 
-COMPILE = yes
-compile: configure
-	+$(PRE_COMPILE) $(MAKE) ${JOBS} -C $(COMPILE_DIR) VERBOSE=1
+PRE_COMPILE = VERBOSE=1
 
 include ../Makefile.rules
