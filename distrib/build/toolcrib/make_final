@@ -225,6 +225,7 @@ fi
       build libpcap
       build expat
 
+      build libusb0
       build libusb
       build cgilib
       build freetype
