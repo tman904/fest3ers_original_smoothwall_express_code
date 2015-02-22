@@ -19,5 +19,8 @@ $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz: install
 	tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz -C $(PKG_ROOT) .
 	tar -zxvf $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz -C /
 
+ALL = yes
+all: $(TARGET_DIR)/smoothwall-$(PACKAGE)0.tar.gz
+
 include ../Makefile.rules
 

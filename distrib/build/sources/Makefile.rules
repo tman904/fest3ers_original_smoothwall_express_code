@@ -109,4 +109,6 @@ packageinfo.html:
 
 endif
 
+ifndef ALL
 all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
+endif
