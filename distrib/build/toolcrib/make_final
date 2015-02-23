@@ -154,6 +154,11 @@ fi
       build libpcap
       build expat
 
+      # udev depends on util-linux and kmod
+      build util-linux
+      build kmod
+      # libusb depends on libudev
+      build udev
       build libusb0
       build libusb
       build cgilib
@@ -229,7 +234,6 @@ fi
       build sysklogd
       build sysvinit
       build tar
-      build util-linux
       build joe
       build libmnl
       build db
@@ -244,9 +248,7 @@ fi
       build xtables-addons
       build ipbatch
       build klibc
-      build kmod
       build gperf
-      build udev
       #build eudev
       build linux-atm
       touch crumbs/Final.grp4.compiled
