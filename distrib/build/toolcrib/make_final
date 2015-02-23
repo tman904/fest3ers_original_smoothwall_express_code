@@ -130,21 +130,64 @@ fi
       build flex
       build dejagnu
       build gettext
+      build pkg-config
       JOBS=$JOBS_UP
       build net-tools
       JOBS=$JOBS_MP
       build inetutils
-      build libxml2
-      build libxslt
-      build gd
       touch crumbs/Final.grp1.compiled
     fi
 
     if [ -e crumbs/Final.grp2.compiled ]; then
-      echo -e "  Final group 2 packages (essential) already built"
+      echo -e "  Final group 2 packages (libs) already built"
     else
       echo
-      echo -e "  Final group 2 packages (essential)"
+      echo -e "  Final group 2 packages (libs)"
+      build Python
+      build libxml2
+      build libxslt
+      build strace
+      build attr
+      build libcap
+      build libcap-ng
+      build pcre
+      build libpcap
+      build expat
+
+      build libusb0
+      build libusb
+      build cgilib
+      build freetype
+      build fontconfig
+      build libpng
+      build libdnet
+      build pixman
+      build libffi
+      build glib
+      build freefont
+      build cairo
+      build pango
+      build openssl
+      build neon
+      build libosip2
+      build libnet
+      build libnfnetlink
+      build libnetfilter_queue
+      JOBS=$JOBS_UP
+      build slang
+      JOBS=$JOBS_MP
+      build popt
+      build dialog
+      build newt
+      build gd
+      touch crumbs/Final.grp2.compiled
+    fi
+
+    if [ -e crumbs/Final.grp3.compiled ]; then
+      echo -e "  Final group 3 packages (essential) already built"
+    else
+      echo
+      echo -e "  Final group 3 packages (essential)"
       build sysfsutils
       build iputils
       build perl
@@ -165,24 +208,22 @@ fi
       build make
       build module-init-tools
       build patch
-      build pkg-config
       build procinfo-ng
       build procps-ng
       build which
       build GeoIP
-      build Python
       JOBS=$JOBS_UP
       build acpica
       JOBS=$JOBS_MP
       build nasm
-      touch crumbs/Final.grp2.compiled
+      touch crumbs/Final.grp3.compiled
     fi
 
-    if [ -e crumbs/Final.grp3.compiled ]; then
-      echo -e "  Final group 3 packages (system) already built"
+    if [ -e crumbs/Final.grp4.compiled ]; then
+      echo -e "  Final group 4 packages (system) already built"
     else
       echo
-      echo -e "  Final group 3 packages (system)"
+      echo -e "  Final group 4 packages (system)"
       build psmisc
       build shadow
       build sysklogd
@@ -190,7 +231,6 @@ fi
       build tar
       build util-linux
       build joe
-      build openssl
       build libmnl
       build db
       build openldap
@@ -209,48 +249,14 @@ fi
       build udev
       #build eudev
       build linux-atm
-      touch crumbs/Final.grp3.compiled
+      touch crumbs/Final.grp4.compiled
     fi
 
-    if [ -e crumbs/Final.grp4.compiled ]; then
-      echo -e "  Final group 4 packages (libs) already built"
+    if [ -e crumbs/Final.grp5.compiled ]; then
+      echo -e "  Final group 5 packages (core) already built"
     else
       echo
-      echo -e "  Final group 4 packages (libs)"
-      build strace
-      build attr
-      build libcap
-      build libcap-ng
-      build pcre
-      build libpcap
-      build expat
-
-      build libusb0
-      build libusb
-      build cgilib
-      build freetype
-      build fontconfig
-      #build libart_lgpl  # 1/2/2012: no longer needed?
-      build libpng
-      build libdnet
-      build pixman
-      build libffi
-      build glib
-      build freefont
-      build cairo
-      build pango
-      build neon
-      build libosip2
-      build libnet
-      build libnfnetlink
-      build libnetfilter_queue
-      JOBS=$JOBS_UP
-      build slang
-      JOBS=$JOBS_MP
-      build popt
-      build dialog
-      build newt
-
+      echo -e "  Final group 5 packages (core)"
       build usbutils
       build pciutils
       build bridge-utils
@@ -270,18 +276,10 @@ fi
       #   on rrdtool.
       build perl-mods
       build cacert-bundle
+
       # daq (and snort) version check depend on cacert-bundle
       build daq
       build sqlite
-
-      touch crumbs/Final.grp4.compiled
-    fi
-
-    if [ -e crumbs/Final.grp5.compiled ]; then
-      echo -e "  Final group 5 packages (core) already built"
-    else
-      echo
-      echo -e "  Final group 5 packages (core)"
       build httpd
       build cron
       JOBS=$JOBS_UP
