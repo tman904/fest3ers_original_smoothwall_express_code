@@ -6,13 +6,10 @@
 
 include ../../../Makefile.conf
 
-PACKAGE = GD
-VERSION = 2.53
+PACKAGE = GDGraph
+VERSION = 1.48
 
-#VERSION = 2.55		# broken
-#VERSION = 2.56		# broken
-
-BASE_URL = http://search.cpan.org/CPAN/authors/id/L/LD/LDS/
+BASE_URL = http://search.cpan.org/CPAN/authors/id/R/RU/RUZ
 
 CONFIGURE = yes
 CLEAN = yes

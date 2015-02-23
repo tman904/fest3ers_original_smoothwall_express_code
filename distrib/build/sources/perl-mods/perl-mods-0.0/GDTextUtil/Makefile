@@ -6,13 +6,10 @@
 
 include ../../../Makefile.conf
 
-PACKAGE = GD
-VERSION = 2.53
+PACKAGE = GDTextUtil
+VERSION = 0.86
 
-#VERSION = 2.55		# broken
-#VERSION = 2.56		# broken
-
-BASE_URL = http://search.cpan.org/CPAN/authors/id/L/LD/LDS/
+BASE_URL = http://search.cpan.org/CPAN/authors/id/M/MV/MVERB
 
 CONFIGURE = yes
 CLEAN = yes

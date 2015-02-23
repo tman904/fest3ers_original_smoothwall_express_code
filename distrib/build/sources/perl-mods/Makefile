@@ -24,6 +24,8 @@ export PERL_MODS = \
 	    Config-Patch \
 	    Date-Calc \
 	    GD \
+	    GDTextUtil \
+	    GDGraph \
 	    HTML-Parser \
 	    HTML-Tagset \
 	    Log-Log4perl \
