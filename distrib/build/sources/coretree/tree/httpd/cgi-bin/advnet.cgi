@@ -40,11 +40,6 @@ if ($advnetsettings{'ACTION'} eq $tr{'save'})
 		
 	if (not defined $success) {
                 $errormessage .= $tr{'smoothd failure'}."<br />"; }
-
-        $success = message('setoutgoing');
-                
-        if (not defined $success) {
-                $errormessage .= $tr{'smoothd failure'}."<br />"; }
 }
 
 &readhash("${swroot}/advnet/settings", \%advnetsettings);
