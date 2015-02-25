@@ -137,7 +137,7 @@ END
 
 	&closebox();
 
-	print "</form>\N";
+	print "</form>\n";
 }
 else
 {
