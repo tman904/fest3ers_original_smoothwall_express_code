@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = whois
-VERSION = 5.5
+VERSION = 5.5.2
 
 EXTENSION = .tgz
 
@@ -27,5 +27,6 @@ install: compile
 	@mkdir -p $(PKG_ROOT)
 	@install -D $(DIR)/whois $(PKG_ROOT)/usr/bin/whois
 	@install -D $(DIR)/tld.conf $(PKG_ROOT)/etc/whois/tld.conf
+	@install -D $(DIR)/sd.conf $(PKG_ROOT)/etc/whois/sd.conf
 	
 include ../Makefile.rules
