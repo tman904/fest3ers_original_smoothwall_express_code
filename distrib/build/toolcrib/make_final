@@ -159,8 +159,8 @@ fi
       build kmod
       # libusb depends on libudev
       build udev
-      build libusb0
       build libusb
+      build libusb-compat
       build cgilib
       build freetype
       build fontconfig
