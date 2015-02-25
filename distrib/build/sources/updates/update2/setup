@@ -1,0 +1,30 @@
+#!/bin/sh
+
+echo "Update 1 installing."
+
+tar xvf patch.tar.gz -C /
+
+# Change the mode of logrotate conf files; logrotate silently fails.
+chmod 644 /etc/logrotate.conf /etc/logrotate.d/*
+
+# Migrate time/settings
+TIMEFILE=/var/smoothwall/time/settings
+TMPTIME=/tmp/timesettings
+egrep "ENABLED|NTP_INTERVAL|TIMEZONE" $TIMEFILE > $TIMESETTINGS
+cat<<END >> $TIMESETTINGS
+NTP_SERVER=pool.ntp.org
+NTP_METHOD=Automatic
+END
+sort /tmp/timesettings > $TIMEFILE
+chown nobody:nobody $TIMEFILE
+chmod 644 $TIMEFILE
+
+# Update grub.conf with odd hw/fw workaround
+cp /boot/grub/grub.conf /boot/grub/grub.conf-OLD
+# Change VESA single
+sed -i -e 's/VESA Console, Single-User/VESA Console, Odd Hardware/' /boot/grub/grub.conf
+sed -i -e 's/quiet single/quiet iommu=soft nomodeset/' /boot/grub/grub.conf
+# Change serial single
+sed -i -e 's/Serial Console, Single-User/Serial Console, Odd Hardware/' /boot/grub/grub.conf
+sed -i -e 's/quiet \([^ ]*\) single/quiet \1 iommu=soft nomodeset/' /boot/grub/grub.conf
+
