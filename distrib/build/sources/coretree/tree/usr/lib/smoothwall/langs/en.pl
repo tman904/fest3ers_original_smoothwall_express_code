@@ -758,6 +758,7 @@
 'whois lookup' => 'Whois lookup',
 'whois lookupc' => 'Whois lookup:',
 'ip addresses or domain names' => 'IP addresses or domain names:',
+'invalid addresses or names' => 'Invalid IP address(es) or host or domain name(s)',
 
 # shell.cgi
 'secure shellc' => 'Secure shell:',
