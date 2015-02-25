@@ -61,7 +61,7 @@ patch.tar.gz:
 	@echo "Building patch.tar.gz, stand by ..."
 	tar cfz patch.tar.gz -C distrib .
 	# ----
-	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz review
+	tar cfz inspection-$(mARCH).tar.gz setup patch.tar.gz review
 
 updateinfo:
 	@echo "Building update information file ..."	
