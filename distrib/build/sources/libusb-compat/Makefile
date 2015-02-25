@@ -12,7 +12,7 @@ VERSION = $(VER_MM).5
 TARBALL = $(PACKAGE)-$(VERSION)
 EXTENSION = .tar.bz2
 
-BASE_URL = http://heanet.dl.sourceforge.net/project/libusb/$(PACKAGE)-$(VER_MM)/$(PACKAGE)-$(VERION)
+BASE_URL = http://heanet.dl.sourceforge.net/project/libusb/$(PACKAGE)-$(VER_MM)/$(PACKAGE)-$(VERSION)
 
 include ../Makefile.rules
 
