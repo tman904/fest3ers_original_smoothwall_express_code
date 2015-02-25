@@ -36,7 +36,7 @@ KVM_PKGS = samba
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    daq libnet libnetfilter_queue libnfnetlink attr libcap-ng \
 	    libcap fontconfig glib cairo libffi readline libpcap sqlite-autoconf \
-	    libosip2 libpcap pango zlib slang pixman libxml2 libusb0 libusb \
+	    libosip2 libpcap pango zlib slang pixman libxml2 libusb-compat libusb \
 	    kmod gmp mpfr mpc popt yaml perl-mods libcap-ng rsync \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \
 	    ncurses vim less sed flex gettext net-tools inetutils iputils \
