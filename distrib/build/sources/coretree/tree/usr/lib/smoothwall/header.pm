@@ -36,11 +36,11 @@ sub requireConditional
   if (-f $incFile)
   {
     require $incFile;
-    return true;
+    return 1;
   }
   else
   {
-    return false;
+    return 0;
   }
 }
 
@@ -67,9 +67,14 @@ my $span = 0;
 # some constant defaults.
 
 $swroot = '/var/smoothwall';
-$thisscript = $ENV{'SCRIPT_NAME'};
-$thisscript =~ s/^\///;
-$thisscript =~ s/^cgi-bin\///;
+if (defined $ENV{'SCRIPT_NAME'})
+{
+  $thisscript = $ENV{'SCRIPT_NAME'};
+  $thisscript =~ s/^\///;
+  $thisscript =~ s/^cgi-bin\///;
+} else {
+  $thisscript = "";
+}
 
 use Net::Domain qw(hostname hostfqdn hostdomain);
 my $hostname = hostfqdn();
@@ -1032,7 +1037,7 @@ sub basename {
 
 sub dirname {
 	my ($filename) = @_;
-	$filename =~ s=(.*)/.*=\1=;
+	$filename =~ s=(.*)/.*=$1=;
 	if ($1) {
 		return $1;
 	} else {
