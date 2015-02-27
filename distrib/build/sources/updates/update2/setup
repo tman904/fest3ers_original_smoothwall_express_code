@@ -10,8 +10,8 @@ chmod 644 /etc/logrotate.conf /etc/logrotate.d/*
 # Migrate time/settings
 TIMEFILE=/var/smoothwall/time/settings
 TMPTIME=/tmp/timesettings
-egrep "ENABLED|NTP_INTERVAL|TIMEZONE" $TIMEFILE > $TIMESETTINGS
-cat<<END >> $TIMESETTINGS
+egrep "ENABLED|NTP_INTERVAL|TIMEZONE" $TIMEFILE > $TMPTIME
+cat<<END >> $TMPTIME
 NTP_SERVER=pool.ntp.org
 NTP_METHOD=Automatic
 END
