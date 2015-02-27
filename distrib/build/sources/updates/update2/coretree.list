@@ -3,6 +3,7 @@
 ./etc/logrotate.d/snort
 ./etc/logrotate.d/squid
 ./etc/rc.d/rc.sysinit
+./etc/rc.d/rc.updatered
 ./etc/rc.d/restorescript
 ./httpd/cgi-bin/advnet.cgi
 ./httpd/cgi-bin/changepw.cgi
@@ -21,4 +22,4 @@
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/langs/en.pl
 ./usr/lib/smoothwall/smoothtype.pm
-
+./var/smoothwall/patches/installed
