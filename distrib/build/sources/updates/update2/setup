@@ -15,7 +15,7 @@ cat<<END >> $TMPTIME
 NTP_SERVER=pool.ntp.org
 NTP_METHOD=Automatic
 END
-sort /tmp/timesettings > $TIMEFILE
+sort $TMPTIME > $TIMEFILE
 chown nobody:nobody $TIMEFILE
 chmod 644 $TIMEFILE
 
@@ -28,3 +28,9 @@ sed -i -e 's/quiet single/quiet iommu=soft nomodeset/' /boot/grub/grub.conf
 sed -i -e 's/Serial Console, Single-User/Serial Console, Odd Hardware/' /boot/grub/grub.conf
 sed -i -e 's/quiet \([^ ]*\) single/quiet \1 iommu=soft nomodeset/' /boot/grub/grub.conf
 
+echo "Creating security tokens"
+grep root /etc/shadow | sha1sum | sed -e 's/ -$//' >/usr/etc/token1.sum
+grep admin /var/smoothwall/auth/users | sha1sum | sed -e 's/ -$//' >/usr/etc/token2.sum
+sha1sum < /usr/etc/ssh_host_rsa_key | sed -e 's/ -$//' >/usr/etc/token3.sum
+chgrp nobody /usr/etc/token[123].sum
+chmod g=r /usr/etc/token[123].sum
