@@ -59,7 +59,7 @@ This happens when you wait too long to click an action button (Reboot/Shutdown/S
 to shut down or reboot the system or to change passwords.<br />
 ";
 		print <<END;
-Refresh: 6; url=$ENV{'HTTP_ORIGIN'}/cgi-bin/index.cgi\r
+Refresh: 6; url=/cgi-bin/index.cgi\r
 Content-type: text/html\r
 \r
 END
