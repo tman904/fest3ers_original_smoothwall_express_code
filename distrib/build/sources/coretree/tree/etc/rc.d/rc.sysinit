@@ -244,9 +244,10 @@ echo "  POP3 scanner (if enabled)"
 
 # Adapted from Steve McNeill's ModInstall
 echo "Running mods' run level scripts"
-# if any; limited to .../mods/*/etc/rc.d
+# if any; limited to .../mods/*/etc/rc.d, 10-89
+# FIXME: this should be ordered by number, then by mod; use an assoc. array.
 shopt -s nullglob
-for i in /var/smoothwall/mods/*/etc/rc.d/[1-9][0-9]rc.sysinit; do
+for i in /var/smoothwall/mods/*/etc/rc.d/[1-8][0-9]rc.sysinit; do
   $i;
 done
 shopt -u nullglob
@@ -287,6 +288,16 @@ echo "  dhcpd (if enabled)"
 /usr/bin/smoothcom dhcpdrestart
 echo "  squid (if enabled)"
 /usr/bin/smoothcom squidrestart
+
+# Adapted from Steve McNeill's ModInstall
+echo "Running mods' post-barricade run level scripts"
+# if any; limited to .../mods/*/etc/rc.d, 10-89
+# FIXME: this should be ordered by number, then by mod; use an assoc. array.
+shopt -s nullglob
+for i in /var/smoothwall/mods/*/etc/rc.d/9[0-9]rc.sysinit; do
+  $i;
+done
+shopt -u nullglob
 
 #echo "  ntop"
 #/usr/bin/ntop -w 8080 -i eth0 -a /usr/var/ntop/access_log -m "$GREEN_NETWORK/$GREEN_NETMASK" -n 2 --w3c -d -L --skip-version-check --known-networks=$RED_NETWORK/$RED_NETMASK
