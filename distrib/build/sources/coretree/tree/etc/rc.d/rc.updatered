@@ -187,7 +187,7 @@ crEcho "..snort, squid, upnpd, TC, DDNS, VPN (as enabled)"
 /etc/rc.d/rc.vpn.up
 
 # Adapted from Steve McNeill's ModInstall
-cdEcho "..running mods' 'on RED up' scripts"
+crEcho "..running mods' 'on RED up' scripts"
 # if any; limited to .../mods/*/etc/rc.d
 shopt -s nullglob
 for i in /var/smoothwall/mods/*/etc/rc.d/00rc.updatered; do
