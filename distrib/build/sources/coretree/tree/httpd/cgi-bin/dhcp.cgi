@@ -75,34 +75,28 @@ my $errormessage = '';
 if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 {
 	unless ($dhcpsettings{'NIS_DOMAIN'} eq "" or $dhcpsettings{'NIS_DOMAIN'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) {
-		$errormessage = $tr{'invalid domain name'};
-		goto ERROR;
+		$errormessage .= $tr{'invalid domain name'} ."<br />\n";
 	}
 
 	if ($dhcpsettings{'SUBNET'} ne 'green' && $dhcpsettings{'SUBNET'} ne 'purple')
 	{
-		$errormessage = $tr{'invalid input'};
-		goto ERROR;
+		$errormessage .= $tr{'invalid input'} ."<br />\n";
 	}
 	if ($dhcpsettings{'SUBNET'} ne $dhcpsettings{'CHECKSUBNET'})
 	{
-		$errormessage = 'Cannot save without selecting first.';
-		goto ERROR;
+		$errormessage .= 'Cannot save without selecting first.' ."<br />\n";
 	}
 	if (!(&validip($dhcpsettings{'START_ADDR'})))
 	{
-		$errormessage = $tr{'invalid start address'};
-		goto ERROR;
+		$errormessage .= $tr{'invalid start address'} ."<br />\n";
 	}
 	if (!(&validip($dhcpsettings{'END_ADDR'})))
 	{
-		$errormessage = $tr{'invalid end address'};
-		goto ERROR;
+		$errormessage .= $tr{'invalid end address'} ."<br />\n";
 	}
 	if (!(&ip2number($dhcpsettings{'END_ADDR'}) > &ip2number($dhcpsettings{'START_ADDR'})))
 	{
-		$errormessage = $tr{'end must be greater than start'};
-		goto ERROR;
+		$errormessage .= $tr{'end must be greater than start'} ."<br />\n";
 	}
 	open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
 	my @current = <FILE>;
@@ -116,109 +110,105 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 		{
 			unless(!((&ip2number($temp[2]) <= &ip2number($dhcpsettings{'END_ADDR'}) 
 				&& (&ip2number($temp[2]) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
-				$errormessage = $tr{'dynamic range cannot overlap static'};
-				goto ERROR;
+				$errormessage .= $tr{'dynamic range cannot overlap static'} ."<br />\n";
 			}
 		}
 	}
 	if ($dhcpsettings{'DNS1'})
 	{
 		if (!(&validip($dhcpsettings{'DNS1'}))) {
-			$errormessage = $tr{'invalid primary dns'};
-			goto ERROR;
+			$errormessage .= $tr{'invalid primary dns'} ."<br />\n";
 		}
 	}
 	if (!($dhcpsettings{'DNS1'}) && $dhcpsettings{'DNS2'})
 	{
-		$errormessage = $tr{'cannot specify secondary dns without specifying primary'};
-		goto ERROR;
+		$errormessage .= $tr{'cannot specify secondary dns without specifying primary'} ."<br />\n";
 	}
 	if ($dhcpsettings{'DNS2'})
 	{
 		if (!(&validip($dhcpsettings{'DNS2'}))) {
-			$errormessage = $tr{'invalid secondary dns'};
-			goto ERROR;
+			$errormessage .= $tr{'invalid secondary dns'} ."<br />\n";
 		}
 	}
 	if ($dhcpsettings{'NTP1'})
 	{
 		if (!(&validip($dhcpsettings{'NTP1'}))) {
-			$errormessage = $tr{'invalid primary ntp'};
-			goto ERROR;
+			$errormessage .= $tr{'invalid primary ntp'} ."<br />\n";
 		}
 	}
 	if (!($dhcpsettings{'NTP1'}) && $dhcpsettings{'NTP2'})
 	{
-		$errormessage = $tr{'cannot specify secondary ntp without specifying primary'};
-		goto ERROR;
+		$errormessage .= $tr{'cannot specify secondary ntp without specifying primary'} ."<br />\n";
 	}
 	if ($dhcpsettings{'NTP2'})
 	{
 		if (!(&validip($dhcpsettings{'NTP2'}))) {
-			$errormessage = $tr{'invalid secondary ntp'};
-			goto ERROR;
+			$errormessage .= $tr{'invalid secondary ntp'} ."<br />\n";
 		}
 	}
 	if (!($dhcpsettings{'WINS1'}) && $dhcpsettings{'WINS2'})
 	{
-		$errormessage = $tr{'cannot specify secondary wins without specifying primary'}; 
-		goto ERROR;
+		$errormessage .= $tr{'cannot specify secondary wins without specifying primary'} ."<br />\n"; 
 	}
 	if ($dhcpsettings{'WINS1'})
 	{
 		if (!(&validip($dhcpsettings{'WINS1'})))
 		{
-			$errormessage = $tr{'invalid primary wins'};
-			goto ERROR;
+			$errormessage .= $tr{'invalid primary wins'} ."<br />\n";
 		}
 	}
 	if ($dhcpsettings{'WINS2'})
 	{
 		if (!(&validip($dhcpsettings{'WINS2'})))
 		{
-			$errormessage = $tr{'invalid secondary wins'};
-			goto ERROR;
+			$errormessage .= $tr{'invalid secondary wins'} ."<br />\n";
 		}
 	}
 	if (!($dhcpsettings{'DNS1'}) && $dhcpsettings{'DNS2'}) {
-		$errormessage = $tr{'cannot specify secondary dns without specifying primary'}; 
-		goto ERROR;
+		$errormessage .= $tr{'cannot specify secondary dns without specifying primary'} ."<br />\n"; 
 	}
 	if (!($dhcpsettings{'NIS_DOMAIN'}) && $dhcpsettings{'NIS1'}) {
-		$errormessage = $tr{'cannot specify nis server without specifying nis domain'};
-		goto ERROR;
+		$errormessage .= $tr{'cannot specify nis server without specifying nis domain'} ."<br />\n";
 	}
 	if (!($dhcpsettings{'NIS1'}) && $dhcpsettings{'NIS2'}) {
-		$errormessage = $tr{'cannot specify secondary nis without specifying primary'};
-		goto ERROR;
+		$errormessage .= $tr{'cannot specify secondary nis without specifying primary'} ."<br />\n";
 	}
 	if ($dhcpsettings{'NIS1'})
 	{
 		if (!(&validip($dhcpsettings{'NIS1'}))) {
-			$errormessage = $tr{'invalid primary nis'};
-			goto ERROR;
+			$errormessage .= $tr{'invalid primary nis'} ."<br />\n";
 		}
 	}
 	if ($dhcpsettings{'NIS2'})
 	{
 		if (!(&validip($dhcpsettings{'NIS2'}))) {
-			$errormessage = $tr{'invalid secondary nis'};
-			goto ERROR;
+			$errormessage .= $tr{'invalid secondary nis'} ."<br />\n";
 		}
 	}
 	unless (!$dhcpsettings{'DOMAIN_NAME'} || $dhcpsettings{'DOMAIN_NAME'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) {
-		$errormessage = $tr{'invalid domain name'};
-		goto ERROR;
+		$errormessage .= $tr{'invalid domain name'} ."<br />\n";
 	}
 	if (!($dhcpsettings{'DEFAULT_LEASE_TIME'} =~ /^\d+$/))
 	{
-		$errormessage = $tr{'invalid default lease time'};
-		goto ERROR;
+		$errormessage .= $tr{'invalid default lease time'} ."<br />\n";
 	}
 	if (!($dhcpsettings{'MAX_LEASE_TIME'} =~ /^\d+$/))
 	{
-		$errormessage = $tr{'invalid max lease time'};
-		goto ERROR;
+		$errormessage .= $tr{'invalid max lease time'} ."<br />\n";
+	}
+#	if ($dhcpsettings{'BOOT_SERVER'} ne "" and
+#	    !(validip($dhcpsettings{'BOOT_SERVER'}) or
+#	      validhostname($dhcpsettings{'BOOT_SERVER'})))
+#	{
+#		$errormessage .= "FIX_TR bad boot server name/IP". $tr{'invalid boot_server_ip_or_name'} ."<br />\n";
+#	}
+#	if ($dhcpsettings{'BOOT_ROOT'} ne "" and $dhcpsettings{'BOOT_ROOT'} !~ m=[^<>'"]*=)
+#	{
+#		$errormessage .= "FIX_TR bad boot root path". $tr{'invalid boot_root_path'} ."<br />\n";
+#	}
+#	if ($dhcpsettings{'BOOT_FILE'} ne "" and ! ($dhcpsettings{'BOOT_FILE'} =~ m=[^/<>'"]*=))
+#	{
+#		$errormessage .= "FIX_TR bad boot file name". $tr{'invalid boot_file_name'} ."<br />\n";
 	}
 	
 ERROR:
@@ -227,32 +217,40 @@ ERROR:
 	else {
 		$dhcpsettings{'VALID'} = 'yes'; }
 		
-	my %tempsettings;
-	
-	$tempsettings{'BOOT_ENABLE'} = $dhcpsettings{'BOOT_ENABLE'};
-	$tempsettings{'BOOT_SERVER'} = $dhcpsettings{'BOOT_SERVER'};
-	$tempsettings{'BOOT_FILE'} = $dhcpsettings{'BOOT_FILE'};
-	$tempsettings{'BOOT_ROOT'} = $dhcpsettings{'BOOT_ROOT'};
-	
-	&writehash("${swroot}/dhcp/global", \%tempsettings);
-	
-	delete $dhcpsettings{'STATIC_DESC'};
-	delete $dhcpsettings{'STATIC_MAC'};
-	delete $dhcpsettings{'STATIC_IP'};
-	delete $dhcpsettings{'DEFAULT_ENABLE_STATIC'};
-	
-	&writehash("${swroot}/dhcp/settings-$dhcpsettings{'SUBNET'}", \%dhcpsettings);
-
-	system('/usr/bin/smoothwall/writedhcp.pl');
-
 	if ($dhcpsettings{'VALID'} eq 'yes')
 	{
+		my %tempsettings;
+	
+		$tempsettings{'BOOT_ENABLE'} = $dhcpsettings{'BOOT_ENABLE'};
+		$tempsettings{'BOOT_SERVER'} = $dhcpsettings{'BOOT_SERVER'};
+		$tempsettings{'BOOT_FILE'} = $dhcpsettings{'BOOT_FILE'};
+		$tempsettings{'BOOT_ROOT'} = $dhcpsettings{'BOOT_ROOT'};
+	
+		&writehash("${swroot}/dhcp/global", \%tempsettings);
+	
+		delete $dhcpsettings{'STATIC_DESC'};
+		delete $dhcpsettings{'STATIC_MAC'};
+		delete $dhcpsettings{'STATIC_IP'};
+		delete $dhcpsettings{'DEFAULT_ENABLE_STATIC'};
+	
+		&writehash("${swroot}/dhcp/settings-$dhcpsettings{'SUBNET'}", \%dhcpsettings);
+
+		system('/usr/bin/smoothwall/writedhcp.pl');
+
 		unlink "${swroot}/dhcp/uptodate";
 	
 		my $success = message('dhcpdrestart');
 		
 		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; 
+			$errormessage .= "DHCPD Restart:". $tr{'smoothd failure'} ."<br />\n"; 
+		}
+
+		system('/usr/bin/smoothwall/writehosts.pl');
+
+		my $success = message('dnsproxyhup');
+		if (not defined $success)
+		{
+			$errormessage .= "DNSProxy SIGHUP:". $tr{'smoothd failure'} ."<br />\n";
 		}
 	}
 }
@@ -268,15 +266,15 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 	if (&validmac($mac)) {
 		$dhcpsettings{'STATIC_MAC'} = $mac; }
 
-	unless($dhcpsettings{'STATIC_HOST'}) { $errormessage = $tr{'please enter a host name'}; }
-	unless($dhcpsettings{'STATIC_HOST'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) { $errormessage = $tr{'invalid host name'}; }
-	unless(&validmac($dhcpsettings{'STATIC_MAC'})) { $errormessage = $tr{'mac address not valid'}; }
-	unless(&validip($dhcpsettings{'STATIC_IP'})) { $errormessage = $tr{'ip address not valid'}; }
+	unless($dhcpsettings{'STATIC_HOST'}) { $errormessage .= $tr{'please enter a host name'} ."<br />\n"; }
+	unless($dhcpsettings{'STATIC_HOST'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) { $errormessage .= $tr{'invalid host name'} ."<br />\n"; }
+	unless(&validmac($dhcpsettings{'STATIC_MAC'})) { $errormessage .= $tr{'mac address not valid'} ."<br />\n"; }
+	unless(&validip($dhcpsettings{'STATIC_IP'})) { $errormessage .= $tr{'ip address not valid'} ."<br />\n"; }
 	if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on')
 	{
 		unless(!((&ip2number($dhcpsettings{'STATIC_IP'}) <= &ip2number($dhcpsettings{'END_ADDR'}) 
 			&& (&ip2number($dhcpsettings{'STATIC_IP'}) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
-			$errormessage = $tr{'static must be outside dynamic range'};
+			$errormessage .= $tr{'static must be outside dynamic range'} ."<br />\n";
 		}
 	}
 	open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
@@ -290,19 +288,19 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'})
 		if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on')
 		{
 			if (($dhcpsettings{'STATIC_HOST'} eq $temp[0]) && ($temp[4] eq 'on')) {
-				$errormessage = "$tr{'hostnamec'} $temp[0] $tr{'already exists and has assigned ip'} $tr{'ip address'} $temp[2].";
+				$errormessage .= "$tr{'hostnamec'} $temp[0] $tr{'already exists and has assigned ip'} $tr{'ip address'} $temp[2].<br />\n";
 			}
 			if (($dhcpsettings{'STATIC_MAC'} eq $temp[1]) && ($temp[4] eq 'on')) {
-				$errormessage = "$tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]) $tr{'already assigned to ip'} $tr{'ip address'} $temp[2].";
+				$errormessage .= "$tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]) $tr{'already assigned to ip'} $tr{'ip address'} $temp[2].<br />\n";
 			}
 			if (($dhcpsettings{'STATIC_IP'} eq $temp[2]) && ($temp[4] eq 'on')) {
-				$errormessage = "$tr{'ip address'} $temp[2] $tr{'ip already assigned to'} $tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]).";
+				$errormessage .= "$tr{'ip address'} $temp[2] $tr{'ip already assigned to'} $tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]).<br />\n";
 			}
 		}
 	}
-	unless($dhcpsettings{'STATIC_DESC'} =~ /^([a-zA-Z 0-9]*)$/) { $errormessage = $tr{'description contains bad characters'}; }
-	unless(&validmac($dhcpsettings{'STATIC_MAC'})) { $errormessage = $tr{'mac address not valid'}; }
-	unless(&validip($dhcpsettings{'STATIC_IP'})) { $errormessage = $tr{'ip address not valid'}; }
+	unless($dhcpsettings{'STATIC_DESC'} =~ /^([a-zA-Z 0-9]*)$/) { $errormessage .= $tr{'description contains bad characters'} ."<br />\n"; }
+	unless(&validmac($dhcpsettings{'STATIC_MAC'})) { $errormessage .= $tr{'mac address not valid'} ."<br />\n"; }
+	unless(&validip($dhcpsettings{'STATIC_IP'})) { $errormessage .= $tr{'ip address not valid'} ."<br />\n"; }
 	unless ($errormessage)
 	{
 		open(FILE, ">>${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
@@ -334,9 +332,9 @@ if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'
 			$count++; }
 	}
 	if ($count == 0) {
-		$errormessage = $tr{'nothing selected'}; }
+		$errormessage .= $tr{'nothing selected'} ."<br />\n"; }
 	if ($count > 1 && $dhcpsettings{'ACTION'} eq $tr{'edit'}) {
-		$errormessage = $tr{'you can only select one item to edit'}; }
+		$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n"; }
 	unless ($errormessage)
 	{
 		open(FILE, ">${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
