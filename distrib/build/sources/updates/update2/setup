@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Update 1 installing."
+echo "Update 2 installing."
 
 tar xvf patch.tar.gz -C /
 
