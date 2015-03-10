@@ -14,7 +14,7 @@ compile:
 	make -C $(DIR)
 
 install: compile
-	@mkdir -p $(PKG_ROOT)
+	@mkdir -p $(PKG_ROOT)/usr/bin/smoothwall
 	make -C $(DIR) DESTDIR=$(PKG_ROOT) install
 
 clean:
