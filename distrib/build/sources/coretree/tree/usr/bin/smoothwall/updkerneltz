@@ -1,0 +1,16 @@
+#! /bin/sh
+
+# This script sets the kernel timezone to userland's timezone, writes
+#   the system clock to the H/W clock as localtime. It may need to
+#   reload/replace netfilter rules that use '-m time'.
+
+# This script needs to be run *just* after DST is set or reset. But
+#   if the system is not running at that moment, all is well because
+#   the kernel timezone will be set correctly on the next boot.
+
+# Wait until just after the changeover
+sleep 1.2
+
+# Do it
+/usr/bin/smoothwall/setkerneltz
+/sbin/hwclock --systohc --localtime
