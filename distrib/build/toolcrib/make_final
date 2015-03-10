@@ -368,6 +368,7 @@ fi
       build ntop
       build iperf
       build apcupsd
+      build setkerneltz
 
       touch crumbs/Final.grp6.compiled
     fi
