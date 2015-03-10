@@ -18,6 +18,8 @@
 ./usr/bin/smoothwall/gettime.pl
 ./usr/bin/smoothwall/ppp-off
 ./usr/bin/smoothwall/smoothinfo.pl
+./usr/bin/smoothwall/upddsttimes
+./usr/bin/smoothwall/updkerneltz
 ./usr/bin/smoothwall/writentpd.pl
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/langs/en.pl
