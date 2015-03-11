@@ -12,7 +12,7 @@ INSTALL = yes
 CLEAN = yes
 
 download:
-	true
+	@true
 
 compile:
 	make -C $(DIR)
