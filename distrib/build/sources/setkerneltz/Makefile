@@ -6,9 +6,13 @@ include ../Makefile.conf
 PACKAGE = setkerneltz
 VERSION = 0.0
 
+DOWNLOAD = yes
 COMPILE = yes
 INSTALL = yes
 CLEAN = yes
+
+download:
+	true
 
 compile:
 	make -C $(DIR)
