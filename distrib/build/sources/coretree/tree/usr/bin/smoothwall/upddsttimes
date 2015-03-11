@@ -8,6 +8,8 @@ PATH=/usr/sbin:/sbin:/bin:/usr/bin:/usr/bin/smoothwall
 # Comand line can override
 if [ ! -z $1 ]; then TIMEZONE=$1; fi
 
+logger -t "kerneltz" "Checking for DST changes for '$TIMEZONE'..."
+
 # Get this year
 thisYear=`date +%Y`
 
@@ -69,6 +71,7 @@ if [ -f /tmp/kerneltz  -a ! -f /etc/cron.d/kerneltz ]; then
     mv /tmp/kerneltz /etc/cron.d/kerneltz
     chown root:root /etc/cron.d/kerneltz
     chmod 444 /etc/cron.d/kerneltz
+    logger -t "kerneltz" "Created /etc/crond./kerneltz"
 
 elif [ -f /tmp/kerneltz ]; then
   if ! diff /tmp/kerneltz /etc/cron.d/kerneltz >/dev/null 2>&1; then
@@ -76,11 +79,13 @@ elif [ -f /tmp/kerneltz ]; then
     mv /tmp/kerneltz /etc/cron.d/kerneltz
     chown root:root /etc/cron.d/kerneltz
     chmod 444 /etc/cron.d/kerneltz
+    logger -t "kerneltz" "Replaced /etc/crond./kerneltz"
   fi
 
 elif [ ! -f /tmp/kerneltz ]; then
   # No DST changeovers for this TZ
   rm -f /etc/cron.d/kerneltz
+  logger -t "kerneltz" "Removed /etc/crond./kerneltz"
 fi
 
 # Bus the table, Justin Case
