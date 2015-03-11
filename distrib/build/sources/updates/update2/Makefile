@@ -1,6 +1,6 @@
-UPDATE_PACKAGES = libusb libusb-compat openssl bzip2 perl-mods libsmooth+setup \
-		  whois clamav apcupsd perl-mods smartmontools squid smoothd \
-		  openswan setkerneltz coretree 
+UPDATE_PACKAGES = apcupsd bzip2 clamav coretree gd libsmooth+setup libusb \
+		  libusb-compat openssl openswan perl-mods perl-mods \
+		  setkerneltz smartmontools smoothd squid whois
 
 UPDATE_ID = 002
 UPDATE_NAME = Update2
