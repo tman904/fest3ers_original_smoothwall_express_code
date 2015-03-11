@@ -1,4 +1,5 @@
 ./etc/cron.weekly/logrotate
+./etc/cron.weekly/upddsttimes
 ./etc/httpd/conf/httpd.conf
 ./etc/logrotate.d/snort
 ./etc/logrotate.d/squid

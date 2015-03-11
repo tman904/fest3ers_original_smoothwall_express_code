@@ -77,11 +77,18 @@ int start_ntpd( std::vector<std::string> & parameters, std::string & response )
 	if (settings["ENABLED"] == "on" and settings["NTP_METHOD"] == "Automatic")
 	{
 		error = simplesecuresysteml("/usr/sbin/ntpd", NULL);
-		
 		if (error)
 			response = "NTPD Start failed!";
 		else
 			response = "NTPD Start Successful";
+
+		// This needs to run only when the time zone changes. Since it's a small
+		//   bit of processing, it won't hurt to do it a little more often.
+		error = simplesecuresysteml("/usr/bin/smoothwall/upddsttimes", NULL);
+		if (error)
+			response += "; DST times update failed!";
+		else
+			response += "; DST times update Successful";
 	}
 		
 	return error;

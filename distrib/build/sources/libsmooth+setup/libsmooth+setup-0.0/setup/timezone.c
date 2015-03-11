@@ -90,6 +90,9 @@ int handletimezone(void)
 		writekeyvalues(kv, CONFIG_ROOT "time/settings");
 		unlink(CONFIG_ROOT "time/localtime");
 		symlink(timezone, CONFIG_ROOT "time/localtime");
+		/* Whether or not the TZ changed, update the DST times */
+		mysystem("/usr/bin/smoothwall/upddsttimes");
+
 		result = 1;
 	}
 	else
