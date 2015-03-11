@@ -8,9 +8,15 @@
 #   if the system is not running at that moment, all is well because
 #   the kernel timezone will be set correctly on the next boot.
 
-# Wait until just after the changeover
-sleep 1.2
+# Leave crumbs
+logger -t "kerneltz" "Setting kernel time zone and writing H/W clock..."
+
+# Wait until just after the changeover. This runs at xx:59:00, so we must
+#   wait more than a minute; 65 seconds should be adequate.
+sleep 65
 
 # Do it
-/usr/bin/smoothwall/setkerneltz
-/sbin/hwclock --systohc --localtime
+(
+  /usr/bin/smoothwall/setkerneltz
+  /sbin/hwclock --systohc --localtime
+) 2>&1 | logger -t "kerneltz"
