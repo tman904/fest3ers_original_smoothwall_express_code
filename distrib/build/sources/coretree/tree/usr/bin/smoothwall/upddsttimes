@@ -27,7 +27,7 @@ thisYear=`date +%Y`
     OIFS=$IFS; IFS=":"; set $time; IFS=$OIFS
     hr=$1
     mn=$2
-    cronFirst="$mn $hr $day $mon * root /usr/bin/smoothwall/updkerneltz | logger -t \"kerneltz\"\n"
+    cronFirst="$mn $hr $day $mon * root /usr/bin/smoothwall/updkerneltz 2>&1 | logger -t \"kerneltz\"\n"
     
     # skip the first post-changeover
     read a
@@ -45,7 +45,7 @@ thisYear=`date +%Y`
       OIFS=$IFS; IFS=":"; set $time; IFS=$OIFS
       hr=$1
       mn=$2
-      cronSecond="$mn $hr $day $mon * root /usr/bin/smoothwall/updkerneltz | logger -t \"kerneltz\"\n"
+      cronSecond="$mn $hr $day $mon * root /usr/bin/smoothwall/updkerneltz 2>&1 | logger -t \"kerneltz\"\n"
     fi
   
     # skip the rest
