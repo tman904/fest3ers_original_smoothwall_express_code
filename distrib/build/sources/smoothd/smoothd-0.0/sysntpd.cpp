@@ -35,7 +35,7 @@ int load( std::vector<CommandFunctionPair> & pairs )
 	CommandFunctionPair restart_ntpd_function("ntpdrestart", "restart_ntpd", 0, 0 );
 	CommandFunctionPair start_ntpd_function("ntpdstart", "start_ntpd", 0, 0 );
 	CommandFunctionPair stop_ntpd_function("ntpdstop", "stop_ntpd", 0, 0 );
-	CommandFunctionPair setkerneltz_function("ntpdsetkerneltz", "set_kerneltz", 0, 0 );
+	CommandFunctionPair setkerneltz_function("ntpdchgtimezone", "chg_timezone", 0, 0 );
 
 	pairs.push_back(restart_ntpd_function );
 	pairs.push_back(start_ntpd_function );
@@ -90,16 +90,20 @@ int start_ntpd( std::vector<std::string> & parameters, std::string & response )
 }
 
 
-int set_kerneltz( std::vector<std::string> & parameters, std::string & response )
+int chg_timezone( std::vector<std::string> & parameters, std::string & response )
 {
-	int error = 0;
-
 	// This needs to run whenever the time zone changes.
-	error = simplesecuresysteml("/usr/bin/smoothwall/setkerneltz", NULL);
-	if (error)
-		response = "Kernel time zone update failed!";
-	else
-		response = "Kernel time zone update Successful";
+
+	// Update /etc/cron.d/kerneltz (DST update times).
+	simplesecuresysteml("/usr/bin/smoothwall/upddsttimes", NULL);
+
+	// Set the kernel time zone.
+	simplesecuresysteml("/usr/bin/smoothwall/setkerneltz", NULL);
+
+	// Write the new localtime to the H/W clock.
+	simplesecuresysteml("/sbin/hwclock", "--systohc", "--localtime", NULL);
+
+	response = "Kernel time zone / HW clock update complete";
 		
-	return error;
+	return 0;
 }

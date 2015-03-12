@@ -90,10 +90,15 @@ int handletimezone(void)
 		writekeyvalues(kv, CONFIG_ROOT "time/settings");
 		unlink(CONFIG_ROOT "time/localtime");
 		symlink(timezone, CONFIG_ROOT "time/localtime");
-		/* Whether or not the TZ changed, update the DST times in the cron schedule. */
+
+		// Update /etc/cron.d/kerneltz (DST update times).
 		mysystem("/usr/bin/smoothwall/upddsttimes");
-		/* Lastly, update the kernel's time zone. */
+
+		// Set the kernel time zone.
 		mysystem("/usr/bin/smoothwall/setkerneltz");
+
+		// Write the new localtime to the H/W clock.
+		mysystem("/sbin/hwclock --systohc --localtime");
 
 		result = 1;
 	}

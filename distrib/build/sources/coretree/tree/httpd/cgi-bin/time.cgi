@@ -14,7 +14,7 @@ use smoothtype qw( :standard );
 my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
 	'Sep', 'Oct', 'Nov', 'Dec' );
 
-my (%timesettings, %netsettings, $errormessage, my %timeservers);
+my (%cgitimesettings, %timesettings, %netsettings, $errormessage, my %timeservers);
 my $found;
 my @temp;
 my $temp;
@@ -31,7 +31,7 @@ $timesettings{'ACTION'} = '';
 $timesettings{'VALID'} = '';
 
 $timesettings{'TIMEZONE'} = '';
-$timesettings{'ENABLE'} = 'off';
+$timesettings{'ENABLED'} = 'off';
 $timesettings{'NTP_RTC'} = 'off';
 $timesettings{'NTPD'} = 'off';
 
@@ -192,8 +192,10 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'})
 			system('/bin/ln', '-s', "${tzroot}/$cgitimesettings{'TIMEZONE'}",
 						"${swroot}/time/localtime");
 			# And update the kernel's time zone
-			my $success = message('ntpdsetkerneltz');
-			$errormessage .= $tr{'smoothd failure'} ."<br />";
+			my $success = message('ntpdchgtimezone');
+			if (not defined $success) {
+				$errormessage .= $tr{'smoothd failure'} ." (ntpdchgtimezone)<br />";
+			}
 		}
 
 		foreach $temp ('TIMEZONE', 'ENABLED', 'NTP_INTERVAL', 'NTP_METHOD', 'NTP_SERVER')
@@ -208,17 +210,17 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'})
 		my $success = message('ntpdrestart');
 		
 		if (not defined $success) {
-			$errormessage .= $tr{'smoothd failure'} ."<br />";
+			$errormessage .= $tr{'smoothd failure'} ." (ntpdrestart)<br />";
 		}
 
 	}
-	%timesettings = (
-		%timesettings,
-		%cgitimesettings,
-	);
 }
 # End of 'SAVE'
 
+%timesettings = (
+	%timesettings,
+	%cgitimesettings,
+);
 
 # Set defaults as needed
 $timesettings{'TIMEZONE'} = 'Europe/London' if ($timesettings{'TIMEZONE'} eq "");
