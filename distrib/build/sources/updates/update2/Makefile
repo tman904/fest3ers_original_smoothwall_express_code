@@ -4,13 +4,13 @@ UPDATE_PACKAGES = \
 		  clamav \
 		  coretree \
 		  device-ids \
+		  gd \
 		  libsmooth+setup \
 		  libusb \
 		  libusb-compat \
 		  linux-firmware \
 		  openssl \
 		  openswan \
-		  perl-mods \
 		  perl-mods \
 		  setkerneltz \
 		  smartmontools \
