@@ -26,6 +26,7 @@ extern "C" {
 	int restart_ntpd( std::vector<std::string> & parameters, std::string & response );
 	int start_ntpd( std::vector<std::string> & parameters, std::string & response );
 	int stop_ntpd( std::vector<std::string> & parameters, std::string & response );
+	int set_kerneltz( std::vector<std::string> & parameters, std::string & response );
 }
 
 int load( std::vector<CommandFunctionPair> & pairs )
@@ -34,10 +35,12 @@ int load( std::vector<CommandFunctionPair> & pairs )
 	CommandFunctionPair restart_ntpd_function("ntpdrestart", "restart_ntpd", 0, 0 );
 	CommandFunctionPair start_ntpd_function("ntpdstart", "start_ntpd", 0, 0 );
 	CommandFunctionPair stop_ntpd_function("ntpdstop", "stop_ntpd", 0, 0 );
+	CommandFunctionPair setkerneltz_function("ntpdsetkerneltz", "set_kerneltz", 0, 0 );
 
 	pairs.push_back(restart_ntpd_function );
 	pairs.push_back(start_ntpd_function );
 	pairs.push_back(stop_ntpd_function );
+	pairs.push_back(setkerneltz_function );
 
 	return 0;
 }
@@ -81,16 +84,22 @@ int start_ntpd( std::vector<std::string> & parameters, std::string & response )
 			response = "NTPD Start failed!";
 		else
 			response = "NTPD Start Successful";
-
-		// This needs to run only when the time zone changes. Since it's a small
-		//   bit of processing, it won't hurt to do it a little more often.
-		error = simplesecuresysteml("/usr/bin/smoothwall/upddsttimes", NULL);
-		if (error)
-			response += "; DST times update failed!";
-		else
-			response += "; DST times update Successful";
 	}
 		
 	return error;
 }
-	
+
+
+int set_kerneltz( std::vector<std::string> & parameters, std::string & response )
+{
+	int error = 0;
+
+	// This needs to run whenever the time zone changes.
+	error = simplesecuresysteml("/usr/bin/smoothwall/setkerneltz", NULL);
+	if (error)
+		response = "Kernel time zone update failed!";
+	else
+		response = "Kernel time zone update Successful";
+		
+	return error;
+}

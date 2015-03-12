@@ -158,25 +158,7 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'})
 	{
 		$errormessage .= $tr{'time invalid server'} ."<br />";
 	}	
-
-	if ($cgitimesettings{'NTP_METHOD'} eq 'MANUAL')
-	{
-		my ($year, $month, $day, $hour, $minute, $second);
-		$year = $cgitimesettings{'YEAR'};
-		$month = $cgitimesettings{'MONTH'};
-		$day = $cgitimesettings{'DAY'};
-		$hour = $cgitimesettings{'HOUR'};
-		$minute = $cgitimesettings{'MINUTE'};
-		$second = $cgitimesettings{'SECOND'};
-
-		system('/usr/bin/smoothcom', 'settime', "$hour:$minute:$second $year/$month/$day");
-		&log($tr{'setting time'});
-	}
 	# End of validations
-
-	# Update time zone, whether or not it's needed
-	unlink("${swroot}/time/localtime");
-	system('/bin/ln', '-s', "${tzroot}/$cgitimesettings{'TIMEZONE'}", "${swroot}/time/localtime");
 
 	# If there are errors, mark the data invalid. Otherwise mark them valid, store them,
 	#   write the new ntpd.conf, and restart ntpd.
@@ -187,6 +169,33 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'})
 
 		$cgitimesettings{'VALID'} = 'yes';
 
+		# Manual set works, enabled or not.
+		if ($cgitimesettings{'NTP_METHOD'} eq 'MANUAL')
+		{
+			my ($year, $month, $day, $hour, $minute, $second);
+			$year = $cgitimesettings{'YEAR'};
+			$month = $cgitimesettings{'MONTH'};
+			$day = $cgitimesettings{'DAY'};
+			$hour = $cgitimesettings{'HOUR'};
+			$minute = $cgitimesettings{'MINUTE'};
+			$second = $cgitimesettings{'SECOND'};
+
+			system('/usr/bin/smoothcom', 'settime', "$hour:$minute:$second $year/$month/$day");
+			&log($tr{'setting time'});
+		}
+
+		# Time zone can change, enabled or not
+		# Update time zone if it changed
+		if ($cgitimesettings{'TIMEZONE'} ne $timesettings{'TIMEZONE'})
+		{
+			unlink("${swroot}/time/localtime");
+			system('/bin/ln', '-s', "${tzroot}/$cgitimesettings{'TIMEZONE'}",
+						"${swroot}/time/localtime");
+			# And update the kernel's time zone
+			my $success = message('ntpdsetkerneltz');
+			$errormessage .= $tr{'smoothd failure'} ."<br />";
+		}
+
 		foreach $temp ('TIMEZONE', 'ENABLED', 'NTP_INTERVAL', 'NTP_METHOD', 'NTP_SERVER')
 		{
 			$tempsettings{$temp} = $cgitimesettings{$temp};
@@ -194,7 +203,8 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'})
 
 		&writehash("${swroot}/time/settings", \%tempsettings);
 		system('/usr/bin/smoothwall/writentpd.pl');
-	
+
+		# The smoothd plugin checks 'enabled' before restarting.
 		my $success = message('ntpdrestart');
 		
 		if (not defined $success) {
