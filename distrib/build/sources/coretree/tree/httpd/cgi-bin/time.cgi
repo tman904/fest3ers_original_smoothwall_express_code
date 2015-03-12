@@ -37,6 +37,7 @@ $timesettings{'NTPD'} = 'off';
 
 # Get stored and submitted settings
 &getcgihash(\%cgitimesettings);
+unless (defined $cgitimesettings{'ENABLED'}) { $cgitimesettings{'ENABLED'} = 'off'; }
 &readhash("${swroot}/time/settings", \%timesettings);
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 
@@ -184,6 +185,14 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'})
 			&log($tr{'setting time'});
 		}
 
+		foreach $temp ('TIMEZONE', 'ENABLED', 'NTP_INTERVAL', 'NTP_METHOD', 'NTP_SERVER')
+		{
+			$tempsettings{$temp} = $cgitimesettings{$temp};
+		}
+
+		&writehash("${swroot}/time/settings", \%tempsettings);
+		system('/usr/bin/smoothwall/writentpd.pl');
+
 		# Time zone can change, enabled or not
 		# Update time zone if it changed
 		if ($cgitimesettings{'TIMEZONE'} ne $timesettings{'TIMEZONE'})
@@ -197,14 +206,6 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'})
 				$errormessage .= $tr{'smoothd failure'} ." (ntpdchgtimezone)<br />";
 			}
 		}
-
-		foreach $temp ('TIMEZONE', 'ENABLED', 'NTP_INTERVAL', 'NTP_METHOD', 'NTP_SERVER')
-		{
-			$tempsettings{$temp} = $cgitimesettings{$temp};
-		}
-
-		&writehash("${swroot}/time/settings", \%tempsettings);
-		system('/usr/bin/smoothwall/writentpd.pl');
 
 		# The smoothd plugin checks 'enabled' before restarting.
 		my $success = message('ntpdrestart');

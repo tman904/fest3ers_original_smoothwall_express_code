@@ -26,7 +26,7 @@ extern "C" {
 	int restart_ntpd( std::vector<std::string> & parameters, std::string & response );
 	int start_ntpd( std::vector<std::string> & parameters, std::string & response );
 	int stop_ntpd( std::vector<std::string> & parameters, std::string & response );
-	int set_kerneltz( std::vector<std::string> & parameters, std::string & response );
+	int chg_timezone( std::vector<std::string> & parameters, std::string & response );
 }
 
 int load( std::vector<CommandFunctionPair> & pairs )
@@ -35,12 +35,12 @@ int load( std::vector<CommandFunctionPair> & pairs )
 	CommandFunctionPair restart_ntpd_function("ntpdrestart", "restart_ntpd", 0, 0 );
 	CommandFunctionPair start_ntpd_function("ntpdstart", "start_ntpd", 0, 0 );
 	CommandFunctionPair stop_ntpd_function("ntpdstop", "stop_ntpd", 0, 0 );
-	CommandFunctionPair setkerneltz_function("ntpdchgtimezone", "chg_timezone", 0, 0 );
+	CommandFunctionPair chgtimezone_function("ntpdchgtimezone", "chg_timezone", 0, 0 );
 
 	pairs.push_back(restart_ntpd_function );
 	pairs.push_back(start_ntpd_function );
 	pairs.push_back(stop_ntpd_function );
-	pairs.push_back(setkerneltz_function );
+	pairs.push_back(chgtimezone_function );
 
 	return 0;
 }
