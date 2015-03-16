@@ -15,6 +15,7 @@ UPDATE_PACKAGES = \
 		  setkerneltz \
 		  smartmontools \
 		  smoothd \
+		  snort \
 		  squid \
 		  whois
 		  
