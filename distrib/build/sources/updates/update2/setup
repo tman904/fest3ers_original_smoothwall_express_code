@@ -34,3 +34,6 @@ grep admin /var/smoothwall/auth/users | sha1sum | sed -e 's/ -$//' >/usr/etc/tok
 sha1sum < /usr/etc/ssh_host_rsa_key | sed -e 's/ -$//' >/usr/etc/token3.sum
 chgrp nobody /usr/etc/token[123].sum
 chmod g=r /usr/etc/token[123].sum
+
+echo "Ensure URL Filter downloads work"
+chown nobody:nobody /var/smoothwall/urlfilter
