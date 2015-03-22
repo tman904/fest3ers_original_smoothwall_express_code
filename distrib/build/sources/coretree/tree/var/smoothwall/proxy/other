@@ -3,7 +3,7 @@
 forwarded_for off
 pid_filename /var/run/squid.pid
 
-shutdown_lifetime 3 seconds
+shutdown_lifetime 30 seconds
 icp_port 3130
 #https_port 443
 
