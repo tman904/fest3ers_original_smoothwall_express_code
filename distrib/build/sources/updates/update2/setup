@@ -37,3 +37,6 @@ chmod g=r /usr/etc/token[123].sum
 
 echo "Ensure URL Filter downloads work"
 chown nobody:nobody /var/smoothwall/urlfilter
+
+echo "Remove unused file 'acl'
+rm -f /var/smoothwall/proxy/acl

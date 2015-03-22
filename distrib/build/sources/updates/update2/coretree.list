@@ -26,3 +26,4 @@
 ./usr/lib/smoothwall/langs/en.pl
 ./usr/lib/smoothwall/smoothtype.pm
 ./var/smoothwall/patches/installed
+./var/smoothwall/proxy/acl
