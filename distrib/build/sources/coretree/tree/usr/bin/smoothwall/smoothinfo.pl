@@ -63,9 +63,9 @@ if (! -z "${swroot}/patches/installed") {
   my $updatenumber = $update[1];
   $updatenumber =~ s/-i586//;
   $updatenumber =~ s/-x86_64//;
-  $swe_version = "$productdata{'PRODUCT'} $productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}-$updatenumber";
+  $swe_version = "$productdata{'PRODUCT'} $productdata{'VERSION'}$productdata{'EXTRA'}-$productdata{'REVISION'}-$productdata{'ARCH'}-$updatenumber";
 } else {
-  $swe_version = "$productdata{'PRODUCT'} $productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
+  $swe_version = "$productdata{'PRODUCT'} $productdata{'VERSION'}$productdata{'EXTRA'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
 }
 
 # MEMORY
