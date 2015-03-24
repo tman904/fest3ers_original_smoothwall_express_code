@@ -214,21 +214,21 @@ rebuild:
 
 # prepare the installation media
 #
-media:
+media: crumbs/Final.built
 	+@(echo -e "\nMaking ISO images with linux$(KERNEL_TYPE)..."; sleep 1; \
 	    $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_media") \
 	    <$(BUILD_IN) >>$(BUILD_OUT) 2>&1
 
 # prepare the specified update; the Final phase must have been built first.
 #
-update:
+update: crumbs/Final.built
 	@if [ -z "$(UPDATE)" ]; then echo "Example: UPDATE=1 make update"; exit 234; fi;
 	@echo -e "\nPreparing update '$(UPDATE)'..."
 	+@ $(ARCHset) toolcrib/as_chroot "/build/toolcrib/make_update $(UPDATE)"
 
 # prepare a bootable flash drive
 #
-mediaflash:
+mediaflash: 
 	@echo -e "\nMaking FLASH content..."; sleep 1
 	@+sudo su -c "toolcrib/make_flash"
 

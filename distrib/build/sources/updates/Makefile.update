@@ -15,9 +15,7 @@ OUTPUT_FILENAME = $(BASENAME)-$(UPDATE_NAME)-$(mARCH).tar.gz
 
 all: clean $(OUTPUT_FILENAME) updateinfo
 
-patch.tar.gz:
-	# Build the packages
-	cd ../../..; toolcrib/redo.sh $(UPDATE_PACKAGES)
+patch.tar.gz: ../../../crumbs/Final.built
 	# Prep the tree
 	mkdir distrib review
 	(for I in \
