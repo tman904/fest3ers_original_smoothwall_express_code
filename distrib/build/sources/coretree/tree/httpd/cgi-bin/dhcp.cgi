@@ -209,7 +209,7 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'})
 #	if ($dhcpsettings{'BOOT_FILE'} ne "" and ! ($dhcpsettings{'BOOT_FILE'} =~ m=[^/<>'"]*=))
 #	{
 #		$errormessage .= "FIX_TR bad boot file name". $tr{'invalid boot_file_name'} ."<br />\n";
-	}
+#	}
 	
 ERROR:
 	if ($errormessage) {
