@@ -100,6 +100,9 @@ sub setentry
 	my $ip = $_[0];
 	my $name = $_[1];
 
+	# Can't have an entry without an IP address.
+	if ($ip eq "") { return; }
+
 	my $thisIP = new NetAddr::IP $ip;
 	my $names;
 
