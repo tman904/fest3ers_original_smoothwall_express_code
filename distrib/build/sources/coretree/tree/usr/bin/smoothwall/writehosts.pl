@@ -28,6 +28,7 @@ if (-e "${swroot}/dhcp/settings-orange")
 &readhash("${swroot}/main/settings", \%mainsettings);
 
 # prepare the zone addresses for comparisons
+$loopBACK = new NetAddr::IP "127.0.0.1/8";
 $greenLAN = new NetAddr::IP "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
 if ($netsettings{'PURPLE_NETADDRESS'} ne "")
 {
@@ -110,7 +111,12 @@ sub setentry
 	my $thisIP = new NetAddr::IP $ip;
 	my $names;
 
-	if ($thisIP->within($greenLAN))
+	if ($thisIP->within($loopBACK))
+	{
+		# loopback: no domain
+		$domain = "";
+	}
+	elsif ($thisIP->within($greenLAN))
 	{
 		# Use GREEN domain
 		$domain = $dhcpsettingsGreen{'DOMAIN_NAME'};
