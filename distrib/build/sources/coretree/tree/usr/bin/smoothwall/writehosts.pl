@@ -42,18 +42,9 @@ if ($netsettings{'ORANGE_NETADDRESS'} ne "")
 	$orangeLAN = "";
 }
 
-# set the static DNS entries
-open(RULES, "$filename") or die 'Unable to open config file.';
-while (<RULES>)
-{
-	chomp($_);
-	@temp = split(/\,/,$_);
-	if ($temp[2] eq 'on')
-	{
-		&setentry($temp[0], $temp[1]);
-	}
-}
-close RULES;
+# Set the local entries
+&setentry("127.0.0.1", "localhost");
+&setentry($netsettings{'GREEN_ADDRESS'}, $mainsettings{'HOSTNAME'});
 
 # set the static DHCP entries
 foreach $zone ("green","purple","orange")
@@ -73,12 +64,25 @@ foreach $zone ("green","purple","orange")
 	}
 }
 
+# set the static DNS entries
+open(RULES, "$filename") or die 'Unable to open config file.';
+while (<RULES>)
+{
+	chomp($_);
+	@temp = split(/\,/,$_);
+	if ($temp[2] eq 'on')
+	{
+		&setentry($temp[0], $temp[1]);
+	}
+}
+close RULES;
+
 # write the entries to /etc/hosts
 open(FILE, ">${swroot}/hosts/hosts") or die 'Unable to write hosts.';
-print FILE "127.0.0.1\tlocalhost\n";
 
-&setentry($netsettings{'GREEN_ADDRESS'}, $mainsettings{'HOSTNAME'});
+print FILE "127.0.0.1\t$hostEntries{'127.0.0.1'}\n";
 print FILE "$netsettings{'GREEN_ADDRESS'}\t$hostEntries{$netsettings{'GREEN_ADDRESS'}}\n";
+delete $hostEntries{'127.0.0.1'};
 delete $hostEntries{$netsettings{'GREEN_ADDRESS'}};
 
 print FILE "\n";
