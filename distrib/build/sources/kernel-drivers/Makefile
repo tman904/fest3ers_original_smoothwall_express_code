@@ -23,8 +23,11 @@ IXGBEVF_VER = 2.15.3
 I40EVF_VER = 1.0.5
 I40E_VER = 1.0.15
 R8168_VER = 8.038.00
+NCT6775_VER = v1.1
 
-PACKAGES = package-igb package-igbvf package-ixgbe package-ixgbevf package-e1000e package-i40evf package-i40e
+
+PACKAGES = package-nct6775 package-igb package-igbvf package-ixgbe package-ixgbevf \
+	   package-i40evf package-i40e package-e1000e
 BROKEN_PKGS = package-e1000
 
 #ifeq ($(mARCH), $(ARCH32))
@@ -36,10 +39,7 @@ BROKEN_PKGS = package-e1000
 #endif
 
 download:
-#	$(DL_CMD) http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz
-#	$(DL_CMD) http://sotonfs/tg3-$(TG3_VER).tar.gz
-#	$(DL_CMD) http://sotonfs/bnx2-$(BNX2_VER).tar.gz
-#	$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz
+	@$(DL_CMD) https://github.com/groeck/nct6775/archive/nct6775-$(NCT6775_VER).tar.gz
 	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/igb-$(IGB_VER).tar.gz
 	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/igbvf-$(IGBVF_VER).tar.gz
 	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/ixgbe-$(IXGBE_VER).tar.gz
@@ -48,12 +48,15 @@ download:
 	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/i40evf-$(I40EVF_VER).tar.gz
 	@$(DL_CMD) http://dfn.dl.sourceforge.net/sourceforge/e1000/i40e-$(I40E_VER).tar.gz
 	@$(DL_CMD) http://r8168dl.appspot.com/files/r8168-$(R8168_VER).tar.bz2
+#	$(DL_CMD) http://heanet.dl.sourceforge.net/sourceforge/openadsl/pulsar-$(PULSAR_VER).tar.gz
+#	$(DL_CMD) http://sotonfs/tg3-$(TG3_VER).tar.gz
+#	$(DL_CMD) http://sotonfs/bnx2-$(BNX2_VER).tar.gz
+#	$(DL_CMD) http://kent.dl.sourceforge.net/sourceforge/e1000/e1000-$(E1000_VER).tar.gz
 
 prepare: download
-#	tar -xvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
-#	tar -xvf $(DOWNLOADS_DIR)/tg3-$(TG3_VER).tar.gz
-#	tar -xvf $(DOWNLOADS_DIR)/bnx2-$(BNX2_VER).tar.gz
-#	tar -xvf $(DOWNLOADS_DIR)/e1000-$(E1000_VER).tar.gz
+	tar -xvf $(DOWNLOADS_DIR)/nct6775-$(NCT6775_VER).tar.gz
+	mv nct6775-nct6775-$(NCT6775_VER) nct6775-$(NCT6775_VER)
+	cd nct6775-$(NCT6775_VER); patch -p1 < ../nct6775-makefile.patch
 	tar -xvf $(DOWNLOADS_DIR)/igb-$(IGB_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/igbvf-$(IGBVF_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/ixgbe-$(IXGBE_VER).tar.gz
@@ -62,6 +65,10 @@ prepare: download
 	tar -xvf $(DOWNLOADS_DIR)/i40evf-$(I40EVF_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/i40e-$(I40E_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/r8168-$(R8168_VER).tar.bz2
+#	tar -xvf $(DOWNLOADS_DIR)/pulsar-$(PULSAR_VER).tar.gz
+#	tar -xvf $(DOWNLOADS_DIR)/tg3-$(TG3_VER).tar.gz
+#	tar -xvf $(DOWNLOADS_DIR)/bnx2-$(BNX2_VER).tar.gz
+#	tar -xvf $(DOWNLOADS_DIR)/e1000-$(E1000_VER).tar.gz
 
 #compile-pulsar:
 #	$(MAKE) $(JOBS) V=1 -C pulsar-$(PULSAR_VER) KDIR=$(KERNEL_DIR)
@@ -89,6 +96,9 @@ compile-i40evf:
 
 compile-i40e:
 	$(MAKE) $(JOBS) V=1 -C i40e-$(I40E_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.4
+
+compile-nct6775:
+	$(MAKE) $(JOBS) V=1 -C nct6775-$(NCT6775_VER)/ -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.4
 
 
 #package-pulsar: compile-pulsar
@@ -135,6 +145,10 @@ package-i40e: compile-i40e
 	install -D $(DRIVER_DIR)/i40e-$(I40E_VER)/src/i40e.ko \
 		$(PKG_ROOT)/lib/modules/$(K_SWE_VERSION)/kernel/drivers/net/ethernet/intel/i40e/i40e.ko
 
+package-nct6775: compile-nct6775
+	install -D $(DRIVER_DIR)/nct6775-$(NCT6775_VER)/nct6775.ko \
+		$(PKG_ROOT)/lib/modules/$(K_SWE_VERSION)/kernel/drivers/hwmon/nct6775.ko
+
 $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz: prepare $(PACKAGES)
 	@( \
 	  cd $(PKG_ROOT); \
@@ -156,6 +170,7 @@ clean:
 	@rm -rf i40evf-$(I40EVF_VER)
 	@rm -rf i40e-$(I40E_VER)
 	@rm -rf r8168-$(R8168_VER)
+	@rm -rf nct6775-$(NCT6775_VER)
 	@rm -rf $(PKG_ROOT)
 
 all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
