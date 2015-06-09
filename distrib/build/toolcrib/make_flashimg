@@ -1,0 +1,183 @@
+#! /bin/bash
+
+# Won't work as a mere mortal
+if [ $UID -ne 0 ]; then
+  echo "This script MUST be run as root. Please su or sudo and try again!"
+  echo
+  exit 1
+fi
+
+# Be sure loop device is available
+/sbin/modprobe loop || \
+    { echo "Couldn't modprobe loop device!"; exit 1; }
+
+# Find the next available drive node name
+for i in a b c d e f g h i j k l m n o p q r s t u v w x y z; do
+  [ -e /dev/sd$i ] && continue;
+  export DISKDEV=/dev/sd$i
+  break;
+done
+
+export ORIG_DIR=${PWD}
+
+# Function to unmount and clean up
+function cleanup {
+  cd $ORIG_DIR
+  umount ./$1
+  rmdir $1
+  umount ./$2
+  rmdir $2
+  losetup -d $LOOPDEV
+  rm -f ${DISKDEV}*
+}
+
+# User prompts, collect info
+# Stuff you need to know
+echo
+echo "                   Smoothwall Express ISO TO FLASH IMAGE CONVERTER"
+echo
+echo "$0 is a script that copies a Smoothwall Express 3.1 install ISO image"
+echo "to an image file that can be written onto a flash or hard drive."
+echo "The resulting image will have one partition--#1--and will be formatted"
+echo "with EXT-2."
+echo "  1. You will be prompted to enter an ISO pathname. The script will"
+echo "     list those it finds in the 'usual' places; you can copy/paste"
+echo "     the desired pathname."
+echo "  2. You will be prompted to select the baud rate for the serial console."
+echo "     The default is 115200; 19200 and 9600 are available."
+echo
+echo -n "Enter 'yes' to continue or press <ENTER> to skip this step: "
+read ans
+if [ "$ans" != "yes" ]; then exit 0; fi
+echo
+
+# List ISOs, get desired
+echo
+echo -e "\nAvailable ISO(s)"
+ls -C1 target/isos/*.iso 2>/dev/null | sed -e 's/^/    /'
+ls -C1 *.iso 2>/dev/null | sed -e 's/^/    /'
+
+MOUNT_OPT="-o loop,ro "
+echo -n "   Enter the ISO filename: "
+read isoname
+if [ ! -f "$isoname" ]; then
+  echo "ISO image '$isoname' does not exist. Try again."
+  exit 1
+fi
+
+# Serial port baud rate, get desired
+echo
+echo "Select serial port baud rate for GRUB"
+while [ 1 -eq 1 ]; do
+  # Choose baud rate
+  i=1; echo "  $i. 115200 (default)"
+  i=2; echo "  $i. 19200"
+  i=3; echo "  $i. 9600"
+  echo
+
+  echo -n "[1]        Selection: "
+  read serialbaud
+  if [ x$serialbaud == x ]; then serialbaud="1"; fi
+  if [ $serialbaud -lt 4 ]; then break; fi
+done
+case $serialbaud in
+  1) BAUD=115200;;
+  2) BAUD=19200;;
+  3) BAUD=9600;;
+esac
+
+echo
+echo "Build flash image"
+
+echo "..Create 7GiB image file"
+CONV=
+[ -e sources/media/flash.img ] && CONV=" conv=notrunc"
+dd if=/dev/zero of=sources/media/flash.img bs=1024k seek=7167 count=1
+# testing...
+#dd if=/dev/zero of=sources/media/flash.img bs=1024k count=10 conv=notrunc
+
+echo "..Create partition table and filesystem"
+fdisk -u=s sources/media/flash.img <<END
+n
+p
+1
+
+
+a 1
+w
+END
+
+echo "..Create loop device"
+LOOPDEV=`losetup --show -f -P sources/media/flash.img`
+cp -av ${LOOPDEV} $DISKDEV
+cp -av ${LOOPDEV}p1 ${DISKDEV}1
+chown root:disk ${DISKDEV}*
+chmod 664 ${DISKDEV}*
+fldev="$DISKDEV"
+
+echo "..Make EXT2 FS"
+mke2fs ${DISKDEV}1
+
+# Shorthand
+CD="isomnt${RANDOM}"
+FL="flmnt${RANDOM}"
+
+# Be sure the ISO and flash are unmounted and the mount point deleted
+#   if the script abends.
+trap "cleanup $CD $FL; exit" EXIT SIGINT SIGQUIT
+if [ `basename ${PWD}` == 'build' ]; then
+  # Assume 'make media' and use the target grub
+  GRUB="${ORIG_DIR}/.."
+else
+  # Assume on booted Roadster, use the natural grub
+  GRUB=""
+fi
+
+echo
+echo "..Prepare"
+
+# Make the mount points
+mkdir -p $CD || \
+    { echo "Couldn't make '$CD' ISO mount point!"; exit 1; }
+mkdir -p $FL || \
+    { echo "Couldn't make '$FL' flash mount point!"; exit 1; }
+
+# Mount the ISO and flash; allow any known FS for flash
+mount -t iso9660 ${isoname} $CD ${MOUNT_OPT} || \
+    { echo "Couldn't mount the CD or ISO image!"; exit 1; }
+mount ${fldev}1 $FL || \
+    { echo "Couldn't mount flash partition #1!"; exit 1; }
+
+echo
+echo "..Copy"
+
+# Copy the ISO contents to flash
+cp -arv $CD/* $FL
+
+echo
+echo "..Wrench"
+
+# Stuff needed for grub
+PRT=`echo "find /smoothwall.tgz" | ${GRUB}/usr/sbin/grub --batch 2>&- | egrep "\([^ ]*\)"`
+DRV=`echo $PRT | sed -e 's/,[0-9]*//'`
+sed -i -e "s/(cd)/(hd0,0)/" -e 's/115200/'$BAUD'/' ${FL}/boot/grub/*.conf
+sed -i -e '/Install Smoothwall Express$/,/^$/d' ${FL}/boot/grub/main.conf
+echo -e "root ${PRT}\nsetup ${DRV}" | ${GRUB}/usr/sbin/grub --batch
+
+echo
+echo "..Clean up"
+
+# Unmount them
+cleanup $CD $FL
+
+# Clear the exit booby trap
+trap "" EXIT
+
+echo
+echo "..Zip"
+zip target/isos/flash-img.zip sources/media/flash.img
+
+echo
+echo "iso2flashimg complete."
+
+exit;
