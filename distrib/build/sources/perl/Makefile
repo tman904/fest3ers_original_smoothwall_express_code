@@ -31,7 +31,7 @@ compile: configure
 INSTALL = yes
 install: compile
 	cd $(COMPILE_DIR); \
-	  cp -v perl pod/pod2man $(TOOLS_DIR)/bin; \
+	  cp -v perl cpan/podlators/pod2man $(TOOLS_DIR)/bin; \
 	  mkdir -pv $(TOOLS_DIR)/lib/perl5/$(VERSION); \
 	  cp -Rv lib/* $(TOOLS_DIR)/lib/perl5/$(VERSION)
 endif
