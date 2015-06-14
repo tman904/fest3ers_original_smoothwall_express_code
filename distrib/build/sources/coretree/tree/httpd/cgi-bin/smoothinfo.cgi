@@ -504,7 +504,7 @@ print <<END
 END
 ;
 
-&openbox("Prepare Report");
+&openbox($tr{'smoothinfo-prepare-report'});
 
 print<<END;
     <p class='base' style='vertical-align:middle; margin:1em 1em 0 1em; padding:4px;'>
@@ -531,9 +531,9 @@ END
 print <<END;
 <TABLE WIDTH='90%' align='center' style='margin-top:1em'>
   <TR>
-    <th style='width:33%; padding:2px' colspan=2>Smoothwall</th>
-    <th style='width:33%; padding:2px' colspan=2>Linux</th>
-    <th style='width:33%; padding:2px' colspan=2>Mods</th>
+    <th style='width:33%; padding:2px' colspan=2>$tr{'smoothinfo-sect-smoothwall'}</th>
+    <th style='width:33%; padding:2px' colspan=2>$tr{'smoothinfo-sect-linux'}</th>
+    <th style='width:33%; padding:2px' colspan=2>$tr{'smoothinfo-sect-mods'}</th>
   </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-config-tip'}'>$tr{'smoothinfo-config'}:</TD>
@@ -558,14 +558,14 @@ print <<END;
     <td></td>
   </TR>
   <TR>
-    <th style='padding:2px' colspan=6>Networking</th>
+    <th style='padding:2px' colspan=6>$tr{'smoothinfo-sect-networking'}</th>
   </TR>
   <TR>
     <TD  WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-net settings-tip'}">$tr{'smoothinfo-net settings'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='NETCONF2' $checked{'NETCONF2'}{'on'}></TD>
     <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-dhcpinfo-tip'}'>$tr{'smoothinfo-dhcpinfo'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DHCPINFO' $checked{'DHCPINFO'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base'>External access:</TD>
+    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-external-access'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='XTACCESS' $checked{'XTACCESS'}{'on'}></TD>
   </TR>
   <TR>
@@ -577,23 +577,23 @@ print <<END;
   <TR>
     <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='ROUTE' $checked{'ROUTE'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base'>Outgoing exceptions:</TD>
+    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-outgoing-exceptions'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='OUTGOING' $checked{'OUTGOING'}{'on'}></TD>
   </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-conntracks-tip'}'>$tr{'smoothinfo-conntracks'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONNTRACKS' $checked{'CONNTRACKS'}{'on'}></TD>
-    <TD  WIDTH='30%' CLASS='base'>Internal pinholes:</TD>
+    <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-internal-pinholes'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='PINHOLES' $checked{'PINHOLES'}{'on'}></TD>  </TR>
   <TR>
-    <th style='width:67%; padding:2px' colspan=4>Hardware</th><th style='width:33%; padding:2px' colspan=2>Services</th>
+    <th style='width:67%; padding:2px' colspan=4>$tr{'smoothinfo-sect-hardware'}</th><th style='width:33%; padding:2px' colspan=2>$tr{'smoothinfo-sect-services'}</th>
   </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-cpu'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' NAME='CPU' $checked{'CPU'}{'on'}></TD>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-memory-tip'}'>$tr{'smoothinfo-memory'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='MEMORY' $checked{'MEMORY'}{'on'}></TD>
-    <TD WIDTH='30%' CLASS='base'>Web proxy:</TD>
+    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-proxy'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='SQUID' $checked{'SQUID'}{'on'}></TD>
   </TR>
   <TR>
@@ -615,7 +615,7 @@ END
 
 &closebox();
 
-&openbox("Include logs:&nbsp;&nbsp;&nbsp;
+&openbox("$tr{'smoothinfo-include-logsc'}&nbsp;&nbsp;&nbsp;
     <a href='#'><img src='/ui/img/help.gif' alt='?'
                      title='$tr{'smoothinfo-log-help'}'
                      valign='top'
@@ -717,11 +717,11 @@ END
 
 &closebox();
 
-&openbox("Include screenshots:");
+&openbox($tr{'smoothinfo-include-screenshotsc'});
 
 print <<END;
   <p style='margin:1em 0 0 1em'>
-    Link(s) to screenshot(s):<br />
+    $tr{'smoothinfo-links-to-screenshotsc'}<br />
     <input type='text' name='SCREENSHOTS' value='$smoothinfosettings{'SCREENSHOTS'}'
            style='margin:.2em 0 0 2em'
            size='80' TITLE='$tr{'smoothinfo-screenshots-tip'}'>
@@ -730,7 +730,7 @@ END
 
 &closebox();
 
-&openbox("Other information:");
+&openbox($tr{'smoothinfo-other-informationc'});
 
 print<<END;
 <div style='text-align:center; margin:1em 1em .2em 1em'>
@@ -974,7 +974,7 @@ $bbcodehelp
 <DIV ALIGN='CENTER'>
 <TABLE WIDTH='60%'>
 <TR>
-  <TD ALIGN='CENTER'><a href="javascript:selectAll('myform.data')" style='font-size:120%; color:red; font-weight:bold;' TITLE='$tr{'smoothinfo-selectall-tip'}'>Select All</a></TD>
+  <TD ALIGN='CENTER'><a href="javascript:selectAll('myform.data')" style='font-size:120%; color:red; font-weight:bold;' TITLE='$tr{'smoothinfo-selectall-tip'}'>$tr{'smoothinfo-selectall'}</a></TD>
 </TR>
 </TABLE>
 </DIV>
