@@ -27,7 +27,35 @@ my $version = $modinfo{'MOD_LONG_NAME'} . " v. " . $modinfo{'MOD_VERSION'};
 my $filename = "$MODDIR/report.txt";
 my $settingsfile = "$MODDIR/settings";
 my @chains = ('All chains');
-my @items = ('MEMORY', 'TOP', 'LOADEDMODULES', 'CPU', 'IRQs', 'DISKSPACE', 'CONNTYPE', 'ADAPTERS', 'NETCONF1', 'NETCONF2', 'ROUTE', 'CONNTRACKS', 'MODLIST', 'DHCPINFO', 'PORTFW', 'OUTGOING', 'XTACCESS', 'PINHOLES', 'CONFIG', 'DMESG', 'APACHE', 'MESSAGES', 'SERVICES', 'MODSERVICES', 'SQUID');
+my @items = (
+             'ADAPTERS',
+             'APACHE',
+             'CONFIG',
+             'CONNTRACKS',
+             'CONNTYPE',
+             'CPU',
+             'DHCPINFO',
+             'DISKSPACE',
+             'DMESG',
+             'DNS',
+             'FWPOLICY',
+             'IRQs',
+             'LOADEDMODULES',
+             'MEMORY',
+             'MESSAGES',
+             'MODLIST',
+             'MODSERVICES',
+             'NETCONF1',
+             'NETCONF2',
+             'OUTGOING',
+             'PINHOLES',
+             'PORTFW',
+             'ROUTE',
+             'SERVICES',
+             'SQUID',
+             'TOP',
+             'XTACCESS'
+   );
 my @ASCII_items = ('SWITCH1', 'SWITCH2', 'SWITCH3', 'WAP1', 'WAP2', 'WAP3', 'WAP4', 'WAP5', 'WAP6', 'MODEM', 'ROUTER');
 my $errormessage = '';
 
@@ -129,53 +157,67 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
     system("/bin/touch $MODDIR/schematic");
   }
 
-  unless ($smoothinfosettings{'MEMORY'} eq 'on' &&
-          $smoothinfosettings{'LOADEDMODULES'} eq 'on' &&
-          $smoothinfosettings{'TOP'} eq 'on' &&
-          $smoothinfosettings{'CPU'} eq 'on' &&
-          $smoothinfosettings{'DISKSPACE'} eq 'on' &&
-          $smoothinfosettings{'CONNTYPE'} eq 'on' &&
+  unless (
           $smoothinfosettings{'ADAPTERS'} eq 'on' &&
+          $smoothinfosettings{'APACHE'} eq 'on' &&
+          $smoothinfosettings{'CONFIG'} eq 'on' &&
+          $smoothinfosettings{'CONNTRACKS'} eq 'on' &&
+          $smoothinfosettings{'CONNTYPE'} eq 'on' &&
+          $smoothinfosettings{'CPU'} eq 'on' &&
+          $smoothinfosettings{'DHCPINFO'} eq 'on' &&
+          $smoothinfosettings{'DHCPLEASES'} eq 'on' &&
+          $smoothinfosettings{'DISKSPACE'} eq 'on' &&
+          $smoothinfosettings{'DMESG'} eq 'on' &&
+          $smoothinfosettings{'DNS'} eq 'on' &&
+          $smoothinfosettings{'FWPOLICY'} eq 'on' &&
+          $smoothinfosettings{'IRQs'} eq 'on' &&
+          $smoothinfosettings{'LOADEDMODULES'} eq 'on' &&
+          $smoothinfosettings{'MEMORY'} eq 'on' &&
+          $smoothinfosettings{'MESSAGES'} eq 'on' &&
+          $smoothinfosettings{'MODLIST'} eq 'on' &&
+          $smoothinfosettings{'MODSERVICES'} eq 'on' &&
           $smoothinfosettings{'NETCONF1'} eq 'on' &&
           $smoothinfosettings{'NETCONF2'} eq 'on' &&
-          $smoothinfosettings{'DHCPLEASES'} eq 'on' &&
-          $smoothinfosettings{'PORTFW'} eq 'on' &&
           $smoothinfosettings{'OUTGOING'} eq 'on' &&
-          $smoothinfosettings{'XTACCESS'} eq 'on' &&
           $smoothinfosettings{'PINHOLES'} eq 'on' &&
-          $smoothinfosettings{'SQUID'} eq 'on' &&
+          $smoothinfosettings{'PORTFW'} eq 'on' &&
           $smoothinfosettings{'ROUTE'} eq 'on' &&
-          $smoothinfosettings{'MODLIST'} eq 'on' &&
-          $smoothinfosettings{'CONFIG'} eq 'on' &&
-          $smoothinfosettings{'DMESG'} eq 'on' &&
-          $smoothinfosettings{'APACHE'} eq 'on' &&
-          $smoothinfosettings{'MESSAGES'} eq 'on') {
-
+          $smoothinfosettings{'SQUID'} eq 'on' &&
+          $smoothinfosettings{'TOP'} eq 'on' &&
+          $smoothinfosettings{'XTACCESS'} eq 'on'
+         ) {
     $smoothinfosettings{'CHECKALL'} = 'off';
   }
 
-  unless ($smoothinfosettings{'MEMORY'} eq 'on' or
-          $smoothinfosettings{'LOADEDMODULES'} eq 'on' or
-          $smoothinfosettings{'TOP'} eq 'on' or
-          $smoothinfosettings{'CPU'} eq 'on' or
-          $smoothinfosettings{'DISKSPACE'} eq 'on' or
-          $smoothinfosettings{'CONNTYPE'} eq 'on' or
-          $smoothinfosettings{'ADAPTERS'} eq 'on' or
-          $smoothinfosettings{'NETCONF1'} eq 'on' or
-          $smoothinfosettings{'NETCONF2'} eq 'on' or
-          $smoothinfosettings{'DHCPLEASES'} eq 'on' or
-          $smoothinfosettings{'PORTFW'} eq 'on' or
-          $smoothinfosettings{'OUTGOING'} eq 'on' or
-          $smoothinfosettings{'XTACCESS'} eq 'on' or
-          $smoothinfosettings{'PINHOLES'} eq 'on' or
-          $smoothinfosettings{'SQUID'} eq 'on' or
-          $smoothinfosettings{'ROUTE'} eq 'on' or
-          $smoothinfosettings{'MODLIST'} eq 'on' or
-          $smoothinfosettings{'CONFIG'} eq 'on' or
-          $smoothinfosettings{'DMESG'} eq 'on' or
-          $smoothinfosettings{'APACHE'} eq 'on' or
-          $smoothinfosettings{'MESSAGES'} eq 'on') {
-
+  unless (
+          $smoothinfosettings{'ADAPTERS'} eq 'on' ||
+          $smoothinfosettings{'APACHE'} eq 'on' ||
+          $smoothinfosettings{'CONFIG'} eq 'on' ||
+          $smoothinfosettings{'CONNTRACKS'} eq 'on' ||
+          $smoothinfosettings{'CONNTYPE'} eq 'on' ||
+          $smoothinfosettings{'CPU'} eq 'on' ||
+          $smoothinfosettings{'DHCPINFO'} eq 'on' ||
+          $smoothinfosettings{'DHCPLEASES'} eq 'on' ||
+          $smoothinfosettings{'DISKSPACE'} eq 'on' ||
+          $smoothinfosettings{'DMESG'} eq 'on' ||
+          $smoothinfosettings{'DNS'} eq 'on' ||
+          $smoothinfosettings{'FWPOLICY'} eq 'on' ||
+          $smoothinfosettings{'IRQs'} eq 'on' ||
+          $smoothinfosettings{'LOADEDMODULES'} eq 'on' ||
+          $smoothinfosettings{'MEMORY'} eq 'on' ||
+          $smoothinfosettings{'MESSAGES'} eq 'on' ||
+          $smoothinfosettings{'MODLIST'} eq 'on' ||
+          $smoothinfosettings{'MODSERVICES'} eq 'on' ||
+          $smoothinfosettings{'NETCONF1'} eq 'on' ||
+          $smoothinfosettings{'NETCONF2'} eq 'on' ||
+          $smoothinfosettings{'OUTGOING'} eq 'on' ||
+          $smoothinfosettings{'PINHOLES'} eq 'on' ||
+          $smoothinfosettings{'PORTFW'} eq 'on' ||
+          $smoothinfosettings{'ROUTE'} eq 'on' ||
+          $smoothinfosettings{'SQUID'} eq 'on' ||
+          $smoothinfosettings{'TOP'} eq 'on' ||
+          $smoothinfosettings{'XTACCESS'} eq 'on'
+         ) {
     $smoothinfosettings{'NOSELECT'} = 'on';
     $errormessage .= "Nothing selected for report.<br />";
   }
@@ -369,8 +411,15 @@ print <<END
 
   function CheckDef()
   {
-    var checkBoxes = ['MEMORY', 'DISKSPACE', 'CONNTYPE', 'NETCONF1', 'NETCONF2',
-                    'CONFIG', 'SERVICES'];
+    var checkBoxes = [
+            'CONFIG',
+            'CONNTYPE',
+            'DISKSPACE',
+            'MEMORY',
+            'NETCONF1',
+            'NETCONF2',
+            'SERVICES',
+        ];
 
     // Get the state
     var newState = document.myform.CHECKDEFAULT.checked;
@@ -539,21 +588,27 @@ print <<END;
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-config-tip'}'>$tr{'smoothinfo-config'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONFIG' VALUE='on' $checked{'CONFIG'}{'on'}></TD>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-modules-tip'}'>$tr{'smoothinfo-modules'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' NAME='LOADEDMODULES' $checked{'LOADEDMODULES'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='LOADEDMODULES' $checked{'LOADEDMODULES'}{'on'}></TD>
     <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-mod-services-status-tip'}">$tr{'smoothinfo-mod-services-status'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' NAME='MODSERVICES' $checked{'MODSERVICES'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='MODSERVICES' $checked{'MODSERVICES'}{'on'}></TD>
   </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-services-status-tip'}'>$tr{'smoothinfo-services-status'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' NAME='SERVICES' $checked{'SERVICES'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='SERVICES' VALUE='on' $checked{'SERVICES'}{'on'}></TD>
     <TD WIDTH='30%' CLASS='base' TITLE="$tr{'smoothinfo-top-tip'}">$tr{'smoothinfo-top'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' NAME='TOP' $checked{'TOP'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='TOP' $checked{'TOP'}{'on'}></TD>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-mods-tip'}'>$tr{'smoothinfo-installed-mods'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' NAME='MODLIST' $checked{'MODLIST'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='MODLIST' $checked{'MODLIST'}{'on'}></TD>
   </TR>
   <TR>
     <TD WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-connection-tip'}'>$tr{'smoothinfo-connection'}:</TD>
-    <TD width='3%'><INPUT TYPE='checkbox' NAME='CONNTYPE' VALUE='on' $checked{'CONNTYPE'}{'on'}></TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='CONNTYPE' VALUE='on' $checked{'CONNTYPE'}{'on'}></TD>
+    <td></td>
+    <td></td>
+  </TR>
+  <TR>
+    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-fwPolicy'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='FWPOLICY' VALUE='on' $checked{'FWPOLICY'}{'on'}></TD>
     <td></td>
     <td></td>
   </TR>
@@ -573,6 +628,8 @@ print <<END;
     <TD width='3%'><INPUT TYPE='checkbox' NAME='NETCONF1' VALUE='on' $checked{'NETCONF1'}{'on'}></TD>
     <TD  WIDTH='30%' CLASS='base'>$tr{'smoothinfo-portfw'}:</TD>
     <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='PORTFW' $checked{'PORTFW'}{'on'}></TD>
+    <TD WIDTH='30%' CLASS='base'>$tr{'smoothinfo-dns'}:</TD>
+    <TD width='3%'><INPUT TYPE='checkbox' ALIGN='LEFT' NAME='DNS' VALUE='on' $checked{'DNS'}{'on'}></TD>
   </TR>
   <TR>
     <TD  WIDTH='30%' CLASS='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}:</TD>

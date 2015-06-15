@@ -469,8 +469,7 @@ if ($smoothinfosettings{'CONNTYPE'} eq 'on') {
 }
 
 # Default firewall policy
-# FIXME: this needs a checkbox in the Smoothwall section of the UI
-#if ($smoothinfosettings{'OUTGOING'} eq 'on') {
+if ($smoothinfosettings{'FWPOLICY'} eq 'on') {
   if ($defseclevelsettings{'OPENNESS'} eq 'halfopen') {
     $smoothinfosettings{'SECPOLICY'} = 'Half-open';
   } elsif ($defseclevelsettings{'OPENNESS'} eq 'open') {
@@ -480,8 +479,32 @@ if ($smoothinfosettings{'CONNTYPE'} eq 'on') {
   } else {
     $smoothinfosettings{'SECPOLICY'} = '(Unknown)';
   }
-  print FILE "[info=\"$tr{'smoothinfo-default-secpol'}\"]\[code\]$smoothinfosettings{'SECPOLICY'}\[/code\]\[/info\]";
-#}
+  print FILE "[info=\"$tr{'smoothinfo-default-secpol'}\"]\[code\]$tr{'smoothinfo-policy'}: $smoothinfosettings{'SECPOLICY'}\n";
+    if (open (OUTGOING, "<${swroot}/outgoing/settings")) {
+      foreach (<OUTGOING>) {
+        if (grep /GREEN=REJECT/, $_) {
+          $rule_green = "$tr{'smoothinfo-traffic-originating'} GREEN is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_green\n";
+        }
+        if (grep /GREEN=ACCEPT/, $_) {
+          $rule_green = "$tr{'smoothinfo-traffic-originating'} GREEN is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_green\n";
+        }
+        if (grep /ORANGE=REJECT/, $_) {
+          $rule_orange = "$tr{'smoothinfo-traffic-originating'} ORANGE is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_orange\n";
+        }
+        if (grep /ORANGE=ACCEPT/, $_) {
+          $rule_orange = "$tr{'smoothinfo-traffic-originating'} ORANGE is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_orange\n";
+        }
+        if (grep /PURPLE=REJECT/, $_) {
+          $rule_purple = "$tr{'smoothinfo-traffic-originating'} PURPLE is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_purple\n";
+        }
+        if (grep /PURPLE=ACCEPT/, $_) {
+          $rule_purple = "$tr{'smoothinfo-traffic-originating'} PURPLE is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_purple\n";
+        }
+      }
+      close OUTGOING;
+    }
+  print FILE "\[/code\]\[/info\]";
+}
 
 # Generate the ASCII schematic (ugly but works)
 my $purple;
@@ -1001,8 +1024,9 @@ if ($smoothinfosettings{'SQUID'} eq 'on' and $proxysettings{'ENABLE'} eq 'on') {
 
 ### Networking Section
 if ($smoothinfosettings{'NETCONF2'} eq 'on' or
-    $smoothinfosettings{'DHCPINFO'} eq 'on'or
+    $smoothinfosettings{'DHCPINFO'} eq 'on' or
     $smoothinfosettings{'XTACCESS'} eq 'on' or
+    $smoothinfosettings{'DNS'} eq 'on' or
     $smoothinfosettings{'NETCONF1'} eq 'on' or
     $smoothinfosettings{'ROUTE'} eq 'on' or
     $smoothinfosettings{'OUTGOING'} eq 'on' or
@@ -1011,7 +1035,7 @@ if ($smoothinfosettings{'NETCONF2'} eq 'on' or
     $smoothinfosettings{'PORTFW'} eq 'on' ) {
   print FILE "\n[u][b]Networking[/b][/u]\n";
 
-  if ($smoothinfosettings{'NETCONF1'} eq "on" or $smoothinfosettings{'NETCONF2'} eq "on") {
+  if ($smoothinfosettings{'DNS'} eq "on") {
     # Get the DNS info for Red, Green, Purple
     print FILE "[info=\"$tr{'smoothinfo-dns'}\"]\[code\]";
     open (DNS1, "</var/smoothwall/red/dns1");
@@ -1228,31 +1252,6 @@ if ($smoothinfosettings{'NETCONF2'} eq 'on' or
   }
 
   if ($smoothinfosettings{'OUTGOING'} eq 'on') {
-    open (OUTGOING, "<${swroot}/outgoing/settings") || die "Unable to open ${swroot}/outgoing/settings: $!";
-    print FILE "[info=\"$tr{'smoothinfo-outgoing'}\"]\[code\]";
-    foreach (<OUTGOING>) {
-      if (grep /GREEN=REJECT/, $_) {
-        $rule_green = "$tr{'smoothinfo-traffic-originating'} GREEN is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_green\n"
-      }
-      if (grep /GREEN=ACCEPT/, $_) {
-        $rule_green = "$tr{'smoothinfo-traffic-originating'} GREEN is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_green\n"
-      }
-      if (grep /ORANGE=REJECT/, $_) {
-        $rule_orange = "$tr{'smoothinfo-traffic-originating'} ORANGE is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_orange\n"
-      }
-      if (grep /ORANGE=ACCEPT/, $_) {
-        $rule_orange = "$tr{'smoothinfo-traffic-originating'} ORANGE is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_orange\n"
-      }
-      if (grep /PURPLE=REJECT/, $_) {
-        $rule_purple = "$tr{'smoothinfo-traffic-originating'} PURPLE is: $tr{'smoothinfo-allowed'}"; print FILE "$rule_purple\n"
-      }
-      if (grep /PURPLE=ACCEPT/, $_) {
-        $rule_purple = "$tr{'smoothinfo-traffic-originating'} PURPLE is: $tr{'smoothinfo-blocked'}"; print FILE "$rule_purple\n"
-      }
-    }
-    close OUTGOING;
-    print FILE "\[/code\]\[/info\]";
-
     unless (-z "${swroot}/outgoing/config") {
       my @config = `/bin/cat /var/smoothwall/outgoing/config`;
 
