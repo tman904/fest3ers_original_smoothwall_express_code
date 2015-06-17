@@ -14,6 +14,7 @@ BASE_URL = http://miniupnp.free.fr/files/
 
 PATCH_FILE1 = umask.patch
 PATCH_FILE2 = genconfig.patch
+PATCH_FILE3 = pcpserver.c.patch
 
 CONFIGURE = yes
 COMPILE = yes
