@@ -253,7 +253,7 @@ sub displaytable
 			$colourcolumn = $column->{'column'};
 			$colourtranslations = $column->{'tr'};
 		} else {
-			# Incase no column has been specified, assume column 0.
+			# In case no column has been specified, assume column 0.
 			if ( not defined $column->{'column'} ){
 				push @columns, "0,$column->{'mark'}";
 			} elsif ( defined $column->{'mark'} ){
@@ -492,8 +492,8 @@ sub dispaliastab
 
     if ( not defined $column->{'colour'} ){
       print qq !
-        <th$span$rowspan class='$class' style='$style'>
-          <div style="margin:0;$rotate"><a href="$url">$column->{'title'}$arrow</a></div>
+        <th$span$rowspan class='$class' style='$style; padding:.05em .5em'>
+          <div style="a$rotate"><a href="$url">$column->{'title'}$arrow</a></div>
         </th>
 !;
     }
@@ -607,7 +607,7 @@ sub dispaliastab
     my $rowspan = " rowspan='$rowSpanCount'";
     foreach my $reference ( @columns ){
       unless ( $reference =~ /,/ ){
-      # are we supposed to tranlate this at all ?
+      # are we supposed to translate this at all ?
         my $text = $cols[$reference];
         if ($cols[$reference] =~ /^\!/) {
           $text = "<font color=#2B60DE>$text</font>";
@@ -640,7 +640,7 @@ sub dispaliastab
         if ( $colourcolumn != 0 ){
           $text = "<span class='$colourtranslations->{$cols[$colourcolumn]}'>$text</span>";
         }
-        print "<td$rowspan class='list' style='$colour$styles[$entry]' onclick=\"toggle_row('${id}_$cols[0]');\" >$text</td>\n";
+        print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_row('${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
         # Single use!
         $rowspan = "";
 
@@ -668,7 +668,7 @@ sub dispaliastab
         if ($cols[$reference] =~ /\+/) {
           $cols[$reference] =~ s/\+//;
         }
-        print "</tr><tr class='list'><td style='$colour$styles[$entry]' class='listcomment' colspan='$colcount'$styles[$entry]><i>$cols[$reference]</i></td>\n";
+        print "</tr><tr class='list'><td style='padding:.1em .5em; $colour$styles[$entry]' class='listcomment' colspan='$colcount'$styles[$entry]><i>$cols[$reference]</i></td>\n";
       }
     }
 
