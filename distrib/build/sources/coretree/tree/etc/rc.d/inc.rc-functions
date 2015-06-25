@@ -13,10 +13,10 @@ fi
 if [ -f /var/run/debug-dhcpcd ]; then
   export DEBUG="e"
   export crDEBUG="E"
-  export DHCPCD_DEBUG="d"
+  export DEBUG_DHCPCD="d"
 else
   # Don't clear DEBUG/crDEBUG in case they were explicitly requested.
-  export DHCPCD_DEBUG=""
+  export DEBUG_DHCPCD=""
 fi
 
 # Function echolog() directs feedback to any of three locations

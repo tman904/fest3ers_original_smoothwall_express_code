@@ -232,7 +232,7 @@ if [ "$RED_TYPE" == "DHCP" ]; then
 	    # This might could get annoying if the lease changes often
 	    /usr/bin/sounds/offlinesound
             echolog "$DEBUG" "" "$DEBUG_DHCPCD" "DHCP lease link-DOWN; Exiting rc.updatered RED_TYPE [$RED_TYPE] ($reason) [`date`]"
-	    echolog "" "s" "" "DHCP lease lost (system going down). Reason: ($reason)"
+	    echolog "" "s" "" "DHCP lease lost (links or system going down). Reason: ($reason)"
 
 	    exit 0
 	    ;;
@@ -320,7 +320,7 @@ fi
 
 # Restart/reset everything that depends on RED
 #
-echolog "e" "s" "" "..DNSMasq (DNS1: " $DNSMASQ_DNS1 " DNS2: " $DNSMASQ_DNS2 ")"
+echolog "e" "s" "" "..DNSMasq (DNS1: $DNSMASQ_DNS1; DNS2: $DNSMASQ_DNS2)"
 /usr/bin/smoothcom dnsproxyrestart $DNSMASQ_DNS1 $DNSMASQ_DNS2
 
 echolog "e" "s" "" "..RED filtering"
@@ -339,11 +339,11 @@ echolog "e" "s" "" "..external access rules"
 
 echolog "e" "s" "$DEBUG_DHCPCD" "..snort, squid, upnpd, TC, DDNS, VPN (as enabled)"
 /usr/bin/smoothcom snortrestart
-echolog "$DEBUG" "" "d" "....smoothcom: squidrestart  [`date`]"
+echolog "$DEBUG" "" "$DEBUG_DHCPCD" "....smoothcom: squidrestart  [`date`]"
 /usr/bin/smoothcom squidrestart
-echolog "$DEBUG" "" "d" "....smoothcom: upnpdrestart [`date`]"
+echolog "$DEBUG" "" "$DEBUG_DHCPCD" "....smoothcom: upnpdrestart [`date`]"
 /usr/bin/smoothcom upnpdrestart
-echolog "$DEBUG" "" "d" "....smoothcom: trafficrestart [`date`]"
+echolog "$DEBUG" "" "$DEBUG_DHCPCD" "....smoothcom: trafficrestart [`date`]"
 /usr/bin/smoothcom trafficrestart
 
 /usr/bin/smoothwall/setddns.pl
