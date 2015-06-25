@@ -157,7 +157,7 @@ echolog "$crDEBUG" "" "$DEBUG_DHCPCD" "..enter rc.updatered ($reason) [`date`]"
 
 if [ "$RED_TYPE" == "DHCP" ]; then
     case $reason in
-        BOUND|RENEW|STOPPED|REBOOT)
+        BOUND|RENEW|STOP|STOPPED|REBOOT)
           # Do nothing; we care about only these
           ;;
 	*)
@@ -218,7 +218,7 @@ if [ "$RED_TYPE" == "DHCP" ]; then
 	# First up; when RED is DHCP
 
 	case $reason in
-	  STOPPED)
+	  STOP|STOPPED)
 	    # Nothing to do; either the system is going down or networking is
 	    #   being stopped for restart. *Technically*, it might be more correct
 	    #   to stop the various services; but since they are re-started soon
