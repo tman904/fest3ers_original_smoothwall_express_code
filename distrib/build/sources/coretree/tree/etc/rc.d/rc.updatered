@@ -211,7 +211,7 @@ fi
 
 
 # Drop a trace
-logger -t updatered "Updating RED"
+echolog "E" "s" "$DEBUG_DHCPCD" "Updating RED"
 
 
 if [ "$RED_TYPE" == "DHCP" ]; then
