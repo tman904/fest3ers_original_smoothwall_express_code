@@ -32,7 +32,7 @@ function readRED {
 	    ;;
 	  *)
 	    echolog "" "s" "$DEBUG_DHCPCD" "readRED called for invalid red type '$RED_TYPE'"
-	    exit 1
+	    exit 0
 	    ;;
 	esac
 }
@@ -157,7 +157,7 @@ echolog "$DEBUG" "" "$DEBUG_DHCPCD" "enter rc.updatered ($reason) [`date`]"
 
 if [ "$RED_TYPE" == "DHCP" ]; then
     case $reason in
-        BOUND|RENEW|STOP|REBOOT)
+        BOUND|RENEW|STOPPED|REBOOT)
           # Do nothing; we care about only these
           ;;
 	*)
@@ -231,8 +231,8 @@ if [ "$RED_TYPE" == "DHCP" ]; then
 	    rm -f /var/lib/dhcpcd-"$INTERFACE".info
 	    # This might could get annoying if the lease changes often
 	    /usr/bin/sounds/offlinesound
-                echolog "$DEBUG" "" "$DEBUG_DHCPCD" "DHCP lease link-DOWN; Exiting rc.updatered RED_TYPE [$RED_TYPE] ($reason) [`date`]"
-	        echolog "" "s" "" "DHCP lease lost (system going down). Reason: ($reason)"
+            echolog "$DEBUG" "" "$DEBUG_DHCPCD" "DHCP lease link-DOWN; Exiting rc.updatered RED_TYPE [$RED_TYPE] ($reason) [`date`]"
+	    echolog "" "s" "" "DHCP lease lost (system going down). Reason: ($reason)"
 
 	    exit 0
 	    ;;
@@ -298,7 +298,7 @@ else
 	echolog "" "s" "" "PPP is active on $1; updating RED info"
 
 	# Do nothing if it's already active
-	[ -e $redDIR/active ] && exit
+	[ -e $redDIR/active ] && exit 0
 
 	# Otherwise prepare and write the RED info
 	. ${pppDIR}/settings
@@ -373,4 +373,3 @@ fi
 
 # exit rc.updatered:
 echolog "$DEBUG" "" "$DEBUG_DHCPCD" "exit rc.updatered RED_TYPE [$RED_TYPE] ($reason) [`date`]"
-

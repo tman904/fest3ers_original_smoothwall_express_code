@@ -334,3 +334,5 @@ unset STARTSTOP
 
 # Start a shutdown daemon that waits for the power button to be pressed
 /usr/bin/smoothwall/powerButton.pl&
+
+exit 0
