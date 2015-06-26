@@ -360,15 +360,19 @@ for i in /var/smoothwall/mods/*/etc/rc.d/00rc.updatered; do
 done
 shopt -u nullglob
 
-# Check updates and register now if during operation. Otherwise, rc.sysinit handles it
-if [ "x$STARTSTOP" == "x" ]; then
+# If we are here, RED *must* be up; no need to check.
+
+# Check updates and register now if not during system boot. Otherwise, rc.sysinit handles it.
+if [ ! -e /var/run/STARTSTOP ]; then
   # Only do the following the first time RED comes up; it might not be for a while after booting
   #   in the case of PPP. Both must succeed for the flag to be deleted.
   if [ -e /var/run/do_update_machreg ]; then
-    echolog "E" "s" "" "..look for system updates; register system."
+    echolog "E" "s" "" "..look for system updates; register system. (async)"
+    (
     /usr/bin/smoothwall/updatelists.pl &&
-      /etc/rc.d/rc.machineregister &&
-      rm -f /var/run/do_update_machreg
+        /etc/rc.d/rc.machineregister &&
+        rm -f /var/run/do_update_machreg
+    ) |& logger -t smoothwall &
   fi
 fi
 
