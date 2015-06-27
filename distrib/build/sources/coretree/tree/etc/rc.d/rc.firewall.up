@@ -307,11 +307,13 @@ fi
 /sbin/iptables -t nat -A PREROUTING -j portfw
 
 # UPNP
-for chain in MINIUPNPD MINIUPNPD_PCP_PEER; do
-  /sbin/iptables -t nat -N $chain
-  for iface in $RED_DEV ppp0 ippp0; do
-    /sbin/iptables -t nat -A PREROUTING -i $iface -j $chain
-  done
+/sbin/iptables -t nat -N MINIUPNPD
+for iface in $RED_DEV ppp0 ippp0; do
+  /sbin/iptables -t nat -A PREROUTING -i $iface -j MINIUPNPD
+done
+/sbin/iptables -t nat -N MINIUPNPD-PCP-PEER
+for iface in $RED_DEV ppp0 ippp0; do
+  /sbin/iptables -t nat -A POSTROUTING -o $iface -j MINIUPNPD-PCP-PEER
 done
 
 # Web proxy
@@ -391,6 +393,8 @@ fi
 
 # adding MINIUPNPD chain to mangle
 /sbin/iptables -t mangle -N MINIUPNPD
+/sbin/iptables -t mangle -A PREROUTING -i ppp0 -j MINIUPNPD
+/sbin/iptables -t mangle -A PREROUTING -i ippp0 -j MINIUPNPD
 /sbin/iptables -t mangle -A PREROUTING -i $RED_DEV -j MINIUPNPD
 
 # Portforward bouncing
