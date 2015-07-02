@@ -136,8 +136,8 @@ install: compile
 	mkdir -p $(PKG_ROOT)/usr/lib
 
 ifeq ($(BITS_64), yes)
-	(cd $(PKG_ROOT); ln -s lib lib64)
-	(cd $(PKG_ROOT)/usr; ln -s lib lib64)
+	(cd $(PKG_ROOT); ln lib lib64)
+	(cd $(PKG_ROOT)/usr; ln lib lib64)
 endif
 
 	touch $(PKG_ROOT)/etc/ld.so.conf
