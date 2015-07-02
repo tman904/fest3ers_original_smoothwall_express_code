@@ -46,14 +46,10 @@ compile: configure
 
 INSTALL = yes
 install: compile
-	mkdir -p $(PKG_ROOT)/lib
-	mkdir -p $(PKG_ROOT)/usr/lib
-
 ifeq ($(BITS_64), yes)
-	(cd $(TOOLS_DIR); ln lib lib64)
-	(cd $(TOOLS_DIR)/usr; ln lib lib64)
+	mkdir -pv $(TOOLS_DIR)/lib
+	ln -sv lib $(TOOLS_DIR)/lib64
 endif
-
 	$(MAKE) -C $(COMPILE_DIR) install
 endif # Stage 1
 

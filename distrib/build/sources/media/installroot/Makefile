@@ -13,7 +13,7 @@ BB = /opt/busybox
 BBPROGS = [ [[ ar ash awk basename bbconfig blkid bunzip2 bzcat bzip2 cat \
 	  chattr chgrp chmod chown chroot chvt clear cmp cp cut date dd \
 	  df diff dirname dmesg du echo ed egrep eject env expr false fdisk find \
-	  findfs fsck grep gunzip halt hdparm head ifconfig init insmod ip \
+	  findfs fsck grep gunzip halt hdparm head ifconfig init insmod \
 	  ipcrm ipcs kill killall less ln ls lsattr lsmod mdev microcom \
 	  mkdir mkdosfs mkfifo mkfs.vfat mknod mkswap mktemp modprobe \
 	  more mount mv nohup od patch pipe_progress poweroff ps pwd \
@@ -79,11 +79,6 @@ klibc:
 all: clean bin lib klibc
 	mkdir -p tmp/sys
 	for i in $(ROOTDIRS); do mkdir -p tmp/$$i; done
-ifeq ($(BITS_64), yes)
-	(cd tmp; mkdir -p lib; ln lib lib64)
-	(cd tmp/usr; mkdir -p lib; ln lib lib64)
-endif
-
 	cp -aR $(BB)/bin/busybox tmp/bin
 	cd tmp/bin; for FILE in $(BBPROGS); do ln -s busybox $$FILE; done
 	for i in cpio gzip; do \
@@ -152,6 +147,11 @@ endif
 	
 	(cd tmp; mkdir -p local; cd local; \
 	  tar xfz /build/target/smoothwall-gzip.tar.gz)
+
+ifeq ($(BITS_64), yes)
+	(cd tmp; ln -s lib lib64)
+	(cd tmp/usr; ln -s lib lib64)
+endif
 
 	touch tmp/cdrominstall
 

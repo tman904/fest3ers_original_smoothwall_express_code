@@ -61,11 +61,6 @@ klibc:
 all: clean bin lib klibc
 	@mkdir -p tmp/sys tmp/run
 	@for i in $(ROOTDIRS); do mkdir -p tmp/$$i; done
-ifeq ($(BITS_64), yes)
-	cd tmp; mkdir -p lib; ln lib lib64
-	cd tmp/usr; mkdir -p lib; ln lib lib64
-endif
-
 	@ln -s bin tmp/sbin
 	@cp -aR $(BB)/bin/busybox tmp/bin
 	@cd tmp/bin; for FILE in $(BBPROGS); do ln -s busybox $$FILE; done
@@ -109,6 +104,11 @@ endif
 	  #ln -sf proc/self/fd/2 /lib/udev/devices/stderr; \
 	#
 	
+ifeq ($(BITS_64), yes)
+	cd tmp; ln -s lib lib64
+	cd tmp/usr; ln -s lib lib64
+endif
+
 	@touch tmp/cdrominstall
 
 	@/build/toolcrib/striptree tmp
