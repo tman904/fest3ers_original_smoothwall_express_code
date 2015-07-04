@@ -84,14 +84,7 @@ clean:
 	@echo -n " $(PACKAGE)"
 	@rm -rf $(PACKAGE)-$(VERSION)
 	@rm -rf $(COMPILE_DIR)
-ifeq ($(BUILD_PHASE), Final)
-	@rm -rf $(PKG_ROOT); mkdir -p $(PKG_ROOT)
-ifeq ($(BITS_64), yes)
-	mkdir -p $(PKG_ROOT)/{lib,usr/lib}
-	@cd $(PKG_ROOT); ln -s lib lib64
-	@cd $(PKG_ROOT)/usr; ln -s lib lib64
-endif
-endif
+	@rm -rf $(PKG_ROOT)
         
 endif
 
