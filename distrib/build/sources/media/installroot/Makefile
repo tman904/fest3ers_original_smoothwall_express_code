@@ -149,8 +149,8 @@ all: clean bin lib klibc
 	  tar xfz /build/target/smoothwall-gzip.tar.gz)
 
 ifeq ($(BITS_64), yes)
-	(cd tmp; ln -s lib lib64)
-	(cd tmp/usr; ln -s lib lib64)
+	(cd tmp; [ -e lib64 ] || ln -s lib lib64)
+	(cd tmp/usr; [ -e lib64 ] || ln -s lib lib64)
 endif
 
 	touch tmp/cdrominstall
