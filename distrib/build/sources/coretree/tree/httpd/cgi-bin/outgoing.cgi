@@ -371,16 +371,17 @@ my %render_settings =
 			rotate => 60,
 			mark   => ' ',
 		},
+		{ 
+			column => '4',
+			title => "$tr{'comment'}",
+			align  => 'left',
+			break => 'line',
+		},
 		{
 			column => '1',
 			colour => 'colour',
 			tr     => { 'GREEN' => 'green', 'ORANGE' => 'orange', 'PURPLE' => 'purple' },
 		},
-		{ 
-			column => '4',
-			title => "$tr{'comment'}",
-			break => 'line',
-		}
 	]
 );
 
@@ -441,8 +442,7 @@ my %render_settings =
 		},
 		{ 
 			column => '3',
-			title => "$tr{'comment'}",
-			break #=> 'line',
+			title  => "$tr{'comment'}",
 		},
 		{
 			column => '2',
