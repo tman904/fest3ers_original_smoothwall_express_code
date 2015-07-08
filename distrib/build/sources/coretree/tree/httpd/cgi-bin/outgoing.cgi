@@ -346,8 +346,9 @@ my %render_settings =
 		{ 
 			column => '1',
 			title  => "$tr{'interfacenc'}",
-			size   => 30,
+			size   => 20,
 			sort   => 'cmp',
+			maxrowspan  => 2,
 		},
 		{
 			column => '3',
@@ -359,13 +360,15 @@ my %render_settings =
 		{
 			column => '2',
 			title  => "$tr{'enabledtitle'}",
-			size   => 10,
+			size   => 6,
+			rotate => 60,
 			tr     => 'onoff',
 			align  => 'center',
 		},
 		{
 			title  => "$tr{'mark'}", 
-			size   => 10,
+			size   => 6,
+			rotate => 60,
 			mark   => ' ',
 		},
 		{
@@ -436,22 +439,25 @@ my %render_settings =
 			size   => 30,
 			sort   => 'cmp',
 		},
+		{ 
+			column => '3',
+			title => "$tr{'comment'}",
+			break #=> 'line',
+		},
 		{
 			column => '2',
 			title  => "$tr{'enabledtitle'}",
-			size   => 10,
+			size   => 8,
+			rotate => 60,
 			tr     => 'onoff',
 			align  => 'center',
 		},
 		{
 			title  => "$tr{'mark'}", 
-			size   => 10,
+			size   => 4,
+			rotate => 60,
+			align  => 'center',
 			mark   => ' ',
-		},
-		{ 
-			column => '3',
-			title => "$tr{'comment'}",
-			break => 'line',
 		}
 	]
 );
