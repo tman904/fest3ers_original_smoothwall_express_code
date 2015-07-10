@@ -175,7 +175,7 @@ sub displaytable
 	# widget.	
 
 	print qq{
-		<table class='list' style='margin:6pt 0'>
+		<table class='list' style='margin:6pt auto'>
 			<tr>
 	};
 
@@ -456,7 +456,7 @@ sub dispaliastab
 	# widget.	
 
 	print qq{
-		<table class='list' style='margin:6pt 0'>
+		<table class='list' style='margin:6pt auto'>
 			<tr>
 	};
 
