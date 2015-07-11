@@ -410,7 +410,7 @@ sub displaytable
 				if ( $colourcolumn != 0 ){
 					$text = "<span class='$colourtranslations->{$cols[$colourcolumn]}'>$text</span>";
 				}
-        print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_row('R${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
+        print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_mark('R${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
         # Single use!
         $rowspan = "";
 
@@ -422,7 +422,7 @@ sub displaytable
 				if ( $mark ne " " ){
 					$newmark = $mark;
 				}
-				print "<td class='list' style='$colour$styles[$entry]'' onclick=\"toggle_row('R${id}_$cols[0]');\"><input id ='R${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]'></td>";
+				print "<td class='list' style='$colour$styles[$entry]'' onclick=\"toggle_mark('R${id}_$cols[0]');\"><input id ='R${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]'></td>";
 			}
 			$entry++;
 		}
@@ -704,7 +704,7 @@ sub dispaliastab
 				if ( $colourcolumn != 0 ){
 					$text = "<span class='$colourtranslations->{$cols[$colourcolumn]}'>$text</span>";
 				}
-				print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_row('R${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
+				print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_mark('R${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
 				# Single use!
 				$rowspan = "";
 
@@ -722,7 +722,7 @@ sub dispaliastab
 				} else {
 					$text = 'DISABLED';
 				}
-				print "<td class='list' style='$colour$styles[$entry]'' onclick=\"toggle_row('R${id}_$cols[0]');\"><input id ='R${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]'></td>";
+				print "<td class='list' style='$colour$styles[$entry]'' onclick=\"toggle_mark('R${id}_$cols[0]');\"><input id ='R${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]'></td>";
 			}
 			$entry++;
 		}

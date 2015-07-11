@@ -26,7 +26,7 @@ function displayHelp(url) {
 
 /* Validation functions and related options */
 
-function toggle_row(field)
+function toggle_mark(field)
 {
 	if ( document.getElementById(field) ){
 		document.getElementById(field).checked = ! document.getElementById(field).checked;
