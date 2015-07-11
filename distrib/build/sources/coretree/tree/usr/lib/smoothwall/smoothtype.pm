@@ -422,7 +422,7 @@ sub displaytable
 				if ( $mark ne " " ){
 					$newmark = $mark;
 				}
-				print "<td class='list' style='$colour$styles[$entry]'' onclick=\"toggle_mark('R${id}_$cols[0]');\"><input id ='R${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]'></td>";
+				print "<td class='list' style='$colour$styles[$entry]' onclick=\"toggle_mark('R${id}_$cols[0]');\"><input id ='R${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]' onclick=\"toggle_mark('R${id}_$cols[0]');\"></td>";
 			}
 			$entry++;
 		}
