@@ -172,7 +172,11 @@ sub displaytable
 	my ( $filename, $settings, $order, $selected_column, $id ) = @_;
 
 	# 'id' can be used to give us a different name, *iff* we are repeating the
-	# widget.	
+	# widget. If it isn't set, set it randomly.
+	if (undef($id) || $id eq "")
+	{
+		$id = rand(1000);
+	}
 
 	print qq{
 		<table class='list' style='margin:6pt auto'>
@@ -406,7 +410,7 @@ sub displaytable
 				if ( $colourcolumn != 0 ){
 					$text = "<span class='$colourtranslations->{$cols[$colourcolumn]}'>$text</span>";
 				}
-        print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_row('${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
+        print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_row('R${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
         # Single use!
         $rowspan = "";
 
@@ -418,7 +422,7 @@ sub displaytable
 				if ( $mark ne " " ){
 					$newmark = $mark;
 				}
-				print "<td class='list' style='$colour$styles[$entry]'><input id ='${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]'></td>";
+				print "<td class='list' style='$colour$styles[$entry]'' onclick=\"toggle_row('R${id}_$cols[0]');\"><input id ='R${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]'></td>";
 			}
 			$entry++;
 		}
@@ -453,7 +457,11 @@ sub dispaliastab
 	my ( $filename, $settings, $order, $selected_column, $id ) = @_;
 
 	# 'id' can be used to give us a different name, *iff* we are repeating the
-	# widget.	
+	# widget. If it isn't set, set it randomly.
+	if (undef($id) || $id eq "")
+	{
+		$id = rand(1000);
+	}
 
 	print qq{
 		<table class='list' style='margin:6pt auto'>
@@ -696,7 +704,7 @@ sub dispaliastab
 				if ( $colourcolumn != 0 ){
 					$text = "<span class='$colourtranslations->{$cols[$colourcolumn]}'>$text</span>";
 				}
-				print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_row('${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
+				print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_row('R${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
 				# Single use!
 				$rowspan = "";
 
@@ -714,7 +722,7 @@ sub dispaliastab
 				} else {
 					$text = 'DISABLED';
 				}
-				print "<td class='list' style='$colour$styles[$entry]'><input id ='${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]' $text></td>";
+				print "<td class='list' style='$colour$styles[$entry]'' onclick=\"toggle_row('R${id}_$cols[0]');\"><input id ='R${id}_$cols[$column]' type='checkbox' name='$newmark$cols[$column]'></td>";
 			}
 			$entry++;
 		}
