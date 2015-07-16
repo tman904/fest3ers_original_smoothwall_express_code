@@ -418,6 +418,7 @@ print <<END
             'MEMORY',
             'NETCONF1',
             'NETCONF2',
+            'ROUTE',
             'SERVICES',
         ];
 
