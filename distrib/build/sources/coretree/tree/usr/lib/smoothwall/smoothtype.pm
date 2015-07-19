@@ -191,59 +191,59 @@ sub displaytable
 	my @styles;
 	my @translations;
 	my @breaks;
-  my @urls;
+	my @urls;
 
 	my $i = 0;
 	my $sort;
 	my $colourtranslations;
 	my $colourcolumn = 0;
-  my $colcount;
+	my $colcount;
 
 	my ( $table1colour, $table2colour ) = ( '#f0f0f0', '#e0e0e0' );
 
 	foreach my $column ( @{$settings->{'columns'}} ){
 		my $span = "";
-    my $style = "background-color: $table1colour;";
+		my $style = "background-color: $table1colour;";
 		my $class = "list";
 
-    if ( defined $column->{'maxrowspan'} ) {
-      $rowspan = " rowspan='$column->{'maxrowspan'}'";
-    } else {
-      $rowspan = "";
-    }
+		if ( defined $column->{'maxrowspan'} ) {
+			$rowspan = " rowspan='$column->{'maxrowspan'}'";
+		} else {
+			$rowspan = "";
+		}
 
-    if ( defined $column->{'rotate'} ) {
-      $rotate = "; transform:rotate($column->{'rotate'}deg);";
-      if ( defined $column->{'valign'} ) {
-        $style .= "vertical-align:middle;";
-      }
-    } else {
-      $rotate = "";
-      if ( defined $column->{'valign'} ) {
-        $style .= "vertical-align:bottom;";
-      }
-    }
+		if ( defined $column->{'rotate'} ) {
+			$rotate = "; transform:rotate($column->{'rotate'}deg);";
+			if ( defined $column->{'valign'} ) {
+			$style .= "vertical-align:middle;";
+			}
+		} else {
+			$rotate = "";
+			if ( defined $column->{'valign'} ) {
+				$style .= "vertical-align:bottom;";
+			}
+		}
 
-    if ( defined $column->{'align'} ){
-      $style .= "text-align: $column->{'align'};";
-    }
+		if ( defined $column->{'align'} ){
+			$style .= "text-align: $column->{'align'};";
+		}
 
 		if ( defined $column->{'break'} ){
 			print "</tr><tr>";
-      $colcount = scalar(@columns) + $column->{'spanadj'};
+			$colcount = scalar(@columns) + $column->{'spanadj'};
 			$span = " colspan='$colcount'";
-      $class = "list";
-    } else {
-      $style .= "border-bottom:1px solid #b0b0b0;";
+			$class = "list";
+		} else {
+			$style .= "border-bottom:1px solid #b0b0b0;";
 		}
 
-    if ( $rotate eq "" ){
-		if ( defined $column->{'size'} ){
-			$style .= "width: $column->{'size'}%;";
+		if ( $rotate eq "" ){
+			if ( defined $column->{'size'} ){
+				$style .= "width: $column->{'size'}%;";
+			}
+		} else {
+			$style .= "width:.01%; height:6em;";
 		}
-    } else {
-      $style .= "width:.01%; height:6em;";
-    }
 
 		my $arrow;
 		my $url = $settings->{'url'};
@@ -269,7 +269,7 @@ sub displaytable
 		}
 
 		if ( not defined $column->{'colour'} ){
-      print qq !
+			print qq !
         <th$span$rowspan class='$class' style='$style; padding:.05em .5em'>
           <div style="a$rotate"><a href="$url">$column->{'title'}$arrow</a></div>
 				</th>
@@ -279,13 +279,13 @@ sub displaytable
 		$style = "";
 
 		if ( defined $column->{'align'} ){
-      $style .= "text-align: $column->{'align'};";
+			$style .= "text-align: $column->{'align'};";
 		}
 
 		if ( defined $column->{'break'} ){
 			push @breaks, $column->{'column'};
-    } elsif ( defined $column->{'urllimit'} ){
-      push @urls,  $column->{'column'};
+		} elsif ( defined $column->{'urllimit'} ){
+			push @urls,  $column->{'column'};
 		} elsif ( defined $column->{'colour'} ){
 			$colourcolumn = $column->{'column'};
 			$colourtranslations = $column->{'tr'};
@@ -310,15 +310,15 @@ sub displaytable
 
 	# now we can render the content
 
-  my $colour = "background-color: $table2colour;";
+	my $colour = "background-color: $table2colour;";
 	$i = 0;
 	my @lines;
 
-  if (ref($filename) eq "ARRAY"){
-    foreach $line (@$filename) {
-      my @cols = ( $position++, (split / /, $line) );
-      push @lines, \@cols;
-    }
+	if (ref($filename) eq "ARRAY"){
+		foreach $line (@$filename) {
+			my @cols = ( $position++, (split / /, $line) );
+			push @lines, \@cols;
+		}
 	} elsif ( open my $input, "$filename" ){
 		my $position = 1;
 		while( my $line = <$input> ){
@@ -371,17 +371,17 @@ sub displaytable
 		my @cols = @{$line};
 		print "<tr class='list'>\n";
 		my $entry = 0;
-    # Each comment increments $rowSpanCount
-    $rowSpanCount = 1;
-    foreach my $reference ( @breaks ){
-      if ( defined $cols[$reference] and $cols[$reference] ne "" ){
-        $rowSpanCount++;
-      }
-    }
-    my $rowspan = " rowspan='$rowSpanCount'";
+		# Each comment increments $rowSpanCount
+		$rowSpanCount = 1;
+		foreach my $reference ( @breaks ){
+			if ( defined $cols[$reference] and $cols[$reference] ne "" ){
+				$rowSpanCount++;
+			}
+		}
+		my $rowspan = " rowspan='$rowSpanCount'";
 		foreach my $reference ( @columns ){
 			unless ( $reference =~ /,/ ){
-			# are we supposed to translate this at all ?
+				# are we supposed to translate this at all ?
 				my $text = $cols[$reference];
 				if ( defined $translations[$entry] ){
 					my $type = ref $translations[$entry];
@@ -393,14 +393,14 @@ sub displaytable
 								$text = "<img alt='off' src='/ui/img/off.gif'>";
 							}
 						}
-            if ( $translations[$entry] =~ /url/ ){
-              my ($kwd, $charlimit) = split (/:/, $translations[$entry]);
-	      my $url = $text;
-	      my $part = substr($text, 0, 80);
-	      $part .= "..." unless length($part) < 80;
-              $text = "<a href='$url' title='$url' target='_new'>";
-	      $text .= "$part</a>";
-            }
+						if ( $translations[$entry] =~ /url/ ){
+							my ($kwd, $charlimit) = split (/:/, $translations[$entry]);
+							my $url = $text;
+							my $part = substr($text, 0, 80);
+							$part .= "..." unless length($part) < 80;
+							$text = "<a href='$url' title='$url' target='_new'>";
+							$text .= "$part</a>";
+						}
 					} elsif ( $type eq "HASH" and defined $translations[$entry]->{$cols[$reference]} ){
 						$text = $translations[$entry]->{$cols[$reference]};
 					} elsif ( $type eq "ARRAY" and defined $translations[$entry]->[$cols[$reference]] ){
@@ -410,13 +410,13 @@ sub displaytable
 				if ( $colourcolumn != 0 ){
 					$text = "<span class='$colourtranslations->{$cols[$colourcolumn]}'>$text</span>";
 				}
-        print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_mark('R${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
-        # Single use!
-        $rowspan = "";
+				print "<td$rowspan class='list' style='$colour$styles[$entry]; padding:.1em .5em' onclick=\"toggle_mark('R${id}_$cols[0]');\" ><p style='margin:0'>$text</p</td>\n";
+				# Single use!
+				$rowspan = "";
 
 			} else {
 				# this is a "mark" field, i.e. a checkbox
-        my $text;
+				my $text;
 				my ($column, $mark) = split( /,/, $reference );
 				my $newmark = "";
 				if ( $mark ne " " ){
