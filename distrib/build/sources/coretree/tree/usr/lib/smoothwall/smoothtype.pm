@@ -232,9 +232,9 @@ sub displaytable
 			print "</tr><tr>";
 			$colcount = scalar(@columns) + $column->{'spanadj'};
 			$span = " colspan='$colcount'";
-			$class = "list";
+			$class = "listcomment";
 		} else {
-			$style .= "border-bottom:1px solid #b0b0b0;";
+			$style .= "border-bottom:1px solid #d0d0d0;";
 		}
 
 		if ( $rotate eq "" ){
@@ -517,9 +517,9 @@ sub dispaliastab
 			print "</tr><tr>";
 			$colcount = scalar(@columns) + $column->{'spanadj'};
 			$span = " colspan='$colcount'";
-			$class = "list";
+			$class = "listcomment";
 		} else {
-			$style .= "border-bottom:1px solid #b0b0b0;";
+			$style .= "border-bottom:1px solid #d0d0d0;";
 		}
 
 		if ( $rotate eq "" ){

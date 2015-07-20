@@ -259,7 +259,7 @@ th.listcomment {
 	width: 30%; 
 	border-width: 0px; 
 	border-right: 1px; 
-	border-color: #b0b0b0; 
+	border-color: #d0d0d0; 
 	background-color: #eeeeee;
 	border-style: solid;
 }
@@ -282,7 +282,7 @@ td.list {
 td.listcomment {
 	border-width: 0px; 
 	border-top: 1px;
-	border-color: #b0b0b0;
+	border-color: #d0d0d0; 
 	border-style: solid;
 	text-align: center;
 }
