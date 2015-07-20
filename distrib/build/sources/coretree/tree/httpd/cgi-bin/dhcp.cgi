@@ -488,8 +488,6 @@ print <<END
 END
 ;
 
-&closebox();
-
 &openbox('DHCP:');
 
 print <<END
@@ -710,6 +708,8 @@ if (-e "${swroot}/dhcp/uptodate") {
 END
 	&closebox();
 }
+
+&closebox();
 
 &alertbox('add','add');
 
