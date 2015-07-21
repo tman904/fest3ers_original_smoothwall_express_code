@@ -11,7 +11,6 @@ UPDATE_PACKAGES = \
 		  kernel-drivers \
 		  miniupnpd \
 		  openssl \
-		  perl ? \
 		  qemu \
 		  smoothd \
 		  squid \
