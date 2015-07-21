@@ -302,6 +302,10 @@ echolog "e" "s" "" "  Start dhcpd (if enabled)"
 /usr/bin/smoothcom dhcpdrestart
 echolog "e" "s" "" "  Start squid (if enabled)"
 /usr/bin/smoothcom squidrestart
+echolog "e" "s" "" "  APCupsd server (if enabled)"
+/usr/bin/smoothcom apcupsdrestart
+rm -f /etc/apcupsd/powerfail;
+rm -f /etc/nologin;
 
 # Adapted from Steve McNeill's ModInstall
 echolog "e" "s" "" "  Run mods' post-barricade run level scripts"
