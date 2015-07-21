@@ -199,7 +199,9 @@ sub displaytable
 	my $colourcolumn = 0;
 	my $colcount;
 
-	my ( $table1colour, $table2colour ) = ( '#f0f0f0', '#e0e0e0' );
+	#my ( $table1colour, $table2colour ) = ( '#f0f0f0', '#e0e0e0' );
+	my ( $table1colour, $table2colour ) = ( "rgba(0,0,0,.03)", "rgba(0,0,0,.1)" );
+
 
 	foreach my $column ( @{$settings->{'columns'}} ){
 		my $span = "";
