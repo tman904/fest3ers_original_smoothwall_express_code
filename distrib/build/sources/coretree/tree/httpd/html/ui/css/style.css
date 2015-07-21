@@ -251,7 +251,7 @@ th.list {
 	border-width: 0px; 
 	border-right: 1px; 
 	border-color: #b0b0b0; 
-	background-color: #dedede;
+	background-color: rgba(0,0,0,.03);
 	border-style: solid;
 }
 
@@ -267,7 +267,7 @@ th.listcomment {
 tr.list {
 	border-width: 0px; 
 	border-top: 1px;
-	border-color: #c0c0c0;
+	background-color: rgba(0,0,0,.03);
 	border-style: solid;
 }
 
