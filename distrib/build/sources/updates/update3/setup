@@ -2,7 +2,12 @@
 
 echo "Update 3 installing."
 
+# Remove the old dhcpcd bin and symlink
+rm -f /sbin/dhcpcd /usr/sbin/dhcpcd
+
+# Unpack the patch
 tar xvf patch.tar.gz -C /
 
+# Leave this for a few generations, just in case.
 echo "Remove unused file 'acl'"
 rm -f /var/smoothwall/proxy/acl
