@@ -19,9 +19,9 @@ my $machineconfig = "${swroot}/outgoing/machineconfig";
 my $errormessage = '';
 
 my %backgroundColor = (
-	'GREEN'  => '#bbffbb',
-	'ORANGE' => '#ffaa77',
-	'PURPLE' => '#ddaaff',
+	'GREEN'  => 'rgba(0,255,0,.2',
+	'ORANGE' => 'rgba(255,160,0,.4',
+	'PURPLE' => 'rgba(179,0,255,.2',
 	'RED'    => '#ffaaaa',
 );
 
@@ -269,8 +269,8 @@ my $width = 90 / $unused;
 
 print <<END;
 	<tr>
-		<td class='list' style='width: 50%; border-bottom:1px solid #b0b0b0; background-color:#f0f0f0'>$tr{'traffic is 1'}</td>
-		<td class='list' style='width: 50%; border-bottom:1px solid #b0b0b0; background-color:#f0f0f0'>$tr{'traffic is 4'}</td>
+		<td class='list' style='width: 50%; border-bottom:1px solid #b0b0b0; background-color:(0,0,0,.03)'>$tr{'traffic is 1'}</td>
+		<td class='list' style='width: 50%; border-bottom:1px solid #b0b0b0; background-color:rgba(0,0,0,.03)'>$tr{'traffic is 4'}</td>
 	</tr>
 END
 
