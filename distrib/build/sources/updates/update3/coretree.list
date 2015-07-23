@@ -1,6 +1,7 @@
 ./etc/apcupsd/apcupsd.conf
 ./etc/apcupsd/apcupsd.conf.template
 ./etc/logrotate.d/debug
+./etc/logrotate.d/snort
 ./etc/miniupnpd.conf.template
 ./etc/passwd
 ./etc/rc.d/inc.block-ingress

@@ -7,10 +7,12 @@ UPDATE_PACKAGES = \
 		  device-ids \
 		  dhcpcd \
 		  expat \
+		  findutils \
 		  freetype \
 		  kernel-drivers \
 		  miniupnpd \
 		  openssl \
+		  perl-mods \
 		  qemu \
 		  smoothd \
 		  squid \
