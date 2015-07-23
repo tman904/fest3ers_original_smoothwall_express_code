@@ -8,6 +8,9 @@ rm -f /sbin/dhcpcd /usr/sbin/dhcpcd
 # Unpack the patch
 tar xvf patch.tar.gz -C /
 
+# Fix a couple existing programs that should be setuid
+chmod u+s /usr/sbin/ping6 /usr/bin/traceroute
+
 # Leave this for a few generations, just in case.
 echo "Remove unused file 'acl'"
 rm -f /var/smoothwall/proxy/acl
