@@ -31,6 +31,8 @@ export PERL_MODS = \
 	    Log-Log4perl \
 	    Net-CIDR \
 	    Net-Netmask \
+	    Net-SMTPS \
+	    Net-SMTP-SSL \
 	    NetAddr-IP \
 	    RRD-Simple \
 	    Set-IntSpan \
