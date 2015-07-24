@@ -748,7 +748,7 @@ END
 
 print <<END;
 
-<TABLE style='width: 90%; border: none; margin:1em auto'>
+<TABLE style='width: 100%; border: none; margin:1em auto'>
 <TR>
 	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save and restart'}'></TD>
 	<TD style='text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'restart'}'></TD>
