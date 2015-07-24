@@ -76,7 +76,7 @@ $apcupsdsettings{'VALID'} = '';
 
 my $errormessage = '';
 
-if ($apcupsdsettings{'ACTION'} eq $tr{'save&restart'}) {
+if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	# First, validate all entry fields for blank or valid content
 	if ($apcupsdsettings{'ALERTADDR'} ne "" and ! &validemailaddr($apcupsdsettings{'ALERTADDR'})) {
 		$errormessage .= $tr{"apc invalid alert addr"} ."<br />";
@@ -629,7 +629,7 @@ print <<END;
 
 <TABLE style='width: 100%; text-align:center; border: none; margin:1em auto'>
 <TR>
-	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save&restart'}'></TD>
+	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save and restart'}'></TD>
 	<TD style='text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'restart'}'></TD>
 	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'stop'}'></TD>
 </TR>
@@ -750,7 +750,7 @@ print <<END;
 
 <TABLE style='width: 90%; border: none; margin:1em auto'>
 <TR>
-	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save&restart'}'></TD>
+	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save and restart'}'></TD>
 	<TD style='text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'restart'}'></TD>
 	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'stop'}'></TD>
 </TR>

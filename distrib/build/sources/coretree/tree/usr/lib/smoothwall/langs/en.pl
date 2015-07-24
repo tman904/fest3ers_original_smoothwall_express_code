@@ -1602,7 +1602,7 @@
 'Wait before responding to On Battery alert for' => 'Wait before responding to On Battery alert for',
 'if not default' => 'if not default',
 'port' => 'port',
-'save&restart' => 'Save & Restart',
+'save and restart' => 'Save and restart',
 'will shutdown Smoothwall in response to a power failure' => 'will shutdown Smoothwall in response to a power failure',
 'ssapcupsd' => 'ups',
 'will simulate the response to a power failure; it will not shutdown Smoothwall or the UPS' => 'will simulate the response to a power failure; it will not shutdown Smoothwall or the UPS',
