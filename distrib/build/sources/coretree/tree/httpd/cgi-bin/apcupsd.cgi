@@ -19,8 +19,8 @@ sub validemailaddr() {
 
         my $okaddr = 1;
 	my ($tmpnam, $tmphst) = split ("@", $email);
-        if ($tmpnam !~ /[a-zA-Z][a-zA-Z0-9.]*/ ) { $okaddr = 0; }
-        if (! &validhostname ($tmphst)) { $okaddr = 0; }
+        if ($tmpnam !~ /[a-zA-Z0-9._+-]*/ ) { $okaddr = 0; }
+        if (! (&validhostname ($tmphst) or &validip($tmphst))) { $okaddr = 0; }
 	return $okaddr;
 }
 
@@ -96,7 +96,7 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save&restart'}) {
 	if ($apcupsdsettings{'MAILSVR'} ne "" and !&validip($apcupsdsettings{'MAILSVR'}) and ! &validhostname($apcupsdsettings{'MAILSVR'})) {
 		$errormessage .= $tr{"apc invalid svr addr"} ."<br />";
 	}
-	if ($apcupsdsettings{'NISPORT'} ne "" and $apcupsdsettings{'NISPORT'} !~ /[0-9]+/ ) {
+	if ($apcupsdsettings{'NISPORT'} ne "" and not &validport($apcupsdsettings{'NISPORT'}) ) {
 		$errormessage .= $tr{"apc invalid nis port"} ."<br />";
 	}
 	if ($apcupsdsettings{'POLLTIME'} ne "" and $apcupsdsettings{'POLLTIME'} !~ /[0-9]+/ ) {
@@ -110,8 +110,12 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save&restart'}) {
 	}
 	if ($apcupsdsettings{'UPSAUTH'} =~ /[<>]/ ) { $errormessage .= $tr{"apc invalid password"} ."<br />"; }
 
-	if ($apcupsdsettings{'UPSIP'} != "" and ! &validip($apcupsdsettings{'UPSIP'}) ) {
-		$errormessage .= $tr{"apc invalid ups ip"} ."<br />";
+	my ($tmphost,$tmpport) = split(":",$apcupsdsettings{'UPSIP'});
+	if ($tmphost ne "" and not &validip($tmphost) and not &validhostname($tmphost)) {
+		$errormessage .= $tr{"apc invalid ups ip host"} ."<br />";
+	}
+	if ($tmpport ne "" and not &validport($tmpport)) {
+		$errormessage .= $tr{"apc invalid ups ip port"} ."<br />";
 	}
 	if ($apcupsdsettings{'UPSMODE'} ne "" and $apcupsdsettings{'UPSMODE'} !~ /[0-9]+/ ) {
 		$errormessage .= $tr{"apc invalid ups mode"} ."<br />";
