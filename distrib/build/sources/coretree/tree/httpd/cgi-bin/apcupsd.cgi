@@ -314,8 +314,9 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save&restart'}) {
 ERROR:
 	if ($errormessage) {
                 $apcupsdsettings{'VALID'} = 'no'; }		
-       else {
-                $apcupsdsettings{'VALID'} = 'yes'; }
+	else {
+                $apcupsdsettings{'VALID'} = 'yes';
+	}
 
 	if ($apcupsdsettings{'VALID'} eq 'yes') {
 		
@@ -324,12 +325,12 @@ ERROR:
 		&writehash("/var/smoothwall/apcupsd/settings", \%apcupsdsettings);
 		
 		system("/usr/bin/smoothwall/writeapcupsdconf.pl");
-		system("smoothcom apcupsdkillpwr");
 		
 		my $success = message("apcupsdrestart");
 		
 		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+			$errormessage = $tr{'smoothd failure'};
+		}
 	}
 }
 
@@ -349,8 +350,9 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'restart'})
 	&log("APCupsd service restarted.");
 
 	my $success = message("apcupsdrestart");
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'};
+	}
 }
 
 if ($apcupsdsettings{'ACTION'} eq $tr{'stop'})
@@ -358,8 +360,9 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'stop'})
 	&log("APCupsd service stopped.");
 
 	my $success = message("apcupsdstop");
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+	if (not defined $success) {
+		$errormessage = $tr{'smoothd failure'};
+	}
 }
 
 $checked{'ENABLE'}{'off'} = '';
