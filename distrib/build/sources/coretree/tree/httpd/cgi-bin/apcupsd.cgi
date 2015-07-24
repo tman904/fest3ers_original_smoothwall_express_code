@@ -671,7 +671,7 @@ END
 &openbox("$tr{'UPS Events'}:");
 
 print <<END
-<TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
+<TABLE style='width: 98%; border: none; margin:1em auto .5em auto'>
 <TR>
 	<TD style='text-align: right;'>$tr{'apc MSGCOMMFAILURE'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGCOMMFAILURE' $checked{'MSGCOMMFAILURE'}{'on'}></TD>
 	<TD style='text-align: right;'>$tr{'apc MSGPOWEROUT'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGPOWEROUT' $checked{'MSGPOWEROUT'}{'on'}></TD>
