@@ -34,7 +34,7 @@ $apcupsdsettings{'BATTLEVEL'} = '15';
 $apcupsdsettings{'CC1ADDR'} = '';
 $apcupsdsettings{'CC2ADDR'} = '';
 $apcupsdsettings{'ENABLE'} = 'off';
-$apcupsdsettings{'ENABLEEMAIL'} = 'off';
+$apcupsdsettings{'ENABLEALERTS'} = 'off';
 $apcupsdsettings{'FROMADDR'} = '';
 $apcupsdsettings{'KILLPOWER'} = 'off';
 $apcupsdsettings{'MAILSVR'} = '';
@@ -251,33 +251,37 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save&restart'}) {
 	$errormessage .= 'Invalid Poll time, enter a value between 20 and 300<br />';
 	}
 
-	unless ($apcupsdsettings{'FROMADDR'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/))
+	# Don't validate email addrs, etc., if notifications are not enabled
+	if ($apcupsdsettings{'ENABLEALERTS'} eq 'on')
 	{
-	$errormessage .= 'Please enter a valid From address<br />';
-	}
-
-	unless ($apcupsdsettings{'ALERTADDR'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/))
-	{
-	$errormessage .= 'Please enter a valid Alert address<br />';
-	}
-
-	if ($apcupsdsettings{'CC1ADDR'} ne '') {
-		unless ($apcupsdsettings{'CC1ADDR'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/))
+		if (! &validemailaddr($apcupsdsettings{'FROMADDR'}))
 		{
-		$errormessage .= 'Please enter a valid Alert2 address<br />';
+		$errormessage .= 'Please enter a valid From address<br />';
 		}
-	}
-
-	if ($apcupsdsettings{'CC2ADDR'} ne '') {
-		unless ($apcupsdsettings{'CC2ADDR'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/))
+	
+		if (! &validemailaddr($apcupsdsettings{'ALERTADDR'}))
 		{
-		$errormessage .= 'Please enter a valid Alert3 address<br />';
-	 	}
-	}
-
-	if ($apcupsdsettings{'MAILSVR'} eq '')
-	{
-	$errormessage .= 'Please enter valid mailserver<br />';
+		$errormessage .= 'Please enter a valid Alert address<br />';
+		}
+	
+		if ($apcupsdsettings{'CC1ADDR'} ne '') {
+			unless ($apcupsdsettings{'CC1ADDR'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/))
+			{
+			$errormessage .= 'Please enter a valid Alert2 address<br />';
+			}
+		}
+	
+		if ($apcupsdsettings{'CC2ADDR'} ne '') {
+			unless ($apcupsdsettings{'CC2ADDR'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/))
+			{
+			$errormessage .= 'Please enter a valid Alert3 address<br />';
+		 	}
+		}
+	
+		if ($apcupsdsettings{'MAILSVR'} eq '')
+		{
+		$errormessage .= 'Please enter valid mailserver<br />';
+		}
 	}
 
 	if ($apcupsdsettings{'BATTLEVEL'} >= 96 || $apcupsdsettings{'BATTLEVEL'} <= 4 )
@@ -366,9 +370,9 @@ $checked{'ENABLE'}{'off'} = '';
 $checked{'ENABLE'}{'on'} = '';
 $checked{'ENABLE'}{$apcupsdsettings{'ENABLE'}} = 'CHECKED';
 
-$checked{'ENABLEEMAIL'}{'off'} = '';
-$checked{'ENABLEEMAIL'}{'on'} = '';
-$checked{'ENABLEEMAIL'}{$apcupsdsettings{'ENABLEEMAIL'}} = 'CHECKED';
+$checked{'ENABLEALERTS'}{'off'} = '';
+$checked{'ENABLEALERTS'}{'on'} = '';
+$checked{'ENABLEALERTS'}{$apcupsdsettings{'ENABLEALERTS'}} = 'CHECKED';
 
 $selected{'OPMODE'}{'testing'} = '';
 $selected{'OPMODE'}{'full'} = '';
@@ -545,7 +549,7 @@ print <<END
 	<TD CLASS='base' style='width: 37%;'>$tr{'Wait before responding to On Battery alert for'}:</TD>
 	<TD style='width: 13%;'><INPUT TYPE='text' style='width: 3em;' NAME='BATTDELAY' VALUE='$apcupsdsettings{'BATTDELAY'}'> $tr{'sec.'}</TD>
 	<TD CLASS='base' style='width: 37%;'>$tr{'Shutdown after on battery for'}:<span style='font-size:7pt;'> (0 $tr{'Disables'})</span></TD>
-	<TD style='width: 13%;'><INPUT TYPE='text' style='width: 3em;' NAME='TO' VALUE='$apcupsdsettings{'TO'}'> $tr{'min.'}</TD>
+	<TD style='width: 13%;'><INPUT TYPE='text' style='width: 3em;' NAME='TO' VALUE='$apcupsdsettings{'TO'}'> $tr{'sec.'}</TD>
 </TR>
 <TR>
 	<TD CLASS='base' style='width: 37%;'>$tr{'Deny Shell Login when on battery'}:</TD>
@@ -632,13 +636,13 @@ print <<END;
 </TABLE>
 END
 
-&openbox("$tr{'Email Alert Configurationc'}");
+&openbox("$tr{'Alerts Configurationc'}");
 
 print <<END
 <TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
 <TR>
-	<TD CLASS='base' style='width:20%'>$tr{'Enable Email Alerts'}:</TD>
-	<TD style='width:15%'><INPUT TYPE='checkbox' NAME='ENABLEEMAIL' $checked{'ENABLEEMAIL'}{'on'}></TD>
+	<TD CLASS='base' style='width:20%'>$tr{'Enable Alerts'}:</TD>
+	<TD style='width:15%'><INPUT TYPE='checkbox' NAME='ENABLEALERTS' $checked{'ENABLEALERTS'}{'on'}></TD>
 	<TD CLASS='base' style='width:30%'></td>
 	<TD style='width:20%'></td>
 </TR>
@@ -664,7 +668,7 @@ print <<END
 END
 ;
 
-&openbox("$tr{'Event Alert Emails'}:");
+&openbox("$tr{'UPS Events'}:");
 
 print <<END
 <TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
