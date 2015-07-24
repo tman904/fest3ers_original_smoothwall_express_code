@@ -26,7 +26,7 @@ extern "C" {
    int restart_apcupsd(std::vector<std::string> & parameters, std::string & response);
    int   start_apcupsd(std::vector<std::string> & parameters, std::string & response);
    int    stop_apcupsd(std::vector<std::string> & parameters, std::string & response);
-   int killpwr_apcupsd(std::vector<std::string> & parameters, std::string & response);
+   int   write_apcupsd(std::vector<std::string> & parameters, std::string & response);
 }
 
 int load(std::vector<CommandFunctionPair> & pairs) {
