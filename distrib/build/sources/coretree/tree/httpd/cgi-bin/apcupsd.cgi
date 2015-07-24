@@ -231,12 +231,6 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save&restart'}) {
 	$errormessage .= $tr{"Password Not Required"} .'<br />';
 	}
 
-
-	if ($apcupsdsettings{'UPSMODE'} eq '4' && ($apcupsdsettings{'TO'}) eq '')
-	{
-	$errormessage .= $tr{"Pls Enter Shutdown After Time on Batt"} .'<br />'; 
-	}
-
 	if ($apcupsdsettings{'UPSMODE'} eq '4' && ($apcupsdsettings{'UPSPORT'}) ne '' )
 	{
 	$errormessage .= $tr{"Pls Leave Serial Blank Slave"} .'<br />';
