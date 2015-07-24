@@ -1596,7 +1596,7 @@
 'Standalone UPS' => 'Standalone UPS',
 'TESTING' => 'TESTING',
 'Turn off UPS on shutdown' => 'Turn off UPS on Shutdown',
-'UPS Killpower Incompatible Slave' => '<B>UPS Killpower on shutdown</B> is not compatible with SLAVE working.<BR>Only available for MASTER (e.g. directly connected via USB or Serial) systems',
+'UPS Killpower Incompatible Slave' => '<B>UPS Killpower on shutdown</B> is not compatible with SLAVE mode.<br />&nbsp;&nbsp;&nbsp;&nbsp;It is only available for MASTER mode (i.e., when directly connected via USB or Serial)',
 'UPS Name (8 Char Max.)' => 'UPS Name (8 Char Max.)',
 'UPS Type' => 'Type',
 'Username Not Required' => 'User name not required unless using PCNET',
