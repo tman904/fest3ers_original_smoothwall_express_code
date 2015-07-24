@@ -193,7 +193,7 @@ close FILE;
 
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGONBATTERY} eq 'on') {
-  open (FILE, ">/var/smoothwall/apcupsd/scripts/onbattery");
+  open (FILE, ">/etc/apcupsd/scripts/onbattery");
   print FILE <<END;
 #!/bin/sh
 #
@@ -222,15 +222,15 @@ echo `date +%Y-%m-%d%t%T%t%z` " Onbattery Alert email sent to: $settings{CC1ADDR
 exit 0
 END
 
-} elsif (-f "/var/smoothwall/apcupsd/scripts/onbattery") {
-	unlink("/var/smoothwall/apcupsd/scripts/onbattery");
+} elsif (-f "/etc/apcupsd/scripts/onbattery") {
+	unlink("/etc/apcupsd/scripts/onbattery");
 }
 close FILE;
 
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGOFFBATTERY} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/offbattery");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/offbattery");
+	print FILE <<END;
 #!/bin/sh
 #
 # Utility power returned alert script
@@ -258,14 +258,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Offbattery Alert email sent to: $settings{CC1ADD
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/offbattery")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/offbattery");
-	}
+} elsif (-f "/etc/apcupsd/scripts/offbattery") {
+	unlink("/etc/apcupsd/scripts/offbattery");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGCOMMFAILURE} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/commfailure");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/commfailure");
+	print FILE <<END;
 #!/bin/sh
 #
 # Communication with UPS lost alert script
@@ -293,14 +292,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Commfailure Alert email sent to: $settings{CC1AD
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/commfailure")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/commfailure");
-	}
+} elsif (-f "/etc/apcupsd/scripts/commfailure") {
+	unlink("/etc/apcupsd/scripts/commfailure");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGCOMMOK} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/commok");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/commok");
+	print FILE <<END;
 #!/bin/sh
 #
 # Communication with UPS restored alert script
@@ -328,14 +326,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Commok Alert email sent to: $settings{CC1ADDR} $
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/commok")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/commok");
-	}
+} elsif (-f "/etc/apcupsd/scripts/commok") {
+	unlink("/etc/apcupsd/scripts/commok");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGCHANGEME} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/changeme");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/changeme");
+	print FILE <<END;
 #!/bin/sh
 #
 # UPS battery replacement required alert script
@@ -363,14 +360,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Changeme Alert email sent to: $settings{CC1ADDR}
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/changeme")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/changeme");
-	}
+} elsif (-f "/etc/apcupsd/scripts/changeme") {
+	unlink("/etc/apcupsd/scripts/changeme");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGANNOY} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/annoyme");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/annoyme");
+	print FILE <<END;
 #!/bin/sh
 #
 # Annoyme alert script
@@ -398,15 +394,14 @@ echo `date +%Y-%m-%d%t%T%t%z` " Annoyme Alert email sent to: $settings{CC1ADDR} 
 exit 0
 END
 
-#system(" 0755 /var/smoothwall/apcupsd/scripts/annoyme");
-}elsif (-f "/var/smoothwall/apcupsd/scripts/annoyme")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/annoyme");
-	}
+#system(" 0755 /etc/apcupsd/scripts/annoyme");
+} elsif (-f "/etc/apcupsd/scripts/annoyme") {
+	unlink("/etc/apcupsd/scripts/annoyme");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGBATTATTACH} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/battattach");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/battattach");
+	print FILE <<END;
 #!/bin/sh
 #
 # Battattach alert script
@@ -434,14 +429,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Battattach Alert email sent to: $settings{CC1ADD
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/battattach")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/battattach");
-	}
+} elsif (-f "/etc/apcupsd/scripts/battattach") {
+	unlink("/etc/apcupsd/scripts/battattach");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGBATTDETACH} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/battdetach");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/battdetach");
+	print FILE <<END;
 #!/bin/sh
 #
 # Battdetach alert script
@@ -469,14 +463,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Battdetach Alert email sent to: $settings{CC1ADD
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/battdetach")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/battdetach");
-	}
+} elsif (-f "/etc/apcupsd/scripts/battdetach") {
+	unlink("/etc/apcupsd/scripts/battdetach");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGDOSHUTDOWN} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/doshutdown");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/doshutdown");
+	print FILE <<END;
 #!/bin/sh
 #
 # Doshutdown alert script
@@ -504,14 +497,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Doshutdown Alert email sent to: $settings{CC1ADD
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/doshutdown")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/doshutdown");
-	}
+} elsif (-f "/etc/apcupsd/scripts/doshutdown") {
+	unlink("/etc/apcupsd/scripts/doshutdown");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGEMERGENCY} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/emergency");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/emergency");
+	print FILE <<END;
 #!/bin/sh
 #
 # Emergency alert script
@@ -539,14 +531,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Emergency Alert email sent to: $settings{CC1ADDR
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/emergency")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/emergency");
-	}
+} elsif (-f "/etc/apcupsd/scripts/emergency") {
+	unlink("/etc/apcupsd/scripts/emergency");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGENDSELFTEST} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/endselftest");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/endselftest");
+	print FILE <<END;
 #!/bin/sh
 #
 # Endselftest alert script
@@ -574,14 +565,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Endselftest Alert email sent to: $settings{CC1AD
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/endselftest")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/endselftest");
-	}
+} elsif (-f "/etc/apcupsd/scripts/endselftest") {
+	unlink("/etc/apcupsd/scripts/endselftest");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGFAILING} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/failing");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/failing");
+	print FILE <<END;
 #!/bin/sh
 #
 # Battery failing alert script
@@ -609,14 +599,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Failing Alert email sent to: $settings{CC1ADDR} 
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/failing")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/failing");
-	}
+} elsif (-f "/etc/apcupsd/scripts/failing") {
+	unlink("/etc/apcupsd/scripts/failing");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGKILLPOWER} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/killpower");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/killpower");
+	print FILE <<END;
 #!/bin/sh
 #
 # UPS killpower alert script
@@ -644,14 +633,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Killpower Alert email sent to: $settings{CC1ADDR
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/killpower")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/killpower");
-	}
+} elsif (-f "/etc/apcupsd/scripts/killpower") {
+	unlink("/etc/apcupsd/scripts/killpower");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGLOADLIMIT} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/loadlimit");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/loadlimit");
+	print FILE <<END;
 #!/bin/sh
 #
 # Loadlimit alert script
@@ -679,14 +667,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Loadlimit Alert email sent to: $settings{CC1ADDR
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/loadlimit")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/loadlimit");
-	}
+} elsif (-f "/etc/apcupsd/scripts/loadlimit") {
+	unlink("/etc/apcupsd/scripts/loadlimit");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGPOWERBACK} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/mainsback");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/mainsback");
+	print FILE <<END;
 #!/bin/sh
 #
 # Mainsback alert script
@@ -714,14 +701,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Mainsback Alert email sent to: $settings{CC1ADDR
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/mainsback")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/mainsback");
-	}
+} elsif (-f "/etc/apcupsd/scripts/mainsback") {
+	unlink("/etc/apcupsd/scripts/mainsback");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGPOWEROUT} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/powerout");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/powerout");
+	print FILE <<END;
 #!/bin/sh
 #
 # Powerout alert script
@@ -749,14 +735,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Powerout Alert email sent to: $settings{CC1ADDR}
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/powerout")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/powerout");
-	}
+} elsif (-f "/etc/apcupsd/scripts/powerout") {
+	unlink("/etc/apcupsd/scripts/powerout");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGREMOTEDOWN} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/remotedown");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/remotedown");
+	print FILE <<END;
 #!/bin/sh
 #
 # Remotedown alert script
@@ -784,14 +769,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Remotedown Alert email sent to: $settings{CC1ADD
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/remotedown")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/remotedown");
-	}
+} elsif (-f "/etc/apcupsd/scripts/remotedown") {
+	unlink("/etc/apcupsd/scripts/remotedown");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGRUNLIMIT} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/runlimit");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/runlimit");
+	print FILE <<END;
 #!/bin/sh
 #
 # Runlimit alert script
@@ -819,14 +803,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Runlimit Alert email sent to: $settings{CC1ADDR}
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/runlimit")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/runlimit");
-	}
+} elsif (-f "/etc/apcupsd/scripts/runlimit") {
+	unlink("/etc/apcupsd/scripts/runlimit");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGSTARTSELFTEST} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/startselftest");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/startselftest");
+	print FILE <<END;
 #!/bin/sh
 #
 # Startselftest alert script
@@ -854,14 +837,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Startselftest Alert email sent to: $settings{CC1
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/startselftest")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/startselftest");
-	}
+} elsif (-f "/etc/apcupsd/scripts/startselftest") {
+	unlink("/etc/apcupsd/scripts/startselftest");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{MSGTIMEOUT} eq 'on') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/timeout");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/timeout");
+	print FILE <<END;
 #!/bin/sh
 #
 # Timeout alert script
@@ -889,14 +871,13 @@ echo `date +%Y-%m-%d%t%T%t%z` " Timeout Alert email sent to: $settings{CC1ADDR} 
 exit 0
 END
 
-}elsif (-f "/var/smoothwall/apcupsd/scripts/timeout")
-	{
-	unlink("/var/smoothwall/apcupsd/scripts/timeout");
-	}
+} elsif (-f "/etc/apcupsd/scripts/timeout") {
+	unlink("/etc/apcupsd/scripts/timeout");
+}
 
 if ($settings{'ENABLEALERTS'} eq 'on' and $settings{OPMODE} eq 'testing') {
-open (FILE, ">/var/smoothwall/apcupsd/scripts/apccontrol");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/apccontrol");
+	print FILE <<END;
 #!/bin/sh
 #
 # Copyright (C) 1999-2002 Riccardo Facchetti <riccardo@master.oasi.gpa.it>
@@ -912,7 +893,7 @@ APCPID=/var/run/apcupsd.pid
 APCUPSD=/sbin/apcupsd
 SHUTDOWN=/sbin/shutdown
 SCRIPTSHELL=/
-SCRIPTDIR=/var/smoothwall/apcupsd/scripts
+SCRIPTDIR=/etc/apcupsd/scripts
 WALL=wall
 #
 #
@@ -1008,8 +989,8 @@ END
 
 if ($settings{OPMODE} eq 'full') {
 
-open (FILE, ">/var/smoothwall/apcupsd/scripts/apccontrol");
-print FILE <<END;
+	open (FILE, ">/etc/apcupsd/scripts/apccontrol");
+	print FILE <<END;
 #!/bin/sh
 #
 # Copyright (C) 1999-2002 Riccardo Facchetti <riccardo@master.oasi.gpa.it>
@@ -1025,7 +1006,7 @@ APCPID=/var/run/apcupsd.pid
 APCUPSD=/sbin/apcupsd
 SHUTDOWN=/sbin/shutdown
 SCRIPTSHELL=/bin/sh
-SCRIPTDIR=/var/smoothwall/apcupsd/scripts
+SCRIPTDIR=/etc/apcupsd/scripts
 WALL=wall
 #
 #
