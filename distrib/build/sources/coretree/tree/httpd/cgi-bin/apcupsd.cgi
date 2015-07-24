@@ -324,12 +324,15 @@ ERROR:
 	
 		&writehash("/var/smoothwall/apcupsd/settings", \%apcupsdsettings);
 		
-		system("/usr/bin/smoothwall/writeapcupsdconf.pl");
-		
-		my $success = message("apcupsdrestart");
+		my $success = message("apcupsdwrite");
 		
 		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'};
+			$errormessage = $tr{'smoothd failure'} .": apcupsdwrite";
+		}
+		$success = message("apcupsdrestart");
+		
+		if (not defined $success) {
+			$errormessage = $tr{'smoothd failure'} .": apcupsdrestart";
 		}
 	}
 }
