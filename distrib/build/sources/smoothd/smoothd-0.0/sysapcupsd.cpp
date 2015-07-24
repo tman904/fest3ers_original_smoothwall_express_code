@@ -34,12 +34,12 @@ int load(std::vector<CommandFunctionPair> & pairs) {
    CommandFunctionPair restart_apcupsd_function( "apcupsdrestart", "restart_apcupsd", 0, 0 );
    CommandFunctionPair   start_apcupsd_function( "apcupsdstart",     "start_apcupsd", 0, 0 );
    CommandFunctionPair    stop_apcupsd_function( "apcupsdstop",       "stop_apcupsd", 0, 0 );
-   CommandFunctionPair killpwr_apcupsd_function( "apcupsdkillpwr", "killpwr_apcupsd", 0, 0 );
+   CommandFunctionPair   write_apcupsd_function( "apcupsdwrite",     "write_apcupsd", 0, 0 );
 
    pairs.push_back( restart_apcupsd_function );
    pairs.push_back(   start_apcupsd_function );
    pairs.push_back(    stop_apcupsd_function );
-   pairs.push_back( killpwr_apcupsd_function );
+   pairs.push_back(   write_apcupsd_function );
 
    return 0;
 }
@@ -88,18 +88,16 @@ int start_apcupsd(std::vector<std::string> & parameters, std::string & response)
    return error;
 }
 
-int killpwr_apcupsd(std::vector<std::string> & parameters, std::string & response) {
+int write_apcupsd(std::vector<std::string> & parameters, std::string & response) {
    int error = 0;
 
       {
-      error = simplesecuresysteml("/usr/bin/smoothwall/apcupsdkillpower.pl", NULL);
-
-      response = "rc.halt script modified for UPS KILLPOWER";
+      error = simplesecuresysteml("/usr/bin/smoothwall/writeapcupsdconf.pl", NULL);
 
       if (error) {
-         response = "rc.halt modification Failed!";
+         response = "apcupsd.conf write FAILED!";
       } else {
-         response = "rc.halt modification Successful";
+         response = "apcupsd.conf written";
       }
    }
    return error;
