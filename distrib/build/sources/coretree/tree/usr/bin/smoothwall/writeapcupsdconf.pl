@@ -28,7 +28,7 @@ print FILE <<END
 #
 #
 LOCKFILE /var/lock
-SCRIPTDIR /var/smoothwall/apcupsd/scripts
+SCRIPTDIR /etc/apcupsd/scripts
 NETSERVER on
 EVENTSFILE /var/smoothwall/apcupsd/events
 EVENTSFILEMAX 25
