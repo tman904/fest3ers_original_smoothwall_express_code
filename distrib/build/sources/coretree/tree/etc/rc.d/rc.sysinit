@@ -300,8 +300,6 @@ ntpdate pool.ntp.org
 /usr/bin/smoothcom ntpdrestart
 echolog "e" "s" "" "  Start dhcpd (if enabled)"
 /usr/bin/smoothcom dhcpdrestart
-echolog "e" "s" "" "  Start squid (if enabled)"
-/usr/bin/smoothcom squidrestart
 echolog "e" "s" "" "  APCupsd server (if enabled)"
 /usr/bin/smoothcom apcupsdrestart
 rm -f /etc/apcupsd/powerfail;
