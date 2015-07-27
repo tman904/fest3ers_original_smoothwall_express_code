@@ -11,33 +11,28 @@ echolog "e" "s" "" "Shutting down..."
 # Block all inbound packets on all NICs
 . /etc/rc.d/inc.block-ingress
 
-echolog "e" "s" "" "Stopping squid (if running)..."
-if [ -f /var/run/squid.pid -a -f /proc/`cat /var/run/squid.pid` ]; then
-	/usr/sbin/squid -k interrupt
-	typeset -i count
-	while [ -d /proc/`cat /var/run/squid.pid` ]; do
-		count=count+1
-		if [ $count -gt 50 ]; then break; fi
-		sleep .01
-	done
-fi
+# Squid can take a while to write swap.state, so it rides
+#   the short bus.
 
-echolog "e" "s" "" "Sending all processes the TERM signal..." 
+echolog "e" "s" "" "Stop squid (if running)..."
+smoothcom squidstop
+
+echolog "e" "s" "" "Send all processes the TERM signal..." 
 /sbin/killall5 -15
 sleep 3
-echolog "e" "s" "" "Sending all processes the KILL signal..."
+echolog "e" "s" "" "Send all processes the KILL signal..."
 /sbin/killall5 -9
 sleep 3
 
-echolog "e" "s" "" "Turning off swap"
+echolog "e" "s" "" "Turn off swap"
 /sbin/swapoff -a
-echolog "e" "s" "" "Unmounting others"
+echolog "e" "s" "" "Unmount others"
 umount -l /var/log
 umount -l /boot
 
 rm -f /var/run/STARTSTOP
 
-echolog "e" "s" "" "Remounting root RO"
+echolog "e" "s" "" "Remount root RO"
 mount -n -o remount,ro /
 
 echo -ne \\a >/dev/console 
