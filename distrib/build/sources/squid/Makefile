@@ -16,7 +16,8 @@ CONFIG_OPTS += --enable-storeio="aufs,diskd,ufs" --enable-linux-netfilter \
 	      --enable-removal-policies="heap,lru" --enable-delay-pools \
 	      --localstatedir=/var --with-dl --with-openssl \
 	      --enable-http-violations --enable-icap-client \
-	      --with-large-files --with-libcap --disable-ipv6
+	      --with-large-files --with-libcap --disable-ipv6 \
+	      --enable-ssl-crtd
 
 INSTALL_LANGUAGES = English
 
