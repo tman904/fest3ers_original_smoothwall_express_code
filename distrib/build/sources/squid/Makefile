@@ -35,8 +35,9 @@ install: compile
 	mkdir -p $(PKG_ROOT)/var/smoothwall/proxy
 	touch $(PKG_ROOT)/var/smoothwall/proxy/squid.conf
 	chown nobody:nobody $(PKG_ROOT)/var/smoothwall/proxy/squid.conf
-	chown 664 $(PKG_ROOT)/var/smoothwall/proxy/squid.conf
-	ln -s $(PKG_ROOT)/usr/etc/squid.conf /var/smoothwall/proxy/squid.conf
+	chmod 664 $(PKG_ROOT)/var/smoothwall/proxy/squid.conf
+	rm -f $(PKG_ROOT)/usr/etc/squid.conf
+	ln -s /var/smoothwall/proxy/squid.conf $(PKG_ROOT)/usr/etc/squid.conf
 
 
 BUILDTARBALL = yes
