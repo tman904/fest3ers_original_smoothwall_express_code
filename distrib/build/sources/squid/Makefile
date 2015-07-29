@@ -17,7 +17,8 @@ CONFIG_OPTS += --enable-storeio="aufs,diskd,ufs" --enable-linux-netfilter \
 	      --localstatedir=/var --with-dl --with-openssl \
 	      --enable-http-violations --enable-icap-client \
 	      --with-large-files --with-libcap --disable-ipv6 \
-	      --enable-ssl-crtd
+	      --enable-ssl-crtd --with-logdir=/var/log/squid \
+	      --with-swapdir=/var/spool/squid
 
 INSTALL_LANGUAGES = English
 
