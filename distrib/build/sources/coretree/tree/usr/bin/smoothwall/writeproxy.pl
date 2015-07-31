@@ -106,7 +106,6 @@ if ($netsettings{'PURPLE_DEV'})
 }
 print FILE "http_port 127.0.0.1:800 intercept\n";
 print FILE <<END
-icp_port 7
 
 
 END
