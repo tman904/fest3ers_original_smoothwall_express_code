@@ -13,6 +13,7 @@ EXTENSION = .tar.bz2
 BASE_URL = http://roy.marples.name/downloads/dhcpcd/
 
 TARBALL = $(PACKAGE)-$(VERSION)
+EXTENSION = .tar.xz
 
 DIR =  $(PACKAGE)-$(VERSION)
 
