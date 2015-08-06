@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = dhcpcd
-VERSION =  6.9.0
+VERSION =  6.9.1
 EXTENSION = .tar.bz2
 
 BASE_URL = http://roy.marples.name/downloads/dhcpcd/
