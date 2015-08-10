@@ -246,6 +246,14 @@ table.list {
 	-moz-box-shadow: inset 0px 0px 6px 0px rgba(138,120,90,0.4);
 }
 
+div.list {
+	margin-left: auto;
+	margin-right: auto;
+	box-shadow: inset 0px 0 6px 0 rgba(138,120,90,0.4);
+	-webkit-box-shadow: inset 0px 0px 6px 0px rgba(138,120,90,0.4);
+	-moz-box-shadow: inset 0px 0px 6px 0px rgba(138,120,90,0.4);
+}
+
 th.list {
 	width: 30%; 
 	border-width: 0px; 

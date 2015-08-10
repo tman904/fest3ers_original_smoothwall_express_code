@@ -758,6 +758,17 @@ print <<END;
 </FORM>
 END
 
+
+if ( $apcupsdsettings{'ENABLE'} = 'on' and -f "/var/run/apcupsd.pid" )
+{
+	&openbox("$tr{'UPS Status'}:");
+	print "<div class='list' style='padding:.2em 1.25em; margin:1em'><pre>\n";
+	system ("/sbin/apcaccess");
+	print "</pre></div>\n";
+}
+
+&closebox();
+
 &alertbox('add', 'add');
 
 &closepage();
