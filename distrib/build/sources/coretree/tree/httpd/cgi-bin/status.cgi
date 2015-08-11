@@ -48,6 +48,11 @@ foreach my $file ( sort @files ){
         if ($rel) {chomp $rel; };
 	if ( defined $rel and $rel eq "core" ){
 		$coreservices{ $tr{ $name } } = $servicename;
+	} elsif ( defined $rel and $rel eq "special" ){
+		# Another extension of ModInstall: allow mods with
+		#   'special case' status checks
+		$servicenames{ $tr{ $name } } = $servicename;
+		$specialcases{ $basename } = "$dirname/../../../bin/smoothwall/$basename-status.pl";
 	} else {	
 		$servicenames{ $tr{ $name } } = $servicename;
 	}
@@ -165,9 +170,17 @@ sub isrunning
 	{
 		if (-f $qosPidFile)
 		{
-			$status = status_line( "running" );
+			$status = &status_line( "running" );
 			$howlong = &running_since($qosPidFile);
 		}
+	}
+	elsif (defined $specialcases{$cmd})
+	{
+		# Another extension of ModInstall: this is a
+		#   'special case' status check
+		require $specialcases{$cmd};
+		my $speccase = \&{$cmd . "_isrunning"};
+		($status, $howlong) = &$speccase();
 	}
 	elsif (open(FILE, "/var/run/${cmd}.pid"))
 	{
@@ -183,7 +196,7 @@ sub isrunning
 			close FILE;
 			if ($testcmd =~ /$exename/)
 			{
-				$status = status_line( "running" );
+				$status = &status_line( "running" );
 				$howlong = &running_since("/var/run/${cmd}.pid");
 
 				if (open(FILE, "/proc/${pid}/cmdline"))
