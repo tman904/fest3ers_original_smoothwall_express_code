@@ -49,8 +49,8 @@
 ./httpd/html/ui/img/bottom-right.png
 ./httpd/html/ui/img/left.png
 ./httpd/html/ui/img/right.png
-./html/ui/img/top-left.png
-./html/ui/img/top-right.png
+./httpd/html/ui/img/top-left.png
+./httpd/html/ui/img/top-right.png
 ./httpd/html/ui/js/script.js
 ./usr/bin/smoothwall/apcupsdkillpower.pl
 ./usr/bin/smoothwall/smoothinfo.pl
