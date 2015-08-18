@@ -380,7 +380,7 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'mail-test'}) {
 	system ("/usr/bin/smoothwall/upsd-notify.pl", "APCUPSD Test Message.");
 	if (-e "/dev/shm/upsd-notify_failed") {
 		$errormessage = $tr{'unsuccesful mail'};
-		unlink ("/dev/shm/upsd-notify_failed";
+		unlink ("/dev/shm/upsd-notify_failed");
 	}
 	&readhash("/var/smoothwall/apcupsd/settings", \%apcupsdsettings);
 }
