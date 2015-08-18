@@ -759,11 +759,11 @@ print <<END
 	</TD>
 </TR>
 <TR>
-	<TD class='base'>$tr{'smtp-auth'}</TD>
+	<TD class='base'>$tr{'smtp-authc'}</TD>
 	<TD style='width: 50px;'><INPUT TYPE='checkbox' NAME='ENABLEAUTH' $checked{'ENABLEAUTH'}{'on'} onClick='javaScript:UncheckSMTPS();'></TD>
-	<TD class='base' style='width: 100px;'>$tr{'ssl-smtps'}</TD>
+	<TD class='base' style='width: 100px;'>$tr{'ssl-smtpsc'}</TD>
 	<TD><INPUT TYPE='checkbox' NAME='SMTPS' $checked{'SMTPS'}{'on'} onClick='javaScript:CheckAuth();'></TD>
-	<TD class='base'>$tr{'starttls'}</TD>
+	<TD class='base'>$tr{'starttlsc'}</TD>
 	<TD><INPUT TYPE='checkbox' NAME='STARTTLS' $checked{'STARTTLS'}{'on'} onClick='javaScript:CheckSTARTTLS();'></TD>
 </TR>
 <TR>
