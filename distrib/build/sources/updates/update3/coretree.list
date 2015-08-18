@@ -66,6 +66,7 @@
 ./usr/lib/smoothwall/menu/2000_Services/8000_ups.list
 ./usr/lib/smoothwall/smoothnet.pm
 ./usr/lib/smoothwall/smoothtype.pm
+./var/smoothwall/apcupsd
 ./var/smoothwall/apcupsd/events
 ./var/smoothwall/apcupsd/settings
 ./var/smoothwall/proxy/cache
