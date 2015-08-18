@@ -13,7 +13,7 @@ my (%mailsettings, %hostsettings, @upsdata, $smtp, $upsdata, $TO, $CC, $SMS);
 my $log = "${swroot}/apcupsd/events";
 my $maildate = `date -R`; chomp $maildate;
 my $logdate = `date -d '$maildate' '+%Y-%m-%d %T %z'`; chomp $logdate;
-my $errfile = "$/dev/shm/upsd-notify_failed";
+my $errfile = "/dev/shm/upsd-notify_failed";
 my $logfile = "${swroot}/apcupsd/maillog";
 open (STDERR, ">", "$logfile") or die "Can't open log";
 

@@ -528,7 +528,7 @@ $checked{'STARTTLS'}{'off'} = '';
 $checked{'STARTTLS'}{'on'} = '';
 $checked{'STARTTLS'}{$apcupsdsettings{'STARTTLS'}} = 'CHECKED';
 
-&openpage('apcupsd', 1, '$refresh', 'services');
+&openpage('apcupsd', 1, "$refresh", 'services');
 
 print <<END
 <FORM METHOD='POST' action='?' name='myform'>
