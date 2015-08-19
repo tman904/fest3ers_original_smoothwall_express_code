@@ -758,26 +758,29 @@ print <<END
 	<TD>
 	</TD>
 </TR>
+</TABLE>
+<TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
 <TR>
 	<TD class='base'>$tr{'smtp-authc'}</TD>
-	<TD style='width: 50px;'><INPUT TYPE='checkbox' NAME='ENABLEAUTH' $checked{'ENABLEAUTH'}{'on'} onClick='javaScript:UncheckSMTPS();'></TD>
-	<TD class='base' style='width: 100px;'>$tr{'ssl-smtpsc'}</TD>
+	<TD style='width: 2em;'><INPUT TYPE='checkbox' NAME='ENABLEAUTH' $checked{'ENABLEAUTH'}{'on'} onClick='javaScript:UncheckSMTPS();'></TD>
+	<TD class='base' style='width: 10em;'>$tr{'ssl-smtpsc'}</TD>
 	<TD><INPUT TYPE='checkbox' NAME='SMTPS' $checked{'SMTPS'}{'on'} onClick='javaScript:CheckAuth();'></TD>
-	<TD class='base'>$tr{'starttlsc'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='STARTTLS' $checked{'STARTTLS'}{'on'} onClick='javaScript:CheckSTARTTLS();'></TD>
+	<TD class='base' style='width:10em'>User:</TD>
+	<TD ><INPUT TYPE='text' NAME='USER' style='width: 15em;' VALUE='$apcupsdsettings{'USER'}'></TD>
 </TR>
 <TR>
-	<TD class='base'>User:</TD>
-	<TD COLSPAN='2'><INPUT TYPE='text' NAME='USER' style='width: 220px;' VALUE='$apcupsdsettings{'USER'}'></TD>
+	<TD class='base' colspan='2'></TD>
+	<TD class='base'>$tr{'starttlsc'}</TD>
+	<TD><INPUT TYPE='checkbox' NAME='STARTTLS' $checked{'STARTTLS'}{'on'} onClick='javaScript:CheckSTARTTLS();'></TD>
 	<TD class='base'>Password:</TD>
-	<TD COLSPAN='2'><INPUT TYPE='password' NAME='EMAIL_PASSWORD' style='width: 220px;' VALUE='$apcupsdsettings{'EMAIL_PASSWORD'}'></TD>
+	<TD ><INPUT TYPE='password' NAME='EMAIL_PASSWORD' style='width: 15em;' VALUE='$apcupsdsettings{'EMAIL_PASSWORD'}'></TD>
 </TR>
 </TABLE>
 END
 ;
 
 print <<END
-<TABLE style='width: 30%; border: none; margin-left:auto; margin-right:auto'>
+<TABLE style='width: 30%; border: none; margin:1em auto'>
 <TR>
 	<TD style='text-align: center;'><INPUT TYPE='submit' NAME='ACTION' TITLE='$tr{'email-test-tip'}' VALUE='$tr{'mail-test'}'></TD>
 </TR>
