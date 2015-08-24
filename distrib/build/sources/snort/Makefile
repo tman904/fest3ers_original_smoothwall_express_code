@@ -64,10 +64,10 @@ install: compile
 	@mkdir -p $(PKG_ROOT)/$(MODULE_DIR)/usr/lib/smoothwall
 	@echo $(VERSION) > $(PKG_ROOT)/$(MODULE_DIR)/usr/lib/smoothwall/snortversion
 	SNORT_OPTS=`echo -n "$(CONFIG_OPTS)" | sed -e 's/ +/ /'`; \
-	  sed -e '/OPTIONS :/s@:.*$$@: '"$$SNORT_OPTS@" \
+	  sed -i -e '/OPTIONS :/s@:.*$$@: '"$$SNORT_OPTS@" \
 	      -e '/OPTIONS :/a #     SWE built : $(PACKAGE)-$(VERSION)' \
-	      < $(COMPILE_DIR)/etc/snort.conf | \
-	    sed -f snort.conf.sed > $(COMPILE_DIR)/etc/snort.conf-new
+	      $(COMPILE_DIR)/etc/snort.conf
+	sed -f snort.conf.sed < $(COMPILE_DIR)/etc/snort.con > $(COMPILE_DIR)/etc/snort.conf-new
 	install -D $(COMPILE_DIR)/etc/snort.conf-new $(PKG_ROOT)/etc/snort.conf
 	chown root:root -R $(PKG_ROOT)/etc
 	chmod 755 -R $(PKG_ROOT)/etc
