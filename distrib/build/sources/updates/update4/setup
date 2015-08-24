@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo "Update 4 installing."
+
+# Unpack the patch
+tar xvf patch.tar.gz -C /
+
+# Verify squid.conf symlink
+pushd /usr/etc
+rm -f squid.conf
+ln -s /var/smoothwall/proxy/squid.conf
+popd
+
+# Fix 'lost' ttyS0 getty
+pushd /etc
+grep -q "default 1" /boot/grub/grub.conf && sed -i -e '/^S0/s/off/respawn/' inittab
+init q
+popd
+
+# Leave this for a few generations, just in case.
+echo "Remove unused file 'acl'"
+rm -f /var/smoothwall/proxy/acl
