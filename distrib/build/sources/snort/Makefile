@@ -67,7 +67,7 @@ install: compile
 	  sed -i -e '/OPTIONS :/s@:.*$$@: '"$$SNORT_OPTS@" \
 	      -e '/OPTIONS :/a #     SWE built : $(PACKAGE)-$(VERSION)' \
 	      $(COMPILE_DIR)/etc/snort.conf
-	sed -f snort.conf.sed < $(COMPILE_DIR)/etc/snort.con > $(COMPILE_DIR)/etc/snort.conf-new
+	sed -f snort.conf.sed < $(COMPILE_DIR)/etc/snort.conf > $(COMPILE_DIR)/etc/snort.conf-new
 	install -D $(COMPILE_DIR)/etc/snort.conf-new $(PKG_ROOT)/etc/snort.conf
 	chown root:root -R $(PKG_ROOT)/etc
 	chmod 755 -R $(PKG_ROOT)/etc
