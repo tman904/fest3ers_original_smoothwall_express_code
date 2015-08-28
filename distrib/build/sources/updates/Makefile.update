@@ -68,6 +68,10 @@ updateinfo:
 
 $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 	@echo "Making update file ..."
+ifdef KERNEL
+EXTRA_UPDATE_FILES += update-grub-kernel.pl
+	cp ../update-grub-kernel.pl .
+endif
 	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
 
 clean:
@@ -76,6 +80,7 @@ clean:
 	@rm -f $(OUTPUT_FILENAME)
 	@rm -f updateinfo
 	@rm -f information
+	@rm -f update-grub-kernel.pl
 
 download:
 	@true
