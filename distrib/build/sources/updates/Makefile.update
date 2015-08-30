@@ -43,7 +43,7 @@ patch.tar.gz: ../../../crumbs/Final.built
 	);
 	# Bump kernel version as needed
 	if [ "$(KERNEL)" != "" ]; then \
-		tar -xf /$(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
+		tar -xf $(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
 	fi;
 	# Clear ClamAV files as needed
 	if [ "$(CLAMAV)" != "" ]; then \
@@ -69,10 +69,11 @@ updateinfo:
 $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 	@echo "Making update file ..."
 ifdef KERNEL
-EXTRA_UPDATE_FILES += update-grub-kernel.pl
 	cp ../update-grub-kernel.pl .
-endif
+	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information update-grub-kernel.pl $(EXTRA_UPDATE_FILES)
+else
 	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
+endif
 
 clean:
 	@rm -rf distrib review
