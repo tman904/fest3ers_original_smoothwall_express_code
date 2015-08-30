@@ -1,16 +1,16 @@
 UPDATE_PACKAGES = \
-		  coretree \
-		  ipbatch \
-		  ipset \
+		  linux \
 		  iptables \
-		  kernel-drivers \
-		  linux \ 
+		  xtables-addons \
+		  ipset \
+		  ipbatch \
 		  openswan \
 		  smoothd \
 		  snort \
 		  trafficstats \
-		  xtables-addons
-		  
+		  kernel-drivers \
+		  coretree
+
 
 UPDATE_ID = 004
 UPDATE_NAME = Update4
