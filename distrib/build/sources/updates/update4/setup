@@ -8,42 +8,47 @@ echo "Update 4 installing."
 # Unpack the patch
 /usr/bin/tar xvf patch.tar.gz -C /
 
-# Verify squid.conf symlink
+echo "  Verify squid.conf symlink"
 pushd /usr/etc
 /bin/rm -f squid.conf
 /bin/ln -s /var/smoothwall/proxy/squid.conf
 popd
 
-# Fix 'lost' ttyS0 getty
+echo "  Compress squid log files as needed"
+cd /var/log/squid
+gzip access.log.[0-9] cache.log.[0-9]
+
+echo "  Fix 'lost' serial console getty"
 pushd /etc
 /bin/grep -q "default 1" /boot/grub/grub.conf && /usr/bin/sed -i -e '/^S0/s/off/respawn/' inittab
 /sbin/init q
 popd
 
 # Leave this for a few generations, just in case.
-echo "Remove unused file 'acl'"
+echo "  Remove unused file 'acl'"
 /bin/rm -f /var/smoothwall/proxy/acl
 
-# Fix /var/run
+echo "  Fix /var/run"
 chmod 1777 /var/run
 
 # Update the new initramfs
+echo "  Update the initramfs"
 mkdir /root/upd4-initramfs-unpack
 pushd /root/upd4-initramfs-unpack
 
-# Unpack
+echo "    Unpack"
 /usr/bin/zcat /boot/initrd-${KERNEL_VERSION}.gz | /bin/cpio -id
 
-# Copy the disk/NIC rules
+echo "    Copy udev disk/NIC rules"
 pushd etc/udev/rules.d
 rm -f *
 /bin/cp /etc/udev/rules.d/* .
 popd
 
-# Copy the root mount info
+ech "    Copy the root mount info"
 /bin/grep harddisk4 /etc/fstab | /usr/bin/sed -e 's=[ \t][ \t]*/[ \t][ \t]*= /harddisk =' > etc/fstab
 
-# Archive and remove old kernels, as needed
+echo "    Keep only current and previous kernels"
 pushd /lib/modules >/dev/null
 
 /bin/ls -dC1 [0-9.]* | \
@@ -52,7 +57,7 @@ pushd /lib/modules >/dev/null
   /usr/bin/sed -e 's/ /./g' | \
   /usr/bin/tail -n +3 | \
   while read a; do
-    echo "Archiving and deleting old kernel $a"
+    echo "        Archiving and deleting old kernel $a"
     pushd / >/dev/null
     /usr/bin/find ./lib/modules/$a ./boot/initrd-$a.gz ./boot/vmlinuz-$a | \\
         /bin/cpio -o -H newc | \\
@@ -65,11 +70,11 @@ pushd /lib/modules >/dev/null
 
 popd >/dev/null
 
-# Repack
+echo "    Repack"
 /usr/bin/find . | /bin/cpio -o -H newc | /usr/bin/gzip > /boot/initrd-${KERNEL_VERSION}.gz
 chmod 644 /boot/initrd-${KERNEL_VERSION}.gz
 
 popd >/dev/null
 
-# Update grub
+echo "  Update grub
 /usr/bin/perl update-grub-kernel.pl $OLD_KERNEL $KERNEL_VERSION
