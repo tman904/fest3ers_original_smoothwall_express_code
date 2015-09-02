@@ -16,7 +16,11 @@ popd
 
 echo "  Compress squid log files as needed"
 cd /var/log/squid
-gzip access.log.[0-9] cache.log.[0-9] 2>&1 | sed -e 's/^/    /'
+/usr/bin/gzip access.log.[0-9] cache.log.[0-9] 2>&1 | /usr/bin/sed -e 's/^/    /'
+
+echo "  Symlink gzip into /bin for logrotate"
+/bin/rm -rf /bin/gzip
+/bin/ln -s /usr/bin/gzip /bin/gzip
 
 echo "  Fix 'lost' serial console getty"
 pushd /etc
