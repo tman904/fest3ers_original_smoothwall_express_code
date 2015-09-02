@@ -20,7 +20,7 @@ pushd /var/log/squid >/dev/null 2>&1
 popd >/dev/null 2>&1
 
 echo "  Fix logrotate config file modes"
-chmod 644 /etc/logrotate.{conf,.d/*}
+chmod 644 /etc/logrotate.{conf,d/*}
 
 echo "  Symlink gzip into /bin for logrotate"
 /bin/rm -rf /bin/gzip
