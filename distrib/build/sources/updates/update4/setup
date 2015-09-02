@@ -16,7 +16,9 @@ popd >/dev/null 2>&1
 
 echo "  Compress squid log files as needed"
 pushd /var/log/squid >/dev/null 2>&1
-/usr/bin/gzip access.log.[0-9] cache.log.[0-9] 2>&1 | /usr/bin/sed -e 's/^/    /'
+ls -1 {access,cache}.log.[0-9] 2>/dev/null | while read a; do
+  gzip "$a"
+done
 popd >/dev/null 2>&1
 
 echo "  Fix logrotate config file modes"
