@@ -16,7 +16,7 @@ popd
 
 echo "  Compress squid log files as needed"
 cd /var/log/squid
-gzip access.log.[0-9] cache.log.[0-9]
+gzip access.log.[0-9] cache.log.[0-9] 2>&1 | sed -e 's/^/    /'
 
 echo "  Fix 'lost' serial console getty"
 pushd /etc
@@ -45,10 +45,10 @@ rm -f *
 /bin/cp /etc/udev/rules.d/* .
 popd
 
-ech "    Copy the root mount info"
+echo "    Copy the root mount info"
 /bin/grep harddisk4 /etc/fstab | /usr/bin/sed -e 's=[ \t][ \t]*/[ \t][ \t]*= /harddisk =' > etc/fstab
 
-echo "    Keep only current and previous kernels"
+echo "    Keep only current and one previous kernels"
 pushd /lib/modules >/dev/null
 
 /bin/ls -dC1 [0-9.]* | \
@@ -76,5 +76,5 @@ chmod 644 /boot/initrd-${KERNEL_VERSION}.gz
 
 popd >/dev/null
 
-echo "  Update grub
+echo "  Update grub"
 /usr/bin/perl update-grub-kernel.pl $OLD_KERNEL $KERNEL_VERSION
