@@ -19,6 +19,9 @@ pushd /var/log/squid >/dev/null 2>&1
 /usr/bin/gzip access.log.[0-9] cache.log.[0-9] 2>&1 | /usr/bin/sed -e 's/^/    /'
 popd >/dev/null 2>&1
 
+echo "  Fix logrotate config file modes"
+chmod 644 /etc/logrotate.{conf,.d/*}
+
 echo "  Symlink gzip into /bin for logrotate"
 /bin/rm -rf /bin/gzip
 /bin/ln -s /usr/bin/gzip /bin/gzip
