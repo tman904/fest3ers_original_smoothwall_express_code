@@ -78,6 +78,9 @@ echo "    Repack"
 /usr/bin/find . | /bin/cpio -o -H newc | /usr/bin/gzip > /boot/initrd-${KERNEL_VERSION}.gz
 chmod 644 /boot/initrd-${KERNEL_VERSION}.gz
 
+echo "    Tidy"
+mkdir /root/upd4-initramfs-unpack
+
 popd >/dev/null
 
 echo "  Update grub"
