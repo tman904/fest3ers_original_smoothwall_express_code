@@ -70,10 +70,10 @@ $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 ifdef KERNEL
 	cp ../update-grub-kernel.pl .
 	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information update-grub-kernel.pl $(EXTRA_UPDATE_FILES)
-	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information update-grub-kernel.pl $(EXTRA_UPDATE_FILES)
+	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information update-grub-kernel.pl review $(EXTRA_UPDATE_FILES)
 else
 	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
-	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
+	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information review $(EXTRA_UPDATE_FILES)
 endif
 
 clean:
