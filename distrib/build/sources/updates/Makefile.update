@@ -60,7 +60,12 @@ patch.tar.gz: ../../../crumbs/Final.built
 	@echo "Building patch.tar.gz, stand by ..."
 	tar cfz patch.tar.gz -C distrib .
 	# ----
-	tar cfz inspection-$(mARCH).tar.gz setup patch.tar.gz review
+ifdef KERNEL
+	cp ../update-grub-kernel.pl .
+	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information update-grub-kernel.pl $(EXTRA_UPDATE_FILES)
+else
+	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
+endif
 
 updateinfo:
 	@echo "Building update information file ..."	
