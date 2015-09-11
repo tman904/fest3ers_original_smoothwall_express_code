@@ -5,6 +5,9 @@ AuthUserFile /var/smoothwall/auth/users
 <Files dial.cgi>
 require user admin dial
 </Files>
+<Files time-clock.cgi>
+require valid-user
+</Files>
 <Files trafficmon.cgi>
 require valid-user
 </Files>
