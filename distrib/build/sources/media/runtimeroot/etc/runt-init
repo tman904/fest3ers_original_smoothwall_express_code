@@ -36,6 +36,21 @@ echo "  hang here for a minute waiting for udev. Please be patient."
 /sbin/udevadm trigger
 /sbin/udevadm settle
 
+# Wait up to 30s for udev to create the /dev/harddisk* symlinks
+# Fail if it takes longer than 30s.
+while true; do
+  sleep .1
+  # When the symlinks are available, bust out.
+  if [ -e "/dev/harddisk4" ]; then break; fi
+  i=i+1
+  # 30 seconds should be *plenty* long enough for SCSI devices to come to life in a smoothie.
+  if [ $i -eq 300 ]; then
+    echo "Could not find root storage device. Cannot boot!"
+    sleep 2
+    exit 1
+  fi
+done
+
 # Load any modules explicitly required
 test -e /etc/modules && egrep -v "^$|^#" /etc/modules | while read a; do modprobe $a; done
 
