@@ -36,25 +36,40 @@ echo "  hang here for a minute waiting for udev. Please be patient."
 /sbin/udevadm trigger
 /sbin/udevadm settle
 
-# Wait up to 30s for udev to create the /dev/harddisk* symlinks
-# Fail if it takes longer than 30s.
+# Some drivers may not notify udev of new disks, so wait up to 30s for
+#   the sda4 partition node to become available. As soon as it appears,
+#   make the symlinks--if needed--and bust out of gaol.
+# Fail if it takes longer than 15s.
 typeset -i i; i=0
 while true; do
   if [ $i -eq 10 ]; then
     echo "Waiting for storage to become ready..."
   fi
-  # When the symlinks are available, bust out.
-  if [ -e "/dev/harddisk4" ]; then break; fi
+  # When the partition node is available but the harddisk symlink isn't,
+  #   make all the harddisk symlinks and bust out. We'll assume that udev
+  #   doesn't know about the discovered drive.
+  if [ -e "/dev/sda4" ]; then
+    # Wait a half-second, Justin Case; maybe udev'll get to it.
+    sleep .5
+    if [ ! -e "/dev/harddisk4" ]; then
+      for NODE in /dev/sda*; do
+        ln -s $NODE ${NODE/sda/harddisk} >/dev/null 2>&1
+      done
+    fi
+    # Either way, the symlink(s) now exist.
+    break;
+  fi
+
   sleep .1
   i=i+1
-  # 30 seconds should be *plenty* long enough for SCSI devices to come to life in a smoothie.
-  if [ $i -eq 300 ]; then
+  # 15 seconds should be *plenty* long enough for SCSI devices to come to life in a smoothie.
+  if [ $i -eq 150 ]; then
     echo "Could not find root storage device. Cannot boot!"
     sleep 2
     exit 1
   fi
 done
-unset i
+unset i NODE
 
 # Load any modules explicitly required
 test -e /etc/modules && egrep -v "^$|^#" /etc/modules | while read a; do modprobe $a; done
