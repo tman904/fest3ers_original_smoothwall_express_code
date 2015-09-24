@@ -2,8 +2,8 @@
 
 . /etc/rc.d/inc.rc-functions
 
-mkidr -p /earlylog
-echo "*.*		-/var/log/messages" > /earlylog/syslog.conf
+mkdir -p /earlylog
+echo "*.*		-/earlylog/messages" > /earlylog/syslog.conf
 /usr/sbin/syslogd -m 0 -f /earlylog/syslog.conf
 echolog "e" "s" "" "Started early syslogd"
 
