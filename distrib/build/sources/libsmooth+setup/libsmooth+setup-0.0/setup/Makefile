@@ -6,13 +6,15 @@
 
 include ../../../Makefile.versions
 
+VERSION_DEFINES = -DPRODUCT_NAME="\"$(PRODUCT_NAME) $(PRODUCT_VERSION)\"" -DPRODUCT_EXTRA="\"$(PRODUCT_EXTRA)\"" -DPRODUCT_ARCH="\"$(mARCH)\""
+
 CC=gcc 
 
 LD=gcc
 LDFLAGS=-g -L../libsmooth
 LIBS=-lnewt -lslang -ldl -lsmooth
 
-COMPILE=$(CC) -c $(INCLUDE) $(CFLAGS)
+COMPILE=$(CC) -c $(VERSION_DEFINES) $(INCLUDE) $(CFLAGS)
 
 LINK=$(LD) $(LIBRARY) $(LDFLAGS)
 
