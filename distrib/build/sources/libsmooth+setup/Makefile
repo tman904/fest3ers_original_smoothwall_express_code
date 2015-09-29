@@ -5,6 +5,7 @@
 # This code is distributed under the terms of the GPL v2.
 
 include ../Makefile.conf
+include ../Makefile.versions
 
 PACKAGE = libsmooth+setup
 VERSION = 0.0

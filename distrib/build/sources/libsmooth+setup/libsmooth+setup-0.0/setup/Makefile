@@ -4,7 +4,7 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-include ../../../Makefile.versions
+include ../../../Makefile
 
 VERSION_DEFINES = -DPRODUCT_NAME="\"$(PRODUCT_NAME) $(PRODUCT_VERSION)\"" -DPRODUCT_EXTRA="\"$(PRODUCT_EXTRA)\"" -DPRODUCT_ARCH="\"$(mARCH)\""
 
