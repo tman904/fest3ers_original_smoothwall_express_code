@@ -10,7 +10,7 @@ PACKAGE = libsmooth+setup
 VERSION = 0.0
 
 compile:
-	@$(MAKE) $(JOBS) -C $(COMPILE_DIR)
+	@+$(MAKE) $(JOBS) -C $(COMPILE_DIR)
 
 install: compile
 	@install -D $(COMPILE_DIR)/setup/setup $(PKG_ROOT)/usr/sbin/setup
@@ -25,7 +25,7 @@ all: install
 
 clean:
 	@echo -n " $(PACKAGE)"
-	@$(MAKE) --no-print-directory -C $(COMPILE_DIR) clean >/dev/null 2>&1
+	@+$(MAKE) --no-print-directory -C $(COMPILE_DIR) clean >/dev/null 2>&1
 ifeq ($(BUILD_PHASE), Final)
 	@rm -rf $(PKG_ROOT)
 	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
