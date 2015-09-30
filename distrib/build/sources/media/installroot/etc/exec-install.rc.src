@@ -63,7 +63,8 @@ KERNEL_TYPE=KeRnElTyPe
 
 CONFIG_ROOT=/var/smoothwall
 
-TITLE="$CLS           ${BOUL}Smoothwall Express 3.1 Installation$NO"
+BACKTITLE="Smoothwall PRODUCT_NAME PRODUCT_VERSIONPRODUCT_EXTRA (mARCH) -- http://smoothwall.org"
+TITLE="${CLS}${BOUL}$BACKTITLE${NO}"
 
 echo -e "$TITLE"
 echo
