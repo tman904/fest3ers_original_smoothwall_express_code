@@ -85,9 +85,14 @@ END
 	        		$hostname = gethostbyaddr(inet_aton($addr), AF_INET);
 	       			if (!$hostname) { $hostname = $tr{'lookup failed'}; }
 				&openbox("$addr ($hostname)");
-				print "<pre style='max-width:500px'>\n";
-				system('/usr/bin/whois', '--nocgi', '-s', $addr);
-				print "</pre>\n";
+				print "<div style='margin:1em; max-width:500px; font-family:monospace'>\n";
+				open (WHOIS,"/usr/bin/whois --nocgi -s $addr |");
+				while (<WHOIS>)
+				{
+				  print "$_<br />\n";
+				}
+				close(WHOIS);
+				print "</div>\n";
 				&closebox();
 			}
 		}	
