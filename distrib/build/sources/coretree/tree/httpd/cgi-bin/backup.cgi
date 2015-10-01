@@ -226,7 +226,6 @@ my %render_settings =
 			title  => "$tr{'bu name'}",
 			size   => 20,
 			valign => 'top',
-			maxrowspan => 2,
 			sort   => 'cmp',
 		},
 		{
