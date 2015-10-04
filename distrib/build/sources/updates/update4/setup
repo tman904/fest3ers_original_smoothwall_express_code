@@ -70,8 +70,8 @@ pushd /lib/modules >/dev/null 2>&1
   while read a; do
     echo "        Archiving and deleting old kernel $a"
     pushd / >/dev/null 2>&1
-    /usr/bin/find ./lib/modules/$a ./boot/initrd-$a.gz ./boot/vmlinuz-$a | \\
-        /bin/cpio -o -H newc | \\
+    /usr/bin/find ./lib/modules/$a ./boot/initrd-$a.gz ./boot/vmlinuz-$a | \
+        /bin/cpio -o -H newc | \
         /usr/bin/gzip > /root/linux-$a-archive.cpio.gz
     /bin/rm -rf /lib/modules/$a
     /bin/rm -f /boot/initrd-$a.gz
