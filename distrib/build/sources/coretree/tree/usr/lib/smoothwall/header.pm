@@ -674,12 +674,8 @@ sub closepage
    	  </td>
         </tr>
       </table>
-<script type='text/javascript'
-        language='JavaScript'
-        src='/ui/js/monitor.js'>
-</script>
-<script type='text/javascript'
-        language='JavaScript'>
+<script type='text/javascript' src='/ui/js/monitor.js'></script>
+<script type='text/javascript'>
   var timeMonitorObj = new Object();
 
   function doTime () {
@@ -687,7 +683,9 @@ sub closepage
   }
 
   function displayTime(dateTime) {
-    document.getElementById('currentTime').innerHTML = 'Firewall Time<br /><span style="color:#505050; font-size:10pt; font-weight:bold">'+ dateTime +'</span>';
+    // "The script tag is closed with "< / x x x" (sans spaces); the '/' must be escaped (double).
+    document.getElementById('currentTime').innerHTML =
+      'Firewall Time<br /><span style="color:#505050; font-size:10pt; font-weight:bold">'+ dateTime +'<\\/span>';
   }
   var timeTimer = setInterval (doTime, 1000);
 </script>
