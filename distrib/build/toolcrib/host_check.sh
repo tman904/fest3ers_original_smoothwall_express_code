@@ -127,6 +127,9 @@ VTAR=1.14
 CXZ=050000
 VXZ=5.0.0
 
+CZIP=0300
+VZIP=3.0
+
 # TEXINFO is tested with makeinfo
 CTEXINFO=0408
 VTEXINFO=4.8
@@ -565,6 +568,23 @@ else
     OK=OK+1
   else
     echo "    OK: xz v$WORK seems new enough (>=$VXZ)"
+  fi
+fi
+
+# Check zip
+if [ ! -e /bin/zip -a ! -e /usr/bin/zip ]; then
+  echo "  FAIL: zip not found in /bin or /usr/bin. Need zip version>=$VZIP."
+  OK=OK+1
+else
+  WORK=`zip 2>&1| head -2 | tail -1 | sed -e 's/.* \([0-9.]*\).*/\1/'`
+  OIFS=$IFS; IFS="."; set $WORK
+  TZIP=`echo $*|awk '{printf("%2.2d%2.2d%2.2d\n", $1, $2, $3)}'`
+  IFS=$OIFS
+  if [[ $TZIP < $CZIP ]]; then
+    echo "  FAIL: zip v$WORK seems too old (<$VZIP)"
+    OK=OK+1
+  else
+    echo "    OK: zip v$WORK seems new enough (>=$VZIP)"
   fi
 fi
 

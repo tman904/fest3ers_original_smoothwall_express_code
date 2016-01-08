@@ -373,6 +373,7 @@ fi
       build c_icap_modules
       build squidclamav
       build usb-modeswitch
+      build zip
 
       touch crumbs/Final.grp6.compiled
     fi
