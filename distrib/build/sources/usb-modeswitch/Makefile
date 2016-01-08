@@ -25,10 +25,10 @@ download:
 	@$(PRE_DL) $(DL_CMD) $(PKG_URL) $(MD5)
 	@$(PRE_DL) $(DL_CMD) $(DATA_PKG_URL) $(MD5)
 
-ifndef PREPARE
-$(DATA_PACKAGE)-$(DATA_VERSION)/: download
+PREPARE = yes
+$(PACKAGE)-$(VERSION)/: download
+	tar -xvf $(DOWNLOADS_DIR)/$(PACKAGE)-$(VERSION)$(EXTENSION)
 	tar -xvf $(DOWNLOADS_DIR)/$(DATA_PACKAGE)-$(DATA_VERSION)$(EXTENSION)
-endif
 
 
 CONFIGURE = yes
