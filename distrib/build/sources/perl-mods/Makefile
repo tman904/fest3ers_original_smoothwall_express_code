@@ -41,7 +41,9 @@ export PERL_MODS = \
 	    libwww-perl \
 	    local-lib \
 	    Net-SSLeay \
-	    IO-Socket-SSL
+	    IO-Socket-SSL \
+	    XML-Parser \
+	    XML-Simple
 
 DOWNLOAD = yes
 download:
