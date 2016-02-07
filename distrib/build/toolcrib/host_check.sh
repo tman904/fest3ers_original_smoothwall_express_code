@@ -58,9 +58,7 @@ CBASH=02050a
 VBASH=2.5.a #(/bin/sh should be a symbolic or hard link to bash) 
 
 CBINUTILS=021200
-CBINUTILSM=022500
 VBINUTILS=2.12
-VBINUTILSM=2.25.00
 
 CFLEX=020500
 VFLEX=2.5
@@ -88,9 +86,7 @@ CGCCM=040601
 VGCC=3.0.1
 
 CGLIBC=020205
-#CGLIBCM=021300
 VGLIBC=2.2.5
-#VGLIBCM=2.13.0
 
 CGREP=0205
 VGREP=2.5
@@ -168,18 +164,18 @@ fi
 
 # check binutils
 if [ ! -e /usr/bin/ld ]; then
-  echo "  FAIL: /usr/bin/ld not found. Need binutilis $VBINUTILS<=version<=$VBINUTILSM."
+  echo "  FAIL: /usr/bin/ld not found. Need binutilis version>=$VBINUTILS."
   OK=OK+1
 else
   WORK=`ld --version | head -1 | sed -e 's/[^0-9.]*\(.*\)/\1/'`
   OIFS=$IFS; IFS="."; set $WORK
   TBINUTILS=`echo $1 $2 $3|awk '{printf("%2.2d%2.2d%2.2d\n", $1, $2, $3)}'`
   IFS=$OIFS
-  if [[ $TBINUTILS < $CBINUTILS || $TBINUTILS > $CBINUTILSM ]]; then
-    echo "  FAIL: binutils v$WORK FAILED ($CBINUTILS-$CBINUTILSM)"
+  if [[ $TBINUTILS < $CBINUTILS  ]]; then
+    echo "  FAIL: binutils v$WORK FAILED ($CBINUTILS)"
     OK=OK+1
   else
-    echo "    OK: binutils v$WORK seems OK (>=$VBINUTILS, <=$VBINUTILSM)"
+    echo "    OK: binutils v$WORK seems OK (>=$VBINUTILS)"
   fi
 fi
 
