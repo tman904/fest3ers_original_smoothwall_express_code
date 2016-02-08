@@ -11,8 +11,6 @@ VERSION = 4.5.19
 
 BASE_URL = ftp://alpha.gnu.org/gnu/findutils/
 
-PATCH_FILE1 = stdio.h.patch
-
 ifneq ($(BUILD_PHASE),Final)
 CONFIG_OPTS += --prefix=/tools
 else
