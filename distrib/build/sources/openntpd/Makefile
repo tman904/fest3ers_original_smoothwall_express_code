@@ -12,7 +12,6 @@ VERSION = 5.7p4
 BASE_URL = ftp://ftp.openbsd.org/pub/OpenBSD/OpenNTPD/
 
 PATCH_FILE1 = openntpd-username.patch
-PATCH_FILE2 = openntpd-pidfile.patch
 
 INSTALL = yes
 
