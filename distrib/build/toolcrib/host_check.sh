@@ -572,7 +572,7 @@ if [ ! -e /bin/zip -a ! -e /usr/bin/zip ]; then
   echo "  FAIL: zip not found in /bin or /usr/bin. Need zip version>=$VZIP."
   OK=OK+1
 else
-  WORK=`zip 2>&1| head -2 | tail -1 | sed -e 's/.* \([0-9.]*\).*/\1/'`
+  WORK=`zip -? 2>&1| head -2 | tail -1 | sed -e 's/^Zip \([0-9.]*\).*/\1/'`
   OIFS=$IFS; IFS="."; set $WORK
   TZIP=`echo $*|awk '{printf("%2.2d%2.2d%2.2d\n", $1, $2, $3)}'`
   IFS=$OIFS
