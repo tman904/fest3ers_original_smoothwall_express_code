@@ -1,6 +1,6 @@
 UPDATE_PACKAGES = \
 		  openssl \
-		  perl-modules \
+		  perl-mods \
 		  usb-modeswitch \
 		  openntpd \
 		  httpd \
