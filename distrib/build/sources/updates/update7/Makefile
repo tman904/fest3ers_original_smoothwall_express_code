@@ -11,6 +11,7 @@ UPDATE_PACKAGES = \
 		  linux-firmware \
 		  subversion \
 		  neon \
+		  smoothd \
 		  kernel-drivers \
 		  coretree
 
