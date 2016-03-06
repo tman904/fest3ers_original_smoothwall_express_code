@@ -7,12 +7,12 @@
 include ../Makefile.conf
 
 PACKAGE = subversion
-VERSION = 1.7.5
+VERSION = 1.9.3
 
 BASE_URL = http://archive.apache.org/dist/subversion
 
 EXTENSION = .tar.bz2
 
-CONFIG_OPTS += --with-neon
+CONFIG_OPTS += --with-neon=/usr
 
 include ../Makefile.rules
