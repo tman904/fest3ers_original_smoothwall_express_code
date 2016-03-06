@@ -17,7 +17,7 @@ SetEnvIf Request_URI "trafficstats.cgi" dontlog
 s/\(CustomLog.*common$\)/\1 env=!dontlog/' /etc/httpd/conf/httpd.conf
 
   # The 'magic' file is not in default location.
-  sed -i -e 's=/usr/share/magic=/etc/httpd/conf/magic=' \
+  sed -i -e 's=share/magic=/etc/httpd/conf/magic=' \
       /etc/httpd/conf/httpd.conf
 
   echo "httpd.conf patched"
