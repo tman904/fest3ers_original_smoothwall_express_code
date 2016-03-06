@@ -18,6 +18,6 @@ UPDATE_PACKAGES = \
 UPDATE_ID = 007
 UPDATE_NAME = Update7
 
-KERNEL = yes
+CLAMAV = yes
 
 include ../Makefile.update
