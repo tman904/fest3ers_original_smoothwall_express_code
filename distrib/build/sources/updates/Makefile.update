@@ -30,12 +30,12 @@ patch.tar.gz: ../../../crumbs/Final.built
 		tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib$$Toption; \
 		mkdir review/$$I; \
 		tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C review/$$I$$Toption; \
-		( find review/$$I -name \*.la -print; \
-		  find review/$$I -name \*.a -print; \
-		  find review/$$I -name include -print ; \
-		  find review/$$I -name doc -print ; \
-		  find review/$$I -name man -print ; \
-		  find review/$$I -name info -exec rm -rf {} \;) | while read filnam; do \
+		( find review/$$I -name \*.la -print \
+		               -o -name \*.a -print \
+		               -o -name include -print \
+		               -o -name doc -print \
+		               -o -name man -print \
+		               -o -name info -print) | while read filnam; do \
 		    rm -rf $$filnam; done; \
 		tar cfz review/$$I-$(mARCH).tar.gz -C review/$$I .; \
 		rm -rf review/$$I; \
