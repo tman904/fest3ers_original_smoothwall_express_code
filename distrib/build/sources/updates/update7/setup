@@ -1,0 +1,48 @@
+#!/bin/sh
+
+echo "Update 7 installing."
+
+# Unpack the patch
+/usr/bin/tar xvf patch.tar.gz -C /
+
+echo "  Fix logrotate config file modes"
+chmod 644 /etc/logrotate.{conf,d/*}
+
+# Leave this for a few generations, just in case.
+echo "  Remove unused file 'acl'"
+/bin/rm -f /var/smoothwall/proxy/acl
+
+echo "  Fix /var/run"
+chmod 1777 /var/run
+
+# Update the new initramfs
+echo "  Update the initramfs"
+mkdir /root/upd5-initramfs-unpack
+pushd /root/upd5-initramfs-unpack >/dev/null 2>&1
+
+echo "    Unpack"
+/usr/bin/zcat /boot/initrd-${KERNEL_VERSION}.gz | /bin/cpio -id
+
+echo -en "\007"
+echo "    FINISHME: Copy udev usb-modeswitch rules"
+
+echo -en "\007"
+echo "    FINISHME: install usb-modeswitch"
+
+echo "    Repack"
+/usr/bin/find . | /bin/cpio -o -H newc | /usr/bin/gzip > /boot/initrd-${KERNEL_VERSION}.gz
+chmod 644 /boot/initrd-${KERNEL_VERSION}.gz
+
+echo "    Tidy"
+rm -rf /root/upd5-initramfs-unpack
+
+popd >/dev/null 2>&1
+
+echo "Patch httpd.conf to fix excessive logging and magic file"
+bash patch-apache-conf.sh
+
+echo "Make stock squid use the faster aufs instead of diskd"
+# This should not affect the filtering mod's config.
+/usr/bin/smoothwall/writeproxy.pl
+# This should restart the right squid even when the filtering mod is installed.
+/usr/bin/smoothcom squidrestart

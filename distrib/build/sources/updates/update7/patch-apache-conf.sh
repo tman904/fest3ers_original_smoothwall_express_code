@@ -12,7 +12,7 @@ else
   # Don't log trafficstats.cgi or time-clock.cgi; no need to fill the logs
   #   with things that run this often.
   sed -i -e '/^ErrorLog/a\
-SetEnvIf Request_URI "time-clock.cgi$" dontlog\
+SetEnvIf Request_URI "time-clock.cgi" dontlog\
 SetEnvIf Request_URI "trafficstats.cgi" dontlog
 s/\(CustomLog.*common$\)/\1 env=!dontlog/' /etc/httpd/conf/httpd.conf
 
