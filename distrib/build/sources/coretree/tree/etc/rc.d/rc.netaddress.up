@@ -81,7 +81,7 @@ if [ "$CONFIG_TYPE" == "2" -o "$CONFIG_TYPE" == "3" -o "$CONFIG_TYPE" == "6" -o 
                                 /usr/sbin/ip link set dev $RED_DEV address $nativeMAC
                         fi
                         echolog "" "" "$DEBUG_DHCPCD" "invoking dhcpcd daemon: (rc.netaddress.up)"
-			/usr/sbin/dhcpcd -4 -A -L -q --nodev -t 0 -h $RED_DHCP_HOSTNAME \
+			/usr/sbin/dhcpcd -4 -b -A -L -q --nodev -t 0 -h $RED_DHCP_HOSTNAME \
                           -c /etc/rc.d/rc.updatered $RED_DEV
                        
                         # TODO: MTU override will be handled via dhcpcd.conf.
