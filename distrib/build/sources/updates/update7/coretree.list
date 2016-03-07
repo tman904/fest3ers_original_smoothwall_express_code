@@ -1,6 +1,9 @@
 ./etc/rc.d/rc.adsl
+./etc/rc.d/rc.firewall.up
 ./etc/rc.d/rc.netaddress.down
+./etc/rc.d/rc.netaddress.up
 ./etc/rc.d/rc.network
+./etc/rc.d/rc.updatered
 ./httpd/cgi-bin/pppsetup.cgi
 ./usr/bin/smoothwall/writeproxy.pl
 ./usr/lib/smoothwall/langs/en.pl
