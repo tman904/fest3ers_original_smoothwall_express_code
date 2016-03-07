@@ -107,7 +107,7 @@ function writeDHCPinfo {
         RENEWALTIME=$new_dhcp_renewal_time
         REBINDTIME=$new_dhcp_rebinding_time
         INTERFACE=$interface
-	CLASSID="dhcpcd 6.9.0"
+	CLASSID="dhcpcd 6.10.1"
         CLIENTID=$client_duid
 	DHCPCADDR=$red_macaddr
         # these values were not being used previously
