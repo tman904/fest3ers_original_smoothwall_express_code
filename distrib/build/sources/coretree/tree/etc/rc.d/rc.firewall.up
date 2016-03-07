@@ -325,9 +325,9 @@ fi
 for iface in $RED_DEV ppp0 ippp0; do
   /sbin/iptables -t nat -A PREROUTING -i $iface -j MINIUPNPD
 done
-/sbin/iptables -t nat -N MINIUPNPD-PCP-PEER
+/sbin/iptables -t nat -N MINIUPNPD-POSTROUTING
 for iface in $RED_DEV ppp0 ippp0; do
-  /sbin/iptables -t nat -A POSTROUTING -o $iface -j MINIUPNPD-PCP-PEER
+  /sbin/iptables -t nat -A POSTROUTING -o $iface -j MINIUPNPD-POSTROUTING
 done
 
 # Web proxy
