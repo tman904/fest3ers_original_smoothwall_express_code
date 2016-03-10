@@ -44,7 +44,7 @@ if [ "$1" == "halt" ]; then
 	. /var/smoothwall/apcupsd/settings
 	if [ "$ENABLE" == "on" -a "$KILLPOWER" == "on" -a -f "/etc/apcupsd/powerfail" ]; then
 		# This is a powerfail situation, so turn off the UPS.
-		/usr/sbin/apcupsd --killpower
+		/sbin/apcupsd --killpower
 	fi
 	# If the above 'killpower' executed, we may or may not reach here. No matter;
 	#   / is RO and the plug's about to be 'pulled' anyway.
