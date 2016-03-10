@@ -10,64 +10,72 @@ use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
 use smoothtype qw( :standard );
+use strict;
+use warnings;
 
 my (%cgiparams, %checked, %selected);
 my $filename = "${swroot}/xtaccess/config";
+my $refresh = '';
+my $errormessage = '';
 
 &showhttpheaders();
 
+$cgiparams{'ACTION'} = '';
+
+$cgiparams{'EXT'} = '';
+$cgiparams{'DEST_PORT'} = '';
+$cgiparams{'COMMENT'} = '';
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'COLUMN'} = 1;
 $cgiparams{'ORDER'} = $tr{'log ascending'};
 
 &getcgihash(\%cgiparams);
 
-if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
-{
+if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq "" ) {
 	my @temp = split(',',$ENV{'QUERY_STRING'});
 	$cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
 	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
 }
 
-
-my $errormessage = '';
-
-if ($cgiparams{'ACTION'} eq $tr{'add'})
-{
-	unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/) { $errormessage = $tr{'invalid input'}; }
-	unless(&validipormask($cgiparams{'EXT'}))
-	{
+if ($cgiparams{'ACTION'} eq $tr{'add'}) {
+	$errormessage = $tr{'invalid input'} unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/);
+	unless(&validipormask($cgiparams{'EXT'})) {
 		if ($cgiparams{'EXT'} ne '') {
-			$errormessage = $tr{'source ip bad'}; }
+			$errormessage = $tr{'source ip bad'};
+		}
 		else {
-			$cgiparams{'EXT'} = '0.0.0.0/0'; }
+			$cgiparams{'EXT'} = '0.0.0.0/0';
+		}
 	}
+	$errormessage = $tr{'invalid comment'} unless ( &validcomment( $cgiparams{'COMMENT'} ) );	
+	$errormessage = $tr{'destination port numbers'} unless(&validportrange($cgiparams{'DEST_PORT'}));
 
-	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'}; }	
-	unless(&validportrange($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; }
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
-	unless ($errormessage)
-	{
+	unless ($errormessage) {
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
 		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
-		undef %cgiparams;
+
+		$cgiparams{'EXT'} = '';
+		$cgiparams{'DEST_PORT'} = '';
+		$cgiparams{'COMMENT'} = '';
+		$cgiparams{'ENABLED'} = 'off';
 		$cgiparams{'COLUMN'} = 1;
 		$cgiparams{'ORDER'} = $tr{'log ascending'};
 		
 		&log($tr{'external access rule added'});
 
 		my $success = message('setxtaccess');
-	
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+		$errormessage = $success;
+		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">';
 	}
 }
-if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
-{
+
+if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}) {
 	open(FILE, "$filename") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -75,35 +83,30 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 	my $count = 0;
 	my $id = 0;
 	my $line;
-	foreach $line (@current)
-	{
+	foreach $line (@current) {
 		$id++;
-		if ($cgiparams{$id} eq "on") {
-			$count++; }
+		$count++ if (($cgiparams{$id}) && $cgiparams{$id} eq "on");
 	}
-	if ($count == 0) {
-		$errormessage = $tr{'nothing selected'}; }
-	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-		$errormessage = $tr{'you can only select one item to edit'}; }
-	unless ($errormessage)
-	{
+	$errormessage = $tr{'nothing selected'} if ($count == 0);
+	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+
+	unless ($errormessage) {
 		open(FILE, ">$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
 		my $id = 0;
-		foreach $line (@current)
-		{
+		foreach $line (@current) {
 			$id++;
-			unless ($cgiparams{$id} eq "on") {
-				print FILE "$line"; }
-			elsif ($cgiparams{'ACTION'} eq $tr{'edit'})
-			{
+			unless (($cgiparams{$id}) && $cgiparams{$id} eq "on") {
+				print FILE "$line";
+			}
+			elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
 				chomp($line);
 				my @temp = split(/\,/,$line);
 				$cgiparams{'PROTOCOL'} = $temp[0];
 				$cgiparams{'EXT'} = $temp[1];
 				$cgiparams{'DEST_PORT'} = $temp[2];
 				$cgiparams{'ENABLED'} = $temp[3];
-				$cgiparams{'COMMENT'} = $temp[4];
+				$cgiparams{'COMMENT'} = $temp[4] || '';
 			}
 		}
 		close(FILE);
@@ -111,13 +114,10 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'external access rule removed'});
 
 		my $success = message('setxtaccess');
-	
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+		$errormessage = $tr{'smoothd failure'} unless ($success);
 	}
 }
-if ($cgiparams{'ACTION'} eq '')
-{
+if ($cgiparams{'ACTION'} eq '') {
 	$cgiparams{'PROTOCOL'} = 'tcp';
 	$cgiparams{'ENABLED'} = 'on';
 }
@@ -130,40 +130,42 @@ $checked{'ENABLED'}{'off'} = '';
 $checked{'ENABLED'}{'on'} = '';  
 $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
-&openpage($tr{'external access configuration'}, 1, '', 'networking');
+&openpage($tr{'external access configuration'}, 1, $refresh, 'networking');
 
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'add a new rule'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD>
-<SELECT NAME='PROTOCOL'>
-<OPTION VALUE='udp' $selected{'PROTOCOL'}{'udp'}>UDP
-<OPTION VALUE='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP
-</SELECT>
-</TD>
-<TD CLASS='base'><FONT COLOR='$colourred'>$tr{'sourcec'}</FONT></TD>
-<TD><INPUT TYPE='TEXT' NAME='EXT' VALUE='$cgiparams{'EXT'}' SIZE='32' id='ext' @{[jsvalidipormask('ext')]}></TD>
-<TD CLASS='base'><FONT COLOR='$colourred'>$tr{'destination portc'}</FONT></TD>
-<TD><INPUT TYPE='TEXT' NAME='DEST_PORT' VALUE='$cgiparams{'DEST_PORT'}' SIZE='5' id='dest_port' @{[jsvalidport('dest_port')]}></TD>
-</TR>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td>
+	<select name='PROTOCOL'>
+	<option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP
+	<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP
+	</select></td>
+	<td class='base'>$tr{'sourcec'}</td>
+	<td><input type='TEXT' name='EXT' value='$cgiparams{'EXT'}' SIZE='32' id='ext' 
+		@{[jsvalidipormask('ext','true')]}></td>
+	<td class='base'>$tr{'destination portc'}</td>
+	<td><input type='TEXT' name='DEST_PORT' value='$cgiparams{'DEST_PORT'}' SIZE='5' id='dest_port' 
+		@{[jsvalidport('dest_port')]}></td>
+</tr>
 <tr>
 	<td>$tr{'commentc'}</td>
 	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
 </tr>
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-<TD CLASS='base' style='width:50%' >$tr{'enabled'}</td><td><INPUT TYPE='CHECKBOX' NAME='ENABLED' $checked{'ENABLED'}{'on'}></TD>
-<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
-</TR>
-</TABLE>
+</table>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td class='base' style='width:50%;'>$tr{'enabled'}</td>
+	<td><input type='CHECKBOX' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
+	<td style='width:50%; text-align:center;'><input type='SUBMIT' name='ACTION' value='$tr{'add'}'></td>
+</tr>
+</table>
 END
 ;
 &closebox();
@@ -222,17 +224,17 @@ my %render_settings =
 print <<END
 <table class='blank'>
 <tr>
-<td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
-<td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
+	<td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+	<td style='text-align: center; width: 50%;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
 </tr>
 </table>
 END
 ;
 &closebox();
 
+print "</div></form>\n";
+
 &alertbox('add', 'add');
-
 &closebigbox();
-
 &closepage();
 

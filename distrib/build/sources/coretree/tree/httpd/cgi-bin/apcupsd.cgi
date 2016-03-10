@@ -9,17 +9,17 @@ use header qw( :standard );
 use smoothd qw( message );
 use smoothtype qw( :standard );
 use strict;
+use warnings;
 
 my (%apcupsdsettings, %checked, %selected);
-my $refresh;
+my $refresh = '';
 
 sub validemailaddr() {
 	my ($email) = @_;
-
-        my $okaddr = 1;
+	my $okaddr = 1;
 	my ($tmpnam, $tmphst) = split ("@", $email);
-        if ($tmpnam !~ /[a-zA-Z0-9._+-]*/ ) { $okaddr = 0; }
-        if (! (&validhostname ($tmphst) or &validip($tmphst))) { $okaddr = 0; }
+	$okaddr = 0 if ($tmpnam !~ /[a-zA-Z0-9._+-]*/ );
+	$okaddr = 0 if (! (&validhostname ($tmphst) or &validip($tmphst)));
 	return $okaddr;
 }
 
@@ -86,9 +86,15 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	if ($apcupsdsettings{'EMAIL'} ne "" and ! &validemailaddr($apcupsdsettings{'EMAIL'})) {
 		$errormessage .= $tr{"apc invalid alert addr"} ."<br />";
 	}
-	if ($apcupsdsettings{'ANNOY'} !~ /[0-9]+/ ) { $errormessage .= $tr{"apc invalid annoy time"} ."<br />"; }
-	if ($apcupsdsettings{'BATTDELAY'} !~ /[0-9]+/ ) { $errormessage .= $tr{"apc invalid batt delay"} ."<br />"; }
-	if ($apcupsdsettings{'BATTLEVEL'} !~ /[0-9]+/ ) { $errormessage .= $tr{"apc invalid batt level"} ."<br />"; }
+	if ($apcupsdsettings{'ANNOY'} !~ /[0-9]+/ ) {
+		$errormessage .= $tr{"apc invalid annoy time"} ."<br />";
+	}
+	if ($apcupsdsettings{'BATTDELAY'} !~ /[0-9]+/ ) {
+		$errormessage .= $tr{"apc invalid batt delay"} ."<br />";
+	}
+	if ($apcupsdsettings{'BATTLEVEL'} !~ /[0-9]+/ ) {
+		$errormessage .= $tr{"apc invalid batt level"} ."<br />";
+	}
 	if ($apcupsdsettings{'CC'} ne "" and ! &validemailaddr($apcupsdsettings{'CC'})) {
 		$errormessage .= $tr{"apc invalid cc1 addr"} ."<br />";
 	}
@@ -98,7 +104,8 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	if ($apcupsdsettings{'FROM'} ne "" and ! &validemailaddr($apcupsdsettings{'FROM'})) {
 		$errormessage .= $tr{"apc invalid from addr"} ."<br />";
 	}
-	if ($apcupsdsettings{'SMTPSERVER'} ne "" and !&validip($apcupsdsettings{'SMTPSERVER'}) and ! &validhostname($apcupsdsettings{'SMTPSERVER'})) {
+	if ($apcupsdsettings{'SMTPSERVER'} ne "" and !&validip($apcupsdsettings{'SMTPSERVER'}) and 
+	    ! &validhostname($apcupsdsettings{'SMTPSERVER'})) {
 		$errormessage .= $tr{"apc invalid svr addr"} ."<br />";
 	}
 	if ($apcupsdsettings{'NISPORT'} ne "" and not &validport($apcupsdsettings{'NISPORT'}) ) {
@@ -113,26 +120,32 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	if ($apcupsdsettings{'TO'} ne "" and $apcupsdsettings{'TO'} !~ /[0-9]+/ ) {
 		$errormessage .= $tr{"apc invalid time out"} ."<br />";
 	}
-	if ($apcupsdsettings{'UPSAUTH'} =~ /[<>]/ ) { $errormessage .= $tr{"apc invalid password"} ."<br />"; }
+	if ($apcupsdsettings{'UPSAUTH'} =~ /[<>]/ ) {
+		$errormessage .= $tr{"apc invalid password"} ."<br />";
+	}
 
-	my ($tmphost,$tmpport) = split(":",$apcupsdsettings{'UPSIP'});
-	if ($tmphost ne "" and not &validip($tmphost) and not &validhostname($tmphost)) {
+	my ($tmphost, $tmpport) = split(":",$apcupsdsettings{'UPSIP'});
+	if (($tmphost) and not &validip($tmphost) and not &validhostname($tmphost)) {
 		$errormessage .= $tr{"apc invalid ups ip host"} ."<br />";
 	}
-	if ($tmpport ne "" and not &validport($tmpport)) {
+	if (($tmpport) and not &validport($tmpport)) {
 		$errormessage .= $tr{"apc invalid ups ip port"} ."<br />";
 	}
 	if ($apcupsdsettings{'UPSMODE'} ne "" and $apcupsdsettings{'UPSMODE'} !~ /[0-9]+/ ) {
 		$errormessage .= $tr{"apc invalid ups mode"} ."<br />";
 	}
-	if ($apcupsdsettings{'UPSNAME'} =~ /[<>]/ ) { $errormessage .= $tr{"apc invalid ups name"} ."<br />"; }
+	if ($apcupsdsettings{'UPSNAME'} =~ /[<>]/ ) {
+		$errormessage .= $tr{"apc invalid ups name"} ."<br />";
+	}
 
 	if ($apcupsdsettings{'UPSPORT'} ne "" and 
 	    $apcupsdsettings{'UPSPORT'} !~ /\/dev\/ttyS[0-9]+/ and
 	    $apcupsdsettings{'UPSPORT'} !~ /\/dev\/ttyUSB[0-9]+/ ) {
 		$errormessage .= $tr{"apc invalid serial port"} ."<br />";
 	}
-	if ($apcupsdsettings{'UPSUSER'} =~ /[<>]/ ) { $errormessage .= $tr{"apc invalid username"} ."<br />"; }
+	if ($apcupsdsettings{'UPSUSER'} =~ /[<>]/ ) {
+		$errormessage .= $tr{"apc invalid username"} ."<br />";
+	}
 
 
 	# Now warn when things don't quite line up
@@ -140,30 +153,25 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	  or ($apcupsdsettings{'UPSMODE'} eq '1')
 	  or ($apcupsdsettings{'UPSMODE'} eq '2')
 	  or ($apcupsdsettings{'UPSMODE'} eq '3')
-	  or ($apcupsdsettings{'UPSMODE'} eq '5')) && ($apcupsdsettings{'TO'}) ne '0')
-	{
-	$errormessage .= $tr{"Pls Leave Shutdown After Time on Batt"} .'<br />';     
+	  or ($apcupsdsettings{'UPSMODE'} eq '5')) && ($apcupsdsettings{'TO'}) ne '0') {
+		$errormessage .= $tr{"Pls Leave Shutdown After Time on Batt"} .'<br />';     
 	}
 
 	if  ((($apcupsdsettings{'UPSMODE'} eq '1') or ($apcupsdsettings{'UPSMODE'} eq '3')
-	  or ($apcupsdsettings{'UPSMODE'} eq '5')) && ($apcupsdsettings{'UPSPORT'}) ne '' )
-	 {
-	$errormessage .= $tr{"Pls Leave Serial Blank USB PC"} .'<br />';
+	  or ($apcupsdsettings{'UPSMODE'} eq '5')) && ($apcupsdsettings{'UPSPORT'}) ne '' ) {
+		$errormessage .= $tr{"Pls Leave Serial Blank USB PC"} .'<br />';
 	}
 
-	if ($apcupsdsettings{'UPSMODE'} eq '5' && (!(&validip($apcupsdsettings{'UPSIP'}))))
-	 {
-	$errormessage .= $tr{"invalid ups IP"} .'<br />';
+	if ($apcupsdsettings{'UPSMODE'} eq '5' && (!(&validip($apcupsdsettings{'UPSIP'})))) {
+		$errormessage .= $tr{"invalid ups IP"} .'<br />';
 	}
 
-	if ($apcupsdsettings{'UPSMODE'} eq '5' && $apcupsdsettings{'UPSUSER'} eq '' ) 
-	 {
-	$errormessage .= $tr{"Pls Enter Username"} .'<br />';
+	if ($apcupsdsettings{'UPSMODE'} eq '5' && $apcupsdsettings{'UPSUSER'} eq '' ) {
+		$errormessage .= $tr{"Pls Enter Username"} .'<br />';
 	}
         
-	if ($apcupsdsettings{'UPSMODE'} eq '5' && $apcupsdsettings{'UPSAUTH'} eq '' )
-	{
-	$errormessage .= $tr{"Pls Enter Password"} .'<br />';
+	if ($apcupsdsettings{'UPSMODE'} eq '5' && $apcupsdsettings{'UPSAUTH'} eq '' ) {
+		$errormessage .= $tr{"Pls Enter Password"} .'<br />';
 	}
 
 	if (($apcupsdsettings{'UPSMODE'} eq '0')
@@ -180,11 +188,9 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	 or ($apcupsdsettings{'UPSMODE'} eq '15')
 	 or ($apcupsdsettings{'UPSMODE'} eq '16')
 	 or ($apcupsdsettings{'UPSMODE'} eq '17')
-	 or ($apcupsdsettings{'UPSMODE'} eq '18'))
-	{
-	unless ($apcupsdsettings{'UPSPORT'} =~ /^\/dev\/tty[A-Z][0-9]/ )
-		{
-		$errormessage .= $tr{"Pls Enter Serial Port"} .'<br />';
+	 or ($apcupsdsettings{'UPSMODE'} eq '18')) {
+		unless ($apcupsdsettings{'UPSPORT'} =~ /^\/dev\/tty[A-Z][0-9]/ ) {
+			$errormessage .= $tr{"Pls Enter Serial Port"} .'<br />';
 		}
 	}
 
@@ -200,9 +206,8 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	  or ($apcupsdsettings{'UPSMODE'} eq '15')
 	  or ($apcupsdsettings{'UPSMODE'} eq '16')
 	  or ($apcupsdsettings{'UPSMODE'} eq '17')
-	  or ($apcupsdsettings{'UPSMODE'} eq '18')) && ($apcupsdsettings{'TO'}) <= '119')
-	{
-	$errormessage .= $tr{"Pls Select Shutdown Time SimpleSig"} .'<br />';
+	  or ($apcupsdsettings{'UPSMODE'} eq '18')) && ($apcupsdsettings{'TO'}) <= '119') {
+		$errormessage .= $tr{"Pls Select Shutdown Time SimpleSig"} .'<br />';
 	}
 
 	if ((($apcupsdsettings{'UPSMODE'} eq '0')
@@ -221,97 +226,79 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	  or ($apcupsdsettings{'UPSMODE'} eq '15')
 	  or ($apcupsdsettings{'UPSMODE'} eq '16')
 	  or ($apcupsdsettings{'UPSMODE'} eq '17')
-	  or ($apcupsdsettings{'UPSMODE'} eq '18')) && ($apcupsdsettings{'UPSIP'}) ne '')
-	{
-	$errormessage .= $tr{"Pls Leave IP Blank"} .'<br />';
+	  or ($apcupsdsettings{'UPSMODE'} eq '18')) && ($apcupsdsettings{'UPSIP'}) ne '') {
+		$errormessage .= $tr{"Pls Leave IP Blank"} .'<br />';
 	}
 
-	if ($apcupsdsettings{'UPSMODE'} ne '5' && $apcupsdsettings{'UPSUSER'} ne '' ) 
-	{
-	$errormessage .= $tr{"Username Not Required"} .'<br />';
+	if ($apcupsdsettings{'UPSMODE'} ne '5' && $apcupsdsettings{'UPSUSER'} ne '' ) {
+		$errormessage .= $tr{"Username Not Required"} .'<br />';
 	}
 
-	if ($apcupsdsettings{'UPSMODE'} ne '5' && $apcupsdsettings{'UPSAUTH'} ne '' )
-	{
-	$errormessage .= $tr{"Password Not Required"} .'<br />';
+	if ($apcupsdsettings{'UPSMODE'} ne '5' && $apcupsdsettings{'UPSAUTH'} ne '' ) {
+		$errormessage .= $tr{"Password Not Required"} .'<br />';
 	}
 
-	if ($apcupsdsettings{'UPSMODE'} eq '4' && ($apcupsdsettings{'UPSPORT'}) ne '' )
-	{
-	$errormessage .= $tr{"Pls Leave Serial Blank Slave"} .'<br />';
+	if ($apcupsdsettings{'UPSMODE'} eq '4' && ($apcupsdsettings{'UPSPORT'}) ne '' ) {
+		$errormessage .= $tr{"Pls Leave Serial Blank Slave"} .'<br />';
 	}
 
-	if ($apcupsdsettings{'UPSMODE'} eq '4' && ($apcupsdsettings{'KILLPOWER'}) eq 'on')
-	{
-	$errormessage .= $tr{"UPS Killpower Incompatible Slave"} .'<br />';
+	if ($apcupsdsettings{'UPSMODE'} eq '4' && ($apcupsdsettings{'KILLPOWER'}) eq 'on') {
+		$errormessage .= $tr{"UPS Killpower Incompatible Slave"} .'<br />';
 	}
 
-	if ($apcupsdsettings{'UPSMODE'} eq '4' && ($apcupsdsettings{'UPSIP'}) eq '')
-	{
-	$errormessage .= $tr{"Pls Enter IP"} .'<br />';
+	if ($apcupsdsettings{'UPSMODE'} eq '4' && ($apcupsdsettings{'UPSIP'}) eq '') {
+		$errormessage .= $tr{"Pls Enter IP"} .'<br />';
 	}
 
-	if ($apcupsdsettings{'POLLTIME'} >= 301 || $apcupsdsettings{'POLLTIME'} <= 19 ) 
-	{
-	$errormessage .= 'Invalid Poll time, enter a value between 20 and 300<br />';
+	if ($apcupsdsettings{'POLLTIME'} >= 301 || $apcupsdsettings{'POLLTIME'} <= 19 ) {
+		$errormessage .= 'Invalid Poll time, enter a value between 20 and 300<br />';
 	}
 
 	# Don't validate email addrs, etc., if notifications are not enabled
-	if ($apcupsdsettings{'ENABLEALERTS'} eq 'on')
-	{
-		if (! &validemailaddr($apcupsdsettings{'FROM'}))
-		{
-		$errormessage .= 'Please enter a valid From address<br />';
+	if ($apcupsdsettings{'ENABLEALERTS'} eq 'on') {
+		if (! &validemailaddr($apcupsdsettings{'FROM'})) {
+			$errormessage .= 'Please enter a valid From address<br />';
 		}
 	
-		if (! &validemailaddr($apcupsdsettings{'EMAIL'}))
-		{
-		$errormessage .= 'Please enter a valid Alert To<br />';
+		if (! &validemailaddr($apcupsdsettings{'EMAIL'})) {
+			$errormessage .= 'Please enter a valid Alert To<br />';
 		}
 	
 		if ($apcupsdsettings{'CC'} ne '') {
-			unless ($apcupsdsettings{'CC'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/))
-			{
-			$errormessage .= 'Please enter a valid And To address<br />';
+			unless ($apcupsdsettings{'CC'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/)) {
+				$errormessage .= 'Please enter a valid And To address<br />';
 			}
 		}
 	
 		if ($apcupsdsettings{'SMSEMAIL'} ne '') {
-			unless ($apcupsdsettings{'SMSEMAIL'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/))
-			{
-			$errormessage .= 'Please enter a valid SMSemail address<br />';
+			unless ($apcupsdsettings{'SMSEMAIL'} =~ (/^[A-z0-9_\-\.]+[@][A-z0-9_\-.]+[A-z]{2,}$/)) {
+				$errormessage .= 'Please enter a valid SMSemail address<br />';
 		 	}
 		}
 	
-		if ($apcupsdsettings{'SMTPSERVER'} eq '')
-		{
-		$errormessage .= 'Please enter valid mailserver<br />';
+		if ($apcupsdsettings{'SMTPSERVER'} eq '') {
+			$errormessage .= 'Please enter valid mailserver<br />';
 		}
 	}
 
-	if ($apcupsdsettings{'BATTLEVEL'} >= 96 || $apcupsdsettings{'BATTLEVEL'} <= 4 )
-	{
-	$errormessage .= 'Please enter % of battery remaining between 5 and 95<br />';
+	if ($apcupsdsettings{'BATTLEVEL'} >= 96 || $apcupsdsettings{'BATTLEVEL'} <= 4 ) {
+		$errormessage .= 'Please enter % of battery remaining between 5 and 95<br />';
 	}
 
-	if ($apcupsdsettings{'BATTDELAY'} >= 301 || $apcupsdsettings{'BATTDELAY'} <= -1 )
-	{
-	$errormessage .= 'Invalid on battery response delay, enter a value between 0 and 300<br />';
+	if ($apcupsdsettings{'BATTDELAY'} >= 301 || $apcupsdsettings{'BATTDELAY'} <= -1 ) {
+		$errormessage .= 'Invalid on battery response delay, enter a value between 0 and 300<br />';
 	}
 
-	if ($apcupsdsettings{'RTMIN'} <= 4 )
-	{
-	$errormessage .= 'Invalid minimum runtime, enter a value of 5 or greater<br />';
+	if ($apcupsdsettings{'RTMIN'} <= 4 ) {
+		$errormessage .= 'Invalid minimum runtime, enter a value of 5 or greater<br />';
 	}
 
-	if (length $apcupsdsettings{'UPSNAME'} > 8)
-	{
-	$errormessage .= 'Please use 8 characters or less for UPS name<br />';
+	if (length $apcupsdsettings{'UPSNAME'} > 8) {
+		$errormessage .= 'Please use 8 characters or less for UPS name<br />';
 	}
 
-	if ($apcupsdsettings{'ANNOY'} eq '')
-	{
-	$errormessage .= 'Please enter Annoy Message Period<BR>Default is 300 Seconds<br />';
+	if ($apcupsdsettings{'ANNOY'} eq '') {
+		$errormessage .= 'Please enter Annoy Message Period<BR>Default is 300 Seconds<br />';
 	}
 
 ERROR:
@@ -328,21 +315,24 @@ ERROR:
 		&writehash("/var/smoothwall/apcupsd/settings", \%apcupsdsettings);
 		
 		my $success = message("apcupsdwrite");
-		
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'} .": apcupsdwrite";
+		$errormessage = $success."<br />" if ($success);
+		$errormessage = $tr{'smoothd failure'} .": apcupsdwrite.<br />" unless ($success);
+
+		if ($apcupsdsettings{'ENABLE'} eq 'on') {
+			$success = message("apcupsdrestart");
+			$errormessage .= $success."<br />" if ($success);
+			$errormessage .= $tr{'smoothd failure'} .": apcupsdrestart.<br />" unless ($success);
 		}
-		$success = message("apcupsdrestart");
-		$errormessage = $success;
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'} .": apcupsdrestart";
+		else {
+			$success = message("apcupsdstop");
+			$errormessage .= $success."<br />" if ($success);
+			$errormessage .= $tr{'smoothd failure'} .": apcupsdstop.<br />" unless ($success);
 		}
-		$refresh = "<META HTTP-EQUIV='refresh' CONTENT='2; URL=apcupsd.cgi'>";
+		$refresh = "<meta http-equiv='refresh' content='2;'>";
 	}
 }
 
-if ($apcupsdsettings{'ACTION'} eq '' )
-{
+if ($apcupsdsettings{'ACTION'} eq '' ) {
 	$apcupsdsettings{'ENABLE'} = 'off';
 	$apcupsdsettings{'NOLOGINTYPE'} = '0';
 	$apcupsdsettings{'OPMODE'} = 'testing';
@@ -352,28 +342,27 @@ if ($apcupsdsettings{'ACTION'} eq '' )
 	}
 }
 
-if ($apcupsdsettings{'ACTION'} eq $tr{'restart'})
-{
+if ($apcupsdsettings{'ACTION'} eq $tr{'restart'}) {
 	&log("APCupsd service restarted.");
 
-	my $success = message("apcupsdrestart");
-	$errormessage = $success;
-	if (not defined $success) {
-		$errormessage = $tr{'smoothd failure'};
+	if ($apcupsdsettings{'ENABLE'} eq 'on') {
+		my $success = message("apcupsdrestart");
+		$errormessage .= $success."<br />" if ($success);
+		$errormessage .= $tr{'smoothd failure'} .": apcupsdrestart.<br />" unless ($success);
 	}
-	$refresh = "<META HTTP-EQUIV='refresh' CONTENT='2; URL=apcupsd.cgi'>";
+	else {
+		$errormessage .= "Not Enabled!<br />";
+	}
+	$refresh = "<meta http-equiv='refresh' content='2;'>";
 }
 
-if ($apcupsdsettings{'ACTION'} eq $tr{'stop'})
-{
+if ($apcupsdsettings{'ACTION'} eq $tr{'stop'}) {
 	&log("APCupsd service stopped.");
 
 	my $success = message("apcupsdstop");
-	$errormessage = $success;
-	if (not defined $success) {
-		$errormessage = $tr{'smoothd failure'};
-	}
-	$refresh = "<META HTTP-EQUIV='refresh' CONTENT='2; URL=apcupsd.cgi'>";
+	$errormessage = $success if ($success);
+	$errormessage = $tr{'smoothd failure'} unless ($success);
+	$refresh = "<meta http-equiv='refresh' content='2;'>";
 }
 
 if ($apcupsdsettings{'ACTION'} eq $tr{'mail-test'}) {
@@ -400,10 +389,6 @@ $selected{'OPMODE'}{$apcupsdsettings{'OPMODE'}} = 'SELECTED';
 $checked{'STANDALONE'}{'off'} = '';
 $checked{'STANDALONE'}{'on'} = '';
 $checked{'STANDALONE'}{$apcupsdsettings{'STANDALONE'}} = 'CHECKED';
-
-$checked{'SHELLLOGIN'}{'off'} = '';
-$checked{'SHELLLOGIN'}{'on'} = '';
-$checked{'SHELLLOGIN'}{$apcupsdsettings{'SHELLLOGIN'}} = 'CHECKED';
 
 $checked{'KILLPOWER'}{'off'} = '';
 $checked{'KILLPOWER'}{'on'} = '';
@@ -531,7 +516,7 @@ $checked{'STARTTLS'}{$apcupsdsettings{'STARTTLS'}} = 'CHECKED';
 &openpage('apcupsd', 1, "$refresh", 'services');
 
 print <<END
-<FORM METHOD='POST' action='?' name='myform'>
+<form method='POST' action='?' name='myform'><div>
 
 <script type="text/javascript">
 
@@ -607,20 +592,20 @@ END
 &openbox('APCupsd:');
 
 print <<END
-<TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
-<TR>
-	<TD CLASS='base' style='width: 25%;'>$tr{'enabled'}</TD>
-	<TD style='width:2%'><INPUT TYPE='checkbox' NAME='ENABLE' $checked{'ENABLE'}{'on'}></TD>
-	<TD CLASS='base' style='width:30%'>$tr{'Standalone UPS'}:</TD>
-	<TD><INPUT style='width:2%' TYPE='checkbox' NAME='STANDALONE' $checked{'STANDALONE'}{'on'}></TD>
-</TR>
-<TR>
-	<TD CLASS='base'></td>
-	<TD></td>
-	<TD CLASS='base'>$tr{'Turn off UPS on shutdown'}:</TD>
-	<TD><INPUT TYPE='checkbox' NAME='KILLPOWER' $checked{'KILLPOWER'}{'on'}></TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin:1em auto 0 auto;'>
+<tr>
+	<td class='base' style='width: 25%;'>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
+	<td class='base' style='width: 25%;'>$tr{'Standalone UPS'}:</td>
+	<td><input type='checkbox' name='STANDALONE' $checked{'STANDALONE'}{'on'}></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td class='base'>$tr{'Turn off UPS on shutdown'}:</td>
+	<td><input type='checkbox' name='KILLPOWER' $checked{'KILLPOWER'}{'on'}></td>
+</tr>
+</table>
 END
 ;
 &closebox();
@@ -628,32 +613,32 @@ END
 &openbox("$tr{'On Battery Configurationc'}");
 
 print <<END
-<TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
-<TR>
-	<TD CLASS='base' style='width: 37%;'>$tr{'Shutdown when remaining capacity less than'}:</TD>
-	<TD style='width: 13%;'><INPUT TYPE='text' style='width: 3em;' NAME='BATTLEVEL' VALUE='$apcupsdsettings{'BATTLEVEL'}'> %</TD>
-	<TD CLASS='base' style='width: 37%;'>$tr{'Shutdown when remaining time less than'}:</TD>
-	<TD style='width: 13%;'><INPUT TYPE='text' style='width: 3em;' NAME='RTMIN' VALUE='$apcupsdsettings{'RTMIN'}'> $tr{'min.'}</TD>
-</TR>
-<TR>
-	<TD CLASS='base' style='width: 37%;'>$tr{'Wait before responding to On Battery alert for'}:</TD>
-	<TD style='width: 13%;'><INPUT TYPE='text' style='width: 3em;' NAME='BATTDELAY' VALUE='$apcupsdsettings{'BATTDELAY'}'> $tr{'sec.'}</TD>
-	<TD CLASS='base' style='width: 37%;'>$tr{'Shutdown after on battery for'}:<span style='font-size:7pt;'> (0 $tr{'Disables'})</span></TD>
-	<TD style='width: 13%;'><INPUT TYPE='text' style='width: 3em;' NAME='TO' VALUE='$apcupsdsettings{'TO'}'> $tr{'sec.'}</TD>
-</TR>
-<TR>
-	<TD CLASS='base' style='width: 37%;'>$tr{'Deny Shell Login when on battery'}:</TD>
-	<TD style='width: 13%;'>
-	<SELECT NAME='NOLOGINTYPE'>
-	<OPTION VALUE='0' $selected{'NOLOGINTYPE'}{'0'}>$tr{'Never'}
-	<OPTION VALUE='1' $selected{'NOLOGINTYPE'}{'1'}>$tr{'Percent'}
-	<OPTION VALUE='2' $selected{'NOLOGINTYPE'}{'2'}>$tr{'Minutes'}
-	<OPTION VALUE='3' $selected{'NOLOGINTYPE'}{'3'}>$tr{'Always'}
-	</SELECT></TD>
-	<TD style='width: 37%;' CLASS='base'>$tr{'Send annoy message every'}:</TD>
-	<TD style='width: 13%'><INPUT TYPE='text' style='width: 3em;' NAME='ANNOY' VALUE='$apcupsdsettings{'ANNOY'}'> $tr{'sec.'}</TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin:1em auto 0 auto;'>
+<tr>
+	<td class='base' style='width: 37%;'>$tr{'Shutdown when remaining capacity less than'}:</td>
+	<td style='width: 13%;'><input type='text' style='width: 3em;' name='BATTLEVEL' value='$apcupsdsettings{'BATTLEVEL'}'> %</td>
+	<td class='base' style='width: 37%;'>$tr{'Shutdown when remaining time less than'}:</td>
+	<td style='width: 13%;'><input type='text' style='width: 3em;' name='RTMIN' value='$apcupsdsettings{'RTMIN'}'> $tr{'min.'}</td>
+</tr>
+<tr>
+	<td class='base'>$tr{'Wait before responding to On Battery alert for'}:</td>
+	<td><input type='text' style='width: 3em;' name='BATTDELAY' value='$apcupsdsettings{'BATTDELAY'}'> $tr{'sec.'}</td>
+	<td class='base'>$tr{'Shutdown after on battery for'}:<span style='font-size:7pt;'> (0 $tr{'Disables'})</span></td>
+	<td><input type='text' style='width: 3em;' name='TO' value='$apcupsdsettings{'TO'}'> $tr{'sec.'}</td>
+</tr>
+<tr>
+	<td class='base'>$tr{'Deny Shell Login when on battery'}:</td>
+	<td>
+		<select name='NOLOGINTYPE'>
+		<option value='0' $selected{'NOLOGINTYPE'}{'0'}>$tr{'Never'}
+		<option value='1' $selected{'NOLOGINTYPE'}{'1'}>$tr{'Percent'}
+		<option value='2' $selected{'NOLOGINTYPE'}{'2'}>$tr{'Minutes'}
+		<option value='3' $selected{'NOLOGINTYPE'}{'3'}>$tr{'Always'}
+		</select></td>
+	<td class='base'>$tr{'Send annoy message every'}:</td>
+	<td><input type='text' style='width: 3em;' name='ANNOY' value='$apcupsdsettings{'ANNOY'}'> $tr{'sec.'}</td>
+</tr>
+</table>
 END
 ;
 
@@ -662,54 +647,54 @@ END
 &openbox("$tr{'Communication Configurationc'}");
 
 print <<END
-<TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
-<TR>
-	<TD CLASS='base' style='width:20%'>$tr{'UPS Type'}:</TD>
-	<TD style='width:10%'>
-		<SELECT NAME='UPSMODE'>
-		<OPTION VALUE='0' $selected{'UPSMODE'}{'0'}>SmartUPS (Serial)
-		<OPTION VALUE='1' $selected{'UPSMODE'}{'1'}>SmartUPS (USB)
-		<OPTION VALUE='2' $selected{'UPSMODE'}{'2'}>Modbus (Serial)
-		<OPTION VALUE='3' $selected{'UPSMODE'}{'3'}>Modbus (USB)
-		<OPTION VALUE='4' $selected{'UPSMODE'}{'4'}>Ethernet (Slave)
-		<OPTION VALUE='5' $selected{'UPSMODE'}{'5'}>PCNET (TCP/IP)
-		<OPTION VALUE='6' $selected{'UPSMODE'}{'6'}>940-0020B $tr{'Cable'}
-		<OPTION VALUE='7' $selected{'UPSMODE'}{'7'}>940-0020C $tr{'Cable'}
-		<OPTION VALUE='8' $selected{'UPSMODE'}{'8'}>940-0023A $tr{'Cable'}
-		<OPTION VALUE='9' $selected{'UPSMODE'}{'9'}>940-0024B $tr{'Cable'}
-		<OPTION VALUE='10' $selected{'UPSMODE'}{'10'}>940-0024C $tr{'Cable'}
-		<OPTION VALUE='11' $selected{'UPSMODE'}{'11'}>940-0024G $tr{'Cable'}
-		<OPTION VALUE='12' $selected{'UPSMODE'}{'12'}>940-0095A $tr{'Cable'}
-		<OPTION VALUE='13' $selected{'UPSMODE'}{'13'}>940-0095B $tr{'Cable'}
-		<OPTION VALUE='14' $selected{'UPSMODE'}{'14'}>940-0095C $tr{'Cable'}
-		<OPTION VALUE='15' $selected{'UPSMODE'}{'15'}>940-0119A $tr{'Cable'}
-		<OPTION VALUE='16' $selected{'UPSMODE'}{'16'}>940-0127A $tr{'Cable'}
-		<OPTION VALUE='17' $selected{'UPSMODE'}{'17'}>940-0128A $tr{'Cable'}
-		<OPTION VALUE='18' $selected{'UPSMODE'}{'18'}>940-1524C $tr{'Cable'}
-		</SELECT>
-	</TD>
-	<TD CLASS='base'>$tr{'Master Address or Hostname'}:<BR><sup>$tr{'Append'} <span style="color:red">:&lt;$tr{'port'}&gt;</span> $tr{'if not default'} (3551)</sup></TD>
-	<TD><INPUT TYPE='text'NAME='UPSIP' VALUE='$apcupsdsettings{'UPSIP'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'UPS Name (8 Char Max.)'}:</TD>
-	<TD><INPUT TYPE='text' maxlength='8' NAME='UPSNAME' style='width:8em' VALUE='$apcupsdsettings{'UPSNAME'}'></TD>
-	<TD CLASS='base' style='width:25%'>$tr{'Serial Port'}:</TD>
-	<TD style='width:20%'><INPUT TYPE='text'NAME='UPSPORT' VALUE='$apcupsdsettings{'UPSPORT'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'Polling Interval'}:</TD>
-	<TD><INPUT TYPE='text' NAME='POLLTIME' style='width: 3em;' VALUE='$apcupsdsettings{'POLLTIME'}'></TD>
-	<TD CLASS='base'>$tr{'PCNET username'}:</TD>
-	<TD><INPUT TYPE='text'NAME='UPSUSER' VALUE='$apcupsdsettings{'UPSUSER'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'Network server listen port'}:<span style='font-size:7pt;'><br />$tr{'Leave blank for default'}</span></TD>
-	<TD><INPUT TYPE='text' maxlength='5' NAME='NISPORT' style='width: 3em;' VALUE='$apcupsdsettings{'NISPORT'}'></TD>
-	<TD CLASS='base'>$tr{'PCNET password'}:</TD>
-	<TD><INPUT TYPE='text'NAME='UPSAUTH' VALUE='$apcupsdsettings{'UPSAUTH'}'></TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin:1em auto 0 auto;'>
+<tr>
+	<td class='base' style='width:20%;'>$tr{'UPS Type'}:</td>
+	<td style='width:10%;'>
+		<select name='UPSMODE'>
+		<option value='0' $selected{'UPSMODE'}{'0'}>SmartUPS (Serial)
+		<option value='1' $selected{'UPSMODE'}{'1'}>SmartUPS (USB)
+		<option value='2' $selected{'UPSMODE'}{'2'}>Modbus &nbsp;&nbsp;(Serial)
+		<option value='3' $selected{'UPSMODE'}{'3'}>Modbus &nbsp;&nbsp;(USB)
+		<option value='4' $selected{'UPSMODE'}{'4'}>Ethernet (Slave)
+		<option value='5' $selected{'UPSMODE'}{'5'}>PCNET &nbsp;&nbsp;&nbsp;(TCP/IP)
+		<option value='6' $selected{'UPSMODE'}{'6'}>940-0020B $tr{'Cable'}
+		<option value='7' $selected{'UPSMODE'}{'7'}>940-0020C $tr{'Cable'}
+		<option value='8' $selected{'UPSMODE'}{'8'}>940-0023A $tr{'Cable'}
+		<option value='9' $selected{'UPSMODE'}{'9'}>940-0024B $tr{'Cable'}
+		<option value='10' $selected{'UPSMODE'}{'10'}>940-0024C $tr{'Cable'}
+		<option value='11' $selected{'UPSMODE'}{'11'}>940-0024G $tr{'Cable'}
+		<option value='12' $selected{'UPSMODE'}{'12'}>940-0095A $tr{'Cable'}
+		<option value='13' $selected{'UPSMODE'}{'13'}>940-0095B $tr{'Cable'}
+		<option value='14' $selected{'UPSMODE'}{'14'}>940-0095C $tr{'Cable'}
+		<option value='15' $selected{'UPSMODE'}{'15'}>940-0119A $tr{'Cable'}
+		<option value='16' $selected{'UPSMODE'}{'16'}>940-0127A $tr{'Cable'}
+		<option value='17' $selected{'UPSMODE'}{'17'}>940-0128A $tr{'Cable'}
+		<option value='18' $selected{'UPSMODE'}{'18'}>940-1524C $tr{'Cable'}
+		</select>
+	</td>
+	<td class='base' style='width:25%;'>$tr{'Master Address or Hostname'}:<BR><sup>$tr{'Append'} <span style='color:red;'>:&lt;$tr{'port'}&gt;</span> $tr{'if not default'} (3551)</sup></td>
+	<td style='width:20%;'><input type='text' name='UPSIP' value='$apcupsdsettings{'UPSIP'}'></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'UPS Name (8 Char Max.)'}:</td>
+	<td><input type='text' maxlength='8' name='UPSNAME' style='width:8em;' value='$apcupsdsettings{'UPSNAME'}'></td>
+	<td class='base'>$tr{'Serial Port'}:</td>
+	<td><input type='text' name='UPSPORT' value='$apcupsdsettings{'UPSPORT'}'></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'Polling Interval'}:</td>
+	<td><input type='text' name='POLLTIME' style='width: 3em;' value='$apcupsdsettings{'POLLTIME'}'></td>
+	<td class='base'>$tr{'PCNET username'}:</td>
+	<td><input type='text' name='UPSUSER' value='$apcupsdsettings{'UPSUSER'}'></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'Network server listen port'}:<span style='font-size:7pt;'><br />$tr{'Leave blank for default'}</span></td>
+	<td><input type='text' maxlength='5' name='NISPORT' style='width: 3em;' value='$apcupsdsettings{'NISPORT'}'></td>
+	<td class='base'>$tr{'PCNET password'}:</td>
+	<td><input type='password' name='UPSAUTH' value='$apcupsdsettings{'UPSAUTH'}'></td>
+</tr>
+</table>
 END
 ;
 
@@ -717,109 +702,129 @@ END
 
 print <<END;
 
-<TABLE style='width: 100%; text-align:center; border: none; margin:1em auto'>
-<TR>
-	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save and restart'}'></TD>
-	<TD style='text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'restart'}'></TD>
-	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'stop'}'></TD>
-</TR>
-</TABLE>
+<table style='width: 100%; text-align:center; border: none; margin:1em auto;'>
+<tr>
+	<td style='width: 33%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'save and restart'}'></td>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'restart'}'></td>
+	<td style='width: 33%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'stop'}'></td>
+</tr>
+</table>
 END
 
 &openbox("$tr{'Alerts Configurationc'}");
 
 print <<END
-<TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
-<TR>
-	<TD CLASS='base' style='width:20%'>$tr{'Enable Alerts'}:</TD>
-	<TD style='width:15%'><INPUT TYPE='checkbox' NAME='ENABLEALERTS' $checked{'ENABLEALERTS'}{'on'}></TD>
-	<TD CLASS='base' style='width:30%'></td>
-	<TD style='width:20%'></td>
-</TR>
-<TR>
-	<TD class='base'>$tr{'Send Alerts To'}:</TD>
-	<TD COLSPAN='2'><INPUT TYPE='text' NAME='EMAIL' style='width: 220px;' VALUE='$apcupsdsettings{'EMAIL'}'></TD>
-	<TD class='base' style='width: 90px;'>$tr{'Send Alerts From'}:</TD>
-       <TD COLSPAN='2'><INPUT TYPE='text' NAME='FROM' style='width: 220px;' VALUE='$apcupsdsettings{'FROM'}'></TD>
-</TR>
-<TR>
-	<TD class='base'><IMG SRC='/ui/img/blob.gif' ALT='*'>&nbsp;$tr{'And To'}:</TD>
-	<TD COLSPAN='2'><INPUT TYPE='text' NAME='CC' style='width: 220px;' VALUE='$apcupsdsettings{'CC'}'></TD>
-	<TD class='base'><IMG SRC='/ui/img/blob.gif' ALT='*'>&nbsp;$tr{'SMS Email Address'}:</TD>
-	<TD COLSPAN='2'><INPUT TYPE='text' NAME='SMSEMAIL' style='width: 220px;' VALUE='$apcupsdsettings{'SMSEMAIL'}'></TD>
-</TR>
-<TR>
-	<TD class='base'>$tr{'Mail Server'}:</TD>
-	<TD COLSPAN='2'><INPUT TYPE='text' NAME='SMTPSERVER' style='width: 220px;' VALUE='$apcupsdsettings{'SMTPSERVER'}'></TD>
-	<TD class='base'>Port:</TD>
-	<TD COLSPAN='2'><INPUT TYPE='text' NAME='PORT' style='width: 50px;' VALUE='$apcupsdsettings{'PORT'}'></TD>
-</TR>
-<TR style='height: 20px;'>
-	<TD>
-	</TD>
-</TR>
-</TABLE>
-<TABLE style='width: 100%; border: none; margin:1em auto 0 auto'>
-<TR>
-	<TD class='base'>$tr{'smtp-authc'}</TD>
-	<TD style='width: 2em;'><INPUT TYPE='checkbox' NAME='ENABLEAUTH' $checked{'ENABLEAUTH'}{'on'} onClick='javaScript:UncheckSMTPS();'></TD>
-	<TD class='base' style='width: 10em;'>$tr{'ssl-smtpsc'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='SMTPS' $checked{'SMTPS'}{'on'} onClick='javaScript:CheckAuth();'></TD>
-	<TD class='base' style='width:10em'>User:</TD>
-	<TD ><INPUT TYPE='text' NAME='USER' style='width: 15em;' VALUE='$apcupsdsettings{'USER'}'></TD>
-</TR>
-<TR>
-	<TD class='base' colspan='2'></TD>
-	<TD class='base'>$tr{'starttlsc'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='STARTTLS' $checked{'STARTTLS'}{'on'} onClick='javaScript:CheckSTARTTLS();'></TD>
-	<TD class='base'>Password:</TD>
-	<TD ><INPUT TYPE='password' NAME='EMAIL_PASSWORD' style='width: 15em;' VALUE='$apcupsdsettings{'EMAIL_PASSWORD'}'></TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin:1em auto 0 auto;'>
+<tr>
+	<td class='base' style='width:20%;'>$tr{'Enable Alerts'}:</td>
+	<td style='width:15%;'><input type='checkbox' name='ENABLEALERTS' $checked{'ENABLEALERTS'}{'on'}></td>
+	<td class='base' style='width:30%;'></td>
+	<td style='width:20%;'></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'Send Alerts To'}:</td>
+	<td colspan='2'><input type='text' name='EMAIL' style='width: 220px;' value='$apcupsdsettings{'EMAIL'}'></td>
+	<td class='base' style='width: 90px;'>$tr{'Send Alerts From'}:</td>
+       <td colspan='2'><input type='text' name='FROM' style='width: 220px;' value='$apcupsdsettings{'FROM'}'></td>
+</tr>
+<tr>
+	<td class='base'><IMG SRC='/ui/img/blob.gif' ALT='*'>&nbsp;$tr{'And To'}:</td>
+	<td colspan='2'><input type='text' name='CC' style='width: 220px;' value='$apcupsdsettings{'CC'}'></td>
+	<td class='base'><IMG SRC='/ui/img/blob.gif' ALT='*'>&nbsp;$tr{'SMS Email Address'}:</td>
+	<td colspan='2'><input type='text' name='SMSEMAIL' style='width: 220px;' value='$apcupsdsettings{'SMSEMAIL'}'></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'Mail Server'}:</td>
+	<td colspan='2'><input type='text' name='SMTPSERVER' style='width: 220px;' value='$apcupsdsettings{'SMTPSERVER'}'></td>
+	<td class='base'>Port:</td>
+	<td colspan='2'><input type='text' name='PORT' style='width: 50px;' value='$apcupsdsettings{'PORT'}'></td>
+</tr>
+<tr style='height: 20px;'>
+	<td></td>
+</tr>
+</table>
+
+<table style='width: 100%; border: none; margin:1em auto 0 auto;'>
+<tr>
+	<td class='base'>$tr{'smtp-authc'}</td>
+	<td style='width: 2em;'><input type='checkbox' name='ENABLEAUTH' $checked{'ENABLEAUTH'}{'on'} onClick='javaScript:UncheckSMTPS();'></td>
+	<td class='base' style='width: 10em;'>$tr{'ssl-smtpsc'}</td>
+	<td><input type='checkbox' name='SMTPS' $checked{'SMTPS'}{'on'} onClick='javaScript:CheckAuth();'></td>
+	<td class='base' style='width:10em;'>User:</td>
+	<td ><input type='text' name='USER' style='width: 15em;' value='$apcupsdsettings{'USER'}'></td>
+</tr>
+<tr>
+	<td class='base' colspan='2'></td>
+	<td class='base'>$tr{'starttlsc'}</td>
+	<td><input type='checkbox' name='STARTTLS' $checked{'STARTTLS'}{'on'} onClick='javaScript:CheckSTARTTLS();'></td>
+	<td class='base'>Password:</td>
+	<td ><input type='password' name='EMAIL_PASSWORD' style='width: 15em;' value='$apcupsdsettings{'EMAIL_PASSWORD'}'></td>
+</tr>
+</table>
 END
 ;
 
 print <<END
-<TABLE style='width: 30%; border: none; margin:1em auto'>
-<TR>
-	<TD style='text-align: center;'><INPUT TYPE='submit' NAME='ACTION' TITLE='$tr{'email-test-tip'}' VALUE='$tr{'mail-test'}'></TD>
-</TR>
-</TABLE>
+<table style='width: 30%; border: none; margin:1em auto;'>
+<tr>
+	<td style='text-align: center;'><input type='submit' name='ACTION' TITLE='$tr{'email-test-tip'}' value='$tr{'mail-test'}'></td>
+</tr>
+</table>
 END
 ;
 
 &openbox("$tr{'UPS Events'}:");
 
 print <<END
-<TABLE style='width: 98%; border: none; margin:1em auto .5em auto'>
-<TR>
-	<TD style='text-align: right;'>$tr{'apc MSGCOMMFAILURE'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGCOMMFAILURE' $checked{'MSGCOMMFAILURE'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGPOWEROUT'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGPOWEROUT' $checked{'MSGPOWEROUT'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGONBATTERY'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGONBATTERY' $checked{'MSGONBATTERY'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGTIMEOUT'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGTIMEOUT' $checked{'MSGTIMEOUT'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGDOSHUTDOWN'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGDOSHUTDOWN' $checked{'MSGDOSHUTDOWN'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGBATTATTACH'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGBATTATTACH' $checked{'MSGBATTATTACH'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGSTARTSELFTEST'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGSTARTSELFTEST' $checked{'MSGSTARTSELFTEST'}{'on'}></TD>
-</TR>
-<TR>
-	<TD style='text-align: right;'>$tr{'apc MSGCOMMOK'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGCOMMOK' $checked{'MSGCOMMOK'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGPOWERBACK'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGPOWERBACK' $checked{'MSGPOWERBACK'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGOFFBATTERY'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGOFFBATTERY' $checked{'MSGOFFBATTERY'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGLOADLIMIT'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGLOADLIMIT' $checked{'MSGLOADLIMIT'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGREMOTEDOWN'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGREMOTEDOWN' $checked{'MSGREMOTEDOWN'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGBATTDETACH'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGBATTDETACH' $checked{'MSGBATTDETACH'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGENDSELFTEST'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGENDSELFTEST' $checked{'MSGENDSELFTEST'}{'on'}></TD>
-</TR>
-<TR>
-	<TD style='text-align: right;'></TD><TD></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGANNOY'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGANNOY' $checked{'MSGANNOY'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGEMERGENCY'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGEMERGENCY' $checked{'MSGEMERGENCY'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGRUNLIMIT'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGRUNLIMIT' $checked{'MSGRUNLIMIT'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGKILLPOWER'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGKILLPOWER' $checked{'MSGKILLPOWER'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGCHANGEME'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGCHANGEME' $checked{'MSGCHANGEME'}{'on'}></TD>
-	<TD style='text-align: right;'>$tr{'apc MSGFAILING'}</TD><TD><INPUT TYPE='checkbox' NAME='MSGFAILING' $checked{'MSGFAILING'}{'on'}></TD>
-</TR>
-</TABLE>
+<table style='width: 98%; border: none; margin:1em auto .5em auto;'>
+<tr>
+	<td style='text-align: right;'>$tr{'apc MSGCOMMFAILURE'}</td>
+	<td><input type='checkbox' name='MSGCOMMFAILURE' $checked{'MSGCOMMFAILURE'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGPOWEROUT'}</td>
+	<td><input type='checkbox' name='MSGPOWEROUT' $checked{'MSGPOWEROUT'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGONBATTERY'}</td>
+	<td><input type='checkbox' name='MSGONBATTERY' $checked{'MSGONBATTERY'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGTIMEOUT'}</td>
+	<td><input type='checkbox' name='MSGTIMEOUT' $checked{'MSGTIMEOUT'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGDOSHUTDOWN'}</td>
+	<td><input type='checkbox' name='MSGDOSHUTDOWN' $checked{'MSGDOSHUTDOWN'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGBATTATTACH'}</td>
+	<td><input type='checkbox' name='MSGBATTATTACH' $checked{'MSGBATTATTACH'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGSTARTSELFTEST'}</td>
+	<td><input type='checkbox' name='MSGSTARTSELFTEST' $checked{'MSGSTARTSELFTEST'}{'on'}></td>
+</tr>
+<tr>
+	<td style='text-align: right;'>$tr{'apc MSGCOMMOK'}</td>
+	<td><input type='checkbox' name='MSGCOMMOK' $checked{'MSGCOMMOK'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGPOWERBACK'}</td>
+	<td><input type='checkbox' name='MSGPOWERBACK' $checked{'MSGPOWERBACK'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGOFFBATTERY'}</td>
+	<td><input type='checkbox' name='MSGOFFBATTERY' $checked{'MSGOFFBATTERY'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGLOADLIMIT'}</td>
+	<td><input type='checkbox' name='MSGLOADLIMIT' $checked{'MSGLOADLIMIT'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGREMOTEDOWN'}</td>
+	<td><input type='checkbox' name='MSGREMOTEDOWN' $checked{'MSGREMOTEDOWN'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGBATTDETACH'}</td>
+	<td><input type='checkbox' name='MSGBATTDETACH' $checked{'MSGBATTDETACH'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGENDSELFTEST'}</td>
+	<td><input type='checkbox' name='MSGENDSELFTEST' $checked{'MSGENDSELFTEST'}{'on'}></td>
+</tr>
+<tr>
+	<td style='text-align: right;'></td><td></td>
+	<td style='text-align: right;'>$tr{'apc MSGANNOY'}</td>
+	<td><input type='checkbox' name='MSGANNOY' $checked{'MSGANNOY'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGEMERGENCY'}</td>
+	<td><input type='checkbox' name='MSGEMERGENCY' $checked{'MSGEMERGENCY'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGRUNLIMIT'}</td>
+	<td><input type='checkbox' name='MSGRUNLIMIT' $checked{'MSGRUNLIMIT'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGKILLPOWER'}</td>
+	<td><input type='checkbox' name='MSGKILLPOWER' $checked{'MSGKILLPOWER'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGCHANGEME'}</td>
+	<td><input type='checkbox' name='MSGCHANGEME' $checked{'MSGCHANGEME'}{'on'}></td>
+	<td style='text-align: right;'>$tr{'apc MSGFAILING'}</td>
+	<td><input type='checkbox' name='MSGFAILING' $checked{'MSGFAILING'}{'on'}></td>
+</tr>
+</table>
 END
 ;
 
@@ -830,37 +835,21 @@ END
 &openbox("$tr{'Operation Mode'}:");
 
 my $setcolor = '#000000';
-if ( $selected{'OPMODE'}{'testing'} eq 'SELECTED' ) {
-	$setcolor = '#b59d00';
-}
-
-if ( $selected{'OPMODE'}{'full'} eq 'SELECTED' ) {
-	$setcolor = 'green';
-}
+$setcolor = '#b59d00' if ( $selected{'OPMODE'}{'testing'} eq 'SELECTED' );
+$setcolor = 'green' if ( $selected{'OPMODE'}{'full'} eq 'SELECTED' );
 
 print <<END
-<p style='margin:1em 1em .25em 2em'>
-  <span style="color:#b59d00">
-    <b>$tr{'TESTING'}</B>
-  </span>
-  $tr{'will simulate the response to a power failure; it will not shutdown Smoothwall or the UPS'}.
-</p>
-<p style='margin:.25em 1em 0 2em'>
-  <span style="color:green;">
-    <B>$tr{'Full Operations'}</B>
-  </span>
-  $tr{'will shutdown Smoothwall in response to a power failure'}.
-</p>
-<p style='margin:.25em 1em 0 2em'>
-  <i>$tr{'Do NOT select Full Operations Mode until you know that your configuration is OK'}</i>
-</p>
-<p style='margin:1em 1em 0 4em'>
-  $tr{'Modec'}
-    <SELECT NAME='OPMODE' style='color: $setcolor;' onchange='ffoxSelectUpdate(this);'>
-      <OPTION VALUE='testing' $selected{'OPMODE'}{'testing'} style='color:#b59d00'>$tr{'TESTING'}</option>
-      <OPTION VALUE='full' $selected{'OPMODE'}{'full'} style='color: green;'>$tr{'Full Operations'}</option>
-    </SELECT>
-</p>
+<p style='margin:1em 1em .25em 2em;'><span style='color:#b59d00; font-weight:bold;'>$tr{'TESTING'}</span>
+	$tr{'will simulate the response to a power failure; it will not shutdown Smoothwall or the UPS'}.</p>
+<p style='margin:.25em 1em 0 2em;'><span style='color:green; font-weight:bold;'>$tr{'Full Operations'}</span>
+	$tr{'will shutdown Smoothwall in response to a power failure'}.</p>
+<p style='margin:.25em 1em 0 2em; font-style:italic;'>
+	$tr{'Do NOT select Full Operations Mode until you know that your configuration is OK'}</p>
+<p style='margin:1em 1em 0 4em;'>$tr{'Modec'}
+	<select name='OPMODE' style='color: $setcolor;' onchange='ffoxSelectUpdate(this);'>
+	<option value='testing' $selected{'OPMODE'}{'testing'} style='color:#b59d00;'>$tr{'TESTING'}</option>
+	<option value='full' $selected{'OPMODE'}{'full'} style='color: green;'>$tr{'Full Operations'}</option>
+	</select></p>
 END
 ;
 
@@ -868,22 +857,21 @@ END
 
 print <<END;
 
-<TABLE style='width: 100%; border: none; margin:1em auto'>
-<TR>
-	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save and restart'}'></TD>
-	<TD style='text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'restart'}'></TD>
-	<TD style='width: 33%; text-align: center;'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'stop'}'></TD>
-</TR>
-</TABLE>
-</FORM>
+<table style='width: 100%; border: none; margin:1em auto;'>
+<tr>
+	<td style='width: 33%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'save and restart'}'></td>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'restart'}'></td>
+	<td style='width: 33%; text-align: center;'><input type='submit' name='ACTION' value='$tr{'stop'}'></td>
+</tr>
+</table>
+</div></form>
 END
 
 
-if ( $apcupsdsettings{'ENABLE'} eq 'on' and -f "/var/run/apcupsd.pid" )
-{
+if ( $apcupsdsettings{'ENABLE'} eq 'on' and -f "/var/run/apcupsd.pid" ) {
 	&openbox("$tr{'UPS Status'}:");
 
-	print "<div class='list' style='padding:.2em 1.25em; margin:1em'><pre>\n";
+	print "<div class='list' style='padding:.2em 1.25em; margin:1em;'><pre>\n";
 	system ("/sbin/apcaccess");
 	print "</pre></div>\n";
 

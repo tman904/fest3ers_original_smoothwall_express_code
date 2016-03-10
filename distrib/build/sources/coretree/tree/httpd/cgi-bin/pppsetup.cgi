@@ -9,19 +9,16 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothtype qw( :standard );
+use strict;
+use warnings;
 
-my %pppsettings;
-my %temppppsettings;
-my @profilenames;
-
+my (%pppsettings, %temppppsettings, %isdnsettings, %netsettings, %adslsettings);
+my (%selected, %checked, @profilenames);
 my $maxprofiles = 5;
-
-my %isdnsettings;
-my %netsettings;
-my %adslsettings;
 
 # Get ISDN settings so we can see if ISDN is enabled or not.
 $isdnsettings{'ENABLED'} = 'off';
+$adslsettings{'ENABLED'} = 'off';
 &readhash("${swroot}/isdn/settings", \%isdnsettings);
 &readhash("${swroot}/adsl/settings", \%adslsettings);
 
@@ -68,128 +65,120 @@ $pppsettings{'STAYUP_TIME'} = '';
 
 my $errormessage = '';
 
-if ($pppsettings{'ACTION'} ne '' &&
-	(-e '/var/run/ppp-smooth.pid' || -e "${swroot}/red/active"))
-{
+if ($pppsettings{'ACTION'} ne '' && (-e '/var/run/ppp-smooth.pid' || -e "${swroot}/red/active")) {
 	$errormessage = $tr{'unable to alter profiles while red is active'};
 	# read in the current vars
 	%pppsettings = ();
 	$pppsettings{'VALID'} = '';
 	&readhash("${swroot}/ppp/settings", \%pppsettings);
 }
-elsif ($pppsettings{'ACTION'} eq $tr{'save'})
-{
+elsif ($pppsettings{'ACTION'} eq $tr{'save'}) {
 	unless ($pppsettings{'COMPORT'} =~ /^(ttyS0|ttyS1|ttyS2|ttyS3|isdn1|isdn2|pppoe|adsl|ttyUSB0|ttyUSB1|ttyUSB2|ttyUSB3|ttyUSB4||ttyUSB5|ttyUSB6|ttyUSB7)$/) {
-		$errormessage = $tr{'invalid input'};
-		goto ERROR; }
+		$errormessage .= $tr{'invalid input'}."<br />";
+
+	}
 	unless ($pppsettings{'DTERATE'} =~ /^(9600|19200|38400|57600|115200|230400|460800|1000000|2000000|4000000)$/) {
-		$errormessage = $tr{'invalid input'};
-		goto ERROR; }
+		$errormessage .= $tr{'invalid input'}."<br />";
+	}
 	unless ($pppsettings{'DIALMODE'} =~ /^(T|P)$/) {
-		$errormessage = $tr{'invalid input'};
-		goto ERROR; }
+		$errormessage .= $tr{'invalid input'}."<br />";
+	}
 	unless ($pppsettings{'AUTH'} =~
-		/^(pap-or-chap|standard-login-script|demon-login-script|other-login-script)$/)
-	{
-		$errormessage = $tr{'invalid input'};
-		goto ERROR;
-	}
-	unless ($pppsettings{'USERNAME'} and ($pppsettings{'USERNAME'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+\/_ ]*$/ )) {
-		$errormessage = $tr{'invalid username'};
-		goto ERROR; 
-	}
-	unless ($pppsettings{'PASSWORD'} and ($pppsettings{'PASSWORD'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+\/_ ]*$/ )) {
-		$errormessage = $tr{'invalid password'};
-		goto ERROR; 
+		/^(pap-or-chap|standard-login-script|demon-login-script|other-login-script)$/) {
+		$errormessage .= $tr{'invalid input'}."<br />";
 	}
 
+	if ($pppsettings{'USERNAME'} eq '') {
+		$errormessage .= $tr{'username not set'}."<br />"; 
+	}
+	elsif 	($pppsettings{'USERNAME'} !~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+\/_ ]*$/ ) {
+		$errormessage .= $tr{'invalid username'}."<br />";
+		$pppsettings{'USERNAME'} = '';
+	}
+
+	if ($pppsettings{'PASSWORD'} eq '') {
+		$errormessage .= $tr{'password not set'}."<br />";
+	}
+	elsif ($pppsettings{'PASSWORD'} !~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+\/_ ]*$/ ) {
+		$errormessage .= $tr{'invalid password'}."<br />";
+		$pppsettings{'PASSWORD'} = '';
+	}
 
 	if ($pppsettings{'PROFILENAME'} eq '') {
-		$errormessage = $tr{'profile name not given'};
+		$errormessage .= $tr{'profile name not given'}."<br />";
 		$pppsettings{'PROFILENAME'} = '';
-		goto ERROR; }
+	}
 
-	unless($pppsettings{'COMPORT'} eq 'pppoe' || $pppsettings{'COMPORT'} eq 'adsl') {
+	unless ($pppsettings{'COMPORT'} eq 'pppoe' || $pppsettings{'COMPORT'} eq 'adsl') {
 		if ($pppsettings{'TELEPHONE'} eq '') {
-			$errormessage = $tr{'telephone not set'}; 
-			goto ERROR; }
+			$errormessage .= $tr{'telephone not set'}."<br />"; 
+		}
 		if (!($pppsettings{'TELEPHONE'} =~ /^[\d\*\#\,]+$/)) {
-			$errormessage = $tr{'bad characters in the telephone number field'};
-			goto ERROR; }
+			$errormessage .= $tr{'bad characters in the telephone number field'}."<br />";
+		}
 	}
 	if ($pppsettings{'DIALONDEMAND'} eq 'on' &&
-		($pppsettings{'COMPORT'} eq 'pppoe' || $pppsettings{'COMPORT'} eq 'adsl'))
-	{
-		$errormessage = $tr{'dial on demand for this interface is not supported'};
-		goto ERROR;
+		($pppsettings{'COMPORT'} eq 'pppoe' || $pppsettings{'COMPORT'} eq 'adsl')) {
+		$errormessage .= $tr{'dial on demand for this interface is not supported'}."<br />";
+		$pppsettings{'DIALONDEMAND'} = 'off';
 	}
-	if ($pppsettings{'USERNAME'} eq '') {
-		$errormessage = $tr{'username not set'}; 
-		goto ERROR; }
-	if ($pppsettings{'PASSWORD'} eq '') {
-		$errormessage = $tr{'password not set'};
-		goto ERROR; }
+	if ($pppsettings{'DIALONDEMANDDNS'} eq 'on' &&
+		($pppsettings{'COMPORT'} eq 'pppoe' || $pppsettings{'COMPORT'} eq 'adsl')) {
+		$errormessage .= $tr{'dial on demand for this interface is not supported'}."<br />";
+		$pppsettings{'DIALONDEMANDDNS'} = 'off';
+	}
+
 
 	if ($pppsettings{'TIMEOUT'} eq '') {
-		$errormessage = $tr{'idle timeout not set'};
-		goto ERROR; }
-	if (!($pppsettings{'TIMEOUT'} =~ /^\d+$/)) {
-                $errormessage = $tr{'only digits allowed in the idle timeout'};
-		goto ERROR; }
-
+		$errormessage .= $tr{'idle timeout not set'}."<br />";
+	}
+	unless ($pppsettings{'TIMEOUT'} =~ /^\d+$/) {
+                $errormessage .= $tr{'only digits allowed in the idle timeout'}."<br />";
+	}
 	if ($pppsettings{'LOGINSCRIPT'} =~ /[.\/ ]/ ) {
-		$errormessage = $tr{'bad characters in script field'}; 
-		goto ERROR; }
+		$errormessage .= $tr{'bad characters in script field'}."<br />"; 
+	}
 
-        if ($pppsettings{'DNS1'})
-        {
-                if (!(&validip($pppsettings{'DNS1'}))) {
-                        $errormessage = $tr{'invalid primary dns'};
-			goto ERROR;  }
-        }
-        if ($pppsettings{'DNS2'})
-        {
-                if (!(&validip($pppsettings{'DNS2'}))) {
-                        $errormessage = $tr{'invalid secondary dns'};
-			goto ERROR; }
-        }
 
+	if ($pppsettings{'DNS'} eq 'Manual') {
+		unless (&validip($pppsettings{'DNS1'})) {
+			$errormessage .= $tr{'invalid primary dns'}."<br />";
+			$pppsettings{'DNS'} = 'Automatic'
+		}
+	}
+
+	if ($pppsettings{'DNS2'}) {
+		unless (&validip($pppsettings{'DNS2'})) {
+			$errormessage .= $tr{'invalid secondary dns'}."<br />";
+		}
+	}
 	if ($pppsettings{'MAXRETRIES'} eq '') {
-		$errormessage = $tr{'max retries not set'};
-		goto ERROR; }
+		$errormessage .= $tr{'max retries not set'}."<br />";
+	}
 	if (!($pppsettings{'MAXRETRIES'} =~ /^\d+$/)) {
-		$errormessage = $tr{'only digits allowed in max retries field'};
-		goto ERROR; }
-
-	if ($adslsettings{'ENABLED'} eq 'on' &&
-		$pppsettings{'COMPORT'} eq 'adsl')
-	{
-		if ($adslsettings{'DEVICE'} eq 'ALCATEL' &&
-			!-e "${swroot}/adsl/mgmt.o")
-		{
-			$errormessage = $tr{'no usb adsl firmware'};
-			goto ERROR;
+		$errormessage .= $tr{'only digits allowed in max retries field'}."<br />";
+	}
+	if ($adslsettings{'ENABLED'} eq 'on' && $pppsettings{'COMPORT'} eq 'adsl') {
+		if ($adslsettings{'DEVICE'} eq 'ALCATEL' && !-e "${swroot}/adsl/mgmt.o") {
+			$errormessage .= $tr{'no usb adsl firmware'}."<br />";
+		}
+	}
+	if ($isdnsettings{'ENABLED'} eq 'on' && $pppsettings{'COMPORT'} =~ /^isdn/) {
+		unless ($pppsettings{'STAYUP_TIME'} =~ /^\d+$/) {
+			$errormessage .= 'Minimum time to keep second channel up is not a number.'."<br />";
 		}
 	}
 
-	if ($isdnsettings{'ENABLED'} eq 'on' &&
-		$pppsettings{'COMPORT'} =~ /^isdn/)
-	{
-		unless ($pppsettings{'STAYUP_TIME'} =~ /^\d+$/)
-		{
-			$errormessage = 'Minimum time to keep second channel up is not a number.';
-			goto ERROR;
-		}
-	}
-ERROR:
+
 	if ($errormessage) {
-		$pppsettings{'VALID'} = 'no'; }
+		$pppsettings{'VALID'} = 'no';
+	}
 	else {
-		$pppsettings{'VALID'} = 'yes'; }
+		$pppsettings{'VALID'} = 'yes';
+	}
 
 	# write cgi vars to the file.
-	&writehash("${swroot}/ppp/settings-$pppsettings{'PROFILE'}",
-		\%pppsettings);
+	&writehash("${swroot}/ppp/settings-$pppsettings{'PROFILE'}", \%pppsettings);
 
 	# make link and write secret file.
 	&updatesettings();
@@ -197,15 +186,12 @@ ERROR:
 
 	&log("$tr{'profile saved'} $pppsettings{'PROFILENAME'}");
 }
-elsif ($pppsettings{'ACTION'} eq $tr{'select'})
-{
+elsif ($pppsettings{'ACTION'} eq $tr{'select'}) {
 	%temppppsettings = ();
 	$temppppsettings{'PROFILE'} = '';
-	&readhash("${swroot}/ppp/settings-$pppsettings{'PROFILE'}",
-		\%temppppsettings);
+	&readhash("${swroot}/ppp/settings-$pppsettings{'PROFILE'}", \%temppppsettings);
 
-	if ($temppppsettings{'PROFILE'} ne '')
-	{
+	if ($temppppsettings{'PROFILE'} ne '') {
 		# make link.
 		&updatesettings(); 
 
@@ -217,43 +203,42 @@ elsif ($pppsettings{'ACTION'} eq $tr{'select'})
 
 		&log("$tr{'profile made current'} $pppsettings{'PROFILENAME'}"); 
 	}
-	else
-	{
+	else {
 		$errormessage = $tr{'the selected profile is empty'};
 		%pppsettings = ();		 
 		$pppsettings{'VALID'} = '';	 
 		&readhash("${swroot}/ppp/settings", \%pppsettings);
 	}		
 }
-elsif ($pppsettings{'ACTION'} eq $tr{'delete'})
-{
+elsif ($pppsettings{'ACTION'} eq $tr{'delete'}) {
 	&log("$tr{'profile deleted'} $pppsettings{'PROFILENAME'}");
 
 	truncate ("${swroot}/ppp/settings-$pppsettings{'PROFILE'}", 0);
-	%pppsettings = ();
-	$pppsettings{'VALID'} = '';
+
+	foreach my $key (keys(%pppsettings)) {
+		$_ = '';
+	}
 	&readhash("${swroot}/ppp/settings", \%pppsettings);			
 }
-else
-{
+else {
 	# read in the current vars
-	%pppsettings = ();
-	$pppsettings{'VALID'} = '';
+
+	foreach my $key (keys(%pppsettings)) {
+		$_ = '';
+	}
 	&readhash("${swroot}/ppp/settings", \%pppsettings);
 }
 
 # read in the profile names into @profilenames.
 my $c;
-for ($c = 1; $c <= $maxprofiles; $c++)
-{
+for ($c = 1; $c <= $maxprofiles; $c++) {
  	%temppppsettings = ();
 	$temppppsettings{'PROFILENAME'} = $tr{'empty'};
 	&readhash("${swroot}/ppp/settings-$c", \%temppppsettings);
 	$profilenames[$c] = $temppppsettings{'PROFILENAME'};
 }
 
-if ($pppsettings{'VALID'} eq '')
-{
+if ($pppsettings{'VALID'} eq '') {
 	$pppsettings{'PROFILE'} = 1;
 	$pppsettings{'PROFILENAME'} = $tr{'unnamed'};
 	$pppsettings{'COMPORT'} = 'ttyS0';
@@ -273,10 +258,20 @@ if ($pppsettings{'VALID'} eq '')
 	$pppsettings{'DNS'} = 'Automatic';
 	$pppsettings{'STAYUP'} = 'off';
 	$pppsettings{'STAYUP_TIME'} = '30';
+	$pppsettings{'SENDCR'} = 'off';
+	$pppsettings{'TELEPHONE'} = '';
+	$pppsettings{'USERNAME'} = '';
+	$pppsettings{'PASSWORD'} = '';
+	$pppsettings{'LOGINSCRIPT'} = '';
+	$pppsettings{'DNS1'} = '';
+	$pppsettings{'DNS2'} = '';
 }
-my (%selected,%checked);
+
+
 for ($c = 1; $c <= $maxprofiles; $c++) {
-	$selected{'PROFILE'}{$c} = ''; }
+	$selected{'PROFILE'}{$c} = '';
+}
+
 $selected{'PROFILE'}{$pppsettings{'PROFILE'}} = 'SELECTED';
 
 $selected{'COMPORT'}{'ttyS0'} = '';
@@ -361,30 +356,30 @@ $checked{'STAYUP'}{$pppsettings{'STAYUP'}} = 'CHECKED';
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'profiles'});
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='30%'>
-	<SELECT NAME='PROFILE'>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:30%;'>
+	<select name='PROFILE'>
 END
 ;
-for ($c = 1; $c <= $maxprofiles; $c++)
-{
-	print "\t<OPTION VALUE='$c' $selected{'PROFILE'}{$c}>$profilenames[$c]\n";
+
+for ($c = 1; $c <= $maxprofiles; $c++) {
+	print "		<option value='$c' $selected{'PROFILE'}{$c}>$profilenames[$c]\n";
 }
+
 print <<END
-	</SELECT>
-	</TD>
-	<TD WIDTH='10%'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'select'}'></TD>
-	<TD WIDTH='10%'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'delete'}'></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'profile name'}</TD>
-        <TD WIDTH='25%'><INPUT TYPE='text' NAME='PROFILENAME' VALUE='$pppsettings{'PROFILENAME'}'></TD>
-</TR>
-</TABLE>
+	</select></td>
+	<td style='width:10%;'><input type='submit' name='ACTION' value='$tr{'select'}'></td>
+	<td style='width:10%;'><input type='submit' name='ACTION' value='$tr{'delete'}'></td>
+	<td style='width:25%;' class='base'>$tr{'profile name'}</td>
+	<td style='width:25%;'><input type='text' name='PROFILENAME' value='$pppsettings{'PROFILENAME'}'></td>
+</tr>
+</table>
 END
 ;
 
@@ -392,205 +387,203 @@ END
 
 &openbox($tr{'telephony'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD CLASS='base' WIDTH='25%'>$tr{'interfacec'}</TD>
-	<TD WIDTH='25%'>
-	<SELECT NAME='COMPORT'>
-	<OPTION VALUE='ttyS0' $selected{'COMPORT'}{'ttyS0'}>$tr{'modem on com1'}
-	<OPTION VALUE='ttyS1' $selected{'COMPORT'}{'ttyS1'}>$tr{'modem on com2'}
-	<OPTION VALUE='ttyS2' $selected{'COMPORT'}{'ttyS2'}>$tr{'modem on com3'}
-	<OPTION VALUE='ttyS3' $selected{'COMPORT'}{'ttyS3'}>$tr{'modem on com4'}
-	<OPTION VALUE='ttyUSB0' $selected{'COMPORT'}{'ttyUSB0'}>$tr{'USB Serial 0'}
-	<OPTION VALUE='ttyUSB1' $selected{'COMPORT'}{'ttyUSB1'}>$tr{'USB Serial 1'}
-	<OPTION VALUE='ttyUSB2' $selected{'COMPORT'}{'ttyUSB2'}>$tr{'USB Serial 2'}
-	<OPTION VALUE='ttyUSB3' $selected{'COMPORT'}{'ttyUSB3'}>$tr{'USB Serial 3'}
-	<OPTION VALUE='ttyUSB4' $selected{'COMPORT'}{'ttyUSB4'}>$tr{'USB Serial 4'}
-	<OPTION VALUE='ttyUSB5' $selected{'COMPORT'}{'ttyUSB5'}>$tr{'USB Serial 5'}
-	<OPTION VALUE='ttyUSB6' $selected{'COMPORT'}{'ttyUSB6'}>$tr{'USB Serial 6'}
-	<OPTION VALUE='ttyUSB7' $selected{'COMPORT'}{'ttyUSB7'}>$tr{'USB Serial 7'}
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:25%;' class='base'>$tr{'interface'}</td>
+	<td style='width:25%;'>
+	<select name='COMPORT'>
+		<option value='ttyS0' $selected{'COMPORT'}{'ttyS0'}>$tr{'modem on com1'}
+		<option value='ttyS1' $selected{'COMPORT'}{'ttyS1'}>$tr{'modem on com2'}
+		<option value='ttyS2' $selected{'COMPORT'}{'ttyS2'}>$tr{'modem on com3'}
+		<option value='ttyS3' $selected{'COMPORT'}{'ttyS3'}>$tr{'modem on com4'}
+		<option value='ttyUSB0' $selected{'COMPORT'}{'ttyUSB0'}>$tr{'USB Serial 0'}
+		<option value='ttyUSB1' $selected{'COMPORT'}{'ttyUSB1'}>$tr{'USB Serial 1'}
+		<option value='ttyUSB2' $selected{'COMPORT'}{'ttyUSB2'}>$tr{'USB Serial 2'}
+		<option value='ttyUSB3' $selected{'COMPORT'}{'ttyUSB3'}>$tr{'USB Serial 3'}
+		<option value='ttyUSB4' $selected{'COMPORT'}{'ttyUSB4'}>$tr{'USB Serial 4'}
+		<option value='ttyUSB5' $selected{'COMPORT'}{'ttyUSB5'}>$tr{'USB Serial 5'}
+		<option value='ttyUSB6' $selected{'COMPORT'}{'ttyUSB6'}>$tr{'USB Serial 6'}
+		<option value='ttyUSB7' $selected{'COMPORT'}{'ttyUSB7'}>$tr{'USB Serial 7'}
 END
 ;
-if ($isdnsettings{'ENABLED'} eq 'on')
-{
+
+if ($isdnsettings{'ENABLED'} eq 'on') {
 	print <<END
-	<OPTION VALUE='isdn1' $selected{'COMPORT'}{'isdn1'}>$tr{'isdn1'}
-	<OPTION VALUE='isdn2' $selected{'COMPORT'}{'isdn2'}>$tr{'isdn2'}
-END
-;
-}
-if ($netsettings{'RED_TYPE'} eq 'PPPOE')
-{
-	print <<END
-	<OPTION VALUE='pppoe' $selected{'COMPORT'}{'pppoe'}>PPPoE
+		<option value='isdn1' $selected{'COMPORT'}{'isdn1'}>$tr{'isdn1'}
+		<option value='isdn2' $selected{'COMPORT'}{'isdn2'}>$tr{'isdn2'}
 END
 ;
 }
-if ($adslsettings{'ENABLED'} eq 'on')
-{
+
+if ($netsettings{'RED_TYPE'} eq 'PPPOE') {
 	print <<END
-	<OPTION VALUE='adsl' $selected{'COMPORT'}{'adsl'}>ADSL
+		<option value='pppoe' $selected{'COMPORT'}{'pppoe'}>PPPoE
+END
+;
+}
+
+if ($adslsettings{'ENABLED'} eq 'on') {
+	print <<END
+		<option value='adsl' $selected{'COMPORT'}{'adsl'}>ADSL
 END
 ;
 }
 
 print <<END
-	</SELECT>
-	</TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'computer to modem rate'}</TD>
-	<TD WIDTH='25%'>
-	<SELECT NAME='DTERATE'>
-	<OPTION VALUE='9600' $selected{'DTERATE'}{'9600'}>9600
-	<OPTION VALUE='19200' $selected{'DTERATE'}{'19200'}>19200
-	<OPTION VALUE='38400' $selected{'DTERATE'}{'38400'}>38400
-	<OPTION VALUE='57600' $selected{'DTERATE'}{'57600'}>57600
-	<OPTION VALUE='115200' $selected{'DTERATE'}{'115200'}>115200
-	<OPTION VALUE='230400' $selected{'DTERATE'}{'230400'}>230400
-	<OPTION VALUE='460800' $selected{'DTERATE'}{'460800'}>460800
-	<OPTION VALUE='1000000' $selected{'DTERATE'}{'1000000'}>1000000
-	<OPTION VALUE='2000000' $selected{'DTERATE'}{'2000000'}>2000000
-	<OPTION VALUE='4000000' $selected{'DTERATE'}{'4000000'}>4000000
-	</SELECT>
-	</TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'number'}</TD>
-	<TD><INPUT TYPE='text' NAME='TELEPHONE' VALUE='$pppsettings{'TELEPHONE'}' id='telephone' @{[jsvalidregex('telephone', '^[0-9\*\#\,]+$', 'true')]}></TD>
-	<TD CLASS='base'>$tr{'modem speaker on'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='SPEAKER' VALUE='on' $checked{'SPEAKER'}{'on'}></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'dialing mode'}</TD>
-	<TD>
-	<SELECT NAME='DIALMODE'>
-	<OPTION VALUE='T' $selected{'DIALMODE'}{'T'}>$tr{'tone'}
-	<OPTION VALUE='P' $selected{'DIALMODE'}{'P'}>$tr{'pulse'}
-	</SELECT>
-	</TD>
-	<TD CLASS='base'>$tr{'maximum retries'}</TD>
-	<TD><INPUT TYPE='text' NAME='MAXRETRIES' VALUE='$pppsettings{'MAXRETRIES'}' id='maxretries' @{[jsvalidnumber('maxretries','0','10000')]}></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'idle timeout'}</TD>
-	<TD><INPUT TYPE='text' NAME='TIMEOUT' VALUE='$pppsettings{'TIMEOUT'}' id='timeout' @{[jsvalidnumber('timeout','0','10000')]}  ></TD>
-	<TD CLASS='base'>$tr{'persistent connection'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='PERSISTENT' VALUE='on' $checked{'PERSISTENT'}{'on'}></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'dod'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='DIALONDEMAND' VALUE='on' $checked{'DIALONDEMAND'}{'on'}></TD>
-	<TD CLASS='base'>$tr{'dod for dns'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='DIALONDEMANDDNS' VALUE='on' $checked{'DIALONDEMANDDNS'}{'on'}></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'connect on smoothwall restart'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='AUTOCONNECT' VALUE='on'$checked{'AUTOCONNECT'}{'on'}></TD>
-	<TD CLASS='base'>$tr{'automatic reboot'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='AUTOREBOOT' VALUE='on' $checked{'AUTOREBOOT'}{'on'}></TD>
-</TR>
-<TR>
-        <TD CLASS='base'>$tr{'send cr'}</TD>
-        <TD><INPUT TYPE='checkbox' NAME='SENDCR' $checked{'SENDCR'}{'on'}></TD>
-	<TD>&nbsp;</TD>
-	<TD>&nbsp;</TD>
-</TR>
-</TABLE>
+	</select></td>
+	<td style='width:25%;' class='base'>$tr{'computer to modem rate'}</td>
+	<td style='width:25%;'>
+	<select name='DTERATE'>
+		<option value='9600' $selected{'DTERATE'}{'9600'}>9600
+		<option value='19200' $selected{'DTERATE'}{'19200'}>19200
+		<option value='38400' $selected{'DTERATE'}{'38400'}>38400
+		<option value='57600' $selected{'DTERATE'}{'57600'}>57600
+		<option value='115200' $selected{'DTERATE'}{'115200'}>115200
+		<option value='230400' $selected{'DTERATE'}{'230400'}>230400
+		<option value='460800' $selected{'DTERATE'}{'460800'}>460800
+		<option value='1000000' $selected{'DTERATE'}{'1000000'}>1000000
+		<option value='2000000' $selected{'DTERATE'}{'2000000'}>2000000
+		<option value='4000000' $selected{'DTERATE'}{'4000000'}>4000000
+	</select></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'number'}</td>
+	<td><input type='text' name='TELEPHONE' value='$pppsettings{'TELEPHONE'}' id='telephone' 
+		@{[jsvalidregex('telephone', '^[0-9\*\#\,]+$', 'true')]}></td>
+	<td class='base'>$tr{'modem speaker on'}</td>
+	<td><input type='checkbox' name='SPEAKER' value='on' $checked{'SPEAKER'}{'on'}></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'dialing mode'}</td>
+	<td>
+	<select name='DIALMODE'>
+		<option value='T' $selected{'DIALMODE'}{'T'}>$tr{'tone'}
+		<option value='P' $selected{'DIALMODE'}{'P'}>$tr{'pulse'}
+	</select></td>
+	<td class='base'>$tr{'maximum retries'}</td>
+	<td><input type='text' name='MAXRETRIES' value='$pppsettings{'MAXRETRIES'}' id='maxretries' 
+		@{[jsvalidnumber('maxretries','0','10000')]}></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'idle timeout'}</td>
+	<td><input type='text' name='TIMEOUT' value='$pppsettings{'TIMEOUT'}' id='timeout' 
+		@{[jsvalidnumber('timeout','0','10000')]}  ></td>
+	<td class='base'>$tr{'persistent connection'}</td>
+	<td><input type='checkbox' name='PERSISTENT' value='on' $checked{'PERSISTENT'}{'on'}></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'dod'}</td>
+	<td><input type='checkbox' name='DIALONDEMAND' value='on' $checked{'DIALONDEMAND'}{'on'}></td>
+	<td class='base'>$tr{'dod for dns'}</td>
+	<td><input type='checkbox' name='DIALONDEMANDDNS' value='on' $checked{'DIALONDEMANDDNS'}{'on'}></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'connect on smoothwall restart'}</td>
+	<td><input type='checkbox' name='AUTOCONNECT' value='on'$checked{'AUTOCONNECT'}{'on'}></td>
+	<td class='base'>$tr{'automatic reboot'}</td>
+	<td><input type='checkbox' name='AUTOREBOOT' value='on' $checked{'AUTOREBOOT'}{'on'}></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'send cr'}</td>
+	<td><input type='checkbox' name='SENDCR' $checked{'SENDCR'}{'on'}></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+</table>
 END
 ;
 
 &closebox();
 
-if ($netsettings{'RED_TYPE'} eq 'PPPOE')
-{
+if ($netsettings{'RED_TYPE'} eq 'PPPOE') {
 	&openbox($tr{'pppoe settings'});
 
-print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'service name'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='SERVICENAME' VALUE='$pppsettings{'SERVICENAME'}'></TD>
-        <TD WIDTH='25%' CLASS='base'>$tr{'concentrator name'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='CONCENTRATORNAME' VALUE='$pppsettings{'CONCENTRATORNAME'}'></TD>
-</TR>
-</TABLE>
+	print <<END
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:25%;' class='base'>$tr{'service name'}</td>
+	<td style='width:25%;'><input type='text' name='SERVICENAME' value='$pppsettings{'SERVICENAME'}'></td>
+	<td style='width:25%;' class='base'>$tr{'concentrator name'}</td>
+	<td style='width:25%;'><input type='text' name='CONCENTRATORNAME' value='$pppsettings{'CONCENTRATORNAME'}'></td>
+</tr>
+</table>
 END
 ;
 	&closebox();
 }
 
-if ($adslsettings{'ENABLED'} eq 'on')
-{
-	if ($adslsettings{'DEVICE'} eq 'ALCATEL')
-	{
+if ($adslsettings{'ENABLED'} eq 'on') {
+	if ($adslsettings{'DEVICE'} eq 'ALCATEL') {
 		&openbox('Alcatel USB ADSL settings:');
 
 		print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD CLASS='base'>$tr{'firmwarec'}</TD>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td class='base'>$tr{'firmwarec'}</td>
 END
 ;
 		if (-e "${swroot}/adsl/mgmt.o") {
-			print "<TD WIDTH='50%' ALIGN='LEFT' CLASS='base'>$tr{'firmware present'}</TD>\n"; }
+			print "	<td style='width:50%; text-align:left' class='base'>$tr{'firmware present'}</td>\n";
+		}
 		else {
-			print "<TD WIDTH='50%' ALIGN='LEFT' CLASS='base'>$tr{'firmware not present'}</TD>\n"; }
+			print "	<td style='width:50%; text-align:left' class='base'>$tr{'firmware not present'}</td>\n"; }
 		print <<END
-	<TD WIDTH='50%' ALIGN='CENTER'><A HREF='/cgi-bin/alcateladslfw.cgi'>$tr{'upload usb adsl firmware'}</A></TD>
-</TR>
-</TABLE>
+	<td style='width:25%; text-align: center;'><A HREF='/cgi-bin/alcateladslfw.cgi'>$tr{'upload usb adsl firmware'}</A></td>
+</tr>
+</table>
 END
 ;
 		&closebox();
 	}
 }
 
-if ($isdnsettings{'ENABLED'} eq 'on')
-{
+if ($isdnsettings{'ENABLED'} eq 'on') {
 	openbox('ISDN settings:');
 	print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='25%' CLASS='base'>Keep second channel up:</TD>
-<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='STAYUP' $checked{'STAYUP'}{'on'}></TD>
-<TD WIDTH='25%' CLASS='base'>Minimum time to keep second channel up (sec):</TD>
-<TD WIDTH='25%'><INPUT TYPE='text' NAME='STAYUP_TIME' VALUE='$pppsettings{'STAYUP_TIME'}'></TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:25%;' class='base'>Keep second channel up:</td>
+	<td style='width:25%;'><input type='checkbox' name='STAYUP' $checked{'STAYUP'}{'on'}></td>
+	<td style='width:25%;' class='base'>Minimum time to keep second channel up (sec):</td>
+	<td style='width:25%;'><input type='text' name='STAYUP_TIME' value='$pppsettings{'STAYUP_TIME'}'></td>
+</tr>
+</table>
 END
-	;
+;
 	&closebox();
 }
 
 &openbox($tr{'authentication'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'username'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='USERNAME' VALUE='$pppsettings{'USERNAME'}' id='username' @{[jsvalidregex('username','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+\/_ ]*$')]}></TD>
-	<TD WIDTH='25%' CLASS='base'>$tr{'password'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='password' NAME='PASSWORD' VALUE='$pppsettings{'PASSWORD'}' id='password' @{[jsvalidregex('password','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+\/_ ]*$')]}></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'method'}</TD>
-	<TD>
-	<SELECT NAME='AUTH'>
-	<OPTION VALUE='pap-or-chap' $selected{'AUTH'}{'pap-or-chap'}>$tr{'pap or chap'}
-	<OPTION VALUE='standard-login-script' $selected{'AUTH'}{'standard-login-script'}>$tr{'standard login script'}
-	<OPTION VALUE='demon-login-script' $selected{'AUTH'}{'demon-login-script'}>$tr{'demon login script'}
-	<OPTION VALUE='other-login-script' $selected{'AUTH'}{'other-login-script'}>$tr{'other login script'}
-	</SELECT>
-	</TD>
-	<TD CLASS='base'>$tr{'script name'}</TD>
-	<TD><INPUT TYPE='text' NAME='LOGINSCRIPT' VALUE='$pppsettings{'LOGINSCRIPT'}'></TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:25%;' class='base'>$tr{'username'}</td>
+	<td style='width:25%;'><input type='text' name='USERNAME' value='$pppsettings{'USERNAME'}' id='username' 
+		@{[jsvalidregex('username','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+\/_ ]*$')]}></td>
+	<td style='width:25%;' class='base'>$tr{'password'}</td>
+	<td style='width:25%;'><input type='password' name='PASSWORD' value='$pppsettings{'PASSWORD'}' id='password' 
+		@{[jsvalidregex('password','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+\/_ ]*$')]}></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'method'}</td>
+	<td>
+	<select name='AUTH'>
+		<option value='pap-or-chap' $selected{'AUTH'}{'pap-or-chap'}>$tr{'pap or chap'}
+		<option value='standard-login-script' $selected{'AUTH'}{'standard-login-script'}>$tr{'standard login script'}
+		<option value='demon-login-script' $selected{'AUTH'}{'demon-login-script'}>$tr{'demon login script'}
+		<option value='other-login-script' $selected{'AUTH'}{'other-login-script'}>$tr{'other login script'}
+	</select></td>
+	<td class='base'>$tr{'script name'}</td>
+	<td><input type='text' name='LOGINSCRIPT' value='$pppsettings{'LOGINSCRIPT'}'></td>
+</tr>
+</table>
 END
 ;
 &closebox();
 
 &openbox('DNS:');
 print <<END
-<script>
+<script type='text/javascript'>
 function checkdns(option,field1, field2)
 {
 	var val = document.getElementById(option).value;
@@ -607,54 +600,54 @@ function checkdns(option,field1, field2)
 	}
 }
 </script>
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'type'}</TD>
-	<TD WIDTH='25%' CLASS='base' style='text-align:left'>
-	<INPUT TYPE='radio' NAME='DNS' VALUE='Manual' $checked{'DNS'}{'Manual'} id='r1' onClick="checkdns('r1','dns1', 'dns2')">$tr{'manual'}
-	<INPUT TYPE='radio' NAME='DNS' VALUE='Automatic' $checked{'DNS'}{'Automatic'} id='r2' onClick="checkdns('r2','dns1', 'dns2')" style='margin-left:1em'>$tr{'automatic'}
-	</TD>
-	<TD WIDTH='25%'>&nbsp;</TD>
-	<TD WIDTH='25%'>&nbsp;</TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'primary dns'}</TD>
-	<TD><INPUT TYPE='text' NAME='DNS1' VALUE='$pppsettings{'DNS1'}' id='dns1' @{[jsvalidip('dns1')]}></TD>
-	<TD CLASS='base'>$tr{'secondary dns'}</TD>
-	<TD><INPUT TYPE='text' NAME='DNS2' VALUE='$pppsettings{'DNS2'}' id='dns2' @{[jsvalidip('dns2','true')]}></TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:25%;' class='base'>$tr{'type'}</td>
+	<td style='width:25%; text-align:left' class='base'>
+	<input type='radio' name='DNS' value='Manual' $checked{'DNS'}{'Manual'} id='r1' 
+		onClick="checkdns('r1','dns1', 'dns2')">$tr{'manual'}
+	<input type='radio' name='DNS' value='Automatic' $checked{'DNS'}{'Automatic'} id='r2' 
+		onClick="checkdns('r2','dns1', 'dns2')" style='margin-left:1em'>$tr{'automatic'}
+	</td>
+	<td style='width:25%;'>&nbsp;</td>
+	<td style='width:25%;'>&nbsp;</td>
+</tr>
+<tr>
+	<td class='base'>$tr{'primary dns'}</td>
+	<td><input type='text' name='DNS1' value='$pppsettings{'DNS1'}' id='dns1' 
+		@{[jsvalidip('dns1')]}></td>
+	<td class='base'>$tr{'secondary dns'}</td>
+	<td><input type='text' name='DNS2' value='$pppsettings{'DNS2'}' id='dns2' 
+		@{[jsvalidip('dns2','true')]}></td>
+</tr>
+</table>
 END
 ;
+
 &closebox();
 
 push @_validation_items, "checkdns('r2','dns1','dns2')";
 	
 print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='80%'>
-<TR>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save'}'></TD>
-</TR>
-</TABLE>
-</DIV>
+<table style='width: 60%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+        <td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
 END
 ;
 
-print "</FORM>\n";
+print "</div></form>\n";
 
 &alertbox('add','add');
-
 &closebigbox();
-
 &closepage();
 
 sub updatesettings
 {
 	# make a link from the selected profile to the "default" one.
  	unlink("${swroot}/ppp/settings");
-	link("${swroot}/ppp/settings-$pppsettings{'PROFILE'}",
-		"${swroot}/ppp/settings");
+	link("${swroot}/ppp/settings-$pppsettings{'PROFILE'}", "${swroot}/ppp/settings");
 }
 
 sub writesecrets
@@ -666,15 +659,19 @@ sub writesecrets
 	flock(FILE, 2);
 	my $username = $pppsettings{'USERNAME'};
 	my $password = $pppsettings{'PASSWORD'};
-        print FILE "'$username' * '$password'\n";
+	print FILE "'$username' * '$password'\n";
 	chmod 0600, "${swroot}/ppp/secrets";
-        close FILE;
+	close FILE;
 
 	# write ibod.cf
 	open (FILE, ">${swroot}/ppp/ibod.cf") or die 'Unable to create ibod.cf.';
 	flock(FILE, 2);
-	if ($pppsettings{'STAYUP'} eq 'on') { $stayup = 1; }
-	else { $stayup = 0; }
+	if ($pppsettings{'STAYUP'} eq 'on') {
+		$stayup = 1;
+	}
+	else { 
+		$stayup = 0;
+	}
 	print FILE "STAYUP $stayup\n";
 	print FILE "STAYUP_TIME $pppsettings{'STAYUP_TIME'}\n";
 	close FILE;
