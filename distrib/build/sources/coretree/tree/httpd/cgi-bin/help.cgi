@@ -8,16 +8,25 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use strict;
+use warnings;
+
+our (%glossary, %uisettings);
+&readhash("${swroot}/main/uisettings", \%uisettings);
+
+my ($needhelpwith, $helpPath);
 
 my $modbase = "/var/smoothwall/mods";
+my $tmp = '';
+my $modname = '';
+my $line = '';
 
 # What do we need help with?
 #print STDERR "Help GET:$ENV{'QUERY_STRING'}\n";
 
-(my $tmp, $modname) = split("/", $ENV{'QUERY_STRING'});
+($tmp, $modname) = split("/", $ENV{'QUERY_STRING'}) if ($ENV{'QUERY_STRING'});
 
-if ($tmp ne "mods")
-{
+if ($tmp ne "mods") {
 	# This is a stock help file.
 	$needhelpwith = $tmp;
 	$tmp = "";
@@ -25,8 +34,7 @@ if ($tmp ne "mods")
 	$helpPath = "";
 #print STDERR "stk: helpwith=$needhelpwith tmp=$tmp name=$modname path=$helpPath\n";
 }
-else
-{
+else {
 	# This is a mod's help file.
 	$helpPath = "/var/smoothwall/mods/$modname";
 	$needhelpwith = $ENV{'QUERY_STRING'};
@@ -44,6 +52,7 @@ unless ($needhelpwith =~ /^[A-Za-z0-9\.]+$/) {
 
 &openpage($tr{'help'}, 1, '', 'help');
 
+print "<div>";
 &openbigbox();
 
 &openbox('');
@@ -57,60 +66,49 @@ unless ($needhelpwith =~ /^[A-Za-z0-9\.]+$/) {
 # The first help file found satisfies the request. Thus it's possible for mods to
 #   completely override stock help.
 
-if ($uisettings{'ALWAYS_ENGLISH'} ne 'off')
-{
-  # English only. But include all mods' glossaries
-  $enGlob = "/usr/lib/smoothwall/langs/glossary.en.pl";
-  $enGlob .= " $modbase/*/usr/lib/smoothwall/langs/glossary.en.pl";
+if ($uisettings{'ALWAYS_ENGLISH'} ne 'off') {
+	# English only. But include all mods' glossaries
+	my $enGlob = "/usr/lib/smoothwall/langs/glossary.en.pl";
+	$enGlob .= " $modbase/*/usr/lib/smoothwall/langs/glossary.en.pl";
 
-  # Read the help file, if any
-  while (<$helpPath/httpd/html/help/$needhelpwith.html.en>)
-  {
-    if (-f $_)
-    {
-      open (FILE, $_);
-      # include all English glossaries
-      # mods can override/supplement stock glossaries
-      while (glob $enGlob)
-      {
-        if (-f $_)
-        {
-            require $_;
-        }
-      }
-      last;
-    }
-  }
+	# Read the help file, if any
+	while (<$helpPath/httpd/html/help/$needhelpwith.html.en>) {
+		if (-f $_) {
+			open (FILE, $_);
+			# include all English glossaries
+			# mods can override/supplement stock glossaries
+			while (glob $enGlob) {
+				if (-f $_) {
+					require $_;
+				}
+			}
+			last;
+		}
+	}
 }
-else
-{
-  # Other language only. But include all mods' glossaries for that language.
-  $nonEnGlob = "/usr/lib/smoothwall/langs/glossary.$language.pl";
-  $nonEnGlob .= " $modbase/*/usr/lib/smoothwall/langs/glossary.$language.pl";
+else {
+	# Other language only. But include all mods' glossaries for that language.
+	my $nonEnGlob = "/usr/lib/smoothwall/langs/glossary.$language.pl";
+	$nonEnGlob .= " $modbase/*/usr/lib/smoothwall/langs/glossary.$language.pl";
 
-  # Read the help file, if any
-  while (<$helpPath/httpd/html/help/$needhelpwith.html.$language>)
-  {
-    if (-f $_)
-    {
-      open (FILE, $_);
-      # include all $language glossaries
-      # mods can override/supplement stock glossaries
-      while (glob $nonEnGlob)
-      {
-        if (-f $_)
-        {
-            require $_;
-        }
-      }
-      last;
-    }
-  }
+	# Read the help file, if any
+	while (<$helpPath/httpd/html/help/$needhelpwith.html.$language>) {
+		if (-f $_) {
+			open (FILE, $_);
+			# include all $language glossaries
+			# mods can override/supplement stock glossaries
+			while (glob $nonEnGlob) {
+				if (-f $_) {
+					require $_;
+				}
+			}
+			last;
+		}
+	}
 }
 require "/usr/lib/smoothwall/langs/glossary.base.pl";
 
 # Read the help file.
-my $line;
 while ( <FILE> ){
 	$line =~s/\n/ /g;
 	$line .= $_;
@@ -118,7 +116,7 @@ while ( <FILE> ){
 close (FILE);
 
 print <<END
-<table>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
 	<td class='helpheader'>
 		<a href="javascript:window.close();"><img src="/ui/img/help.footer.png" alt="Smoothwall Express Online Help - click to close window"></a>
@@ -131,7 +129,7 @@ END
 
 foreach my $term ( keys %glossary ){
 	$line =~s/([\W])($term)([^\w:])/$1\01$2\02$term\03$3/ig;
-	$glossary{$term} =~ s/(['\\"])/\\\1/g;
+	$glossary{$term} =~ s/(['\\"])/\\$1/g;
 }
 
 $line =~ s/\01([^\02]*)\02([^\03]*)\03/<span style='color: #008b00;' onMouseOver="return Tip('$glossary{$2}');" onmouseout="UnTip();">$1<\/span>/ig;
@@ -142,7 +140,7 @@ print <<END
 </tr>
 <tr>
 	<td class='helpfooter'>
-		<a href="javascript:window.close();"><img alt="Close this window" src="/ui/img/help.footer.png" border="0"></a>
+		<a href="javascript:window.close();"><img style='border-style: none;' alt="Close this window" src="/ui/img/help.footer.png"></a>
 	</td>
 </tr>
 </table>
@@ -152,6 +150,6 @@ END
 &closebox();
 
 &closebigbox();
-
+print "</div>";
 &closepage('blank');
 

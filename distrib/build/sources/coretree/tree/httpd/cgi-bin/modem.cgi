@@ -9,8 +9,11 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothtype qw( :standard );
+use strict;
+use warnings;
 
-my (%modemsettings,$errormessage);
+my %modemsettings;
+my $errormessage = '';
 
 &showhttpheaders();
 
@@ -20,46 +23,41 @@ $modemsettings{'VALID'} = '';
 &getcgihash(\%modemsettings);
 
 $errormessage = '';
-if ($modemsettings{'ACTION'} eq $tr{'save'})
-{
-	if (!($modemsettings{'TIMEOUT'} =~ /^\d+$/))
-	{
-		$errormessage = $tr{'timeout must be a number'};
-		goto ERROR;
+if ($modemsettings{'ACTION'} eq $tr{'save'}) {
+	if (!($modemsettings{'TIMEOUT'} =~ /^\d+$/)) {
+		$errormessage .= $tr{'timeout must be a number'}."<br />";
 	}
 
-	unless ($modemsettings{'INIT'} and ($modemsettings{'INIT'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-		$errormessage = $tr{'modem invalid init'};
-		goto ERROR; 
+	unless ($modemsettings{'INIT'} 
+	   and ($modemsettings{'INIT'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage .= $tr{'modem invalid init'}."<br />";
 	}
 
-	unless ($modemsettings{'HANGUP'} and ($modemsettings{'HANGUP'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-		$errormessage = $tr{'modem invalid hangup'};
-		goto ERROR; 
+	unless ($modemsettings{'HANGUP'} 
+	   and ($modemsettings{'HANGUP'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage .= $tr{'modem invalid hangup'}."<br />";
 	}
 
-	unless ($modemsettings{'SPEAKER_ON'} and ($modemsettings{'SPEAKER_ON'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-		$errormessage = $tr{'modem invalid speaker'};
-		goto ERROR; 
+	unless ($modemsettings{'SPEAKER_ON'} 
+	   and ($modemsettings{'SPEAKER_ON'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage .= $tr{'modem invalid speaker'}."<br />"; 
 	}
 
-	unless ($modemsettings{'SPEAKER_OFF'} and ($modemsettings{'SPEAKER_OFF'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-		$errormessage = $tr{'modem invalid speaker'};
-		goto ERROR; 
+	unless ($modemsettings{'SPEAKER_OFF'} 
+	   and ($modemsettings{'SPEAKER_OFF'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage .= $tr{'modem invalid speaker'}."<br />"; 
 	}
 
-	unless ($modemsettings{'TONE_DIAL'} and ($modemsettings{'TONE_DIAL'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-		$errormessage = $tr{'modem invalid tone dial'};
-		goto ERROR; 
+	unless ($modemsettings{'TONE_DIAL'} 
+	   and ($modemsettings{'TONE_DIAL'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage .= $tr{'modem invalid tone dial'}."<br />"; 
 	}
 
-	unless ($modemsettings{'PULSE_DIAL'} and ($modemsettings{'PULSE_DIAL'} =~ /^[\w\d\.\-,\(\)@$!\%\^\&\*=\+_ ]*$/ )) {
-		$errormessage = $tr{'modem invalid pulse dial'};
-		goto ERROR; 
+	unless ($modemsettings{'PULSE_DIAL'} 
+	   and ($modemsettings{'PULSE_DIAL'} =~ /^[\w\d\.\-,\(\)\@\$\!\%\^\&\*=\+_ ]*$/ )) {
+		$errormessage .= $tr{'modem invalid pulse dial'}."<br />";
 	}
-
-
-ERROR:   
+  
 	if ($errormessage) {
 		$modemsettings{'VALID'} = 'no'; }
 	else {
@@ -68,8 +66,7 @@ ERROR:
 	&writehash("${swroot}/modem/settings", \%modemsettings);
 }
 
-if ($modemsettings{'ACTION'} eq $tr{'restore defaults'})
-{
+if ($modemsettings{'ACTION'} eq $tr{'restore defaults'}) {
 	system('/bin/cp', "${swroot}/modem/defaults", "${swroot}/modem/settings", '-f');
 }
 
@@ -81,57 +78,68 @@ if ($modemsettings{'ACTION'} eq $tr{'restore defaults'})
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'modem configurationc'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='25%' CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'init string'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='INIT' VALUE='$modemsettings{'INIT'}' id='init' @{[jsvalidregex('init','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></TD>
-	<TD WIDTH='25%' CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'hangup string'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='HANGUP' VALUE='$modemsettings{'HANGUP'}' id='hangup' @{[jsvalidregex('hangup','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
-</TR>
-<TR>
-	<TD CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'speaker on'}</TD>
-	<TD><INPUT TYPE='text' NAME='SPEAKER_ON' VALUE='$modemsettings{'SPEAKER_ON'}' id='speakeron' @{[jsvalidregex('speakeron','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
-	<TD CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'speaker off'}</TD>
-	<TD><INPUT TYPE='text' NAME='SPEAKER_OFF' VALUE='$modemsettings{'SPEAKER_OFF'}' id='speakeroff' @{[jsvalidregex('speakeroff','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
-</TR>
-<TR>
-	<TD CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'tone dial'}</TD>
-	<TD><INPUT TYPE='text' NAME='TONE_DIAL' VALUE='$modemsettings{'TONE_DIAL'}' id='tone' @{[jsvalidregex('tone','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
-	<TD CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'pulse dial'}</TD>
-	<TD><INPUT TYPE='text' NAME='PULSE_DIAL' VALUE='$modemsettings{'PULSE_DIAL'}' id='pulse' @{[jsvalidregex('pulse','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'connect timeout'}</TD>
-	<TD><INPUT TYPE='text' NAME='TIMEOUT' VALUE='$modemsettings{'TIMEOUT'}' id='timeout' @{[jsvalidnumber('timeout','0','10000000')]}></TD>
-	<TD CLASS='base'>&nbsp;</TD>
-	<TD>&nbsp;</TD>
-</TR>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:25%;' class='base'><IMG SRC='/ui/img/blob.gif' alt='*' 
+		style='vertical-align: text-top;'>&nbsp;$tr{'init string'}</td>
+	<td style='width:25%;'><input type='text' name='INIT' value='$modemsettings{'INIT'}' id='init' 
+		@{[jsvalidregex('init','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]}></td>
+	<td style='width:25%;' class='base'><IMG SRC='/ui/img/blob.gif' alt='*' 
+		style='vertical-align: text-top;'>&nbsp;$tr{'hangup string'}</td>
+	<td style='width:25%;'><input type='text' name='HANGUP' value='$modemsettings{'HANGUP'}' id='hangup' 
+		@{[jsvalidregex('hangup','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></td>
+</tr>
+<tr>
+	<td class='base'><IMG SRC='/ui/img/blob.gif' alt='*' 
+		style='vertical-align: text-top;'>&nbsp;$tr{'speaker on'}</td>
+	<td><input type='text' name='SPEAKER_ON' value='$modemsettings{'SPEAKER_ON'}' id='speakeron' 
+		@{[jsvalidregex('speakeron','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></td>
+	<td class='base'><IMG SRC='/ui/img/blob.gif' alt='*' 
+		style='vertical-align: text-top;'>&nbsp;$tr{'speaker off'}</td>
+	<td><input type='text' name='SPEAKER_OFF' value='$modemsettings{'SPEAKER_OFF'}' id='speakeroff' 
+		@{[jsvalidregex('speakeroff','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></td>
+</tr>
+<tr>
+	<td class='base'><IMG SRC='/ui/img/blob.gif' alt='*' 
+		style='vertical-align: text-top;'>&nbsp;$tr{'tone dial'}</td>
+	<td><input type='text' name='TONE_DIAL' value='$modemsettings{'TONE_DIAL'}' id='tone' 
+		@{[jsvalidregex('tone','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></td>
+	<td class='base'><IMG SRC='/ui/img/blob.gif' alt='*' 
+		style='vertical-align: text-top;'>&nbsp;$tr{'pulse dial'}</td>
+	<td><input type='text' name='PULSE_DIAL' value='$modemsettings{'PULSE_DIAL'}' id='pulse' 
+		@{[jsvalidregex('pulse','^[a-zA-Z0-9\.,\(\)@$!\%\^\&\*=\+_ ]*$')]} ></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'connect timeout'}</td>
+	<td><input type='text' name='TIMEOUT' value='$modemsettings{'TIMEOUT'}' id='timeout' 
+		@{[jsvalidnumber('timeout','0','10000000')]}></td>
+	<td class='base'>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
 
-</TABLE>
-<BR>
-<IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
-<FONT CLASS='base'>$tr{'these fields may be blank'}</FONT>
+</table>
+<br />
+<div class='base'><IMG SRC='/ui/img/blob.gif' alt='*' 
+	style='vertical-align: text-top;'>&nbsp;$tr{'these fields may be blank'}</div>
 END
 ;
 &closebox();
 
 print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='80%'>
-<TR>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'restore defaults'}'></TD>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save'}'></TD>
-</TR>
-</TABLE>
-</DIV>
+<table style='width: 80%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'restore defaults'}'></td>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
 END
 ;
 
-print "</FORM>\n";
+print "</div></form>\n";
 
 &alertbox('add','add');
 

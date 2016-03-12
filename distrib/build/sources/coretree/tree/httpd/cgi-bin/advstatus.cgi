@@ -346,7 +346,8 @@ foreach my $interface ( sort @interfaces ){
 	$devicename	= $1 if ( $interface =~ /^([^:]+)/ );
 	$macaddress	= $1 if ( $interface =~ /link\/[^\s]+\s+(([0-9A-F]{2}:){5}[0-9A-F]{2})/i );
 	$ipaddress	= $1 if ( $interface =~ /inet ((\d+\.){3}\d+)/ );
-	$netmask	= $4 if ( $interface =~ /inet ((\d+\.){3}\d+)(\/\d+)/ );
+	# $3 is correct: nested groupings
+	$netmask	= $3 if ( $interface =~ /inet ((\d+\.){3}\d+)(\/\d+)/ );
 	$mtu		= $1 if ( $interface =~ /mtu (\d+)/ );
 	$status	= $1 if ( $interface =~ /state\s+(\w+)\s+/ );
 	$states	= $1 if ( $interface =~ /<([^>]+)>/ );

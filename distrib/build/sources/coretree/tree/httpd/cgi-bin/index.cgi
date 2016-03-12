@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 #
 # SmoothWall CGIs
 #
@@ -9,122 +9,108 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothnet qw( checkmd5 );
+use strict;
+use warnings;
 
-my %pppsettings;
-my %modemsettings;
-my %netsettings;
+my (%pppsettings, %modemsettings, %netsettings, %alertbox, %cgiparams, %ownership);
+my ($timestr, $connstate);
 
 my $locks = scalar(glob("/var/run/ppp-*.pid"));
-
-my $cgiparams;
+my $errormessage = '';
+my $refresh = '';
 
 &showhttpheaders();
 
 &getcgihash(\%cgiparams);
 
+$pppsettings{"COMPORT"} = '';
 $pppsettings{'VALID'} = '';
 $pppsettings{'PROFILENAME'} = 'None';
 &readhash("${swroot}/ppp/settings", \%pppsettings);
 &readhash("${swroot}/modem/settings", \%modemsettings);
 &readhash("${swroot}/ethernet/settings", \%netsettings);
+&readhash("${swroot}/main/ownership", \%ownership);
 
-if ($pppsettings{'COMPORT'} =~ /^tty/)
-{
-	if ($locks)
-	{
-		if (-e "${swroot}/red/active")
-		{
+if ($pppsettings{'COMPORT'} =~ /^tty/) {
+	if ($locks) {
+		if (-e "${swroot}/red/active") {
 			$timestr = &age("${swroot}/red/active");
-			$connstate = "$tr{'connected'} (<FONT COLOR='#b04040'>$timestr</FONT>)"; 
+			$connstate = "$tr{'connected'} (<span style='color:#b04040;'>$timestr</span>)"; 
 		}
-		else
-		{
-			if (-e "${swroot}/red/dial-on-demand")
-			{
-				$refresh = "<META HTTP-EQUIV='refresh' CONTENT='30;'>";
+		else {
+			if (-e "${swroot}/red/dial-on-demand") {
+				$refresh = "<meta http-equiv='refresh' content='30;'>";
 				$connstate = $tr{'modem dod waiting'};
 			}
-			else
-			{
-				$refresh = "<META HTTP-EQUIV='refresh' CONTENT='5;'>";
+			else {
+				$refresh = "<meta http-equiv='refresh' content='5;'>";
 				$connstate = $tr{'dialing'};
 			}
 		}
 	}
 	else {
 		$connstate = $tr{'modem idle'};
-	 }
+	}
 }
-elsif ($pppsettings{'COMPORT'} =~ /^isdn/) 
-{
-	$channels = &countisdnchannels();
+elsif ($pppsettings{'COMPORT'} =~ /^isdn/) {
+	my $number;
+	my $channels = &countisdnchannels();
 	if ($channels == 0) {
-		$number = 'none!'; }
+		$number = 'none!';
+	}
 	elsif ($channels == 1) {
-		$number = 'single'; }
+		$number = 'single';
+	}
 	else {
-		$number = 'dual'; }
+		$number = 'dual';
+	}
 		
-	if (-e "${swroot}/red/active")
-	{
+	if (-e "${swroot}/red/active") {
 		$timestr = &age("${swroot}/red/active");
-		$connstate = "$tr{'connected'} - $number channel (<FONT COLOR='#b04040'>$timestr</FONT>)";
+		$connstate = "$tr{'connected'} - $number channel (<span style='color:#b04040;'>$timestr</span>)";
  	}
-	else 
-	{
-		if ($channels == 0)
-		{
-			if (-e "${swroot}/red/dial-on-demand")
-			{
+	else {
+		if ($channels == 0) {
+			if (-e "${swroot}/red/dial-on-demand") {
 				$connstate = $tr{'isdn dod waiting'};
-				$refresh = "<META HTTP-EQUIV='refresh' CONTENT='30;'>"
-			} else {
+				$refresh = "<meta http-equiv='refresh' content='30;'>"
+			}
+			else {
 				$connstate = $tr{'isdn idle'};
 			}
 		}
-		else
-		{
+		else {
 			$connstate = $tr{'dialing'};
-                 	$refresh = "<META HTTP-EQUIV='refresh' CONTENT='5;'>";
+                 	$refresh = "<meta http-equiv='refresh' content='5;'>";
 		}
 	}
 }
-elsif ($pppsettings{'COMPORT'} eq 'pppoe')
-{
-	if (-e "${swroot}/red/active" )
-	{
+elsif ($pppsettings{'COMPORT'} eq 'pppoe') {
+	if (-e "${swroot}/red/active" ) {
 		$timestr = &age("${swroot}/red/active");
-		$connstate = "$tr{'connected'} (<FONT COLOR='#b04040'>$timestr</FONT>)";
+		$connstate = "$tr{'connected'} (<span style='color:#b04040;'>$timestr</span>)";
 	}
-	else
-	{
-		if ($locks)
-		{
+	else {
+		if ($locks) {
 			$connstate = $tr{'dialing'};
-			$refresh = "<META HTTP-EQUIV='refresh' CONTENT='5;'>"
+			$refresh = "<meta http-equiv='refresh' content='5;'>"
 		}
-		else
-		{
+		else {
 			$connstate = $tr{'pppoe idle'};
 		}
 	}
 }
-else
-{
-	if (-e "${swroot}/red/active" )
-	{
+else {
+	if (-e "${swroot}/red/active" ) {
 		$timestr = &age("${swroot}/red/active");
-		$connstate = "$tr{'connected'} (<FONT COLOR='#b04040'>$timestr</FONT>)";
+		$connstate = "$tr{'connected'} (<span style='color:#b04040;'>$timestr</span>)";
 	}
-	else
-	{
-		if ($locks)
-		{
+	else {
+		if ($locks) {
 			$connstate = $tr{'dialing'};
-			$refresh = "<META HTTP-EQUIV='refresh' CONTENT='5;'>"
+			$refresh = "<meta http-equiv='refresh' content='5;'>"
 		}
-		else
-		{
+		else {
 			$connstate = $tr{'adsl idle'};
 		}
 	}
@@ -136,71 +122,65 @@ else
 
 &alertbox($errormessage);
 
-my %ownership;
-&readhash( "/var/smoothwall/main/ownership", \%ownership );
-
-if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" ){
+if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} eq "0" ) {
 	&openbox();
 
 	print "<div style='width: 100%; text-align: center;'><a href='/cgi-bin/register.cgi'><img src='/ui/img/frontpage/frontpage.x3.png' alt='Smoothwall Express'/></a></div>";
 	&closebox();
-} else {
-
+}
+else {
 	&openbox();
 	if(open(LIST, "<${swroot}/banners/available")) {
 		my @images;
-		while ( my $input = <LIST> ){
+		while ( my $input = <LIST> ) {
 			my ( $url, $md5, $link, $alt ) = ( $input =~/([^\|]*)\|([^\|]*)\|([^\|]*)\|(.*)/ );
 	
-			if ( -e "/httpd/html/ui/img/frontpage/$md5.png" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.png", $md5) == 1 )){
+			if ( -e "/httpd/html/ui/img/frontpage/$md5.png" and ( &checkmd5( "/httpd/html/ui/img/frontpage/$md5.png", $md5) == 1 )) {
 				push @images, { md5 => $md5, href => $link, alt => $alt };
 			}
 		}
 
-		if ( scalar( @images ) >= 1 ){
+		if ( scalar( @images ) >= 1 ) {
 			my $day = (localtime(time))[6];
 			my $r = ( $day % scalar(@images) );
 			my $image = $images[$r];
 			print "<div style='width: 100%; text-align: center;'><a href='$image->{'href'}'><img src='/ui/img/frontpage/$image->{'md5'}.png' alt='$image->{'alt'}'/></a></div>";
-		} else {
+		}
+		else {
 			print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.png' alt='Smoothwall Express'/></div>";
 		}
-	} else {
+	}
+	else {
 		print "<div style='width: 100%; text-align: center;'><img src='/ui/img/frontpage/frontpage.png' alt='Smoothwall Express'/></div>";
 	}
-
 	&closebox();
 }
 
-
 &openbox('');
 
-$currentconnection = &connectedstate();
+my $currentconnection = &connectedstate();
 print <<END
 <table class='centered'>
 	<tr>
-		<td style='text-align: right; vertical-align: top;'><img src='/ui/img/netstatus.$currentconnection.gif' alt='$connpick' style='float: right;'></td>
+		<td style='text-align: right; vertical-align: top;'><img src='/ui/img/netstatus.$currentconnection.gif' alt='$currentconnection' style='float: right;'></td>
 		<td>&nbsp;</td>
 END
 ;
 
-if (($pppsettings{'COMPORT'} ne '') && (($netsettings{'RED_DEV'} eq "") || ($netsettings{'RED_TYPE'} eq 'PPPOE')))
-{
-	if ($pppsettings{'VALID'} eq 'yes')
-	{
+if (($pppsettings{'COMPORT'} ne '') && (($netsettings{'RED_DEV'} eq "") || ($netsettings{'RED_TYPE'} eq 'PPPOE'))) {
+	if ($pppsettings{'VALID'} eq 'yes') {
 		my $control = qq {
 	<table style='width: 100%;'>
-	<form method='post' action='/cgi-bin/dial.cgi'>
 	<tr>
-		<td style='text-align: center;'><input type='submit' name='ACTION' value="$tr{'dial'}"></td>
+		<td style='text-align: center;'><form method='post' action='/cgi-bin/dial.cgi'>
+			<div><input type='submit' name='ACTION' value="$tr{'dial'}"></div></form></td>
 		<td>&nbsp;&nbsp;</td>
-		<td style='text-align: center;'><input type='submit' name='ACTION' value="$tr{'hangup'}"></td>
+		<td style='text-align: center;'><form method='post' action='/cgi-bin/dial.cgi'>
+			<div><input type='submit' name='ACTION' value="$tr{'hangup'}"></div></form></td>
 		<td>&nbsp;&nbsp;</td>
-		</form>
-		<form method='post'>
-		<td style='text-align: center;'><input type='submit' name='ACTION' value="$tr{'refresh'}"></td>
+		<td style='text-align: center;'><form method='post' action='?'>
+			<div><input type='submit' name='ACTION' value="$tr{'refresh'}"></div></form></td>
 	</tr>
-	</form>
 </table>
 <br/>
 <strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>
@@ -208,47 +188,38 @@ $connstate
 		};
 		&showstats( $control );
 	}
-	elsif (-e "${swroot}/red/active" )
-	{
+	elsif (-e "${swroot}/red/active" ) {
 		my $control = qq {
 	<table style='width: 100%;'>
 	<tr>
-		<td style='text-align: right;'>
-<form method='post' action='/cgi-bin/dial.cgi'>
-	<input type='submit' name='ACTION' value="$tr{'hangup'}">
-</form>
-		</td>
+		<td style='text-align: right;'><form method='post' action='/cgi-bin/dial.cgi'>
+			<div><input type='submit' name='ACTION' value="$tr{'hangup'}"></div></form></td>
 	</tr>
 	</table>
 <td><strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>
-};
+		};
 		&showstats( $control );
-	} elsif ($modemsettings{'VALID'} eq 'no') {
+	}
+	elsif ($modemsettings{'VALID'} eq 'no') {
 		print "$tr{'modem settings have errors'}\n"; 
-	} else {
+	}
+	else {
 		print "$tr{'profile has errors'}\n"; 
 	}
-
 	print "</td>";
 }
-else
-{
+else {
 	my $control = qq {
 	<table style='width: 100%;'>
 	<tr>
-		<td style='text-align: left;'>
-			
-		</td>
+		<td></td>
 	</tr>
 	<tr>
-		<td style='text-align: left;'>
-<form method='post'>
-	<input type='submit' name='ACTION' value='$tr{'refresh'}'>
-</form>
-		</td>
+		<td style='text-align: left;'><form method='POST' action='?'>
+			<div><input type='submit' name='ACTION' value='$tr{'refresh'}'></div></form></td>
 	</tr>
 	</table>
-};
+	};
 	&showstats( $control );
 }
 	print <<END
@@ -260,28 +231,22 @@ END
 &closebox();
 
 open(AV, "${swroot}/patches/available") or die "Could not open available patches database ($!)";
-@av = <AV>;
+my @av = <AV>;
 close(AV);
+
 open(PF, "${swroot}/patches/installed") or die "Could not open installed patches file. ($!)<br>";
-while(<PF>)
-{
+while(<PF>) {
         next if $_ =~ m/^#/;
-        @temp = split(/\|/,$_);
+        my @temp = split(/\|/,$_);
         @av = grep(!/^$temp[0]/, @av);
 }
 close(PF);
 
-if ($#av != -1)
-{
-	&pageinfo($alertbox{"texterror"}, "$tr{'there are updates'}");
-}
-$age = &age("/${swroot}/patches/available");
-if ($age =~ m/(\d{1,3})d/)
-{
-	if ($1 >= 7)
-	{
-		&pageinfo($alertbox{"texterror"}, "$tr{'updates is old1'} $age $tr{'updates is old2'}");
-	}
+&pageinfo($alertbox{"texterror"}, "$tr{'there are updates'}") if ($#av != -1);
+my $age = &age("/${swroot}/patches/available");
+
+if ($age =~ m/(\d{1,3})d/) {
+	&pageinfo($alertbox{"texterror"}, "$tr{'updates is old1'} $age $tr{'updates is old2'}") if ($1 >= 7);
 }
 
 print "<br/><table class='blank'><tr><td class='note'>";
@@ -314,12 +279,9 @@ sub countisdnchannels
 	@phonenumbers = split / /, $phone;
 
 	$count = 0;
-	foreach (@phonenumbers)
-	{
- 		if ($_ ne '???') {
-			$count++; }
+	foreach (@phonenumbers) {
+ 		$count++ if ($_ ne '???');
 	}
-	
 	return $count;
 }
 
@@ -333,27 +295,16 @@ sub showstats
 	my( $daystatsin, $daystatsout, $monthstatsin, $monthstatsout, $ratein, $rateout );
 
 	print "<td style='vertical-align: top;'>\n";
-	print "<table style='width: 100%; border-collapse: collapse;'>";
+	print "<table style='width: 100%; border-collapse: collapse;'>\n";
 
-	if ( open ( $iface_file, "</var/smoothwall/red/local-ipaddress" )){
-		my $ip = <$iface_file>;
-		chomp $ip;
-		print "<tr><td class='base'><strong>Local:</strong></td><td>$ip</td></tr>";
-		close $iface_file;
-	}
+	my $ipl = &readvalue("${swroot}/red/local-ipaddress") || '';
+	print "		<tr><td class='base'><strong>Local:</strong></td><td>$ipl</td></tr>\n";
 
-	if ( open ( $iface_file, "</var/smoothwall/red/remote-ipaddress" )){
-		my $ip = <$iface_file>;
-		chomp $ip;
-		print "<tr><td class='base'><strong>Remote:</strong></td><td>$ip</td></tr>";
-		close $iface_file;
-	}
+	my $ipr = &readvalue("${swroot}/red/remote-ipaddress") || '';
+	print "		<tr><td class='base'><strong>Remote:</strong></td><td>$ipr</td></tr>\n";
 
-
-	if ( open ( $iface_file, "</var/smoothwall/red/iface" )){
-		my $iface = <$iface_file>;
-		chomp $iface;
-		close $iface_file;
+	if (-s "${swroot}/red/iface") {
+		my $iface = &readvalue("${swroot}/red/iface");
 		
 		# interogate the traffic stats
 		my %stats;
@@ -375,11 +326,14 @@ sub showstats
 			
 			if ( $number > (1000*1000*1000) ){
 				$ret = sprintf( "%0.1f TB", $number/(1000*1000*1000) );	
-			} elsif ( $number > (1000*1000) ){
+			} 
+			elsif ( $number > (1000*1000) ){
 				$ret = sprintf( "%0.1f GB", $number/(1000*1000) );	
-			} elsif ( $number > (1000) ){
+			}
+			elsif ( $number > (1000) ){
 				$ret = sprintf( "%0.1f MB", $number/(1000) );	
-			} else {
+			}
+			else {
 				$ret = sprintf( "%0.1f KB", $number );	
 			}
 			return $ret;
@@ -391,11 +345,14 @@ sub showstats
 			
 			if ( $number > (1000*1000*1000) ){
 				$ret = sprintf( "%0.1f Gbit/s", $number/(1000*1000*1000) );	
-			} elsif ( $number > (1000*1000) ){
+			}
+			elsif ( $number > (1000*1000) ){
 				$ret = sprintf( "%0.1f Mbit/s", $number/(1000*1000) );	
-			} elsif ( $number > (1000) ){
+			}
+			elsif ( $number > (1000) ){
 				$ret = sprintf( "%0.1f Kbit/s", $number/(1000) );	
-			} else {
+			}
+			else {
 				$ret = sprintf( "%0.1f bit/s", $number );	
 			}
 			return $ret;
@@ -417,11 +374,11 @@ END
 	}
 
 	print "</table>\n";
-	print "$control</td>\n";
+	print "$control\n";
 
 	# we even have a preview graph thingy
 
 	if (-e '/var/smoothwall/red/active' && -e '/httpd/html/rrdtool/red-hour_preview.png' ){
-		print "<td>&nbsp;</td><td style='vertical-align: top;'><img src='/rrdtool/red-day_preview.png' alt='traffic'></td>\n";
+		print "<td>&nbsp;</td><td style='vertical-align: top;'><img src='/rrdtool/red-day_preview.png' alt='traffic'>\n";
 	}
 }

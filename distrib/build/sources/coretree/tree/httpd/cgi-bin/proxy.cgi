@@ -9,16 +9,17 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use strict;
+use warnings;
 
-my %proxysettings;
-my %netsettings;
-my %mainsettings;
+my (%proxysettings, %netsettings, %mainsettings, %filtersettings);
 
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 &readhash("${swroot}/main/settings", \%mainsettings);
+
 # Start of modification by URLfilter
-my %filtersettings;
 $filtersettings{'CHILDREN'} = '5';
+
 if (-e "${swroot}/urlfilter/settings") {
         &readhash("${swroot}/urlfilter/settings", \%filtersettings);
 }
@@ -37,6 +38,7 @@ $proxysettings{'MAX_SIZE'} = '4096';
 $proxysettings{'MIN_SIZE'} = '0';
 $proxysettings{'MAX_OUTGOING_SIZE'} = '0';
 $proxysettings{'MAX_INCOMING_SIZE'} = '0';
+
 # Start of modification by URLfilter
 $proxysettings{'ENABLE_FILTER'} = 'off';
 # End of modification by URLfilter
@@ -45,63 +47,64 @@ $proxysettings{'ENABLE_FILTER'} = 'off';
 
 my $needhup = 0;
 my $errormessage = '';
+my $refresh = '';
+
 if ($proxysettings{'ACTION'} eq $tr{'save'} ||
-	$proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'})
-{ 
-	if (!($proxysettings{'CACHE_SIZE'} =~ /^\d+/) ||
-		($proxysettings{'CACHE_SIZE'} < 10))
-	{
+	$proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'}) { 
+	if (!($proxysettings{'CACHE_SIZE'} =~ /^\d+/) || ($proxysettings{'CACHE_SIZE'} < 10)) {
 		$errormessage .= $tr{'invalid cache size'}."<br />";
-		goto ERROR;
-	}		
-	if (!($proxysettings{'MAX_SIZE'} =~ /^\d+/))
-	{
+	}
+		
+	if (!($proxysettings{'MAX_SIZE'} =~ /^\d+/)) {
 		$errormessage .= $tr{'invalid maximum object size'}."<br />";
-		goto ERROR;
 	}
-	if (!($proxysettings{'MIN_SIZE'} =~ /^\d+/))
-	{
+
+	if (!($proxysettings{'MIN_SIZE'} =~ /^\d+/)) {
 		$errormessage .= $tr{'invalid minimum object size'}."<br />";
-		goto ERROR;
 	}
-	if (!($proxysettings{'MAX_OUTGOING_SIZE'} =~ /^\d+/))
-	{
+
+	if (!($proxysettings{'MAX_OUTGOING_SIZE'} =~ /^\d+/)) {
 		$errormessage .= $tr{'invalid maximum outgoing size'}."<br />";
-		goto ERROR;
 	}
-	if (!($proxysettings{'MAX_INCOMING_SIZE'} =~ /^\d+/))
-	{
+
+	if (!($proxysettings{'MAX_INCOMING_SIZE'} =~ /^\d+/)) {
 		$errormessage .= $tr{'invalid maximum incoming size'}."<br />";
-		goto ERROR;
 	}
-	if ($proxysettings{'PEER_USERNAME'})
-	{
-		unless ($proxysettings{'PEER_PASSWORD'})
-		{
+
+	if ($proxysettings{'PEER_USERNAME'}) {
+		unless ($proxysettings{'PEER_PASSWORD'}) {
 			$errormessage .= $tr{'password cant be blank'}."<br />";
-			goto ERROR;
 		}
 	}
 
-ERROR:
 	if ($errormessage) {
-		$proxysettings{'VALID'} = 'no'; }
+		$proxysettings{'VALID'} = 'no';
+	}
 	else {
-              	$proxysettings{'VALID'} = 'yes'; }
-
+              $proxysettings{'VALID'} = 'yes';
+	}
 	&writehash("${swroot}/proxy/settings", \%proxysettings);
-	if ($proxysettings{'VALID'} eq 'yes')
-	{
+
+	if ($proxysettings{'VALID'} eq 'yes') {
 		system('/usr/bin/smoothwall/writeproxy.pl');
-        	
-        	my @args = ('squidrestart');
-        	if ($proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'}) {
-			push(@args, '--clearcache'); }
-        	
+		my @args;
+
+		if ($proxysettings{'ENABLE'} eq 'on') {
+        		@args = ('squidrestart');
+        		if ($proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'}) {
+				push(@args, '--clearcache');
+			}
+		}
+		else {
+        		@args = ('squidstop');
+        		if ($proxysettings{'ACTION'} eq $tr{'save and restart with cleared cache'}) {
+				push(@args, '--clearcache');
+			}
+		}
 		my $success = message(@args);
-		
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+		$errormessage = $success;
+		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">';
 	}
 }
 
@@ -116,86 +119,83 @@ $checked{'ENABLE'}{$proxysettings{'ENABLE'}} = 'CHECKED';
 $checked{'TRANSPARENT'}{'off'} = '';
 $checked{'TRANSPARENT'}{'on'} = '';
 $checked{'TRANSPARENT'}{$proxysettings{'TRANSPARENT'}} = 'CHECKED';
+
 # Start of modification by URLfilter
 $checked{'ENABLE_FILTER'}{'off'} = '';
 $checked{'ENABLE_FILTER'}{'on'} = '';
 $checked{'ENABLE_FILTER'}{$proxysettings{'ENABLE_FILTER'}} = 'CHECKED';
 # End of modification by URLfilter
 
-&openpage($tr{'web proxy configuration'}, 1, '', 'services');
+&openpage($tr{'web proxy configuration'}, 1, $refresh, 'services');
 
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'web proxyc'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD CLASS='base'>$tr{'enabled'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='ENABLE' $checked{'ENABLE'}{'on'}></TD>
-	<TD CLASS='base'>$tr{'urlfilter enabled'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'transparent'}</TD>
-	<TD><INPUT TYPE='checkbox' NAME='TRANSPARENT' $checked{'TRANSPARENT'}{'on'}></TD>
+<table width='100%'>
+<tr>
+	<td class='base'>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
+	<td class='base'>$tr{'urlfilter enabled'}</td>
+	<td><input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'transparent'}</td>
+	<td><input type='checkbox' name='TRANSPARENT' $checked{'TRANSPARENT'}{'on'}></td>
 	<td></td>
 	<td></td>
-</TR>
-<TR>
+</tr>
+<tr>
 	<td colspan='4'>&nbsp;</td>
-</TR>
-<TR>
-	<TD WIDTH='25%' CLASS='base'>$tr{'cache size'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='CACHE_SIZE' VALUE='$proxysettings{'CACHE_SIZE'}' SIZE='5'></TD>
-	<TD WIDTH='25%' CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'remote proxy'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='text' NAME='UPSTREAM_PROXY' VALUE='$proxysettings{'UPSTREAM_PROXY'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'remote proxy username'}</TD>
-	<TD><INPUT TYPE='text' NAME='PEER_USERNAME' VALUE='$proxysettings{'PEER_USERNAME'}'></TD>
-	<TD CLASS='base'>$tr{'remote proxy password'}</TD>
-	<TD><INPUT TYPE='password' NAME='PEER_PASSWORD' VALUE='$proxysettings{'PEER_PASSWORD'}'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'max size'}</TD>
-	<TD><INPUT TYPE='text' NAME='MAX_SIZE' VALUE='$proxysettings{'MAX_SIZE'}' SIZE='5'></TD>
-	<TD CLASS='base'>$tr{'min size'}</TD>
-	<TD><INPUT TYPE='text' NAME='MIN_SIZE' VALUE='$proxysettings{'MIN_SIZE'}' SIZE='5'></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'max outgoing size'}</TD>
-	<TD><INPUT TYPE='text' NAME='MAX_OUTGOING_SIZE' VALUE='$proxysettings{'MAX_OUTGOING_SIZE'}' SIZE='5'></TD>
-	<TD CLASS='base'>$tr{'max incoming size'}</TD>
-	<TD><INPUT TYPE='text' NAME='MAX_INCOMING_SIZE' VALUE='$proxysettings{'MAX_INCOMING_SIZE'}' SIZE='5'></TD>
-</TR>
-</TABLE>
+</tr>
+<tr>
+	<td style='width:25%;' class='base'>$tr{'cache size'}</td>
+	<td style='width:25%;'><input type='text' name='CACHE_SIZE' value='$proxysettings{'CACHE_SIZE'}' SIZE='5'></td>
+	<td style='width:25%;' class='base'><img src='/ui/img/blob.gif' alt='*' style='vertical-align: text-top;'>&nbsp;$tr{'remote proxy'}</td>
+	<td style='width:25%;'><input type='text' name='UPSTREAM_PROXY' value='$proxysettings{'UPSTREAM_PROXY'}'></td>
+</tr>
+<tr>
+	<td class='base'><img src='/ui/img/blob.gif' alt='*' style='vertical-align: text-top;'>&nbsp;$tr{'remote proxy username'}</td>
+	<td><input type='text' name='PEER_USERNAME' value='$proxysettings{'PEER_USERNAME'}'></td>
+	<td class='base'>$tr{'remote proxy password'}</td>
+	<td><input type='password' name='PEER_PASSWORD' value='$proxysettings{'PEER_PASSWORD'}'></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'max size'}</td>
+	<td><input type='text' name='MAX_SIZE' value='$proxysettings{'MAX_SIZE'}' SIZE='5'></td>
+	<td class='base'>$tr{'min size'}</td>
+	<td><input type='text' name='MIN_SIZE' value='$proxysettings{'MIN_SIZE'}' SIZE='5'></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'max outgoing size'}</td>
+	<td><input type='text' name='MAX_OUTGOING_SIZE' value='$proxysettings{'MAX_OUTGOING_SIZE'}' SIZE='5'></td>
+	<td class='base'>$tr{'max incoming size'}</td>
+	<td><input type='text' name='MAX_INCOMING_SIZE' value='$proxysettings{'MAX_INCOMING_SIZE'}' SIZE='5'></td>
+</tr>
+</table>
 <BR>
-<IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
-<FONT CLASS='base'>$tr{'these fields may be blank'}</FONT>
+<img src='/ui/img/blob.gif' alt='*' style='vertical-align: text-top;'>&nbsp;
+<span class='base'>$tr{'these fields may be blank'}</span>
 END
 ;
 &closebox();
 
 
 print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='60%'>
-<TR>
-        <TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE=
-'$tr{'save'}'></TD>
-        <TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE=
-'$tr{'save and restart with cleared cache'}'></TD>
-</TR>
-</TABLE>
-</DIV>
+<table style='width: 60%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+        <td style='width:50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+        <td style='width:50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'save and restart with cleared cache'}'></td>
+</tr>
+</table>
 END
 ;
 
-print "</FORM>\n";
+print "</div></form>\n";
 
 &alertbox('add', 'add');
 

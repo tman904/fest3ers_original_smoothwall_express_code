@@ -9,6 +9,8 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use strict;
+use warnings;
 
 my (%remotesettings, %checked, $errormessage);
 
@@ -17,22 +19,27 @@ my (%remotesettings, %checked, $errormessage);
 $remotesettings{'ENABLE_SSH'} = 'off';
 $remotesettings{'ENABLE_SECURE_ADMIN'} = 'off';
 $remotesettings{'ACTION'} = '';
+
+my $refresh = '';
+my $success = '';
+
 &getcgihash(\%remotesettings);
 
 $errormessage = '';
-if ($remotesettings{'ACTION'} eq $tr{'save'})
-{
+if ($remotesettings{'ACTION'} eq $tr{'save'}) {
 	&writehash("${swroot}/remote/settings", \%remotesettings);
 
 	if ($remotesettings{'ENABLE_SSH'} eq 'on') {
-		&log($tr{'ssh is enabled'}); }
+		&log($tr{'ssh is enabled'});
+		$success = message('sshdrestart');
+	}
 	else {
-		&log($tr{'ssh is disabled'}); }
-
-	my $success = message('sshdrestart');
-	
-	if (not defined $success) {
-		$errormessage = $tr{'smoothd failure'}; }
+		&log($tr{'ssh is disabled'});
+		$success = message('sshdstop');
+	}
+	$errormessage = $success;
+	$errormessage = $tr{'smoothd failure'} unless ($success);
+	$refresh = '<meta http-equiv="refresh" content="2;">';
 }
 
 $remotesettings{'ENABLE_SECURE_ADMIN'} = 'off';
@@ -46,46 +53,42 @@ $checked{'ENABLE_SECURE_ADMIN'}{'off'} = '';
 $checked{'ENABLE_SECURE_ADMIN'}{'on'} = '';
 $checked{'ENABLE_SECURE_ADMIN'}{$remotesettings{'ENABLE_SECURE_ADMIN'}} = 'CHECKED';
 
-&openpage($tr{'remote access'}, 1, '', 'services');
+&openpage($tr{'remote access'}, 1, $refresh, 'services');
 
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'remote access2'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD class='base' WIDTH='25%' CLASS='base'>SSH:</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_SSH' $checked{'ENABLE_SSH'}{'on'}></TD>
-	<TD class='base' WIDTH='25%' CLASS='base'><IMG SRC='/ui/img/blob.gif'>&nbsp;$tr{'secure admin'}</TD>
-	<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE_SECURE_ADMIN' $checked{'ENABLE_SECURE_ADMIN'}{'on'}></TD>
-</TR>
-</TABLE>
-<BR>
-<IMG SRC='/ui/img/blob.gif' VALIGN='top'>&nbsp;
-<FONT CLASS='base'>$tr{'secure admin long'}</FONT>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:25%;' class='base'>SSH:</td>
+	<td style='width:25%;'><input type='checkbox' name='ENABLE_SSH' $checked{'ENABLE_SSH'}{'on'}></td>
+	<td style='width:25%;' class='base'><img src='/ui/img/blob.gif' alt='*' style='vertical-align: text-top;'>&nbsp;$tr{'secure admin'}</td>
+	<td style='width:25%;'><input type='checkbox' name='ENABLE_SECURE_ADMIN' $checked{'ENABLE_SECURE_ADMIN'}{'on'}></td>
+</tr>
+</table>
+<br />
+<img src='/ui/img/blob.gif' alt='*' style='vertical-align: text-top;'>&nbsp;
+<span class='base'>$tr{'secure admin long'}</span>
 END
 ;
 &closebox();
 
 print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='60%'>
-<TR>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save'}'></TD> 
-</TR>
-</TABLE>
-</DIV>
+<table style='width: 60%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+        <td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
 END
 ;
 
-print "</FORM>\n";
+print "</div></form>\n";
 
 &alertbox('add', 'add');
-
 &closebigbox();
-
 &closepage();

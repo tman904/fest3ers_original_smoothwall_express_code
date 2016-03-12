@@ -9,13 +9,17 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use strict;
+use warnings;
 
-my (%advnetsettings,%checked);
+my (%advnetsettings,%checked, %selected);
+my $refresh = '';
+my $errormessage = '';
+my $success = '';
 
 &showhttpheaders();
 
-# These defaults must be 'off'; the system defaults must be set in
-#   the advnet settings file.
+# These defaults must be 'off'; the system defaults must be set in the advnet settings file.
 $advnetsettings{'ENABLE_NOPING'} = 'off';
 $advnetsettings{'ENABLE_COOKIES'} = 'off';
 $advnetsettings{'ENABLE_NOIGMP'} = 'off';
@@ -26,20 +30,24 @@ $advnetsettings{'BAD_TRAFFIC'} = 'REJECT';
 $advnetsettings{'ACTION'} = '';
 &getcgihash(\%advnetsettings);
 
-$errormessage = '';
-if ($advnetsettings{'ACTION'} eq $tr{'save'})
-{
+if ($advnetsettings{'ACTION'} eq $tr{'save'}) {
 	&writehash("${swroot}/advnet/settings", \%advnetsettings);
 	
-	my $success = message('setadvnet');
-	
-	if (not defined $success) {
-		$errormessage .= $tr{'smoothd failure'}."<br />"; }	
-	
-	my $success = message('upnpdrestart');
-		
-	if (not defined $success) {
-                $errormessage .= $tr{'smoothd failure'}."<br />"; }
+	$success = message('setadvnet');
+	$errormessage .= $success."<br />" if ($success);
+	$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+
+	if ($advnetsettings{'ENABLE_UPNP'} eq 'on') {
+		$success = message('upnpdrestart');
+		$errormessage .= $success."<br />" if ($success);
+		$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+	}
+	else {
+		$success = message('upnpdstop');
+		$errormessage .= $success."<br />" if ($success);
+		$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+	}
+	$refresh = "<meta http-equiv='refresh' content='2; URL=advnet.cgi'>";
 }
 
 &readhash("${swroot}/advnet/settings", \%advnetsettings);
@@ -72,66 +80,61 @@ $selected{'BAD_TRAFFIC'}{'REJECT'} = '';
 $selected{'BAD_TRAFFIC'}{'DROP'} = '';
 $selected{'BAD_TRAFFIC'}{$advnetsettings{'BAD_TRAFFIC'}} = 'SELECTED';
 
-&openpage($tr{'advanced networking features'}, 1, '', 'networking');
+&openpage($tr{'advanced networking features'}, 1, $refresh, 'networking');
 
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'advanced networking featuresc'});
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='38%' CLASS='base'>$tr{'block icmp ping'}</TD>
-	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOPING' $checked{'ENABLE_NOPING'}{'on'}></TD>
-	<TD WIDTH='38%' CLASS='base'>$tr{'enable syn cookies'}</TD>
-	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_COOKIES' $checked{'ENABLE_COOKIES'}{'on'}></TD>
-</TR>
-<TR>
-	<TD WIDTH='38%' CLASS='base'>$tr{'block and ignore igmp packets'}</TD>
-	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOIGMP' $checked{'ENABLE_NOIGMP'}{'on'}></TD>
-	<TD WIDTH='38%' CLASS='base'>$tr{'block and ignore multicast traffic'}</TD>
-	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_NOMULTICAST' $checked{'ENABLE_NOMULTICAST'}{'on'}></TD>
-</TR>
-<TR>
-	<TD WIDTH='38%' CLASS='base'>$tr{'upnp support'}</TD>
-	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='ENABLE_UPNP' $checked{'ENABLE_UPNP'}{'on'}></TD>
-	<TD WIDTH='38%' CLASS='base'>$tr{'log invalid'}</TD>
-	<TD WIDTH='12%'><INPUT TYPE='checkbox' style='vertical-align:middle' NAME='LOG_INVALID' $checked{'LOG_INVALID'}{'on'}></TD>
-</TR>
-<TR>
-        <td></td>
-        <td></td>
-	<TD WIDTH='38%' CLASS='base'>$tr{'action to perform on bad external traffic'}</TD>
-	<TD WIDTH='12%'>
-	<SELECT NAME='BAD_TRAFFIC'>
-	<OPTION VALUE='REJECT' $selected{'BAD_TRAFFIC'}{'REJECT'}>$tr{'reject'}
-	<OPTION VALUE='DROP' $selected{'BAD_TRAFFIC'}{'DROP'}>$tr{'drop'}
-	</SELECT>
-	</TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:38%;' class='base'>$tr{'block icmp ping'}</td>
+	<td style='width:12%;'><input type='checkbox' style='vertical-align:middle' name='ENABLE_NOPING' $checked{'ENABLE_NOPING'}{'on'}></td>
+	<td style='width:38%;' class='base'>$tr{'enable syn cookies'}</td>
+	<td style='width:12%;'><input type='checkbox' style='vertical-align:middle' name='ENABLE_COOKIES' $checked{'ENABLE_COOKIES'}{'on'}></td>
+</tr>
+<tr>
+	<td style='width:38%;' class='base'>$tr{'block and ignore igmp packets'}</td>
+	<td style='width:12%;'><input type='checkbox' style='vertical-align:middle' name='ENABLE_NOIGMP' $checked{'ENABLE_NOIGMP'}{'on'}></td>
+	<td style='width:38%;' class='base'>$tr{'block and ignore multicast traffic'}</td>
+	<td style='width:12%;'><input type='checkbox' style='vertical-align:middle' name='ENABLE_NOMULTICAST' $checked{'ENABLE_NOMULTICAST'}{'on'}></td>
+</tr>
+<tr>
+	<td style='width:38%;' class='base'>$tr{'upnp support'}</td>
+	<td style='width:12%;'><input type='checkbox' style='vertical-align:middle' name='ENABLE_UPNP' $checked{'ENABLE_UPNP'}{'on'}></td>
+	<td style='width:38%;' class='base'>$tr{'log invalid'}</td>
+	<td style='width:12%;'><input type='checkbox' style='vertical-align:middle' name='LOG_INVALID' $checked{'LOG_INVALID'}{'on'}></td>
+</tr>
+<tr>
+	<td></td>
+	<td></td>
+	<td style='width:38%;' class='base'>$tr{'action to perform on bad external traffic'}</td>
+	<td style='width:12%;'>
+	<select name='BAD_TRAFFIC'>
+		<option value='REJECT' $selected{'BAD_TRAFFIC'}{'REJECT'}>$tr{'reject'}
+		<option value='DROP' $selected{'BAD_TRAFFIC'}{'DROP'}>$tr{'drop'}
+	</select></td>
+</tr>
+</table>
 END
 ;
 &closebox();
 
 print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='60%'>
-<TR>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save'}'></TD> 
-</TR>
-</TABLE>
-</DIV>
+<table style='width: 60%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+        <td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
 END
 ;
 
-print "</FORM>\n";
+print "</div></form>\n";
 
 &alertbox('add', 'add');
-
 &closebigbox();
-
 &closepage($errormessage);

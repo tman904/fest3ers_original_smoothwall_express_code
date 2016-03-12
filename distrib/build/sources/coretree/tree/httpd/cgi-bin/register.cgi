@@ -59,8 +59,8 @@ sub register_page
   &openbox();
 
   print qq!
-<div align="center">
-  <h2 style="font-size:15pt">Smoothwall $displayVersion</h2>
+<div style='text-align:center;'>
+  <h2 style="font-size:15pt">Smoothwall Express $displayVersion</h2>
   <p>User interface version $webuirevision
 </div>
 !;
@@ -75,7 +75,7 @@ if ( not defined $ownership{'ADDED_TO_X3'} or $ownership{'ADDED_TO_X3'} ne "1" )
   print qq!
 <div style="margin:0; text-align:centered">
   <p style="margin:0">
-    <a target='_new' href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.x3.png' title='my.Smoothwall'/></a>
+    <a href='https://my.smoothwall.org' onclick="window.open(this.href); return false"><img src='/ui/img/frontpage/frontpage.x3.png' title='my.Smoothwall' alt='my.Smoothwall'/></a>
   </p>
 </div>
 !;
@@ -107,7 +107,7 @@ $tr{'x3 reg info'}
     print qq!
 <div style="text-align:center">
 <div style="display:inline-block">
-  <form method='post' action='https://my.smoothwall.org/cgi-bin/signin.cgi' target='_blank'>
+  <form method='post' action='https://my.smoothwall.org/cgi-bin/signin.cgi'>
     <input type="hidden" name=id value='$sysid'>
     <input name="ACTION" type='submit' value="$tr{'register'}"
            style="margin:8pt 40pt 8pt 8pt; display:inline-block">
@@ -137,7 +137,7 @@ $tr{'x3 reg info'}
 <table class='centered'>
 	<tr>
 		<td>
-			<a target='_new' href='https://my.smoothwall.org'><img src='/ui/img/frontpage/frontpage.png' title='my.Smoothwall'/></a>
+			<a href='https://my.smoothwall.org' onclick="window.open(this.href); return false"><img src='/ui/img/frontpage/frontpage.png' title='my.Smoothwall' alt='my.Smoothwall'/></a>
 			<br/>
 		</td>
 	</tr>
@@ -160,31 +160,30 @@ print <<END
               border:1pt dashed gray'>
     <p style="margin:4pt; text-align:center">
       For more information about Smoothwall Express, please visit our website at
-      <a href="http://smoothwall.org/" target="_breakoutWindow">
+      <a href="http://smoothwall.org/" onclick="window.open(this.href); return false">
         http://smoothwall.org/</a>.
     </p>
     <p style="margin:4pt">
       For more information about Smoothwall products, please visit 
       our website at
-      <a href="http://www.smoothwall.net/"
-         target="_breakoutWindow">
+      <a href="http://www.smoothwall.net/" onclick="window.open(this.href); return false">
         http://www.smoothwall.net/</a>.
     </p>
   </div>
 
     <p style="margin:8pt 4pt 8pt 4pt; text-align:center">
-      Smoothwall $displayVersion<br>
+      Smoothwall Express $displayVersion<br>
       Copyright &copy; 2000 - 2015 the
-      <a href="http://smoothwall.org/team/" target="_breakoutWindow">
+      <a href="http://smoothwall.org/team/" onclick="window.open(this.href); return false">
         Smoothwall Team</a>.
     </p>
     <p>
       A full team listing can be found
-      <a href="http://smoothwall.org/team/" target="_breakoutWindow">
+      <a href="http://smoothwall.org/team/" onclick="window.open(this.href); return false">
         on our website</a>.
       The copyrights to portions of this software are held by the original
       authors. The source code of such portions are 
-      <a href="http://www.smoothwall.org/download/sources/" target="_breakoutWindow">
+      <a href="http://www.smoothwall.org/download/sources/" onclick="window.open(this.href); return false">
         available under the terms of the appropriate licenses</a>.
     </p>
     <p>
@@ -193,7 +192,7 @@ print <<END
     All trademarks and copyrights are the property of their
     respective owners.
     Stock photography used courtesy of
-    <a href="http://istockphoto.com/">iStockphoto.com</a>.
+    <a href="http://istockphoto.com/" onclick="window.open(this.href); return false">iStockphoto.com</a>.
   </p>
 </div>
 END

@@ -9,23 +9,32 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothtype qw(:standard);
+use strict;
+use warnings;
 
-my (%cgiparams,%selected,%checked);
+my (%cgiparams, %selected, %checked);
 my $filename = "${swroot}/ddns/config";
 
 &showhttpheaders();
 
+$cgiparams{'ACTION'} = '';
+
+$cgiparams{'SERVICE'} = '';
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'PROXY'} = 'off';
 $cgiparams{'WILDCARDS'} = 'off';
+$cgiparams{'HOSTNAME'} = '';
+$cgiparams{'DOMAIN'} = '';
+$cgiparams{'LOGIN'} = '';
+$cgiparams{'PASSWORD'} = '';
+$cgiparams{'COMMENT'} = '';
 
 $cgiparams{'COLUMN'} = 1;
 $cgiparams{'ORDER'} = $tr{'log ascending'};
 
 &getcgihash(\%cgiparams);
 
-if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
-{
+if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" )) {
 	my @temp = split(',',$ENV{'QUERY_STRING'});
 	$cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
 	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
@@ -34,46 +43,49 @@ if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'AC
 my $errormessage = '';
 my @service = ();
 
-if ($cgiparams{'ACTION'} eq $tr{'add'})
-{
+if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 	my $domOnce = 0;
-	unless ($cgiparams{'SERVICE'} =~ /^(dhs|dyndns-custom|dyndns|dyns|hn|no-ip|zoneedit|easydns|ods)$/) { $errormessage .= $tr{'invalid input'} ."<br />"; }
-	unless ($cgiparams{'LOGIN'} =~ /^[^\"\']*$/) { $errormessage .= $tr{'invalid username'} ."<br />"; }
-	unless ($cgiparams{'LOGIN'} ne '') { $errormessage .= $tr{'username not set'} ."<br />"; }
-	unless ($cgiparams{'PASSWORD'} ne '') { $errormessage .= $tr{'password not set'} ."<br />"; }
-	unless ($cgiparams{'PASSWORD'} =~ /^[^\s\"\']*$/) { $errormessage .= $tr{'invalid username'} ."<br />"; }
-	unless ($cgiparams{'DOMAIN'} ne '') { $errormessage .= $tr{'domain not set'} ."<br />"; }
-	unless ($cgiparams{'DOMAIN'} =~ /^[a-zA-Z_0-9.-]+$/) { $domOnce = 1; $errormessage .= $tr{'invalid domain name'} ."<br />"; }
-	unless ($cgiparams{'DOMAIN'} =~ /[.]/) { $errormessage .= $tr{'invalid domain name'} ."<br />" unless ($domOnce); }
-	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage .= $tr{'invalid comment'} ."<br />";  }
+	$errormessage .= $tr{'invalid input'} ."<br />" unless ($cgiparams{'SERVICE'} =~ /^(dhs|dyndns-custom|dyndns|dyns|hn|no-ip|zoneedit|easydns|ods)$/);
+	$errormessage .= $tr{'invalid username'} ."<br />" unless ($cgiparams{'LOGIN'} =~ /^[^\"\']*$/);
+	$errormessage .= $tr{'username not set'} ."<br />" unless ($cgiparams{'LOGIN'} ne '');
+	$errormessage .= $tr{'password not set'} ."<br />" unless ($cgiparams{'PASSWORD'} ne '');
+	$errormessage .= $tr{'invalid username'} ."<br />" unless ($cgiparams{'PASSWORD'} =~ /^[^\s\"\']*$/);
+	$errormessage .= $tr{'domain not set'} ."<br />" unless ($cgiparams{'DOMAIN'} ne '');
+	unless ($cgiparams{'DOMAIN'} =~ /^[a-zA-Z_0-9.-]+$/) {
+		$domOnce = 1;
+		$errormessage .= $tr{'invalid domain name'} ."<br />";
+	}
+	unless ($cgiparams{'DOMAIN'} =~ /[.]/) {
+		$errormessage .= $tr{'invalid domain name'} ."<br />" unless ($domOnce);
+	}
+	$errormessage .= $tr{'invalid comment'} ."<br />" unless ( &validcomment( $cgiparams{'COMMENT'} ) );
+
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
 	my $line;
-	foreach $line (@current)
-	{
+	foreach $line (@current) {
 		my @temp = split(/\,/,$line);
-		if($cgiparams{'HOSTNAME'} eq $temp[1] &&
-			$cgiparams{'DOMAIN'} eq $temp[2])
-		{
+		if($cgiparams{'HOSTNAME'} eq $temp[1] && $cgiparams{'DOMAIN'} eq $temp[2]) {
 			 $errormessage .= $tr{'hostname and domain already in use'} ."<br />";
 		}
 	}
-	unless ($errormessage)
-	{
+	unless ($errormessage) {
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
 		print FILE "$cgiparams{'SERVICE'},$cgiparams{'HOSTNAME'},$cgiparams{'DOMAIN'},$cgiparams{'PROXY'},$cgiparams{'WILDCARDS'},$cgiparams{'LOGIN'},$cgiparams{'PASSWORD'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
-		undef %cgiparams;
+
+		foreach my $key (keys %cgiparams) {
+			$cgiparams{$key} = '';
+		}
 		$cgiparams{'COLUMN'} = 1;
 		$cgiparams{'ORDER'} = $tr{'log ascending'};
 		&log($tr{'ddns hostname added'});
 	}
 }
 
-if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
-{
+if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}) {
 	open(FILE, "$filename") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -81,28 +93,22 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 	my $count = 0;
 	my $id = 0;
 	my $line;
-	foreach $line (@current)
-	{
+	foreach $line (@current) {
 		$id++;
-		if ($cgiparams{$id} eq "on") {
-			$count++; }
+		$count++ if ($cgiparams{$id} eq "on");
 	}
-	if ($count == 0) {
-		$errormessage .= $tr{'nothing selected'} ."<br />"; }
-	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-		$errormessage .= $tr{'you can only select one item to edit'} ."<br />"; }
-	unless ($errormessage)
-	{
+	$errormessage .= $tr{'nothing selected'} ."<br />" if ($count == 0);
+	$errormessage .= $tr{'you can only select one item to edit'} ."<br />" if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+	unless ($errormessage) {
 		open(FILE, ">$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
 		my $id = 0;
-		foreach $line (@current)
-		{
+		foreach $line (@current) {
 			$id++;
 			unless ($cgiparams{$id} eq "on") {
-				print FILE "$line"; }
-			elsif ($cgiparams{'ACTION'} eq $tr{'edit'})
-			{
+				print FILE "$line";
+			}
+			elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
 				chomp($line);
 				my @temp = split(/\,/,$line);
 				$cgiparams{'SERVICE'} = $temp[0];
@@ -113,7 +119,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'LOGIN'} = $temp[5];
 				$cgiparams{'PASSWORD'} = $temp[6];
 				$cgiparams{'ENABLED'} = $temp[7];
-				$cgiparams{'COMMENT'} = $temp[8];
+				$cgiparams{'COMMENT'} = $temp[8] || '';
 			}
 		}
 		close(FILE);
@@ -121,15 +127,9 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 	}
 }
 
-if ($cgiparams{'ACTION'} eq $tr{'force update'})
-{
-	system('/usr/bin/smoothwall/setddns.pl', '-f');
-}
+system('/usr/bin/smoothwall/setddns.pl', '-f') if ($cgiparams{'ACTION'} eq $tr{'force update'});
 
-if ($cgiparams{'ACTION'} eq '')
-{
-	$cgiparams{'ENABLED'} = 'on';
-}
+$cgiparams{'ENABLED'} = 'on' if ($cgiparams{'ACTION'} eq '');
 
 $selected{'SERVICE'}{'dhs'} = '';
 $selected{'SERVICE'}{'dyndns'} = '';
@@ -139,7 +139,7 @@ $selected{'SERVICE'}{'hn'} = '';
 $selected{'SERVICE'}{'no-ip'} = '';
 $selected{'SERVICE'}{'zoneedit'} = '';
 $selected{'SERVICE'}{'easydns'} = '';
-$selected{'SERIVCE'}{'ods'} = '';
+$selected{'SERVICE'}{'ods'} = '';
 $selected{'SERVICE'}{$cgiparams{'SERVICE'}} = 'SELECTED';
 
 $checked{'PROXY'}{'off'} = '';
@@ -158,59 +158,65 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-$errormessage = "<br />". $errormessage if ($errormessage);
+#$errormessage = "<br />". $errormessage if ($errormessage);
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'add a host'});
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-	<TD WIDTH='20%' CLASS='base'>$tr{'servicec'}</TD>
-	<TD WIDTH='25%'>
-	<SELECT SIZE='1' NAME='SERVICE'>
-	<OPTION VALUE='dhs' $selected{'SERVICE'}{'dhs'}>dhs.org
-	<OPTION VALUE='dyndns' $selected{'SERVICE'}{'dyndns'}>dyndns.org
-	<OPTION VALUE='dyndns-custom' $selected{'SERVICE'}{'dyndns-custom'}>dyndns.org (Custom)
-	<OPTION VALUE='dyns' $selected{'SERVICE'}{'dyns'}>dyns.cx
-	<OPTION VALUE='hn' $selected{'SERVICE'}{'hn'}>hn.org
-	<OPTION VALUE='no-ip' $selected{'SERVICE'}{'no-ip'}>no-ip.com
-	<OPTION VALUE='zoneedit' $selected{'SERVICE'}{'zoneedit'}>zonedit.com
-	<OPTION VALUE='easydns' $selected{'SERVICE'}{'easydns'}>easydns.com
-	<OPTION VALUE='ods' $selected{'SERVICE'}{'ods'}>ods.org
-	</SELECT>
-	</TD>
-	<TD WIDTH='20%' CLASS='base'>$tr{'behind a proxy'}</td>
-        <td style='width:5%'><INPUT TYPE='checkbox' NAME='PROXY' VALUE='on' $checked{'PROXY'}{'on'}></TD>
-	<TD WIDTH='20%'CLASS='base'>$tr{'enable wildcards'}</td>
-        <td> <INPUT TYPE='checkbox' NAME='WILDCARDS' VALUE='on' $checked{'WILDCARDS'}{'on'}></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'hostnamec'}</TD>
-	<TD><INPUT TYPE='text' NAME='HOSTNAME' VALUE='$cgiparams{'HOSTNAME'}' id='hostname' @{[jsvalidregex('hostname','^[a-zA-Z_0-9-]+$','true')]}></TD>
-	<TD CLASS='base'>$tr{'domainc'}</TD>
-	<TD><INPUT TYPE='text' NAME='DOMAIN' VALUE='$cgiparams{'DOMAIN'}' id='domain' @{[jsvalidregex('domain','^[a-zA-Z_0-9-\.]+$')]}></TD>
-</TR>
-<TR>
-	<TD CLASS='base'>$tr{'username'}</TD>
-	<TD><INPUT TYPE='text' NAME='LOGIN' VALUE='$cgiparams{'LOGIN'}' id='login' @{[jsvalidregex('login','^[a-zA-Z0-9\@\s~#!\(\)&^\%\$£\*]+$')]}></TD>
-	<TD CLASS='base'>$tr{'password'}</TD>
-	<TD><INPUT TYPE='PASSWORD' NAME='PASSWORD' VALUE='$cgiparams{'PASSWORD'}' id='password' @{[jsvalidregex('password','^[a-zA-Z0-9\@\s~#!\(\)&^\%\$£\*]+$')]}></TD>
-</TR>
-<TR>
-	<td class='base'>$tr{'commentc'}</td>
-	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' id='comment' @{[jsvalidcomment('comment')]} value='$cgiparams{'COMMENT'}'></td>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:20%;' class='base'>$tr{'servicec'}</td>
+	<td style='width:25%;'>
+		<select name='SERVICE'>
+		<option value='dhs' $selected{'SERVICE'}{'dhs'}>dhs.org
+		<option value='dyndns' $selected{'SERVICE'}{'dyndns'}>dyndns.org
+		<option value='dyndns-custom' $selected{'SERVICE'}{'dyndns-custom'}>dyndns.org (Custom)
+		<option value='dyns' $selected{'SERVICE'}{'dyns'}>dyns.cx
+		<option value='hn' $selected{'SERVICE'}{'hn'}>hn.org
+		<option value='no-ip' $selected{'SERVICE'}{'no-ip'}>no-ip.com
+		<option value='zoneedit' $selected{'SERVICE'}{'zoneedit'}>zonedit.com
+		<option value='easydns' $selected{'SERVICE'}{'easydns'}>easydns.com
+		<option value='ods' $selected{'SERVICE'}{'ods'}>ods.org
+		</select></td>
+
+	<td style='width:20%;' class='base'>$tr{'behind a proxy'}</td>
+	<td style='width:5%'><input type='checkbox' name='PROXY' value='on' $checked{'PROXY'}{'on'}></td>
+	<td style='width:20%;' class='base'>$tr{'enable wildcards'}</td>
+	<td> <input type='checkbox' name='WILDCARDS' value='on' $checked{'WILDCARDS'}{'on'}></td>
 </tr>
-</TABLE>
-<TABLE WIDTH='100%'>
-<TR>
-	<TD CLASS='base' WIDTH='40%'>$tr{'enabled'}</td>
-        <td><INPUT TYPE='checkbox' NAME='ENABLED' VALUE='on' $checked{'ENABLED'}{'on'}></TD>
-	<TD WIDTH='50%' ALIGN='CENTER'><INPUT TYPE='SUBMIT' NAME='ACTION' VALUE='$tr{'add'}'></TD>
-</TR>
-</TABLE>
+<tr>
+	<td class='base'>$tr{'hostnamec'}</td>
+	<td><input type='text' name='HOSTNAME' value='$cgiparams{'HOSTNAME'}' id='hostname' 
+		@{[jsvalidregex('hostname','^[a-zA-Z_0-9-]+$','true')]}></td>
+	<td class='base'>$tr{'domainc'}</td>
+	<td><input type='text' name='DOMAIN' value='$cgiparams{'DOMAIN'}' id='domain' 
+		@{[jsvalidregex('domain','^[a-zA-Z_0-9-\.]+$')]}></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'username'}</td>
+	<td><input type='text' name='LOGIN' value='$cgiparams{'LOGIN'}' id='login' 
+		@{[jsvalidregex('login','^[a-zA-Z0-9\@\s~#!\(\)\&^\%\$£\*]+$')]}></td>
+	<td class='base'>$tr{'password'}</td>
+	<td><input type='PASSWORD' name='PASSWORD' value='$cgiparams{'PASSWORD'}' id='password' 
+		@{[jsvalidregex('password','^[a-zA-Z0-9\@\s~#!\(\)\&^\%\$£\*]+$')]}></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'commentc'}</td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' id='comment' 
+		@{[jsvalidcomment('comment')]} value='$cgiparams{'COMMENT'}'></td>
+</tr>
+</table>
+
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:40%;' class='base'>$tr{'enabled'}</td>
+	<td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'}></td>
+	<td style='width:50%; text-align:center'><input type='SUBMIT' name='ACTION' value='$tr{'add'}'></td>
+</tr>
+</table>
 END
 ;
 &closebox();
@@ -283,23 +289,21 @@ my %render_settings =
 print <<END
 <table class='blank'>
 <tr>
-<td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
-<td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
+	<td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'remove'}'></td>
+	<td style='width: 50%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'edit'}'></td>
 </tr>
 </table>
 <table class='blank'>
 <tr>
-<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'force update'}'></td>
+	<td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'force update'}'></td>
 </tr>
 </table>
 END
 ;
 &closebox();
 
+print "</div></form>\n";
+
 &alertbox('add','add');
-
 &closebigbox();
-
 &closepage();
-
-

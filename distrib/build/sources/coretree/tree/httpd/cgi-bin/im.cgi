@@ -9,6 +9,8 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use strict;
+use warnings;
 
 my %imsettings;
 my %netsettings;
@@ -34,35 +36,40 @@ $imsettings{'SSL'} = 'off';
 &getcgihash(\%imsettings);
 
 my $errormessage = '';
+my $refresh = '';
+my $success = '';
 
-if ($imsettings{'ACTION'} eq $tr{'save'})
-{ 
+if ($imsettings{'ACTION'} eq $tr{'save'}) { 
 ERROR:
 	if ($errormessage) {
-		$imsettings{'VALID'} = 'no'; }
+		$imsettings{'VALID'} = 'no';
+	}
 	else {
-		$imsettings{'VALID'} = 'yes'; }
+		$imsettings{'VALID'} = 'yes';
+	}
 
 	&writehash("${swroot}/im/settings", \%imsettings);
 
-	if ($imsettings{'VALID'} eq 'yes')
-	{
+	if ($imsettings{'VALID'} eq 'yes') {
 		system('/usr/bin/smoothwall/writeim.pl');
-		
-		my $success = message('imrestart');
-		
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+
+		if ($imsettings{'ENABLE'} eq 'on') {
+			$success = message('imrestart');
+		}
+		else {
+			$success = message('imstop');
+		}
+		$errormessage = $success;
+		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">';
 	}
 }
 
-if ($imsettings{'ACTION'} eq $tr{'download ca certificate'})
-{
+if ($imsettings{'ACTION'} eq $tr{'download ca certificate'}) {
 	&outputfile('/etc/httpd/server.crt', 'IM CA.pem');
 }
 
-if ($imsettings{'ACTION'} eq '')
-{
+if ($imsettings{'ACTION'} eq '') {
 	$imsettings{'MSN'} = 'on';
 	$imsettings{'ICQ'} = 'on';
 	$imsettings{'YAHOO'} = 'on';
@@ -113,37 +120,36 @@ $checked{'ENABLE'}{$imsettings{'ENABLE'}} = 'CHECKED';
 
 &showhttpheaders();
 
-&openpage('IM proxy configuration', 1, '', 'services');
+&openpage('IM proxy configuration', 1, $refresh, 'services');
 
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox('IM proxy:');
 print <<END
-<table width='100%'>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-	<td width='25%' class='base'>$tr{'enabled'}</TD>
-	<td width='25%'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></TD>
-	<td width='25%' class='base'>Swear-word filtering:</TD>
-	<td width='25%'><input type='checkbox' name='FILTERING' $checked{'FILTERING'}{'on'}></TD>
+	<td style='width:25%;' class='base'>$tr{'enabled'}</td>
+	<td style='width:25%;'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
+	<td style='width:25%;' class='base'>Swear-word filtering:</td>
+	<td style='width:25%;'><input type='checkbox' name='FILTERING' $checked{'FILTERING'}{'on'}></td>
 </tr>
 </table>
 END
 ;
-
 &closebox();
 
-&openbox($tr{'im protocols'}, 1, '', 'services');
+&openbox($tr{'im protocols'});
 print <<END
-<table width='100%'>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-	<td width='25%' class='base'>MSN:</td>
-	<td width='25%'><input type='checkbox' name='MSN' $checked{'MSN'}{'on'}></td>
-	<td width='25%' class='base'>ICQ and AIM:</td>
-	<td width='25%'><input type='checkbox' name='ICQ' $checked{'ICQ'}{'on'}></td>
+	<td style='width:25%;' class='base'>MSN:</td>
+	<td style='width:25%;'><input type='checkbox' name='MSN' $checked{'MSN'}{'on'}></td>
+	<td style='width:25%;' class='base'>ICQ and AIM:</td>
+	<td style='width:25%;'><input type='checkbox' name='ICQ' $checked{'ICQ'}{'on'}></td>
 </tr>
 <tr>
 	<td class='base'>Yahoo:</td>
@@ -162,14 +168,13 @@ END
 ;
 &closebox();
 
-&openbox($tr{'im ssl'}, 1, '', 'services');
-
+&openbox($tr{'im ssl'});
 print <<END
-<table width='100%'>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-	<td width='25%' class='base'>$tr{'im ssl mitm'}</TD>
-	<td width='25%'><input type='checkbox' name='SSL' $checked{'SSL'}{'on'}></TD>
-	<td width='50%' align='center'>
+	<td style='width:25%;' class='base'>$tr{'im ssl mitm'}</td>
+	<td style='width:25%;'><input type='checkbox' name='SSL' $checked{'SSL'}{'on'}></td>
+	<td style='width:50%;' align='center'>
 	<input type='submit' name='ACTION' value='$tr{'download ca certificate'}'>
 	</td>
 </tr>
@@ -179,20 +184,16 @@ END
 &closebox();
 
 print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='60%'>
-<TR>
-        <TD WIDTH='100%' ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save'}'></TD>
-</TR>
-</TABLE>
-</DIV>
+<table style='width: 60%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+        <td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
 END
 ;
 
-print "</FORM>\n";
+print "</div></form>\n";
 
 &alertbox('add', 'add');
-
 &closebigbox();
-
 &closepage();

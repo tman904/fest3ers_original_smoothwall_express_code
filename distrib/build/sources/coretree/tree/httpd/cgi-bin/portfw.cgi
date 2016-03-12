@@ -10,71 +10,85 @@ use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
 use smoothtype qw( :standard );
+use strict;
+use warnings;
 
-my (%cgiparams,%selected,%checked);
+my (%cgiparams, %selected, %checked);
 my $filename = "${swroot}/portfw/config";
 
 &showhttpheaders();
 
+$cgiparams{'ACTION'} = '';
+
+$cgiparams{'PROTOCOL'} = 'tcp';
+$cgiparams{'ENABLED'} = 'off';
+$cgiparams{'EXT'} = '';
+$cgiparams{'SRC_PORT_SEL'} = '';
+$cgiparams{'SRC_PORT'} = '';
+$cgiparams{'DEST_PORT_SEL'} = '';
+$cgiparams{'DEST_PORT'} = '';
+$cgiparams{'COMMENT'} = '';
+$cgiparams{'DEST_IP'} = '';
+
 $cgiparams{'COLUMN'} = 1;
 $cgiparams{'ORDER'} = $tr{'log ascending'};
-$cgiparams{'ENABLED'} = 'off';
 
 my $service = "user";
 my $dst_service = "user";
+my $refresh = '';
+my $errormessage = '';
 
 &getcgihash(\%cgiparams);
 
-if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" ))
-{
+if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" )) {
 	my @temp = split(',',$ENV{'QUERY_STRING'});
 	$cgiparams{'ORDER'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
 	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
 }
 
-my $errormessage = '';
-
-if ($cgiparams{'ACTION'} eq $tr{'add'})
-{
-
-	unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/) { $errormessage = $tr{'invalid input'}; }
-	unless(&validipormask($cgiparams{'EXT'}))
-	{
+if ($cgiparams{'ACTION'} eq $tr{'add'}) {
+	$errormessage = $tr{'invalid input'} unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/);
+	unless (&validipormask($cgiparams{'EXT'})) {
 		if ($cgiparams{'EXT'} ne '') {
-			$errormessage = $tr{'source ip bad'}; }
+			$errormessage = $tr{'source ip bad'};
+		}
 		else {
-			$cgiparams{'EXT'} = '0.0.0.0/0'; }
+			$cgiparams{'EXT'} = '0.0.0.0/0';
+		}
 	}
 
-	if (defined $cgiparams{'SRC_PORT_SEL'} and $cgiparams{'SRC_PORT_SEL'} ne "user") {
+	if ($cgiparams{'SRC_PORT_SEL'} ne "user") {
 		$cgiparams{'SRC_PORT'} = $cgiparams{'SRC_PORT_SEL'};
-	} else {
-		unless(&validportrange($cgiparams{'SRC_PORT'})) { $errormessage = $tr{'source port numbers'}; } }
-
-	if (defined $cgiparams{'DEST_PORT_SEL'} and $cgiparams{'DEST_PORT_SEL'} ne "user" ){
-		$cgiparams{'DEST_PORT'} = $cgiparams{'DEST_PORT_SEL'}; } 
-	else 
-	{
-		if ($cgiparams{'DEST_PORT'}) {
-			unless(&validport($cgiparams{'DEST_PORT'})) { $errormessage = $tr{'destination port numbers'}; } }
-		else {
-			$cgiparams{'DEST_PORT'} = 0; }
+	}
+	else {
+		$errormessage = $tr{'source port numbers'} unless (&validportrange($cgiparams{'SRC_PORT'}));
 	}
 
-	unless ( &validcomment( $cgiparams{'COMMENT'} ) ){ $errormessage = $tr{'invalid comment'}; }	
+	if ($cgiparams{'DEST_PORT_SEL'} ne "user" ) {
+		$cgiparams{'DEST_PORT'} = $cgiparams{'DEST_PORT_SEL'};
+	} 
+	else {
+		if ($cgiparams{'DEST_PORT'}) {
+			$errormessage = $tr{'destination port numbers'} unless(&validport($cgiparams{'DEST_PORT'}));
+		}
+		else {
+			$cgiparams{'DEST_PORT'} = 0;
+		}
+	}
 
-	unless (&validip($cgiparams{'DEST_IP'})) { $errormessage = $tr{'destination ip bad'}; }
+	$errormessage = $tr{'invalid comment'} unless ( &validcomment( $cgiparams{'COMMENT'} ) );	
+	$errormessage = $tr{'destination ip bad'} unless (&validip($cgiparams{'DEST_IP'}));
+
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
+
 	my $line;
-	foreach $line (@current)
-	{
+	foreach $line (@current) {
 		my @temp = split(/\,/,$line);
 		if ($cgiparams{'SRC_PORT'} eq $temp[2] && 
-			$cgiparams{'PROTOCOL'} eq $temp[0] &&
-			$cgiparams{'EXT'} eq $temp[1])
-		{
+		    $cgiparams{'PROTOCOL'} eq $temp[0] &&
+		    $cgiparams{'EXT'} eq $temp[1]) {
 			$errormessage = "$tr{'source port in use'} $cgiparams{'SRC_PORT'}";
 		}
 	}
@@ -82,27 +96,35 @@ if ($cgiparams{'ACTION'} eq $tr{'add'})
 	$service = $cgiparams{'SRC_PORT'};
 	$dst_service = $cgiparams{'DEST_PORT'};
 
-	unless ($errormessage)
-	{
+	unless ($errormessage) {
 		open(FILE,">>$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
 		print FILE "$cgiparams{'PROTOCOL'},$cgiparams{'EXT'},$cgiparams{'SRC_PORT'},$cgiparams{'DEST_IP'},$cgiparams{'DEST_PORT'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
 		close(FILE);
-		undef %cgiparams;
+
+		$cgiparams{'PROTOCOL'} = 'tcp';
+		$cgiparams{'ENABLED'} = 'on';
+		$cgiparams{'EXT'} = '';
+		$cgiparams{'SRC_PORT_SEL'} = '';
+		$cgiparams{'SRC_PORT'} = '';
+		$cgiparams{'DEST_PORT_SEL'} = '';
+		$cgiparams{'DEST_PORT'} = '';
+		$cgiparams{'COMMENT'} = '';
+		$cgiparams{'DEST_IP'} = '';
+
 		$service = '';
 		$dst_service = '';
 
 		&log($tr{'forwarding rule added'});
 		
 		my $success = message('setincoming');
-		
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+		$errormessage = $success;
+		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">';
 	}
 }
 
-if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'})
-{
+if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}) {
 	open(FILE, "$filename") or die 'Unable to open config file.';
 	my @current = <FILE>;
 	close(FILE);
@@ -110,28 +132,23 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 	my $count = 0;
 	my $id = 0;
 	my $line;
-	foreach $line (@current)
-	{
+	foreach $line (@current) {
 		$id++;
-		if ($cgiparams{$id} eq "on") {
-			$count++; }
+		$count++ if (($cgiparams{$id}) && $cgiparams{$id} eq "on");
 	}
-	if ($count == 0) {
-		$errormessage = $tr{'nothing selected'}; }
-	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-		$errormessage = $tr{'you can only select one item to edit'}; }
-	unless ($errormessage)
-	{
+	$errormessage = $tr{'nothing selected'} if ($count == 0);
+	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+
+	unless ($errormessage) {
 		open(FILE, ">$filename") or die 'Unable to open config file.';
 		flock FILE, 2;
 		$id = 0;
-		foreach $line (@current)
-		{
+		foreach $line (@current) {
 			$id++;
-			unless ($cgiparams{$id} eq "on") {
-				print FILE "$line"; }
-			elsif ($cgiparams{'ACTION'} eq $tr{'edit'})
-			{
+			unless (($cgiparams{$id}) && $cgiparams{$id} eq "on") {
+				print FILE "$line";
+			}
+			elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
 				chomp($line);
 				my @temp = split(/\,/,$line);
 				$cgiparams{'PROTOCOL'} = $temp[0];
@@ -140,7 +157,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 				$cgiparams{'DEST_IP'} = $temp[3];
 				$cgiparams{'DEST_PORT'} = $temp[4];
 				$cgiparams{'ENABLED'} = $temp[5];
-				$cgiparams{'COMMENT'} = $temp[6];
+				$cgiparams{'COMMENT'} = $temp[6] || '';
 				$service = $temp[2];
 				$dst_service = $temp[4];
 
@@ -151,14 +168,11 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'forwarding rule removed'});
 
 		my $success = message('setincoming');
-		
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+		$errormessage = $tr{'smoothd failure'} unless ($success);
 	}
 }
 
-if ($cgiparams{'ACTION'} eq '')
-{
+if ($cgiparams{'ACTION'} eq '') {
 	$cgiparams{'PROTOCOL'} = 'tcp';
 	$cgiparams{'ENABLED'} = 'on';
 }
@@ -171,34 +185,35 @@ $checked{'ENABLED'}{'off'} = '';
 $checked{'ENABLED'}{'on'} = '';  
 $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
-&openpage($tr{'port forwarding configuration'}, 1, '', 'networking');
+&openpage($tr{'port forwarding configuration'}, 1, $refresh, 'networking');
 
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'add a new rule'});
 print <<END
-<table style='width: 100%;'>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
 	<td class='base' style='width: 25%;'>$tr{'protocolc'}</td>
 	<td style='width: 25%;'>
 		<select name='PROTOCOL'>
 			<option value='udp' $selected{'PROTOCOL'}{'udp'}>UDP
 			<option value='tcp' $selected{'PROTOCOL'}{'tcp'}>TCP
-		</select>
-	</td>
+		</select></td>
 	<td class='base' style='width: 25%;'>$tr{'sourcec'}</td>
-	<td style='width: 25%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size=18' title='$tr{'sourcec hint'}' id='extaddress' @{[jsvalidipormask('extaddress','true')]}></td>
+	<td style='width: 25%;'><input type='text' name='EXT' value='$cgiparams{'EXT'}' size='18' title='$tr{'sourcec hint'}' id='extaddress' 
+		@{[jsvalidipormask('extaddress','true')]}></td>
 </tr>
 <tr>
 	@{[&portlist('SRC_PORT_SEL', $tr{'source port or rangec'}, 'SRC_PORT', $tr{'portc'}, $service, { 'ungrouped' => 'true' })]}
 </tr>
 <tr>
 	<td class='base'>$tr{'new destination ipc'}</td>
-	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18' id='iaddress' @{[jsvalidip('iaddress')]}></td>
+	<td><input type='text' name='DEST_IP' value='$cgiparams{'DEST_IP'}' size='18' id='iaddress' 
+		@{[jsvalidip('iaddress')]}></td>
 	<td></td>
 	<td></td>
 </tr>
@@ -207,7 +222,8 @@ print <<END
 </tr>
 <tr>
 	<td class='base'>$tr{'commentc'}</td>
-	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' @{[jsvalidcomment('comment')]}  ></td>
+	<td colspan='3'><input type='text' style='width: 80%;' name='COMMENT' value='$cgiparams{'COMMENT'}' id='comment' 
+		@{[jsvalidcomment('comment')]}  ></td>
 </tr>
 <tr>
 	<td class='base'>$tr{'enabled'}</td>
@@ -216,9 +232,10 @@ print <<END
 </tr>
 </table>
 <br/>
-<img src='/ui/img/blob.gif'>&nbsp;$tr{'portfw destination port'}
+<img src='/ui/img/blob.gif' alt='*' style='vertical-align: text-top;'>&nbsp;$tr{'portfw destination port'}
 END
 ;
+
 &closebox();
 
 &openbox($tr{'current rules'});
@@ -297,11 +314,13 @@ print <<END
 </table>
 END
 ;
+
 &closebox();
+
+print "</div></form>\n";
 
 &alertbox('add', 'add');
 
 &closebigbox();
-
 &closepage();
 

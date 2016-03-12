@@ -7,9 +7,10 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use strict;
+use warnings;
 
-my %sipsettings;
-my %checked; my %selected;
+my (%sipsettings, %checked, %selected);
 
 &showhttpheaders();
 
@@ -21,24 +22,27 @@ $sipsettings{'TRANSPARENT'} = 'off';
 &getcgihash(\%sipsettings);
 
 my $errormessage = '';
-if ($sipsettings{'ACTION'} eq $tr{'save'})
-{
-ERROR:
+my $refresh = '';
+my $success = '';
 
-	unless ($errormessage)
-	{
+if ($sipsettings{'ACTION'} eq $tr{'save'}) {
+	&writehash("${swroot}/sipproxy/settings", \%sipsettings);
+	system("/usr/bin/smoothwall/writesiproxdconf.pl");
+
+	if ($sipsettings{'ENABLE'} eq 'on') {
 		&log("SIP service restarted.");
-	
-		&writehash("${swroot}/sipproxy/settings", \%sipsettings);
-		system("/usr/bin/smoothwall/writesiproxdconf.pl");
-		my $success = message("siprestart");
-		if (not defined $success) {
-			$errormessage = $tr{'smoothd failure'}; }
+		$success = message("siprestart");
 	}
+	else {
+		&log("SIP service stopped.");
+		$success = message("sipstop");
+	}
+	$errormessage = $success;
+	$errormessage = $tr{'smoothd failure'} unless ($success);
+	$refresh = '<meta http-equiv="refresh" content="2;">';
 }
 
-if ($sipsettings{'ACTION'} eq '')
-{
+if ($sipsettings{'ACTION'} eq '') {
 	$sipsettings{'LOGGING'} = '0';
 	$sipsettings{'LOG_CALLS'} = 'on';
 	$sipsettings{'CLIENTS'} = '50';
@@ -70,71 +74,64 @@ $selected{'CLIENTS'}{'100'} = '';
 $selected{'CLIENTS'}{'200'} = '';
 $selected{'CLIENTS'}{$sipsettings{'CLIENTS'}} = 'SELECTED';
 
-&openpage($tr{'sip'}, 1, '', 'services');
+&openpage($tr{'sip'}, 1, $refresh, 'services');
 
 &openbigbox('100%', 'LEFT');
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'session initiation protocol'});
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='25%' CLASS='base'>$tr{'enabled'}</TD>
-<TD WIDTH='25%'><INPUT TYPE='checkbox' NAME='ENABLE' $checked{'ENABLE'}{'on'}></TD>
-<TD CLASS='base'>$tr{'sip logging level'}</TD>
-<TD>
-<SELECT NAME='LOGGING'>
-<OPTION VALUE='0' $selected{'LOGGING'}{'0'}>$tr{'sip normal'}
-<OPTION VALUE='1' $selected{'LOGGING'}{'1'}>$tr{'sip detailed'}
-<OPTION VALUE='2' $selected{'LOGGING'}{'2'}>$tr{'sip very detailed'}
-</SELECT>
-</TD>
-</TR>
-<TR>
-<TD CLASS='base'>$tr{'log calls'}</TD>
-<TD><INPUT TYPE='checkbox' NAME='LOG_CALLS' $checked{'LOG_CALLS'}{'on'}></TD>
-<TD CLASS='base'>$tr{'maximum number of clients'}</TD>
-<TD>
-<SELECT NAME='CLIENTS'>
-<OPTION VALUE='5' $selected{'CLIENTS'}{'5'}>5
-<OPTION VALUE='10' $selected{'CLIENTS'}{'10'}>10
-<OPTION VALUE='50' $selected{'CLIENTS'}{'50'}>50
-<OPTION VALUE='100' $selected{'CLIENTS'}{'100'}>100
-<OPTION VALUE='200' $selected{'CLIENTS'}{'200'}>200
-</SELECT>
-</TD>
-</TR>
-<TR>
-<TD CLASS='base'>$tr{'sip transparent'}</TD>
-<TD><INPUT TYPE='checkbox' NAME='TRANSPARENT' $checked{'TRANSPARENT'}{'on'}></TD>
-<TD>&nbsp;</TD>
-<TD>&nbsp;</TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:25%;' class='base'>$tr{'enabled'}</td>
+	<td style='width:25%;'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
+	<td class='base'>$tr{'sip logging level'}</td>
+	<td><select name='LOGGING'>
+		<option value='0' $selected{'LOGGING'}{'0'}>$tr{'sip normal'}
+		<option value='1' $selected{'LOGGING'}{'1'}>$tr{'sip detailed'}
+		<option value='2' $selected{'LOGGING'}{'2'}>$tr{'sip very detailed'}
+	</select></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'log calls'}</td>
+	<td><input type='checkbox' name='LOG_CALLS' $checked{'LOG_CALLS'}{'on'}></td>
+	<td class='base'>$tr{'maximum number of clients'}</td>
+	<td><select name='CLIENTS'>
+		<option value='5' $selected{'CLIENTS'}{'5'}>5
+		<option value='10' $selected{'CLIENTS'}{'10'}>10
+		<option value='50' $selected{'CLIENTS'}{'50'}>50
+		<option value='100' $selected{'CLIENTS'}{'100'}>100
+		<option value='200' $selected{'CLIENTS'}{'200'}>200
+	</select></td>
+</tr>
+<tr>
+	<td class='base'>$tr{'sip transparent'}</td>
+	<td><input type='checkbox' name='TRANSPARENT' $checked{'TRANSPARENT'}{'on'}></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+</table>
 END
 ;
 
 &closebox();
 
 print <<END
-<DIV ALIGN='CENTER'>
-<TABLE WIDTH='60%'>
-<TR>
-	<TD ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'save'}'></TD>
-</TR>
-</TABLE>
-</DIV>
+<table style='width: 60%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+        <td style='text-align: center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+</tr>
+</table>
 END
 ;
 
-print "</FORM>\n";
+print "</div></form>\n";
 
 &alertbox('add', 'add');
 
 &closebigbox();
-
 &closepage();

@@ -3,7 +3,8 @@
 use lib "/usr/lib/smoothwall/";
 use header qw( :standard );
 use POSIX qw(strftime);
-
+use strict;
+use warnings;
 
 # Common configuration parameters.
 
@@ -21,6 +22,7 @@ my $conversation_colour = '#335ebe';
 
 my $local_user_colour   = 'blue';
 my $remote_user_colour  = 'green';
+my $url = '';
 
 my %smilies = (  
 	':)' => 'icon_smile.gif',
@@ -43,18 +45,23 @@ my %smilies = (
 	':twisted:' => 'icon_twisted.gif',
 );
 
+my %cgiparams;
+
+$cgiparams{'section'} = '';
+$cgiparams{'offset'} = '';
+$cgiparams{'conversation'} = '';
+$cgiparams{'skimhtml'} = '';
+
 # Page declaration, The following code should parse the CGI headers, and render the page
 # accordingly... How you do this depends what environment you're in.
 
-my %cgiparams;
+
 &getcgihash(\%cgiparams);
 &showhttpheaders();
 
-if ($ENV{'QUERY_STRING'})
-{
-        my @vars = split('\&', $ENV{'QUERY_STRING'});
-	foreach $_ (@vars)
-	{
+if ($ENV{'QUERY_STRING'}) {
+	my @vars = split('\&', $ENV{'QUERY_STRING'});
+	foreach $_ (@vars) {
 		my ($var, $val) = split(/\=/);
 		$cgiparams{$var} = $val;
 	}
@@ -62,7 +69,7 @@ if ($ENV{'QUERY_STRING'})
 
 # Act in Tail mode (as in just generate the raw logs and pass back to the other CGI
 
-if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ){
+if ( defined $cgiparams{'mode'} and $cgiparams{'mode'} eq "render" ) {
 	&parser( $cgiparams{'section'}, $cgiparams{'offset'}, $cgiparams{'conversation'}, $cgiparams{'skimhtml'} );
 	exit;
 }
@@ -101,7 +108,7 @@ sub scriptheader
 	my $conversation = sprintf( "%.4d-%.2d-%.2d", $year, $mon, $mday );
 
 	my $script = qq {
-<script language="Javascript">
+<script type='text/javascript'>
 var section	     ='none';
 var moveit   	     = 1;
 var skimhtml 	     = 1;
@@ -148,10 +155,10 @@ function updatepage(str){
 
 	var lines = parts[0].split( "\\n" );
 			
-	for ( var line = 0 ; line < lines.length ; line ++ ){
+	for ( var line = 0 ; line < lines.length ; line ++ ) {
 		var a = lines[line].split("|");
 
-		if ( !a[1] || !a[2] || !a[3] ){
+		if ( !a[1] || !a[2] || !a[3] ) {
 			continue;
 		}
 
@@ -159,27 +166,28 @@ function updatepage(str){
 		a[5] = parseInt( a[5] * 24 * 60 * 60 );
 
 		/* create titling information if needed */
-		if ( !document.getElementById( a[1] ) ){
-			document.getElementById('conversations').innerHTML += "<div id='" + a[1] + "_t' style='width: 100%; background-color: #d9d9f3; color: $protocol_colour;'>" + a[1] + "</div><div id='" + a[1] + "' style='width: 100%; background-color: #e5e5f3;'></div>";
-		 }
+		if ( !document.getElementById( a[1] ) ) {
+			document.getElementById('conversations').innerHTML += "<div id='" + a[1] + "_t' style='width: 100%; background-color: #d9d9f3; color: $protocol_colour;'>" + a[1] + "<\\/div><div id='" + a[1] + "' style='width: 100%; background-color: #e5e5f3;'><\\/div>";
+		}
 
-		if ( !document.getElementById( a[1] + "_" + a[2] ) ){
+		if ( !document.getElementById( a[1] + "_" + a[2] ) ) {
 			var imageref = "";
-			if ( a[0] ){
-				imageref = "<img src='" + a[0] + "' alt='" + a[1] + "'/>";
+			if ( a[0] ) {
+				imageref = "<img src='" + a[0] + "' alt='" + a[1] + "'\\/>";
 			}
-			document.getElementById( a[1] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_t' style='width: 100%; color: $local_colour; padding-left: 5px;'>" + imageref + a[2] + "</div><div id='" + a[1] + "_" + a[2] + "' style='width: 100%; background-color: #efeffa; border-bottom: solid 1px #d9d9f3;'></div>";
+			document.getElementById( a[1] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_t' style='width: 100%; color: $local_colour; padding-left: 5px;'>" + imageref + a[2] + "<\\/div><div id='" + a[1] + "_" + a[2] + "' style='width: 100%; background-color: #efeffa; border-bottom: solid 1px #d9d9f3;'><\\/div>";
 			delete imageref;
 		}
 
-		if ( !document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) ){
-			document.getElementById( a[1] + "_" + a[2] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_t' style='width: 100%; color: $remote_colour; padding-left: 10px; cursor: pointer;' onClick=" + '"' + "setsection('" + a[1] + "|" + a[2] + "|" + a[3] + "|" + a[4] + "');" + '"' + "' + >&raquo;&nbsp;" + a[3] + "</div><div id='" + a[1] + "_" + a[2] + "_" + a[3] + "' style='width: 1%; display: none;'></div>";
+		if ( !document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) ) {
+			document.getElementById( a[1] + "_" + a[2] ).innerHTML += "<div id='" + a[1] + "_" + a[2] + "_" + a[3] + "_t' style='width: 100%; color: $remote_colour; padding-left: 10px; cursor: pointer;' onClick=" + '"' + "setsection('" + a[1] + "|" + a[2] + "|" + a[3] + "|" + a[4] + "');" + '"' + "' + >&raquo;&nbsp;" + a[3] + "<\\/div><div id='" + a[1] + "_" + a[2] + "_" + a[3] + "' style='width: 1%; display: none;'><\\/div>";
 		}
 
-		if ( document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) && a[5] <= 60 ){
+		if ( document.getElementById( a[1] + "_" + a[2] + "_" + a[3] ) && a[5] <= 60 ) {
 			/* modified within the last minute! */
 			document.getElementById( a[1] + "_" + a[2] + "_" + a[3] + "_t" ).style.fontWeight = "bold";
-		} else {
+		}
+		else {
 			document.getElementById( a[1] + "_" + a[2] + "_" + a[3] + "_t" ).style.fontWeight = "normal";
 		}
 		delete a;
@@ -194,12 +202,12 @@ function updatepage(str){
 	var the_select = document.getElementById('conversationdates');
 	the_select.options.length = 0;
 		
-	for ( var line = 0 ; line < lines.length ; line ++ ){
+	for ( var line = 0 ; line < lines.length ; line ++ ) {
 		if ( lines[ line ] != "" ){
 			the_select.options.length ++;
 			the_select.options[ line ].text  = lines[line];
 			the_select.options[ line ].value = lines[line];
-			if ( lines[line] == conversationdate ){
+			if ( lines[line] == conversationdate ) {
 				the_select.selectedIndex = line;
 			}
 		}
@@ -211,7 +219,7 @@ function updatepage(str){
 	/* determine the title of this conversation */
 	if ( parts[2] ){
 		var details = parts[2].split(",");
-		var title = details[0] + " conversation between <span style='color: $local_user_colour;'>" + details[ 1 ] + "</span> and <span style='color: $remote_user_colour;'>" + details[2] + "</span>" + details[1];
+		var title = details[0] + " conversation between <span style='color: $local_user_colour;'>" + details[ 1 ] + "<\\/span> and <span style='color: $remote_user_colour;'>" + details[2] + "<\\/span>" + details[1];
 		if ( !details[1] ){
 			title = "&nbsp;";
 		}
@@ -224,13 +232,14 @@ function updatepage(str){
 
 		if ( absheight == document.getElementById('content').scrollHeight ){	
 			moveit = 1;
-		} else {
+		}
+		else {
 //			moveit = 0;
 		}
 
 		fragment += parts[4];
-		document.getElementById('content').innerHTML = "<table style='width: 100%'>" + fragment + "</table>";
-		if (moveit == 1 ){
+		document.getElementById('content').innerHTML = "<table style='width: 100%'>" + fragment + "<\\/table>";
+		if (moveit == 1 ) {
 			document.getElementById('content').scrollTop = 0;
 			document.getElementById('content').scrollTop = document.getElementById('content').scrollHeight;
 		}
@@ -246,13 +255,13 @@ function updatepage(str){
 	/* set the file offset */
 	offset = parts[3];
 
-	if ( moveit == 1 ){
+	if ( moveit == 1 ) {
 		document.getElementById('scrlck').style.color = 'green';
 	} else {
 		document.getElementById('scrlck').style.color = '#202020';
 	}
 
-	if ( skimhtml == 1 ){
+	if ( skimhtml == 1 ) {
 		document.getElementById('skimhtml').style.color = 'green';
 	} else {
 		document.getElementById('skimhtml').style.color = '#202020';
@@ -277,10 +286,11 @@ function setsection( value )
 
 function togglescrlck()
 {
-	if ( moveit == 1 ){
+	if ( moveit == 1 ) {
 		moveit = 0;
 		document.getElementById('scrlck').style.color = '#202020';
-	} else {
+	}
+	else {
 		moveit = 1;
 		document.getElementById('scrlck').style.color = 'green';
 	}
@@ -288,10 +298,11 @@ function togglescrlck()
 
 function toggleskimhtml()
 {
-	if ( skimhtml == 1 ){
+	if ( skimhtml == 1 ) {
 		skimhtml = 0;
 		document.getElementById('skimhtml').style.color = '#202020';
-	} else {
+	}
+	else {
 		skimhtml = 1;
 		document.getElementById('skimhtml').style.color = 'green';
 	}
@@ -312,20 +323,8 @@ function setDate()
 }
 
 </script>
-	};
 
-	return $script;
-}
-
-# pagebody function 
-# -----------------
-# Return the HTML fragment which includes the page body.
-
-sub pagebody
-{
-	my $body = qq {
-	<div style='width: 100%; text-align: right;'><span id='status' style='background-color: #fef1b5; display: none;'>Updating</span>&nbsp;</div>
-	<style>
+<style type='text/css'>
 .powerbutton {
 	color:  #202020;
 	font-size: 9pt;
@@ -341,9 +340,22 @@ sub pagebody
 	color: $local_user_colour;
 	font-size: 9pt;
 }
+</style>
+	};
 
+	return $script;
+}
 
-	</style>
+# pagebody function 
+# -----------------
+# Return the HTML fragment which includes the page body.
+
+sub pagebody
+{
+	my $body = qq {
+
+	<div style='width: 100%; text-align: right;'><span id='status' style='background-color: #fef1b5; display: none;'>Updating</span>&nbsp;</div>
+
 	<table style='width: 100%;'>
 		<tr>
 			<td style='width: 170px; text-align: left; vertical-align: top; overflow: auto; font-size: 8pt; border: solid 1px #c0c0c0;'><div id='conversations' style='height: 400px; overflow: auto; font-size: 10px; overflow-x: hidden;'></div></td>
@@ -353,7 +365,8 @@ sub pagebody
 				<div id='content_subtitle' style='height: 24px; overflow: auto; vertical-align: top; background-color: #E6E8FA; width: 100%; padding: 2px;'>
 					<div style='width: 60%; float: left;' id='statuswindow'>
 						For conversations on:&nbsp;
-						<select id='conversationdates' onChange='setDate()';>
+						<select id='conversationdates' onChange='setDate();'>
+						<option></option>
 						</select>
 					</div>
 					<div style='width: 40%; text-align: right; float: right;'>
@@ -364,7 +377,7 @@ sub pagebody
 			</td>
 		</tr>
 	</table>
-	<script>xmlhttpPost();</script>
+	<script type='text/javascript'>xmlhttpPost();</script>
 	};
 	return $body;
 }
@@ -386,35 +399,35 @@ sub parser
 
 	chomp $offset;	
 
-	unless (  $offset =~ /^([\d]*)$/ ){
-		print STDERR "Illegal offset ($offset $1) resetting...\n";
+	unless (  $offset =~ /^([\d]*)$/ ) {
+		#print STDERR "Illegal offset ($offset $1) resetting...\n";
 		$offset = 0;
 	}
 
-	print STDERR "Have a set offset of $offset\n";
+	#print STDERR "Have a set offset of $offset\n";
 
 
 	# browse for the available protocols
-	unless ( opendir DIR, $logbase ){
+	unless ( opendir DIR, $logbase ) {
 		exit;
 	}
 
 	my %conversationaldates;
 	my @protocols = grep {!/^\./} readdir(DIR);		
 
-	foreach my $protocol ( @protocols ){
-		unless ( opendir LUSER, "$logbase$protocol" ){
+	foreach my $protocol ( @protocols ) {
+		unless ( opendir LUSER, "$logbase$protocol" ) {
 			next;
 		}
 	
 		my @localusers = grep {!/^\./} readdir(LUSER);		
 		foreach my $localuser ( @localusers ){
-			unless ( opendir RUSER, "$logbase$protocol/$localuser/" ){
+			unless ( opendir RUSER, "$logbase$protocol/$localuser/" ) {
 				next;
 			}
 			my @remoteusers = grep {!/^\./} readdir( RUSER );
 			foreach my $remoteuser ( @remoteusers ){
-				unless ( opendir CONVERSATIONS, "/var/log/imspector/$protocol/$localuser/$remoteuser/" ){
+				unless ( opendir CONVERSATIONS, "/var/log/imspector/$protocol/$localuser/$remoteuser/" ) {
 					next;
 				}
 				my @conversations = grep {!/^\./} readdir( CONVERSATIONS );
@@ -430,9 +443,9 @@ sub parser
 
 				$conversation = $conversationdate if ( defined $conversationdate and $conversationdate ne "" );
 
-				if ( -e "$logbase$protocol/$localuser/$remoteuser/$conversation" ){
+				if ( -e "$logbase$protocol/$localuser/$remoteuser/$conversation" ) {
 					my $protocol_img = "";
-					if ( -e "$webbase$protocol.png" ){
+					if ( -e "$webbase$protocol.png" ) {
 						$protocol_img = "$webroot$protocol.png";
 					}
 
@@ -459,16 +472,17 @@ sub parser
 	# now check the log file ...
 	
 	if ( $section ne "none" ){
-		my ( $protocol, $localuser, $remoteuser, $conversation ) = split /\|/, $section;
+		my ( $protocol, $localuser, $remoteuser, $conversation ) = ('', '', '', '');
+		( $protocol, $localuser, $remoteuser, $conversation ) = split (/\|/, $section) if ($section);
 		
 		print "$protocol, $localuser, $remoteuser, $conversation\n";
 		print "--END--\n";
 		
 		my $filename = "$logbase$protocol/$localuser/$remoteuser/$conversation";
 		
-		unless ( open(FD, "$filename" ) ){
+		unless ( open(FD, "$filename" ) ) {
 			exit;
-		};
+		}
 
 		# perform some *reasonably* complicated file hopping and stuff of that ilk.
 		# it's not beyond reason that logs *could* be extremely large, so what we
@@ -495,124 +509,148 @@ sub parser
 
 		my $TAILSIZE = 100;
 
-		do {
-			$end_position = $log_position;
+		# Put 'do' block in a LOOP so 'last' is valid. See http://perldoc.perl.org/perlsyn.html
+		LOOP: {
+			do {
+				$end_position = $log_position;
 
-			if ( $offset != 0 ){
-				# we were given a hint as to where we should have been anyhow ..
-				# so we might as well use that to go back to.
-				$log_position = $offset;
-				$goneback = $end_position - $log_position;
-			} else {
-				$log_position -= $jumpback;
-				$goneback += $jumpback;
-			}
+				if ( ($offset) && $offset != 0 ) {
+					# we were given a hint as to where we should have been anyhow ..
+					# so we might as well use that to go back to.
+					$log_position = $offset;
+					$goneback = $end_position - $log_position;
+				}
+				else {
+					$log_position -= $jumpback;
+					$goneback += $jumpback;
+				}
 
-			last if ( $goneback > $gonebacklimit );
+				last if ( $goneback > $gonebacklimit );
 
-			if ( $log_position > 0 ){
-				seek( FD, $log_position, 0 );
-			} else {
-				seek( FD, 0, 0 );
-			}
+				if ( $log_position > 0 ) {
+					seek( FD, $log_position, 0 );
+				}
+				else {
+					seek( FD, 0, 0 );
+				}
 	
-			my @newcontent;
-
-			while ( my $line = <FD> and ( tell( FD ) <= $end_position ) ){
-				chomp $line;
-				push @content, $line;
+				my @newcontent;
+				#while ( defined ( my $line = <FD> and ( tell( FD ) <= $end_position ) ) ) {
+				while (<FD>) {
+					if ( my $line = $_ and ( tell( FD ) <= $end_position ) ) {
+						chomp $line;
+						push @content, $line;
+					}
+				}
+				shift @content if $#content >= $TAILSIZE;
 			}
-			shift @content if $#content >= $TAILSIZE;
-		} while ( $#content < $TAILSIZE and $log_position > 0 and $offset == 0 );
+			while ( $#content < $TAILSIZE and $log_position > 0 and $offset == 0 );
+		}
 
 		# trim the content down as we may have more entries than we should.
 	
-		while ( $#content > $TAILSIZE ){ shift @content; };
+		while ( $#content > $TAILSIZE ){ 
+			shift @content;
+		};
 		close FD;
 
-		print STDERR "Log was ".$#content." since last read\n";
+		#print STDERR "Log was ".$#content." since last read\n";
 
 		print "$end_position\n--END--\n";
 
-		foreach my $line ( @content ){
-			my ( $address, $timestamp, $direction, $type, $filtered, $cat, $data );
+		foreach my $line ( @content ) {
+			my ( $address, $timestamp, $direction, $type, $filtered, $cat, $data ) = ('', '', '', '', '', '', '');
 
 			( $address, $timestamp, $direction, $type, $filtered, $cat, $data ) = ( $line =~ /([^,]*),(\d+),(\d+),(\d+),(\d+),([^,]*),(.*)/ );
 
 			# are we using the oldstyle or new style logs ?
-			if ( not defined $address and not defined $timestamp ){
+			if ( not defined $address and not defined $timestamp ) {
 				( $address, $timestamp, $type, $data ) = ( $line =~ /([^,]*),([^,]*),([^,]*),(.*)/ );
-				if ( $type eq "1" ){
-					$direction = 0;
-					$type      = 1;
-				} elsif ( $type eq "2" ){
-					$direction = 1;
-					$type      = 1;
-				} elsif ( $type eq "3" ){
-					$direction = 0;
-					$type      = 2;
-				} elsif ( $type eq "4" ){
-					$direction = 1;
-					$type      = 4;
+				if ($type) {
+					if ( $type eq "1" ) {
+						$direction = 0;
+						$type      = 1;
+					}
+					elsif ( $type eq "2" ) {
+						$direction = 1;
+						$type      = 1;
+					}
+					elsif ( $type eq "3" ) {
+						$direction = 0;
+						$type      = 2;
+					}
+					elsif ( $type eq "4" ) {
+						$direction = 1;
+						$type      = 4;
+					}
 				}
 			}
 			
-			my ( $severity, $classification ) = '0', 'None';
+			my ( $severity, $classification ) = ('0', 'None');
 			if ($cat) {
-				( $severity, $classification) = split(/ /, $cat, 2); }
+				( $severity, $classification) = split(/ /, $cat, 2);
+			}
 			else {
-				$cat = 'N/A'; }
+				$cat = 'N/A';
+			}
 
 			my $red = 255;
 			my $green = 255;
 			my $blue = 255;
 
 			if ($severity < 0 && $severity >= -5) {
-				$red = 0; $green = abs($severity) * (255 / 5); $blue = 0; }
+				$red = 0; $green = abs($severity) * (255 / 5); $blue = 0;
+			}
 			elsif ($severity > 0 && $severity <= 5) {
-				$red = $severity * (255 / 5); $green = 0; $blue = 0; }
+				$red = $severity * (255 / 5); $green = 0; $blue = 0;
+			}
 			else {
-				$red = 0; $green = 0; $blue = 0; }
+				$red = 0; $green = 0; $blue = 0;
+			}
 			
 			my $severitycolour = '';
 			if ($cat ne 'N/A') {
-				$severitycolour = sprintf("background-color: #%02x%02x%02x;", $red, $green, $blue); }
+				$severitycolour = sprintf("background-color: #%02x%02x%02x;", $red, $green, $blue);
+			}
 
 			# some protocols (ICQ, I'm looking in your direction) have a habit of starting 
 			# and ending each sentence with HTML (evil program)		
 
-			if ( defined $skimhtml and $skimhtml eq "1" ){	
+			if ( defined $skimhtml and defined $data and $skimhtml eq "1" ) {	
 				$data =~ s/^<HTML><BODY[^>]*><FONT[^>]*>//ig;	
 				$data =~ s/<\/FONT><\/BODY><\/HTML>//ig;	
 			}
 
-			$data = &htmlescape($data);
-			$data =~ s/\r\\n/<br>\n/g;
+			$data = &htmlescape($data) if ($data);
+			$data =~ s/\r\\n/<br>\n/g if ($data);
 			my $user = "";
 
 			my $bstyle = "";
-			$bstyle = "style='background-color: #FFE4E1;'" if ( $filtered eq "1" );
+			$bstyle = "style='background-color: #FFE4E1;'" if ( ($filtered) && $filtered eq "1" );
 
-			if ( $type eq "1" ){
+			if (($type) && $type eq "1") {
 				# a message message (from remote user)
-				if ( $direction eq "0" ){
+				if ( $direction eq "0" ) {
 					# incoming
 					my $u = $remoteuser;
 					$u =~ s/\@.*//g;
 					$user = "&lt;<span class='remoteuser'>$u</span>&gt;";
-				} else { 
+				}
+				else { 
 					# outgoing message
 					my $u = $localuser;
 					$u =~ s/\@.*//g;
 					$user = "&lt;<span class='localuser'>$u</span>&gt;";
 				}
-			} elsif ($type eq "2") {
-				if ( $direction eq "0" ){
+			}
+			elsif (($type) && $type eq "2") {
+				if ( $direction eq "0" ) {
 					# incoming file
 					my $u = $remoteuser;
 					$u =~ s/\@.*//g;
 					$user = "&lt;<span class='remoteuser'><b><i>$u</i></b></span>&gt;";
-				} else {
+				}
+				else {
 					# outgoing file
 					my $u = $localuser;
 					$u =~ s/\@.*//g;
@@ -620,18 +658,18 @@ sub parser
 				}
 			}
 
-			foreach my $smiley ( keys %smilies ){
-				if ( -e "$webbase/smiles/$smilies{$smiley}" ){
+			foreach my $smiley ( keys %smilies ) {
+				if ( -e "$webbase/smiles/$smilies{$smiley}" ) {
 					my $smile = quotemeta $smiley;
-					$data =~s/$smile/<img src='${webroot}smiles\/$smilies{$smiley}' alt='$smiley'\/>/igm;
+					$data =~s/$smile/<img src='${webroot}smiles\/$smilies{$smiley}' alt='$smiley'\/>/igm if ($data);
 				}
 			}
 
-			my $t = strftime "%H:%M:%S", localtime($timestamp);
-			if ($type eq "3" or $type eq "4") {
+			my $t = strftime "%H:%M:%S", localtime($timestamp) if ($timestamp);
+			if (($type) && ($type eq "3" or $type eq "4")) {
 				$data = "<b><i>$data</i></b>";
 			}
-			print "<tr $bstyle><td style='width: 30px; vertical-align: top;'>[$t]</td><td style='width: 10px; $severitycolour' title='$cat'><td style=' width: 60px; vertical-align: top;'>$user</td><td style='vertical-align: top;'>$data</td></tr>";
+			print "<tr $bstyle><td style='width: 30px; vertical-align: top;'>[$t]</td><td style='width: 10px; $severitycolour' title='$cat'><td style=' width: 60px; vertical-align: top;'>$user</td><td style='vertical-align: top;'>$data</td></tr>" if ($t);
 		}
 	}
 	return;

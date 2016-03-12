@@ -9,33 +9,27 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use strict;
+use warnings;
 
 my %cgiparams;
 
 $cgiparams{'ACTION'} = '';
 &getcgihash(\%cgiparams);
 
-if ($cgiparams{'ACTION'} eq $tr{'dial'})
-{
+if ($cgiparams{'ACTION'} eq $tr{'dial'}) {
 	my $success = message('updown', 'UP');
 		
-	if (not defined $success)
-	{
-		&log("Dial failed");
-	}
+	&log("Dial failed") if (not defined $success);
 }
-elsif ($cgiparams{'ACTION'} eq $tr{'hangup'})
-{
+elsif ($cgiparams{'ACTION'} eq $tr{'hangup'}) {
 	my $success = message('updown', 'DOWN');
 		
-	if (not defined $success)
-	{
+	unless ($success) {
 		&log("Hangup failed");
 	}
-	else
-	{
-		if ( -e "${swroot}/red/active" )
-		{
+	else {
+		if ( -e "${swroot}/red/active" ) {
 			# If it failed silently, it might not've ever come up, so
 			#   be sure it doesn't get stuck in a false up state.
 			system ("/etc/ppp/ip-down");

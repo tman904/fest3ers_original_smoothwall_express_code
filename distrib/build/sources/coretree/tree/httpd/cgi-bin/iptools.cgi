@@ -8,14 +8,20 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use strict;
+use warnings;
 
 use Socket;
 
-my %cgiparams;
-my @inaddrs, @addrs;
-my $addr;
-my $address;
+my (%cgiparams, %selected);
+my (@inaddrs, @addrs);
+my ($addr, $address);
 my $errormessage = '';
+
+$cgiparams{'ACTION'} = '';
+
+$cgiparams{"TOOL"} = '';
+$cgiparams{'IP'} = '';
 
 &getcgihash(\%cgiparams);
 
@@ -31,25 +37,24 @@ $selected{'TOOL'}{$cgiparams{'TOOL'}} = 'SELECTED';
 
 &alertbox($errormessage);
 
-print "<FORM METHOD='POST'>\n";
+print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'select tool'});
 
 print <<END
-<TABLE WIDTH='100%'>
-<TR>
-<TD WIDTH='15%' CLASS='base'>$tr{'toolc'}</TD>
-<TD WIDTH='20%'>
-<SELECT NAME='TOOL'>
-<OPTION VALUE='PING' $selected{'TOOL'}{'PING'}>Ping
-<OPTION VALUE='TRACEROUTE' $selected{'TOOL'}{'TRACEROUTE'}>Traceroute
-</SELECT>
-</TD>
-<TD WIDTH='20%' CLASS='base'>$tr{'ip addresses or hostnames'}</TD>
-<TD WIDTH='30%'><INPUT TYPE='text' SIZE='40' NAME='IP' VALUE='$cgiparams{'IP'}'></TD>
-<TD WIDTH='15%' ALIGN='CENTER'><INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'run'}'></TD>
-</TR>
-</TABLE>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+	<td style='width:15%;' class='base'>$tr{'toolc'}</td>
+	<td style='width:20%;'>
+	<select name='TOOL'>
+		<option value='PING' $selected{'TOOL'}{'PING'}>Ping
+		<option value='TRACEROUTE' $selected{'TOOL'}{'TRACEROUTE'}>Traceroute
+		</select> </td>
+	<td style='width:20%;' class='base'>$tr{'ip addresses or hostnames'}</td>
+	<td style='width:30%;'><input type='text' SIZE='40' name='IP' value='$cgiparams{'IP'}'></td>
+	<td style='width:15%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'run'}'></td>
+</tr>
+</table>
 END
 ;
 
@@ -76,8 +81,8 @@ unless ($errormessage)
 {
 	foreach $addr (@addrs)
 	{
-		$iaddr = inet_aton($addr);
-		$hostname = gethostbyaddr($iaddr, AF_INET);
+		my $iaddr = inet_aton($addr);
+		my $hostname = gethostbyaddr($iaddr, AF_INET);
 		if (!$hostname) { $hostname = $tr{'lookup failed'}; }
 	
 		&openbox("${addr} (${hostname})");
@@ -92,7 +97,7 @@ unless ($errormessage)
 	}
 }
 
-print "</FORM>\n";
+print "</div></form>\n";
 
 &alertbox('add','add');
 

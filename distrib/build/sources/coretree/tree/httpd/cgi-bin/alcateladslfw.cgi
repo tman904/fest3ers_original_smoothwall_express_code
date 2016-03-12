@@ -9,20 +9,21 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 use smoothd qw( message );
+use strict;
+use warnings;
 
 my %uploadsettings;
+$uploadsettings{'ACTION'} = '';
 
 &showhttpheaders();
 
 &getcgihash(\%uploadsettings);
 
 my $errormessage = '';
-my $extramessage;
+my $extramessage = '';
 
-if ($uploadsettings{'ACTION'} eq $tr{'upload'})
-{
-	if (length($uploadsettings{'FH'}) > 1)
-	{
+if ($uploadsettings{'ACTION'} eq $tr{'upload'}) {
+	if (length($uploadsettings{'FH'}) > 1) {
 		open(FILE, ">${swroot}/adsl/mgmt.o") or $errormessage = $tr{'could not create file'};
 		flock FILE, 2;
 		print FILE $uploadsettings{'FH'};
@@ -33,8 +34,7 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'})
 
 	my $success = message('alcateladslfw');
 		
-	if (not defined $success) {
-		$errormessage = $tr{'smoothd failure'}; }	
+	$errormessage = $tr{'smoothd failure'} unless ($success);	
 }
 
 &openpage($tr{'usb adsl setup'}, 1, '', 'maintenance');
@@ -47,21 +47,19 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'})
 print <<END
 $tr{'usb adsl help'}
 <P>
-<TABLE>
-<TR>
-<FORM METHOD='post' ENCTYPE='multipart/form-data'>
-<TD ALIGN='right' CLASS='base'>$tr{'upload filec'}</TD>
-<TD><INPUT TYPE="file" NAME="FH"> <INPUT TYPE='submit' NAME='ACTION' VALUE='$tr{'upload'}'></TD>
-END
-;
-print <<END
-</FORM>
-</TR>
-</TABLE>
+<form method='post' ENCTYPE='multipart/form-data' action='?'>
+<table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
+<tr>
+
+	<td class='base' style='text-align:right;'>$tr{'upload filec'}</td>
+	<td><input type="file" name="FH"> <input type='submit' name='ACTION' value='$tr{'upload'}'></td>
+</tr>
+</table>
+</form>
 END
 ;
 
-print "<FONT SIZE='5' CLASS='base'><DIV ALIGN='center'>$extramessage</DIV></FONT>\n";
+print "<div class='base' style='text-align:center; font-size: 200%;'>$extramessage</div>\n";
 
 &closebox();
 

@@ -8,6 +8,8 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use strict;
+use warnings;
 
 my %netsettings;
 
@@ -26,22 +28,22 @@ my %ethersettings;
 
 my $etherline = "var translations = new Array(); ";
 
-if ( defined $ethersettings{'GREEN_DEV'} and $ethersettings{'GREEN_DEV'} ne "" ){
+if ( ($ethersettings{'GREEN_DEV'}) and $ethersettings{'GREEN_DEV'} ne "" ) {
 	$etherline .= "translations[\"$ethersettings{'GREEN_DEV'}\"] = \"Green\"; ";
 }
-if ( defined $ethersettings{'ORANGE_DEV'} and $ethersettings{'ORANGE_DEV'} ne "" ){
+if ( ($ethersettings{'ORANGE_DEV'}) and $ethersettings{'ORANGE_DEV'} ne "" ) {
 	$etherline .= "translations[\"$ethersettings{'ORANGE_DEV'}\"] = \"Orange (DMZ)\"; ";
 }
-if ( defined $ethersettings{'PURPLE_DEV'} and $ethersettings{'PURPLE_DEV'} ne "" ){
+if ( ($ethersettings{'PURPLE_DEV'}) and $ethersettings{'PURPLE_DEV'} ne "" ) {
 	$etherline .= "translations[\"$ethersettings{'PURPLE_DEV'}\"] = \"Purple\"; ";
 }
-if ( defined $ethersettings{'RED_DEV'} and $ethersettings{'RED_DEV'} ne "" ){
+if ( ($ethersettings{'RED_DEV'}) and $ethersettings{'RED_DEV'} ne "" ) {
 	$etherline .= "translations[\"$ethersettings{'RED_DEV'}\"] = \"Red (External)\"; ";
 }
 
 
 my $script = qq {
-<script language="Javascript">
+<script type="text/javascript">
 
 var interfaces = new Array();
 var rates = new Array();
@@ -77,7 +79,8 @@ function xmlhttpPost()
     	if (window.XMLHttpRequest) {
 		// Mozilla/Safari
         	self.xmlHttpReq = new XMLHttpRequest();
-    	} else if (window.ActiveXObject) {
+    	}
+	else if (window.ActiveXObject) {
     		// IE
         	self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
     	}
@@ -94,7 +97,7 @@ function xmlhttpPost()
     	self.xmlHttpReq.send( null );
 }
 
-function updatepage(str){
+function updatepage(str) {
 	/* determine the interfaces we're supposed to be dealing with, wherever they may be */
 
 	var rows = str.split( '\\n' );
@@ -103,7 +106,7 @@ function updatepage(str){
 	ugraph[ 'inc' ] = new Array();
 	ugraph[ 'out' ] = new Array();
 	
-	for ( var i = 0; i < graphs.length ; i++ ){
+	for ( var i = 0; i < graphs.length ; i++ ) {
 		ugraph[ 'inc' ][ graphs[ i ] ] = 0;
 		ugraph[ 'out' ][ graphs[ i ] ] = 0;
 		totals[ graphs[i] ] = 0;
@@ -111,14 +114,14 @@ function updatepage(str){
 	
 	
 	var detail_finder = new RegExp( /cur_(.{3})_rate_([^=]*)=(.*)/ );
-	for ( var i = 0; (i < rows.length) && ( i <= $maxgraphs ) ; i++ ){
+	for ( var i = 0; (i < rows.length) && ( i <= $maxgraphs ) ; i++ ) {
 		if ( !rows[i] ){ continue; }
 		var matches = detail_finder.exec( rows[i] );
 		var tinterface = matches[2];
 		var direction = matches[1];	
 		var value     = matches[3];
 
-		if (!document.getElementById('graph_' + tinterface ) ){
+		if (!document.getElementById('graph_' + tinterface ) ) {
 			create_graph( tinterface );
 		}
 
@@ -127,11 +130,11 @@ function updatepage(str){
 		ugraph[ direction ][ tinterface ] = 1;
 	}
 
-	for ( var i = 0; i < graphs.length ; i++ ){
-		if ( ugraph['inc'][graphs[i]] == 0 ){
+	for ( var i = 0; i < graphs.length ; i++ ) {
+		if ( ugraph['inc'][graphs[i]] == 0 ) {
 			update_graph( graphs[i], 'inc', 0 );
 		}
-		if ( ugraph['out'][graphs[i]] == 0 ){
+		if ( ugraph['out'][graphs[i]] == 0 ) {
 			update_graph( graphs[i], 'out', 0 );
 		}
 	}
@@ -143,14 +146,14 @@ function update_graph( tinterface, direction, value)
 {
 	var max_height = $ubermax;
 
-	if ( value >= max_height ){
+	if ( value >= max_height ) {
 		max_height = value;
 	}
 
 	var total_height = 0;
 
-	for ( var i = 0 ; i < ($history-1) ; i++ ){
-		if ( parseInt(interfaces[ tinterface ][ direction ][ i ]) > max_height ){
+	for ( var i = 0 ; i < ($history-1) ; i++ ) {
+		if ( parseInt(interfaces[ tinterface ][ direction ][ i ]) > max_height ) {
 			max_height = interfaces[ tinterface ][ direction ][ i ];
 			total_height += interfaces[tinterface][direction][i];
 		}
@@ -163,7 +166,7 @@ function update_graph( tinterface, direction, value)
 	var height = Math.floor( ( value / max_height ) * $ubermax );
 	total_height += height;
 
-	for ( var i = 0 ; i < ($history-1) ; i++ ){
+	for ( var i = 0 ; i < ($history-1) ; i++ ) {
 		interfaces[ tinterface ][ direction ][ i ] = interfaces[ tinterface ][ direction ][ i + 1 ];
 		var nheight = Math.floor((interfaces[ tinterface ][ direction ][ i ]/max_height)*60);
 		document.getElementById('u_' + tinterface + '_' + direction + '_' + i ).style.height = nheight + 'px';
@@ -181,19 +184,22 @@ function update_graph( tinterface, direction, value)
 
 	var re = new RegExp( /(\\d+\\.?\\d?)/ );
 
-	if ( value2 > 1000000000 ){
+	if ( value2 > 1000000000 ) {
 		value2 = ( value2 / 1000000000 );
 		var m2 = re.exec( value2 ); 
 		value2 = m2[1] + "Gbps";
-	} else if ( value2 > 1000000 ){
+	}
+	else if ( value2 > 1000000 ) {
 		value2 = ( value2 / 1000000 );
 		var m2 = re.exec( value2 ); 
 		value2 = m2[1] + "Mbps";
-	} else if ( value2 > 1000 ){
+	}
+	else if ( value2 > 1000 ) {
 		value2 = ( value2 / 1000 );
 		var m2 = re.exec( value2 ); 
 		value2 = m2[1] + "kbps";
-	} else {
+	}
+	else {
 		var m2 = re.exec( value2 ); 
 		value2 = m2[1] + "bps";
 	}
@@ -205,22 +211,25 @@ function update_graph( tinterface, direction, value)
 
 function fader()
 {
-	for ( var i = 0; i < graphs.length ; i++ ){
+	for ( var i = 0; i < graphs.length ; i++ ) {
 		var total_height = totals[ graphs[i] ];
 		var tinterface = graphs[i];
 
-		if ( total_height == 0 ){
+		if ( total_height == 0 ) {
 			visibility[ tinterface ] = visibility[tinterface] - 1;
-		} else {
+		}
+		else {
 			visibility[ tinterface ] ++;
 		}
 	
-		if ( visibility[ tinterface ] >= 20 ){
+		if ( visibility[ tinterface ] >= 20 ) {
 			visibility[tinterface] = 20;
-		} else if ( visibility[ tinterface ] < 0 ){
+		}
+		else if ( visibility[ tinterface ] < 0 ) {
 			visibility[tinterface] = 0;
 			document.getElementById('graph_' + tinterface).style.display = 'none';
-		} else {
+		}
+		else {
 			document.getElementById('graph_' + tinterface).style.display = 'inline';
 		}
 	
@@ -232,17 +241,18 @@ function fader()
 
 function maxit( v1, v2 )
 {
-	if ( v1 > v2 ){
+	if ( v1 > v2 ) {
 		return v1;
-	} else {
+	}
+	else {
 		return v2;
 	}
 }
 
 function rationalise( value )
 {
-	for ( var v = 10; v <= 10000000000 ; v *= 10 ){
-		if ( maxit( value, v ) == v ){
+	for ( var v = 10; v <= 10000000000 ; v *= 10 ) {
+		if ( maxit( value, v ) == v ) {
 			return v;
 		}
 	}
@@ -253,17 +263,23 @@ function printableinterface(tinterface)
 
 	if (tinterface == '$netsettings{'GREEN_DEV'}') {
 		return 'Green'; 
-	} else if (tinterface == '$netsettings{'ORANGE_DEV'}') {
+	}
+	else if (tinterface == '$netsettings{'ORANGE_DEV'}') {
 		return 'Orange'; 
-	} else if (tinterface == '$netsettings{'PURPLE_DEV'}') {
+	}
+	else if (tinterface == '$netsettings{'PURPLE_DEV'}') {
 		return 'Purple'; 
-	} else if (tinterface == '$netsettings{'RED_DEV'}') {
+	}
+	else if (tinterface == '$netsettings{'RED_DEV'}') {
 		return 'Red'; 
-	} else if (tinterface == 'ppp0') {
+	}
+	else if (tinterface == 'ppp0') {
 		return 'Modem'; 
-	} else if (tinterface == 'ippp0') {
+	}
+	else if (tinterface == 'ippp0') {
 		return 'ISDN'; 
-	} else {
+	}
+	else {
 		return tinterface;
 	}
 }
@@ -274,36 +290,36 @@ function create_graph(tinterface)
 	var colours    = new Array( "#ff9900", "#ffcc66" );
 	var graph_html = "";	
 
-	for ( var j = 0; j < directions.length ; j++ ){
+	for ( var j = 0; j < directions.length ; j++ ) {
 		var direction = directions[j];
-		graph_html += "<div><table style='width: 100%; height: 100px; border: 1px solid #c0c0c0; border-collapse: collapse; background-color: #f0f0ff; margin-bottom: 3px;'><tr style='height: 70px;'><td style='vertical-align: top; font-size: 8px; width: 10px; text-align: center; vertical-align: middle; background-color: #e0e0ef;' rowspan='2'>" + titles[ direction ] + "</td><td style='vertical-align: top; font-size: 8px; width: 50px; text-align: right; border-right: 1px dashed #909090;' id='title_" + tinterface + "_" + direction + "' rowspan='2'></td><td style='vertical-align: top;'><div class='rateb'></div><div class='ratet' id='rate_" + tinterface + "_" + direction + "'>11</div></td>";
+		graph_html += "<div><table style='width: 100%; height: 100px; border: 1px solid #c0c0c0; border-collapse: collapse; background-color: #f0f0ff; margin-bottom: 3px;'><tr style='height: 70px;'><td style='vertical-align: top; font-size: 8px; width: 10px; text-align: center; vertical-align: middle; background-color: #e0e0ef;' rowspan='2'>" + titles[ direction ] + "<\\/td><td style='vertical-align: top; font-size: 8px; width: 50px; text-align: right; border-right: 1px dashed #909090;' id='title_" + tinterface + "_" + direction + "' rowspan='2'><\\/td><td style='vertical-align: top;'><div class='rateb'><\\/div><div class='ratet' id='rate_" + tinterface + "_" + direction + "'>11<\\/div><\\/td>";
 	
-		for ( var i = 0; i < $history ; i++ ){
-			graph_html += "<td style='width: 5px; margin: 0px;padding: 0px; vertical-align: bottom;  background-image: url(/ui/img/dasher.png); background-repeat: repeat;'><div id='u_" + tinterface + "_" + direction + "_" + i + "' style='background-color: " + colours[j] + "; height: 33px; margin: 0px; width: 6px; padding: 0px; font-size: 1px;'></div></td>";
+		for ( var i = 0; i < $history ; i++ ) {
+			graph_html += "<td style='width: 5px; margin: 0px;padding: 0px; vertical-align: bottom;  background-image: url(/ui/img/dasher.png); background-repeat: repeat;'><div id='u_" + tinterface + "_" + direction + "_" + i + "' style='background-color: " + colours[j] + "; height: 33px; margin: 0px; width: 6px; padding: 0px; font-size: 1px;'><\\/div><\\/td>";
 		}
 
-		graph_html += "<td></td></tr><tr style='height: 30px;'><td></td>";
+		graph_html += "<td><\\/td><\\/tr><tr style='height: 30px;'><td><\\/td>";
 
-		for ( var i = 0; i < $history ; i++ ){
-			graph_html += "<td style='border-top: 1px solid #909090;  width: 5px; margin: 0px;padding: 0px; padding-top: 1px; vertical-align: top;'><div id='l_" + tinterface + "_" + direction + "_" + i + "' style=\\\"background-image: url('/ui/img/fader" + direction + ".jpg'); background-repeat: repeat-x; background-position: top left; height: 11px; margin: 0px; width: 6px; padding: 0px; font-size: 1px;\\\"></div></td>";
+		for ( var i = 0; i < $history ; i++ ) {
+			graph_html += "<td style='border-top: 1px solid #909090;  width: 5px; margin: 0px;padding: 0px; padding-top: 1px; vertical-align: top;'><div id='l_" + tinterface + "_" + direction + "_" + i + "' style=\\\"background-image: url('/ui/img/fader" + direction + ".jpg'); background-repeat: repeat-x; background-position: top left; height: 11px; margin: 0px; width: 6px; padding: 0px; font-size: 1px;\\\"><\\/div><\\/td>";
 		}
 
-		graph_html += "<td></td></tr></table></div>";
+		graph_html += "<td><\\/td><\\/tr><\\/table><\\/div>";
 	}
 
 	var tinterfacetitle = tinterface;
 	tinterfacetitle = tinterfacetitle.replace(/_/g," ");
 	tinterfacetitle = printableinterface(tinterfacetitle.replace(/(GREEN|ORANGE|PURPLE|RED)/g," "));
 
-	if ( translations[tinterface] && translations[ tinterface ] != "" ){
+	if ( translations[tinterface] && translations[ tinterface ] != "" ) {
 		tinterfacetitle = translations[tinterface];
 	}
 
-	document.getElementById('content').innerHTML += "<div style='width: 60%; margin-left: auto; margin-right: auto;' id='outer_" + tinterface + "'><div id='graph_" + tinterface + "'><div style='border: 1px solid #c0c0c0; margin-bottom: 3px;'><div style='background-color: #d0d0d0; text-align: center; width: 100%;'>" + tinterfacetitle + "</div><div style='padding: 5px;'>" + graph_html + "</div></div></div></div>";
+	document.getElementById('content').innerHTML += "<div style='width: 60%; margin-left: auto; margin-right: auto;' id='outer_" + tinterface + "'><div id='graph_" + tinterface + "'><div style='border: 1px solid #c0c0c0; margin-bottom: 3px;'><div style='background-color: #d0d0d0; text-align: center; width: 100%;'>" + tinterfacetitle + "<\\/div><div style='padding: 5px;'>" + graph_html + "<\\/div><\\/div><\\/div><\\/div>";
 	interfaces[ tinterface ] = new Array();
 	interfaces[ tinterface ]["inc"] = new Array();
 	interfaces[ tinterface ]["out"] = new Array();
-	for ( var i = 0 ; i < $history ; i++ ){
+	for ( var i = 0 ; i < $history ; i++ ) {
 		interfaces[tinterface]["inc"][ i ] = 0;
 		interfaces[tinterface]["out"][ i ] = 0;
 	}
@@ -311,9 +327,32 @@ function create_graph(tinterface)
 	graphs[ graphs.length ] = tinterface;
 	visibility[ tinterface ] = 0;
 }
-
-
 </script>
+
+<style type='text/css'>  
+	.ratet{ display: inline; float: right; position: absolute; border: 1px solid #c0c0c0; margin-left: 320px; width: 60px; font-size: 9px; text-align: right; }
+	.rateb{ display: inline; float: right; position: absolute; background-color: #f0f0ff; margin-left: 320px; width: 60px; opacity: 0.50; -moz-opacity: 0.50; -khtm-opacity: 0.50; filter:alpha(opacity=50); height: 10px;}
+	.s0{ opacity: 0.10 ; -moz-opacity: 0.10 ; -khtml-opacity:0.10 ; filter:alpha(opacity=10)} 
+	.s1{ opacity: 0.10 ; -moz-opacity: 0.10 ; -khtml-opacity:0.10 ; filter:alpha(opacity=10)} 
+	.s2{ opacity: 0.15 ; -moz-opacity: 0.15 ; -khtml-opacity:0.15 ; filter:alpha(opacity=15)} 
+	.s3{ opacity: 0.20 ; -moz-opacity: 0.20 ; -khtml-opacity:0.20 ; filter:alpha(opacity=20)} 
+	.s4{ opacity: 0.25 ; -moz-opacity: 0.25 ; -khtml-opacity:0.25 ; filter:alpha(opacity=25)} 
+	.s5{ opacity: 0.30 ; -moz-opacity: 0.30 ; -khtml-opacity:0.30 ; filter:alpha(opacity=30)} 
+	.s6{ opacity: 0.35 ; -moz-opacity: 0.35 ; -khtml-opacity:0.35 ; filter:alpha(opacity=35)} 
+	.s7{ opacity: 0.40 ; -moz-opacity: 0.40 ; -khtml-opacity:0.40 ; filter:alpha(opacity=40)} 
+	.s8{ opacity: 0.45 ; -moz-opacity: 0.45 ; -khtml-opacity:0.45 ; filter:alpha(opacity=45)} 
+	.s9{ opacity: 0.50 ; -moz-opacity: 0.50 ; -khtml-opacity:0.50 ; filter:alpha(opacity=50)} 
+	.s10{ opacity: 0.55 ; -moz-opacity: 0.55 ; -khtml-opacity:0.55 ; filter:alpha(opacity=55)} 
+	.s11{ opacity: 0.60 ; -moz-opacity: 0.60 ; -khtml-opacity:0.60 ; filter:alpha(opacity=60)} 
+	.s12{ opacity: 0.65 ; -moz-opacity: 0.65 ; -khtml-opacity:0.65 ; filter:alpha(opacity=65)} 
+	.s13{ opacity: 0.70 ; -moz-opacity: 0.70 ; -khtml-opacity:0.70 ; filter:alpha(opacity=70)} 
+	.s14{ opacity: 0.75 ; -moz-opacity: 0.75 ; -khtml-opacity:0.75 ; filter:alpha(opacity=75)} 
+	.s15{ opacity: 0.80 ; -moz-opacity: 0.80 ; -khtml-opacity:0.80 ; filter:alpha(opacity=80)} 
+	.s16{ opacity: 0.85 ; -moz-opacity: 0.85 ; -khtml-opacity:0.85 ; filter:alpha(opacity=85)} 
+	.s17{ opacity: 0.90 ; -moz-opacity: 0.90 ; -khtml-opacity:0.90 ; filter:alpha(opacity=90)} 
+	.s18{ opacity: 0.95 ; -moz-opacity: 0.95 ; -khtml-opacity:0.95 ; filter:alpha(opacity=95)} 
+	.s19{ } 
+</style>
 };
 
 # display the page ...
@@ -324,34 +363,9 @@ function create_graph(tinterface)
 &alertbox();
 
 print qq{
-	<style>  
-		.ratet{ display: inline; float: right; position: absolute; border: 1px solid #c0c0c0; margin-left: 320px; width: 60px; font-size: 9px; text-align: right; }
-		.rateb{ display: inline; float: right; position: absolute; background-color: #f0f0ff; margin-left: 320px; width: 60px; opacity: 0.50; -moz-opacity: 0.50; -khtm-opacity: 0.50; filter:alpha(opacity=50); height: 10px;}
-		.s0{ opacity: 0.10 ; -moz-opacity: 0.10 ; -khtml-opacity:0.10 ; filter:alpha(opacity=10)} 
-		.s1{ opacity: 0.10 ; -moz-opacity: 0.10 ; -khtml-opacity:0.10 ; filter:alpha(opacity=10)} 
-		.s2{ opacity: 0.15 ; -moz-opacity: 0.15 ; -khtml-opacity:0.15 ; filter:alpha(opacity=15)} 
-		.s3{ opacity: 0.20 ; -moz-opacity: 0.20 ; -khtml-opacity:0.20 ; filter:alpha(opacity=20)} 
-		.s4{ opacity: 0.25 ; -moz-opacity: 0.25 ; -khtml-opacity:0.25 ; filter:alpha(opacity=25)} 
-		.s5{ opacity: 0.30 ; -moz-opacity: 0.30 ; -khtml-opacity:0.30 ; filter:alpha(opacity=30)} 
-		.s6{ opacity: 0.35 ; -moz-opacity: 0.35 ; -khtml-opacity:0.35 ; filter:alpha(opacity=35)} 
-		.s7{ opacity: 0.40 ; -moz-opacity: 0.40 ; -khtml-opacity:0.40 ; filter:alpha(opacity=40)} 
-		.s8{ opacity: 0.45 ; -moz-opacity: 0.45 ; -khtml-opacity:0.45 ; filter:alpha(opacity=45)} 
-		.s9{ opacity: 0.50 ; -moz-opacity: 0.50 ; -khtml-opacity:0.50 ; filter:alpha(opacity=50)} 
-		.s10{ opacity: 0.55 ; -moz-opacity: 0.55 ; -khtml-opacity:0.55 ; filter:alpha(opacity=55)} 
-		.s11{ opacity: 0.60 ; -moz-opacity: 0.60 ; -khtml-opacity:0.60 ; filter:alpha(opacity=60)} 
-		.s12{ opacity: 0.65 ; -moz-opacity: 0.65 ; -khtml-opacity:0.65 ; filter:alpha(opacity=65)} 
-		.s13{ opacity: 0.70 ; -moz-opacity: 0.70 ; -khtml-opacity:0.70 ; filter:alpha(opacity=70)} 
-		.s14{ opacity: 0.75 ; -moz-opacity: 0.75 ; -khtml-opacity:0.75 ; filter:alpha(opacity=75)} 
-		.s15{ opacity: 0.80 ; -moz-opacity: 0.80 ; -khtml-opacity:0.80 ; filter:alpha(opacity=80)} 
-		.s16{ opacity: 0.85 ; -moz-opacity: 0.85 ; -khtml-opacity:0.85 ; filter:alpha(opacity=85)} 
-		.s17{ opacity: 0.90 ; -moz-opacity: 0.90 ; -khtml-opacity:0.90 ; filter:alpha(opacity=90)} 
-		.s18{ opacity: 0.95 ; -moz-opacity: 0.95 ; -khtml-opacity:0.95 ; filter:alpha(opacity=95)} 
-		.s19{ } 
-	</style>
-
 	<div style='width: 100%; text-align: right;' id='dbg'></div>
 	<div id='content' style='width: 100%; overflow: auto; vertical-align: bottom; border-bottom: solid 1px #c0c0c0; overflow-x: hidden;'></div>
-	<script>xmlhttpPost(); fader();</script>
+	<script type="text/javascript">xmlhttpPost(); fader();</script>
 };
 
 &closebigbox();
