@@ -165,7 +165,13 @@ while (<AV>) {
 	next if $_ =~ m/^#/;
 	chomp $_;
 	my @temp = split(/\|/,$_);
-	my ($summary) = ( $temp[3] =~ /^(.{0,80})/ );
+	my $summary = $temp[3];
+	$summary =~ s/<p[^>]+>//;
+	$summary =~ s/<.*//;
+	if (length($summary) > 75) {
+		$summary =~ s/^(.{0,74}).*/\1/;
+		$summary .= "...";
+	}
 	$updates{ $temp[ 0 ] } = { name => $temp[2], summary => $summary, description => $temp[3], date => $temp[4], info => $temp[5], size => $temp[6], md5 => $temp[1] };
 }
 close (AV);
@@ -203,7 +209,7 @@ foreach my $update ( sort keys %updates ) {
 	print <<END
 <tr>
 	<td style='width: 15%;' ><a href='$updates{$update}{'info'}' onclick='window.open(this.href); return false'>$updates{$update}{'name'}</a></td>
-	<td onClick="toggle('update-$update');" class='expand' title='Click to expand/hide'>$updates{$update}{'summary'}...</td>
+	<td onClick="toggle('update-$update');" class='expand' title='Click to expand/hide'><p class="updSummary">$updates{$update}{'summary'}</p></td>
 	<td style='width: 10%; text-align:right'>$updates{$update}{'date'}</td>
 </tr>
 <tr>
@@ -251,7 +257,7 @@ foreach my $update ( sort keys %updates ) {
 	print <<END
 <tr>
 	<td style='width: 15%;' ><a style='color: #808080;' href='$updates{$update}{'info'}' onclick='window.open(this.href); return false'>$updates{$update}{'name'}</a></td>
-	<td onClick="toggle('update-$update');" class='expand' style='color: #8080ff;' title='Click to expand/hide'>$updates{$update}{'summary'}...</td>
+	<td onClick="toggle('update-$update');" class='expand' style='color: #8080ff;' title='Click to expand/hide'><p class="updSummary">$updates{$update}{'summary'}</p></td>
 	<td style='width: 10%; text-align: right; color:#808080' >$updates{$update}{'date'}</td>
 </tr>
 <tr>
