@@ -13,7 +13,7 @@ include ../Makefile.conf
 PACKAGE = device-ids
 VERSION = 0.0
 
-PCI_URL = http://pciids.sourceforge.net/v2.2/
+PCI_URL = http://pci-ids.ucw.cz/v2.2/
 PCI_FILE = pci.ids.bz2
 USB_URL = http://www.linux-usb.org/
 USB_FILE = usb.ids.bz2
