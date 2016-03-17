@@ -624,31 +624,3 @@ p.help {
 	margin: 0 0 .5em 0;
 	text-indent: 2em;
 }
-p.updDesc {
-	margin: 0 0 0 0;
-}
-p.updDescItal {
-	margin: 0 0 0 0;
-	font-style:italic;
-}
-p.updDescHead {
-	margin:.5em 0 0 0;
-	text-decoration: underline;
-	font-weight:bold;
-}
-p.updReboot {
-	color:#c00000;
-	text-align:center;
-	margin:.5em 0 0 0;
-	font-weight:bold;
-}
-p.updStdWarn {
-	margin: 0 0 0 2em;
-}
-p.updSummary {
-	margin: 0 0 0 2em;
-	max-height:1em;
-}
-ul.UpdUL {
-	margin:0 0 0 0;
-}
