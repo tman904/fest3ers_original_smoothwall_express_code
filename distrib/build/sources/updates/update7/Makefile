@@ -20,6 +20,8 @@ UPDATE_PACKAGES = \
 UPDATE_ID = 007
 UPDATE_NAME = Update7
 
+EXTRA_UPDATE_FILES = patch-apache-conf.sh
+
 CLAMAV = yes
 
 include ../Makefile.update
