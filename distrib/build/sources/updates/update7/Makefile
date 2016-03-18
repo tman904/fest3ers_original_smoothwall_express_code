@@ -1,4 +1,5 @@
 UPDATE_PACKAGES = \
+		  device-ids \
 		  openssl \
 		  perl-mods \
 		  usb-modeswitch \
