@@ -87,7 +87,7 @@ chomp ($cpuCores);
 opendir (DIR, "/proc/irq") || die "Unable to open $!"; 
 my @IRQs = '';
 my $warning = '';
-my @files = sort { lc($a) > lc($b) } (grep { /^\d+$/ } readdir DIR);
+my @files = sort { $a <=> $b } (grep { /^\d+$/ } readdir DIR);
 foreach (@files) {
 	opendir (IRQS, "/proc/irq/$_");
 	my $device = "";
@@ -99,7 +99,7 @@ foreach (@files) {
 		next if /smp_affinity/;
 		next if /spurious/;
 		#print "$_\n";
-		$device = "$_, ";
+		$device .= "$_, ";
 	}
 	closedir (IRQS);
 	chop ($device);
@@ -117,7 +117,7 @@ foreach (@files) {
 closedir (DIR);
 
 #CONNTRACKS
-my $conntracks = `/bin/cat /proc/net/ip_conntrack|/usr/bin/wc -l`;
+my $conntracks = `wc -l < /proc/net/ip_conntrack`;
 $conntracks .= "\n";
 $conntracks .= `/bin/cat /proc/net/ip_conntrack`;
 chomp ($conntracks);
@@ -127,10 +127,10 @@ my $diskspace = &pipeopen( '/bin/df', '-h' );
 chomp ($diskspace);
 
 # ETHERNET ADAPTERS
-open (LSPCI, "-|") or exec ("/usr/sbin/lspci");
+open (LSPCI, "/usr/sbin/lspci|");
 my @ethernet_adapters = '';
 foreach (<LSPCI>){
-	if (/Ethernet/){
+	if (/Ethernet/) {
 		$_ =~ s/^(.*)Ethernet controller: //;
 		push (@ethernet_adapters, $_);
 	}
@@ -189,7 +189,7 @@ my $red_notused    = $not_used."\[color=red\]\[b\]";
 my (@red, @green, @purple, @orange, @other, @live_red);
 if (($netsettings{'RED_TYPE'} eq 'DHCP' || 
      $netsettings{'RED_TYPE'} eq 'PPPOE') && (-e "${swroot}/red/active")) {
-	if (-s "/var/smoothwall/red/dns1") {
+	if (-s "${swroot}/red/dns1") {
 		my $redDNS1 = &readvalue("${swroot}/red/dns1");
 		$dns1_tag = "$red_notused" if ($netsettings{'DNS1'} ne $redDNS1 || $netsettings{'DNS1'} eq "" );
 		$netsettings{'DNS1'} = $redDNS1;
@@ -219,21 +219,20 @@ if (($netsettings{'RED_TYPE'} eq 'DHCP' ||
 
   	# Let's get the broadcast and netmask of the red iface when up
 	# IP ADDR
-	open (IPADDR_RED, "-|") or exec ("/usr/sbin/ip addr show $netsettings{'RED_DEV'}");
+	open (IPADDR_RED, "/usr/sbin/ip addr show $netsettings{'RED_DEV'}|");
 	my @temp = <IPADDR_RED>;
 	close (IPADDR_RED);
 
 	foreach $line (@temp) {
 		chomp $line;
+		$line =~ s/^\s+//;
 		if ($line =~ /inet /) {
-			chomp $line;
-			@newarray = split / /, $line;
-			for (my $i=1; $i<=4; $i++) {
-				shift @newarray;
-			}
+			@newarray = split /\s+/, $line;
 			$block = new Net::Netmask($newarray[1]);
 			$netmask = $block->mask();
 			$bcast = $newarray[3];
+			$bcast = '' if ($netsettings{'RED_DEV'} =~ /ppp/);
+			last;
 		}
 	}
 	$bcast_tag = "$red_notused" if ($netsettings{'RED_BROADCAST'} ne $bcast);
@@ -372,7 +371,8 @@ closedir (DIR);
 
 # MODULES
 my $modules = &pipeopen( '/bin/lsmod' );
-open (TOP, "-|") or exec ("/usr/bin/top -b -n 1");
+open (TOP, "/usr/bin/top -b -n 1|");
+
 my @top = (<TOP>);
 close (TOP);
 pop (@top);
