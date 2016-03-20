@@ -67,9 +67,13 @@
 ./httpd/cgi-bin/xtaccess.cgi 
 ./httpd/html/help/pppsetup.cgi.html.en
 ./usr/bin/smoothwall/smoothinfo.pl
+./usr/bin/smoothwall/smoothinfoCLI.pl
 ./usr/bin/smoothwall/writeproxy.pl
 ./usr/lib/smoothwall/header.pm
+./usr/lib/smoothwall/smoothnet.pm
+./usr/lib/smoothwall/smoothtype.pm
 ./usr/lib/smoothwall/langs/en.pl
+./usr/lib/smoothwall/langs/alertboxes.en.pl
 ./var/smoothwall/knownports/Email and News
 ./var/smoothwall/patches/installed
 ./var/smoothwall/smoothinfo/about.ph
