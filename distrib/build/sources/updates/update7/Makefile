@@ -13,6 +13,7 @@ UPDATE_PACKAGES = \
 		  subversion \
 		  neon \
 		  smoothd \
+		  squid \
 		  kernel-drivers \
 		  coretree
 
@@ -22,6 +23,7 @@ UPDATE_NAME = Update7
 
 EXTRA_UPDATE_FILES = patch-apache-conf.sh
 
+KERNEL = yes
 CLAMAV = yes
 
 include ../Makefile.update
