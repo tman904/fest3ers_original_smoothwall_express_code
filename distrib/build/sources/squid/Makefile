@@ -13,12 +13,12 @@ VERSION = 3.5.15
 BASE_URL = http://www.squid-cache.org/Versions/v3/3.5/
 
 CONFIG_OPTS += --disable-arch-native \
-	       --disable-ipv6 \
+	       --enable-async-io \
 	       --enable-delay-pools \
-	       --enable-http-violations \
 	       --enable-follow-x-forwarded-for \
-	       --enable-icap-client \
+	       --enable-http-violations \
 	       --enable-linux-netfilter \
+	       --enable-poll \
 	       --enable-removal-policies="heap,lru" \
 	       --enable-ssl-crtd \
 	       --enable-storeio="aufs,diskd" \
@@ -28,6 +28,7 @@ CONFIG_OPTS += --disable-arch-native \
 	       --with-large-files \
 	       --with-libcap \
 	       --with-logdir=/var/log/squid \
+	       --with-max_fd=8192 \
 	       --with-openssl \
 	       --with-swapdir=/var/spool/squid
 
