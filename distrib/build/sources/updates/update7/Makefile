@@ -9,11 +9,12 @@ UPDATE_PACKAGES = \
 		  dhcpcd \
 		  miniupnpd \
 		  clamav \
-		  linux-firmware \
 		  subversion \
 		  neon \
 		  smoothd \
 		  squid \
+		  linux \
+		  linux-firmware \
 		  kernel-drivers \
 		  coretree
 
