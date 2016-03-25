@@ -34,10 +34,13 @@ while ((<presentConf>))
   $newLine = $_;
 
   # Adjust for the new kernel
-  $newLine =~ s/$oldkern/$newkern/g;
+  $newLine =~ s/vmlinuz-[^ ]+/vmlinuz-$newkern/g;
+  $newLine =~ s/initrd-[^ ]+\.gz/initrd-$newkern\.gz/g;
   print newConf $newLine;
 
   # Relabel for the old kernel
+  $_ =~ s/vmlinuz-[^ ]+/vmlinuz-$oldkern/g;
+  $_ =~ s/initrd-[^ ]+\.gz/initrd-$oldkern\.gz/g;
   $_ =~ s/using/old Linux ($oldkern) using/g;
   $_ =~ s/(Console|Hardware)\)/\1, old [$oldkern] kernel)/g;
   print oldConf;
