@@ -14,6 +14,7 @@ UPDATE_PACKAGES = \
 		  smoothd \
 		  squid \
 		  linux \
+		  ipset \
 		  linux-firmware \
 		  kernel-drivers \
 		  coretree
