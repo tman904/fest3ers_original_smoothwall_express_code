@@ -13,6 +13,8 @@ BASE_URL = ftp://ftp.openbsd.org/pub/OpenBSD/OpenNTPD/
 
 PATCH_FILE1 = openntpd-username.patch
 
+CONFIG_OPTS += --with-privsep-user=ntpd
+
 INSTALL = yes
 
 install: compile
