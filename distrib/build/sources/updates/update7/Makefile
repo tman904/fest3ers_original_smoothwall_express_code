@@ -16,6 +16,7 @@ UPDATE_PACKAGES = \
 		  linux \
 		  ipset \
 		  xtables-addons \
+		  openswan \
 		  linux-firmware \
 		  kernel-drivers \
 		  coretree
