@@ -15,6 +15,7 @@ UPDATE_PACKAGES = \
 		  squid \
 		  linux \
 		  ipset \
+		  xtables-addons \
 		  linux-firmware \
 		  kernel-drivers \
 		  coretree
