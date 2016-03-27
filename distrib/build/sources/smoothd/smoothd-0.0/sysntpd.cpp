@@ -79,7 +79,7 @@ int start_ntpd( std::vector<std::string> & parameters, std::string & response )
 
 	if (settings["ENABLED"] == "on" and settings["NTP_METHOD"] == "Automatic")
 	{
-		error = simplesecuresysteml("/usr/sbin/ntpd", NULL);
+		error = simplesecuresysteml("/usr/sbin/ntpd", "-p", "/var/run/ntpd.pid", NULL);
 		if (error)
 			response = "NTPD Start failed!";
 		else
