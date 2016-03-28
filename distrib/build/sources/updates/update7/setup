@@ -10,7 +10,7 @@ echo "Install Update 7."
 
 # Leave these for a few generations, just in case.
 echo "  Fix logrotate config file modes"
-chmod 644 /etc/logrotate.{conf,d/*}
+chmod 644 /etc/logrotate.{base,conf,d/*}
 echo "  Remove unused file 'acl'"
 /bin/rm -f /var/smoothwall/proxy/acl
 echo "  Fix /var/run"
