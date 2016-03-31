@@ -398,15 +398,14 @@ print qq|
 my $found = 0;
 my $graphname;
 
-print qq|&laquo; <a href="?#Summary_graphs">return to graph summary</a><br /><br />| if ( $name ne "" );
+print qq|&laquo; <a href="?#graphs">return to graph summary</a><br /><br />| if ( $name ne "" );
 
 foreach $graphname (@graphs) {
 	if (-e "$rrddir/$graphname.png") {
 		# check if displaying summary graphs
 		my $graphinterface = (substr($graphname,0,index($graphname,"-")));
-		if ($name eq "") { 
-			print "<a name='Summary_graphs'></a>\n";
-			print "<a href='".$ENV{'SCRIPT_NAME'}."?i=".(substr($graphname,0,index($graphname,"-")))."&amp;#Detailed_graphs'";
+		if ($name eq "") {
+			print "<a href='".$ENV{'SCRIPT_NAME'}."?i=".(substr($graphname,0,index($graphname,"-")))."&amp;#graphs'";
 			print " title='click for detailed graphs for the ".$graphinterface." interface'>";
 			print "<img alt='$graphname'";
 		}
@@ -415,14 +414,14 @@ foreach $graphname (@graphs) {
 		}
 		print " style='border-style: none;' src='/rrdtool/$graphname.png'>";
 		if ($name eq "") { 
-			print qq|</a><br /><a href="?i=$graphinterface&amp;#Detailed_graphs|;
+			print qq|</a><br /><a href="?i=$graphinterface&amp;#graphs|;
 			print qq|">click for detailed graphs for the $graphinterface interface</a> &raquo;|;
 		}
 		print "<br /><br />\n";
 		$found = 1;
 	}
 }
-print "<a name='Detailed_graphs'></a>\n";
+print "<a name='graphs'></a>\n";
 
 print "<CLASS='boldbase' style='font-weight:bold;'>$tr{'no graphs available'}</CLASS>" if (!$found);
 print "<br />\n";
