@@ -13,12 +13,14 @@ BASE_URL = ftp://ftp.openbsd.org/pub/OpenBSD/OpenNTPD/
 
 PATCH_FILE1 = openntpd-username.patch
 
-CONFIG_OPTS += --with-privsep-user=ntpd
+CONFIG_OPTS += --with-privsep-user=ntpd --localstatedir=/var
 
 INSTALL = yes
 
 install: compile
 	@mkdir -p $(PKG_ROOT)
-	@install -D $(COMPILE_DIR)/src/ntpd $(PKG_ROOT)$(PKG_DIR)/sbin/ntpd
+	cd $(COMPILE_DIR); make DESTDIR=$(PKG_ROOT) install
+	# We don't want the default ntpd.conf
+	rm -rf $(PKG_ROOT)/usr/etc
 
 include ../Makefile.rules
