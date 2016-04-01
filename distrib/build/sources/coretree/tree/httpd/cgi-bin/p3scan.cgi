@@ -134,26 +134,23 @@ sub isclamrunning {
 
 	if (open(FILE, "/var/run/${cmd}.pid")) {
 		$pid = <FILE>;
-		chomp $pid;
+		chomp ($pid) if ($pid);
 		close FILE;
-		if (open(FILE, "/proc/${pid}/status")) {
-			while (<FILE>) {
-				if (/^Name:\W+(.*)/) {
-					$testcmd = $1;
+
+		if ($pid) {
+			if (open(FILE, "/proc/${pid}/status")) {
+				while (<FILE>) {
+					$testcmd = $1 if (/^Name:\W+(.*)/);
 				}
-			}
-			close FILE;
-			if ($testcmd =~ /$exename/) {
-				$status = "running"; 
+				close FILE;
+				$status = "running" if ($testcmd =~ /$exename/);
 			}
 		}
 	}
 	else {
 		$pid = `ps -C $cmd -o pid=`;
-		chomp ($pid);
-		if ($pid) {
-			$status = "starting";
-		}
+		chomp ($pid) if ($pid);
+		$status = "running" if ($pid);
 	}
 	return ( $status );
 }
