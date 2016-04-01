@@ -95,9 +95,9 @@ if ($snortsettings{'ACTION'} eq $tr{'save'} and
 		&log($tr{'snort is disabled'});
 		$success = &message('snortstop');
 	}
-	$errormessage .= $success."<br />";
-	$errormessage .= $tr{'smoothd failure'} ."<br />" unless ($success);
-	$refresh = "<meta http-equiv='refresh' content='2;'>";
+	$errormessage .= $success."<br />" if ($success);
+	$errormessage .= "snort ".$tr{'smoothd failure'} ."<br />" unless ($success);
+	$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 # If download is checked, uncheck and make oink text

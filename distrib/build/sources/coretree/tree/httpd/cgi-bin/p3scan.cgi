@@ -39,8 +39,8 @@ if ($p3scansettings{'ACTION'} eq $tr{'save'}) {
 
 	if ($p3scansettings{"ENABLE"} eq 'on') {
 		$success = message('p3scanrestart');
-		$errormessage .= $success."<br />";
-		$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+		$errormessage .= $success."<br />" if ($success);
+		$errormessage .= "p3scanrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 
 		# Check if ClamAV is already running
 		my $avstatus = isclamrunning("clamd");
@@ -51,15 +51,15 @@ if ($p3scansettings{'ACTION'} eq $tr{'save'}) {
 		else {
 			$success = message('clamavrestart');
 			$success = "TIMEOUT: ClamAV Still Restarting" if ($success =~ /TIMEOUT/i);
-			$errormessage .= $success."<br />";
-			$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+			$errormessage .= $success."<br />" if ($success);
+			$errormessage .= "clamavrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
-		$refresh = "<meta http-equiv='refresh' content='2; URL=p3scan.cgi'>";
+		$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 	else {
 		$success = message('p3scanstop');
-		$errormessage .= $success."<br />";
-		$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+		$errormessage .= $success."<br />" if ($success);
+		$errormessage .= "p3scanstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 
 		# Check if anything else has ClamAV turned on, if not - turn it off.
 		open (CLAM, "${swroot}/clamav/settings") || die "Unable to open $!"; 
@@ -69,13 +69,13 @@ if ($p3scansettings{'ACTION'} eq $tr{'save'}) {
 
 		if ($clamused == 0) {
 			$success = message('clamavstop');
-			$errormessage .= $success."<br />";
-			$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+			$errormessage .= $success."<br />" if ($success);
+			$errormessage .= "clamavstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
 		else {
 			$errormessage .= "ClamAV is being used by another Application - Not Terminated<br />";
 		}
-		$refresh = "<meta http-equiv='refresh' content='2; URL=p3scan.cgi'>";
+		$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 

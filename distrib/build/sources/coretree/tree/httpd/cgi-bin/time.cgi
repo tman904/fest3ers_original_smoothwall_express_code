@@ -158,15 +158,15 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'}) {
 
 			# Update the kernel's time zone, H/W Clock, and DST cron task
 			my $success = message('ntpdchgtimezone');
-			$errormessage .= $success."<br />";
-			$errormessage .= $tr{'smoothd failure'} ." (ntpdchgtimezone)<br />" unless ($success);
+			$errormessage .= $success."<br />" if ($success);
+			$errormessage .= "ntpdchgtimezone ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
 
 		# The smoothd plugin always stops, then checks 'enabled' before restarting.
 		my $success = message('ntpdrestart');
-		$errormessage .= $success;
-		$errormessage .= $tr{'smoothd failure'} ." (ntpdrestart)<br />" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">';
+		$errormessage .= $success if ($success);
+		$errormessage .= " ntpdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 
 	}
 

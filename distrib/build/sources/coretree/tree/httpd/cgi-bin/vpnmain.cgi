@@ -47,15 +47,15 @@ if ($cgiparams{'ACTION'} eq $tr{'restart'}) {
 
 	my $success = message('ipsecrestart');
 	$errormessage = $success if ($success);
-	$errormessage = $tr{'smoothd failure'} unless ($success);
-	$refresh = '<meta http-equiv="refresh" content="2;">';
+	$errormessage = "ipsecrestart ".$tr{'smoothd failure'} unless ($success);
+	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'stop'}) {
 	my $success = message('ipsecstop');
 	$errormessage = $success if ($success);
-	$errormessage = $tr{'smoothd failure'} unless ($success);
-	$refresh = '<meta http-equiv="refresh" content="2;">';
+	$errormessage = "ipsecstop ".$tr{'smoothd failure'} unless ($success);
+	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 $cgiparams{'ENABLE'} = 'off' if ($cgiparams{'VALID'} eq '');

@@ -69,9 +69,9 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'external access rule added'});
 
 		my $success = message('setxtaccess');
-		$errormessage = $success;
-		$errormessage = $tr{'smoothd failure'} unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">';
+		$errormessage = $success if ($success);
+		$errormessage = "setxtaccess ".$tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 

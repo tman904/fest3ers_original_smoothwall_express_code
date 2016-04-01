@@ -77,8 +77,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 
 		my $success = message('setinternal');
 		$errormessage = $success if ($success);
-		$errormessage = $tr{'smoothd failure'} unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">';
+		$errormessage = "setinternal ".$tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 
 		$cgiparams{'ENABLED'} = 'on';
 		$cgiparams{'SRC_IP'} = '';

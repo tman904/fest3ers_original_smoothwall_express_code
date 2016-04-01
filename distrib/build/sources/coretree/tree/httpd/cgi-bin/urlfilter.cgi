@@ -251,9 +251,9 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 				$updatemessage = $tr{'urlfilter upload success'};
 
 				my $success = message('sgprebuild');
-				$errormessage = $success;
-				$errormessage .= "$tr{'smoothd failure'}<br \>" unless ($success);
-				$refresh .= '<meta http-equiv="refresh" content="2;">';
+				$errormessage = $success if ($success);
+				$errormessage .= "sgprebuild ".$tr{'smoothd failure'}."<br \>" unless ($success);
+				$refresh .= '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 
 				system("logger -t installpackage[urlfilter] \"URL filter blacklist - Blacklist update from local source completed\"");
 			}
@@ -363,9 +363,9 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		&setpermissions ($dbdir);
 
 		my $success = message('squidrestart');
-		$errormessage = $success;
-              $errormessage .= "$tr{'smoothd failure'} (squidrestart)<br \>" unless ($success);
-		$refresh .= '<meta http-equiv="refresh" content="2;">';
+		$errormessage = $success if ($success);
+              $errormessage .= "squidrestart ".$tr{'smoothd failure'}."<br \>" unless ($success);
+		$refresh .= '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -382,9 +382,9 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter save schedule'}) {
 		close FILE;
 
               my $success = message('sgautoupdate');
-		$errormessage = $success;
-              $errormessage .= "$tr{'smoothd failure'} (sgautoupdate)<br \>" unless ($success);
-		$refresh .= '<meta http-equiv="refresh" content="2;">';
+		$errormessage = $success if ($success);
+              $errormessage .= "sgautoupdate ".$tr{'smoothd failure'}."<br \>" unless ($success);
+		$refresh .= '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 

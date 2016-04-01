@@ -163,8 +163,8 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 
 		my $success = message('trafficrestart');
 		$errormessage .= $success if ($success);
-		$errormessage .= $tr{'smoothd failure'} ."<br />" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">';
+		$errormessage .= "trafficrestart ".$tr{'smoothd failure'} ."<br />" unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 

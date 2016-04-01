@@ -316,19 +316,19 @@ ERROR:
 		
 		my $success = message("apcupsdwrite");
 		$errormessage = $success."<br />" if ($success);
-		$errormessage = $tr{'smoothd failure'} .": apcupsdwrite.<br />" unless ($success);
+		$errormessage = "apcupsdwrite ".$tr{'smoothd failure'}."<br />" unless ($success);
 
 		if ($apcupsdsettings{'ENABLE'} eq 'on') {
 			$success = message("apcupsdrestart");
 			$errormessage .= $success."<br />" if ($success);
-			$errormessage .= $tr{'smoothd failure'} .": apcupsdrestart.<br />" unless ($success);
+			$errormessage .= "apcupsdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
 		else {
 			$success = message("apcupsdstop");
 			$errormessage .= $success."<br />" if ($success);
-			$errormessage .= $tr{'smoothd failure'} .": apcupsdstop.<br />" unless ($success);
+			$errormessage .= "apcupsdstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
-		$refresh = "<meta http-equiv='refresh' content='2;'>";
+		$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -348,12 +348,12 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'restart'}) {
 	if ($apcupsdsettings{'ENABLE'} eq 'on') {
 		my $success = message("apcupsdrestart");
 		$errormessage .= $success."<br />" if ($success);
-		$errormessage .= $tr{'smoothd failure'} .": apcupsdrestart.<br />" unless ($success);
+		$errormessage .= "apcupsdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 	}
 	else {
 		$errormessage .= "Not Enabled!<br />";
 	}
-	$refresh = "<meta http-equiv='refresh' content='2;'>";
+	$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 if ($apcupsdsettings{'ACTION'} eq $tr{'stop'}) {
@@ -361,8 +361,8 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'stop'}) {
 
 	my $success = message("apcupsdstop");
 	$errormessage = $success if ($success);
-	$errormessage = $tr{'smoothd failure'} unless ($success);
-	$refresh = "<meta http-equiv='refresh' content='2;'>";
+	$errormessage = "apcupsdstop ".$tr{'smoothd failure'} unless ($success);
+	$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 if ($apcupsdsettings{'ACTION'} eq $tr{'mail-test'}) {

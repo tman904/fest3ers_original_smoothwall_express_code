@@ -35,19 +35,19 @@ if ($advnetsettings{'ACTION'} eq $tr{'save'}) {
 	
 	$success = message('setadvnet');
 	$errormessage .= $success."<br />" if ($success);
-	$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+	$errormessage .= "setadvnet ".$tr{'smoothd failure'}."<br />" unless ($success);
 
 	if ($advnetsettings{'ENABLE_UPNP'} eq 'on') {
 		$success = message('upnpdrestart');
 		$errormessage .= $success."<br />" if ($success);
-		$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+		$errormessage .= "upnpdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 	}
 	else {
 		$success = message('upnpdstop');
 		$errormessage .= $success."<br />" if ($success);
-		$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+		$errormessage .= "upnpdstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 	}
-	$refresh = "<meta http-equiv='refresh' content='2; URL=advnet.cgi'>";
+	$refresh = "<meta http-equiv='refresh' content='2; URL=advnet.cgi'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 &readhash("${swroot}/advnet/settings", \%advnetsettings);

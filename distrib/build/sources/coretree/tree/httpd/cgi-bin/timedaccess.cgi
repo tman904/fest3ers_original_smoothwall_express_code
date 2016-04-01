@@ -72,9 +72,9 @@ ERROR:
 
 	if ($cgiparams{'VALID'} eq 'yes') {
 		my $success = message('settimedaccess');
-		$errormessage = $success;
-		$errormessage = $tr{'smoothd failure'} unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">';
+		$errormessage = $success if ($success);
+		$errormessage = "settimedaccess ".$tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 

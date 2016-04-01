@@ -62,7 +62,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		system('/usr/bin/smoothwall/writehosts.pl');
 
 		my $success = message('dnsproxyhup');
-		$errormessage .= $tr{'smoothd failure'}."<br />" unless ($success);
+		$errormessage .= "dnsproxyhup ".$tr{'smoothd failure'}."<br />" unless ($success);
 	}
 }
 
@@ -105,7 +105,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		system('/usr/bin/smoothwall/writehosts.pl');
 
 		my $success = message('dnsproxyhup');
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage = "dnsproxyhup ".$tr{'smoothd failure'} unless ($success);
 	}
 }
 

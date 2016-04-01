@@ -118,9 +118,9 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'forwarding rule added'});
 		
 		my $success = message('setincoming');
-		$errormessage = $success;
-		$errormessage = $tr{'smoothd failure'} unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">';
+		$errormessage = $success if ($success);
+		$errormessage = "setincoming ".$tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 

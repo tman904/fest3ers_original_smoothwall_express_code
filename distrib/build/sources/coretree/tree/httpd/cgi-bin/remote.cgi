@@ -37,9 +37,9 @@ if ($remotesettings{'ACTION'} eq $tr{'save'}) {
 		&log($tr{'ssh is disabled'});
 		$success = message('sshdstop');
 	}
-	$errormessage = $success;
-	$errormessage = $tr{'smoothd failure'} unless ($success);
-	$refresh = '<meta http-equiv="refresh" content="2;">';
+	$errormessage = $success if ($success);
+	$errormessage = "sshd ".$tr{'smoothd failure'} unless ($success);
+	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 $remotesettings{'ENABLE_SECURE_ADMIN'} = 'off';

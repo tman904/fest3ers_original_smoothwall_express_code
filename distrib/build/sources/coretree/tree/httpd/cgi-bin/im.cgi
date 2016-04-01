@@ -60,8 +60,8 @@ ERROR:
 			$success = message('imstop');
 		}
 		$errormessage = $success;
-		$errormessage = $tr{'smoothd failure'} unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">';
+		$errormessage = "imspector ".$tr{'smoothd failure'} unless ($success);
+		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
