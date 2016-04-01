@@ -1,4 +1,4 @@
 # Keep 'make clean' tidy.
 
 clean:
-	@true
+	@for i in update[1-9]*; do if [ -d $$i ]; then cd $$i; make clean; fi; done
