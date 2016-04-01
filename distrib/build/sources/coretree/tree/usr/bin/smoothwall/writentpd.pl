@@ -30,8 +30,18 @@ END
 }
 
 # Query the upstream
+
+# Use the admin's choice, if specified
+if ($timesettings{'NTP_SERVER'} ne "") {
+	print FILE "server $timesettings{'NTP_SERVER'}\n";
+}
+
+# Always use ntp.org's DNS pool
 	print FILE <<END;
-server $timesettings{'NTP_SERVER'}
+server 0.pool.ntp.org
+server 1.pool.ntp.org
+server 2.pool.ntp.org
+server 3.pool.ntp.org
 END
 
 close (FILE);
