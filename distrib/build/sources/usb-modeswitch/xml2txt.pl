@@ -12,12 +12,10 @@ my $which = $ARGV[1];
 
 if ( ! -f "usb-modeswitch-versions.xml" )
 {
-  system("wget http://www.draisberghof.de/usb_modeswitch/usb-modeswitch-versions.xml");
+  system("wget http://www.draisberghof.de/usb_modeswitch/usb-modeswitch-versions.xml >/dev/null 2>&1");
 }
 
 my $modeswitch = XMLin('usb-modeswitch-versions.xml', KeyAttr => {target => 'URL'});
-
-unlink("usb-modeswitch-versions.xml");
 
 my $i;
 for ($i=0; $i<@{$modeswitch->{"package"}}; $i++)
