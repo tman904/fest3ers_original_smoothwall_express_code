@@ -17,7 +17,7 @@ if ( ! -f "usb-modeswitch-versions.xml" )
 
 my $modeswitch = XMLin('usb-modeswitch-versions.xml', KeyAttr => {target => 'URL'});
 
-#print STDERR Dumper($modeswitch);
+unlink("usb-modeswitch-versions.xml");
 
 my $i;
 for ($i=0; $i<@{$modeswitch->{"package"}}; $i++)
