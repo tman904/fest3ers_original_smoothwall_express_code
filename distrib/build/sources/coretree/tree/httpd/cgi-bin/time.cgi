@@ -113,7 +113,8 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'}) {
 	}
 
 	# Validate server
-	if ( !(validip($cgitimesettings{'NTP_SERVER'}) or validhostname($cgitimesettings{'NTP_SERVER'}))) {
+        if (($cgitimesettings{'NTP_SERVER'} ne "") and
+           (!(validip($cgitimesettings{'NTP_SERVER'}) or validhostname($cgitimesettings{'NTP_SERVER'})))) {
 		$errormessage .= $tr{'time invalid server'} ."<br />";
 	}	
 	# End of validations
@@ -183,7 +184,6 @@ $timesettings{'TIMEZONE'} = 'Europe/London' if ($timesettings{'TIMEZONE'} eq "")
 $timesettings{'ENABLED'} = 'off' if ($timesettings{'ENABLED'} eq "");
 $timesettings{'NTP_INTERVAL'} = 6 if ($timesettings{'NTP_INTERVAL'} eq "");
 $timesettings{'NTP_METHOD'} = $tr{'time method automatic'} if ($timesettings{'NTP_METHOD'} eq "");
-$timesettings{'NTP_SERVER'} = 'pool.ntp.org' if ($timesettings{'NTP_SERVER'} eq "");
 $timesettings{'YEAR'} = '';
 $timesettings{'MONTH'} = '';
 $timesettings{'DAY'} = '';
