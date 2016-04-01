@@ -315,7 +315,11 @@ while [ $i -lt 15 ]; do
 done
 
 echolog "e" "s" "" "  Set the system time; and start time service (if enabled)"
-ntpdate pool.ntp.org
+eval `grep NTP_SERVER /var/smoothwall/time/settings`
+if [ "$NTP_SERVER" == "" ]; then
+  NTP_SERVER="pool.ntp.org"
+fi
+ntpdate ${NTP_SERVER}
 /sbin/hwclock --systohc --localtime
 /usr/bin/smoothcom ntpdrestart
 echolog "e" "s" "" "  Start dhcpd (if enabled)"
