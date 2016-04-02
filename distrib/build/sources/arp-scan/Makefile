@@ -12,7 +12,7 @@ VERSION = 20151122
 EXTENSION = .tar.gz
 
 export pkgName = $(PACKAGE)
-export gitURL = https://github.com/royhills/$(PACKAGE).git
+export gitURL = git://github.com/royhills/$(PACKAGE).git
 export gitCommitID=69b2f7058856
 export gitBranch=20151122
 
