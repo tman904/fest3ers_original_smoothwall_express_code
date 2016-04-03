@@ -5,6 +5,7 @@
 ./etc/rc.d/rc.netaddress.down
 ./etc/rc.d/rc.netaddress.up
 ./etc/rc.d/rc.network
+./etc/rc.d/rc.sysinit
 ./etc/rc.d/rc.updatered
 ./httpd/cgi-bin/advnet.cgi
 ./httpd/cgi-bin/advstatus.cgi
@@ -66,9 +67,11 @@
 ./httpd/cgi-bin/vpnmain.cgi
 ./httpd/cgi-bin/xtaccess.cgi
 ./httpd/html/help/pppsetup.cgi.html.en
+./httpd/html/help/time.cgi.html.en
 ./usr/bin/smoothwall/smoothinfo.pl
 ./usr/bin/smoothwall/smoothinfoCLI.pl
 ./usr/bin/smoothwall/writeproxy.pl
+./usr/bin/smoothwall/writentpd.pl
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/smoothnet.pm
 ./usr/lib/smoothwall/smoothtype.pm
