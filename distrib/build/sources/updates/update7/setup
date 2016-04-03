@@ -50,7 +50,6 @@ pushd /lib/modules >/dev/null 2>&1
   /usr/bin/sed -e 's/\./ /g' -e 's=/$==' | \
   /bin/sort -n -r -k 1 -k 2 -k 3 | \
   /usr/bin/sed -e 's/ /./g' | \
-  /usr/bin/tail -n +3 | \
   while read a; do
     if [ "$a" == "3.4.111" ]; then continue; fi
     if [ "$a" == "3.4.109" ]; then continue; fi
