@@ -55,12 +55,12 @@ pushd /lib/modules >/dev/null 2>&1
     if [ "$a" == "3.4.109" ]; then continue; fi
     echo "        Archiving and deleting old kernel $a"
     pushd / >/dev/null 2>&1
-    /usr/bin/find ./lib/modules/$a ./boot/initrd-$a.gz ./boot/vmlinuz-$a | \
+    /usr/bin/find ./lib/modules/$a ./boot/initrd-$a.gz ./boot/{vmlinuz,System.map}-$a | \
         /bin/cpio -o -H newc | \
         /usr/bin/gzip > /root/linux-$a-archive.cpio.gz
     /bin/rm -rf /lib/modules/$a
     /bin/rm -f /boot/initrd-$a.gz
-    /bin/rm -f /boot/vmlinuz-$a
+    /bin/rm -f /boot/{vmlinuz,System.map}-$a
     popd >/dev/null 2>&1
   done
 
