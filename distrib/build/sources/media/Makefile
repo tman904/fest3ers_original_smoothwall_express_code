@@ -54,13 +54,14 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
 	    $(UDEV) lm_sensors xz pcmciautils qemu sysfsutils db squidGuard \
 	    apcupsd cacert-bundle setkerneltz \
-	    kernel-drivers \
+	    linux-backports kernel-drivers \
 	    coretree $(ADV_PKGS) device-ids
 
 # INST_PKGS notes.
 # cacert-bundle should be installed after openssl.
-# kernel-driver *MUST* be installed after linux. Its drivers replace their
+# kernel-drivers *MUST* be installed after linux. Its drivers replace their
 #   counterparts in linux.
+# linux-backports *may* override drivers in kernel-drivers; keep an eye pealed.
 # 'coretree' *MUST* be third-last.
 # If the 'advanced' mechanism is added, ADV_PKGS must be second-last; they'll
 #   override what's in coretree.
