@@ -34,7 +34,11 @@ endif
 
 INSTALL = yes
 install: compile
+ifeq ($(BITS_64), yes)
 	cd $(DIR); $(MAKE) $(JOBS) CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64" KLIB=$(PKG_ROOT) KLIB_BUILD=$(KLIB_BUILD) install
+else
+	cd $(DIR); $(MAKE) $(JOBS) KLIB=$(PKG_ROOT) KLIB_BUILD=$(KLIB_BUILD) install
+endif
 	
 
 include ../Makefile.rules
