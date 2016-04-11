@@ -68,6 +68,7 @@
 ./httpd/cgi-bin/xtaccess.cgi
 ./httpd/html/help/pppsetup.cgi.html.en
 ./httpd/html/help/time.cgi.html.en
+./httpd/html/help/urlfilter.cgi.html.en
 ./usr/bin/smoothwall/smoothinfo.pl
 ./usr/bin/smoothwall/smoothinfoCLI.pl
 ./usr/bin/smoothwall/writeproxy.pl
