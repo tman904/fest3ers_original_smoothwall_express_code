@@ -26,11 +26,15 @@ configure: patch
 
 COMPILE = yes
 compile: configure
+ifeq ($(BITS_64), yes)
+	cd $(DIR); $(MAKE) $(JOBS) CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64" V=1 KLIB=$(KLIB) KLIB_BUILD=$(KLIB_BUILD) modules
+else
 	cd $(DIR); $(MAKE) $(JOBS) V=1 KLIB=$(KLIB) KLIB_BUILD=$(KLIB_BUILD) modules
+endif
 
 INSTALL = yes
 install: compile
-	cd $(DIR); $(MAKE) $(JOBS) KLIB=$(PKG_ROOT) KLIB_BUILD=$(KLIB_BUILD) install
+	cd $(DIR); $(MAKE) $(JOBS) CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64" KLIB=$(PKG_ROOT) KLIB_BUILD=$(KLIB_BUILD) install
 	
 
 include ../Makefile.rules
