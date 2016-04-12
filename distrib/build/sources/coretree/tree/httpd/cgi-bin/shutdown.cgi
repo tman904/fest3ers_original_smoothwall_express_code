@@ -132,7 +132,8 @@ else {
 	&openbigbox('100%', 'CENTER');
 	print <<END
 <div align='center'>
-<table bgcolor='#ffffff'>
+<table style="margin:2em; background-color:none;">
+
 <tr>
 	<td align='center'>
 		<a href='/' border='0'><img src='/ui/img/smoothwall_big.png'></a><br /><br />
