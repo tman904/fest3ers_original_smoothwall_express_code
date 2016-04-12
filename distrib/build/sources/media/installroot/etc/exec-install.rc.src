@@ -229,18 +229,21 @@ select /dev/$hdd
 mklabel gpt
 mkpart boot reiserfs $bootstart $bootend
 name 1 "/boot"
+toggle 1 boot
 mkpart swap linux-swap $swapstart $swapend
 name 2 swap
 mkpart log reiserfs $logstart $logend
 name 3 "/var/log"
 mkpart root reiserfs $rootstart $rootend
 name 4 "/"
-mkpart bios_grub $grubstart $grubend
-set 5 bios_grub on
-name 5 "bios_grub"
 print
 quit
 END
+
+  # Some day, these three lines will go back above the 'print' above.
+  #mkpart bios_grub $grubstart $grubend
+  #set 5 bios_grub on
+  #name 5 "bios_grub"
 
   echo
   # First tell udev to remove any existing partition nodes in /dev.

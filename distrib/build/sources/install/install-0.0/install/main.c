@@ -217,6 +217,7 @@ int main(int argc, char *argv[])
 	partStart = 3;
 	fprintf(Fpartitions, "mkpart boot ext3 %d %d\n", partStart, partStart+boot_partition-1);
 	fprintf(Fpartitions, "name 1 \"/boot\"\n");
+	fprintf(Fpartitions, "toggle 1 boot\n");
 	partStart += boot_partition;
 	fprintf(Fpartitions, "mkpart swap linux-swap %d %d\n", partStart, partStart+swap_partition-1);
 	fprintf(Fpartitions, "name 2 swap\n");
@@ -226,8 +227,9 @@ int main(int argc, char *argv[])
 	partStart += log_partition;
 	fprintf(Fpartitions, "mkpart root ext3 %d %d\n", partStart, partStart+root_partition-1);
 	fprintf(Fpartitions, "name 4 \"/\"\n");
-	fprintf(Fpartitions, "mkpart bios_grub 1 2\n");
-	fprintf(Fpartitions, "name 5 \"bios_grub\"\n");
+	// Partition 5 is for UEFI.
+	// fprintf(Fpartitions, "mkpart bios_grub 1 2\n");
+	// fprintf(Fpartitions, "name 5 \"bios_grub\"\n");
 	fprintf(Fpartitions, "print\n");
 	fprintf(Fpartitions, "quit\n");
 	fclose (Fpartitions);
