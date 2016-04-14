@@ -76,13 +76,13 @@ print "<form method='POST' action='?'><div>\n";
 
 &openbox($tr{'manual control and status'});
 
-if (-s "$filename") {
+if (-f "$filename") {
 	open (FILE, "$filename");
 	@current = <FILE>;
 	close (FILE);
 }
 
-if (-s "/proc/net/ipsec_eroute") {
+if (-f "/proc/net/ipsec_eroute") {
 	open (ACTIVE, "/proc/net/ipsec_eroute");
 	@active = <ACTIVE>;
 	close (ACTIVE);
@@ -161,7 +161,7 @@ foreach $line (@current) {
 			$active = "<img src='/ui/img/open.jpg' alt='$tr{'capsopen'}'>";
 		}
 	}
-	print "<tr class='dark' style='border: 1px solid #c0c0c0;'>\n"; 
+	print "<tr class='dark' style='border: 1px solid #c0c0c0;background-color:rgba(0,0,0,.035)'>\n"; 
 	print "<td style='width: 65%; text-align: center;'><strong>$name</strong></td><td style='text-align: left;'>$active</td>\n";
 	print "</tr><tr><td>&nbsp;</td></tr>\n";
 }
