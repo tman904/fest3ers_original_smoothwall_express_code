@@ -248,6 +248,9 @@ END
 
 foreach my $update ( sort keys %updates ) {
 	next if ( not defined $updates{$update}{'installed'} );
+	$updates{$update}{'name'} = "update?-???" if ($updates{$update}{'name'} eq "");
+	$updates{$update}{'summary'} = "Update summary not found; are you testing?" if ($updates{$update}{'summary'} eq "");
+	$updates{$update}{'description'} = "Update description not found." if ($updates{$update}{'description'} eq "");
 	print <<END
 <tr>
 	<td style='width: 15%;' ><a style='color: #808080;' href='$updates{$update}{'info'}' onclick='window.open(this.href); return false'>$updates{$update}{'name'}</a></td>
