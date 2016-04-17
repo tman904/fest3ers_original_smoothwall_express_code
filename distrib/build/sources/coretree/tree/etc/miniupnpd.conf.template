@@ -99,8 +99,8 @@ UUID
 
 # Daemon's serial and model number when reporting to clients
 # (in XML description)
-serial=1.9.20150609
-model_number=3.1
+serial=1.9160222
+model_number=3.1_igd-1_uda-1.1
 
 # UPnP permission rules
 # (allow|deny) (external port range) IP/mask (internal port range)
