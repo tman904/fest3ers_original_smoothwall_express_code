@@ -32,7 +32,7 @@ fi
 # Set model, UUID and Pres. URL
 UUID=`cat /etc/miniupnpd.uuid`
 PRES_URL="presentation_url=https://$GREEN_ADDRESS:441/cgi-bin/index.cgi"
-MODEL_NAME="model_name=$VERSION-$REVISION-$ARCH"
+MODEL_NAME="model_name=$displayVersion"
 
 # Get 'friendly' name
 FRIENDLY_NAME=friendly_name=`hostname`
