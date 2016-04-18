@@ -1,3 +1,4 @@
+./etc/miniupnpd.conf.template
 ./etc/httpd/conf/httpd.conf
 ./etc/rc.d/rc.adsl
 ./etc/rc.d/rc.halt
@@ -73,6 +74,7 @@
 ./usr/bin/smoothwall/smoothinfoCLI.pl
 ./usr/bin/smoothwall/writeproxy.pl
 ./usr/bin/smoothwall/writentpd.pl
+./usr/bin/smoothwall/writeupnp
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/smoothnet.pm
 ./usr/lib/smoothwall/smoothtype.pm
