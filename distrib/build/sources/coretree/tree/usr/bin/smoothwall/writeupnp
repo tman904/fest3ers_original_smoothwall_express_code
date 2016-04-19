@@ -11,6 +11,8 @@ while read var value; do
   esac
 done </var/smoothwall/traffic/settings
 IFS=$OIFS
+displayVersion=`perl -e 'use lib "/usr/lib/smoothwall";use header qw( :standard ); print $displayVersion;'`
+displayVersion="Smoothwall${displayVersion/ /-}"
 
 if [ ! -z $UPLOAD_SPEED ]; then UPLOAD_SPEED="bitrate_up=$UPLOAD_SPEED"; fi
 if [ ! -z $DOWNLOAD_SPEED ]; then DOWNLOAD_SPEED="bitrate_down=$DOWNLOAD_SPEED"; fi
