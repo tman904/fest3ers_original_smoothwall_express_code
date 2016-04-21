@@ -113,8 +113,7 @@ unless ($blacklist_url eq '')
 			system("/usr/sbin/squidGuard -d -c $target/update.conf -C all");
 
 			# Clear the existing blacklists, and copy the new blacklist in.
-			system("cd $dbdir; for i in domains urls; do /usr/bin/find . -name \$i\* -exec rm -f {} \\;; done");
-			system("cd $dbdir; find * -depth -type d -exec rmdir --ignore-fail-on-non-empty {} \\;");
+			system("cd $dbdir; rm -rf *");
 			system("cp -r $target/blacklists/* $dbdir");
 			system("chown -R nobody.nobody $dbdir");
 
