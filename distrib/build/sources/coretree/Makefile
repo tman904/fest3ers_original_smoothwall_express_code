@@ -49,6 +49,11 @@ distrib:
 	@(cd distrib/usr/etc; ln -s /var/smoothwall/sipproxy/siproxd.conf)
 	@(cd distrib/var/run; ln -s /var/clamav/clamd.pid)
 	
+	# Twerk upnpd.conf template with minupnpd's version.
+	@(cd distrib/etc; \
+	  set `grep "VERSION = " /build/sources/miniupnpd/Makefile`; \
+	  VER=$$3; \
+	  sed -i -e "s/SERIAL/serial=$$VER/" miniupnpd.conf.template)
 	@(cd distrib/var/smoothwall/time; ln -s /usr/share/zoneinfo/posix/Europe/London localtime)
 
 	@(cd distrib; \
