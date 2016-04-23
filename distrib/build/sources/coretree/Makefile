@@ -53,7 +53,7 @@ distrib:
 	@(cd distrib/etc; \
 	  set `grep "VERSION = " /build/sources/miniupnpd/Makefile`; \
 	  VER=$$3; \
-	  sed -i -e "s/SERIAL/serial=$$VER/" miniupnpd.conf.template)
+	  sed -i -e "s/^SERIAL$$/serial=$$VER/" miniupnpd.conf.template)
 	@(cd distrib/var/smoothwall/time; ln -s /usr/share/zoneinfo/posix/Europe/London localtime)
 
 	@(cd distrib; \
