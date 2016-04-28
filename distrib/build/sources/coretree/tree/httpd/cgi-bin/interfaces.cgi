@@ -141,7 +141,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 				$tmpmessage .= $tr{'the netmask for the red interface is invalid'}."<br />\n";
 			}
 			if ( $settings{'DEFAULT_GATEWAY'} ne "" and not &validmask( $settings{'DEFAULT_GATEWAY'} )) {
-				$tmpmessage .= $tr{'invalid default gateway'}."<br />\n";
+				$tmpmessage .= $tr{'the default gateway is invalid'}."<br />\n";
 			}
 			if ( $settings{'DNS1'} ne "" and not &validmask( $settings{'DNS1'} )) {
 				$tmpmessage .= $tr{'invalid primary dns'}."<br />\n";
@@ -153,10 +153,19 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 			     ($settings{'DNS2'} and $settings{'DNS2'} ne "" ) ) {
 				$tmpmessage .= $tr{'cannot specify secondary dns without specifying primary'}."<br />\n";
 			}
+			if ( $settings{'DNS1_OVERRIDE'} ne "" and not &validmask( $settings{'DNS1_OVERRIDE'} )) {
+				$tmpmessage .= $tr{'invalid primary dns override'}."<br />\n";
+			}
+			if ( $settings{'DNS2_OVERRIDE'} ne "" and not &validmask( $settings{'DNS2_OVERRIDE'} )) {
+				$tmpmessage .= $tr{'invalid secondary dns override'}."<br />\n";
+			}
+			if ( (not defined $settings{'DNS1_OVERRIDE'} or $settings{'DNS1_OVERRIDE'} eq "") and
+			     ($settings{'DNS2_OVERRIDE'} and $settings{'DNS2_OVERRIDE'} ne "" ) ) {
+				$tmpmessage .= $tr{'cannot specify secondary dns override without specifying primary override'}."<br />\n";
+			}
 			if ($tmpmessage eq "") {
 				( $settings{'RED_NETADDRESS'}, $settings{'RED_BROADCAST'} ) = 
 				    &bcast_and_net( $settings{'RED_ADDRESS'}, $settings{'RED_NETMASK'} );
-				}
 			}
 			else {
 				$errormessage .= $tmpmessage;
