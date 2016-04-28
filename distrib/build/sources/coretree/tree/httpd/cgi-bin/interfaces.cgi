@@ -132,31 +132,34 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 	}
 
 	if ( $settings{'RED_TYPE'} and $settings{'RED_TYPE'} ne "" ) {
+		$tmpmessage = '';
 		if ( $settings{'RED_TYPE'} eq "STATIC" ) {
 			if ( not &validip( $settings{'RED_ADDRESS'} )) {
-				$errormessage .= $tr{'the ip address for the red interface is invalid'}."<br />\n";
+				$tmpmessage .= $tr{'the ip address for the red interface is invalid'}."<br />\n";
 			}
-			elsif ( not &validmask( $settings{'RED_NETMASK'} )) {
-				$errormessage .= $tr{'the netmask for the red interface is invalid'}."<br />\n";
+			if ( not &validmask( $settings{'RED_NETMASK'} )) {
+				$tmpmessage .= $tr{'the netmask for the red interface is invalid'}."<br />\n";
 			}
-			elsif ( $settings{'DEFAULT_GATEWAY'} ne "" and not &validmask( $settings{'DEFAULT_GATEWAY'} )) {
-				$errormessage .= $tr{'invalid default gateway'}."<br />\n";
+			if ( $settings{'DEFAULT_GATEWAY'} ne "" and not &validmask( $settings{'DEFAULT_GATEWAY'} )) {
+				$tmpmessage .= $tr{'invalid default gateway'}."<br />\n";
 			}
-			elsif ( $settings{'DNS1'} ne "" and not &validmask( $settings{'DNS1'} )) {
-				$errormessage .= $tr{'invalid primary dns'}."<br />\n";
+			if ( $settings{'DNS1'} ne "" and not &validmask( $settings{'DNS1'} )) {
+				$tmpmessage .= $tr{'invalid primary dns'}."<br />\n";
 			}
-			elsif ( $settings{'DNS2'} ne "" and not &validmask( $settings{'DNS2'} )) {
-				$errormessage .= $tr{'invalid secondary dns'}."<br />\n";
+			if ( $settings{'DNS2'} ne "" and not &validmask( $settings{'DNS2'} )) {
+				$tmpmessage .= $tr{'invalid secondary dns'}."<br />\n";
+			}
+			if ( (not defined $settings{'DNS1'} or $settings{'DNS1'} eq "") and
+			     ($settings{'DNS2'} and $settings{'DNS2'} ne "" ) ) {
+				$tmpmessage .= $tr{'cannot specify secondary dns without specifying primary'}."<br />\n";
+			}
+			if ($tmpmessage eq "") {
+				( $settings{'RED_NETADDRESS'}, $settings{'RED_BROADCAST'} ) = 
+				    &bcast_and_net( $settings{'RED_ADDRESS'}, $settings{'RED_NETMASK'} );
+				}
 			}
 			else {
-				if ( (not defined $settings{'DNS1'} or $settings{'DNS1'} eq "") and
-				($settings{'DNS2'} and $settings{'DNS2'} ne "" ) ) {
-					$errormessage .= $tr{'cannot specify secondary dns without specifying primary'}."<br />\n";
-				}
-				else {
-					( $settings{'RED_NETADDRESS'}, $settings{'RED_BROADCAST'} ) = 
-					&bcast_and_net( $settings{'RED_ADDRESS'}, $settings{'RED_NETMASK'} );
-				}
+				$errormessage .= $tmpmessage;
 			}
 		}
 	}
