@@ -18,6 +18,7 @@ my (%cgiparams, %checked, %selected, %settings);
 my ($macaddress, $ignoremtutext);
 
 my $errormessage = "";
+my $tmpmessage = "";
 my $refresh = '';
 my $success = '';
 
@@ -76,40 +77,53 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 
 	# now some sanity checks of the settings we've just tried
   
+	$tmpmessage = '';
 	if ( not &validip( $settings{'GREEN_ADDRESS'} )) {
-		$errormessage .= $tr{'the ip address for the green interface is invalid'}."<br />\n";
+		$tmpmessage .= $tr{'the ip address for the green interface is invalid'}."<br />\n";
 	}
-	elsif ( not &validmask( $settings{'GREEN_NETMASK'} )) {
-		$errormessage .= $tr{'the netmask for the green interface is invalid'}."<br />\n";
+
+	if ( not &validmask( $settings{'GREEN_NETMASK'} )) {
+		$tmpmessage .= $tr{'the netmask for the green interface is invalid'}."<br />\n";
 	}
-	else {
+	if ($tmpmessage eq "") {
 		( $settings{'GREEN_NETADDRESS'}, $settings{'GREEN_BROADCAST'} ) =
 			&bcast_and_net( $settings{'GREEN_ADDRESS'}, $settings{'GREEN_NETMASK'} );
 	}
+	else {
+		$error_message .= $tmpmessage;
+	}
 
 	if ( $settings{'ORANGE_ADDRESS'} and $settings{'ORANGE_ADDRESS'} ne "" ) {
+		$tmpmessage = '';
 		if ( not &validip( $settings{'ORANGE_ADDRESS'} )) {
-			$errormessage .= $tr{'the ip address for the orange interface is invalid'}."<br />\n";
+			$tmpmessage .= $tr{'the ip address for the orange interface is invalid'}."<br />\n";
 		}
-		elsif ( not &validmask( $settings{'ORANGE_NETMASK'} )) {
-			$errormessage .= $tr{'the netmask for the orange interface is invalid'}."<br />\n";
+		if ( not &validmask( $settings{'ORANGE_NETMASK'} )) {
+			$tmpmessage .= $tr{'the netmask for the orange interface is invalid'}."<br />\n";
 		}
-		else {
+		if ($tmpmessage eq "") {
 			( $settings{'ORANGE_NETADDRESS'}, $settings{'ORANGE_BROADCAST'} ) =
 			&bcast_and_net( $settings{'ORANGE_ADDRESS'}, $settings{'ORANGE_NETMASK'} );
+		}
+		else {
+			$error_message .= $tmpmessage;
 		}
 	}
 
 	if ( $settings{'PURPLE_ADDRESS'} and $settings{'PURPLE_ADDRESS'} ne "" ) {
+		$tmpmessage = '';
 		if ( not &validip( $settings{'PURPLE_ADDRESS'} )) {
-			$errormessage .= $tr{'the ip address for the purple interface is invalid'}."<br />\n";
+			$tmpmessage .= $tr{'the ip address for the purple interface is invalid'}."<br />\n";
 		}
-		elsif ( not &validmask( $settings{'PURPLE_NETMASK'} )) {
-			$errormessage .= $tr{'the netmask for the purple interface is invalid'}."<br />\n";
+		if ( not &validmask( $settings{'PURPLE_NETMASK'} )) {
+			$tmpmessage .= $tr{'the netmask for the purple interface is invalid'}."<br />\n";
 		}
-		else {
+		if ($tmpmessage eq "") {
 			( $settings{'PURPLE_NETADDRESS'}, $settings{'PURPLE_BROADCAST'} ) = 
 			&bcast_and_net( $settings{'PURPLE_ADDRESS'}, $settings{'PURPLE_NETMASK'} ); 
+		}
+		else {
+			$error_message .= $tmpmessage;
 		}
 	}
 
