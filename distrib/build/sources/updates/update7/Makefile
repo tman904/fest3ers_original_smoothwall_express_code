@@ -6,6 +6,7 @@ UPDATE_PACKAGES = \
 		  openntpd \
 		  httpd \
 		  findutils \
+		  dhcp \
 		  dhcpcd \
 		  miniupnpd \
 		  clamav \
