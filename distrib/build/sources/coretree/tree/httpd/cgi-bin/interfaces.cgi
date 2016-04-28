@@ -90,7 +90,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 			&bcast_and_net( $settings{'GREEN_ADDRESS'}, $settings{'GREEN_NETMASK'} );
 	}
 	else {
-		$error_message .= $tmpmessage;
+		$errormessage .= $tmpmessage;
 	}
 
 	if ( $settings{'ORANGE_ADDRESS'} and $settings{'ORANGE_ADDRESS'} ne "" ) {
@@ -106,7 +106,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 			&bcast_and_net( $settings{'ORANGE_ADDRESS'}, $settings{'ORANGE_NETMASK'} );
 		}
 		else {
-			$error_message .= $tmpmessage;
+			$errormessage .= $tmpmessage;
 		}
 	}
 
@@ -123,7 +123,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 			&bcast_and_net( $settings{'PURPLE_ADDRESS'}, $settings{'PURPLE_NETMASK'} ); 
 		}
 		else {
-			$error_message .= $tmpmessage;
+			$errormessage .= $tmpmessage;
 		}
 	}
 
