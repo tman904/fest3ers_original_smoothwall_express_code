@@ -8,7 +8,6 @@ use warnings;
 my (%incaddr, %outaddr, @out);
 my $ADDRS_TO_SHOW = 5;
 my $BARS = '';
-$ENV{'QUERY_STRING'} = '';
 
 print <<END
 Pragma: no-cache
