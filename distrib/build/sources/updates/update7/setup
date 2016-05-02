@@ -38,7 +38,7 @@ echo "    Repack"
 chmod 644 /boot/initrd-${KERNEL_VERSION}.gz
 
 echo "    Tidy"
-/bin/rm -rf /root/upd5-initramfs-unpack
+/bin/rm -rf /root/upd7-initramfs-unpack
 
 popd >/dev/null 2>&1
 
