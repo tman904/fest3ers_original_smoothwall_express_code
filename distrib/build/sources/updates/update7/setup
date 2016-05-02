@@ -1,7 +1,7 @@
 #!/bin/sh
 
 OLD_KERNEL=3.4.109
-KERNEL_VERSION=3.4.111
+KERNEL_VERSION=3.4.112
 
 echo "Install Update 7."
 
@@ -16,7 +16,7 @@ echo "  Remove unused file 'acl'"
 echo "  Fix /var/run"
 chmod 1777 /var/run
 
-# Update the new initramfs (for new 3.4.111 kernel)
+# Update the new initramfs (for new 3.4.112 kernel)
 echo "  Update the initramfs"
 mkdir /root/upd7-initramfs-unpack
 pushd /root/upd7-initramfs-unpack >/dev/null 2>&1
@@ -43,7 +43,7 @@ echo "    Tidy"
 popd >/dev/null 2>&1
 
 echo "  Keep only current and one previous kernels"
-# For Update7, keep 3.4.109 (and 3.4.111) and delete 3.4.110
+# For Update7, keep 3.4.109 (and 3.4.112) and delete 3.4.110
 pushd /lib/modules >/dev/null 2>&1
 
 /bin/ls -dC1 [0-9.]* | \
@@ -51,7 +51,7 @@ pushd /lib/modules >/dev/null 2>&1
   /bin/sort -n -r -k 1 -k 2 -k 3 | \
   /usr/bin/sed -e 's/ /./g' | \
   while read a; do
-    if [ "$a" == "3.4.111" ]; then continue; fi
+    if [ "$a" == "3.4.112" ]; then continue; fi
     if [ "$a" == "3.4.109" ]; then continue; fi
     echo "        Archiving and deleting old kernel $a"
     pushd / >/dev/null 2>&1
