@@ -23,6 +23,7 @@ Update build steps
 ------------------
   - Add pkgs to build for the update to the update's makefile.
   - Add coretree files to coretree.list, one file per line, if any.
+  - NOTE: !!! If dhcpcd is included, be sure to include usr/etc/dhcpcd.conf. !!!
   - Create 'pkg'.list file to constrain which of an updated pkg's files
     are added to the update
   - Go to the main .../build/... directory
