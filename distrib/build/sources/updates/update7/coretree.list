@@ -76,6 +76,7 @@
 ./usr/bin/smoothwall/writeproxy.pl
 ./usr/bin/smoothwall/writentpd.pl
 ./usr/bin/smoothwall/writeupnp
+./usr/etc/dhcpcd.conf
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/smoothnet.pm
 ./usr/lib/smoothwall/smoothtype.pm
