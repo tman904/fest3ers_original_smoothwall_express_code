@@ -4,6 +4,12 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
+###
+# 2016-05-02
+# When dhcpcd is included in an update, be sure to add ./usr/etc/dhcpcd.conf
+# to coretree.list
+###
+
 include ../Makefile.conf
 
 PACKAGE = dhcpcd
