@@ -16,56 +16,6 @@ echo "  Remove unused file 'acl'"
 echo "  Fix /var/run"
 chmod 1777 /var/run
 
-# Update the new initramfs (for new 3.4.112 kernel)
-echo "  Update the initramfs"
-mkdir /root/upd7-initramfs-unpack
-pushd /root/upd7-initramfs-unpack >/dev/null 2>&1
-
-echo "    Unpack"
-/usr/bin/zcat /boot/initrd-${KERNEL_VERSION}.gz | /bin/cpio -id
-
-echo "    Copy udev disk/NIC rules"
-pushd etc/udev/rules.d >/dev/null 2>&1
-rm -f *
-/bin/cp /etc/udev/rules.d/* .
-popd >/dev/null 2>&1
-
-echo "    Copy the root mount info"
-/bin/grep harddisk4 /etc/fstab | /usr/bin/sed -e 's=[ \t][ \t]*/[ \t][ \t]*= /harddisk =' > etc/fstab
-
-echo "    Repack"
-/usr/bin/find . | /bin/cpio -o -H newc | /usr/bin/gzip > /boot/initrd-${KERNEL_VERSION}.gz
-chmod 644 /boot/initrd-${KERNEL_VERSION}.gz
-
-echo "    Tidy"
-/bin/rm -rf /root/upd7-initramfs-unpack
-
-popd >/dev/null 2>&1
-
-echo "  Keep only current and one previous kernels"
-# For Update7, keep 3.4.109 (and 3.4.112) and delete 3.4.110
-pushd /lib/modules >/dev/null 2>&1
-
-/bin/ls -dC1 [0-9.]* | \
-  /usr/bin/sed -e 's/\./ /g' -e 's=/$==' | \
-  /bin/sort -n -r -k 1 -k 2 -k 3 | \
-  /usr/bin/sed -e 's/ /./g' | \
-  while read a; do
-    if [ "$a" == "3.4.112" ]; then continue; fi
-    if [ "$a" == "3.4.109" ]; then continue; fi
-    echo "        Archiving and deleting old kernel $a"
-    pushd / >/dev/null 2>&1
-    /usr/bin/find ./lib/modules/$a ./boot/initrd-$a.gz ./boot/{vmlinuz,System.map}-$a | \
-        /bin/cpio -o -H newc | \
-        /usr/bin/gzip > /root/linux-$a-archive.cpio.gz
-    /bin/rm -rf /lib/modules/$a
-    /bin/rm -f /boot/initrd-$a.gz
-    /bin/rm -f /boot/{vmlinuz,System.map}-$a
-    popd >/dev/null 2>&1
-  done
-
-popd >/dev/null 2>&1
-
 echo "  Patch httpd.conf to fix excessive logging and magic file"
 /bin/bash patch-apache-conf.sh
 
@@ -73,8 +23,5 @@ echo "  Configure stock proxy to use the faster aufs instead of diskd"
 # This should not affect the filtering mod's config.
 /usr/bin/smoothwall/writeproxy.pl
 # Don't bother to restart squid since a reboot is required anyway to use the new kernel.
-
-echo "  Update grub"
-/usr/bin/perl update-grub-kernel.pl $OLD_KERNEL $KERNEL_VERSION
 
 echo "Update 7 install is complete."
