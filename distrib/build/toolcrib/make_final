@@ -241,7 +241,7 @@ fi
       build wget
       build sudo
       build linux
-      build linux-backports
+      #build linux-backports
       build linux-firmware
       build kernel-drivers
       build iptables

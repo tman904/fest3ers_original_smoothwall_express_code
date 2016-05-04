@@ -54,7 +54,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
 	    $(UDEV) lm_sensors xz pcmciautils qemu sysfsutils db squidGuard \
 	    apcupsd cacert-bundle setkerneltz \
-	    backports kernel-drivers \
+	    kernel-drivers \
 	    coretree $(ADV_PKGS) device-ids
 
 # INST_PKGS notes.
