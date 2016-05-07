@@ -355,7 +355,7 @@ function optify( field )
 	var inputval = document.getElementById(field).value;
 	if ( inputval == 'DHCP' ){
 		_show('hostname');
-		_show('ignoremtu');
+		_hide('ignoremtu');
 		_hide('ipaddress');
 		_hide('netmask');
 		_hide('gateway');
