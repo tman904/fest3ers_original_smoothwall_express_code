@@ -17,18 +17,22 @@ export ORIG_DIR=${PWD}
 # Function to unmount and clean up
 function cleanup {
   cd $ORIG_DIR
-  umount ./$1
-  rmdir $1
-  umount ./$2
-  rmdir $2
-  while true; do
-    set `grep Dirty /proc/meminfo`
-    dirty=$2
-    set `grep Writeback /proc/meminfo`
-    wb=$2
-    if [ "$dirty" -eq 0 -a "$wb" -eq 0 ]; then break; fi
-    sleep 1
-  done
+  if grep "/$1" /proc/mounts >/dev/null; then
+    umount ./$1
+    rmdir $1
+  fi
+  if grep "/$2" /proc/mounts >/dev/null; then
+    umount ./$2
+    rmdir $2
+    typeset -i i; i=0
+    flnode=`basename $fldev`
+    while true; do
+      set `cat /sys/block/$flnode/stat`
+      if [ "$9" -eq 0 ]; then i=i+1; fi
+      if [ $i -ge 10 ]; then break; fi
+      sleep .1
+    done
+  fi
 }
 
 function countdown {
@@ -191,6 +195,13 @@ mkdir -p $FL || \
 # Mount the ISO and flash; allow any known FS for flash
 mount -t iso9660 ${isoname} $CD ${MOUNT_OPT} || \
     { echo "Couldn't mount the CD or ISO image!"; exit 1; }
+typeset -i i; i=0
+while [ ! -e "/dev/${fldev}1" ]; do
+  if [ $i -gt 100 ]; then
+    { echo "Couldn't find flash partition #1!"; exit 1; }
+  fi
+  sleep .1;
+done
 mount /dev/${fldev}1 $FL || \
     { echo "Couldn't mount flash partition #1!"; exit 1; }
 
