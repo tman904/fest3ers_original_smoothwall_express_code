@@ -22,6 +22,6 @@ echo "  Patch httpd.conf to fix excessive logging and magic file"
 echo "  Configure stock proxy to use the faster aufs instead of diskd"
 # This should not affect the filtering mod's config.
 /usr/bin/smoothwall/writeproxy.pl
-# Don't bother to restart squid since a reboot is required anyway to use the new kernel.
+# Don't bother to restart squid since a reboot is required anyway to use the new libs.
 
 echo "Update 7 install is complete."
