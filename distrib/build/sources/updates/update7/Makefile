@@ -13,6 +13,7 @@ UPDATE_PACKAGES = \
 		  subversion \
 		  neon \
 		  smoothd \
+		  snort \
 		  squid \
 		  kernel-drivers \
 		  coretree
