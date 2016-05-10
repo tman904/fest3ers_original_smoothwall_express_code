@@ -71,6 +71,7 @@
 ./httpd/html/help/time.cgi.html.en
 ./httpd/html/help/urlfilter.cgi.html.en
 ./usr/bin/smoothwall/autoupdate.pl
+./usr/bin/smoothwall/backup_run
 ./usr/bin/smoothwall/smoothinfo.pl
 ./usr/bin/smoothwall/smoothinfoCLI.pl
 ./usr/bin/smoothwall/writeproxy.pl
