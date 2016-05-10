@@ -72,6 +72,8 @@ cd $BACK_DIR
 read NODE < ${DEV_FILE}
 devID=${NODE/-part1/}
 NODE="disk/by-id/$NODE"
+tmp=`readlink /dev/disk/by-id/$devID`
+simpleDev=`basename $tmp`
 
 
 # Make and mount
@@ -163,17 +165,26 @@ else
     done
     rm -rf ${BACK_DIR}/tmp
 
-    # Flush the buffers out to the drive.
-    feedback $AUTOBACK "Flushing data to backup device."
-    sleep .5
-    sync
-
     # Unmount
     feedback $AUTOBACK "Unmounting backup device."
     sleep .5
     (sleep .5; umount $MOUNT_PT >/dev/null 2>&1)&
     inotifywait -q -e unmount $MOUNT_PT >/dev/null 2>&1
     while grep -q " $MOUNT_PT " /proc/mounts; do sleep .1; done
+
+    # Flush the buffers out to the drive.
+    feedback $AUTOBACK "Waiting for backup device to become idle."
+    sync
+    (
+      typeset -i i; i=0;
+      while true; do
+        set `cat /sys/block/$simpleDev/stat`
+        if [ "$9" -eq 0 ]; then i=i+1; fi
+        if [ $i -ge 10 ]; then break; fi
+        sleep .1
+      done
+    )
+
 
     rmdir $MOUNT_PT
   fi  # type is good
