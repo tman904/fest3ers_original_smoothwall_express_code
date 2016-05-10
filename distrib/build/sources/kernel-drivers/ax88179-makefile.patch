@@ -12,7 +12,7 @@
 -#KDIR	= /root/Desktop/Android/UBIQCONN/android-3.0
 -SUBLEVEL= $(shell uname -r | cut -d '.' -f 3 | cut -d '.' -f 1 | cut -d '-' -f 1 | cut -d '_' -f 1)
 +KDIR	= ../../linux/linux
-+SUBLEVEL= $(shell $(KERNEL_VER) | cut -d '.' -f 3 | cut -d '.' -f 1 | cut -d '-' -f 1 | cut -d '_' -f 1)
++SUBLEVEL= $(shell echo $(CURRENT) | cut -d '.' -f 3 | cut -d '.' -f 1 | cut -d '-' -f 1 | cut -d '_' -f 1)
  USBNET	= $(shell find $(KDIR)/include/linux/usb/* -name usbnet.h)
  
  ifneq (,$(filter $(SUBLEVEL),14 15 16 17 18 19 20 21))

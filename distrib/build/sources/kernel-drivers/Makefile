@@ -8,7 +8,7 @@ PACKAGE = kernel-drivers
 
 VERSION = $(KERNEL_VERSION)
 
-export KERNEL_DIR = $(SOURCES_DIR)/linux$(KERNEL_TYPE)/linux
+export KERNEL_DIR = $(SOURCES_DIR)/linux/linux
 export DRIVER_DIR = $(SOURCES_DIR)/${PACKAGE}
 
 IGB_VER = 5.3.3.2
