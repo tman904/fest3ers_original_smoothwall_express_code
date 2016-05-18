@@ -549,6 +549,10 @@ END
       mv settings settings-FRESH
     )
     (
+      cd /harddisk/var/smoothwall/patches;
+      mv installed installed-FRESH
+    )
+    (
       cd /harddisk/var/smoothwall/outgoing
       mv config config-FRESH
     )
@@ -567,6 +571,12 @@ END
       cp productdata-FRESH productdata
       cp settings settings-RESTORED
       cp settings-FRESH settings
+    )
+    # upgrade patches
+    (
+      cd /harddisk/var/smoothwall/main;
+      cp installed installed-RESTORED
+      cp installed-FRESH installed
     )
 
     # Upgrade udev rules
@@ -647,6 +657,7 @@ END
     # Sweep the detritus under the rug
     (cd /harddisk/etc; rm -f {passwd,group,shadow}-{RESTORED,FRESH})
     (cd /harddisk/var/smoothwall/main; rm -f *-{RESTORED,FRESH})
+    (cd /harddisk/var/smoothwall/patches; rm -f *-{RESTORED,FRESH})
     (cd /harddisk/var/smoothwall/outgoing; rm -f *-{RESTORED,FRESH})
     (cd /tmp/; rm -f upgrade-outgoing*)
     GRUB_CMD="$GRUB_CMD --recheck"
