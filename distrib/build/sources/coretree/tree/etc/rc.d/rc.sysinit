@@ -215,6 +215,23 @@ sha1sum < /usr/etc/ssh_host_rsa_key | sed -e 's/ -$//' >/usr/etc/token3.sum
 chgrp nobody /usr/etc/token[123].sum
 chmod g=r /usr/etc/token[123].sum
 
+# Ensure URL Filter's blacklists' custom dirs/files exist
+echolog "e" "s" "" "(Re)make custom blacklist files"
+pushd /var/smoothwall/urlfilter/blacklists >/dev/null 2>&1
+mkdir -p custom/{allowed,blocked}
+chown nobody:nobody custom/{allowed,blocked}
+chmod 2755 custom/{allowed,blocked}
+for tDir in custom/allowed custom/blocked; do
+  for tFile in urls domains expressions files; do
+    if [ ! -e $tDir/$tFile ]; then
+      touch $tDir/$tFile
+      chown nobody:nobody $tDir/$tFile
+      chmod 644 $tDir/$tFile
+    fi
+  done
+done
+popd >/dev/null 2>&1
+
 echolog "e" "s" "" "Generate UPNP UUID"
 /usr/bin/uuidgen >/etc/miniupnpd.uuid
 
