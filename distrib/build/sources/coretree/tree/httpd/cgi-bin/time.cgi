@@ -246,9 +246,9 @@ END
 
 foreach (@timezones) {
 	chomp;
-	my $file = $_;
-	$file =~ s/_/ /g;
-	print "		<option value='$file' $selected{'TIMEZONE'}{$file}>$_\n";
+	my $displayValue = $_;
+	$displayValue =~ s/_/ /g;
+	print "		<option value='$_' $selected{'TIMEZONE'}{$_}>$displayValue</option>\n";
 }
 
 print <<END
