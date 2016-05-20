@@ -1,0 +1,75 @@
+<p style="margin:0 0 0 0;">A number of improvements, fixes and package updates.</p>
+[b][u]Version bumps[/u][/b]
+[list]
+[*]Apache 2.2.31
+[*]ClamAV 0.99.1
+[*]DHCPCD the client daemon) 6.10.2
+[*]Findutils 4.5.19
+[*]IPset 6.29
+[*]Linux 3.4.111
+[*]Linux-Firmware 20160421
+[*]Miniupnpd 2.0.
+[*]Neon 0.30.1
+[*]OpenNTPD 5.7p4
+[*]OpenSSL 1.0.1s
+[*]Snort 2.9.8.2
+[*]Squid 3.5.15
+[*]Subversion 1.9.3.
+[/list]
+
+
+[b][u]Build system[/u][/b]
+[list]
+[*]A few build system housekeeping and maintenance tasks were addressed.
+[*]host_check.sh did not check for the presence of zip/unzip. Zip is needed to build the zip-compressed install image for flash drives.
+[*]A few barnacles in the build system (some remnants from 3.0 and some from early 3.1 development) have been scraped off.
+[*]We equalized the squid build options used for the stock proxy feature and for the Filtering mod to partially prepare to integrate the Filtering Mod into the base system.
+[/list]
+
+
+[b][u]New and retiring packages[/u][/b]
+[list]
+[*]We added driver ax88179_178a for that flavor of USB NAD.
+[*]We added package usb-mode-switch. It is needed to allow some cellular modems to be used as the RED interface.
+[*]We added package arpscan to the build to prepare to integrate the DHCPWOL Mod into the base system.
+[*]We converted the last uses of net-tools (e.g., ifconfig and route) to tools in the iproute2 package. All parts of the system should now use tools from the iproute2 package.
+[/list]
+
+
+[b][u]General system[/u][/b]
+[list]
+[*]There is a known video driver problem with linux 3.4.110. So when Update7 is applied, we delete Linux 3.4.110 and keep 3.4.109 as the 'previous' kernel to use if 3.4.111 doesn't work.
+[*]Several drivers from linux 4.2 backports are included (including alx and USB drivers). This should slightly improve support for newer hardware.
+[*]On virtual systems, the advanced installer now works when the flash drive is VIRTIO.
+[*]rc.netaddress.down needed two variables quoted. This caused a harmless 'error' to be displayed during installation.
+[*]rc.network still referenced ip_nat* and ip_conntrack*. These were renamed to nf_nat* and nf_conntrack* a while ago; we had overlooked that change.
+[*]rc.halt will now shut down the UPS when so configured. There was an incorrect path.
+[*]logrotate.base permissions were incorrect.
+[*]The boot partition's 'boot' flag is now set. The bios_grub partition is no longer created. This may help booting on some UEFI-capable platforms that don't quite follow the spec.
+[*]There were intermittent problems with logrotate. This feature should work smoothly now.
+[*]The 'magic' file that httpd uses wasn't where the config file said it was.
+[*]We increased the smoothd timeout up to 60 seconds to prevent the UI from timing out incorrectly during long operations.
+[/list]
+
+
+[b][u]User interface[/u][/b]
+[list]
+[*]Most of the UI pages now conform to HTML specifications.
+[*]The DHCP UI now places a box around the DHCP, leases and static assignment boxes to visually group them together. (Actually, it was fixed a while ago; this just closes the bug report.)
+[*]URL Filter now has a help file.
+[*]We polished the smoothinfo UI and report some more.
+[*]IPSEC VPN status displays properly again.
+[*]We rewrote the time feature's help text to reflect the changes made since 3.0.
+[/list]
+
+
+[b][u]Features[/u][/b]
+[list]
+[*]We changed squid's disk cache daemon from diskd to the much faster aufs; feeding files from squid's cache should now be much faster than moderate-speed DSL.
+[*]We now build USB serial drivers with the kernel. Some of them are are needed for cellular modems.
+[*]We enhanced the PPP setup UI to allow the use of cellular modems.
+[*]URL Filter now deletes the existing blacklists when it updates. Previously, when the upstream source changed, bits of the old blacklists remained.
+[*]The time feature now always uses {0,1,2,3}.pool.ntp.org servers when the time is set via the daemon; the admin's choice is added when it is not blank. This gives the time daemon the chance to find the 'best' server to use. During system startup as soon as RED is up and when the system time is set periodically, the admin's choice of server (or pool.ntp.org if blank) is used to set the system time.
+[*]We improved UPnP support. It should work for many more games and programs. It uses IGD v1 because some systems do not implement IGD v2 properly.
+[/list]
+<p style="margin:5pt 0 0 0"><b><u>Standard warning</u></b><br />Caution: Some of this update's changes <u>may</u> break some 'homebrew' modifications or customisations which may leave your system inoperable. Check for updates in your mods' threads in <a href='http://community.smoothwall.org' target='blank'>the forum</a> before you apply this update. </p><p style="color:#c00000; text-align:center; margin:5pt 0 0 0"><b>Reboot after installing this update to start the updated kernel.</b></p>
