@@ -1,7 +1,0 @@
-s=\[\*]\(.*\)=<li>\1</li>=g
-s=\[/b]=</b></p>=g
-s=\[/list]=</ul>=g
-s=\[/u]=</u>=g
-s=\[b]=<p style\="margin:5pt 0 0 0;"><b>=g
-s=\[list]=<ul style\="margin:0 0 0 0;">=g
-s=\[u]=<u>=g
