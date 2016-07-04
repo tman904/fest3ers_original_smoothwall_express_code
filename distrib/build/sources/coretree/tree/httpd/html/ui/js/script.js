@@ -24,6 +24,10 @@ function displayHelp(url) {
 	window.open("/cgi-bin/help.cgi?"+url,"disposableHelpWindow","resizable=yes,status=no,scrollbars=yes,width=500,height=500");
 }
 
+function openPopup(url) {
+	window.open(url,"disposableWindow","resizable=yes,status=no,scrollbars=yes,width=400,height=600");
+}
+
 /* Validation functions and related options */
 
 function toggle_mark(field)
