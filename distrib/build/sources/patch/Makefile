@@ -7,18 +7,22 @@
 include ../Makefile.conf
 
 PACKAGE = patch
-VERSION = 2.6.1
+VERSION = 2.7.5
 
 BASE_URL = ftp://ftp.gnu.org/gnu/patch
 
-ifeq ($(BUILD_PHASE), Phase_3)
+ifeq ($(BUILD_PHASE), Stage_3)
 CONFIG_OPTS += --prefix=$(TOOLS_DIR)
 endif
 
 INSTALL = yes
 
 install: compile
+ifeq ($(BUILD_PHASE), Stage_3)
+	@$(MAKE) -C $(COMPILE_DIR) install
+else
 	@mkdir -p $(PKG_ROOT)
-	@$(MAKE) -C $(COMPILE_DIR) prefix=$(PKG_ROOT)$(PKG_DIR) install
+	@$(MAKE) -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT)$(PKG_DIR) install
+endif
 
 include ../Makefile.rules

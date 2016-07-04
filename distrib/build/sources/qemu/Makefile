@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = qemu
-VERSION = 2.3.0
+VERSION = 2.6.0
 
 BASE_URL = http://wiki.qemu-project.org/download
 EXTENSION = .tar.bz2

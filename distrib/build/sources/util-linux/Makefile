@@ -7,8 +7,10 @@
 include ../Makefile.conf
 
 PACKAGE = util-linux
-VER_MM = 2.21
-VERSION = $(VER_MM).2
+VER_MM = 2.27
+VERSION = $(VER_MM)
+
+export NO_CHECK_CERT = 1
 
 BASE_URL = http://www.kernel.org/pub/linux/utils/util-linux/v$(VER_MM)/
 
@@ -18,17 +20,22 @@ CONFIGURE = yes
 COMPILE = yes
 INSTALL = yes
 
+CONFIG_OPTS = \
+            --prefix=/tools                \
+            --without-python               \
+            --disable-makeinstall-chown    \
+            --disable-silent-rules         \
+            --without-systemdsystemunitdir \
+            PKG_CONFIG=""
+
 configure: $(DIR)/
 	cd $(DIR); ./configure $(CONFIG_OPTS) --prefix=$(TOOLS_DIR) 
 
 compile: configure
-	$(MAKE) $(JOBS) -C $(COMPILE_DIR)/mount BLKID_LIBS="-lblkid -luuid" mount umount
-	$(MAKE) $(JOBS) -C $(COMPILE_DIR)/text-utils more
+	$(MAKE) $(JOBS) -C $(COMPILE_DIR)
 
 install: compile
-	cd $(COMPILE_DIR); cp mount/.libs/umount mount/.libs/mount text-utils/more $(TOOLS_DIR)/bin
-	cd $(COMPILE_DIR); cp libblkid/src/.libs/libblk*.so*  $(TOOLS_DIR)/lib
-	cd $(COMPILE_DIR); cp libuuid/src/.libs/libuuid*.so*  $(TOOLS_DIR)/lib
+	cd $(COMPILE_DIR); make install
 endif
 
 

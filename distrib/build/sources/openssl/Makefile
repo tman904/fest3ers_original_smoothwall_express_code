@@ -6,7 +6,7 @@
 
 include ../Makefile.conf
 
-OPENSSL_VER = 1.0.1t
+OPENSSL_VER = 1.0.2h
 
 PACKAGE = openssl
 VERSION = $(OPENSSL_VER)
@@ -37,7 +37,7 @@ configure: $(DIR)/
 	  patch < ../Makefile-MANDIR.patch);
 
 compile: configure
-	@$(MAKE) -C $(PACKAGE)-$(VERSION)
+	@$(MAKE) $(JOBS) -C $(PACKAGE)-$(VERSION)
 
 install: compile
 	@mkdir -p $(PKG_ROOT)

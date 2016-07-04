@@ -10,37 +10,32 @@ include ../Makefile.versions
 
 PACKAGE = klibc
 VER_MM = 2.0
-VERSION = $(VER_MM).1
+VERSION = $(VER_MM).4
 
-EXTENSION = .tar.bz2
+EXTENSION = .tar.xz
 
 BASE_URL = http://www.kernel.org/pub/linux/libs/klibc/$(VER_MM)/
 
 DOWNLOAD = yes
 download:
-	@$(DL_CMD) $(BASE_URL)/$(TARBALL)$(EXTENSION) $(MD5)
+	@NO_CHECK_CERT= $(DL_CMD) $(BASE_URL)/$(TARBALL)$(EXTENSION) $(MD5)
 
 CONFIGURE = yes
 configure: patch
 	true
 
 COMPILE = yes
-
 compile: configure
-	cd ../linux$(KERNEL_TYPE)/linux-$(KERNEL_VER); if [ ! -h include/asm ]; then \
-	  ln -s ../arch/x86/include/asm include/asm; fi; \
-	  cp arch/x86/include/generated/asm/* arch/x86/include/asm/
 	cd $(DIR); \
-	  make mrproper; \
-	  ln -sf ../../linux$(KERNEL_TYPE)/linux-$(KERNEL_VER) linux; \
-	  sed -i -e 's/^\(export HOSTCFLAGS.*\)/\1 $(CFLAGS)/' Makefile; \
-	  make $(JOBS)
+	  $(MAKE) $(JOBS) V=1 prefix=/usr KLIBCKERNELSRC=/build/sources/kernel-headers/linux-$(KERNEL_VER)/usr/
+
 
 INSTALL = yes
 install: compile
-	@mkdir -p $(PKG_ROOT)
+	@mkdir -p $(PKG_ROOT)$(PKG_DIR)
 	cd $(DIR); \
-	  make prefix=$(PKG_ROOT)$(PKG_DIR) install
+	  sed -i -e 's=SRC) ARCH=SRC)/../ ARCH=' scripts/Kbuild.install; \
+	  $(MAKE) V=1 INSTALLROOT=$(PKG_ROOT) prefix=/usr KLIBCKERNELSRC=/build/sources/kernel-headers/linux-$(KERNEL_VER)/usr install
 
 CLEAN = yes
 clean:
