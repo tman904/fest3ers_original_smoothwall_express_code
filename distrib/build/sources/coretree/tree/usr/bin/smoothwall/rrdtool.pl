@@ -64,8 +64,9 @@ sub ProcessInterface
 #         $_[1]: interface (ie, eth0/eth1/eth2/ppp0)
 
 	# get network interface info
-	my $in = `ifconfig $_[1] |grep bytes|cut -d":" -f2|cut -d" " -f1`;
-	my $out = `ifconfig $_[1] |grep bytes|cut -d":" -f3|cut -d" " -f1`;
+	my $tmp = `ip -s link show dev eth0`;
+	my ($in) = ($tmp =~ /RX:[^\n]+\s+(\d+)/);
+	my ($out) = ($tmp =~ /TX:[^\n]+\s+(\d+)/);
 
 	# remove eol chars
 	chomp($in);

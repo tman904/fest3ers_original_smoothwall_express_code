@@ -604,7 +604,6 @@ sub get_ip
 
 	my $method = $host_v{$curr_host}{'detect_method'};
 	my $ip;
-	my $ifconfig_bin = '/sbin/ifconfig';
 
 	print "get_ip: \"$curr_host\" trying method: $method\n" if($debug>1);
 
@@ -631,12 +630,12 @@ sub get_ip
 			$EGID = $GID;
 			$ENV{PATH} = "/bin:/usr/bin:/sbin:/usr/sbin";
 			$ENV{ENV} = '';
-			exec "$ifconfig_bin $host_v{$curr_host}{'iface'}";
+			exec "/usr/sbin/ip addr show dev $host_v{$curr_host}{'iface'}";
 		}	
 	
-		if(s/^.*inet[ \t:]*(addr|adr)*[ \t:]*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*$/$2/s) {
+		if(s/^.*inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\/.*$/$2/s) {
 			if(/^192\.168\..*$/ || /^10\..*$/ || /^172\.((1[6-9])|(2\d)|(3[01]))\..*$/) {
-				output("IP on $host_v{$curr_host}{'iface'} is an Private IP ($_).  Cannot Update",1,2,0);
+				output("IP on $host_v{$curr_host}{'iface'} is a Private IP ($_).  Cannot Update",1,2,0);
 			} else { 
 				s/[\n\ \t]//g;
 				$ip = $_;
