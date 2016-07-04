@@ -18,8 +18,8 @@ else
 endif
 
 # Make it easy to switch between the two
-export UDEV = udev
-export UDEVunused = eudev
+export UDEV = eudev
+export UDEVunused = udev
 
 # Document these pkgs, don't install.
 # Some of these are retirees.
@@ -35,12 +35,14 @@ KVM_PKGS = samba
 
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    daq libnet libnetfilter_queue libnfnetlink attr libcap-ng \
+	    libnetfilter_acct libnetfilter_conntrack libnetfilter_cthelper \
+	    libnetfilter_cttimeout libnetfilter_log libnftnl \
 	    libcap fontconfig glib cairo libffi readline libpcap sqlite-autoconf \
 	    libosip2 libpcap pango zlib slang pixman libxml2 libusb-compat libusb \
 	    kmod gmp mpfr mpc popt yaml perl-mods libcap-ng rsync \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \
-	    ncurses vim less sed flex gettext net-tools inetutils iputils \
-	    whois perl bash bzip2 kbd e2fsprogs grep gzip module-init-tools \
+	    ncurses vim less sed flex gettext inetutils iputils \
+	    whois perl bash bc bzip2 kbd e2fsprogs grep gzip module-init-tools \
 	    procinfo-ng procps-ng psmisc shadow sysklogd logrotate sysvinit tar \
 	    util-linux joe wget iptables ipset ipbatch pciutils usbutils \
 	    linux$(KERNEL_TYPE) openssl openssh httpd smoothd squid freefont \
@@ -223,6 +225,7 @@ endif
 	@#rm -f distrib/etc/resolv.conf
 	@find distrib -name .gitignore -exec rm -f {} \;
 	@ln -s /var/smoothwall/vpn/ipsec.conf distrib/etc/ipsec.conf
+	@ln -sf /usr/bin/hostname distrib/bin/hostname
 	@cd distrib; chown -R root:root usr/share/ntop usr/etc/ntop
 	@cd distrib/etc; mkdir -p apcupsd/scripts && chown root:root apcupsd/scripts && chmod 755 apcupsd/scripts
 	@cd distrib/etc; chmod 644 logrotate.{base,conf,d/*}
@@ -311,7 +314,7 @@ all: cdrom cdrom/smoothwall.tgz extracontent
 clean:
 	@echo -n " $(PACKAGE)"
 	@rm -f Media.mediaISO.built
-	@rm -f $(BASENAME)$(PRODUCT_EXTRA)-$(mTUPLE).img
+	@rm -f *.img
 	@rm -rf cdrom cdrom-dev offroad distrib distrib-dev distrib-doc klibc temp
 	@make --no-print-directory -C cdromboot clean >/dev/null 2>&1
 	@make --no-print-directory -C installroot clean >/dev/null 2>&1
