@@ -29,7 +29,7 @@ sub tooltip
 	my $oplist;
 
 	foreach my $option ( keys %$options ) {
-		$oplist .= "this.$option = '$options->{$option}';"
+		$oplist .= "this.$option = '$options->{$option}';";
 	}		
 	return "onMouseOver=\"$oplist return escape( $tip );\"";
 }
