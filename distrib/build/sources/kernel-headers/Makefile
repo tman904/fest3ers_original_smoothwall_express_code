@@ -31,15 +31,15 @@ endif
 ifeq ($(BUILD_PHASE), Final)
 	+mkdir -p $(PKG_ROOT); \
 	cd linux-$(KERNEL_VER); \
-	  make mrproper
+	  make ${JOBS} mrproper
 	cd linux-$(KERNEL_VER); \
 	  sed -e 's/^CONFIG_LOCALVERSION=.*$$/CONFIG_LOCALVERSION="$(KERNEL_TYPE)"/' ../../linux.config$(CFG_TYPE) > .config
 	cd linux-$(KERNEL_VER); \
-	  make prepare
+	  make ${JOBS} prepare
 	cd linux-$(KERNEL_VER); \
-	  make headers_check
+	  make ${JOBS} headers_check
 	cd linux-$(KERNEL_VER); \
-	  make INSTALL_HDR_PATH=$(PKG_ROOT)$(PKG_DIR) headers_install
+	  make ${JOBS} INSTALL_HDR_PATH=$(PKG_ROOT)$(PKG_DIR) headers_install
 	cd linux-$(KERNEL_VER); \
 	  find $(PKG_ROOT)$(PKG_DIR)/include \( -name .install -o -name ..install.cmd \) -delete
 endif
