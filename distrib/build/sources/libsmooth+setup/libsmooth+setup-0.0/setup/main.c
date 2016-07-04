@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	newtInit();
 	newtCls();
 
-	newtDrawRootText(0, 0, "Smoothwall " PRODUCT_NAME PRODUCT_EXTRA " (" PRODUCT_ARCH ") -- http://smoothwall.org/");
+	newtDrawRootText(0, 0, TITLE " -- http://smoothwall.org/");
 	newtPushHelpLine(ctr[TR_HELPLINE]);		
 
 	if (automode == 0)
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 		
 		usbfail = 1;
 				
-		if (newtWinChoice(TITLE, ctr[TR_NO], ctr[TR_YES],
+		if (newtWinChoice(ctr[TR_RESTORE_CONFIGURATION], ctr[TR_NO], ctr[TR_YES],
 			ctr[TR_RESTORE_LONG]) != 1)
 		{
 			if (!(handlerestore()))
@@ -250,7 +250,7 @@ EXIT:
 	if (automode == 1)
 	{
 		if (autook)
-			newtWinMessage(TITLE, ctr[TR_OK], ctr[TR_SETUP_FINISHED]);
+			newtWinMessage("", ctr[TR_OK], ctr[TR_SETUP_FINISHED]);
 		else
 			newtWinMessage(ctr[TR_WARNING], ctr[TR_OK], ctr[TR_SETUP_NOT_COMPLETE]);
 	}
@@ -273,7 +273,7 @@ EXIT:
 	{
 		if (rebootrequired)
 		{
-			if (newtWinChoice(TITLE, ctr[TR_YES], ctr[TR_NO],
+			if (newtWinChoice("", ctr[TR_YES], ctr[TR_NO],
 				ctr[TR_DO_YOU_WANT_TO_REBOOT]) != 2)
 			{
 				doreboot = 1;

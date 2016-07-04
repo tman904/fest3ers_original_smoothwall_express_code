@@ -720,19 +720,19 @@ int dnsgatewaymenu(void)
 	entries[DNS1].text = ctr[TR_PRIMARY_DNS];
 	strcpy(temp, ""); findkey(kv, "DNS1", temp);
 	values[DNS1] = strdup(temp);
-	entries[DNS1].value = (const char **) &values[DNS1];
+	entries[DNS1].value = (char **) &values[DNS1];
 	entries[DNS1].flags = 0;
 	
 	entries[DNS2].text = ctr[TR_SECONDARY_DNS];
 	strcpy(temp, ""); findkey(kv, "DNS2", temp);
 	values[DNS2] = strdup(temp);
-	entries[DNS2].value = (const char **) &values[DNS2];
+	entries[DNS2].value = (char **) &values[DNS2];
 	entries[DNS2].flags = 0;
 	
 	entries[DEFAULT_GATEWAY].text = ctr[TR_DEFAULT_GATEWAY];
 	strcpy(temp, ""); findkey(kv, "DEFAULT_GATEWAY", temp);
 	values[DEFAULT_GATEWAY] = strdup(temp);
-	entries[DEFAULT_GATEWAY].value = (const char **)  &values[DEFAULT_GATEWAY];
+	entries[DEFAULT_GATEWAY].value = (char **)  &values[DEFAULT_GATEWAY];
 	entries[DEFAULT_GATEWAY].flags = 0;
 	
 	entries[DNSGATEWAY_TOTAL].text = NULL;

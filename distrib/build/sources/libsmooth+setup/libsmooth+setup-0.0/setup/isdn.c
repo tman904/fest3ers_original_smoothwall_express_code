@@ -302,7 +302,7 @@ void handlemoduleparams(void)
 {
 	struct keyvalue *kv = initkeyvalues();
 	char moduleparams[STRING_SIZE] = "";
-	const char *values[] = { moduleparams, NULL };	/* pointers for the values. */
+	char *values[] = { moduleparams, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
 	int rc;
@@ -518,7 +518,7 @@ void handleisdnmsn(void)
 {
 	struct keyvalue *kv = initkeyvalues();
 	char msn[STRING_SIZE] = "";
-	const char *values[] = { msn, NULL };	/* pointers for the values. */
+	char *values[] = { msn, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
 	int rc;

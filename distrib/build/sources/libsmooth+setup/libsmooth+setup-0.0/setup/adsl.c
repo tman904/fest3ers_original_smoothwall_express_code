@@ -328,7 +328,7 @@ void handleothersettings(void)
 	char vpi[STRING_SIZE] = "";
 	char vci[STRING_SIZE] = "";
 	struct keyvalue *kv = initkeyvalues();
-	const char *values[] = { vpi, vci, NULL };	/* pointers for the values. */
+	char *values[] = { vpi, vci, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "VPI:", &values[0], 0,}, { "VCI:", &values[1], 0,}, { NULL, NULL, 0 } };
 	int rc;

@@ -4,6 +4,7 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
+include ../../../Makefile
 include ../../../Makefile.versions
 
 CC=gcc 
@@ -36,7 +37,9 @@ libsmooth.o: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)
 
 %.o : %.c
-	$(COMPILE) $< -o $@
+	$(COMPILE) \
+	  -D TITLE='"Smoothwall $(PRODUCT_NAME) $(PRODUCT_VERSION)-$(REVISION)$(PRODUCT_EXTRA)-$(mARCH)"' \
+	  $< -o $@
 		
 english.o : english.c
 #german.o : german.c

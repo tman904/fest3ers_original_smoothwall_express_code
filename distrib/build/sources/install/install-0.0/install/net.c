@@ -45,10 +45,10 @@ static int gettarballurl(char *url)
 {
 	const char *values[] = {	NULL, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
-		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
+		{ { "", (char **) &values[0], 0,}, { NULL, NULL, 0 } };
 	int rc;
 	
-	rc = newtWinEntries(TITLE, ctr[TR_ENTER_URL],
+	rc = newtWinEntries(ctr[TR_ENTER_TARBALL_URL], ctr[TR_ENTER_URL],
 		60, 5, 5, 50, entries, ctr[TR_OK], ctr[TR_CANCEL], NULL);
 		
 	strncpy(url, values[0], STRING_SIZE);

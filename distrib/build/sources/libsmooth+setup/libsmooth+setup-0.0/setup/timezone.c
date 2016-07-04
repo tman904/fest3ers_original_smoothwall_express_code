@@ -25,7 +25,7 @@ static char *filenames[MAX_FILENAMES];
 static char *displaynames[MAX_FILENAMES];
 
 static int process(char *prefix, char *path);
-static int cmp(void *s1, void *s2);
+static int cmp(const void *s1, const void *s2);
 
 int handletimezone(void)
 {
@@ -145,7 +145,7 @@ static int process(char *prefix, char *path)
 }
 
 /* Small wrapper for use with qsort(). */		
-static int cmp(void *s1, void *s2)
+static int cmp(const void *s1, const void *s2)
 {
-	return (strcmp(* (char **) s1, * (char **) s2));
+	return (strcmp(* (char * const *) s1, * (char * const *) s2));
 }

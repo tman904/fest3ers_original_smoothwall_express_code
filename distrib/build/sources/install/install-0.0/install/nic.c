@@ -61,7 +61,7 @@ int networkmenu(struct keyvalue *ethernetkv)
 					snprintf(cardinfo, STRING_SIZE, "%s", description);
 
 				sprintf(message, ctr[TR_FOUND_NIC], cardinfo);
-				newtWinMessage(TITLE, ctr[TR_OK], message);
+				newtWinMessage(ctr[TR_CONFIGURE_NETWORKING], ctr[TR_OK], message);
 			}		
 		}			
 		else if (rc == 2)

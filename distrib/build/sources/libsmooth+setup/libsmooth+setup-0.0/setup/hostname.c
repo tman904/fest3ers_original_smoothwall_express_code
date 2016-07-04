@@ -21,7 +21,7 @@ int handlehostname(void)
 {
 	char hostname[STRING_SIZE] = "";
 	struct keyvalue *kv = initkeyvalues();
-	const char *values[] = { hostname, NULL };	/* pointers for the values. */
+	char *values[] = { hostname, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { "", &values[0], 0,}, { NULL, NULL, 0 } };
 	int rc;

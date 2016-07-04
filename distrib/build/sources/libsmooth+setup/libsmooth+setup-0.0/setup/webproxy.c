@@ -22,7 +22,7 @@ int handlewebproxy(void)
 	char server[STRING_SIZE] = "";
 	char port[STRING_SIZE] = "";
 	struct keyvalue *kv = initkeyvalues();
-	const char *values[] = { server, port, NULL };	/* pointers for the values. */
+	char *values[] = { server, port, NULL };	/* pointers for the values. */
 	struct newtWinEntry entries[] =
 		{ { ctr[TR_HOSTNAMEC], &values[0], 0,}, { ctr[TR_PORTC], &values[1], 0 }, { NULL, NULL, 0 } };
 	int rc = 0;
