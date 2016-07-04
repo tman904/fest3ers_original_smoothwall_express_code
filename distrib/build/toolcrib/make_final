@@ -45,9 +45,12 @@ fi
 cd /build
 export BUILD_PHASE="Final"
 
+# Permanent: ensure {,u}mount are not setuid in /tools.
+/tools/bin/chmod u-s /tools/bin/{,u}mount
+
 # Be sure /proc is mounted
 #
-if grep proc /etc/mtab; then umount /proc >/dev/null 2>&1; fi
+if /tools/bin/grep proc /etc/mtab; then /tools/bin/umount /proc >/dev/null 2>&1; fi
 /tools/bin/mount -t proc proc /proc
 
 # Get our functions
@@ -131,9 +134,6 @@ fi
       build dejagnu
       build gettext
       build pkg-config
-      JOBS=$JOBS_UP
-      build net-tools
-      JOBS=$JOBS_MP
       build inetutils
       touch crumbs/Final.grp1.compiled
     fi
@@ -156,9 +156,11 @@ fi
 
       # udev depends on util-linux and kmod
       build util-linux
+      build e2fsprogs
       build kmod
       # libusb depends on libudev
-      build udev
+      build gperf
+      build eudev
       build libusb
       build libusb-compat
       build cgilib
@@ -173,11 +175,23 @@ fi
       build cairo
       build pango
       build openssl
+      build sqlite
+      build unbound
+      build libevent
+      build nspr
+      build nss
       build neon
       build libosip2
+      build libmnl
       build libnet
       build libnfnetlink
+      build libnetfilter_acct
+      build libnetfilter_conntrack
+      build libnetfilter_cthelper
+      build libnetfilter_cttimeout
+      build libnetfilter_log
       build libnetfilter_queue
+      build libnftnl
       JOBS=$JOBS_UP
       build slang
       JOBS=$JOBS_MP
@@ -200,6 +214,7 @@ fi
       build autoconf
       build automake
       build bash
+      build bc
       build file
       build libtool
       build readline
@@ -207,7 +222,6 @@ fi
       build bzip2
       build diffutils
       build kbd
-      build e2fsprogs
       build grep
       build gzip
       build make
@@ -235,7 +249,6 @@ fi
       build sysvinit
       build tar
       build joe
-      build libmnl
       build db
       build openldap
       build wget
@@ -249,8 +262,6 @@ fi
       build xtables-addons
       build ipbatch
       build klibc
-      build gperf
-      #build eudev
       build linux-atm
       touch crumbs/Final.grp4.compiled
     fi
@@ -282,7 +293,6 @@ fi
 
       # daq (and snort) version check depend on cacert-bundle
       build daq
-      build sqlite
       build httpd
       build cron
       JOBS=$JOBS_UP
