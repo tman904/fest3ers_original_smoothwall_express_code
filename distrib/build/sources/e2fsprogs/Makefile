@@ -24,8 +24,15 @@ endif
 
 ifeq ($(BUILD_PHASE), Final)
 
-CONFIG_OPTS += --prefix="" --with-root-prefix="" --enable-elf-shlibs \
-	      --enable-verbose-makecmds
+CONFIG_OPTS += --prefix=/usr           \
+               --bindir=/bin           \
+               --with-root-prefix=""   \
+               --enable-elf-shlibs     \
+               --disable-libblkid      \
+               --disable-libuuid       \
+               --disable-uuidd         \
+               --disable-fsck
+
 
 PATCH = yes
 
@@ -38,7 +45,6 @@ install: compile
 	@mkdir -p $(PKG_ROOT)
 	make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	make -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install-libs
-	chmod -v u+w $(PKG_ROOT)$(PKG_DIR)/lib/{libblkid,libcom_err,libe2p,libext2fs,libss,libuuid}.a
 endif
 	
 include ../Makefile.rules
