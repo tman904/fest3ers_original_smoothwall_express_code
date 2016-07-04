@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = file
-VERSION = 5.04
+VERSION = 5.24
 
 BASE_URL = ftp://ftp.astron.com/pub/file/
 

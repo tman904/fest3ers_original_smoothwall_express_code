@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = gawk
-VERSION = 3.1.8
+VERSION = 4.1.3
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gawk
 
