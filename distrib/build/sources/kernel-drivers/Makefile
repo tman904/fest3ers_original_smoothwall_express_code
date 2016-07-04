@@ -1,7 +1,6 @@
 # Copyright 2004-2010 SmoothWall Ltd
 
 include ../Makefile
-include ../Makefile.conf
 include ../Makefile.versions
 
 PACKAGE = kernel-drivers
@@ -166,3 +165,18 @@ all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 
 packageinfo.html:
 	echo "<li><span style='font-size:large;'>$(PACKAGE) $(KERNEL_VER)</span><br>" >>/tmp/packageinfo.html
+
+PRINTVERSION = yes
+print-version:
+	@echo "IGB $(IGB_VER)"
+	@echo "IXGBE $(IXGBE_VER)"
+	@echo "E1000E $(E1000E_VER)"
+	@echo "IGBVF $(IGBVF_VER)"
+	@echo "IXGBEVF $(IXGBEVF_VER)"
+	@echo "I40EVF $(I40EVF_VER)"
+	@echo "I40E $(I40E_VER)"
+	@echo "R8168 $(R8168_VER)"
+	@echo "NCT6775 $(NCT6775_VER)"
+	@echo "ASIX_88179_178A $(ASIX_88179_178A_VER)"
+
+include ../Makefile.conf

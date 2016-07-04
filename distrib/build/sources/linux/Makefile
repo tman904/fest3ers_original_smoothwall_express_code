@@ -10,3 +10,4 @@ include ../Makefile.versions
 
 include ../Makefile.kernel
 
+VERSION = $(KERNEL_VER)
