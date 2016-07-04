@@ -4,7 +4,7 @@
 
 /usr/bin/killall pppd
 /usr/bin/killall modem_run
-/sbin/ifconfig ADIModem down
+/usr/sbin/ip link set dev ADIModem down
 /sbin/rmmod adiusbadsl
 /sbin/rmmod n_hdlc
 /sbin/rmmod pppoatm
