@@ -273,7 +273,6 @@ fi
       echo -e "  Final group 5 packages (core)"
       build usbutils
       build pciutils
-      build bridge-utils
       build hdparm
       build hddtemp
       build iproute2

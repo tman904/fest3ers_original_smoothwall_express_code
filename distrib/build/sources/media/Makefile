@@ -49,7 +49,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    util-linux joe wget iptables ipset ipbatch pciutils usbutils \
 	    linux openssl openssh httpd smoothd squid freefont \
 	    strace rrdtool cron tcpdump dnsmasq ntp openntpd hdparm hddtemp \
-	    iproute2 gd expat ethtool listtables inotify-tools bridge-utils \
+	    iproute2 gd expat ethtool listtables inotify-tools \
 	    beep2 pcre trafficstats iftop setuids ppp isdn4k-utils rp-pppoe \
 	    ibod dhcpcd eciadsl-synch_bin eciadsl-usermode dhcp snort \
 	    oinkmaster openswan wireless_tools imspector diffutils clamav \
