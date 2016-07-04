@@ -574,7 +574,7 @@ END
     )
     # upgrade patches
     (
-      cd /harddisk/var/smoothwall/main;
+      cd /harddisk/var/smoothwall/patches;
       cp installed installed-RESTORED
       cp installed-FRESH installed
     )
