@@ -9,6 +9,7 @@ include ../Makefile.versions
 include ../Makefile
 
 PACKAGE = media
+VERSION = N/A
 
 # Two dirs down, one cross each.
 ifeq ($(BUILD_OUT), crumbs/build-progress.out)
@@ -39,13 +40,14 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    libnetfilter_cttimeout libnetfilter_log libnftnl \
 	    libcap fontconfig glib cairo libffi readline libpcap sqlite-autoconf \
 	    libosip2 libpcap pango zlib slang pixman libxml2 libusb-compat libusb \
+	    libevent nspr nss unbound \
 	    kmod gmp mpfr mpc popt yaml perl-mods libcap-ng rsync \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \
 	    ncurses vim less sed flex gettext inetutils iputils \
 	    whois perl bash bc bzip2 kbd e2fsprogs grep gzip module-init-tools \
 	    procinfo-ng procps-ng psmisc shadow sysklogd logrotate sysvinit tar \
 	    util-linux joe wget iptables ipset ipbatch pciutils usbutils \
-	    linux$(KERNEL_TYPE) openssl openssh httpd smoothd squid freefont \
+	    linux openssl openssh httpd smoothd squid freefont \
 	    strace rrdtool cron tcpdump dnsmasq ntp openntpd hdparm hddtemp \
 	    iproute2 gd expat ethtool listtables inotify-tools bridge-utils \
 	    beep2 pcre trafficstats iftop setuids ppp isdn4k-utils rp-pppoe \
