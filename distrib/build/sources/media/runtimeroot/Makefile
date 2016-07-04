@@ -25,7 +25,7 @@ BBPROGS = [ [[ ar ash awk basename bbconfig blkid bunzip2 bzcat bzip2 cat \
 SBINPROGS = /sbin/mke2fs /sbin/sfdisk /sbin/depmod
 SWE_PKGS = $(UDEV) kmod grub pciutils bash reiserfsprogs util-linux pcmciautils \
 	   sysfsutils parted readline inotify-tools mtools device-ids kbd \
-	   e2fsprogs
+	   e2fsprogs zlib
 ROOTDIRS = cdrom dev etc harddisk proc sys tmp usr run
 
 # Stuff that shouldn't be needed in the initramfs
