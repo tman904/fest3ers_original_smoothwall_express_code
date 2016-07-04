@@ -7,10 +7,10 @@
 include ../Makefile.conf
 
 PACKAGE = make
-VERSION = 3.82
+VERSION = 4.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/make/
 
-PATCH_FILE1 = make3.82.patch
+CONFIG_OPTS += --without-guile
 
 include ../Makefile.rules
