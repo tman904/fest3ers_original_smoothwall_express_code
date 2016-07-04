@@ -7,23 +7,10 @@
 include ../Makefile.conf
 
 PACKAGE = xz
-VERSION = 5.0.0
+VERSION = 5.2.1
 EXTENSION = .tar.xz
 
 BASE_URL = http://tukaani.org/$(PACKAGE)/
-
-#CONFIGURE = yes
-#COMPILE = yes
-#INSTALL = yes
-#
-#configure: patch
-#	@true
-#
-#compile: configure
-#	@make $(JOBS) -C $(DIR) CC="gcc $(CFLAGS)"
-#
-#install: compile
-#	@make -C $(DIR) PREFIX=$(PKG_ROOT)$(PKG_DIR) install
 
 include ../Makefile.rules
 
