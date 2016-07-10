@@ -57,7 +57,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
 	    $(UDEV) lm_sensors xz pcmciautils qemu sysfsutils db squidGuard \
-	    apcupsd cacert-bundle setkerneltz \
+	    apcupsd cacert-bundle setkerneltz fping \
 	    kernel-drivers \
 	    coretree $(ADV_PKGS) device-ids
 

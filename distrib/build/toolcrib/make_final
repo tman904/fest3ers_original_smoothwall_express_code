@@ -377,6 +377,7 @@ fi
       build qemu
       build ntop
       build iperf
+      build fping
       build apcupsd
       build arp-scan
       build setkerneltz
