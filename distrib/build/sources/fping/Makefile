@@ -18,6 +18,7 @@ INSTALL = yes
 install: compile
 	$(MAKE) -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 	cd $(PKG_ROOT)/sbin; \
+	chmod 4755 fping*; \
 	/sbin/setcap cap_net_raw+ep fping; \
 	/sbin/setcap cap_net_raw+ep fping6
 
