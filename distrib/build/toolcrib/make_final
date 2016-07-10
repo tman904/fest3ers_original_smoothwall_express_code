@@ -379,7 +379,6 @@ fi
       build iperf
       build fping
       build apcupsd
-      build arp-scan
       build setkerneltz
       build c_icap
       build c_icap_modules
