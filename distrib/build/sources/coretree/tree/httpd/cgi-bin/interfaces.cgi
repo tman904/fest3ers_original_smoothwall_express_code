@@ -23,6 +23,8 @@ my $refresh = '';
 my $success = '';
 
 $settings{'RED_IGNOREMTU'} = '';
+$settings{'DNS1_OVERRIDE'} = '';
+$settings{'DNS2_OVERRIDE'} = '';
 
 $cgiparams{'ACTION'} = '';
 $cgiparams{'DNS2'} = '';
@@ -50,30 +52,30 @@ if ($settings{'RED_IGNOREMTU'} ne "off") {
 if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 	# assign the settings over the top of their erstwhile counterparts.
 
-	$settings{'GREEN_ADDRESS'} = $cgiparams{'GREEN_ADDRESS'} if ( $cgiparams{'GREEN_ADDRESS'} );
-	$settings{'GREEN_NETMASK'} = $cgiparams{'GREEN_NETMASK'} if ( $cgiparams{'GREEN_NETMASK'} );
+	$settings{'GREEN_ADDRESS'} = $cgiparams{'GREEN_ADDRESS'} if ( defined $cgiparams{'GREEN_ADDRESS'} );
+	$settings{'GREEN_NETMASK'} = $cgiparams{'GREEN_NETMASK'} if ( defined $cgiparams{'GREEN_NETMASK'} );
 
-	$settings{'ORANGE_ADDRESS'} = $cgiparams{'ORANGE_ADDRESS'} if ( $cgiparams{'ORANGE_ADDRESS'} );
-	$settings{'ORANGE_NETMASK'} = $cgiparams{'ORANGE_NETMASK'} if ( $cgiparams{'ORANGE_NETMASK'} );
+	$settings{'ORANGE_ADDRESS'} = $cgiparams{'ORANGE_ADDRESS'} if ( defined $cgiparams{'ORANGE_ADDRESS'} );
+	$settings{'ORANGE_NETMASK'} = $cgiparams{'ORANGE_NETMASK'} if ( defined $cgiparams{'ORANGE_NETMASK'} );
 
-	$settings{'PURPLE_ADDRESS'} = $cgiparams{'PURPLE_ADDRESS'} if ( $cgiparams{'PURPLE_ADDRESS'} );
-	$settings{'PURPLE_NETMASK'} = $cgiparams{'PURPLE_NETMASK'} if ( $cgiparams{'PURPLE_NETMASK'} );
+	$settings{'PURPLE_ADDRESS'} = $cgiparams{'PURPLE_ADDRESS'} if ( defined $cgiparams{'PURPLE_ADDRESS'} );
+	$settings{'PURPLE_NETMASK'} = $cgiparams{'PURPLE_NETMASK'} if ( defined $cgiparams{'PURPLE_NETMASK'} );
 
-	$settings{'RED_TYPE'} = $cgiparams{'RED_TYPE'} if ( $cgiparams{'RED_TYPE'} );
-	$settings{'RED_DHCP_HOSTNAME'} = $cgiparams{'RED_DHCP_HOSTNAME'} if ( $cgiparams{'RED_DHCP_HOSTNAME'} );
-	$settings{'RED_ADDRESS'} = $cgiparams{'RED_ADDRESS'} if ( $cgiparams{'RED_ADDRESS'} );
-	$settings{'RED_NETMASK'} = $cgiparams{'RED_NETMASK'} if ( $cgiparams{'RED_NETMASK'} );
+	$settings{'RED_TYPE'} = $cgiparams{'RED_TYPE'} if ( defined $cgiparams{'RED_TYPE'} );
+	$settings{'RED_DHCP_HOSTNAME'} = $cgiparams{'RED_DHCP_HOSTNAME'} if ( defined $cgiparams{'RED_DHCP_HOSTNAME'} );
+	$settings{'RED_ADDRESS'} = $cgiparams{'RED_ADDRESS'} if ( defined $cgiparams{'RED_ADDRESS'} );
+	$settings{'RED_NETMASK'} = $cgiparams{'RED_NETMASK'} if ( defined $cgiparams{'RED_NETMASK'} );
 
-	$settings{'DEFAULT_GATEWAY'} = $cgiparams{'DEFAULT_GATEWAY'} if ( $cgiparams{'DEFAULT_GATEWAY'} );
-	$settings{'DNS1'} = $cgiparams{'DNS1'} if ( $cgiparams{'DNS1'} );
-	$settings{'DNS2'} = $cgiparams{'DNS2'} if ( $cgiparams{'DNS2'} );
+	$settings{'DEFAULT_GATEWAY'} = $cgiparams{'DEFAULT_GATEWAY'} if ( defined $cgiparams{'DEFAULT_GATEWAY'} );
+	$settings{'DNS1'} = $cgiparams{'DNS1'} if ( defined $cgiparams{'DNS1'} );
+	$settings{'DNS2'} = $cgiparams{'DNS2'} if ( defined $cgiparams{'DNS2'} );
 
-	$cgiparams{'RED_IGNOREMTU'} = "off" if ( %cgiparams && ! $cgiparams{'RED_IGNOREMTU'} );
+	$cgiparams{'RED_IGNOREMTU'} = "off" if ( %cgiparams && ! defined $cgiparams{'RED_IGNOREMTU'} );
 
-	$settings{'RED_IGNOREMTU'} = $cgiparams{'RED_IGNOREMTU'} if ( $cgiparams{'RED_IGNOREMTU'} );
-	$settings{'DNS1_OVERRIDE'} = $cgiparams{'DNS1_OVERRIDE'} if ( $cgiparams{'DNS1_OVERRIDE'} );
-	$settings{'DNS2_OVERRIDE'} = $cgiparams{'DNS2_OVERRIDE'} if ( $cgiparams{'DNS2_OVERRIDE'} );
-	$settings{'RED_MAC'} = $cgiparams{'RED_MAC'} if ( $cgiparams{'RED_MAC'} );
+	$settings{'RED_IGNOREMTU'} = $cgiparams{'RED_IGNOREMTU'} if ( defined $cgiparams{'RED_IGNOREMTU'} );
+	$settings{'DNS1_OVERRIDE'} = $cgiparams{'DNS1_OVERRIDE'} if ( defined $cgiparams{'DNS1_OVERRIDE'} );
+	$settings{'DNS2_OVERRIDE'} = $cgiparams{'DNS2_OVERRIDE'} if ( defined $cgiparams{'DNS2_OVERRIDE'} );
+	$settings{'RED_MAC'} = $cgiparams{'RED_MAC'} if ( defined $cgiparams{'RED_MAC'} );
 
 	# now some sanity checks of the settings we've just tried
   
@@ -93,7 +95,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 		$errormessage .= $tmpmessage;
 	}
 
-	if ( $settings{'ORANGE_ADDRESS'} and $settings{'ORANGE_ADDRESS'} ne "" ) {
+	if ( defined $settings{'ORANGE_ADDRESS'} and $settings{'ORANGE_ADDRESS'} ne "" ) {
 		$tmpmessage = '';
 		if ( not &validip( $settings{'ORANGE_ADDRESS'} )) {
 			$tmpmessage .= $tr{'the ip address for the orange interface is invalid'}."<br />\n";
@@ -110,7 +112,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 		}
 	}
 
-	if ( $settings{'PURPLE_ADDRESS'} and $settings{'PURPLE_ADDRESS'} ne "" ) {
+	if ( defined $settings{'PURPLE_ADDRESS'} and $settings{'PURPLE_ADDRESS'} ne "" ) {
 		$tmpmessage = '';
 		if ( not &validip( $settings{'PURPLE_ADDRESS'} )) {
 			$tmpmessage .= $tr{'the ip address for the purple interface is invalid'}."<br />\n";
@@ -127,11 +129,11 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 		}
 	}
 
-	if ( $settings{'RED_MAC'} and $settings{'RED_MAC'} ne "" and not &validmac( $settings{'RED_MAC'} )) {
+	if ( defined $settings{'RED_MAC'} and $settings{'RED_MAC'} ne "" and not &validmac( $settings{'RED_MAC'} )) {
 		$errormessage .= $tr{'the spoofed mac address for the red interface is invalid'}."<br />\n";
 	}
 
-	if ( $settings{'RED_TYPE'} and $settings{'RED_TYPE'} ne "" ) {
+	if ( defined $settings{'RED_TYPE'} and $settings{'RED_TYPE'} ne "" ) {
 		$tmpmessage = '';
 		if ( $settings{'RED_TYPE'} eq "STATIC" ) {
 			if ( not &validip( $settings{'RED_ADDRESS'} )) {
