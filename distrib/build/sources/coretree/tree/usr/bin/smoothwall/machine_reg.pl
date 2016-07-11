@@ -121,7 +121,7 @@ close(USB);
 # construct the regular information
 my $nonextra = join('&', 
 	'cpu_vid=' . &_urlencode($vid),
-	'cpu_model=' . &_urlencode($model.' ($coreCount cores)'),
+	'cpu_model=' . &_urlencode($model . " ($coreCount cores)"),
 	'cpu_mhz=' . &_urlencode($mhz),
 	'mem=' . &_urlencode($mem),
 	'hdd=' . &_urlencode($disk),
