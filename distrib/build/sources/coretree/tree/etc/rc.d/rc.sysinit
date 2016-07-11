@@ -64,6 +64,7 @@ rm -f /var/lock/LCK..ttyS*
 rm -f /var/run/pppd*.tdb
 
 echolog "e" "s" "" "Make /dev/shm a tmpfs, mode 1777"
+mkdir -p /dev/shm
 mount -t tmpfs tmpfs /dev/shm
 chmod 1777 /dev/shm
 
