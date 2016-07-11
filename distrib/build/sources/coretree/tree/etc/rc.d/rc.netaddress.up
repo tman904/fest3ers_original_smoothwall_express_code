@@ -62,7 +62,7 @@ fi
 if [ "$CONFIG_TYPE" == "2" -o "$CONFIG_TYPE" == "3" -o "$CONFIG_TYPE" == "6" -o "$CONFIG_TYPE" == "7" ]; then
 	if [ "$RED_DEV" != "" ]; then
                 
-		rm -f /var/lib/dhcpcd/*.info
+		rm -f /var/lib/dhcpcd/dhcpcd-*.info
 
 		if [ "$RED_TYPE" == "DHCP" ]; then
                         echolog "" "" "$DEBUG_DHCPCD" "entering RED = DHCP BLOCK (rc.netaddress.up)"
