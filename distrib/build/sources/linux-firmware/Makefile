@@ -13,7 +13,7 @@ EXTENSION = .tar.gz
 
 export pkgName = $(PACKAGE)
 export gitURL = git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-export gitCommitID = 986a5a8bbbb9f
+export gitCommitID = cf8b2e69c81fb
 export gitBranch = $(VERSION)
 
 PREPARE = yes
