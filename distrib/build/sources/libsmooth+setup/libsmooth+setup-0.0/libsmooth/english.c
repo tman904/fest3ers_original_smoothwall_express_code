@@ -457,7 +457,7 @@ char *english_tr[] = {
 "* AUTODETECT *",
 /* TR_ISDN_MORE_PARAMS */
 "Option Parameters",
-/* TR_ISDN_LOCAL_NUM */
+/* TR_ISDN_LOCAL_NUMBER */
 "ISDN Number",
 /* TR_ISDN_CARD_SELECTION */
 "ISDN card selection",
