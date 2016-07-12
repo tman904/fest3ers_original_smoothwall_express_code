@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = nss
-VERSION = 3.21
+VERSION = 3.25
 
-BASE_URL = https://ftp.mozilla.org/pub/mozilla.org/security/$(PACKAGE)/releases/NSS_3_21_RTM/src
+BASE_URL = https://ftp.mozilla.org/pub/security/$(PACKAGE)/releases/NSS_3_25_RTM/src
 
 DIR=$(PACKAGE)-$(VERSION)/nss
 
