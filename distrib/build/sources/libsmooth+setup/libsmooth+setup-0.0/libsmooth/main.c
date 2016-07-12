@@ -98,7 +98,7 @@ int runcommandwithstatus(char *command, char *message)
 {
 	int rc;
 	
-	statuswindow(60, 4, TITLE, message);
+	statuswindow(60, 4, ctr[TR_MESSAGE], message);
 	rc = mysystem(command);
 	newtPopWindow();
 	
@@ -109,7 +109,7 @@ int runcommandwithstatusnolog(char *command, char *message)
 {
 	int rc;
 	
-	statuswindow(60, 4, TITLE, message);
+	statuswindow(60, 4, ctr[TR_MESSAGE], message);
 	rc = mysystemnolog(command);
 	newtPopWindow();
 	

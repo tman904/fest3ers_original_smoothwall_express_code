@@ -48,6 +48,8 @@ char *english_tr[] = {
 "NOTE",
 /* TR_WARNING */
 "WARNING",
+/* TR_MESSAGE */
+"Message",
 
 /*************/
 /* LIBSMOOTH */
