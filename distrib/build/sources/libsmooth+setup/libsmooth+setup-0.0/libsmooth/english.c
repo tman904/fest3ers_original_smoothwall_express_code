@@ -346,6 +346,8 @@ char *english_tr[] = {
 "Section menu",
 /* TR_SELECT_THE_ITEM */
 "Select the item you wish to configure.",
+/* TR_SETUP_COMPLETE */
+"Finished",
 /* TR_SETUP_FINISHED */
 "Setup is complete.  Press Ok to reboot.",
 /* TR_SETUP_NOT_COMPLETE */
@@ -364,6 +366,8 @@ char *english_tr[] = {
 "reboot now?",
 
 /* passwords.c */
+/* TR_PASSWORD */
+"Initial passwords",
 /* TR_ENTER_ROOT_PASSWORD */
 "Enter the 'root' user password. Login as this user for commandline access.",
 /* TR_SETTING_ROOT_PASSWORD */
@@ -449,6 +453,10 @@ char *english_tr[] = {
 "Choose the ISDN protocol you require.",
 /* TR_AUTODETECT */
 "* AUTODETECT *",
+/* TR_ISDN_MORE_PARAMS */
+"Option Parameters",
+/* TR_ISDN_LOCAL_NUM */
+"ISDN Number",
 /* TR_ISDN_CARD_SELECTION */
 "ISDN card selection",
 /* TR_CHOOSE_THE_ISDN_CARD_INSTALLED */
