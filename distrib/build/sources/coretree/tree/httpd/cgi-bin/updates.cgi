@@ -23,7 +23,7 @@ use warnings;
 my (%uploadsettings, %updates);
 
 $uploadsettings{'ACTION'} = '';
-my $errormessage = '';
+our $errormessage = '';
 
 &getcgihash(\%uploadsettings);
 
@@ -51,7 +51,7 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'}) {
 	my $return = &downloadlist();
 	if ($return =~ m/^200 OK/) {
 		unless (open(LIST, ">${swroot}/patches/available")) {
-			$errormessage = $tr{'could not open available updates file'};
+			$errormessage .= $tr{'could not open available updates file'} ."<br />";
 			goto ERROR;
 		}
 		flock LIST, 2;
@@ -62,19 +62,19 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'}) {
 	} 
 	else {
 		unless(open(LIST, "${swroot}/patches/available")) {
-			$errormessage = $tr{'could not open available updates list'};
+			$errormessage .= $tr{'could not open available updates list'} ."<br />";
 			goto ERROR;
 		}
 		@list = <LIST>;
 		close(LIST);
-		$errormessage = $tr{'could not download the available updates list'};
+		$errormessage .= $tr{'could not download the available updates list'} ."<br />";
 	}
 	unless (mkdir("/var/patches/$$",0700)) {
-		$errormessage = $tr{'could not create directory'};
+		$errormessage .= $tr{'could not create directory'} ."<br />";
 		goto ERROR;
 	}
 	unless (open(FH, ">/var/patches/$$/patch.tar.gz")) {
-		$errormessage = $tr{'could not open update for writing'};
+		$errormessage .= $tr{'could not open update for writing'} ."<br />";
 		goto ERROR;
 	}
 	flock FH, 2;
@@ -94,25 +94,25 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'}) {
 		}
 	}
 	unless ($found == 1) {
-		$errormessage = $tr{'this is not an authorised update'};
+		$errormessage .= $tr{'this is not an authorised update'} ."<br />";
 		goto ERROR;
 	}
 	unless (system("cd /var/patches/$$ && /usr/bin/tar xvfz patch.tar.gz > /dev/null") == 0) {
-		$errormessage = $tr{'this is not a valid archive'};
+		$errormessage .= $tr{'this is not a valid archive'} ."<br />";
 		goto ERROR;
 	}
 	unless (open(INFO, "/var/patches/$$/information")) {
-		$errormessage = $tr{'could not open update information file'};
+		$errormessage .= $tr{'could not open update information file' ."<br />"};
 		goto ERROR;
 	}
 	my $info = <INFO>;
 	close(INFO);
 
-	open(INS, "${swroot}/patches/installed") or $errormessage = $tr{'could not open installed updates file'};
+	open(INS, "${swroot}/patches/installed") or $errormessage .= $tr{'could not open installed updates file'} ."<br />";
 	while (<INS>) {
 		my @temp = split(/\|/,$_);
 		if($info =~ m/^$temp[0]/) {
-			$errormessage = $tr{'this update is already installed'};
+			$errormessage .= $tr{'this update is already installed'} ."<br />";
 			goto ERROR;
 		}
 	}
@@ -120,11 +120,11 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'}) {
 	print STDERR "Going for installation attempt\n";
 
 	if (system( '/usr/bin/setuids/installpackage', $$)) {
-		$errormessage = $tr{'package failed to install'};
+		$errormessage .= $tr{'package failed to install'} ."<br />";
 		goto ERROR;
 	}
 	unless (open(IS, ">>${swroot}/patches/installed")) {
- 		$errormessage = $tr{'update installed but'};
+ 		$errormessage .= $tr{'update installed but'} ."<br />";
 	}
 	flock IS, 2;
 	my @time = gmtime();
@@ -143,7 +143,7 @@ elsif ($uploadsettings{'ACTION'} eq $tr{'refresh update list'}) {
 	my $return = &downloadlist();
 	if ($return =~ m/^200 OK/) {
 		unless(open(LIST, ">${swroot}/patches/available")) {
-			$errormessage = $tr{'could not open available updates file'};
+			$errormessage .= $tr{'could not open available updates file'} ."<br />";
 			goto ERROR;
 		}
 		flock LIST, 2;
@@ -154,13 +154,13 @@ elsif ($uploadsettings{'ACTION'} eq $tr{'refresh update list'}) {
 		&log($tr{'successfully refreshed updates list'});
 	} 
 	else {
-		$errormessage = $tr{'could not download the available updates list'};
+		$errormessage .= $tr{'could not download the available updates list'} ."<br />";
 	}
 }
 
 ERROR:
 
-open(AV, "${swroot}/patches/available") or $errormessage = $tr{'could not open the available updates file'};
+open(AV, "${swroot}/patches/available") or $errormessage .= $tr{'could not open the available updates file'} ."<br />";
 while (<AV>) {
 	next if $_ =~ m/^#/;
 	chomp $_;
@@ -170,7 +170,7 @@ while (<AV>) {
 }
 close (AV);
 
-open (PF, "${swroot}/patches/installed") or $errormessage = $tr{'could not open installed updates file'};
+open (PF, "${swroot}/patches/installed") or $errormessage .= $tr{'could not open installed updates file'} ."<br />";
 while (<PF>) {
 	my @temp = split(/\|/,$_);
 	$updates{$temp[0]}{'installed'} = "---";
@@ -531,14 +531,14 @@ sub apply
 	print STDERR "Applying Patch $f\n";
 	
 	unless (mkdir("/var/patches/$$",0700)) {
-		$errormessage = $tr{'could not create directory'} +"/var/patches/$$";
+		$errormessage .= $tr{'could not create directory'} +"/var/patches/$$<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
 	}
 
 	unless (open(FH, ">/var/patches/$$/patch.tar.gz")) {
-		$errormessage = $tr{'could not open update for writing'} +"/var/patches/$$/patch.tar.gz";
+		$errormessage .= $tr{'could not open update for writing'} +"/var/patches/$$/patch.tar.gz<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
@@ -559,7 +559,7 @@ sub apply
 	my $md5sum;
 	chomp($md5sum = `/usr/bin/md5sum /var/patches/$$/patch.tar.gz`);
 	if ($md5sum eq "d41d8cd98f00b204e9800998ecf8427e") {
-		$errormessage = "patch.tar.gz is empty?!? (MD5 sum = d41d8...8427e)";
+		$errormessage .= "patch.tar.gz is empty?!? (MD5 sum = d41d8...8427e)<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
@@ -569,7 +569,7 @@ sub apply
 	&progressReport ( "apply(): looking for md5" );
 
 	unless(open(LIST, "${swroot}/patches/available")) {
-		$errormessage = $tr{'could not open available updates list'};
+		$errormessage .= $tr{'could not open available updates list'} ."<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
@@ -589,7 +589,7 @@ sub apply
 		&usleep ( 500000 );
 	}
 	unless ($found == 1) {
-		$errormessage = $tr{'this is not an authorised update'} +"; the md5sums do not match";;
+		$errormessage .= $tr{'this is not an authorised update'} +"; the md5sums do not match<br />";
 		&progressReport ( "apply(): $md5 $errormessage" );
 		tidy();
 		return undef;
@@ -597,7 +597,7 @@ sub apply
 	&progressReport ( "apply(): unpack patch tarball..." );
 
 	unless (system("/usr/bin/tar", "xfz", "/var/patches/$$/patch.tar.gz", "-C", "/var/patches/$$") == 0) {
-		$errormessage = $tr{'this is not a valid archive'};
+		$errormessage .= $tr{'this is not a valid archive'} ."<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
@@ -605,7 +605,7 @@ sub apply
 	&progressReport ( "apply(): get information file..." );
 
 	unless (open(INFO, "/var/patches/$$/information")) {
-		$errormessage = $tr{'could not open update information file'};
+		$errormessage .= $tr{'could not open update information file'} ."<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
@@ -616,7 +616,7 @@ sub apply
 	&progressReport ("apply(): already installed?");
 
 	unless (open(INS, "${swroot}/patches/installed")) {
-		$errormessage = $tr{'could not open installed updates file'};
+		$errormessage .= $tr{'could not open installed updates file'} ."<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
@@ -625,7 +625,7 @@ sub apply
 	while (<INS>) {
 		my @temp = split(/\|/,$_);
 		if($info =~ m/^$temp[0]/) {
-			$errormessage = $tr{'this update is already installed'};
+			$errormessage .= $tr{'this update is already installed'} ."<br />";
 			&progressReport ( "apply() failed: $errormessage" );
 			tidy();
 			return undef;
@@ -637,14 +637,14 @@ sub apply
 	&progressReport ("apply(): run installpackage to install the update");
 
 	if (system( '/usr/bin/setuids/installpackage', $$)) {
-		$errormessage = $tr{'smoothd failure'};
+		$errormessage .= $tr{'smoothd failure'} ."<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
 	}
 	
 	unless (open(IS, ">>${swroot}/patches/installed")) {
- 		$errormessage = $tr{'update installed but'};
+ 		$errormessage .= $tr{'update installed but'} ."<br />";
 		&progressReport ( "apply() failed: $errormessage" );
 		tidy();
 		return undef;
