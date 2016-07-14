@@ -24,6 +24,7 @@ patch: $(DIR)/
 CONFIGURE = yes
 configure: patch
 	true
+	sed -i -e 's/\(OS_REL_CFLAGS.*-Di386\)/\1 -march=i586 -mtune=generic/' $(PACKAGE)-$(VERSION)/$(PACKAGE)/coreconf/Linux.mk
 
 COMPILE = yes
 MAKE_DEFS = BUILD_OPT=1 \

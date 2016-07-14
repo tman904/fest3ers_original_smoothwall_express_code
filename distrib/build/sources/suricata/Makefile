@@ -15,6 +15,7 @@ BASE_URL = http://www.openinfosecfoundation.org/download/
 
 CONFIG_OPTS += \
 	--disable-nls \
+	--disable-gccmarch-native \
 	--prefix=/usr \
 	--enable-nfqueue \
 	--sysconfdir=/etc \

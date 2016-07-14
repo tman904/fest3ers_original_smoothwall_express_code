@@ -11,6 +11,6 @@ VERSION = 7.5.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/gdb
 
-PRE_CONFIGURE = CFLAGS=-Wno-error
+PRE_CONFIGURE = CFLAGS="$(CFLAGS) -Wno-error"
 
 include ../Makefile.rules

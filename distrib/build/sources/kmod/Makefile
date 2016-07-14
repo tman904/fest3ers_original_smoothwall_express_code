@@ -18,6 +18,7 @@ CONFIG_OPTS = --prefix=/usr          \
               --bindir=/bin          \
               --sysconfdir=/etc      \
               --with-rootlibdir=/lib \
+	      --disable-silent-rules \
               --with-zlib
               #--with-xz              \
 

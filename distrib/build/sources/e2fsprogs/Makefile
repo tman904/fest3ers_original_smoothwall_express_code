@@ -31,6 +31,7 @@ CONFIG_OPTS += --prefix=/usr           \
                --disable-libblkid      \
                --disable-libuuid       \
                --disable-uuidd         \
+	       --enable-verbose-makecmds \
                --disable-fsck
 
 

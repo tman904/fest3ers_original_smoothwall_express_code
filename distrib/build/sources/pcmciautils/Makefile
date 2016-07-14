@@ -7,17 +7,19 @@
 include ../Makefile.conf
 
 PACKAGE = pcmciautils
-VERSION = 017
+VERSION = 018
 EXTENSION=.tar.bz2
 
 DIR = $(PACKAGE)-$(VERSION)
 
 #BASE_URL = http://www.kernel.org/pub/linux/utils/kernel/pcmcia
 #NOTE: As of 04/07/2012, only versions through 009 were available at the above link.
-BASE_URL = http://pkgs.fedoraproject.org/repo/pkgs/$(PACKAGE)/$(PACKAGE)-$(VERSION)$(EXTENSION)/5245af28eeba57ec0606a874d44d10f7
+BASE_URL = http://pkgs.fedoraproject.org/repo/pkgs/$(PACKAGE)/$(PACKAGE)-$(VERSION)$(EXTENSION)/5d85669b3440baa4532363da6caaf1b4
 
 CONFIGURE = yes
 configure: $(DIR)/
 	@true
+
+export V = 1
 
 include ../Makefile.rules
