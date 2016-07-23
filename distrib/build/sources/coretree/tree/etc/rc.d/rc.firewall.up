@@ -468,6 +468,7 @@ done
 echolog "e" "s" "" "Load mods' firewall rules"
 # if any; limited to .../mods/*/etc/rc.d, 90-99
 shopt -s nullglob
+unset i
 for i in /var/smoothwall/mods/*/etc/rc.d/9[0-9]rc.firewall.up; do
   $i
 done

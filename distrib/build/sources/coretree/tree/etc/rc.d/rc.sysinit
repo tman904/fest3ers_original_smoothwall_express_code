@@ -244,6 +244,7 @@ echolog "e" "s" "" "Load other filesystems"
 echolog "e" "s" "" "Load mods' modules"
 # if any; limited to .../mods/*/etc/rc.d, 00-09
 shopt -s nullglob
+unset i
 for i in /var/smoothwall/mods/*/etc/rc.d/0[0-9]rc.sysinit; do
   $i
 done
