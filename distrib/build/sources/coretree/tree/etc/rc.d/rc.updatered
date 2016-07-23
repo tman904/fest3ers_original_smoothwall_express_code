@@ -318,6 +318,7 @@ echolog "E" "s" "" "..external access rules"
 echolog "E" "s" "" "..run mods' 'on RED up' pre-squidrestart scripts"
 # if any; limited to .../mods/*/etc/rc.d
 shopt -s nullglob
+unset i
 for i in /var/smoothwall/mods/*/etc/rc.d/0[0-9]rc.updatered-presquid; do
   $i
 done
@@ -340,6 +341,7 @@ echolog "$crDEBUG" "" "$DEBUG_DHCPCD" "....smoothcom: trafficrestart [`date`]"
 echolog "E" "s" "" "..run mods' 'on RED up' scripts"
 # if any; limited to .../mods/*/etc/rc.d
 shopt -s nullglob
+unset i
 for i in /var/smoothwall/mods/*/etc/rc.d/0[0-9]rc.updatered; do
   $i
 done
