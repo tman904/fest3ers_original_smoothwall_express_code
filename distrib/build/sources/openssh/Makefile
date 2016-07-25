@@ -9,7 +9,7 @@ include ../Makefile.conf
 PACKAGE = openssh
 VERSION = 7.2p2
 
-BASE_URL = ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/
+BASE_URL = http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/
 
 CONFIG_OPTS += --with-md5-passwords --with-pid-dir=/var/run
 
