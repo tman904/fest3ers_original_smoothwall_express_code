@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 . /etc/rc.d/inc.rc-functions
 
 mkdir -p /dev/earlylog
 echo "*.*		-/dev/earlylog/messages" > /dev/earlylog/syslog.conf
-/usr/sbin/syslogd -d -m 0 -f /dev/earlylog/syslog.conf >/dev/null 2>&1 &
+(/usr/sbin/syslogd -d -m 0 -f /dev/earlylog/syslog.conf >/dev/null 2>&1 &)
 echolog "e" "s" "" "Started early syslogd"
 
 # Initialize the system clock with the hardware clock ASAP
@@ -18,10 +18,10 @@ echolog "e" "s" "" "Initialize the clock"
 umask 022
 
 echolog "e" "s" "" "Set hostname"
-hostname $HOSTNAME
+hostname $HOSTNAME&
 
 if [ "$KEYMAP" != "" ]; then
-	loadkeys $KEYMAP
+	loadkeys $KEYMAP&
 fi
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -58,15 +58,17 @@ echolog "e" "s" "" "Remount root read/write"
 mount -n -o remount,rw /
 
 # Adjustments and cleanup
-chmod 1777 /tmp
-find /var/run -name '*.pid' -type f -exec rm -f '{}' \;
-rm -f /var/lock/LCK..ttyS*
-rm -f /var/run/pppd*.tdb
+chmod 1777 /tmp&
+find /var/run -name '*.pid' -type f -exec rm -f '{}' \;&
+rm -f /var/lock/LCK..ttyS*&
+rm -f /var/run/pppd*.tdb&
 
 echolog "e" "s" "" "Make /dev/shm a tmpfs, mode 1777"
+(
 mkdir -p /dev/shm
 mount -t tmpfs tmpfs /dev/shm
 chmod 1777 /dev/shm
+)&
 
 # If udev didn't create the /dev/harddisk* symlinks, brute-force them. This should
 #   fix a number of SCSI RAID systems.
@@ -80,7 +82,7 @@ fi
 # This flag ensures that the check for updates and the machine registry happens only
 #   once per boot. The first time RED comes up, they will run and this will be deleted.
 #   Must be done *after* the R/W remount.
-touch /var/run/do_update_machreg
+touch /var/run/do_update_machreg&
 
 # This flag allows scripts to differentiate between normal operation and startup/shutdown.
 echo "bootup" > /var/run/STARTSTOP
@@ -99,9 +101,14 @@ fi
 /sbin/udevadm trigger --attr-match=modalias
 /sbin/udevadm settle
 
+(
 echolog "e" "s" "" "Relink mtab"
 rm -f /etc/mtab
 ln -s /proc/mounts /etc/mtab
+)&
+
+# Sync background tasks
+wait >/dev/null 2>&1
 
 /sbin/fsck $FORCE -R -T -a -C -A
 RC=$?  
@@ -128,8 +135,11 @@ if [ $RC -gt 1 ]; then
 fi
 
 echolog "e" "s" "" "Mount other filesystems"
-mount /boot
-mount /var/log
+mount /boot&
+mount /var/log&
+
+# Sync background tasks
+wait >/dev/null 2>&1
 
 echolog "e" "s" "" "Kill early syslogd"
 killall syslogd
@@ -142,38 +152,41 @@ echolog "e" "s" "" "Started syslogd"
 # Deal with potentially changed NICs
 /usr/sbin/compareMACs
 
+(
 echolog "e" "s" "" "Direct core dumps to /var/log"
 mkdir -p /var/log/coredumps
 chmod 700 /var/log/coredumps
 echo "/var/log/coredumps/%e-%t-%s.%p" >/proc/sys/kernel/core_pattern
+)&
 
 echolog "e" "s" "" "Turn on swap"
-/sbin/swapon -a
+/sbin/swapon -a&
 
 echolog "e" "s" "" "Redo module dependencies"
-/sbin/depmod -a
+/sbin/depmod -a&
 
 echolog "e" "s" "" "Clear old files"
-chmod 660 /dev/ttyS*
-chmod 660 /dev/ttyI* >/dev/null 2>&1
+chmod 660 /dev/ttyS*&
+chmod 660 /dev/ttyI* >/dev/null 2>&1&
 
 # Let httpd (nobody) make atari sounds (for backup).
 # It's write-only, so should be OK for now.
 # But it really should use tty63, just so it's way out of the way.
-chmod 622 /dev/tty13 >/dev/null 2>&1
-chgrp nobody /dev/tty13 >/dev/null 2>&1
+chmod 622 /dev/tty13 >/dev/null 2>&1&
+chgrp nobody /dev/tty13 >/dev/null 2>&1&
 
 # Prepare red files
-. /etc/rc.d/inc.clearRED
+. /etc/rc.d/inc.clearRED&
 
 echolog "e" "s" "" "Start klogd"
-/usr/sbin/klogd
+/usr/sbin/klogd&
 
 if [ ! -e /usr/etc/pango/pango.modules ]; then
 	echolog "e" "s" "" "Collect pango modules"
-        /usr/bin/pango-querymodules > /usr/etc/pango/pango.modules
+        /usr/bin/pango-querymodules > /usr/etc/pango/pango.modules&
 fi
 
+(
 echolog "e" "s" "" "Generate keys/certs as needed..."
 if [ ! -e /usr/etc/ssh_host_rsa_key ]; then
         echolog "e" "s" "" "  SSH RSA key.  This may take several minutes."
@@ -208,14 +221,18 @@ fi
 
 echolog "e" "s" "" "Hash CA certs"
 /usr/bin/c_rehash >/dev/null
+)&
 
+(
 echolog "e" "s" "" "Create security tokens"
 grep root /etc/shadow | sha1sum | sed -e 's/ -$//' >/usr/etc/token1.sum
 grep admin /var/smoothwall/auth/users | sha1sum | sed -e 's/ -$//' >/usr/etc/token2.sum
 sha1sum < /usr/etc/ssh_host_rsa_key | sed -e 's/ -$//' >/usr/etc/token3.sum
 chgrp nobody /usr/etc/token[123].sum
 chmod g=r /usr/etc/token[123].sum
+)&
 
+(
 # Ensure URL Filter's blacklists' custom dirs/files exist
 echolog "e" "s" "" "(Re)make custom blacklist files"
 pushd /var/smoothwall/urlfilter/blacklists >/dev/null 2>&1
@@ -232,14 +249,17 @@ for tDir in custom/allowed custom/blocked; do
   done
 done
 popd >/dev/null 2>&1
-
+)&
 echolog "e" "s" "" "Generate UPNP UUID"
-/usr/bin/uuidgen >/etc/miniupnpd.uuid
+/usr/bin/uuidgen >/etc/miniupnpd.uuid&
+
+# Sync background tasks
+wait >/dev/null 2>&1
 
 echolog "e" "s" "" "Load other filesystems"
-/sbin/modprobe msdos
-/sbin/modprobe vfat
-/sbin/modprobe nls_cp437
+/sbin/modprobe msdos&
+/sbin/modprobe vfat&
+/sbin/modprobe nls_cp437&
 # Adapted from Steve McNeill's ModInstall
 echolog "e" "s" "" "Load mods' modules"
 # if any; limited to .../mods/*/etc/rc.d, 00-09
@@ -247,22 +267,25 @@ shopt -s nullglob
 unset i
 for i in /var/smoothwall/mods/*/etc/rc.d/0[0-9]rc.sysinit; do
   $i
-done
+done&
 shopt -u nullglob
 
 echolog "e" "s" "" "Load IPSEC"
-/sbin/modprobe ipsec
+/sbin/modprobe ipsec&
 
 echolog "e" "s" "" "Start smoothd"
-/usr/sbin/smoothd
+/usr/sbin/smoothd&
 
 echolog "e" "s" "" "Rotate logs"
-/usr/sbin/logrotate /etc/logrotate.conf
+/usr/sbin/logrotate /etc/logrotate.conf&
 # Adapted from Steve McNeill's ModInstall
 # and mods' log files, if any
 find /var/smoothwall/mods/*/etc/logrotate.d -type f 2>/dev/null | while read i; do
-  /usr/sbin/logrotate "$i"
+  /usr/sbin/logrotate "$i"&
 done
+
+# Sync background tasks
+wait >/dev/null 2>&1
 
 echo
 echolog "e" "s" "" "Initialize  networking"
@@ -272,19 +295,19 @@ echo
 echolog "e" "s" "" "Start services and daemons"
 echolog "e" "s" "" "  cron"
 rm -f /var/run/crond.reboot
-/usr/sbin/cron
+/usr/sbin/cron&
 echolog "e" "s" "" "  httpd"
-/usr/sbin/httpd -DSSL
+/usr/sbin/httpd -DSSL&
 echolog "e" "s" "" "  sshd (if enabled)"
-/usr/bin/smoothcom sshdrestart
+/usr/bin/smoothcom sshdrestart&
 echolog "e" "s" "" "  IMSpector (if enabled)"
-/usr/bin/smoothcom imrestart
+/usr/bin/smoothcom imrestart&
 echolog "e" "s" "" "  SIP proxy (if enabled)"
-/usr/bin/smoothcom siprestart
+/usr/bin/smoothcom siprestart&
 echolog "e" "s" "" "  Clam Anti-Virus (if enabled)"
-/usr/bin/smoothcom clamavrestart
+/usr/bin/smoothcom clamavrestart&
 echolog "e" "s" "" "  POP3 scanner (if enabled)"
-/usr/bin/smoothcom p3scanrestart
+/usr/bin/smoothcom p3scanrestart&
 #echo "  Guardian (if enabled)"
 #/usr/bin/smoothcom guardianrestart
 
@@ -295,15 +318,15 @@ echolog "e" "s" "" "Run mods' run level scripts"
 shopt -s nullglob
 unset i
 for i in /var/smoothwall/mods/*/etc/rc.d/[1-8][0-9]rc.sysinit; do
-  $i;
-done
+  $i
+done&
 shopt -u nullglob
 
 echo
 echolog "e" "s" "" "Finish startup"
 echolog "e" "s" "" "  Silence the kernel, syslog output on tty12"
 echolog "e" "s" "" "  (View the log files in /var/log to trace errors.)"
-echo "1 4 1 7" >/proc/sys/kernel/printk
+echo "1 4 1 7" >/proc/sys/kernel/printk&
 
 # Remove the policing barricades (delete the ingress qdiscs)
 echolog "e" "s" "" "  Remove policing barricades"
@@ -315,7 +338,10 @@ echolog "e" "s" "" "  Bring the links up"
 
 # Restart TC in case it uses ingress policers
 echolog "e" "s" "" "  Start traffic control (QoS)"
-/usr/bin/smoothcom trafficrestart
+/usr/bin/smoothcom trafficrestart&
+
+# Sync background tasks
+wait >/dev/null 2>&1
 
 # Services here depend on the IFs being up.
 
@@ -342,11 +368,11 @@ ntpdate ${NTP_SERVER}
 /sbin/hwclock --systohc --localtime
 /usr/bin/smoothcom ntpdrestart
 echolog "e" "s" "" "  Start dhcpd (if enabled)"
-/usr/bin/smoothcom dhcpdrestart
+/usr/bin/smoothcom dhcpdrestart&
 echolog "e" "s" "" "  APCupsd server (if enabled)"
-/usr/bin/smoothcom apcupsdrestart
-rm -f /etc/apcupsd/powerfail;
-rm -f /etc/nologin;
+/usr/bin/smoothcom apcupsdrestart&
+rm -f /etc/apcupsd/powerfail&
+rm -f /etc/nologin&
 
 # Adapted from Steve McNeill's ModInstall
 echolog "e" "s" "" "  Run mods' post-barricade run level scripts"
@@ -355,32 +381,36 @@ echolog "e" "s" "" "  Run mods' post-barricade run level scripts"
 shopt -s nullglob
 unset i
 for i in /var/smoothwall/mods/*/etc/rc.d/9[0-9]rc.sysinit; do
-  $i;
-done
+  $i
+done&
 shopt -u nullglob
 
 # Do the following here during bootup IFF RED is active and the flag file exists.
 #   If RED is not active, leave it for the first time rc.updatered runs.
 if [ -e /var/smoothwall/red/active -a -e /var/run/do_update_machreg ]; then
   echolog "e" "s" "" "  Look for system updates; register system."
-  (
+  ((
   /usr/bin/smoothwall/updatelists.pl &&
       etc/rc.d/rc.machineregister &&
       rm -f /var/run/do_update_machreg
-  ) |& logger -t smoothwall &
+  ) |& logger -t smoothwall& )&
 fi
 
 # Final startup steps.
 echolog "e" "s" "" "Save dmesg buffer to /var/log/dmesg"
-dmesg >/var/log/dmesg
-
-echolog "e" "s" "" "Smoothwall started."
-
-/usr/bin/sounds/startupsound
+dmesg >/var/log/dmesg&
 
 # Start a shutdown daemon that waits for the power button to be pressed
-/usr/bin/smoothwall/powerButton.pl&
+echolog "e" "s" "" "  Start powerbutton daemon"
+( /usr/bin/smoothwall/powerButton.pl& )&
 
-rm -f /var/run/STARTSTOP
+rm -f /var/run/STARTSTOP&
+
+/usr/bin/sounds/startupsound&
+
+# Sync background tasks
+wait >/dev/null 2>&1
+
+echolog "e" "s" "" "Smoothwall started."
 
 exit 0
