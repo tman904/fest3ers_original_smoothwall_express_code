@@ -70,6 +70,10 @@ mkdir /var/run
 chmod 755 /var/run
 mount -t tmpfs tmpfs /var/run
 chmod 1777 /var/run
+# This flag ensures that the check for updates and the machine registry happens only
+#   once per boot. The first time RED comes up, they will run and this will be deleted.
+#   Must be done *after* the /var/run tmpfs mounts is complete.
+touch /var/run/do_update_machreg&
 )&
 (
 rm -rf /dev/shm
@@ -87,11 +91,6 @@ if [ -e /dev/sda4 -a ! -e /dev/harddisk4 ]; then
     ln -s -f /dev/sda$i /dev/harddisk$i
   done
 fi
-
-# This flag ensures that the check for updates and the machine registry happens only
-#   once per boot. The first time RED comes up, they will run and this will be deleted.
-#   Must be done *after* the R/W remount.
-touch /var/run/do_update_machreg&
 
 # This flag allows scripts to differentiate between normal operation and startup/shutdown.
 echo "bootup" > /var/run/STARTSTOP
