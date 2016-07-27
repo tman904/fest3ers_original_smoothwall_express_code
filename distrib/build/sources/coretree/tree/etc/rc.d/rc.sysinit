@@ -59,13 +59,22 @@ mount -n -o remount,rw /
 
 # Adjustments and cleanup
 chmod 1777 /tmp&
-find /var/run -name '*.pid' -type f -exec rm -f '{}' \;&
+#find /var/run -name '*.pid' -type f -exec rm -f '{}' \;&
 rm -f /var/lock/LCK..ttyS*&
-rm -f /var/run/pppd*.tdb&
+#rm -f /var/run/pppd*.tdb&
 
-echolog "e" "s" "" "Make /dev/shm a tmpfs, mode 1777"
+echolog "e" "s" "" "Make /var/run and /dev/shm tmpfsen, mode 1777"
 (
+rm -rf /var/run
+mkdir /var/run
+chmod 755 /var/run
+mount -t tmpfs tmpfs /var/run
+chmod 1777 /var/run
+)&
+(
+rm -rf /dev/shm
 mkdir -p /dev/shm
+chmod 755 /dev/shm
 mount -t tmpfs tmpfs /dev/shm
 chmod 1777 /dev/shm
 )&
