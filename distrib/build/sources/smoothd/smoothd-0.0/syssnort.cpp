@@ -145,7 +145,7 @@ int start_snort(std::vector<std::string> & parameters, std::string & response)
 	if (settings["ENABLE_SNORT"] == "on")
 	{
 		error = simplesecuresysteml("/usr/bin/snort","-c", "/etc/snort.conf", "-D",
-			"-u", "snort", "-m", "033", "-pid-path=/var/run", "-g", "snort", "-d",  "-e", "-A", "Full",
+			"-u", "snort", "-m", "033", "--pid-path=/var/run", "-g", "snort", "-d",  "-e", "-A", "Full",
 			"-i" , iface.str().c_str(), NULL);
 
 		if (error)
