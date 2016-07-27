@@ -72,7 +72,7 @@ mount -t tmpfs tmpfs /var/run
 chmod 1777 /var/run
 # This flag ensures that the check for updates and the machine registry happens only
 #   once per boot. The first time RED comes up, they will run and this will be deleted.
-#   Must be done *after* the /var/run tmpfs mounts is complete.
+#   Must be done *after* the /var/run tmpfs mount is complete.
 touch /var/run/do_update_machreg&
 )&
 (
@@ -412,12 +412,12 @@ dmesg >/var/log/dmesg&
 echolog "e" "s" "" "  Start powerbutton daemon"
 ( /usr/bin/smoothwall/powerButton.pl& )&
 
-rm -f /var/run/STARTSTOP&
-
 /usr/bin/sounds/startupsound&
 
 # Sync background tasks
 wait >/dev/null 2>&1
+
+rm -f /var/run/STARTSTOP
 
 echolog "e" "s" "" "Smoothwall started."
 
