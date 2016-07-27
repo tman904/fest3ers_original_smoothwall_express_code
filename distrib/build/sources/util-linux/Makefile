@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = util-linux
-VER_MM = 2.27
+VER_MM = 2.28
 VERSION = $(VER_MM)
 
 export NO_CHECK_CERT = 1
