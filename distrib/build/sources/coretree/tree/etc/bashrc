@@ -30,7 +30,6 @@ fi
 VIM="/usr/share/vim"
 
 alias ls='ls --color=tty -F -b -T 0'
-locate () { su nobody -c "/usr/bin/locate $*"; }
 
 # Adapted from Steve McNeill's ModInstall
 # Include mods' /bin directories in PATH; but only add each one once.
