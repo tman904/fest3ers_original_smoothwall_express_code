@@ -43,46 +43,34 @@ my $count; my $command;
 my @selectedui; my @selectedsetup; my @selectedmodules;
 
 
-if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'} || 
-    $cgiparams{'ACTION'} eq $tr{'create backup floppy image file'}) { 
+if ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) { 
 	unless ($errormessage) {
 		system('/etc/rc.d/backupscript');
 
-		if ($cgiparams{'ACTION'} eq $tr{'create backup floppy disk'}) {
-			if (system('/usr/bin/tar', '-C', "${swroot}/backup", '-cWf', '/dev/fd0', 'backup.dat', 'version')) {
-				$errormessage = $tr{'unable to create backup floppy'};
-			}
-			else {
-				$extramessage = $tr{'backup disk created successfully'};
-			}
-			unlink "${swroot}/backup/backup.dat";
-			unlink "${swroot}/backup/version";
+		if (system('/usr/bin/tar', '-C', "${swroot}/backup", '-cf', "${swroot}/tmp/backup.tar", 'backup.dat', 'version')) {
+			$errormessage = $tr{'unable to create settings backup file'};
 		}
 		else {
-			if (system('/usr/bin/tar', '-C', "${swroot}/backup", '-cf', "${swroot}/tmp/backup.img", 'backup.dat', 'version')) {
-				$errormessage = $tr{'unable to create floppy image file'};
-			}
-			else {
-				print "Content-type: application/octect-stream\n";
-				print "Content-length: " . 1440 * 1024 . "\n";
-				print "Content-disposition: attachment; filename=\"backup.img\"\n\n";
+			# Get the archive file
+			undef $/;
+			open (FILE, "${swroot}/tmp/backup.img");
+			$_= <FILE>;
+			close (FILE);
+			my $tarLength = length;
 
-				undef $/;
-				open (FILE, "${swroot}/tmp/backup.img");
-				$_= <FILE>;
-				print $_;
-				my $l = length;
-				
-				close (FILE);
+			# Send it to the browser
+			print "Content-type: application/octect-stream\n";
+			print "Content-length: \"$tarLength\"\n";
+			print "Content-disposition: attachment; filename=\"backup.tar\"\n\n";
+			print;
 
-				print '\0' x ((1440 * 1024) - $l);
+			# Delete the files
+			unlink "${swroot}/tmp/backup.tar";
+			unlink "${swroot}/backup/backup.dat";
+			unlink "${swroot}/backup/version";
 
-				unlink "${swroot}/tmp/backup.img";
-				unlink "${swroot}/backup/backup.dat";
-				unlink "${swroot}/backup/version";
-
-				exit;
-			}
+			# Done
+			exit;
 		}		
 	}
 }
@@ -263,27 +251,26 @@ END
 
 &closebox();
 
-&openbox($tr{'bu legacy backupc'});
+&openbox($tr{'bu settings backup filec'});
 
-&openbox($tr{'backup floppy instructions'});
+&openbox();
 print <<END
-$tr{'backup floppy instructions long'}
+$tr{'settings backup instructions long'}
 END
 ;
 
 print "<div class='base' style='text-align:center; font-size:x-large;'>$extramessage</div>\n";
 
-&closebox();
-
 print <<END
 <table style='width: 80%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-	<td style='text-align:center;'><input type='submit' name='ACTION' value='$tr{'create backup floppy disk'}'></td>
-	<td style='text-align:center;'><input type='submit' name='ACTION' value='$tr{'create backup floppy image file'}'></td>
+	<td style='text-align:center;'><input type='submit' name='ACTION' value='$tr{'create settings backup file'}'></td>
 </tr>
 </table>
 END
 ;
+
+&closebox();
 
 &closebox();
 

@@ -897,15 +897,10 @@
 'drop' => 'Drop',
 
 # backup.cgi
-'create backup floppy disk' => 'Create backup floppy disk', # button
-'unable to create backup floppy' => 'Unable to create backup floppy. Verify there is a write-enabled floppy disk in the drive.',
 'backup configuration' => 'Backup configuration',
-'backup floppy instructions' => 'Instructions on creating a backup disk or disk image:',
-'backup floppy instructions long' => 'Please insert a blank, formatted floppy disk in the Smoothwall computer\'s floppy disk drive before pressing the button to create the backup disk.  This disk should  be available when reinstalling or upgrading, in order for the saved configuration to be restored.<br/><br/><strong>Note:</strong> It may take up to a minute to write the information to the floppy disk. Alternatively, you may create a floppy disk image file, which you can later write to a floppy disk.<br/><strong>Note 2:</strong> URLFilter data can be too large for a floppy; use its built-in backup/restore or use the PnP Backup facility.<br/>',
-'backup disk created successfully' => 'Backup disk created successfully.',
-'create backup floppy image file' => 'Create backup floppy image file',
-'unable to create backup floppy image file' => 
-'Unable to create backup floppy image file',
+'settings backup instructions long' => 'Click <u>Create settings backup file</u> to create an archive of the settings and primary data that define your firewall. This archive can be used to configure a freshly installed system.<br /><br /><i>This is essentially the legacy floppy backup. It contains only settings, rules and configuration data; it does not contain logs, caches, or other accumulated data.',
+'create settings backup file' => 'Create settings backup file',
+'unable to create settings backup file' => 'Unable to create settings backup file',
 'save and restart with cleared cache' => "Save and clear cache",
 'RRDTool graphs' => 'RRD Tool Graphs',
 'bu pnp backup' => 'plug-n-play backup',
@@ -914,7 +909,7 @@
 'bu total backupc' => 'Total Backup:',
 'bu backup statusc' => 'Status:',
 'bu media mgmtc' => 'Media Management:',
-'bu legacy backupc' => 'Legacy Backup:',
+'bu settings backup filec' => 'Settings Backup File:',
 'bu name' => 'Name',
 'bu id' => 'Drive ID',
 'bu add drive' => 'Add Drive',
