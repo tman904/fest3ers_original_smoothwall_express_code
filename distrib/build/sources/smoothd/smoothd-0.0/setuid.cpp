@@ -38,7 +38,7 @@
 int nullfd = -1;
 
 #define INPUT_BUFFER 128
-#define TIMEOUT 30
+#define TIMEOUT 60
 
 extern int errno;
 
