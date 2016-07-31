@@ -285,12 +285,12 @@ foreach my $interface (keys(%interfaces)) {
 		<select id="outPolicy${interface}" style="margin:.1em 0" name="$interface" onclick="
 		if (document.getElementById('outPolicy${interface}').value == 'REJECT') {
 			document.getElementById('outPolicyExceptions${interface}').innerHTML = 
-			'<span style='font-weight:bold;'>$tr{'block'}</span>';
+			'<span style=\\'font-weight:bold;\\'>$tr{'block'}</span>';
 		}
 		else {
 			document.getElementById('outPolicyExceptions${interface}').innerHTML = 
-			'<span style='font-weight:bold;'>$tr{'allow'}</span>';
-		};">
+			'<span style=\\'font-weight:bold;\\'>$tr{'allow'}</span>';
+		}">
 			<option value='REJECT' $selected{"$interface"}{'REJECT'}>$tr{'allowed'}</option>
 			<option value='ACCEPT' $selected{"$interface"}{'ACCEPT'}>$tr{'blocked'}</option>
 	</select>
