@@ -51,6 +51,15 @@ if ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
 			$errormessage = $tr{'unable to create settings backup file'};
 		}
 		else {
+			my $HOST = `uname -n`; chomp $HOST;
+			my $DATE = `date  +"%Y-%m-%d"`; chomp $DATE;
+			my %productsettings;
+			&readhash("${swroot}/main/productdata", \%productsettings);
+			my $PRODUCT = $productsettings{'PRODUCT'};
+			my $VERSION = $productsettings{'VERSION'};
+			my $REVISION = $productsettings{'REVISION'};
+			my $FNAME = "${HOST}_${DATE}_${PRODUCT}_${VERSION}_${REVISION}_settings";
+
 			# Get the archive file
 			undef $/;
 			open (FILE, "${swroot}/tmp/backup.tar");
@@ -61,7 +70,7 @@ if ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
 			# Send it to the browser
 			print "Content-type: application/octect-stream\n";
 			print "Content-length: \"$tarLength\"\n";
-			print "Content-disposition: attachment; filename=\"backup.tar\"\n\n";
+			print "Content-disposition: attachment; filename=\"$FNAME.tar\"\n\n";
 			print;
 
 			# Delete the files
@@ -70,6 +79,7 @@ if ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
 			unlink "${swroot}/backup/version";
 
 			# Done
+			close(STDOUT);
 			exit;
 		}		
 	}
