@@ -1,0 +1,8 @@
+./httpd/cgi-bin/advnet.cgi
+./httpd/cgi-bin/advstatus.cgi
+./httpd/cgi-bin/apcupsd.cgi
+./httpd/cgi-bin/backup.cgi
+
+./usr/lib/smoothwall/langs/en.pl
+./usr/lib/smoothwall/langs/alertboxes.en.pl
+./var/smoothwall/patches/installed

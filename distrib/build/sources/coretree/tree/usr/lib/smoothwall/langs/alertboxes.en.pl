@@ -37,7 +37,6 @@ firewall.  Further information on your Smoothwall Express is available from <a h
 'shell.cgi' 		=> 'Connect to your Smoothwall using a Java SSH applet (requires SSH to be <a href="/cgi-bin/remote.cgi">enabled</a>).',
 'updates.cgi' 		=> 'See the latest updates and fixes available for your Smoothwall, and an installation history of updates previously applied.',
 'modem.cgi' 		=> 'Apply specific AT string settings for your PSTN modem or ISDN TA.',
-'alcateladslfw.cgi' 	=> 'Upload firmware to enable use of an Alcatel/Thomson Speedtouch Home USB ADSL modem, nicknamed the \'frog\' or \'stingray\'.  <a href="http://smoothwall.org/get/" onclick=\'window.open(this.href); return false\'>Download the \'Speedtouch USB Firmware\' tarball</a>, unpack it, and upload the mgmt.o file using this form.',
 'changepw.cgi' 		=> 'Change passwords for the \'admin\' and \'dial\' management interface users.  This does not affect access by SSH.',
 'shutdown.cgi' 		=> 'Shutdown or restart your Smoothwall &mdash; restarts are sometimes mandated by update installation.',
 'time.cgi' 		=> 'Change timezone, manually set the time and date, configure time syncronisation and enable the time server.',

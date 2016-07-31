@@ -751,14 +751,6 @@
 'traffic stats in' => 'In',
 'traffic stats out' => 'Out',
 
-# usbadsl.cgi
-'usb adsl setup' => 'Alcatel/Thompson SpeedTouch USB ADSL setup',
-'usb adsl help' => 'To utilise the Alcatel/Thompson SpeedTouch USB modem you must upload the firmware to your Smoothwall box. Please download the tarball and then upload the file, usually called <span style=\'font-weight: bold;\'>mgmt.o</span>, using the form below.',
-'upload successful' => 'Upload successful.',
-'could not create file' => 'Could not create file.',
-'mgmt upload' => 'Alcatel/Thompson SpeedTouch USB ADSL driver upload:',
-'upload filec' => 'Upload file:',
-
 # updates.cgi
 'updates' => 'Updates',
 'could not open available updates file' => 'Could not open available updates file.',

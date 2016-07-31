@@ -19,7 +19,7 @@ MAIN = main.cpp
 LIBS = -L. -ldl -lsmoothd -lxtables -lip4tc
 BIN = smoothd
 
-MODULES = sysshutdown sysinstall sysim sysp3scan sysalcatel sysdhcpd sysdnsproxy \
+MODULES = sysshutdown sysinstall sysim sysp3scan sysdhcpd sysdnsproxy \
 	sysntpd syssnort syssquid syssshd sysupnpd sysadvnet sysapcupsd sysipblock \
 	sysxtaccess sysupdown sysipsec systimeset sysiptables systraffic syssip sysclamav \
 	systimedaccess syssmoothinfo syssquidguard
@@ -46,8 +46,6 @@ clean:
 sysadvnet : libsmoothd.so $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 sysapcupsd : libsmoothd.so $(OBJS)  
-	$(CXX) $(MODULEFLAGS)
-sysalcatel : libsmoothd.so $(OBJS)  
 	$(CXX) $(MODULEFLAGS)
 sysclamav : libsmoothd.so $(OBJS)
 	$(CXX) $(MODULEFLAGS)

@@ -19,7 +19,6 @@ install: compile
 	@install -D $(COMPILE_DIR)/smoothd.pm $(PKG_ROOT)/usr/lib/smoothwall/smoothd.pm
 
 	@install -D $(COMPILE_DIR)/sysadvnet.so $(PKG_ROOT)/usr/lib/smoothd/sysadvnet.so 
-	@install -D $(COMPILE_DIR)/sysalcatel.so $(PKG_ROOT)/usr/lib/smoothd/sysalcatel.so 
 	@install -D $(COMPILE_DIR)/sysapcupsd.so $(PKG_ROOT)/usr/lib/smoothd/sysapcupsd.so 
 	@install -D $(COMPILE_DIR)/sysclamav.so $(PKG_ROOT)/usr/lib/smoothd/sysclamav.so 
 	@install -D $(COMPILE_DIR)/sysdhcpd.so $(PKG_ROOT)/usr/lib/smoothd/sysdhcpd.so 
