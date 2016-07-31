@@ -289,7 +289,7 @@ if (($snortsettings{'ACTION'} eq $tr{'save'}) &&
 	my $runmsg .= $errormessage if ($errormessage ne "");
 
 	# Display DL errors encountered
-	if ($runmsg ne "") {
+	if (($runmsg) && ($runmsg ne "")) {
 		$errormessage .= $runmsg;
 		$errormessage .= "Could not fetch the $snortversion ruleset.<br />";
 		print STDERR $errormessage;

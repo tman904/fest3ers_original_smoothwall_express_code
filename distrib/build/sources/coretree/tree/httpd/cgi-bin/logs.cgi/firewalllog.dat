@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use POSIX qw(ceil);
 use strict;
 use warnings;
 
@@ -75,11 +76,11 @@ close (FILE);
 
 my $start = -1;
 
-if ($cgiparams{'ACTION'} ne $tr{'update'}) {
+if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $tr{'update'}) {
 	my @temp = split(',',$ENV{'QUERY_STRING'});
-	$start = $temp[0] if ($temp[0]);
-	$cgiparams{'MONTH'} = $temp[1] if ($temp[1]);
-	$cgiparams{'DAY'} = $temp[2] if ($temp[2]);
+	$start = $temp[0];
+	$cgiparams{'MONTH'} = $temp[1];
+	$cgiparams{'DAY'} = $temp[2];
 }
 
 if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) || 
@@ -324,34 +325,31 @@ END
 	$next = -1 if ($next >= $lines);
 	$prev = -1 if ($start == 0);
 
-	my $number_of_pages = int( $lines / $viewsize );
+	my @slice = splice(@log, $start, $viewsize);
+	my $number_of_pages = ceil( $lines / $viewsize );
 	my $page = 0;
-
 	my $max_number_of_pages = 20;
-
-	my ( $first_link, $last_link );
-
 	my $start_page = 0;
 	my $end_page = $number_of_pages;
-	my $tpage = $number_of_pages - int($start / $viewsize);
+	my $tpage = $number_of_pages - ceil( $start / $viewsize );
 
-	if ( $number_of_pages > $max_number_of_pages ){
+	if ( $number_of_pages > $max_number_of_pages ) {
 		$start_page = $tpage - int( $max_number_of_pages / 2 );
 		$end_page   = $tpage + int( $max_number_of_pages / 2 );
 
-		if ( $end_page > int( $lines / $viewsize ) ){
-			$start_page = int( $lines / $viewsize );
+		if ( $end_page > $number_of_pages ) {
+			$start_page = $number_of_pages;
 			$end_page = $start_page;
 			$start_page -= $max_number_of_pages;
 		}
 
-		if ( $start_page < 0 ){
+		if ( $start_page < 0 ) {
 			$start_page = 0;
 			$end_page = $max_number_of_pages;
 		}
 	}
 
-	my @slice = splice(@log, $start, $viewsize);
+
 
 	# display the header
 
@@ -365,16 +363,18 @@ END
 
 	if ( $number_of_pages >= 2 ) {
 		if ($next != -1) {
+			$next = $lines - ((int( $lines / $viewsize ) * $viewsize)) if ($tpage == $number_of_pages);
 			print "<td style='vertical-align: top;text-align: center;'><a href='/cgi-bin/logs.cgi/firewalllog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>&lt; Sm</a></td>"; 	
 		}
 		else {
 			print "<td style='vertical-align: top;text-align: center'>&lt; Sm</td>"; 
 		}
 
-		for ( my $i = ($total_lines-$viewsize) ; $i > 0 ; $i -= $viewsize ){
-			my $page = $number_of_pages - int( $i / $viewsize );
-			
-			if ( $page >= $start_page and $page <= $end_page ){
+		for ( my $i = ($lines-$viewsize) ; $i > (1-$viewsize) ; $i -= $viewsize ) {
+			my $page = $number_of_pages - ceil( $i / $viewsize );
+			$i = 0 if ( $i < 0);
+      
+			if ( $page >= $start_page and $page <= $end_page ) {
 				if ( $i == $start ){
 					print "<td style='vertical-align: top;text-align: center;'><a style='color: red;' href='/cgi-bin/logs.cgi/firewalllog.dat?$i,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>o<br/><span style='color: #a0a0a0; font-size: 7px;'>$page</span></a></td>"
 				}
