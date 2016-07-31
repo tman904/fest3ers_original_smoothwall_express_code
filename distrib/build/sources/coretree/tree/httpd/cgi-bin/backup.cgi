@@ -287,7 +287,7 @@ END
 &closebox();
 
 &openbox($tr{'bu restore settingsc'});
-  print "<p>Need more detail here. :)</p>\n";
+  print "<p style='margin:1em 2em;'>Need more detail here. :)</p>\n";
 &closebox();
 
 &closebox();
