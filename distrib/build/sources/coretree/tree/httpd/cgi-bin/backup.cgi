@@ -145,6 +145,7 @@ END
 
 print "<form method='POST' action='?'><div>\n";
 
+&openbox($tr{'bu pnp monitor and media'});
 &openbox($tr{'bu backup statusc'});
 
 # Read .../backup/flag into $flag
@@ -183,7 +184,41 @@ END
 
 &openbox($tr{'bu media mgmtc'});
 
-&openbox();
+&openbox($tr{'bu add new drivec'});
+
+print<<END;
+<table class='blank'>
+<tr>
+	<td align='center' style='width: 20%;text-align:center'>
+	   <input id='buAddDrive' type='submit' name='ACTION' value='$tr{"bu add drive"}'
+		onclick='simpleMonitor(addDriveMonitorObj, "/cgi-bin/txt-bu-startAdd.cgi", handleAddFlag); return false;'
+		style='margin:.2em; text-align:center'><br />
+	   <input id='buOK' type='submit' disabled='disabled' name='ACTION' value='$tr{"bu ok"}'
+		onclick='simpleMonitor(addDriveOneShotObj, "/cgi-bin/txt-bu-setRsp.cgi?rsp="+buNameEntry.value, no_op);
+		return false;' style='margin:.2em; text-align:center'><br />
+	   <input id='buCancel' type='submit' disabled='disabled' name='ACTION' value='$tr{"bu cancel"}'
+		onclick='simpleMonitor(addDriveOneShotObj, "/cgi-bin/txt-bu-cancelAdd.cgi", no_op); return false;'
+		style='margin:.2em; text-align:center'></td>
+	<td style='width:75%'><p id='buPrompt'>$tr{'bu default prompt'}</p>
+	   <div id='buInput' style='display:none'>
+	   <p style='display:inline-block; text-align:right; margin-right:.5em'>$tr{'bu name'}:</p>
+	   <input id='buNameEntry' type='text' name='driveName' style='width:50%'
+		onkeyup='if (buNameEntry.value.match(/^[a-zA-Z0-9_-]+\$/) == null)
+		buNameEntry.style.backgroundColor="#ffdddd";
+	   else
+		buNameEntry.style.backgroundColor="";
+		;'>
+	   <p style='display:inline-block; margin-right:.5em; font-style:italic;'>
+		allowed: (A-Z, a-z, 0-9, _, -)</p></div>
+	</td>
+</tr>
+</table>
+<div id='debug' style='border:green 2pt solid; display:none'></div>
+END
+  
+&closebox();
+
+&openbox($tr{'bu remove drivec'});
 
 my %render_settings =
 (
@@ -225,47 +260,16 @@ END
 
 &closebox();
 
-&openbox();
-
-print<<END;
-<table class='blank'>
-<tr>
-	<td align='center' style='width: 20%;text-align:center'>
-	   <input id='buAddDrive' type='submit' name='ACTION' value='$tr{"bu add drive"}'
-		onclick='simpleMonitor(addDriveMonitorObj, "/cgi-bin/txt-bu-startAdd.cgi", handleAddFlag); return false;'
-		style='margin:.2em; text-align:center'><br />
-	   <input id='buOK' type='submit' disabled='disabled' name='ACTION' value='$tr{"bu ok"}'
-		onclick='simpleMonitor(addDriveOneShotObj, "/cgi-bin/txt-bu-setRsp.cgi?rsp="+buNameEntry.value, no_op);
-		return false;' style='margin:.2em; text-align:center'><br />
-	   <input id='buCancel' type='submit' disabled='disabled' name='ACTION' value='$tr{"bu cancel"}'
-		onclick='simpleMonitor(addDriveOneShotObj, "/cgi-bin/txt-bu-cancelAdd.cgi", no_op); return false;'
-		style='margin:.2em; text-align:center'></td>
-	<td style='width:75%'><p id='buPrompt'>$tr{'bu default prompt'}</p>
-	   <div id='buInput' style='display:none'>
-	   <p style='display:inline-block; text-align:right; margin-right:.5em'>$tr{'bu name'}:</p>
-	   <input id='buNameEntry' type='text' name='driveName' style='width:50%'
-		onkeyup='if (buNameEntry.value.match(/^[a-zA-Z0-9_-]+\$/) == null)
-		buNameEntry.style.backgroundColor="#ffdddd";
-	   else
-		buNameEntry.style.backgroundColor="";
-		;'>
-	   <p style='display:inline-block; margin-right:.5em; font-style:italic;'>
-		allowed: (A-Z, a-z, 0-9, _, -)</p></div>
-	</td>
-</tr>
-</table>
-<div id='debug' style='border:green 2pt solid; display:none'></div>
-END
-  
+&closebox();
 &closebox();
 
-&closebox();
+&openbox($tr{'bu settings backup'});
 
-&openbox($tr{'bu settings backup filec'});
-
-&openbox();
+&openbox($tr{'bu save settingsc'});
 print <<END
-$tr{'settings backup instructions long'}
+<p style='margin:1em 2em;'>
+  $tr{'settings backup instructions long'}
+</p>
 END
 ;
 
@@ -280,6 +284,10 @@ print <<END
 END
 ;
 
+&closebox();
+
+&openbox($tr{'bu restore settingsc'});
+  print "<p>Need more detail here. :)</p>\n";
 &closebox();
 
 &closebox();
