@@ -53,7 +53,7 @@ if ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
 		else {
 			# Get the archive file
 			undef $/;
-			open (FILE, "${swroot}/tmp/backup.img");
+			open (FILE, "${swroot}/tmp/backup.tar");
 			$_= <FILE>;
 			close (FILE);
 			my $tarLength = length;
