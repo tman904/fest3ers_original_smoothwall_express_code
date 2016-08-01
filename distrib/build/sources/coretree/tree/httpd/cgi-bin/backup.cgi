@@ -43,7 +43,42 @@ my $count; my $command;
 my @selectedui; my @selectedsetup; my @selectedmodules;
 
 
-if ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) { 
+if ($cgiparams{'ACTION'} eq $tr{'bu restore'}) { 
+	mkdir "/var/smoothwall/backup/restore";
+	# Open the destination file
+	if (open(ARCHIVEFILE, ">/var/smoothwall/backup/backup.tar")) {
+		flock ARCHIVEFILE, 2;
+		print ARCHIVEFILE $cgiparams{'ARCHIVE'};
+		close(ARCHIVEFILE);
+
+		my $fileType = `/usr/bin/file /var/smoothwall/backup/backup.tar`;
+
+		if ($fileType =~ /tar archive/) {
+			system('tar xf /var/smoothwall/backup/backup.tar -C /var/smoothwall/backup/restore');
+
+        		if (-f "/var/smoothwall/backup/restore/version" && -f "/var/smoothwall/backup/restore/backup.dat") {
+				# This will be a call to &message; unpack must be done as root via smoothd
+				system('tar xf /var/smoothwall/backup/restore/backup.dat -C /var/smoothwall/backup/restore');
+			}
+			else {
+				$errormessage .= "Not a settings backup archive</br />";
+				print STDERR "Not a settings archive '$fileType'\n";
+			}
+		}
+		else {
+			$errormessage .= "Not a tar archive<br />";
+			print STDERR "settings restore archive file type '$fileType'\n";
+		}
+	}
+	else {
+		$errormessage .= $tr{'bu could not save archive to disk'} ."<br />";
+	}
+	# Always clean up the tailings,
+	system("rm -rf /var/smoothwall/backup/restore");
+	unlink ("/var/smoothwall/backup/backup.tar");
+}
+
+elsif ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
 	unless ($errormessage) {
 		system('/etc/rc.d/backupscript');
 
@@ -281,18 +316,36 @@ print <<END
 	<td style='text-align:center;'><input type='submit' name='ACTION' value='$tr{'create settings backup file'}'></td>
 </tr>
 </table>
+</form>
 END
 ;
 
 &closebox();
 
 &openbox($tr{'bu restore settingsc'});
-  print "<p style='margin:1em 2em;'>Need more detail here. :)</p>\n";
-&closebox();
+
+print <<END;
+<div style='margin:1em 2em 0 2em;'>
+  <form method='post' action='/cgi-bin/backup.cgi' enctype='multipart/form-data'>
+  <p>
+    $tr{'bu restore settings long'}
+  </p>
+  <p style='margin:.5em 3em;'>
+    <input type='file' name='ARCHIVE' style='margin-right:5em; width:30em;'>
+  </p>
+  <p style='margin:1em 0 .3em 0; width:100%; text-align:center;'>
+    <input type='submit' name='ACTION' value='$tr{'bu restore'}' style='text-align:center'>
+  </p>
+
+  </form>
+</div>
+END
 
 &closebox();
 
-print "</div></form>\n";
+&closebox();
+
+print "</div>\n";
 
 &alertbox('add','add');
 
