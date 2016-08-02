@@ -31,6 +31,7 @@ install: compile
 	@install -D $(COMPILE_DIR)/sysiptables.so $(PKG_ROOT)/usr/lib/smoothd/sysiptables.so 
 	@install -D $(COMPILE_DIR)/sysntpd.so $(PKG_ROOT)/usr/lib/smoothd/sysntpd.so 
 	@install -D $(COMPILE_DIR)/sysp3scan.so $(PKG_ROOT)/usr/lib/smoothd/sysp3scan.so 
+	@install -D $(COMPILE_DIR)/sysrestore.so $(PKG_ROOT)/usr/lib/smoothd/sysrestore.so 
 	@install -D $(COMPILE_DIR)/sysshutdown.so $(PKG_ROOT)/usr/lib/smoothd/sysshutdown.so 
 	@install -D $(COMPILE_DIR)/syssip.so $(PKG_ROOT)/usr/lib/smoothd/syssip.so 
 	@install -D $(COMPILE_DIR)/syssmoothinfo.so $(PKG_ROOT)/usr/lib/smoothd/syssmoothinfo.so 
