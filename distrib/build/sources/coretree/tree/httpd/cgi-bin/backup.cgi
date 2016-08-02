@@ -44,34 +44,45 @@ my @selectedui; my @selectedsetup; my @selectedmodules;
 
 
 if ($cgiparams{'ACTION'} eq $tr{'bu restore'}) { 
-	mkdir "/var/smoothwall/backup/restore";
-	# Open the destination file
-	if (open(ARCHIVEFILE, ">/var/smoothwall/backup/backup.tar")) {
-		flock ARCHIVEFILE, 2;
-		print ARCHIVEFILE $cgiparams{'ARCHIVE'};
-		close(ARCHIVEFILE);
+#use Data::Dumper;
+#print STDERR Dumper \%ENV, \%cgiparams;
 
-		my $fileType = `/usr/bin/file /var/smoothwall/backup/backup.tar`;
-
-		if ($fileType =~ /tar archive/) {
-			system('tar xf /var/smoothwall/backup/backup.tar -C /var/smoothwall/backup/restore');
-
-        		if (-f "/var/smoothwall/backup/restore/version" && -f "/var/smoothwall/backup/restore/backup.dat") {
-				# This will be a call to &message; unpack must be done as root via smoothd
-				system('tar xf /var/smoothwall/backup/restore/backup.dat -C /var/smoothwall/backup/restore');
+	# First, did the supplied filename match the template?
+	my $fileName = $cgiparams{'fileName'};
+	$fileName =~ s/.*\\//;
+	if ($fileName =~ /[a-zA-Z0-9-]+_[0-9-]+_Express_[0-9.]+_[a-zA-Z]+_settings\.tar/) {
+		mkdir "/var/smoothwall/backup/restore";
+		# Open the destination file
+		if (open(ARCHIVEFILE, ">/var/smoothwall/backup/backup.tar")) {
+			flock ARCHIVEFILE, 2;
+			print ARCHIVEFILE $cgiparams{'ARCHIVE'};
+			close(ARCHIVEFILE);
+	
+			my $fileType = `/usr/bin/file /var/smoothwall/backup/backup.tar`;
+	
+			if ($fileType =~ /tar archive/) {
+				system('tar xf /var/smoothwall/backup/backup.tar -C /var/smoothwall/backup/restore');
+	
+	        		if (-f "/var/smoothwall/backup/restore/version" && -f "/var/smoothwall/backup/restore/backup.dat") {
+					# This will be a call to &message; unpack must be done as root via smoothd
+					system('tar xf /var/smoothwall/backup/restore/backup.dat -C /var/smoothwall/backup/restore');
+				}
+				else {
+					$errormessage .= "$tr{'bu not settings archive'}</br />";
+					print STDERR "$tr{'bu not settings archive'}\n";
+				}
 			}
 			else {
-				$errormessage .= "Not a settings backup archive</br />";
-				print STDERR "Not a settings archive '$fileType'\n";
+				$errormessage .= "$tr{'bu not tar archive'} '$fileType'<br />";
+				print STDERR "$tr{'bu not tar archive'} '$fileType'\n";
 			}
 		}
 		else {
-			$errormessage .= "Not a tar archive<br />";
-			print STDERR "settings restore archive file type '$fileType'\n";
+			$errormessage .= $tr{'bu could not save archive to disk'} ."<br />";
 		}
 	}
 	else {
-		$errormessage .= $tr{'bu could not save archive to disk'} ."<br />";
+		$errormessage .= $tr{'bu wrong filename template'} ."<br />";
 	}
 	# Always clean up the tailings,
 	system("rm -rf /var/smoothwall/backup/restore");
@@ -327,11 +338,15 @@ END
 print <<END;
 <div style='margin:1em 2em 0 2em;'>
   <form method='post' action='/cgi-bin/backup.cgi' enctype='multipart/form-data'>
+    <input id='fileName' type='hidden' name='fileName' value=''>
   <p>
     $tr{'bu restore settings long'}
   </p>
   <p style='margin:.5em 3em;'>
-    <input type='file' name='ARCHIVE' style='margin-right:5em; width:30em;'>
+    <input type='file'
+           name='ARCHIVE'
+           style='margin-right:5em; width:30em;'
+           onchange='document.getElementById("fileName").value = this.value;'>
   </p>
   <p style='margin:1em 0 .3em 0; width:100%; text-align:center;'>
     <input type='submit' name='ACTION' value='$tr{'bu restore'}' style='text-align:center'>
