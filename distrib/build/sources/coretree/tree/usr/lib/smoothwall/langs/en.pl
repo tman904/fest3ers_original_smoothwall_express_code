@@ -925,6 +925,9 @@
 'bu invalid name' => 'Invalid name; it may contain only A-Z, a-z, 0-9, -, _ and space.',
 'bu name used' => 'Name already used; try again.',
 'bu drive configured' => 'This drive is already configured; delete it or try another drive.',
+'bu not settings archive' => 'This is not a settings backup archive',
+'bu not tar archive' => 'This is not a tar archive',
+'bu wrong filename template' => 'The filename does not match the template',
 
 # advsstatus.cgi
 'adv total'   => 'Total',
