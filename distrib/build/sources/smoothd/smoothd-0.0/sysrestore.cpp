@@ -23,7 +23,7 @@
 
 extern "C" {
 	int load(std::vector<CommandFunctionPair> & );
-	int set_time(std::vector<std::string> & parameters, std::string & response);
+	int restore_settings(std::vector<std::string> & parameters, std::string & response);
 }
 
 int load(std::vector<CommandFunctionPair> & pairs)
