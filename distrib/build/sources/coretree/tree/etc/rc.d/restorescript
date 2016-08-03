@@ -29,7 +29,7 @@ if ($backupversion =~ /^3.1/)
 		'modem', 'portfw', 'ppp', 'proxy', 'remote', 'snort',
 		'time', 'vpn', 'xtaccess', 'clamav', 'hosts', 'im', 'outgoing',
 		'p3scan', 'sipproxy', 'timedaccess', 'traffic');
-	system('/usr/bin/tar', '-zxf', 'restore/backup.dat');
+	system('/usr/bin/tar', '-xf', 'restore/backup.dat');
 }
 elsif ($backupversion =~ /^3.0/)
 {

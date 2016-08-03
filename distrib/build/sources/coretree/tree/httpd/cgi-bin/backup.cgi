@@ -51,21 +51,21 @@ if ($cgiparams{'ACTION'} eq $tr{'bu restore'}) {
 	my $fileName = $cgiparams{'fileName'};
 	$fileName =~ s/.*\\//;
 	if ($fileName =~ /[a-zA-Z0-9-]+_[0-9-]+_Express_[0-9.]+_[a-zA-Z]+_settings\.tar/) {
-		mkdir "/var/smoothwall/backup/restore";
 		# Open the destination file
-		if (open(ARCHIVEFILE, ">/var/smoothwall/backup/backup.tar")) {
+		if (open(ARCHIVEFILE, ">$swroot/tmp/backup.tar")) {
 			flock ARCHIVEFILE, 2;
 			print ARCHIVEFILE $cgiparams{'ARCHIVE'};
 			close(ARCHIVEFILE);
 	
-			my $fileType = `/usr/bin/file /var/smoothwall/backup/backup.tar`;
+			my $fileType = `/usr/bin/file $swroot/tmp/backup.tar`;
 	
 			if ($fileType =~ /tar archive/) {
-				system('tar xf /var/smoothwall/backup/backup.tar -C /var/smoothwall/backup/restore');
+				system("tar xf $swroot/tmp/backup.tar -C $swroot/restore");
 	
-	        		if (-f "/var/smoothwall/backup/restore/version" && -f "/var/smoothwall/backup/restore/backup.dat") {
-					# This will be a call to &message; unpack must be done as root via smoothd
-					system('tar xf /var/smoothwall/backup/restore/backup.dat -C /var/smoothwall/backup/restore');
+	        		if (-f "$swroot/restore/version" && -f "$swroot/restore/backup.dat") {
+					# Do the restore
+					my $success = message('restoresettings');
+					$errormessage .= "$success<br />";
 				}
 				else {
 					$errormessage .= "$tr{'bu not settings archive'}</br />";
@@ -85,8 +85,9 @@ if ($cgiparams{'ACTION'} eq $tr{'bu restore'}) {
 		$errormessage .= $tr{'bu wrong filename template'} ."<br />";
 	}
 	# Always clean up the tailings,
-	system("rm -rf /var/smoothwall/backup/restore");
-	unlink ("/var/smoothwall/backup/backup.tar");
+	unlink("$swroot/restore/backup.tar");
+        unlink("$swroot/restore/version");
+	unlink ("$swroot/tmp/backup.tar");
 }
 
 elsif ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
