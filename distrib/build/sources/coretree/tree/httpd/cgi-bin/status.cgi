@@ -8,6 +8,7 @@
 
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
+use smoothtype qw( :standard );
 use File::Basename;
 use strict;
 use warnings;
@@ -59,7 +60,20 @@ foreach my $file ( sort @files ){
 
 &showhttpheaders();
 
+$cgiparams{'COLUMN_ONE'} = 1;
+$cgiparams{'ORDER_ONE'} = $tr{'log ascending'};
+$cgiparams{'COLUMN_TWO'} = 1;
+$cgiparams{'ORDER_TWO'} = $tr{'log ascending'};
+
 &getcgihash(\%cgiparams);
+
+if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'ACTION'} eq "" )) {
+        my @temp = split(',',$ENV{'QUERY_STRING'});
+        $cgiparams{'ORDER_TWO'}  = $temp[3] if ( defined $temp[ 3 ] and $temp[ 3 ] ne "" );
+        $cgiparams{'COLUMN_TWO'} = $temp[2] if ( defined $temp[ 2 ] and $temp[ 2 ] ne "" );
+        $cgiparams{'ORDER_ONE'}  = $temp[1] if ( defined $temp[ 1 ] and $temp[ 1 ] ne "" );
+        $cgiparams{'COLUMN_ONE'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
+}
 
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 
@@ -69,59 +83,71 @@ foreach my $file ( sort @files ){
 
 &alertbox($errormessage);
 
-&openbox();
+my %render_settings =
+(
+        'url'     => "",
+        'columns' =>
+        [
+                {
+                        column     => '1',
+                        title      => "Service",
+                        size       => '',
+                        sort       => 'cmp',
+                },
+                {
+                        column     => '2',
+                        title      => "Status",
+                        size       => 10,
+                        sort       => 'cmp',
+                },
+                {
+                        column     => '3',
+                        title      => "Uptime",
+                        size       => 25,
+                        sort       => 'cmp',
+                },
+	]
+);
 
-print <<END
-<strong>$tr{'core services'}</strong>
-<table class='centered' style='width: 60%;'>
-END
-;
+
+# Display core services
+&openbox($tr{'core services'});
 
 my $lines = 0;
+my @tabArray;
 
 foreach my $key (sort keys %coreservices) {
-	if ($lines % 2) {
-		print "<tr class='light'>\n";
-	}
-	else {
-		print "<tr class='dark'>\n";
-	}
 	my $shortname = $coreservices{$key};
 	my ( $status, $period ) = &isrunning($shortname);
 
-	print "<td style='width: 60%; text-align: center;'>$key</td>\n";
-	print "<td style='width: 10%; text-align: center; vertical-align: middle;'>$status</td>\n";
-	print "<td style='width: 30%; text-align: center;'>$period</td>\n";
-	print "</tr>\n";
-	$lines++;
+	$tabArray[$lines++] = "$key|$status|$period";
 }
 
-print <<END
-</table>
-<strong>$tr{'services'}</strong>
-<table class='centered' style='width: 60%;'>
-END
-;
+$render_settings{'url'} = "/cgi-bin/status.cgi?$cgiparams{'COLUMN_ONE'},$cgiparams{'ORDER_ONE'},[%COL%],[%ORD%]";
+print "<div style='margin:1em auto; width:70%'>\n";
+&displaytable( \@tabArray, \%render_settings, $cgiparams{'ORDER_TWO'}, $cgiparams{'COLUMN_TWO'});
+print "</div\n";
+
+&closebox();
+
+
+# Display other services
+&openbox($tr{'services'});
 
 $lines = 0;
+undef @tabArray;
 
 foreach my $key (sort keys %servicenames) {
-	if ($lines % 2) {
-		print "<tr class='light'>\n";
-	}
-	else {
-		print "<tr class='dark'>\n";
-	}
 	my $shortname = $servicenames{$key};
 	my ( $status, $period ) = &isrunning($shortname);
-	print "<td style='width: 60%; text-align: center;'>$key</td>\n";
-	print "<td style='width: 10%; text-align: center;'>$status</td>\n";
-	print "<td style='width: 30%; text-align: center;'>$period</td>\n";
-	print "</tr>\n";
-	$lines++;
+
+	$tabArray[$lines++] = "$key|$status|$period";
 }
 
-print "</table>\n";
+$render_settings{'url'} = "/cgi-bin/status.cgi?[%COL%],[%ORD%],$cgiparams{'COLUMN_TWO'},$cgiparams{'ORDER_TWO'}";
+print "<div style='margin:1em auto; width:70%'>\n";
+&displaytable( \@tabArray, \%render_settings, $cgiparams{'ORDER_ONE'}, $cgiparams{'COLUMN_ONE'});
+print "</div\n";
 
 &closebox();
 

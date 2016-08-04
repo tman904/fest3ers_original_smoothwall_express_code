@@ -320,7 +320,13 @@ sub displaytable
 
 	if (ref($filename) eq "ARRAY") {
 		foreach $line (@$filename) {
-			my @cols = ( $position++, (split / /, $line) );
+			my @cols;
+			if ($line =~ /\|/) {
+				@cols = ( $position++, (split /\|/, $line) );
+			}
+			else {
+				@cols = ( $position++, (split / /, $line) );
+			}
 			push @lines, \@cols;
 		}
 	}
