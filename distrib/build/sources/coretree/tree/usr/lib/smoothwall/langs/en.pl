@@ -17,6 +17,7 @@
 'error messages' => 'Error messages:',
 'help' => 'Help',
 'ignore mtu' => 'Ignore ISP\'s MTU:',
+'invalid archive name' => 'Invalid archive name.',
 'invalid comment' => 'Invalid comment.',
 'invalid input' => 'Invalid input',
 'invalid password' => 'Invalid password.',

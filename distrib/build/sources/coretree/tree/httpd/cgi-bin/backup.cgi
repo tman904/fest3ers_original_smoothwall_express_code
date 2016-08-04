@@ -7,6 +7,7 @@
 # (c) The SmoothWall Team
 
 use lib "/usr/lib/smoothwall";
+use Digest::SHA qw(sha1_hex);
 use header qw( :standard );
 use smoothd qw( message );
 use smoothtype qw(:standard);
@@ -14,9 +15,11 @@ use strict;
 use warnings;
 
 my (%cgiparams, %selected, %checked);
+my ($lastToken, $newToken, $rtnToken);
 my $filename = "${swroot}/backup/config";
 my $flagfile = "${swroot}/backup/flag";
 my $maxwidth = 20;
+my $refresh;
 
 $cgiparams{'ACTION'} = '';
 
@@ -43,51 +46,89 @@ my $count; my $command;
 my @selectedui; my @selectedsetup; my @selectedmodules;
 
 
-if ($cgiparams{'ACTION'} eq $tr{'bu restore'}) { 
-#use Data::Dumper;
-#print STDERR Dumper \%ENV, \%cgiparams;
+# Generate a new token and the previous token on each entry.
+my $tmp;
+foreach my $token ("1","2","3") {
+	if (open TKN,"</usr/etc/token${token}.sum") {
+		$tmp .= <TKN>;
+	        close TKN;
+	}
+	else {
+		$errormessage .= "Can't read token${token}.<br />";
+	}
+}
 
-	# First, did the supplied filename match the template?
+my $time = time;
+my $life = 30;  # seconds
+my $toSum = $tmp . int($time/$life) ."\n";
+$newToken = sha1_hex $toSum;
+$toSum = $tmp . int($time/$life - 1) ."\n";
+$lastToken = sha1_hex $toSum;
+
+# Clear these, just in case
+undef $time;
+undef $toSum;
+undef $tmp;
+
+$rtnToken = $cgiparams{'Token'};
+
+if ($cgiparams{'ACTION'} eq $tr{'bu restore'}) { 
+	# Require token to prevent XSS.
+	if ($rtnToken !~ /[0-9a-f]/ or ($rtnToken ne $newToken and $rtnToken ne $lastToken)) {
+		$errormessage = "$tr{'token error 1'}<br /><br />$tr{'token error 2'}<br />";
+		$refresh = '<meta http-equiv="refresh" content="6; url=index.cgi">';
+		goto ERROR;
+	}
+
 	my $fileName = $cgiparams{'fileName'};
 	$fileName =~ s/.*\\//;
-	if ($fileName =~ /[a-zA-Z0-9-]+_[0-9-]+_Express_[0-9.]+_[a-zA-Z]+_settings\.tar/) {
-		# Open the destination file
-		if (open(ARCHIVEFILE, ">$swroot/tmp/backup.tar")) {
-			flock ARCHIVEFILE, 2;
-			print ARCHIVEFILE $cgiparams{'ARCHIVE'};
-			close(ARCHIVEFILE);
-	
-			my $fileType = `/usr/bin/file $swroot/tmp/backup.tar`;
-	
-			if ($fileType =~ /tar archive/) {
-				system("tar xf $swroot/tmp/backup.tar -C $swroot/restore");
-	
-	        		if (-f "$swroot/restore/version" && -f "$swroot/restore/backup.dat") {
-					# Do the restore
-					my $success = message('restoresettings');
-					$errormessage .= "$success<br />";
+
+	# Validate archive filename
+	if (!&validarchivename($fileName)) {
+		$errormessage .= "$tr{'invalid archive name'}<br />";
+	}
+
+	else {
+		# Did the supplied filename match the template?
+		if ($fileName =~ /[a-zA-Z0-9-]+_[0-9-]+_Express_[0-9.]+_[a-zA-Z]+_settings\.tar/) {
+			# Open the destination file
+			if (open(ARCHIVEFILE, ">$swroot/tmp/backup.tar")) {
+				flock ARCHIVEFILE, 2;
+				print ARCHIVEFILE $cgiparams{'ARCHIVE'};
+				close(ARCHIVEFILE);
+		
+				my $fileType = `/usr/bin/file $swroot/tmp/backup.tar`;
+		
+				if ($fileType =~ /tar archive/) {
+					system("tar xf $swroot/tmp/backup.tar -C $swroot/restore");
+		
+		        		if (-f "$swroot/restore/version" && -f "$swroot/restore/backup.dat") {
+						# Do the restore
+						my $success = message('restoresettings');
+						$errormessage .= "$success<br />";
+					}
+					else {
+						$errormessage .= "$tr{'bu not settings archive'}</br />";
+						print STDERR "$tr{'bu not settings archive'}\n";
+					}
 				}
 				else {
-					$errormessage .= "$tr{'bu not settings archive'}</br />";
-					print STDERR "$tr{'bu not settings archive'}\n";
+					$errormessage .= "$tr{'bu not tar archive'} '$fileType'<br />";
+					print STDERR "$tr{'bu not tar archive'} '$fileType'\n";
 				}
 			}
 			else {
-				$errormessage .= "$tr{'bu not tar archive'} '$fileType'<br />";
-				print STDERR "$tr{'bu not tar archive'} '$fileType'\n";
+				$errormessage .= $tr{'bu could not save archive to disk'} ."<br />";
 			}
 		}
 		else {
-			$errormessage .= $tr{'bu could not save archive to disk'} ."<br />";
+			$errormessage .= $tr{'bu wrong filename template'} ."<br />";
 		}
+		# Always clean up the tailings,
+		unlink("$swroot/restore/backup.tar");
+	        unlink("$swroot/restore/version");
+		unlink ("$swroot/tmp/backup.tar");
 	}
-	else {
-		$errormessage .= $tr{'bu wrong filename template'} ."<br />";
-	}
-	# Always clean up the tailings,
-	unlink("$swroot/restore/backup.tar");
-        unlink("$swroot/restore/version");
-	unlink ("$swroot/tmp/backup.tar");
 }
 
 elsif ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
@@ -132,8 +173,6 @@ elsif ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
 	}
 }
 
-&showhttpheaders();
-
 # There is no action for 'Add Drive'; it is handled in javascript
 
 if ($cgiparams{'ACTION'} eq $tr{'remove'}) {
@@ -164,7 +203,12 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'}) {
 	}
 }
 
-&openpage($tr{'bu pnp backup'}, 1, '', 'services');
+# Place to skip all actions if needed.
+ERROR:
+
+&showhttpheaders();
+
+&openpage($tr{'bu pnp backup'}, 1, $refresh, 'services');
 
 &openbigbox('100%', 'LEFT');
 
@@ -339,6 +383,7 @@ END
 print <<END;
 <div style='margin:1em 2em 0 2em;'>
   <form method='post' action='/cgi-bin/backup.cgi' enctype='multipart/form-data'>
+    <input type='hidden' name='Token' value='$newToken'>
     <input id='fileName' type='hidden' name='fileName' value=''>
   <p>
     $tr{'bu restore settings long'}
