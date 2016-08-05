@@ -165,17 +165,43 @@ sub status_line
 
 sub running_since
 {
-	my $age = time - (stat( $_[0] ))[9];
-	my ( $days, $hours, $minutes, $seconds ) = (gmtime($age))[7,2,1,0];
+	my ( $days, $hours, $minutes, $seconds );
+	my $remain;
 
-	if ( $days != 0 ) {
+	my @pidStat = stat($_[0]);
+	my $remain = time - $pidStat[9];
+
+	$days = int($remain/(3600*24));
+	$remain -= $days*3600*24;
+	$hours = int($remain/3600);
+	$remain -= $hours*3600;
+	$minutes = int($remain/60);
+	$remain -= $minutes*60;
+	$seconds = int($remain);
+
+	my $howlong = "";
+
+	# When the uptimes are negative, it's a strong clue that the clock was
+	#   set backward. It should never happen under normal conditions. It
+	#   could indicate a failing hardware clock, or one that keeps time
+	#   badly. (So the abs() below is correct.)
+
+	# Set day or days
+	if ( abs($days) > 1 ) {
 		$howlong = "$days days";
 	}
-	elsif ( $hours != 0 ) {
-		$howlong = sprintf( "%d hours, %.2d minutes", $hours, $minutes );
+	elsif ( $days != 0 ) {
+		$howlong = "$days day";
 	}
-	else {
-		$howlong = sprintf( "%.d:%.2d", $minutes, $seconds );
+
+	# Append small values if needed
+	if ($days < 7) {
+		$howlong .= sprintf( ", %.2d:%.2d:%.2d", $hours, $minutes, $seconds);
+	}
+
+	# Trim if needed
+	if ($howlong =~ /^,/) {
+		$howlong = substr($howlong, 2);
 	}
 	return $howlong;
 }
