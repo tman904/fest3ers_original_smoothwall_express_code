@@ -3,8 +3,8 @@
 cache_effective_user squid
 cache_effective_group squid
 
-cache_swap_high 100
-cache_swap_low 80
+cache_swap_high 92
+cache_swap_low 90
 
 cache_mem 256 MB
 maximum_object_size_in_memory 512 KB
