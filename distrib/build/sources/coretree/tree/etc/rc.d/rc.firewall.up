@@ -465,7 +465,7 @@ done
 # Another hook for McNeill's ModInstall integration
 # This allows mods to set up firewall rules. *How* they correctly insert
 #   such rules is up to them.
-echolog "e" "s" "" "Load mods' firewall rules"
+echolog "e" "s" "" "  Load mods' firewall rules"
 # if any; limited to .../mods/*/etc/rc.d, 90-99
 shopt -s nullglob
 unset i

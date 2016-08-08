@@ -3,10 +3,10 @@
 . /etc/rc.d/inc.rc-functions
 
 if [ -f /var/run/STARTSTOP ]; then
-  echolog "e" "s" "" "Loading modules for temporary ingress policers"
+  echolog "e" "s" "" "Load modules for temporary ingress policers"
   for i in sch_ingress cls_u32 act_police; do modprobe $i; done
 
-  echolog "e" "s" "" "Blocking non-DHCP traffic on"
+  echolog "e" "s" "" "Block non-DHCP traffic on"
   for i in "$GREEN_DEV" "$RED_DEV" "$ORANGE_DEV" "$PURPLE_DEV"; do
     if [ "$i" != "" ]; then
       echolog "e" "s" "" "  $i"

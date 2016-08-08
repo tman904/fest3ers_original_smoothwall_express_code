@@ -83,6 +83,5 @@ echo 0 > /proc/sys/net/ipv4/tcp_ecn
 echolog "" "" "$DEBUG_DHCPCD" "  Enable conntrack accounting (rc.network) [`date`]"
 sysctl net.netfilter.nf_conntrack_acct=1 >/dev/null 2>&1
 
-echolog "e" "" "" ""
 echolog "" "" "$DEBUG_DHCPCD" "Bring network up (call rc.netaddress.up) in (rc.network)"
 . /etc/rc.d/rc.netaddress.up
