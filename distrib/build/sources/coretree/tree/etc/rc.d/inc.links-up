@@ -21,7 +21,6 @@ for i in $nicsToUp; do
     [0-9]*.[0-9]*.[0-9]*.[0-9]*)
       # The default gateway
       /usr/sbin/ip route add default via $i
-      /etc/rc.d/rc.updatered&
       ;;
 
     *)
@@ -31,11 +30,16 @@ for i in $nicsToUp; do
   esac
 done
 
-# If RED_TYPE is neither DHCP nor STATIC, it is PPP; so up it.
-if [ "$RED_TYPE" != "DHCP" -a "$RED_TYPE" != "STATIC" ]; then
+if [ "$RED_TYPE" = "STATIC" ]; then
+  # If RED_TYPE is STATIC, update the RED settings (pick up the default gateway)
+  . /etc/rc.d/rc.updatered
+
+elif [ "$RED_TYPE" != "DHCP" ]; then
+  # If RED_TYPE is neither DHCP nor STATIC, it is PPP; so up it.
   . /var/smoothwall/ppp/settings
   if [ "$AUTOCONNECT" = "on" ]; then
     echolog "e" "s" "" "  Bringing up modem/ISDN link"
     /usr/bin/smoothcom updown UP
   fi
 fi
+# otherwise, RED is DHCP, and dhcpcd runs rc.updatered.
