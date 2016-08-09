@@ -108,7 +108,7 @@ function build_tc_stage_1() {
   buildenv glibc 1
   startTIME=`date +%s`-beginTIME
   displayTIME=`perl -e "printf('%6d', $startTIME);"`
-  echo "    $displayTIME $BUILDPHASE build complete"
+  echo "    $displayTIME $BUILD_PHASE build complete"
   #exit 111
 }
 
@@ -127,7 +127,7 @@ function build_tc_stage_2() {
   check 2 gcc
   startTIME=`date +%s`-beginTIME
   displayTIME=`perl -e "printf('%6d', $startTIME);"`
-  echo "    $displayTIME $BUILDPHASE build complete"
+  echo "    $displayTIME $BUILD_PHASE build complete"
   #exit 222
 }
 
@@ -171,7 +171,7 @@ function build_tc_stage_3() {
   buildenv wget 1
   startTIME=`date +%s`-beginTIME
   displayTIME=`perl -e "printf('%6d', $startTIME);"`
-  echo "    $displayTIME $BUILDPHASE build complete"
+  echo "    $displayTIME $BUILD_PHASE build complete"
 }
 
 
