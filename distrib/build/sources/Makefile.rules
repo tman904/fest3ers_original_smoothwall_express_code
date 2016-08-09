@@ -4,7 +4,6 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
-
 ifndef DOWNLOAD
 download:
 	@$(PRE_DL) $(DL_CMD) $(BASE_URL)/$(TARBALL)$(EXTENSION) $(MD5)

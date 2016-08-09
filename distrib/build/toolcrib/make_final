@@ -86,6 +86,7 @@ fi
 # Must be building all of the final stage
 #
   JOBS=$JOBS_MP
+  beginTIME=`date +%s`
 
   if [ -e crumbs/Final.compiled ]; then
     echo -e "\n    Final phase packages already compiled"
@@ -391,4 +392,7 @@ fi
 
     touch crumbs/Final.compiled
   fi
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
+  echo "    $displayTIME build complete"
   echo

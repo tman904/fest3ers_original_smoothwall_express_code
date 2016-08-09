@@ -7,6 +7,9 @@
 #
 # This code is distributed under the terms of the GPL v2.
 
+# Track pkg build times (sort-of: display the seconds since the build stage
+#   began that the pkg begins to build)
+declare -i beginTIME startTIME
 
 # function adjust()
 #   perform the specific tool chain adjustment and check to be sure it was done right
@@ -43,11 +46,14 @@ function build()
     TGT=""
     TGTP=""
   fi
+  VERSION=`make --no-print-directory -C sources/$1 show_version 2>&1`
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
   if [ -e "sources/$1/$BUILD_PHASE$TGT.built" ]; then
-    echo "    $1$TGTP already built" >>${BUILD_OUT}
+    echo "    $displayTIME $1$TGTP ($VERSION) already built" >>${BUILD_OUT}
   else
     if [ -p crumbs/monpipe ]; then echo -- "-f $1" > crumbs/monpipe; fi
-    echo "    $1$TGTP: PKG_ROOT:$PKG_ROOT" >>${BUILD_OUT}
+    echo "    $displayTIME $1$TGTP ($VERSION): PKG_ROOT:$PKG_ROOT" >>${BUILD_OUT}
     ( docommand "$1::$2" "make -C sources/$1 $2") > sources/$1/$BUILD_PHASE$TGT.out 2>&1
     status=$?
     if [ -p crumbs/monpipe ]; then echo > crumbs/monpipe; fi
@@ -65,11 +71,14 @@ function build()
 
 function buildenv()
 {
+  VERSION=`make --no-print-directory -C sources/$1 show_version 2>&1`
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
   if [ -e "sources/$1/$BUILD_PHASE.built" ]; then
-    echo "    $1 already built" >>${BUILD_OUT}
+    echo "    $displayTIME $1 ($VERSION) already built" >>${BUILD_OUT}
   else
     if [ -p crumbs/monpipe ]; then echo "-${BUILD_PHASE/Stage_/} $1" > crumbs/monpipe; fi
-    echo "    $1"
+    echo "    $displayTIME $1 ($VERSION) "
     ( docommand "$1" "make -C sources/$1 clean install") > sources/$1/$BUILD_PHASE.out 2>&1
     status=$?
     if [ -p crumbs/monpipe ]; then echo > crumbs/monpipe; fi
@@ -90,6 +99,7 @@ function build_tc_stage_1() {
   set_build_environment
 
   export JOBS=$JOBS_MP 
+  beginTIME=`date +%s`
   buildenv binutils 1
   buildenv gcc 1
   buildenv kernel-headers 1
@@ -106,6 +116,7 @@ function build_tc_stage_2() {
   set_build_environment
 
   export JOBS=$JOBS_MP
+  beginTIME=`date +%s`
   buildenv binutils 2
   buildenv gcc 2
   check 2 gcc
@@ -121,6 +132,7 @@ function build_tc_stage_3() {
   set_build_environment
 
   export JOBS=$JOBS_MP
+  beginTIME=`date +%s`
   buildenv tcl 1
   buildenv expect 1
   buildenv dejagnu 1
