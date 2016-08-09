@@ -16,10 +16,12 @@ declare -i beginTIME startTIME
 
 function adjust()
 {
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
   if [ -e "crumbs/${BUILD_PHASE}.adjusted" ]; then
-    echo "    (${BUILD_PHASE}) adjustment already made" >>${BUILD_OUT}
+    echo "    $displayTIME (${BUILD_PHASE}) adjustment already made" >>${BUILD_OUT}
   else
-    echo "    adjusting tool chain, ${BUILD_PHASE}" >>${BUILD_OUT}
+    echo "    $displayTIME adjusting tool chain, ${BUILD_PHASE}" >>${BUILD_OUT}
     ( docommand "adjusting stage $1" "bash toolcrib/stage$1_tc_adjustment") \
           > crumbs/${BUILD_PHASE}.adjusting.out 2>&1
     status=$?
@@ -104,6 +106,9 @@ function build_tc_stage_1() {
   buildenv gcc 1
   buildenv kernel-headers 1
   buildenv glibc 1
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
+  echo "    $displayTIME $BUILDPHASE build complete"
   #exit 111
 }
 
@@ -120,6 +125,9 @@ function build_tc_stage_2() {
   buildenv binutils 2
   buildenv gcc 2
   check 2 gcc
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
+  echo "    $displayTIME $BUILDPHASE build complete"
   #exit 222
 }
 
@@ -161,6 +169,9 @@ function build_tc_stage_3() {
   buildenv texinfo 1
   buildenv util-linux 1
   buildenv wget 1
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
+  echo "    $displayTIME $BUILDPHASE build complete"
 }
 
 
@@ -169,10 +180,12 @@ function build_tc_stage_3() {
 
 function check()
 {
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
   if [ -e "crumbs/${BUILD_PHASE}_${2}.checked" ]; then
-    echo "    ${BUILD_PHASE} $2 already checked" >>${BUILD_OUT}
+    echo "    $displayTIME ${BUILD_PHASE} $2 already checked" >>${BUILD_OUT}
   else
-      echo "    checking tool chain, ${BUILD_PHASE}" >>${BUILD_OUT}
+      echo "    $displayTIME checking tool chain, ${BUILD_PHASE}" >>${BUILD_OUT}
       ( docommand "checking ${BUILD_PHASE} ${2}" "bash toolcrib/stage${1}_${2}_check") \
             > crumbs/${BUILD_PHASE}_${2}_check.out 2>&1
     status=$?
@@ -250,14 +263,16 @@ function mso () {
 
 other_cmd()
 {
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
   if [ -e "$1" ]; then
-    echo "    $2 already done"
+    echo "    $displayTIME $2 already done"
   else
     if [ "$BUILD_PHASE" == "Final" ]; then
       export PKG_ROOT="$PKG_ROOT_PATH/other"
-      echo "    $2: PKG_ROOT:$PKG_ROOT"
+      echo "    $displayTIME $2: PKG_ROOT:$PKG_ROOT"
     else
-      echo "    $2"
+      echo "    $displayTIME $2"
     fi
     ( docommand "$2" "$3") > "$4" 2>&1
     
