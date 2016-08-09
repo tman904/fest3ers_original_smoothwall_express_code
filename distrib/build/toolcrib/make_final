@@ -394,5 +394,5 @@ fi
   fi
   startTIME=`date +%s`-beginTIME
   displayTIME=`perl -e "printf('%6d', $startTIME);"`
-  echo "    $displayTIME build complete"
+  echo "    $displayTIME final build complete"
   echo
