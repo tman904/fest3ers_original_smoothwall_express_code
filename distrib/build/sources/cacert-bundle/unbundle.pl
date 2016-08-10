@@ -3,30 +3,48 @@
 my $certLines = "";
 my $last1st = "";
 my $last2nd = "";
+my $filename = "";
 
 # Read the bundled certs and unpack
-open BUNDLE, "<ca-certificates.crt";
-while (<BUNDLE>) {
-  if ($_ =~ /BEGIN CERT/) {
-    # If a cert was just finished, emit it and reset
-    if ($last2nd ne "") {
-      printf("%s\n", $last2nd);
-      if (open (outFILE, ">$last2nd.pem")) {
+if (open BUNDLE, "<ca-certificates.crt") {
+  while (<BUNDLE>) {
+    next if /^#/;
+    next if /^$/;
+  
+    if ($_ =~ /BEGIN CERT/) {
+      # Begin? Save the filename, clear queued lines
+      $filename = $last2nd;
+      $certLines = "";
+    }
+
+    if ($_ =~ /END CERT/) {
+      # End? Write and reset
+      printf("%s\n", $filename);
+      if (open (outFILE, ">$filename.pem")) {
         print outFILE $certLines;
+        print outFILE $_;
         close (outFILE);
       }
+      $filename = "";
+      $last1st = "";
+      $last2nd = "";
+      $certLines = "";
     }
-    $last1st= "";
-    $last2nd = "";
-    $certLines = "";
+  
+    else {
+      # Otherwise assemble the cert, change chars as needed, keep the previous two lines
+      $certLines .= $_;
+      chomp;
+      s/[ \/]/_/g;
+      s/[()]/=/g;
+      $last2nd = $last1st;
+      $last1st = $_;
+    }
   }
-
-  # Assemble the cert, change chars as needed, keep the previous two lines
-  $certLines .= $_;
-  chomp;
-  s/[ \/]/_/g;
-  s/[()]/=/g;
-  $last2nd = $last1st;
-  $last1st = $_;
+  close(BUNDLE);
 }
-close(BUNDLE);
+
+else {
+  # File should exist, so fail badly.
+  exit -1;
+}

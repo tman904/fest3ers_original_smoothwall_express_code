@@ -19,10 +19,13 @@ download:
 install:
 	@mkdir -p $(PKG_ROOT)/$(PKG_DIR)/lib/ssl/certs
 	cd $(PKG_ROOT)/$(PKG_DIR)/lib/ssl/certs; \
-	  perl /build/sources/cacert-bundle/mk-ca-bundle.pl ca-certificates.crt; \
-	  perl /build/sources/cacert-bundle/unbundle.pl; \
-	  c_rehash .;
-	@rm -f certdata.txt
+	  /build/sources/cacert-bundle/mk-ca-bundle.pl ca-certificates.crt
+	cd $(PKG_ROOT)/$(PKG_DIR)/lib/ssl/certs; \
+	  rm -f certdata.txt
+	cd $(PKG_ROOT)/$(PKG_DIR)/lib/ssl/certs; \
+	  perl /build/sources/cacert-bundle/unbundle.pl
+	cd $(PKG_ROOT)/$(PKG_DIR)/lib/ssl/certs; \
+	  c_rehash .
 
 clean:
 	@echo -n " $(PACKAGE)"
