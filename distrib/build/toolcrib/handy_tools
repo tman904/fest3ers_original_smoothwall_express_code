@@ -1,6 +1,7 @@
 #! /bin/bash
 
 alias gitstat='git status|egrep -v -- "\.built|\.out|\-compile/$|\.so$|\.o$"|more'
+alias monauto='toolcrib/monauto'
 
 function monbuild ()
 {
