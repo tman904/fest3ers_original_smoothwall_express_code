@@ -32,6 +32,7 @@ echo "Mounting devtmpfs"
 echo "If you added one or more NICs to an existing system, startup may"
 echo "  hang here for a minute waiting for udev. Please be patient."
 /sbin/udevd --daemon
+/sbin/udevadm hwdb --update
 /sbin/udevadm trigger
 /sbin/udevadm settle
 

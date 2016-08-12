@@ -112,6 +112,8 @@ function EXITTRAP {
 }
 
 echo -e "${BOUL}Wait for udev to settle${NO}"
+/sbin/udevadm hwdb --update
+/sbin/udevadm trigger
 while [ -e /tmp/trigger-lock ]; do
   usleep 100000
 done
