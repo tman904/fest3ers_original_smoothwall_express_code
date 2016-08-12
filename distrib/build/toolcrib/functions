@@ -54,7 +54,7 @@ function build()
   if [ -e "sources/$1/$BUILD_PHASE$TGT.built" ]; then
     echo "    $displayTIME $1$TGTP ($VERSION) already built" >>${BUILD_OUT}
   else
-    if [ -p crumbs/monpipe ]; then echo -- "-f $1" > crumbs/monpipe; fi
+    if [ -p crumbs/monpipe ]; then echo "-f $1" > crumbs/monpipe; fi
     echo "    $displayTIME $1$TGTP ($VERSION): PKG_ROOT:$PKG_ROOT" >>${BUILD_OUT}
     ( docommand "$1::$2" "make -C sources/$1 $2") > sources/$1/$BUILD_PHASE$TGT.out 2>&1
     status=$?
