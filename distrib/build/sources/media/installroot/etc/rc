@@ -27,6 +27,7 @@ first_dev() {
 
   # Need USB here for kbd
   echo "Starting USB"
+  /sbin/modprobe xhci-hcd
   /sbin/modprobe ehci-hcd
   /sbin/modprobe ohci-hcd
   /sbin/modprobe uhci-hcd

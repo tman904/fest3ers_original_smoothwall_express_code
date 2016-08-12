@@ -26,9 +26,10 @@ echo "Mounting sysfs"
 
 echo "Starting USB"
 /sbin/modprobe usbcore
+/sbin/modprobe xhci-hcd
+/sbin/modprobe ehci-hcd
 /sbin/modprobe ohci-hcd
 /sbin/modprobe uhci-hcd
-/sbin/modprobe ehci-hcd
 /sbin/modprobe usbhid
 
 #echo "1 4 1 7" >/proc/sys/kernel/printk
