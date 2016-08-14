@@ -11,6 +11,8 @@ include ../Makefile
 PACKAGE = media
 VERSION = N/A
 
+TAR_OPTIONS = 
+
 # Two dirs down, one cross each.
 ifeq ($(BUILD_OUT), crumbs/build-progress.out)
   MEDIA_BUILD_OUT := ../../$(BUILD_OUT)
