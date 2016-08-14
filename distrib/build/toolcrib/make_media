@@ -67,6 +67,7 @@ export JOBS_UP="-j 1"
 export JOBS_MP
 cpu_count
 
+beginTIME=`date +%s`
 
 if [ "$TO_BUILD" != "" ]; then
 
@@ -86,6 +87,9 @@ else
             "sources/media/$BUILD_PHASE.mediaISO.out" \
             ""
   # Indicate success/failure here, too.
+  startTIME=`date +%s`-beginTIME
+  displayTIME=`perl -e "printf('%6d', $startTIME);"`
+  echo "    $displayTIME media assembly complete"
   if [ $? -eq 0 ]; then
     echo "Smoothwall Express ISO ($mTUPLE) media success"
   else
