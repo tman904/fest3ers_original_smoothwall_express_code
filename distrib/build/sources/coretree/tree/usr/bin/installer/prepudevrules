@@ -48,6 +48,7 @@ fi
 mv /etc/udev/rules.d/70-persistent-net.rules /etc/udev/rules.d/70-Smoothwall-custom-NIC.rules
 
 echo "  Triggering udev and waiting for it to settle"
+/sbin/udevadm control --reload
 /sbin/udevadm trigger --subsystem-match=net
 /sbin/udevadm trigger --subsystem-match=block
 /sbin/udevadm settle
