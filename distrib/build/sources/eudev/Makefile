@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = eudev
-VERSION = 3.1.5
+VERSION = 3.2
 
 BASE_URL = http://dev.gentoo.org/~blueness/eudev
 
