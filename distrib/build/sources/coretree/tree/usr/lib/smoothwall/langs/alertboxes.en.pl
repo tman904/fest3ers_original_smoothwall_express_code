@@ -39,7 +39,7 @@ firewall.  Further information on your Smoothwall Express is available from <a h
 'modem.cgi' 		=> 'Apply specific AT string settings for your PSTN modem or ISDN TA.',
 'changepw.cgi' 		=> 'Change passwords for the \'admin\' and \'dial\' management interface users.  This does not affect access by SSH.',
 'shutdown.cgi' 		=> 'Shutdown or restart your Smoothwall &mdash; restarts are sometimes mandated by update installation.',
-'time.cgi' 		=> 'Change timezone, manually set the time and date, configure time syncronisation and enable the time server.',
+'time.cgi' 		=> 'Change timezone, manually set the time and date, configure time syncronisation and enable the time server.<br /><i>The time daemon runs and serves clients only when </i>Automatic<i> is selected.<br />Read the Time feature help page for these details.</i>',
 'advnet.cgi' 		=> 'Configure ICMP settings and other advanced features.',
 'outbound.cgi'		=> 'Configure interfaces to have outbound traffic blocked, except on specific rules.',
 'ipblock.cgi' 		=> 'Add blocking rules to prevent access from specified IP addresses or networks.',
