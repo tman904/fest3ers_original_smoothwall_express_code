@@ -7,32 +7,31 @@
 include ../../../Makefile
 include ../../../Makefile.versions
 
-CC=gcc 
+CC = gcc 
 
-LD=ld
-LDFLAGS=-i
+LD = ld
+LDFLAGS = -i
 
-COMPILE=$(CC) -c $(INCLUDE) $(CFLAGS)
+COMPILE = $(CC) -c $(INCLUDE) $(CFLAGS)
 
-LINK=$(LD) $(LIBRARY) $(LDFLAGS)
+LINK = $(LD) $(LIBRARY) $(LDFLAGS)
 
-all : programs
-
-programs : makelangs libsmooth libsmooth.o 
+all : libsmooth.so libsmooth.o 
 
 clean :
 	-rm -f *.o libsmooth.so core langs.h
 
-makelangs :
+langs.h :
 	-cp -f langs.h.temp langs.h
 	-cat english.c | ./makelangs.pl >> langs.h
 
 ######
 
-OBJS=english.o varval.o main.o netstuff.o
+OBJS = english.o varval.o main.o netstuff.o
 
-libsmooth: $(OBJS)
-	$(CC)  -fPIC -Wall -shared -Wl,-soname,$@.so -o $@.so $(OBJS) $(LIBS)
+libsmooth.so: $(OBJS)
+	$(CC)  -fPIC -Wall -shared -Wl,-soname,$@ -o $@ $(OBJS) $(LIBS)
+
 libsmooth.o: $(OBJS)
 	$(LINK) $(OBJS) -o $@ $(LIBS)
 
@@ -41,13 +40,13 @@ libsmooth.o: $(OBJS)
 	  -D TITLE='"Smoothwall $(PRODUCT_NAME) $(PRODUCT_VERSION)-$(REVISION)$(PRODUCT_EXTRA)-$(mARCH)"' \
 	  $< -o $@
 		
-english.o : english.c
-#german.o : german.c
-#dutch.o : dutch.c
-#danish.o : danish.c
+english.o : langs.h english.c
+#german.o : langs.h german.c
+#dutch.o : langs.h dutch.c
+#danish.o : langs.h danish.c
 
-varval.o : varval.c
-main.o : main.c
-netstuff.o : netstuff.c
+varval.o : langs.h varval.c
+main.o : langs.h main.c
+netstuff.o : langs.h netstuff.c
 
 
