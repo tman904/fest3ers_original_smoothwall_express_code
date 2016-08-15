@@ -2,6 +2,7 @@
 
 include ../Makefile
 include ../Makefile.versions
+PRINTVERSION = yes
 include ../Makefile.conf
 
 PACKAGE = kernel-drivers
@@ -166,7 +167,6 @@ all: $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
 packageinfo.html:
 	echo "<li><span style='font-size:large;'>$(PACKAGE) $(KERNEL_VER)</span><br>" >>/tmp/packageinfo.html
 
-PRINTVERSION = yes
 print-version:
 	@echo "IGB $(IGB_VER)"
 	@echo "IXGBE $(IXGBE_VER)"
