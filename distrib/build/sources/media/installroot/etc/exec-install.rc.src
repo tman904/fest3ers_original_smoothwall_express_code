@@ -49,6 +49,24 @@ function tidyBackupDir () {
   )
 }
 
+# Validate values from config-install.rc. If any are blank, fail.
+FAIL=0
+if [ "$hd" = "" ]; then echo "Var 'hd' is blank"; FAIL=1; fi
+if [ "$CD" = "" ]; then echo "Var 'CD' is blank"; FAIL=1; fi
+if [ "$dev" = "" ]; then echo "Var 'dev' is blank"; FAIL=1; fi
+if [ "$maxMiB" = "" ]; then echo "Var 'maxMiB' is blank"; FAIL=1; fi
+if [ "$filesys" = "" ]; then echo "Var 'filesys' is blank"; FAIL=1; fi
+if [ "$loader" = "" ]; then echo "Var 'loader' is blank"; FAIL=1; fi
+if [ "$noatime" = "" ]; then echo "Var 'noatime' is blank"; FAIL=1; fi
+if [ "$restore" = "" ]; then echo "Var 'restore' is blank"; FAIL=1; fi
+if [ "$archive_id" = "" ]; then echo "Var 'archive_id' is blank"; FAIL=1; fi
+if [ "$archive" = "" ]; then echo "Var 'archive' is blank"; FAIL=1; fi
+
+if [ $FAIL -eq 1 ]; then
+  echo "At least one config var is blank; advanced install cannot proceed."
+  exit 1
+fi
+
 # sed changes this to the currently used kernel version
 #
 KERNEL_VER=KeRnElVeRsIoN
