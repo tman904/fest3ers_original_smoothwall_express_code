@@ -447,7 +447,7 @@ EXIT:
 
 	if (allok)
 	{
-		if (system("/bin/chroot /harddisk /usr/sbin/setup /dev/tty2 INSTALL"))
+		if (system("/bin/chroot /harddisk /usr/sbin/setup /dev/tty2 firstInstall"))
 			printf("Unable to run setup.\n");
 	}
 	

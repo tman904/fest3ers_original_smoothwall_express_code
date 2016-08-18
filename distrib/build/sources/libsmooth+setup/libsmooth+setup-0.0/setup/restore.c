@@ -45,7 +45,8 @@ int handlerestore(void)
 	result = 1;
 	performedrestore = 1;
 
-	if (!automode)
+	if (automode == 1)
+		/* Only auto-reboot after initial install */
 		rebootrequired = 1;                                                                
 
 	newtWinMessage(ctr[TR_RESTORE_CONFIGURATION], ctr[TR_OK], ctr[TR_CONFIGURATION_SUCCESSFULLY_RESTORED]);

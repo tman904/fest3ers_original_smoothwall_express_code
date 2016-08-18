@@ -220,7 +220,8 @@ int handledhcp(void)
 				fprintf(file, "%s", greendev);
 				fclose(file);
 				
-				if (automode == 0)
+				if (automode == 0 || automode == 3)
+					/* Restart DHCP if run during normal operations */
 					mysystem("/usr/bin/smoothcom dhcpdrestart");
 			}
 			result = 1;

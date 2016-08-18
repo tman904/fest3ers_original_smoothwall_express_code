@@ -160,7 +160,7 @@ echo "Configuring installer"
 #   at least to re-assign the NICs. In the case of dev testing, much may
 #   need changing to avoid conflicting with another active system.
 mustRunSetup=0
-autoSetup=" INSTALL"
+autoSetup=" firstInstall"
 
 echo "Executing installer"
 . /etc/exec-install.rc

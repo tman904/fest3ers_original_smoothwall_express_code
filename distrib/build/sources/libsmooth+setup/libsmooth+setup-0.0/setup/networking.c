@@ -94,7 +94,7 @@ int handlenetworking(void)
 		}				
 	}
 
-	if (automode == 0)
+	if (automode == 0 || automode == 3)
 	{
 		/* Restart networking!  Reboot?  BAH! */	
 		if (netaddresschange)

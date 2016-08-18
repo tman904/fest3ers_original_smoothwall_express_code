@@ -239,7 +239,7 @@ static int adslenabledpressed(void)
 		result = 1;
 	}
 
-	if (automode == 0)
+	if (automode == 0 || automode == 3)
 	{
 		runcommandwithstatus("/etc/rc.d/rc.adsl",
 			ctr[TR_STARTING_UP_ADSL]);

@@ -47,11 +47,23 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	
-	if (argc >= 3) {
-		if (strncmp(argv[2], "networkingOnly", 15) == 0) {
-			automode = 2;
-		} else {
+	/* Engage auto operation (run through 'normal' selections automatically) */
+	if (argc >= 3)
+	{
+		if (strlen(argv[2]) == 12 && strncmp(argv[2], "firstInstall", 12) == 0)
+		{
+			/* This execution only follows the installer; outgoing rules are cleared */
 			automode = 1;
+		}
+		else if (strlen(argv[2]) == 15 && strncmp(argv[2], "networkingOnly", 15) == 0)
+		{
+			/* This execution only runs during bootup when the NICs have changed */
+			automode = 2;
+		}
+		else
+		{
+			/* All other values mean generic auto mode during normal operation */
+			automode = 3;
 		}
 	}
 	
@@ -75,6 +87,7 @@ int main(int argc, char *argv[])
 
 	if (automode == 0)
 	{
+		/* Admin selects each menu item individually */
 		sections[0] = ctr[TR_RESTORE_CONFIGURATION];
 		sections[1] = ctr[TR_KEYBOARD_MAPPING];
 		sections[2] = ctr[TR_TIMEZONE];
@@ -168,13 +181,16 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	else if (automode == 2) {
+	else if (automode == 2)
+	{
+		/* Admin specified networkingOnly as the third arg */
+		/* This happens when the NIC change and rc.sysint runs setup */
 		handlenetworking();
 		autook = 2;
 	}
 	else
 	{
-		
+		/* automode is 1 (firstInstall) or 3 (generic) */
 		usbfail = 1;
 				
 		if (newtWinChoice(ctr[TR_RESTORE_CONFIGURATION], ctr[TR_NO], ctr[TR_YES],
@@ -247,7 +263,7 @@ int main(int argc, char *argv[])
 	}
 
 EXIT:	
-	if (automode == 1)
+	if (automode == 1 || automode == 3)
 	{
 		if (autook)
 			newtWinMessage("", ctr[TR_OK], ctr[TR_SETUP_FINISHED]);
