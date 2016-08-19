@@ -68,8 +68,8 @@ while [ 1 -eq 1 ]; do
     serial=
     size=
 
-    # Skip floppy drives
-    if [ "$device" =~ "fd[0-9]*" ]; then continue; fi
+    # Skip floppy drives; double-bracket needed for =~
+    if [[ "$device" =~ "fd[0-9]*" ]]; then continue; fi
 
     if [ -e "${device}/device" ]; then
       UDEVINFO="/sbin/udevadm info --path=${PWD}/${device} --query=all"
