@@ -62,6 +62,15 @@ while [ 1 -eq 1 ]; do
 
   # Find all disks and optical drives
   for device in *; do
+    DEVNAM=
+    ID_TYPE=
+    model=
+    serial=
+    size=
+
+    # Skip floppy drives
+    if [ "$device" =~ "fd[0-9]*" ]; then continue; fi
+
     if [ -e "${device}/device" ]; then
       UDEVINFO="/sbin/udevadm info --path=${PWD}/${device} --query=all"
       ID_TYPE=`$UDEVINFO | grep ID_TYPE | sed -e 's/.*=//'`
@@ -213,7 +222,7 @@ while [ 1 -eq 1 ]; do
     hd_size[$i]=$b
     hd_model[$i]=$c
     hd_id[$i]=$d
-    dlgCmd="$dlgCmd $i. '$a - ${hd_size[$i]}MiB (${hd_id[$i]})'"
+    dlgCmd="$dlgCmd $i. '$a - ${hd_size[$i]}MiB (${hd_model[$i]} ${hd_id[$i]})'"
     i=i+1
   done < /tmp/hd.list
   HD_CNT=$i
@@ -238,11 +247,12 @@ while [ 1 -eq 1 ]; do
 
   i=1
   while read a b c d; do
+    b=b/2/1024
     cd_dev[$i]=$a
     cd_size[$i]=$b
     cd_model[$i]=$c
     cd_id[$i]=$d
-    dlgCmd="$dlgCmd $i. '$a - ${cd_size[$i]}MiB (${cd_model[$i]})'"
+    dlgCmd="$dlgCmd $i. '$a - ${cd_size[$i]}MiB (${cd_model[$i]} ${cd_id[$i]})'"
     i=i+1
   done < /tmp/cd.list
   OPTI_CNT=$i
