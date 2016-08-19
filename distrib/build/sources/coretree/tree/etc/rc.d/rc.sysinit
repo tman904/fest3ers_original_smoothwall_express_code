@@ -231,15 +231,6 @@ echolog "e" "s" "" "Hash CA certs"
 )&
 
 (
-echolog "e" "s" "" "Create security tokens"
-grep root /etc/shadow | sha1sum | sed -e 's/ -$//' >/usr/etc/token1.sum
-grep admin /var/smoothwall/auth/users | sha1sum | sed -e 's/ -$//' >/usr/etc/token2.sum
-sha1sum < /usr/etc/ssh_host_rsa_key | sed -e 's/ -$//' >/usr/etc/token3.sum
-chgrp nobody /usr/etc/token[123].sum
-chmod g=r /usr/etc/token[123].sum
-)&
-
-(
 # Ensure URL Filter's blacklists' custom dirs/files exist
 echolog "e" "s" "" "(Re)make custom blacklist files"
 pushd /var/smoothwall/urlfilter/blacklists >/dev/null 2>&1
@@ -262,6 +253,18 @@ echolog "e" "s" "" "Generate UPNP UUID"
 
 # Sync background tasks
 wait >/dev/null 2>&1
+
+# Making security tokens *must* wait until the keys have been generated when
+#   first booting because some computers are slow to generate the RSA key.
+# So it runs after the 'wait' that follows key generation.
+(
+echolog "e" "s" "" "Create security tokens"
+grep root /etc/shadow | sha1sum | sed -e 's/ -$//' >/usr/etc/token1.sum
+grep admin /var/smoothwall/auth/users | sha1sum | sed -e 's/ -$//' >/usr/etc/token2.sum
+sha1sum < /usr/etc/ssh_host_rsa_key | sed -e 's/ -$//' >/usr/etc/token3.sum
+chgrp nobody /usr/etc/token[123].sum
+chmod g=r /usr/etc/token[123].sum
+)&
 
 echolog "e" "s" "" "Load other filesystems"
 /sbin/modprobe msdos&
