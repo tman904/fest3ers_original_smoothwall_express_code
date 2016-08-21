@@ -264,16 +264,13 @@ END
   #name 5 "bios_grub"
 
   echo
-  # First tell udev to remove any existing partition nodes in /dev.
-  do_or_die "dd if=/dev/zero of=/dev/$hdd bs=512 count=34"
+  # First make udev remove any existing partition nodes in /dev.
   (head -3 /tmp/partitions; echo "quit") > /tmp/clear-partitions
   do_or_die "parted /dev/$hdd </tmp/clear-partitions"
-  sleep 1
+  /sbin/udevadmn settle
   # Now make the partitions
-  do_or_die "dd if=/dev/zero of=/dev/$hdd bs=512 count=34"
   do_or_die "parted /dev/$hdd </tmp/partitions"
-
-  sleep 2
+  /sbin/udevadmn settle
 
 echo -e "$TITLE"
 echo
