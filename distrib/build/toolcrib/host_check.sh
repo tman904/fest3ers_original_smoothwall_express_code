@@ -85,6 +85,9 @@ CGCC=030001
 CGCCM=040601
 VGCC=3.0.1
 
+CGIT=010801
+VGIT=1.8.1
+
 CGLIBC=020205
 VGLIBC=2.2.5
 
@@ -363,6 +366,23 @@ else
   else
     echo "  FAIL: libc.so.6 not found. Need glibc $VGLIBC<=version<=$VGLIBCM."
     OK=OK+1
+  fi
+fi
+
+# check git
+if [ ! -e /usr/bin/git ]; then
+  echo "  FAIL: /usr/bin/git not found. Need git version>=$VGIT."
+  OK=OK+1
+else
+  WORK=`git --version | head -1 | sed -e 's/[^0-9.]*\(.*\)/\1/'`
+  OIFS=$IFS; IFS="."; set $WORK
+  TGIT=`echo $1 $2 $3|awk '{printf("%2.2d%2.2d%2.2d\n", $1, $2, $3)}'`
+  IFS=$OIFS
+  if [[ $TGIT < $CGIT  ]]; then
+    echo "  FAIL: git v$WORK FAILED ($CGIT)"
+    OK=OK+1
+  else
+    echo "    OK: git v$WORK seems OK (>=$VGIT)"
   fi
 fi
 
