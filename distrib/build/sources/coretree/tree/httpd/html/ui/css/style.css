@@ -197,21 +197,25 @@ table.warning {
 	margin-right: auto;
 	border-collapse: collapse;
 	border: red 1px solid;
+	background-color: rgba(255,0,0,0.2);
 }
 
 td.warning {
 	vertical-align: middle;
-	font-size: 11px;
-	color: red;
-	background-color: #ffe0e0;
+	font-size: 9pt;
+	color: black;
+	text-align: left;
+	margin: 0 0 0 1em;
+	background-color: none;
 }
 
 td.warningimg {
 	vertical-align: middle;
-	color: red;
-	width: 70px;
-	text-align: center;
-	background-color: #ffe0e0;
+	color: black;
+	padding: .25em;
+	width: 50px;
+	text-align: left;
+	background-color: none;
 }
 
 table.note {

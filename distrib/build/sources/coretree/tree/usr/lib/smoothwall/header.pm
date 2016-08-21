@@ -19,7 +19,7 @@ our @_validation_items;
                     showmenu showsection openpage closepage openbigbox
                     closebigbox openbox closebox alertbox pageinfo readvalue
                     writevalue writehash readhash getcgihash log pipeopen age
-                    validip validmask validipormask validipandmask validport validarchivename
+                    validip validmask validipormask validipandmask validipandmasks validport validarchivename
                     validportrange validmac validhostname validcomment UTC2LocalString
                     basename dirname connectedstate %tr @_validation_items getsystemid
                     outputfile getLinkSpeed requireConditional %filters %optionText);
@@ -784,7 +784,7 @@ END
 	else {
 		print "<table class='warning'>";
 		print "<tr>";
-		print "	<td class='warningimg'><img src='/ui/img/warning.jpg' alt='$tr{'error'}'></td><td class='warning'><strong>$tr{'error'}</strong>$thisboxmessage</td>";
+		print "	<td class='warningimg'><img src='/ui/img/warning.png' alt='$tr{'error'}'></td><td class='warning'><strong>$tr{'error'}</strong>$thisboxmessage</td>";
 	}
 
 
@@ -1041,6 +1041,23 @@ sub validipormask
 	return 0 if (!(&validip($ip)));
 
 	return &validmask($mask);
+}
+
+sub validipandmasks
+{
+	my @ipandmasks = split(/:/, $_[0]);
+	
+	# Assume all are OK.
+	my $combinedRetVal = 1;
+
+	# split it into individual ip/masks and validate each.
+	foreach $ipandmask (@ipandmasks) {
+		# If invalid, set to zero (not all valid).
+		$combinedRetVal = 0 if !(&validipandmask($ipandmask));
+	}
+
+	return $combinedRetVal;
+
 }
 
 sub validipandmask
