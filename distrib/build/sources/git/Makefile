@@ -7,7 +7,7 @@ VERSION = 2.9.3
 
 EXTENSION = .tar.gz
 
-BASE_URL = http://git-core.googlecode.com/files/
+BASE_URL = https://www.kernel.org/pub/software/scm/git/
 
 CONFIG_OPTS += --with-openssl --without-curl --without-tcltk --without-python
 
