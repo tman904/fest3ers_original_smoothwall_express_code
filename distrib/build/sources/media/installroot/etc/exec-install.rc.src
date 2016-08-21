@@ -267,10 +267,10 @@ END
   # First make udev remove any existing partition nodes in /dev.
   (head -3 /tmp/partitions; echo "quit") > /tmp/clear-partitions
   do_or_die "parted /dev/$hdd </tmp/clear-partitions"
-  /sbin/udevadmn settle
+  /sbin/udevadm settle
   # Now make the partitions
   do_or_die "parted /dev/$hdd </tmp/partitions"
-  /sbin/udevadmn settle
+  /sbin/udevadm settle
 
 echo -e "$TITLE"
 echo
