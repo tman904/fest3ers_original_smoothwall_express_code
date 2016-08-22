@@ -18,15 +18,20 @@ function compute_swap () {
 
   # If memory is > 1/8 of the disk, crowbar swap to 1/8 of the disk
   disk_eighth=remainder/8
-  if [ $memsize -lt $disk_eighth ]; then
-    # Base swap on memory size
-    swapMiB=memsize
-    swapsize=swapMiB
-  else
-    # Base swap on 1/8 disk size
+  if [ $memsize -gt $disk_eighth ]; then
+    # Base swap on 1/8 disk size, but not larger than 1GiB
     swapMiB=disk_eighth
-    swapsize=swapMiB
+    if [ $swapMiB > 1024 ]; then
+      swapMiB=1024
+    fi
+  else
+    # Base swap on memory size, but not smaller than 256MiB
+    swapMiB=memsize
+    if [ $swapMiB < 256 ]; then
+      swapMiB=256
+    fi
   fi
+  swapsize=swapMiB
 }
 
 function tidyBackupDir () {
@@ -171,14 +176,14 @@ echo
   bootMiB=200
   bootsize=bootMiB                   # 200MiB
   bootstart=3                        # 3 MiB
-  bootend=bootstart+bootsize-1
+  bootend=bootstart+bootsize
   echo "  ${hdd}1  ${bootMiB}MiB -> /boot"
 
   # swap partition fixed size
   remainder=remainder-4            # less one MiB at each end, less 2MiB bios_grub
   compute_swap                     # swapsize is based on memory vs. disk size
-  swapstart=bootend+1
-  swapend=swapstart+swapsize-1
+  swapstart=bootend
+  swapend=swapstart+swapsize
   echo "  ${hdd}2  ${swapMiB}MiB -> swap"
 
   # Conditional /var/log sizing
@@ -195,24 +200,24 @@ echo
         logMiB=20000
       fi
       logsize=logMiB
-      logstart=swapend+1
-      logend=logstart+logsize-1
+      logstart=swapend
+      logend=logstart+logsize
       echo "  ${hdd}3  ${logMiB}MiB -> /log"
       ;;
     2)
       # Maximize /var/log
       logMiB=remainder-1024
       logsize=logMiB
-      logstart=swapend+1
-      logend=logstart+logsize-1
+      logstart=swapend
+      logend=logstart+logsize
       echo "  ${hdd}3  ${logMiB}MiB -> /log"
       ;;
     3)
       # Minimize /var/log (1024miB)
       logMiB=1024
       logsize=logMiB
-      logstart=swapend+1
-      logend=logstart+logsize-1
+      logstart=swapend
+      logend=logstart+logsize
       echo "  ${hdd}3  ${logMiB}MiB -> /log"
 
       # Maximize / (root)
@@ -223,15 +228,15 @@ echo
   remainder=remainder-logsize
   rootMiB=remainder
   rootsize=rootMiB
-  rootstart=logend+1
-  rootend=rootstart+rootsize-1
+  rootstart=logend
+  rootend=rootstart+rootsize
   echo "  ${hdd}4  ${rootMiB}MiB -> / (root)"
 
   # grub_bios partition: before /boot
   grubMiB=2
   grubsize=grubMiB
   grubstart=1
-  grubend=grubstart+grubsize-1
+  grubend=grubstart+grubsize
   echo "  ${hdd}5  ${grubMiB}MiB -> grub_bios"
 
   # all that's left
@@ -245,14 +250,14 @@ echo
 unit MiB
 select /dev/$hdd
 mklabel gpt
-mkpart boot reiserfs $bootstart $bootend
+mkpart boot ext2 $bootstart $bootend
 name 1 "/boot"
 toggle 1 boot
 mkpart swap linux-swap $swapstart $swapend
 name 2 swap
-mkpart log reiserfs $logstart $logend
+mkpart log ext2 $logstart $logend
 name 3 "/var/log"
-mkpart root reiserfs $rootstart $rootend
+mkpart root ext2 $rootstart $rootend
 name 4 "/"
 print
 quit
@@ -265,8 +270,7 @@ END
 
   echo
   # First make udev remove any existing partition nodes in /dev.
-  (head -3 /tmp/partitions; echo "quit") > /tmp/clear-partitions
-  do_or_die "parted /dev/$hdd </tmp/clear-partitions"
+  dd if=/dev/zero of=/dev/$hdd bs=1024k count=1
   /sbin/udevadm settle
   # Now make the partitions
   do_or_die "parted /dev/$hdd </tmp/partitions"
