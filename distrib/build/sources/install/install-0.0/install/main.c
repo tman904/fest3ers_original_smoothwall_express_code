@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 
 		/* Try to mount /cdrom in a loop. */
 		cdmounted = 0;
-		snprintf(commandstring, STRING_SIZE, "/bin/mount %s /cdrom", insertdevnode);
+		snprintf(commandstring, STRING_SIZE, "/bin/mount %s /cdrom -o ro", insertdevnode);
 		while (!cdmounted)
 		{
 			if (!(mysystem(commandstring))) {
