@@ -146,6 +146,12 @@ unset i tries
 
 sleep 2
 
+# Load FSen
+for i in ext2 vfat isofs udf; do
+  modprobe $i&
+done
+wait >/dev/null 2>&1
+
 echo "1 4 1 7" >/proc/sys/kernel/printk
 
 # If init (this script) exits for any reason, it will be trapped
