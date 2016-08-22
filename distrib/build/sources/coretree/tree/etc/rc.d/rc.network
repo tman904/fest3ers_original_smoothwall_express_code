@@ -16,7 +16,7 @@ echolog "e" "s" "" "  Set up ADSL"
 
 echolog "e" "s" "" "  Set up loopback"
 /usr/sbin/ip link set dev lo up
-/usr/sbin/ip addr add 127.0.0.1/8 dev lo
+/usr/sbin/ip addr add 127.0.0.1/8 dev lo >/dev/null 2>&1
 
 echolog "e" "s" "" "  Load QOS modules"
 /sbin/modprobe cls_basic
