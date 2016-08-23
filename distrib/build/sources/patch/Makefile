@@ -22,7 +22,7 @@ ifeq ($(BUILD_PHASE), Stage_3)
 	@$(MAKE) -C $(COMPILE_DIR) install
 else
 	@mkdir -p $(PKG_ROOT)
-	@$(MAKE) -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT)$(PKG_DIR) install
+	@$(MAKE) -C $(COMPILE_DIR) DESTDIR=$(PKG_ROOT) install
 endif
 
 include ../Makefile.rules
