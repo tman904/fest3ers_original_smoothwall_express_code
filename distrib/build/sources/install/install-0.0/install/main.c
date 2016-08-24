@@ -454,14 +454,18 @@ static int partitiondisk(char *diskdevnode)
 	int start = 1; int end = 0;
 	char commandstring[STRING_SIZE];
 	
-	memset(commandstring, 0, STRING_SIZE);
 	// Be sure the partition table is cleared.
+	memset(commandstring, 0, STRING_SIZE);
 	snprintf(commandstring, STRING_SIZE - 1, "/bin/dd if=/dev/zero of=%s bs=1024 count=1", diskdevnode);
+	mysystem(commandstring);
+	memset(commandstring, 0, STRING_SIZE);
+	snprintf(commandstring, STRING_SIZE - 1, "/bin/echo \"change\" > /sys/block/%s/uevent", diskdevnode+5);
 	mysystem(commandstring);
 	
 	// Wait for udev to handle the deleted partitions, if any
 	memset(commandstring, 0, STRING_SIZE);
 	snprintf(commandstring, STRING_SIZE - 1, "/sbin/udevadm settle");
+	mysystem(commandstring);
 
 	// Now partition in one swell foop.
 	memset(commandstring, 0, STRING_SIZE);
@@ -473,7 +477,17 @@ static int partitiondisk(char *diskdevnode)
 	
 	// Wait for udev to handle the new partitions
 	memset(commandstring, 0, STRING_SIZE);
+	snprintf(commandstring, STRING_SIZE - 1, "/bin/echo \"change\" > /sys/block/%s/uevent", diskdevnode+5);
+	mysystem(commandstring);
+	memset(commandstring, 0, STRING_SIZE);
 	snprintf(commandstring, STRING_SIZE - 1, "/sbin/udevadm settle");
+	mysystem(commandstring);
+	memset(commandstring, 0, STRING_SIZE);
+	snprintf(commandstring, STRING_SIZE - 1, "/sbin/udevadm trigger");
+	mysystem(commandstring);
+	memset(commandstring, 0, STRING_SIZE);
+	snprintf(commandstring, STRING_SIZE - 1, "/sbin/udevadm settle");
+	mysystem(commandstring);
 	
 	return 0;
 }
