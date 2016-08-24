@@ -117,7 +117,7 @@ echo -e "${BOUL}Wait for udev to settle${NO}"
 /sbin/udevadm trigger
 /sbin/udevadm settle
 
-typeset -i i tries
+typeset -i tries WORK_IDX
 tries=0
 WORKING[0]="|"
 WORKING[1]="/"
@@ -136,9 +136,9 @@ while [ ! -e ${PersistentNetRule} ]; do
 
   usleep 100000
   tries=tries+1
-  if [ $i -gt 60 ]; then touch ${PersistentNetRule}; fi
+  if [ $tries -gt 60 ]; then touch ${PersistentNetRule}; fi
 done
-unset i tries
+unset tries WORK_IDX
 
 # Sort and rename NICs
 . /etc/eth-addr-sort

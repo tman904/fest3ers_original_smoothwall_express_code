@@ -27,7 +27,7 @@ function compute_swap () {
   else
     # Base swap on memory size, but not smaller than 256MiB
     swapMiB=memsize
-    if [ $swapMiB < 256 ]; then
+    if [ $swapMiB -lt 256 ]; then
       swapMiB=256
     fi
   fi
@@ -91,8 +91,8 @@ TITLE="${CLS}${BOUL}$BACKTITLE${NO}"
 
 echo -e "$TITLE"
 echo
-echo "Tweaking udev"
-echo "Tweaking udev" >/dev/tty2
+echo "Tweak udev"
+echo "Tweak udev" >/dev/tty2
   echo "  Rules"
   (
     echo "# Smoothwall Express persistent device names"
@@ -135,9 +135,8 @@ echo "Tweaking udev" >/dev/tty2
   fi # skip NIC names
   mv /etc/udev/rules.d/70-persistent-net.rules /etc/udev/rules.d/70-Smoothwall-custom-NIC.rules
 
-  echo "  Triggering udev and waiting for it to settle"
-  do_or_die "/sbin/udevadm trigger --subsystem-match=net"
-  do_or_die "/sbin/udevadm trigger --subsystem-match=block"
+  echo "  Trigger udev and wait for it to settle"
+  do_or_die "/sbin/udevadm trigger"
   do_or_die "/sbin/udevadm settle"
 
   sleep 2
@@ -145,8 +144,8 @@ echo "Tweaking udev" >/dev/tty2
 
 echo -e "$TITLE"
 echo
-echo "Partitioning hard drive"
-echo "Partitioning hard drive" >/dev/tty2
+echo "Partition hard drive"
+echo "Partition hard drive" >/dev/tty2
 echo
   typeset -i remainder bootsize swapsize rootsize logsize memsize
   typeset -i grubMiB bootMiB swapMiB rootMiB logMiB
@@ -271,6 +270,7 @@ END
   echo
   # First make udev remove any existing partition nodes in /dev.
   dd if=/dev/zero of=/dev/$hdd bs=1024k count=1
+  sleep .5
   /sbin/udevadm settle
   # Now make the partitions
   do_or_die "parted /dev/$hdd </tmp/partitions"
@@ -278,8 +278,8 @@ END
 
 echo -e "$TITLE"
 echo
-echo "Preparing filesystems"
-echo "Preparing filesystems" >/dev/tty2
+echo "Prepare filesystems"
+echo "Prepare filesystems" >/dev/tty2
 echo
   if [ $filesys -eq 1 ]; then MKFS="mke2fs -FFj"; else MKFS="mkreiserfs -ff"; fi
   echo "  /boot"
@@ -292,7 +292,7 @@ echo
   do_or_die "$MKFS /dev/harddisk4"
 
   echo
-  echo "Enabling swap"
+  echo "Enable swap"
   do_or_die "swapon /dev/harddisk2"
 
 
@@ -301,7 +301,7 @@ if [ $restore -eq 1 -o $restore -eq 2 ]; then
   # Confuser: First try to mount the whole medium as an ISO9660 CD-/DVD-ROM;
   # failing that, try mounting partition #1 read-write, letting mount figure
   # out which FS it is. (Same in config-install.)
-  echo "Mounting source medium"
+  echo "Mount source medium"
   CDMNTLOG="/cdmount.log"
   > $CDMNTLOG
   mount -t iso9660  /dev/${cd_dev[$CD]}  /cdrom -o ro >> $CDMNTLOG 2>&1 \
@@ -320,11 +320,11 @@ fi
 if [ $restore -eq 2 -o $restore -eq 3 ]; then
   rm -rf /restore
   if grep "${rd_dev[$rd]}" /proc/mounts >/dev/null 2>&1; then
-    echo "Linking cdrom to restore"
+    echo "Link cdrom to restore"
     # backups are on the source medium
     ln -s /cdrom /restore
   else
-    echo "Mounting restore drive"
+    echo "Mount restore drive"
     mkdir -p /restore
     RDMNTLOG="/tmp/rdmount.log"
     > $RDMNTLOG
@@ -341,10 +341,10 @@ if [ $restore -eq 2 -o $restore -eq 3 ]; then
 fi
 
   if [ $filesys -eq 1 ]; then FS="-t ext4"; else FS="-t reiserfs"; fi
-  echo "Mounting new root filesystem"
+  echo "Mount new root filesystem"
   do_or_die "mount $FS /dev/harddisk4 /harddisk"
 
-  echo "Mounting /boot and /var/log"
+  echo "Mount /boot and /var/log"
   mkdir -p -m 755 /harddisk/boot /harddisk/var/log
   do_or_die "mount $FS /dev/harddisk1 /harddisk/boot"
   do_or_die "mount $FS /dev/harddisk3 /harddisk/var/log"
@@ -353,15 +353,15 @@ fi
 
 echo -e "$TITLE"
 echo
-echo "Preparing Smoothwall"
-echo "Preparing Smoothwall" >/dev/tty2
+echo "Prepare Smoothwall"
+echo "Prepare Smoothwall" >/dev/tty2
 echo
 
 GRUB_CMD="/usr/sbin/grub-install"
 
 # If installing or restoring var data
 if [ $restore -eq 1 -o $restore -eq 2 ]; then
-  echo "  unpacking system"
+  echo "  unpack system"
   do_or_die "tar -C /harddisk -zxvf /cdrom/smoothwall.tgz"
 
   if [ $dev -eq 2 ]; then
@@ -371,11 +371,11 @@ if [ $restore -eq 1 -o $restore -eq 2 ]; then
     do_or_die "/bin/tar -C /harddisk -zxvf /cdrom/smoothdoc.tgz"
   fi
 
-  echo "  copying udev rules to target"
+  echo "  copy udev rules to target"
     do_or_die "mkdir -p -m 755 /harddisk/etc/udev/rules.d"
     do_or_die "cp -v /etc/udev/rules.d/*Smoothwall* /harddisk/etc/udev/rules.d/"
 
-  echo "  creating new fstab, modules and mtab"
+  echo "  create new fstab, modules and mtab"
   set -- $FS
 
   echo >/dev/tty2
@@ -405,7 +405,7 @@ if [ $restore -eq 1 -o $restore -eq 2 ]; then
   do_or_die "/bin/chroot /harddisk /bin/mount -f /dev"
   do_or_die "/bin/chroot /harddisk /bin/mount -a -f"
   
-  echo "  saving configs and settings"
+  echo "  save configs and settings"
   cat <<END > /harddisk/$CONFIG_ROOT/main/hwprofile
 STORAGE_DEVNODE=harddisk
 CDROM_DEVNODE=${cd_dev[$CD]}
@@ -443,15 +443,15 @@ END
     )
   fi
 
-  echo "  prepping module dependencies"
+  echo "  prep module dependencies"
   do_or_die "/bin/chroot /harddisk /sbin/depmod -a"
 
   if [ $serialport -eq 2 -o $serialport -eq 3 ]; then
-    echo "  enabling getty on ttyS0"
+    echo "  enable getty on ttyS0"
     sed -i -e '/^S0/ s/off/respawn/' -e '/^S0/ s/115200/'$BAUD'/' /harddisk/etc/inittab
   fi
 
-  echo "  adjusting runtime initramfs"
+  echo "  adjust runtime initramfs"
   set -- $FS
   FSTYPE=$2
   if [ "$FSTYPE" == "reiserfs" ]; then
@@ -481,7 +481,7 @@ END
   cd ${OPWD}
   rm -rf ${HDTMP}
 
-  echo "  configuring boot loader"
+  echo "  configure boot loader"
   cp /cdrom/boot/grub/express_boot_protect.xpm.gz /harddisk/boot/grub/
   cat > /harddisk/boot/grub/grub.conf <<END
 # Begin /boot/grub/grub.conf
@@ -576,12 +576,12 @@ END
     )
 
     # Restore var data
-    echo "  Restoring variable data from backup"
+    echo "  Restore variable data from backup"
     do_or_die "tar -C /harddisk -zxvf /restore/${archive_id[$archive]}"
 
     tidyBackupDir var
 
-    echo "  Upgrading variable data files"
+    echo "  Upgrade variable data files"
     # upgrade main
     (
       cd /harddisk/var/smoothwall/main;
@@ -684,14 +684,14 @@ END
 else
 
   # Performing a total restore
-  echo "  Restoring complete system from backup"
+  echo "  Restore complete system from backup"
   do_or_die "tar -C /harddisk -zxvf /restore/${archive_id[$archive]}"
 
   tidyBackupDir total
 
   # Adjust the initramfs as needed (different disk, NICs or FS, etc.)
   KERNEL_VER=`ls -C1 /harddisk/boot/initrd* | tail -1 | sed -e 's/.*initrd-//' -e 's/'${KERNEL_TYPE}'\.gz//'`
-  echo "  adjusting runtime initramfs"
+  echo "  adjust runtime initramfs"
   set -- $FS
   FSTYPE=$2
   if [ "$FSTYPE" == "reiserfs" ]; then
@@ -745,7 +745,7 @@ fi
 
 # Always install the boot loader whether installing, restoring var or
 #   doing a total restore
-echo "  installing boot loader"
+echo "  install boot loader"
 do_or_die "mount --rbind /proc /harddisk/proc"
 do_or_die "mount --rbind /sys /harddisk/sys"
 do_or_die "mount --rbind /dev /harddisk/dev"
