@@ -4,14 +4,14 @@
 depmod -a
 
 # Wait for udev
-echo -e "${BOUL}Waiting for udev${NO}"
+echo -e "${BOUL}Wait for udev to start${NO}"
 while :; do
   ps |grep udev > /dev/null 2>&1
   if [ $? -eq 0 ]; then break; fi
   usleep 100000
 done
 
-echo -e "${BOUL}Triggering udev${NO}"
+echo -e "${BOUL}Trigger udev${NO}"
 /sbin/udevadm trigger
 /sbin/udevadm settle
 
