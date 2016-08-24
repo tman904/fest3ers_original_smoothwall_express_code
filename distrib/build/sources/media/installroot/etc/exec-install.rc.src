@@ -135,9 +135,8 @@ echo "Tweak udev" >/dev/tty2
   fi # skip NIC names
   mv /etc/udev/rules.d/70-persistent-net.rules /etc/udev/rules.d/70-Smoothwall-custom-NIC.rules
 
-  echo "  Trigger udev and wait for it to settle"
-  do_or_die "/sbin/udevadm trigger"
-  do_or_die "/sbin/udevadm settle"
+  echo "  Reload udev rules to pick up the new net/disk rules"
+  /sbin/udevadm control --reload-rules
 
   sleep 2
 
@@ -270,10 +269,14 @@ END
   echo
   # First make udev remove any existing partition nodes in /dev.
   dd if=/dev/zero of=/dev/$hdd bs=1024k count=1
-  sleep .5
+  echo "change" > /sys/block/$hdd/uevent
   /sbin/udevadm settle
   # Now make the partitions
   do_or_die "parted /dev/$hdd </tmp/partitions"
+  echo "change" > /sys/block/$hdd/uevent
+  /sbin/udevadm settle
+  # And trigger again
+  /sbin/udevadm trigger
   /sbin/udevadm settle
 
 echo -e "$TITLE"
