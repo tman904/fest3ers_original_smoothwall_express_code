@@ -47,7 +47,7 @@ fi
 # Do the NIC rules, too
 mv /etc/udev/rules.d/70-persistent-net.rules /etc/udev/rules.d/70-Smoothwall-custom-NIC.rules
 
-echo "  Trigger udev and wait for it to settle"
+echo "  reload udev rules, trigger disk, then settle"
 /sbin/udevadm control --reload
-/sbin/udevadm trigger
+/bin/echo "change" > /sys/block/${device}/uevent
 /sbin/udevadm settle

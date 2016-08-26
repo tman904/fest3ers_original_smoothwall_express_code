@@ -276,8 +276,6 @@ END
   echo "change" > /sys/block/$hdd/uevent
   /sbin/udevadm settle
   # And trigger again
-  /sbin/udevadm trigger
-  /sbin/udevadm settle
 
 echo -e "$TITLE"
 echo

@@ -8,6 +8,7 @@
  * filename: main.c
  * Contains main entry point, and misc functions. */
 
+#include <unistd.h>
 #include "install.h"
 
 #define CDROM_INSTALL 0
@@ -76,7 +77,7 @@ int main(int argc, char *argv[])
 
 	if (!(hkernelcmdline = fopen("/proc/cmdline", "r")))
 		return 0;
-	fgets(kernelcmdline, STRING_SIZE - 1, hkernelcmdline);
+	fgets(kernelcmdline, STRING_SIZE, hkernelcmdline);
 	fclose(hkernelcmdline);
 	
 	if (strstr(kernelcmdline, "trimbigdisk"))
@@ -456,37 +457,33 @@ static int partitiondisk(char *diskdevnode)
 	
 	// Be sure the partition table is cleared.
 	memset(commandstring, 0, STRING_SIZE);
-	snprintf(commandstring, STRING_SIZE - 1, "/bin/dd if=/dev/zero of=%s bs=1024 count=1", diskdevnode);
+	snprintf(commandstring, STRING_SIZE, "/bin/dd if=/dev/zero of=%s bs=1024 count=1", diskdevnode);
 	mysystem(commandstring);
+	usleep(500000);
 	memset(commandstring, 0, STRING_SIZE);
-	snprintf(commandstring, STRING_SIZE - 1, "/bin/echo \"change\" > /sys/block/%s/uevent", diskdevnode+5);
+	snprintf(commandstring, STRING_SIZE, "/bin/echo \"change\" > /sys/block/%s/uevent", diskdevnode+5);
 	mysystem(commandstring);
 	
 	// Wait for udev to handle the deleted partitions, if any
 	memset(commandstring, 0, STRING_SIZE);
-	snprintf(commandstring, STRING_SIZE - 1, "/sbin/udevadm settle");
+	snprintf(commandstring, STRING_SIZE, "/sbin/udevadm settle");
 	mysystem(commandstring);
 
 	// Now partition in one swell foop.
 	memset(commandstring, 0, STRING_SIZE);
-	snprintf(commandstring, STRING_SIZE - 1, "/usr/sbin/parted %s </tmp/partitions", diskdevnode);
+	snprintf(commandstring, STRING_SIZE, "/usr/sbin/parted %s </tmp/partitions", diskdevnode);
 	if (runcommandwithstatus(commandstring, ctr[TR_PARTITIONING_DISK]))
 	{
 		return 1;
 	}
+	usleep(500000);
 	
 	// Wait for udev to handle the new partitions
 	memset(commandstring, 0, STRING_SIZE);
-	snprintf(commandstring, STRING_SIZE - 1, "/bin/echo \"change\" > /sys/block/%s/uevent", diskdevnode+5);
+	snprintf(commandstring, STRING_SIZE, "/bin/echo \"change\" > /sys/block/%s/uevent", diskdevnode+5);
 	mysystem(commandstring);
 	memset(commandstring, 0, STRING_SIZE);
-	snprintf(commandstring, STRING_SIZE - 1, "/sbin/udevadm settle");
-	mysystem(commandstring);
-	memset(commandstring, 0, STRING_SIZE);
-	snprintf(commandstring, STRING_SIZE - 1, "/sbin/udevadm trigger");
-	mysystem(commandstring);
-	memset(commandstring, 0, STRING_SIZE);
-	snprintf(commandstring, STRING_SIZE - 1, "/sbin/udevadm settle");
+	snprintf(commandstring, STRING_SIZE, "/sbin/udevadm settle");
 	mysystem(commandstring);
 	
 	return 0;
