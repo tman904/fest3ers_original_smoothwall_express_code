@@ -275,7 +275,6 @@ END
   do_or_die "parted /dev/$hdd </tmp/partitions"
   echo "change" > /sys/block/$hdd/uevent
   /sbin/udevadm settle
-  # And trigger again
 
 echo -e "$TITLE"
 echo
