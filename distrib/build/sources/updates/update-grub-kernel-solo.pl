@@ -9,7 +9,6 @@
 # Grab the new kernel version from the command line
 my ($newkern) = @ARGV;
 shift @ARGV;
-shift @ARGV;
 
 # Open the grub conf files
 open presentConf, "</boot/grub/grub.conf";
