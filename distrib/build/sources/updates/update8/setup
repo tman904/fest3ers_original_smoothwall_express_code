@@ -6,11 +6,15 @@ KERNEL_VERSION=3.14.77
 
 echo "Install Update 8."
 
-# Remove the dead e2fsprogs files
-. remove-dead-e2fsprogs-files
+# First delete 'dead' files in case they'd be overwritten.
 
-# Remove all old udev files to make way for eudev
+# Delete the dead e2fsprogs files
+. remove-dead-e2fsprogs-files
+# Delete all old udev files to make way for eudev
 . remove-udev-files
+# Delete all net-tools files
+. remove-net-tools-files
+
 
 # Unpack the patch
 /usr/bin/tar xvf patch.tar.gz -C /
