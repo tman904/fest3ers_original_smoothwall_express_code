@@ -53,4 +53,6 @@ UPDATE_NAME = Update8
 CLAMAV = yes
 KERNEL = yes
 
+EXTRA_UPDATE_FILES = remove-net-tools-files remove-dead-e2fsprogs-files remove-udev-files
+
 include ../Makefile.update
