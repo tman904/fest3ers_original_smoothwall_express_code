@@ -2,9 +2,9 @@
 
 cd distrib
 
-# delete the docs
-for i in usr/doc usr/man usr/share/doc usr/share/man usr/share/info \
-         usr/include share/doc share/man; do
+# delete the docs and includes
+for i in usr/{doc,man,info} usr/share/{doc,man,info} \
+         usr/include include share/{doc,man,info}; do
   rm -rf $i &
 done
 

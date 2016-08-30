@@ -54,4 +54,9 @@ print newConf "## Old Kernel\ntitle Select Old kernel [$oldkern]\nconfigfile /gr
 
 print oldConf "## Default Kernel\ntitle Select Default kernel [$newkern]\nconfigfile /grub/grub.conf\n";
 
+# And close
+close(newConf);
+close(oldConf);
+
 rename "/boot/grub/newkernel.conf", "/boot/grub/grub.conf";
+chmod 644, "/boot/grub/grub.conf";

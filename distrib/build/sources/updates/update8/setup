@@ -1,9 +1,16 @@
 #!/bin/sh
 
-OLD_KERNEL=3.4.109
-KERNEL_VERSION=3.4.112
+# For update8, delete all old kernels
+OLD_KERNEL=
+KERNEL_VERSION=3.14.77
 
-echo "Install Update 7."
+echo "Install Update 8."
+
+# Remove the dead e2fsprogs files
+. remove-dead-e2fsprogs-files
+
+# Remove all old udev files to make way for eudev
+. remove-udev-files
 
 # Unpack the patch
 /usr/bin/tar xvf patch.tar.gz -C /
@@ -21,28 +28,28 @@ rm -f /httpd/cgi-bin/alcateladslfw.cgi \
       /usr/lib/smoothwall/menu/9000_Maintenance/2000_alcatel.list \
       /usr/lib/smoothd/sysalcatel.so
 
+# For Update8, keep $KERNEL_VERSION; delete all others.
 echo "  Keep only the new 3.14 kernel; the old kernels shouldn't work"
-# For Update7, keep 3.14.74; delete all others.
 pushd /lib/modules >/dev/null 2>&1
 
 /bin/ls -dC1 [0-9.]* | \
   /usr/bin/sed -e 's/\./ /g' -e 's=/$==' | \
-  /bin/sort -n -r -k 1 -k 2 -k 3 | \
-  /usr/bin/sed -e 's/ /./g' | \
-  while read a; do
-    if [ "$a" == "3.14.74" ]; then continue; fi
-    echo "        Archiving and deleting old kernel $a"
-    pushd / >/dev/null 2>&1
-    /usr/bin/find ./lib/modules/$a ./boot/initrd-$a.gz ./boot/{vmlinuz,System.map}-$a | \
+    /bin/sort -n -r -k 1 -k 2 -k 3 | \
+    /usr/bin/sed -e 's/ /./g' | \
+    while read a; do
+      if [ "$a" = "$KERNEL_VERSION" ]; then continue; fi
+      echo "        Archiving and deleting old kernel $a"
+      pushd / >/dev/null 2>&1
+      /usr/bin/find ./lib/modules/$a ./boot/initrd-$a.gz ./boot/{vmlinuz,System.map}-$a | \
         /bin/cpio -o -H newc | \
         /usr/bin/gzip > /root/linux-$a-archive.cpio.gz
-    /bin/rm -rf /lib/modules/$a
-    /bin/rm -f /boot/initrd-$a.gz
-    /bin/rm -f /boot/{vmlinuz,System.map}-$a
-    popd >/dev/null 2>&1
-  done
+      /bin/rm -rf /lib/modules/$a
+      /bin/rm -f /boot/initrd-$a.gz
+      /bin/rm -f /boot/{vmlinuz,System.map}-$a
+      popd >/dev/null 2>&1
+    done
 
 popd >/dev/null 2>&1
 
 
-echo "Update 7 install is complete."
+echo "Update 8 install is complete."
