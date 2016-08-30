@@ -68,9 +68,9 @@ updateinfo:
 $(OUTPUT_FILENAME): patch.tar.gz updateinfo
 	@echo "Making update and inspection tarballs ..."
 ifdef KERNEL
-	cp ../update-grub-kernel.pl .
-	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information update-grub-kernel.pl $(EXTRA_UPDATE_FILES)
-	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information update-grub-kernel.pl review $(EXTRA_UPDATE_FILES)
+	cp ../update-grub-kernel-solo.pl .
+	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information update-grub-kernel-solo.pl $(EXTRA_UPDATE_FILES)
+	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information update-grub-kernel-solo.pl review $(EXTRA_UPDATE_FILES)
 else
 	tar cfz $(OUTPUT_FILENAME) patch.tar.gz setup information $(EXTRA_UPDATE_FILES)
 	tar cfz inspection-$(mARCH).tar.gz patch.tar.gz setup information review $(EXTRA_UPDATE_FILES)
@@ -82,7 +82,7 @@ clean:
 	@rm -f $(OUTPUT_FILENAME)
 	@rm -f updateinfo
 	@rm -f information
-	@rm -f update-grub-kernel.pl
+	@rm -f update-grub-kernel.pl update-grub-kernel-solo.pl
 
 download:
 	@true
