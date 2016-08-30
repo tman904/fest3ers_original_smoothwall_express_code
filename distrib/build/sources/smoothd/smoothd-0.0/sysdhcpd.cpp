@@ -24,20 +24,24 @@
 extern "C" {
 	int load(std::vector<CommandFunctionPair> & );
 	int restart_dhcpd(std::vector<std::string> & parameters, std::string & response);
-	int start_dhcpd(std::vector<std::string> & parameters, std::string & response);
-	int stop_dhcpd(std::vector<std::string> & parameters, std::string & response);
+	int   start_dhcpd(std::vector<std::string> & parameters, std::string & response);
+	int    stop_dhcpd(std::vector<std::string> & parameters, std::string & response);
+	int   clean_dhcpd(std::vector<std::string> & parameters, std::string & response);
 }
 
 int load(std::vector<CommandFunctionPair> & pairs)
 {
 	/* CommandFunctionPair name("command", "function"); */
-	CommandFunctionPair restart_dhcpd_function("dhcpdrestart", "restart_dhcpd", 0, 0);
-	CommandFunctionPair start_dhcpd_function("dhcpdstart", "start_dhcpd", 0, 0);
-	CommandFunctionPair stop_dhcpd_function("dhcpdstop", "stop_dhcpd", 0, 0);
+	int version = 10;
+	CommandFunctionPair restart_dhcpd_function("dhcpdrestart", "restart_dhcpd", 0, 0,version);
+	CommandFunctionPair       start_dhcpd_function("dhcpdstart", "start_dhcpd", 0, 0,version);
+	CommandFunctionPair          stop_dhcpd_function("dhcpdstop", "stop_dhcpd", 0, 0,version);
+	CommandFunctionPair       clean_dhcpd_function("dhcpdclean", "clean_dhcpd", 0, 0,version);
 
 	pairs.push_back(restart_dhcpd_function);
 	pairs.push_back(start_dhcpd_function);
 	pairs.push_back(stop_dhcpd_function);
+	pairs.push_back(clean_dhcpd_function);
 
 	return 0;
 }
@@ -46,10 +50,10 @@ int restart_dhcpd(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 	
-	error += stop_dhcpd(parameters, response);
+	error = stop_dhcpd(parameters, response);
 	
 	if (!error)
-		error += start_dhcpd(parameters, response);
+		error = start_dhcpd(parameters, response);
 	
 	if (!error)
 		response = "DHCPD Restart Successful";
@@ -107,3 +111,21 @@ int start_dhcpd(std::vector<std::string> & parameters, std::string & response)
 	return error;
 }
 	
+int clean_dhcpd(std::vector<std::string> & parameters, std::string & response)
+{
+	int error = 0;
+
+	response = "DHCP Leases Cleaned and Restarted";
+
+	system("/bin/echo > /usr/etc/dhcpd.leases");
+	system("/bin/echo > /usr/etc/dhcpd.leases~");
+
+	error = restart_dhcpd(parameters, response);
+
+	if (error)
+		response = "DHCPD Lease Clean and Restart Failed!";
+	else
+		response = "DHCPD Lease Clean and Restart Successful";
+
+	return error;
+}
