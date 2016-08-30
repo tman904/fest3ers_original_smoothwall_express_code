@@ -1,0 +1,17 @@
+#! /bin/false
+
+# To be sourced only
+
+# Remove udev completely to make way for eudev
+rm -rf ./lib/udev
+rm -rf ./etc/udev/udev.conf /
+  ./usr/lib/libudev.so.1.1.6 /
+  ./usr/lib/libudev.so.1 /
+  ./usr/lib/libudev.la /
+  ./usr/lib/libudev.so /
+  ./usr/lib/pkgconfig/libudev.pc /
+  ./usr/share/man/man8/scsi_id.8 /
+  ./usr/share/pkgconfig/udev.pc /
+  ./usr/include/libudev.h /
+  ./sbin/udevd /
+  ./sbin/udevadm
