@@ -81,6 +81,9 @@ mkdir -p -m 755 ${HDTMP}/etc/udev/rules.d
 cp -v /etc/udev/rules.d/*Smoothwall* ${HDTMP}/etc/udev/rules.d/
 
 grep harddisk4 /etc/fstab > ${HDTMP}/etc/fstab
+>${HDTMP}/etc/modules
+grep ext4 /etc/fstab && echo ext4 >> ${HDTMP}/etc/modules
+grep reiserfs /etc/fstab && echo reiserfs >> ${HDTMP}/etc/modules
 chroot ${HDTMP} /sbin/depmod -a
 
 echo "    re-pack"
