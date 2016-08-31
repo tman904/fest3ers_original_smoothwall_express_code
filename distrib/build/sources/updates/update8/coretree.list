@@ -30,6 +30,7 @@
 ./httpd/html/ui/js/script.js
 ./tmp/clamd
 ./usr/bin/installer/prepudevrules
+./usr/bin/installer/installgrub
 ./usr/bin/smoothwall/addns.pl
 ./usr/bin/smoothwall/machine_reg.pl
 ./usr/bin/smoothwall/ppp-off
