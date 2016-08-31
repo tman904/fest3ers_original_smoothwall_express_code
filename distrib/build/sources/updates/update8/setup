@@ -75,17 +75,17 @@ HDTMP="/runtimeroot"
 # Unpack, update, repack
 mkdir -p $HDTMP; cd $HDTMP
 echo "    unpack"
-gunzip -c /boot/initrd-${KERNEL_VER}${KERNEL_TYPE}.gz | cpio -id
+gunzip -c /boot/initrd-${KERNEL_VERSION}.gz | cpio -id
 echo "    update"
 mkdir -p -m 755 ${HDTMP}/etc/udev/rules.d
 cp -v /etc/udev/rules.d/*Smoothwall* ${HDTMP}/etc/udev/rules.d/
 
 grep harddisk4 /etc/fstab > ${HDTMP}/etc/fstab
-/bin/chroot ${HDTMP} /sbin/depmod -a
+chroot ${HDTMP} /sbin/depmod -a
 
 echo "    re-pack"
-cd ${HDTMP}; find . | /bin/cpio -o -H newc | /usr/bin/gzip > /boot/initrd-${KERNEL_VER}${KERNEL_TYPE}.gz
-chmod 444 /harddisk/boot/initrd-${KERNEL_VER}${KERNEL_TYPE}.gz
+cd ${HDTMP}; find . | /bin/cpio -o -H newc | /usr/bin/gzip > /boot/initrd-${KERNEL_VERSION}.gz
+chmod 444 /boot/initrd-${KERNEL_VERSION}.gz
 
 cd ${OPWD}
 rm -rf ${HDTMP}
