@@ -61,6 +61,9 @@ echo "Delete old/dead files"
 . ./remove-dead-e2fsprogs-files
 . ./remove-udev-files
 
+# Replace net-tools' hostname with that from inetutils
+ln -s /usr/bin/hostname /bin/hostname
+
 echo "Reinstall/update grub"
 # Reinstall grub
 . /usr/bin/installer/installgrub UPDATE
