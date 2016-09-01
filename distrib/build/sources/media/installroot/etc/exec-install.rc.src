@@ -711,7 +711,6 @@ else
 
   echo "/dev/harddisk4  /harddisk       $FSTYPE $OPTION         0       1" >${HDTMP}/etc/fstab
   echo "$FSTYPE" >${HDTMP}/etc/modules
-  do_or_die "/bin/chroot ${HDTMP} /sbin/depmod -a"
 
   echo "    re-pack"
   do_or_die "cd ${HDTMP}; find . | /bin/cpio -o -H newc | /usr/bin/gzip > /harddisk/boot/initrd-${KERNEL_VER}${KERNEL_TYPE}.gz"
