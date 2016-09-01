@@ -58,7 +58,7 @@ echo "Reinstall/update grub"
 # Reinstall grub
 . /usr/bin/installer/installgrub UPDATE
 # Update grub.conf
-perl ./update-grub-kernel-solo.pl
+perl ./update-grub-kernel-solo.pl $KERNEL_VERSION
 
 echo "Adjust initrd"
 # Adjust initrd
