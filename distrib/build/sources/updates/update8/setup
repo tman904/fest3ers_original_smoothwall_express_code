@@ -7,14 +7,10 @@ KERNEL_VERSION=3.14.77
 echo "Install Update 8."
 
 # First delete 'dead' files in case they'd be overwritten.
-
-# Delete the dead e2fsprogs files
-. remove-dead-e2fsprogs-files
-# Delete all old udev files to make way for eudev
-. remove-udev-files
-# Delete all net-tools files
-. remove-net-tools-files
-
+echo "Delete old/dead files"
+. ./remove-net-tools-files
+. ./remove-dead-e2fsprogs-files
+. ./remove-udev-files
 
 # Unpack the patch
 /usr/bin/tar xvf patch.tar.gz -C /
@@ -54,12 +50,6 @@ pushd /lib/modules >/dev/null 2>&1
     done
 
 popd >/dev/null 2>&1
-
-# Remove files that must go away
-echo "Delete old/dead files"
-. ./remove-net-tools-files
-. ./remove-dead-e2fsprogs-files
-. ./remove-udev-files
 
 # Replace net-tools' hostname with that from inetutils
 ln -s /usr/bin/hostname /bin/hostname
