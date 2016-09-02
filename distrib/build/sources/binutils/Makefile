@@ -22,6 +22,8 @@ TAR_MPFR = mpfr-$(MPFR_VER).tar.bz2
 
 COMPILE_DIR = $(DIR)-compile
 
+PATCH_FILE1 = binutils-2.22-build_fix-1.patch
+
 ifeq ($(BITS_64), yes)
 	BITS = 64
 endif
@@ -29,8 +31,6 @@ endif
 # Tool Chain Build Stage_1
 #
 ifeq ($(BUILD_PHASE), Stage_1)
-
-PATCH_FILE1 = binutils-2.22-build_fix-1.patch
 
 CONFIG_OPTS = \
 	      --target=$(SWE_TGT)        \
@@ -57,8 +57,6 @@ endif # Stage 1
 # Tool Chain Build Stage_2
 #
 ifeq ($(BUILD_PHASE), Stage_2)
-
-PATCH_FILE1 = binutils-2.22-build_fix-1.patch
 
 PRE_CONFIGURE = CC=$(SWE_TGT)-gcc \
 	        AR=$(SWE_TGT)-ar RANLIB=$(SWE_TGT)-ranlib
@@ -90,6 +88,7 @@ endif # Stage 2
 # Final Build Stage
 #
 ifeq ($(BUILD_PHASE), Final)
+
 CONFIG_OPTS = \
 	      --host=$(FINAL_TGT) \
 	      --build=$(FINAL_TGT) \
@@ -108,6 +107,18 @@ patch: $(DIR)/
 	cd $(DIR); tar -xvf ../../../downloads/$(TAR_MPFR); mv mpfr-$(MPFR_VER) mpfr
 	rm -fv $(DIR)/etc/standards.info
 	sed -i.bak '/^INFO/s/standards.info //' $(DIR)/etc/Makefile.in
+	(cd $(DIR); \
+	for PATCH in $(PATCH_FILE1) $(PATCH_FILE2) $(PATCH_FILE3) $(PATCH_FILE4) $(PATCH_FILE5); do \
+	  FILENAME=../$$PATCH; \
+	  [ -f $$FILENAME ] || exit 8; \
+	  if echo $$FILENAME | grep -q \.gz$$; then \
+	    zcat $$FILENAME | patch -p1 || exit 10; \
+	  elif echo $$FILENAME | grep -q \.bz2$$; then \
+	    bzcat $$FILENAME | patch -p1 || exit 12; \
+	  else \
+	    cat $$FILENAME | patch -p1 || exit 14; \
+	  fi; \
+	done;)
 
 
 COMPILE = yes
