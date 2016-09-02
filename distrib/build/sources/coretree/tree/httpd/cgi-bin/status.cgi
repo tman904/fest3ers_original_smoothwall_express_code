@@ -169,7 +169,8 @@ sub running_since
 	my $remain;
 
 	my @pidStat = stat($_[0]);
-	my $remain = time - $pidStat[9];
+
+	$remain = time - $pidStat[9];
 
 	$days = int($remain/(3600*24));
 	$remain -= $days*3600*24;
