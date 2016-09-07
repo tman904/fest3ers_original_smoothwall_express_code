@@ -485,37 +485,92 @@ if (-e "$MODDIR/schematic") {
 	print FILE "\[/code\]\[/info\]";
 }
 
+# How to determine what's available and what isn't, because values aren't necessarily deleted
+# from network/settings. (It's nice to have them reappear later.)
+#   CT = netsettings{'CONFIG_TYPE'}
+#   GREEN is always configurable
+#   CT & 1: 0 - ORANGE is not included; 1 - ORANGE is configurable
+#   CT & 2: 0 - RED is NOT LAN; 1 - RED is LAN
+#   CT & 4: 0 - PURPLE is not included; 1 - PURPLE is configurable
+
 # Configuration type
 if ($smoothinfosettings{'CONFIG'} eq 'on') {
-	$RED = 'RED(modem)';
-	$RED = 'RED' if ($reddev);
-	$ORANGE = '-ORANGE' if ($orangedev);
-	$PURPLE = '-PURPLE' if ($purpledev);
+
+	if ($netsettings{'CONFIG_TYPE'} & 2) {
+		# RED is NIC
+		if ($netsettings{'RED_TYPE'} eq "STATIC") {
+			$RED = "RED (STATIC)";
+		}
+		elsif ($netsettings{'RED_TYPE'} eq "DHCP") {
+			$RED = "RED (DHCP)";
+		}
+		elsif ($netsettings{'RED_TYPE'} eq "PPPOE") {
+			$RED = "RED (PPPoE)";
+		}
+	}
+	else {
+		# RED is PPP
+		if ($pppsettings{'COMPORT'}) {
+			if ($pppsettings{'COMPORT'} =~ /^tty/) {
+				$RED = 'RED (Dial-Up/Cellular)';
+			}
+			elsif ($pppsettings{'COMPORT'} =~ /^isdn/) {
+				$RED = 'RED (ISDN)';
+			}
+			else {
+				# Everything else falls into PPPoE.
+				# FIXME: But does this include the 'adsl' comport?
+				$RED = 'RED (PPPoE)';
+			}
+		}
+	}
+
+	$ORANGE = '-ORANGE' if ($netsettings{'CONFIG_TYPE'} & 1);
+	$PURPLE = '-PURPLE' if ($netsettings{'CONFIG_TYPE'} & 4);
+
 	print FILE "\[info=\"$tr{'smoothinfo-firewall-config-type'}\"\]\[code\]$RED-GREEN$ORANGE$PURPLE\[/code\]\[/info\]";
 }
 
 # Connection type
+# RED is either LAN, modem, ISDN, or deaults to PPPoE
+# If PPP, it is Dial-Up/Cellular, ISDN, or PPPoE
+
 if ($smoothinfosettings{'CONNTYPE'} eq 'on') {
 	my $conntype;
-	if ($pppsettings{'COMPORT'}) {
-		if ($pppsettings{'COMPORT'} =~ /^tty/) {
-			$conntype = 'Dial-Up';
+
+	if ($netsettings{'CONFIG_TYPE'} & 2) {
+		if ($netsettings{'RED_TYPE'} eq "STATIC" || $netsettings{'RED_TYPE'} eq "DHCP") {
+			# RED is NIC, and is STATIC or DHCP
+			$conntype = 'LAN';
 		}
-		elsif ($pppsettings{'COMPORT'} =~ /^isdn/) {
-			$conntype = 'ISDN';
+		else {
+			# Must be PPPoE, but notify if wrong 'comport'
+			if ($pppsettings{'COMPORT'} eq "pppoe") {
+				$conntype = "LAN";
+			}
+			else {
+				$conntype = "LAN ($pppsettings{'COMPORT'})";
+			}
 		}
-		elsif ($pppsettings{'COMPORT'} eq 'pppoe') {
-			$conntype = 'PPPOE';
-		}
-	}
-	elsif ($reddev) {
-		$conntype = 'LAN';
 	}
 	else {
-		$conntype = 'Cable or DSL';
+		if ($pppsettings{'COMPORT'}) {
+			if ($pppsettings{'COMPORT'} =~ /^tty/) {
+				$conntype = 'Dial-Up/Cellular';
+			}
+			elsif ($pppsettings{'COMPORT'} =~ /^isdn/) {
+				$conntype = 'ISDN';
+			}
+			else {
+				# Everything else falls into PPPoE.
+				# FIXME: But does this include the 'adsl' comport?
+				$conntype = 'PPPoE';
+			}
+		}
 	}
-	print FILE "\[info=\"$tr{'smoothinfo-connection'}\"\]\[code\]$conntype\[/code\]\[/info\]";
+        print FILE "\[info=\"$tr{'smoothinfo-connection'}\"\]\[code\]$conntype\[/code\]\[/info\]";
 }
+
 
 # Firewall policy
 # Check for replacement chain data (xtaccess, portfw, dmzholes, outgoing) from FFC and other mods
