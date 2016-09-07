@@ -7,7 +7,6 @@
 rm -f /bin/uuidgen \
   /sbin/blkid \
   /sbin/findfs \
-  /sbin/fsck \
   /sbin/uuidd \
   /usr/include/blkid/blkid.h \
   /usr/include/blkid/blkid_types.h \
