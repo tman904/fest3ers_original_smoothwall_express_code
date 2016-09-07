@@ -12,6 +12,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <string>
 #include <fcntl.h>
 #include <syslog.h>
 #include <signal.h>
@@ -47,12 +49,17 @@ int restart_clamav(std::vector<std::string> & parameters, std::string & response
 	int error = 0;
 
 	error += stop_clamav(parameters, response);
+	if (error)
+	{
+		response = "Restart: " + response;
+		return error;
+	}
 
-	if (!error)
-		error += start_clamav(parameters, response);
+	error = start_clamav(parameters, response);
+	response = "Restart: " + response;
 
-	if (!error)
-		response = "ClamAV Restart Successful";
+	// Not needing ClamAV is still success
+	if (error == 1) error = 0;
 
 	return error;
 }
@@ -60,30 +67,54 @@ int restart_clamav(std::vector<std::string> & parameters, std::string & response
 
 int stop_clamav(std::vector<std::string> & parameters, std::string & response)
 {	
-	response = "ClamAV Process Terminated";
+	response = "ClamAV Daemon Stopped";
 
-	killunknownprocess("clamd");
-
-	return 0;
+	return (killunknownprocess("clamd"));
 }
 
 int start_clamav(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
+	int needed;
+	std::ostringstream num2str;
 
-	response = "ClamAV Process started";
+	needed = simplesecuresysteml("/usr/bin/egrep", "-i", "=on$", "/var/smoothwall/clamav/settings", NULL);
 
-	ConfigVAR settings("/var/smoothwall/clamav/settings");
+	// If the execve() fails, it returns -1, which turns into 255 by the
+	//   time it gets here.
+	if (needed == 255)
+	{
+		fprintf(stderr, "ClamAV Start Failed: /usr/bin/egrep not found\n");
+		response = "ClamAV Start Failed: /usr/bin/egrep not found!";
+		return (-1);
+	}
 
-	if (settings["ENABLE_ZAP"] == "on" || settings["ENABLE_GUARDIAN"] == "on")
+	else if (needed == 2)
+	{
+		fprintf(stderr, "ClamAV Start Failed: egrep failed\n");
+		response = "ClamAV Start Failed: egrep failed!";
+		return (-1);
+	}
+
+	else if (needed == 1)
+	{
+		response = "ClamAV not needed";
+		return needed;
+	}
+
+	else if (needed == 0)
 	{
 		error = simplesecuresysteml("/usr/sbin/clamd", "--config-file=/usr/lib/smoothwall/clamd.conf", NULL);
 
 		if (error)
-			response = "ClamAV Start Failed!";
+			response = "ClamAV Daemon Failed! Check /var/log/smoothderror; run freshclam.";
 		else
-			response = "ClamAV Start Successful";
+			response = "ClamAV Daemon Started";
+		return error;
 	}
-
-	return error;
+	else {
+		num2str << needed;
+		response = "ClamAV Not Started: grep returned " + num2str.str();
+		return needed;
+	}
 }
