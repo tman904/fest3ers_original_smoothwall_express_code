@@ -107,18 +107,7 @@ patch: $(DIR)/
 	cd $(DIR); tar -xvf ../../../downloads/$(TAR_MPFR); mv mpfr-$(MPFR_VER) mpfr
 	rm -fv $(DIR)/etc/standards.info
 	sed -i.bak '/^INFO/s/standards.info //' $(DIR)/etc/Makefile.in
-	(cd $(DIR); \
-	for PATCH in $(PATCH_FILE1) $(PATCH_FILE2) $(PATCH_FILE3) $(PATCH_FILE4) $(PATCH_FILE5); do \
-	  FILENAME=../$$PATCH; \
-	  [ -f $$FILENAME ] || exit 8; \
-	  if echo $$FILENAME | grep -q \.gz$$; then \
-	    zcat $$FILENAME | patch -p1 || exit 10; \
-	  elif echo $$FILENAME | grep -q \.bz2$$; then \
-	    bzcat $$FILENAME | patch -p1 || exit 12; \
-	  else \
-	    cat $$FILENAME | patch -p1 || exit 14; \
-	  fi; \
-	done;)
+	cd $(DIR); cat binutils-2.22-build_fix-1.patch | patch -p1 || exit 14
 
 
 COMPILE = yes
