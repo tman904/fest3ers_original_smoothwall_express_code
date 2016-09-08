@@ -18,6 +18,11 @@ TZ_URL =  http://www.iana.org/time-zones/repository/releases/$(TZ_TARBALL)
 
 COMPILE_DIR = $(DIR)-compile
 
+DOWNLOAD = yes
+download:
+	$(DL_CMD) $(BASE_URL)/$(PACKAGE)-$(VERSION)$(EXTENSION)
+	$(DL_CMD) $(TZ_URL)
+
 # Phase 1 compile
 #
 ifeq ($(BUILD_PHASE), Stage_1)
@@ -83,11 +88,6 @@ CONFIG_OPTS = \
 	      --enable-obsolete-rpc
 
 #	      --enable-add-ons \
-
-DOWNLOAD = yes
-download:
-	$(DL_CMD) $(BASE_URL)/$(PACKAGE)-$(VERSION)$(EXTENSION)
-	$(DL_CMD) $(TZ_URL)
 
 PREPARE = yes
 # Prepare
