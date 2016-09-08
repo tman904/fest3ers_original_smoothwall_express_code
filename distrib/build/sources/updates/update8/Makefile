@@ -6,6 +6,7 @@ UPDATE_PACKAGES = \
 		  openswan \
 		  ipbatch \
 		  listtables \
+		  trafficstats \
 		  linux-firmware \
 		  kmod \
 		  libevent \
