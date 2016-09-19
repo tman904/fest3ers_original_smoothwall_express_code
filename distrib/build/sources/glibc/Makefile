@@ -20,8 +20,8 @@ COMPILE_DIR = $(DIR)-compile
 
 DOWNLOAD = yes
 download:
-	$(DL_CMD) $(BASE_URL)/$(PACKAGE)-$(VERSION)$(EXTENSION)
-	$(DL_CMD) $(TZ_URL)
+	@$(DL_CMD) $(BASE_URL)/$(PACKAGE)-$(VERSION)$(EXTENSION)
+	@$(DL_CMD) $(TZ_URL)
 
 # Phase 1 compile
 #
