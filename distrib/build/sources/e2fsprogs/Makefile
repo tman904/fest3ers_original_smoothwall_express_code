@@ -9,6 +9,7 @@ BASE_URL = http://downloads.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)/v$(VER
 
 COMPILE_DIR = $(DIR)-compile
 
+PKG_DIR=
 
 ifeq ($(BUILD_PHASE), Stage_3)
 
