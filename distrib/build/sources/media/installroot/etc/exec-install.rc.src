@@ -64,7 +64,7 @@ if [ "$filesys" = "" ]; then echo "Var 'filesys' is blank"; FAIL=1; fi
 if [ "$loader" = "" ]; then echo "Var 'loader' is blank"; FAIL=1; fi
 if [ "$noatime" = "" ]; then echo "Var 'noatime' is blank"; FAIL=1; fi
 if [ "$restore" = "" ]; then echo "Var 'restore' is blank"; FAIL=1; fi
-if [ "$restore" -gt 1 -a "$archive_id" = "" ]; then echo "Var 'archive_id' is blank"; FAIL=1; fi
+if [ "$restore" -gt 1 -a "{$archive_id[*]}" = "" ]; then echo "Var 'archive_id' is blank"; FAIL=1; fi
 if [ "$restore" -gt 1 -a "$archive" = "" ]; then echo "Var 'archive' is blank"; FAIL=1; fi
 
 if [ $FAIL -eq 1 ]; then
