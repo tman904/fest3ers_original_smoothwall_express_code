@@ -23,6 +23,8 @@ export PERL_MODS = \
 	    Authen-SASL \
 	    Config-Patch \
 	    Date-Calc \
+	    FCGI \
+	    CGI-Fast \
 	    GD \
 	    GDTextUtil \
 	    GDGraph \
