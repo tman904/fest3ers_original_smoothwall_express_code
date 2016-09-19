@@ -6,11 +6,15 @@ KERNEL_VERSION=3.14.78
 
 echo "Install Update 8."
 
-# First delete 'dead' files in case they'd be overwritten.
+# First delete old/dead files in case they'd be overwritten or if they've moved.
 echo "Delete old/dead files"
-. ./remove-net-tools-files
-. ./remove-dead-e2fsprogs-files
-. ./remove-udev-files
+while read FILE; do
+  if [ -d "$FILE" ]; then
+    rm -rf "$FILE"
+  else
+    rm -f "$FILE"
+  fi
+done < remove-old-files
 
 # Unpack the patch
 /usr/bin/tar xvf patch.tar.gz -C /
