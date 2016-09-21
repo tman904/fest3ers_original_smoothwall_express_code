@@ -1,8 +1,16 @@
+# Non-obvious dependency notes:
+#   iproute TC libs depend on libxtables (iptables)
+#   c_icap_modules libclamav_mod depends on libclamav (clamav)
+# Such dependent pkgs *MUST* be updated when the upper pkg is updated
+# Script .../updates/checklibs should find missing libs on updated test smoothies
+
 UPDATE_PACKAGES = \
 		  linux \
 		  iptables \
 		  ipset \
 		  xtables-addons \
+		  iproute2 \
+		  c_icap_modules \
 		  openswan \
 		  ipbatch \
 		  listtables \
