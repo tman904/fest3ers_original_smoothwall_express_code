@@ -78,14 +78,14 @@ int start_clamav(std::vector<std::string> & parameters, std::string & response)
 	int needed;
 	std::ostringstream num2str;
 
-	needed = simplesecuresysteml("/usr/bin/egrep", "-i", "=on$", "/var/smoothwall/clamav/settings", NULL);
+	needed = simplesecuresysteml("/bin/egrep", "-i", "=on$", "/var/smoothwall/clamav/settings", NULL);
 
 	// If the execve() fails, it returns -1, which turns into 255 by the
 	//   time it gets here.
 	if (needed == 255)
 	{
-		fprintf(stderr, "ClamAV Start Failed: /usr/bin/egrep not found\n");
-		response = "ClamAV Start Failed: /usr/bin/egrep not found!";
+		fprintf(stderr, "ClamAV Start Failed: /bin/egrep not found\n");
+		response = "ClamAV Start Failed: /bin/egrep not found!";
 		return (-1);
 	}
 
