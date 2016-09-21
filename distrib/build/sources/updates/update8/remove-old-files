@@ -138,14 +138,17 @@
 ./usr/lib/libblkid.so.1.0
 ./usr/lib/libclamav.so.6
 ./usr/lib/libclamav.so.6.1.23
+./usr/lib/libclamav.so.6.1.24
 ./usr/lib/libclamav.so.6.1.25
 ./usr/lib/libclamav.so.6.1.26
 ./usr/lib/libclamunrar.so.6
 ./usr/lib/libclamunrar.so.6.1.23
+./usr/lib/libclamunrar.so.6.1.24
 ./usr/lib/libclamunrar.so.6.1.25
 ./usr/lib/libclamunrar.so.6.1.26
 ./usr/lib/libclamunrar_iface.so.6
 ./usr/lib/libclamunrar_iface.so.6.1.23
+./usr/lib/libclamunrar_iface.so.6.1.24
 ./usr/lib/libclamunrar_iface.so.6.1.25
 ./usr/lib/libclamunrar_iface.so.6.1.26
 ./usr/lib/libdaq.so.2.0.2
