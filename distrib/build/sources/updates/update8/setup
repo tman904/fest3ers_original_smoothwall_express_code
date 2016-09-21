@@ -2,21 +2,25 @@
 
 # For update8, delete all old kernels
 OLD_KERNEL=
-KERNEL_VERSION=3.14.78
+KERNEL_VERSION=3.16.37
 
 echo "Install Update 8."
 
 # First delete old/dead files in case they'd be overwritten or if they've moved.
-echo "Delete old/dead files"
-while read FILE; do
-  if [ -d "$FILE" ]; then
-    rm -rf "$FILE"
-  else
-    rm -f "$FILE"
-  fi
-done < remove-old-files
+echo " Delete old/dead files"
+(
+  cd /
+  while read FILE; do
+    if [ -d "$FILE" ]; then
+      rm -rf "$FILE"
+    else
+      rm -f "$FILE"
+    fi
+  done
+) < remove-old-files
 
 # Unpack the patch
+echo " Unpack the update"
 /usr/bin/tar xvf patch.tar.gz -C /
 
 # Leave these for a few generations, just in case.
