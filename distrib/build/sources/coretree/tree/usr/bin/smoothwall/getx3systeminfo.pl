@@ -3,6 +3,8 @@
 use lib "/usr/lib/smoothwall";
 use header qw( :standard );
 
+use LWP;
+
 # fetch the system id
 my $sysid = &getsystemid();
 
@@ -24,13 +26,19 @@ unless ($proxy{'SERVER'})
 my %ownership;
 &readhash("${swroot}/main/ownership", \%ownership);
 my $sysid = $ownership{'ID'};
-use IO::Socket;
-$sock = new IO::Socket::INET ( PeerAddr => $host, PeerPort => $port, Proto => 'tcp', Timeout => 5 ) or die "Could not connect to host\n\n";
-print $sock "GET http://$xhost/cgi-bin/system_info.cgi?id=$sysid HTTP/1.1\n";
-print $sock "Host: $xhost\n\n";
-undef $/;
-$retsrt = <$sock>;
-close $sock;
+
+my $infoURL = "http://$xhost/cgi-bin/system_info.cgi?$sysid";
+$req = HTTP::Request->new(GET => $infoURL);
+$ua = LWP::UserAgent->new;
+$ua->agent("Smoothwall/3.0");
+
+if ($proxy{'SERVER'})
+{
+	$ua->proxy(http => "http://$host:$port");
+}
+
+$rsp = $ua->request($req);
+$retsrt = $rsp->content();
 
 @page = split(/\n/,$retsrt,-1);
 $found = 0;

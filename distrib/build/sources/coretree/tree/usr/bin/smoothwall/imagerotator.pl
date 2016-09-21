@@ -3,7 +3,8 @@
 use lib "/usr/lib/smoothwall";
 use header qw(:standard );
 
-use IO::Socket;
+#use IO::Socket;
+use LWP;
 
 my %proxy;
 
@@ -19,24 +20,20 @@ unless ($proxy{'SERVER'})
 	$port = $proxy{'PORT'};
 }
 
-my $sock;
+my $bannerURL = "http://x3.smoothwall.org/cgi-bin/banners.cgi?version=$version";
+$req = HTTP::Request->new(GET => $bannerURL);
+$ua = LWP::UserAgent->new;
+$ua->agent("Smoothwall/3.0");
 
-unless ($sock = new IO::Socket::INET (PeerAddr => $host, PeerPort => $port, Proto => 'tcp', Timeout => 5)) {
-	print STDERR "unable to connect\n";
-	$errormessage = $tr{'could not connect to smoothwall org'};
-	exit 0;
+if ($proxy{'SERVER'})
+{
+	$ua->proxy(http => "http://$host:$port");
 }
 
-print $sock "GET http://x3.smoothwall.org/cgi-bin/banners.cgi?version=$version HTTP/1.1\r\nHost: x3.smoothwall.org\r\nConnection: close\r\n\r\n";
+$rsp = $ua->request($req);
+$return = $rsp->status_line()."\n".$rsp->content();
 
-my $return = '';
-
-while (<$sock>) {
-	$return .= $_; 
-}
-close($sock);
-
-if ($return =~ m/^HTTP\/\d+\.\d+ 200/) {
+if ($return =~ m/^200 OK/) {
 	unless(open(LIST, ">${swroot}/banners/available")) {
 		die "Could not open available lists database."; 
 	}
