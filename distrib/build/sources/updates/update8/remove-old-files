@@ -1,6 +1,7 @@
 ./bin/arch
 ./bin/dnsdomainname
 ./bin/domainname
+./bin/hostname
 ./bin/netstat
 ./bin/nisdomainname
 ./bin/uuidgen
