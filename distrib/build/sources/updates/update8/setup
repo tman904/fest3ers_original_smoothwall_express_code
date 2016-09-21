@@ -37,7 +37,7 @@ rm -f /httpd/cgi-bin/alcateladslfw.cgi \
       /usr/lib/smoothd/sysalcatel.so
 
 # For Update8, keep $KERNEL_VERSION; delete all others.
-echo "  Keep only the new 3.14 kernel; the old kernels shouldn't work"
+echo "  Keep only the new ${KERNEL_VERSION} kernel; the old kernels shouldn't work"
 pushd /lib/modules >/dev/null 2>&1
 
 /bin/ls -dC1 [0-9.]* | \
