@@ -12,7 +12,6 @@
 ./etc/rc.d/rc.sysinit
 ./etc/rc.d/rc.updatered
 ./etc/rc.d/restorescript
-./httpd/cgi-bin/alcateladslfw.cgi
 ./httpd/cgi-bin/backup.cgi
 ./httpd/cgi-bin/ids.cgi
 ./httpd/cgi-bin/interfaces.cgi
@@ -24,7 +23,6 @@
 ./httpd/cgi-bin/outgoing.cgi
 ./httpd/cgi-bin/status.cgi
 ./httpd/cgi-bin/updates.cgi
-./httpd/html/help/alcateladslfw.cgi.html.en
 ./httpd/html/ui/css/style.css
 ./httpd/html/ui/img/warning.png
 ./httpd/html/ui/js/script.js
@@ -41,7 +39,6 @@
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/langs/alertboxes.en.pl
 ./usr/lib/smoothwall/langs/en.pl
-./usr/lib/smoothwall/menu/9000_Maintenance/2000_alcatel.list
 ./usr/lib/smoothwall/smoothtype.pm
 ./var/smoothwall/patches/installed
 ./var/smoothwall/proxy/cache
