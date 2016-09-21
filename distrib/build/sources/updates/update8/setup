@@ -21,7 +21,7 @@ echo " Delete old/dead files"
 
 # Unpack the patch
 echo " Unpack the update"
-/usr/bin/tar xvf patch.tar.gz -C /
+/usr/bin/tar xf patch.tar.gz -C /
 
 # Leave these for a few generations, just in case.
 echo "  Fix logrotate config file modes"
