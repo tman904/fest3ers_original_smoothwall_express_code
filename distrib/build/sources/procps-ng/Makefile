@@ -12,6 +12,15 @@ EXTENSION = .tar.xz
 
 BASE_URL = http://sourceforge.net/projects/procps-ng/files/Production/
 
+ifeq ($(BUILD_PHASE), Final)
+PKG_DIR =
+
+CONFIG_OPTS += --prefix= --exec-prefix= \
+	       --datarootdir=/usr/share \
+	       --libexecdir=/usr/libexec \
+	       --includedir=/usr/include
+endif
+
 CONFIGURE = yes
 INSTALL = yes
 
