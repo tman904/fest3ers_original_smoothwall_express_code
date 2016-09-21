@@ -30,6 +30,8 @@
 ./usr/bin/installer/prepudevrules
 ./usr/bin/installer/installgrub
 ./usr/bin/smoothwall/addns.pl
+./usr/bin/smoothwall/getx3systeminfo.pl
+./usr/bin/smoothwall/imagerotator.pl
 ./usr/bin/smoothwall/machine_reg.pl
 ./usr/bin/smoothwall/ppp-off
 ./usr/bin/smoothwall/ppp-on
