@@ -267,7 +267,9 @@ predownload:
 	  cd sources; \
 	  for I in `find -maxdepth 3 -mindepth 1 -type d | sort`; do \
 	    if [ "$$I" != "\./\.git" ]; then \
-	      if echo $$I | egrep "^./mtools/mtools-4.0.15/scripts" >/dev/null 2>&1; then \
+	      if echo $$I | egrep "^./nss/nss-[^/]*/nss" >/dev/null 2>&1; then \
+	        continue; \
+	      elif echo $$I | egrep "^./mtools/mtools-4.0.15/scripts" >/dev/null 2>&1; then \
 	        continue; \
 	      elif echo $$I | egrep "^./cdrtools" >/dev/null 2>&1; then \
 	        NW="GMAKE_NOWARN=true "; \
