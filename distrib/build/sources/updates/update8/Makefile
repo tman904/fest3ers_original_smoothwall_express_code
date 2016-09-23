@@ -11,6 +11,7 @@ UPDATE_PACKAGES = \
 		  xtables-addons \
 		  iproute2 \
 		  c_icap_modules \
+		  c_icap \
 		  openswan \
 		  ipbatch \
 		  listtables \
