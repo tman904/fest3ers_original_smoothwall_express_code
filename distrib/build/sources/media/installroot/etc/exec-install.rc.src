@@ -21,7 +21,7 @@ function compute_swap () {
   if [ $memsize -gt $disk_eighth ]; then
     # Base swap on 1/8 disk size, but not larger than 1GiB
     swapMiB=disk_eighth
-    if [ $swapMiB > 1024 ]; then
+    if [ $swapMiB -gt 1024 ]; then
       swapMiB=1024
     fi
   else
