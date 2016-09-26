@@ -12,6 +12,14 @@ script that will tidy the distrib tree just before it is tarred up. Create
 these files as needed.
 
 
+Update Development Tools
+------------------------
+  - checklibs: this tool checks every shared lib needed by every program.
+    Note: it should also check shared libs needed by shared libs. It should
+    also report shared libs that are apparently not used by anything; these
+    shuold be deleted from the system.
+
+
 Update info file format
 -----------------------
   MD5:      The md5sum of the complete update tarball.
