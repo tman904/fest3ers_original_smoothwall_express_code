@@ -14,6 +14,7 @@
 ./etc/rc.d/restorescript
 ./httpd/cgi-bin/backup.cgi
 ./httpd/cgi-bin/bandwidthbars.cgi
+./httpd/cgi-bin/help.cgi
 ./httpd/cgi-bin/ids.cgi
 ./httpd/cgi-bin/interfaces.cgi
 ./httpd/cgi-bin/logs.cgi/firewalllog.dat
