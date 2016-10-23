@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 PACKAGE = squidclamav
-VERSION = 6.12
+VERSION = 6.16
 
 BASE_URL = http://heanet.dl.sourceforge.net/project/$(PACKAGE)/$(PACKAGE)/$(VERSION)
 
