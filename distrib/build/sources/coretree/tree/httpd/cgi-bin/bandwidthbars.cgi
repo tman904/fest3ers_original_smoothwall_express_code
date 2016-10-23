@@ -66,6 +66,50 @@ else {
 	}
 }
 
+# Scan the current network for live hosts:
+my (@scanlist, @if_files);
+
+# Push interfaces with static assignments into an array
+push (@if_files, 'green')  if (-s "${swroot}/dhcp/staticconfig-green");
+push (@if_files, 'purple') if (-s "${swroot}/dhcp/staticconfig-purple");
+push (@if_files, 'orange') if (-s "${swroot}/dhcp/staticconfig-orange");
+
+# Get the static assignments for each IF and push into an array.
+if (@if_files) {
+	foreach (@if_files) {
+		open (STATIC, "<${swroot}/dhcp/staticconfig-$_") || die "Can't open $_ static file!";
+		while (<STATIC>) {
+			chomp;
+			my ($name, $MAC, $IP) = split (/,/);
+			push @scanlist, "$IP\n";
+		}
+		close (STATIC);
+	}
+}
+
+# Get the leases and push into the array.
+open (LEASES, "</usr/etc/dhcpd.leases") || die "Can't open dhcpd.leases!";
+while (<LEASES>) {
+	chomp;
+	if ($_ =~ /^lease/) {
+		my ($key, $IP, $brace) = split (/\s+/);
+		# Verify the lease isn't a duplicate.
+		push @scanlist, "$IP\n" if (($IP) && ((grep { /$IP/ } @scanlist) == 0));
+		next;
+	}
+}
+close (LEASES);
+
+# Print the @scanlist array to a file.
+open (ARPLIST, ">${swroot}/traffic/scanip") || die "Can't open scanip!";
+print ARPLIST @scanlist;
+close (ARPLIST);
+
+#Use the scanip file created to ping listed hosts and refresh the ARP cache
+system ("/sbin/fping -c 1 -t 200 -f ${swroot}/traffic/scanip >/dev/null 2>&1");
+my @list = `ip n show`;
+unlink ("${swroot}/traffic/scanip");
+
 &openbox('Bandwidth bars:');
 &realtime_graphs();
 &closebox();
@@ -77,6 +121,11 @@ else {
 #
 # Start of functions
 #
+
+# Scans the array to check if the current host is live
+sub scanlist {
+	return (grep { /^$_[0]\s+.*lladdr/ } @list);
+}
 
 sub printableiface 
 {
@@ -114,11 +163,11 @@ sub realtime_graphs
 		# Change remaining spaces to "_"
 		$iface =~ s/ /_/g;
 		$interfaces{ $iface }{ $rule } = $value;
-		if($iface =~ /^\d+\.\d+\.\d+\.\d+/ && $rule eq 'cur_out_rate') {
-			$addresses{$iface} = $value;
+		if($iface =~ /^(\d+\.\d+\.\d+\.\d+)/ && $rule eq 'cur_out_rate') {
+			$addresses{$iface} = $value if (&scanlist($1));
 		}
 	}
-	push @devices, sort { $addresses{$b} <=> $addresses{$a}; } keys %addresses;
+	push @devices, (sort keys %addresses);
 
 	print "\n<div style='border:1px solid #7f7f7f; margin: 2em;'>\n";
 
