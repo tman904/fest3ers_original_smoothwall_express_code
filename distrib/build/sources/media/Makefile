@@ -41,9 +41,9 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    libnetfilter_acct libnetfilter_conntrack libnetfilter_cthelper \
 	    libnetfilter_cttimeout libnetfilter_log libnftnl \
 	    libcap fontconfig glib cairo libffi readline libpcap sqlite-autoconf \
-	    libosip2 libpcap pango zlib slang pixman libxml2 libusb-compat libusb \
-	    libevent nspr nss unbound \
-	    kmod gmp mpfr mpc popt yaml perl-mods libcap-ng rsync \
+	    libosip2 pango zlib slang pixman libxml2 libusb-compat libusb \
+	    libevent nspr nss unbound c_icap c_icap_modules \
+	    kmod gmp mpfr mpc popt yaml perl-mods rsync \
 	    newt binutils coreutils iana-etc mktemp file findutils gawk \
 	    ncurses vim less sed flex gettext inetutils iputils \
 	    whois perl bash bc bzip2 kbd e2fsprogs grep gzip module-init-tools \
@@ -56,7 +56,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    ibod dhcpcd eciadsl-synch_bin eciadsl-usermode dhcp snort \
 	    oinkmaster openswan wireless_tools imspector diffutils clamav \
 	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
-	    suricata smartmontools at dosfstools e2fsprogs grub linux-atm \
+	    suricata smartmontools at dosfstools grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
 	    $(UDEV) lm_sensors xz pcmciautils qemu sysfsutils db squidGuard \
 	    apcupsd cacert-bundle setkerneltz fping \
