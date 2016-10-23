@@ -152,10 +152,14 @@ sub common {
 	}
 	open FILE, ">>$log" or die $!;
 	if ($ENV{NOTIFYTYPE}) {
-		print FILE "$logdate  $ENV{NOTIFYTYPE}\tAlert sent to:$TO$CC$SMS\n";
+		my $pad = '';
+		for (0..13 - (length($ENV{NOTIFYTYPE}))) {
+			$pad = $pad . ' ';
+		}
+		print FILE "$logdate  $ENV{NOTIFYTYPE}${pad}Alert sent to:$TO$CC$SMS\n";
 	}
 	else {
-		print FILE "$logdate  APCUPSD Test\tAlert sent to:$TO$CC$SMS\n";
+		print FILE "$logdate  APCUPSD Test  Alert sent to:$TO$CC$SMS\n";
 	}
 	close FILE;
 }

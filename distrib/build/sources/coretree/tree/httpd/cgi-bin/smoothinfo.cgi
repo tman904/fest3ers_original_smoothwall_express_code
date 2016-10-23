@@ -36,7 +36,6 @@ my @items = (
              'APACHE',
              'CONFIG',
              'CONNTRACKS',
-             'CONNTYPE',
              'CPU',
              'DHCPINFO',
              'DISKSPACE',
@@ -54,6 +53,7 @@ my @items = (
              'OUTGOING',
              'PINHOLES',
              'PORTFW',
+             'QOS',
              'ROUTE',
              'SERVICES',
              'SQUID',
@@ -168,7 +168,6 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
 		  $smoothinfosettings{'APACHE'} eq 'on' &&
 		  $smoothinfosettings{'CONFIG'} eq 'on' &&
 		  $smoothinfosettings{'CONNTRACKS'} eq 'on' &&
-		  $smoothinfosettings{'CONNTYPE'} eq 'on' &&
 		  $smoothinfosettings{'CPU'} eq 'on' &&
 		  $smoothinfosettings{'DHCPINFO'} eq 'on' &&
 		  $smoothinfosettings{'DISKSPACE'} eq 'on' &&
@@ -186,6 +185,7 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
 		  $smoothinfosettings{'OUTGOING'} eq 'on' &&
 		  $smoothinfosettings{'PINHOLES'} eq 'on' &&
 		  $smoothinfosettings{'PORTFW'} eq 'on' &&
+		  $smoothinfosettings{'QOS'} eq 'on' &&
 		  $smoothinfosettings{'ROUTE'} eq 'on' &&
 		  $smoothinfosettings{'SERVICES'} eq 'on' &&
 		  $smoothinfosettings{'SQUID'} eq 'on' &&
@@ -198,7 +198,6 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
 		  $smoothinfosettings{'APACHE'} eq 'on' ||
 		  $smoothinfosettings{'CONFIG'} eq 'on' ||
 		  $smoothinfosettings{'CONNTRACKS'} eq 'on' ||
-		  $smoothinfosettings{'CONNTYPE'} eq 'on' ||
 		  $smoothinfosettings{'CPU'} eq 'on' ||
 		  $smoothinfosettings{'DHCPINFO'} eq 'on' ||
 		  $smoothinfosettings{'DISKSPACE'} eq 'on' ||
@@ -216,6 +215,7 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
 		  $smoothinfosettings{'OUTGOING'} eq 'on' ||
 		  $smoothinfosettings{'PINHOLES'} eq 'on' ||
 		  $smoothinfosettings{'PORTFW'} eq 'on' ||
+		  $smoothinfosettings{'QOS'} eq 'on' ||
 		  $smoothinfosettings{'ROUTE'} eq 'on' ||
 		  $smoothinfosettings{'SERVICES'} eq 'on' ||
 		  $smoothinfosettings{'SQUID'} eq 'on' ||
@@ -464,13 +464,13 @@ function CheckDef()
 {
 	var checkBoxes = [
 		'CONFIG',
-		'CONNTYPE',
 		'DISKSPACE',
 		'FWPOLICY',
 		'MEMORY',
 		'MODLIST',
 		'NETCONF1',
 		'NETCONF2',
+		'QOS',
 		'ROUTE',
 		'SERVICES',
 	];
@@ -656,28 +656,28 @@ print <<END;
 	<td style='width:3%;'><input type='checkbox' name='MODEXTRA' $checked{'MODEXTRA'}{'on'}></td>
 </tr>
 <tr>
-	<td class='base' TITLE='$tr{'smoothinfo-connection-tip'}'>$tr{'smoothinfo-connection'}:</td>
-	<td><input type='checkbox' name='CONNTYPE' $checked{'CONNTYPE'}{'on'}></td>
+	<td class='base'>$tr{'smoothinfo-fwPolicy'}:</td>
+	<td><input type='checkbox' name='FWPOLICY' $checked{'FWPOLICY'}{'on'}></td>
 	<td class='base' TITLE='$tr{'smoothinfo-dhcpinfo-tip'}'>$tr{'smoothinfo-dhcpinfo'}:</td>
 	<td><input type='checkbox' name='DHCPINFO' $checked{'DHCPINFO'}{'on'}></td>
 	<td class='base'>$tr{'smoothinfo-external-access'}:</td>
 	<td><input type='checkbox' name='XTACCESS' $checked{'XTACCESS'}{'on'}></td>
-	<td class='base'>$tr{'smoothinfo-proxy'}:</td>
-	<td><input type='checkbox' name='SQUID' $checked{'SQUID'}{'on'}></td>
-</tr>
-<tr>
-	<td class='base'>$tr{'smoothinfo-fwPolicy'}:</td>
-	<td><input type='checkbox' name='FWPOLICY' $checked{'FWPOLICY'}{'on'}></td>
-	<td class='base'>$tr{'smoothinfo-dns'}:</td>
-	<td><input type='checkbox' name='DNS' $checked{'DNS'}{'on'}></td>
-	<td class='base'>$tr{'smoothinfo-portfw'}:</td>
-	<td><input type='checkbox' name='PORTFW' $checked{'PORTFW'}{'on'}></td>
-	<td></td>
-	<td></td>
+	<td class='base'>QoS:</td>
+	<td><input type='checkbox' name='QOS' $checked{'QOS'}{'on'}></td>
 </tr>
 <tr>
 	<td class='base' TITLE='$tr{'smoothinfo-mods-tip'}'>$tr{'smoothinfo-installed-mods'}:</td>
 	<td><input type='checkbox' name='MODLIST' $checked{'MODLIST'}{'on'}></td>
+	<td class='base'>$tr{'smoothinfo-dns'}:</td>
+	<td><input type='checkbox' name='DNS' $checked{'DNS'}{'on'}></td>
+	<td class='base'>$tr{'smoothinfo-portfw'}:</td>
+	<td><input type='checkbox' name='PORTFW' $checked{'PORTFW'}{'on'}></td>
+	<td class='base'>$tr{'smoothinfo-proxy'}:</td>
+	<td><input type='checkbox' name='SQUID' $checked{'SQUID'}{'on'}></td>
+</tr>
+<tr>
+	<td class='base' TITLE='$tr{'smoothinfo-services-status-tip'}'>$tr{'smoothinfo-services-status'}:</td>
+	<td><input type='checkbox' name='SERVICES' $checked{'SERVICES'}{'on'}></td>
 	<td class='base' TITLE='$tr{'smoothinfo-ifconfig-tip'}'>$tr{'smoothinfo-ifconfig'}:</td>
 	<td><input type='checkbox' name='NETCONF1' $checked{'NETCONF1'}{'on'}></td>
 	<td class='base'>$tr{'smoothinfo-internal-pinholes'}:</td>
@@ -686,8 +686,8 @@ print <<END;
 	<td></td>
 </tr>
 <tr>
-	<td class='base' TITLE='$tr{'smoothinfo-services-status-tip'}'>$tr{'smoothinfo-services-status'}:</td>
-	<td><input type='checkbox' name='SERVICES' $checked{'SERVICES'}{'on'}></td>
+	<td></td>
+	<td></td>
 	<td class='base' TITLE='$tr{'smoothinfo-routes-tip'}'>$tr{'smoothinfo-routes'}:</td>
 	<td><input type='checkbox' name='ROUTE' $checked{'ROUTE'}{'on'}></td>
 	<td class='base'>$tr{'smoothinfo-outgoing-exceptions'}:</td>

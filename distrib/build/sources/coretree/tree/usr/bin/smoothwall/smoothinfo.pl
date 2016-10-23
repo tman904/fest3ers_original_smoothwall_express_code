@@ -34,12 +34,12 @@ my $SIdir= "${swroot}/smoothinfo";
 my $MODDIR = "$SIdir/etc";
 require "${SIdir}/about.ph";
 
-my ($line, $block, $netmask, $bcast, $bcast_tag, $netmask_tag, $howlong, @newarray, @livered);
-my ($dns1_tag, $dns2_tag, $redIP_tag, $remoteIP_tag, $swe_version) = ('', '', '', '', '');
+my ($line, $block, $netmask, $bcast, $netmask_tag, $howlong, @newarray, @livered);
+my ($dns1_tag, $dns2_tag, $redIP_tag, $bcast_tag, $remoteIP_tag, $swe_version) = ('', '', '', '', '', '');
 my (%productdata, %pppsettings, %modemsettings, %netsettings, %smoothinfosettings, %defseclevelsettings, 
 	%green_dhcpsettings, %purple_dhcpsettings, %orange_dhcpsettings, %imsettings, %p3scansettings, 
 	%sipproxysettings, %proxysettings, %SSHsettings, %snortsettings, %apcupsdsettings, %ntpsettings, 
-	%modinfo, %DETAILS, %servicenames);
+	%qossettings, %qoslocalsettings, %modinfo, %DETAILS, %servicenames, %adslsettings);
 
 &readhash("${swroot}/smoothinfo/etc/settings", \%smoothinfosettings);
 &readhash("${swroot}/main/productdata", \%productdata);
@@ -60,6 +60,9 @@ my (%productdata, %pppsettings, %modemsettings, %netsettings, %smoothinfosetting
 &readhash("${swroot}/dhcp/settings-green", \%green_dhcpsettings) if (-s "${swroot}/dhcp/settings-green");
 &readhash("${swroot}/dhcp/settings-purple", \%purple_dhcpsettings) if (-s "${swroot}/dhcp/settings-purple");
 &readhash("${swroot}/dhcp/settings-orange", \%orange_dhcpsettings) if (-s "${swroot}/dhcp/settings-orange");
+&readhash("${swroot}/traffic/settings", \%qossettings) if (-s "${swroot}/traffic/settings");
+&readhash("${swroot}/traffic/localsettings", \%qoslocalsettings) if (-s "${swroot}/traffic/localsettings");
+&readhash("${swroot}/adsl/settings", \%adslsettings) if (-s "${swroot}/adsl/settings");
 
 my $outputfile = "${SIdir}/etc/report.txt";
 
@@ -72,13 +75,16 @@ open (CPUDATA, "/proc/cpuinfo") || die "Unable to open $!";
 my @cpudata = (<CPUDATA>); 
 close (CPUDATA);
 
-my ($cpu, $frequency, $cache);
+my ($cpu, $frequency, $cache, $physCores);
 foreach (@cpudata) {
 	chomp $_;
 	$cpu = $' if (/^model name\s+:\s+/);
 	$frequency = $' if (/^cpu MHz\s+:\s+/);
 	$cache = $' if (/^cache size\s+:\s+/);
+	$physCores = $' if (/^cpu cores\s+:\s+/);
 }
+
+$physCores = '1' unless ($physCores);
 
 my $cpuCores = grep { /^processor\s+:/ } @cpudata;
 chomp ($cpuCores);
@@ -191,7 +197,7 @@ if (($netsettings{'RED_TYPE'} eq 'DHCP' ||
      $netsettings{'RED_TYPE'} eq 'PPPOE') && (-e "${swroot}/red/active")) {
 	if (-s "${swroot}/red/dns1") {
 		my $redDNS1 = &readvalue("${swroot}/red/dns1");
-		$dns1_tag = "$red_notused" if ($netsettings{'DNS1'} ne $redDNS1 || $netsettings{'DNS1'} eq "" );
+		$dns1_tag = "$red_notused" if (!$netsettings{'DNS1'} || $netsettings{'DNS1'} ne $redDNS1);
 		$netsettings{'DNS1'} = $redDNS1;
 	}
 	else { 
@@ -201,7 +207,7 @@ if (($netsettings{'RED_TYPE'} eq 'DHCP' ||
 
 	unless (-z "/var/smoothwall/red/dns2") {
 		my $redDNS2 = &readvalue("${swroot}/red/dns2");
-		$dns2_tag = "$red_notused" if ($netsettings{'DNS2'} ne $redDNS2 || $netsettings{'DNS2'} eq "" );
+		$dns2_tag = "$red_notused" if (!$netsettings{'DNS2'} || $netsettings{'DNS2'} ne $redDNS2);
 		$netsettings{'DNS2'} = $redDNS2;
 	}
 	else { 
@@ -214,7 +220,7 @@ if (($netsettings{'RED_TYPE'} eq 'DHCP' ||
 	$netsettings{'RED_ADDRESS'} = $redIP;
 
 	my $remoteIP = &readvalue("${swroot}/red/remote-ipaddress");
-	$remoteIP_tag = "$red_notused" if ($netsettings{'DEFAULT_GATEWAY'} ne $remoteIP);
+	$remoteIP_tag = "$red_notused" if (!$netsettings{'DEFAULT_GATEWAY'} || $netsettings{'DEFAULT_GATEWAY'} ne $remoteIP);
 	$netsettings{'DEFAULT_GATEWAY'} = $remoteIP;
 
   	# Let's get the broadcast and netmask of the red iface when up
@@ -495,9 +501,11 @@ if (-e "$MODDIR/schematic") {
 
 # Configuration type
 if ($smoothinfosettings{'CONFIG'} eq 'on') {
-
 	if ($netsettings{'CONFIG_TYPE'} & 2) {
 		# RED is NIC
+		# Pre-match as the unknown catchall
+		$RED = "RED (Unknown LAN)";
+      
 		if ($netsettings{'RED_TYPE'} eq "STATIC") {
 			$RED = "RED (STATIC)";
 		}
@@ -505,11 +513,19 @@ if ($smoothinfosettings{'CONFIG'} eq 'on') {
 			$RED = "RED (DHCP)";
 		}
 		elsif ($netsettings{'RED_TYPE'} eq "PPPOE") {
+			if ($pppsettings{'COMPORT'} eq "PPPoE") {
 			$RED = "RED (PPPoE)";
+		}
+			else {
+				$RED = "RED (PPPoE/$pppsettings{'COMPORT'})";
+			}
 		}
 	}
 	else {
 		# RED is PPP
+		# Pre-match as the unknown catchall
+		$RED = "RED (Unknown PPP)";
+      
 		if ($pppsettings{'COMPORT'}) {
 			if ($pppsettings{'COMPORT'} =~ /^tty/) {
 				$RED = 'RED (Dial-Up/Cellular)';
@@ -517,60 +533,16 @@ if ($smoothinfosettings{'CONFIG'} eq 'on') {
 			elsif ($pppsettings{'COMPORT'} =~ /^isdn/) {
 				$RED = 'RED (ISDN)';
 			}
-			else {
-				# Everything else falls into PPPoE.
-				# FIXME: But does this include the 'adsl' comport?
-				$RED = 'RED (PPPoE)';
+			elsif ($adslsettings{'ENABLED'}  eq "on") {
+				$RED = 'RED (ADSL)';
 			}
 		}
 	}
-
 	$ORANGE = '-ORANGE' if ($netsettings{'CONFIG_TYPE'} & 1);
 	$PURPLE = '-PURPLE' if ($netsettings{'CONFIG_TYPE'} & 4);
 
 	print FILE "\[info=\"$tr{'smoothinfo-firewall-config-type'}\"\]\[code\]$RED-GREEN$ORANGE$PURPLE\[/code\]\[/info\]";
 }
-
-# Connection type
-# RED is either LAN, modem, ISDN, or deaults to PPPoE
-# If PPP, it is Dial-Up/Cellular, ISDN, or PPPoE
-
-if ($smoothinfosettings{'CONNTYPE'} eq 'on') {
-	my $conntype;
-
-	if ($netsettings{'CONFIG_TYPE'} & 2) {
-		if ($netsettings{'RED_TYPE'} eq "STATIC" || $netsettings{'RED_TYPE'} eq "DHCP") {
-			# RED is NIC, and is STATIC or DHCP
-			$conntype = 'LAN';
-		}
-		else {
-			# Must be PPPoE, but notify if wrong 'comport'
-			if ($pppsettings{'COMPORT'} eq "pppoe") {
-				$conntype = "LAN";
-			}
-			else {
-				$conntype = "LAN ($pppsettings{'COMPORT'})";
-			}
-		}
-	}
-	else {
-		if ($pppsettings{'COMPORT'}) {
-			if ($pppsettings{'COMPORT'} =~ /^tty/) {
-				$conntype = 'Dial-Up/Cellular';
-			}
-			elsif ($pppsettings{'COMPORT'} =~ /^isdn/) {
-				$conntype = 'ISDN';
-			}
-			else {
-				# Everything else falls into PPPoE.
-				# FIXME: But does this include the 'adsl' comport?
-				$conntype = 'PPPoE';
-			}
-		}
-	}
-        print FILE "\[info=\"$tr{'smoothinfo-connection'}\"\]\[code\]$conntype\[/code\]\[/info\]";
-}
-
 
 # Firewall policy
 # Check for replacement chain data (xtaccess, portfw, dmzholes, outgoing) from FFC and other mods
@@ -1065,7 +1037,7 @@ if ($smoothinfosettings{'CPU'} eq 'on' or
 		print FILE "\[info=\"$tr{'smoothinfo-ethernet-reported'}\"\]\[code\]@ethernet_adapters\[/code\]\[/info\]";
 	}
 	if ($smoothinfosettings{'CPU'} eq 'on') {
-		print FILE "\[info=\"$tr{'smoothinfo-cpu'}\"\]\[code\]$cpu (Freq.: $frequency MHz - Cache: $cache - Cores: $cpuCores)\[/code\]\[/info\]";
+		print FILE "\[info=\"$tr{'smoothinfo-cpu'}\"\]\[code\]$cpu \nFreq.: $frequency MHz \nCache: $cache \nCores: $physCores \nProcessors: $cpuCores\[/code\]\[/info\]";
 	}
 	if ($smoothinfosettings{'DISKSPACE'} eq 'on') {
 		print FILE "\[info=\"$tr{'smoothinfo-diskspace'}\"\]\[code\]$diskspace\[/code\]\[/info\]";
@@ -1438,7 +1410,7 @@ if ($smoothinfosettings{'DMESG'} eq 'on' or
 
 
 ### Service details Section
-if ($smoothinfosettings{'SQUID'} eq 'on' or $smoothinfosettings{'MODEXTRA'} eq 'on') {
+if ($smoothinfosettings{'SQUID'} eq 'on' or $smoothinfosettings{'MODEXTRA'} eq 'on' or $smoothinfosettings{'QOS'} eq 'on') {
 	print FILE "\n\[u\]\[b\]$tr{'smoothinfo-sect-services'}\[/b\]\[/u\]\n";
 
 	if ($smoothinfosettings{'SQUID'} eq 'on') {
@@ -1464,6 +1436,38 @@ if ($smoothinfosettings{'SQUID'} eq 'on' or $smoothinfosettings{'MODEXTRA'} eq '
 			print FILE "Max incoming size (KB): $proxysettings{'MAX_INCOMING_SIZE'}";
 			print FILE "\[/code\]\[/info\]";
 		}
+	}
+
+	if ($smoothinfosettings{'QOS'} eq 'on') {
+		print FILE "\[info=\"QoS\"\]\[code\]";
+		if ($qossettings{'ENABLE'} eq 'on') {
+			foreach (sort(keys %qossettings)) {
+				# Remove the HTML TITLE text from rules
+				if ($_ =~ /^R_\d+/) {
+					my @qosarray = split(/,/, $qossettings{$_});
+					delete $qosarray[6];
+					$qossettings{$_} = join(',', @qosarray);
+				}
+				print FILE "$_=$qossettings{$_}\n"
+			}
+			if (%qoslocalsettings) {
+				print FILE "\[/code\]";
+				print FILE "\[color=red]QoS local settings and overrides[/color]\[code\]";
+					foreach (sort(keys %qoslocalsettings)) {
+				# Remove the HTML TITLE text from rules
+					if ($_ =~ /^R_\d+/) {
+						my @qosarray = split(/,/, $qoslocalsettings{$_});
+						delete $qosarray[6];
+						$qoslocalsettings{$_} = join(',', @qosarray);
+					}
+					print FILE "$_=$qoslocalsettings{$_}\n"
+				}
+			}
+		}
+		else {
+			print FILE "QoS not enabled";
+		}
+		print FILE "\[/code\]\[/info\]";
 	}
 
 	if ($smoothinfosettings{'MODEXTRA'} eq 'on') {
@@ -1547,8 +1551,8 @@ sub getLinkData {
 	foreach (@ifconf1, @ifconf2) {
 		# Make the IP & MAC addr/masks black 
 		$_ =~ s/(\d+\.\d+\.\d+\.\d+(\/\d+)*)/\[\/b\]\[\/color\]\[color=#000000\]\[b\]$1\[\/b\]\[\/color\]\[color=$color\]\[b\]/g;	# IPv4
-    		$_ =~ s/(([0-9a-f]{2}:){5}([0-9a-f]{2}))/\[\/b]\[\/color][color=#000000][b]$1\[\/b][\/color\][color=$color\][b\]/g;		# MAC
-    		$_ =~ s/(([0-9a-f:])+(\/\d+))/\[\/b]\[\/color][color=#000000][b]$1\[\/b][\/color\][color=$color\][b\]/g;				# IPv6
+    		$_ =~ s/(([0-9a-f]{2}:){5}([0-9a-f]{2}))/\[\/b\]\[\/color\]\[color=#000000\]\[b\]$1\[\/b\]\[\/color\]\[color=$color\]\[b\]/g;	# MAC
+    		$_ =~ s/(([0-9a-f:])+(\/\d+))/\[\/b\]\[\/color\]\[color=#000000\]\[b\]$1\[\/b\]\[\/color\]\[color=$color\]\[b\]/g;		# IPv6
 
 		# Restore the newlines that were split out above
 		$_ =~ s/$/\n/;
@@ -1583,7 +1587,7 @@ sub getLinkData {
 
 	# Prepare the final text (build a new list)
 	# Use the first two lines of 'ip link' output, lines 2... of 'ip addr', then lines 2... of 'ip link'
-	@ifconf = ("\[b\]\[color=$color\]", @ifconf1[0..1], @ifconf2[2..$#ifconf2], @ifconf1[2..$#ifconf1], "\[/color\]\[/b\]");
+	@ifconf = ("\[color=$color\]\[b\]", @ifconf1[0..1], @ifconf2[2..$#ifconf2], @ifconf1[2..$#ifconf1], "\[/b\]\[/color\]");
 	#print stderr "$iface IF Info\n". Dumper @ifconf;
 
 	# oss in a newline if not the first (GREEN)
