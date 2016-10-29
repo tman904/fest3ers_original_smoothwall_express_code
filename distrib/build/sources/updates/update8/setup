@@ -2,7 +2,7 @@
 
 # For update8, delete all old kernels
 OLD_KERNEL=
-KERNEL_VERSION=3.16.37
+KERNEL_VERSION=3.16.38
 
 echo "Install Update 8."
 
