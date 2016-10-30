@@ -50,6 +50,7 @@ UPDATE_PACKAGES = \
 		  qemu \
 		  smoothd \
 		  squid \
+		  squidclamav \
 		  strace \
 		  suricata \
 		  sysklogd \
