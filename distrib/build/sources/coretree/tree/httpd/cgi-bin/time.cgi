@@ -197,9 +197,7 @@ $checked{'ENABLED'}{$timesettings{'ENABLED'}} = 'CHECKED';
 
 foreach (@timezones) {
 	chomp;
-	my $file = $_;
-	$file =~ s/_/ /g;
-	$selected{'TIMEZONE'}{$file} = '';
+	$selected{'TIMEZONE'}{$_} = '';
 }
 $selected{'TIMEZONE'}{$timesettings{'TIMEZONE'}} = 'SELECTED';
 
