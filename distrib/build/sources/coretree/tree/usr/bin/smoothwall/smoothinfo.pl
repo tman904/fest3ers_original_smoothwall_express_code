@@ -420,40 +420,42 @@ if (-e "$MODDIR/schematic") {
 	print FILE "\[info=\"$tr{'smoothinfo-ascii-schematic'}\"\]\[code\]";
 
 	# RED
-	print FILE "                                  Internet\n";
-	print FILE "                                     |\n";
+	print FILE "                                            Internet\n";
+	print FILE "                                               |\n";
 	if ($smoothinfosettings{'MODEM'} eq 'on') {
-		print FILE "                                   Modem\n";
-		print FILE "                                     |\n";
+		print FILE "                                             Modem\n";
+		print FILE "                                               |\n";
 	}
 	if ($smoothinfosettings{'ROUTER'} eq 'on') {
-		print FILE "                                   Router\n";
-		print FILE "                                     |\n";
+		print FILE "                                             Router\n";
+		print FILE "                                               |\n";
 	}
-	print FILE "                                   (red)\n";
+	print FILE "                                             (red)\n";
 
 	# ORANGE
 	if (($orangedev) && $smoothinfosettings{'SWITCH2'} eq 'on') {
 		if ($smoothinfosettings{'WAP2'} eq 'on') {
-			print FILE "  WAP <=== Switch <=== $orange ";
+			print FILE "  WLan <=== WAP <=== Switch <=== $orange ";
 		}
 		else {
-			print FILE "           Switch <=== $orange ";
+			print FILE "                     Switch <=== $orange ";
 		}
 		print FILE "\[SMOOTHWALL\] (green)";
 	}
 	elsif (($orangedev) && $smoothinfosettings{'WAP3'} eq 'on') {
-		print FILE "    WLan <=== WAP <=== $orange ";
-		print FILE "\[SMOOTHWALL\] (green)";
+		print FILE "              WLan <=== WAP <=== $orange \[SMOOTHWALL\] (green)";
+	}
+	elsif ($orangedev) {
+		print FILE "                                 $orange \[SMOOTHWALL\] (green)";
 	}
 	else {
-		print FILE "                       $orange \[SMOOTHWALL\] (green)";
+		print FILE "                                          \[SMOOTHWALL\] (green)";
 	}
 
 	# GREEN
 	if ($smoothinfosettings{'SWITCH1'} eq 'on') {
 		if ($smoothinfosettings{'WAP1'} eq 'on') {
-			print FILE " ===> Switch ===> WAP";
+			print FILE " ===> Switch ===> WAP ===> WLan";
 		}
 		else {
 			print FILE " ===> Switch";
@@ -465,28 +467,31 @@ if (-e "$MODDIR/schematic") {
 
 	# PURPLE
 	if (($purpledev) && $smoothinfosettings{'WAP6'} eq 'on' && $smoothinfosettings{'SWITCH3'} eq 'on') {
-		print FILE "\n                                  $purple\n";
-		print FILE "                                     |\n";
-		print FILE "                                   Switch\n";
-		print FILE "                                     |\n";
-		print FILE "                                    WAP\n";
-		print FILE "                                     |\n";
-		print FILE "                                   W/LAN";
+		print FILE "\n                                            $purple\n";
+		print FILE "                                               |\n";
+		print FILE "                                             Switch\n";
+		print FILE "                                               |\n";
+		print FILE "                                              WAP\n";
+		print FILE "                                               |\n";
+		print FILE "                                             W/LAN";
 	}
 	elsif (($purpledev) && $smoothinfosettings{'WAP6'} ne 'on' && $smoothinfosettings{'SWITCH3'} eq 'on') {
-		print FILE "\n                                  $purple\n";
-		print FILE "                                     |\n";
-		print FILE "                         Switch";
+		print FILE "\n                                            $purple\n";
+		print FILE "                                               |\n";
+		print FILE "                                             Switch";
 	}
 	elsif (($purpledev) && $smoothinfosettings{'WAP5'} eq 'on') {
-		print FILE "\n                                  $purple\n";
-		print FILE "                                     |\n";
-		print FILE "                                    WAP\n";
-		print FILE "                                     |\n";
-		print FILE "                                   W/LAN";
+		print FILE "\n                                            $purple\n";
+		print FILE "                                               |\n";
+		print FILE "                                              WAP\n";
+		print FILE "                                               |\n";
+		print FILE "                                             W/LAN";
+	}
+	elsif ($purpledev) {
+		print FILE "\n                                            $purple\n";
 	}
 	else {
-		print FILE "\n                                  $purple\n";
+		print FILE "\n";
 	}
 	print FILE "\[/code\]\[/info\]";
 }
@@ -514,8 +519,8 @@ if ($smoothinfosettings{'CONFIG'} eq 'on') {
 		}
 		elsif ($netsettings{'RED_TYPE'} eq "PPPOE") {
 			if ($pppsettings{'COMPORT'} eq "PPPoE") {
-			$RED = "RED (PPPoE)";
-		}
+				$RED = "RED (PPPoE)";
+			}
 			else {
 				$RED = "RED (PPPoE/$pppsettings{'COMPORT'})";
 			}
@@ -1452,8 +1457,8 @@ if ($smoothinfosettings{'SQUID'} eq 'on' or $smoothinfosettings{'MODEXTRA'} eq '
 			}
 			if (%qoslocalsettings) {
 				print FILE "\[/code\]";
-				print FILE "\[color=red]QoS local settings and overrides[/color]\[code\]";
-					foreach (sort(keys %qoslocalsettings)) {
+				print FILE "\[color=red\]QoS local settings and overrides:\[/color\]\[code\]";
+				foreach (sort(keys %qoslocalsettings)) {
 				# Remove the HTML TITLE text from rules
 					if ($_ =~ /^R_\d+/) {
 						my @qosarray = split(/,/, $qoslocalsettings{$_});
