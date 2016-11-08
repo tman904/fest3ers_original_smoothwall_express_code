@@ -25,6 +25,7 @@
 ./httpd/cgi-bin/outgoing.cgi
 ./httpd/cgi-bin/status.cgi
 ./httpd/cgi-bin/smoothinfo.cgi
+./httpd/cgi-bin/time.cgi
 ./httpd/cgi-bin/updates.cgi
 ./httpd/html/ui/css/style.css
 ./httpd/html/ui/img/warning.png
