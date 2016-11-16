@@ -49,6 +49,7 @@ UPDATE_PACKAGES = \
 		  pcmciautils \
 		  qemu \
 		  smoothd \
+		  snort \
 		  squid \
 		  squidclamav \
 		  strace \
