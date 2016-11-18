@@ -27,9 +27,9 @@ patch.tar.gz: ../../../crumbs/Final.built
 		else \
 			Toption=""; \
 		fi; \
-		tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib$$Toption; \
+		TAR_OPTIONS= tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib$$Toption; \
 		mkdir review/$$I; \
-		tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C review/$$I$$Toption; \
+		TAR_OPTIONS= tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C review/$$I$$Toption; \
 		( find review/$$I -name \*.la -print \
 		               -o -name \*.a -print \
 		               -o -name include -print \
@@ -44,7 +44,7 @@ patch.tar.gz: ../../../crumbs/Final.built
 	# Bump kernel version as needed
 	if [ "$(KERNEL)" != "" ]; then \
 		cp -av ../../media/distrib/boot/initrd* distrib/boot; \
-		tar -xf $(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
+		TAR_OPTIONS= tar -xf $(TARGET_DIR)/smoothwall-coretree.tar.gz -C distrib ./var/smoothwall/main/kernel; \
 	fi;
 	# Clear ClamAV files as needed
 	if [ "$(CLAMAV)" != "" ]; then \
