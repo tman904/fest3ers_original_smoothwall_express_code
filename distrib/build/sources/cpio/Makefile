@@ -13,7 +13,6 @@ PRE_CONFIGURE = CFLAGS="$(CFLAGS)"
 
 CONFIG_OPTS += --prefix=/usr \
 	      --bindir=/bin \
-	      --libexecdir=/tmp \
 	      --disable-silent-rules \
 	      --with-rmt=/usr/sbin/rmt
 
