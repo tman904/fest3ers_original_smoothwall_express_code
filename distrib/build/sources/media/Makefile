@@ -114,7 +114,7 @@ endif
 	      fi; \
 	    fi; \
 	    echo -n "    $$I"; \
-	    tar -zxf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib-dev || (echo; exit 69); \
+	    TAR_OPTIONS= tar -zxf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib-dev || (echo; exit 69); \
 	    echo; \
 	  done; \
 	);
@@ -136,7 +136,7 @@ endif
 	      fi; \
 	    fi; \
 	    echo -n "    $$I"; \
-	    tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib || (echo; exit 68); \
+	    TAR_OPTIONS= tar xf $(TARGET_DIR)/smoothwall-$$I.tar.gz -C distrib || (echo; exit 68); \
 	    echo; \
 	  done; \
 	);
