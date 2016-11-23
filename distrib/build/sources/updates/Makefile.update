@@ -13,17 +13,24 @@ TARGET_DIR = ../../../target
 
 OUTPUT_FILENAME = $(BASENAME)-$(UPDATE_NAME)-$(mARCH).tar.gz
 
-all: clean updateinfo $(OUTPUT_FILENAME)
+all: updateinfo $(OUTPUT_FILENAME)
 
 patch.tar.gz: ../../../crumbs/Final.built
 	# Prep the tree
 	mkdir distrib review
-	(for I in \
+	unset TAR_OPTIONS; (for I in \
 		$(UPDATE_PACKAGES) \
 	; do \
  		echo "Unpacking $$I ..."; \
 		if [ -f "$$I.list" ]; then \
-			Toption=" -T $$I.list"; \
+			Toption=" -T $$I.list -T $$I.dirs"; \
+			while read path; do \
+				path=`dirname $$path`; \
+				while [ "$$path" != "." ]; do \
+					echo $$path; \
+					path=`dirname $$path`; \
+				done; \
+			done < $$I.list | sort | uniq > $$I.dirs; \
 		else \
 			Toption=""; \
 		fi; \
@@ -77,7 +84,7 @@ else
 endif
 
 clean:
-	@rm -rf distrib review Update.out
+	@rm -rf distrib review Update.out *.dirs
 	@rm -f patch.tar.gz inspection-$(mARCH).tar.gz
 	@rm -f $(OUTPUT_FILENAME)
 	@rm -f updateinfo
