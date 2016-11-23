@@ -1,4 +1,4 @@
-./etc.group
+./etc/group
 ./etc/bashrc
 ./etc/cron.daily/migrate-snort-pcap
 ./etc/ppp/adsl-cleanup
