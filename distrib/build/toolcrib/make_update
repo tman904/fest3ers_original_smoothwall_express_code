@@ -21,12 +21,6 @@ PATH=$PATH:${PWD}/toolcrib
 
 # At this point, we must assume we are in a chroot jail.
 
-# Now trap on exit, to be sure proc is unmounted. Note that this does not change
-#   the exit status of the shell (only an explicit exit would do that).
-#   This is needed so the host OS doesn't complain when shutting down.
-#
-trap "echo; echo \"Unmounting /proc\"; umount /proc >/dev/null 2>&1" EXIT
-
 # If an argument specified, build only that item. Otherwise, build everything.
 #
 if [ "$#" -eq 1 ]; then
@@ -35,6 +29,12 @@ else
   echo "You did not specify which Update to prepare!"
   exit 1;
 fi
+
+# Now trap on exit, to be sure proc is unmounted. Note that this does not change
+#   the exit status of the shell (only an explicit exit would do that).
+#   This is needed so the host OS doesn't complain when shutting down.
+#
+trap "echo; echo \"Unmounting /proc\"; umount /proc >/dev/null 2>&1" EXIT
 
 # The right place, the right phase
 #
@@ -59,14 +59,25 @@ export JOBS_UP="-j 1"
 export JOBS_MP
 cpu_count
 
+pushd sources/updates/update${UPDATE} >/dev/null 2>&1
+
+# Save stdout
+exec 3>&1
+
+# Clean first
+make clean
+
 (
   echo "Preparing Update${UPDATE}"
-  cd sources/updates/update${UPDATE}; make
+  make all
   retCode=$?
   if [ $retCode -eq 0 ]; then
     echo "Update${UPDATE} preparation success"
+    echo "Update${UPDATE} preparation success" >&3
   else
     echo "Update${UPDATE} preparation FAILED"
-    exit 123
+    tail -10 Update.out >&3
+    echo "Update${UPDATE} preparation FAILED" >&3
+    exit $retCode    # 123
   fi
-) <${BUILD_IN} >"/build/sources/updates/update${UPDATE}/Update.out" 2>&1
+)  <${BUILD_IN} >Update.out 2>&1
