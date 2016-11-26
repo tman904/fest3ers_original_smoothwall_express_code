@@ -29,6 +29,9 @@ Update info file format
 
 Update build steps
 ------------------
+  - When releasing a service pack, add the update's release date to
+    .../coretree/tree/var/smoothwall/patches/installed. And don't
+    forget to update it if the update takes a long time to complete.
   - Add pkgs to build for the update to the update's makefile.
   - Add coretree files to coretree.list, one file per line, if any.
   - NOTE: !!! If dhcpcd is included, be sure to include usr/etc/dhcpcd.conf. !!!
