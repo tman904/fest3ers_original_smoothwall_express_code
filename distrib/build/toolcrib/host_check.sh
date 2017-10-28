@@ -540,6 +540,7 @@ fi
 # Check sudo
 if [ ! -e /usr/bin/sudo ]; then
   echo "  FAIL: /usr/bin/sudo not found. Need sudo version>=$VSUDO."
+  OK=OK+1
 else
   WORK=`sudo -V | head -1 | sed -e 's/.*version //'`
   OIFS=$IFS; IFS=".p"; set $WORK
@@ -568,6 +569,14 @@ else
   else
     echo "    OK: tar v$WORK seems new enough (>=$VTAR)"
   fi
+fi
+
+# Check XML::Simple
+if [ ! -e /usr/share/perl5/XML/Simple.pm -a ! -e /usr/lib/perl5/site_perl/*/XML/Simple.pm ]; then
+  echo "  FAIL: XML-Simple not found."
+  OK=OK+1
+else
+  echo "    OK: XML-Simple found."
 fi
 
 # Check xz
