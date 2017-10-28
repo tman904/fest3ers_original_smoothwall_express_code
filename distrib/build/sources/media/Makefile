@@ -39,7 +39,7 @@ KVM_PKGS = samba
 INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    daq libnet libnetfilter_queue libnfnetlink attr libcap-ng \
 	    libnetfilter_acct libnetfilter_conntrack libnetfilter_cthelper \
-	    libnetfilter_cttimeout libnetfilter_log libnftnl \
+	    libnetfilter_cttimeout libnetfilter_log libnftnl libnl \
 	    libcap fontconfig glib cairo libffi readline libpcap sqlite-autoconf \
 	    libosip2 pango zlib slang pixman libxml2 libusb-compat libusb \
 	    libevent nspr nss unbound c_icap c_icap_modules \
@@ -54,7 +54,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    iproute2 gd expat ethtool listtables inotify-tools \
 	    beep2 pcre trafficstats iftop setuids ppp isdn4k-utils rp-pppoe \
 	    ibod dhcpcd eciadsl-synch_bin eciadsl-usermode dhcp snort \
-	    oinkmaster openswan wireless_tools imspector diffutils clamav \
+	    oinkmaster openswan wireless_tools wpa_supplicant imspector diffutils clamav \
 	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
 	    suricata smartmontools at dosfstools grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \

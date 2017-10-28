@@ -144,13 +144,11 @@ fi
     else
       echo
       echo -e "  Final group 2 packages (libs)"
-      build Python
       build libxml2
       build libxslt
       build strace
       build attr
       build libcap
-      build libcap-ng
       build pcre
       build libpcap
       build expat
@@ -171,11 +169,13 @@ fi
       build libdnet
       build pixman
       build libffi
-      build glib
       build freefont
       build cairo
-      build pango
       build openssl
+      build Python
+      build libcap-ng
+      build glib
+      build pango
       build sqlite
       build unbound
       build libevent
@@ -184,6 +184,7 @@ fi
       build neon
       build libosip2
       build libmnl
+      build libnl
       build libnet
       build libnfnetlink
       build libnetfilter_acct
@@ -346,6 +347,7 @@ fi
       build oinkmaster
       build openswan
       build wireless_tools
+      build wpa_supplicant
 
       build noip
       build ez-ipupdate
