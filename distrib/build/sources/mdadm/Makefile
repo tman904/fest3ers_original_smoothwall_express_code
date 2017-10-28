@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 PACKAGE = mdadm
-VERSION = 2.6.3
+VERSION = 4.0
 
 LICENCE_FILE = $(DIR)/COPYING
 

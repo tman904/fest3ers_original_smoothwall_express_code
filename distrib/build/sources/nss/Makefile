@@ -7,13 +7,13 @@
 include ../Makefile.conf
 
 PACKAGE = nss
-VERSION = 3.25
+VERSION = 3.33
 
-BASE_URL = https://ftp.mozilla.org/pub/security/$(PACKAGE)/releases/NSS_3_25_RTM/src
+BASE_URL = https://ftp.mozilla.org/pub/security/$(PACKAGE)/releases/NSS_3_33_RTM/src
 
 DIR=$(PACKAGE)-$(VERSION)/nss
 
-PATCH_FILE1 = nss-3.21-standalone-1.patch
+PATCH_FILE1 = nss-3.33-standalone-1.patch
 
 DIR = $(PACKAGE)-$(VERSION)/nss
 
@@ -41,15 +41,15 @@ compile: configure
 
 INSTALL = yes
 install: compile
-	cd $(PKG_ROOT); \
-	  install -d -m755 usr/{lib,include/nss,bin,lib/pkgconfig};
 	cd $(DIR)/../dist; \
-	  install -v -m755 Linux*/lib/*.so $(PKG_ROOT)/usr/lib/; \
-	  install -v -m644 Linux*/lib/{*.chk,libcrmf.a} $(PKG_ROOT)/usr/lib/; \
-	  cp -v -RL {private,public}/nss/* $(PKG_ROOT)/usr/include; \
-	  chmod -v 644 $(PKG_ROOT)/usr/include; \
-	  install -v -m755 Linux*/bin/{certutil,nss-config,pk12util} $(PKG_ROOT)/usr/bin/; \
-	  install -v -m644 Linux*/lib/pkgconfig/nss.pc $(PKG_ROOT)/usr/lib/pkgconfig/
+	  install -v -m755 Linux*/lib/*.so              /usr/lib; \
+	  install -v -m644 Linux*/lib/{*.chk,libcrmf.a} /usr/lib; \
+	  install -v -m755 -d                           /usr/include/nss; \
+	  cp -v -RL {public,private}/nss/*              /usr/include/nss; \
+	  chmod -v 644                                  /usr/include/nss/*; \
+	  install -v -m755 Linux*/bin/{certutil,nss-config,pk12util} /usr/bin; \
+	  install -v -m644 Linux*/lib/pkgconfig/nss.pc  /usr/lib/pkgconfig
+
 
 CLEAN = yes
 clean:

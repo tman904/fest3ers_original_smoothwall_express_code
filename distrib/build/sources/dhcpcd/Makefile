@@ -13,12 +13,17 @@
 include ../Makefile.conf
 
 PACKAGE = dhcpcd
-VERSION =  6.11.5
+VERSION =  7.0.0-rc3
 
 TARBALL = $(PACKAGE)-$(VERSION)
 EXTENSION = .tar.xz
+#EXTENSION = .tar.gz
 
 BASE_URL = http://roy.marples.name/downloads/dhcpcd/
+#export pkgName = $(PACKAGE)
+#export gitURL = git://roy.marples.name/dhcpcd.git
+#export gitCommitID=9f23d8c75a
+#export gitBranch=$(VERSION)
 
 DIR =  $(PACKAGE)-$(VERSION)
 

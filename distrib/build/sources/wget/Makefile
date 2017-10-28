@@ -7,12 +7,12 @@
 include ../Makefile.conf
 
 PACKAGE = wget
-VERSION = 1.14
+VERSION = 1.19.2
 
 BASE_URL = ftp://ftp.gnu.org/gnu/wget
-EXTENSION = .tar.xz
+EXTENSION = .tar.gz
 
-PATCH_FILE1 = itemx.patch
+#PATCH_FILE1 = itemx.patch
 
 # Some sites disallow HTTP
 ifeq ($(BUILD_PHASE), Stage_3)

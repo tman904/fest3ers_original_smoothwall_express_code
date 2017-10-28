@@ -7,9 +7,9 @@
 include ../Makefile.conf
 
 PACKAGE = wireless_tools
-VERSION = 28
+VERSION = 29
 
-BASE_URL = http://pcmcia-cs.sourceforge.net/ftp/contrib/
+BASE_URL = https://hewlettpackard.github.io/wireless-tools
 
 TARBALL = $(PACKAGE).$(VERSION)
 DIR = $(TARBALL)

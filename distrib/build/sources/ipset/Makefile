@@ -24,7 +24,7 @@ include ../Makefile.versions
 include ../Makefile
 
 PACKAGE = ipset
-VERSION = 6.29
+VERSION = 6.34
 
 EXTENSION = .tar.bz2
 BASE_URL = http://ipset.netfilter.org
