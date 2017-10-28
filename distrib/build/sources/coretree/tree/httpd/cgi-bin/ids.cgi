@@ -35,7 +35,7 @@ use Cwd;
 use strict;
 use warnings;
 
-my (%snortsettings, %snortoldsettings, %checked);
+my (%snortsettings, %snortoldsettings, $snortversion, %checked);
 my $maxwidth = 20;	# em (EM - width of an M in the current font)
 
 &showhttpheaders();
@@ -156,8 +156,8 @@ if (-d "${swroot}/snort/rules") {
 	chomp $opwd;
 	chdir "${swroot}/snort/rules";
 	my $ruledate = `egrep "\$Id:.*,v.*vrtbuild" * 2>/dev/null | \
-                    sed -e 's/.*,v [0-9.]* //' -e's/ .*//' | \
-                    sort | tail -1`;
+		sed -e 's/.*,v [0-9.]* //' -e's/ .*//' | \
+		sort | tail -1`;
 	chomp $ruledate;
 	$ruledate = `date -d '$ruledate' "+%s"`;
 	my $today = `date "+%s"`;
@@ -274,18 +274,33 @@ print "</div></form>\n";
 
 # close except </body> and </html>
 &closepage( "update" );
-  
+
 if (($snortsettings{'ACTION'} eq $tr{'save'}) &&
     ($formdownload eq 'on') && !$errormessage) {
-	# Get installed snort version
-	my $snortversion = &readvalue('/usr/lib/smoothwall/snortversion');
-	$snortversion =~ s/\.//g;
-	while (length $snortversion < 4) {
-		$snortversion = $snortversion.'0';
+	# start snort version query; borrowed from GAR's update-rules.pl
+	open SNORT, "/usr/bin/snort -V 2>&1 |" or die "Couldn't open snort: $! \n";
+	my ($display_version, $sub1, $sub2, $sub3, $sub4);
+	while (my $line = <SNORT>) {
+		chomp($line);
+		if ($line =~ /Version\s+(.*)/) {
+			($display_version, $sub1, $sub2, $sub3, $sub4) = split(/ /, $1);
+			my @versionParts = split(/\./, $display_version);
+			# If any parts are not defined, make them zero.
+			# Start at the end to avoid unneeded work.
+			for (my $i=3; $i>=0; $i--) {
+				last if (defined($versionParts[$i]));
+				$versionParts[$i] = "0";
+			}
+			$snortversion = join(".", @versionParts);
+			last;
+		}
 	}
-  
+	close SNORT or die "Couldn't close snort command: $! \n";
+
 	# Try to fetch the ruleset
-	&runoinkmaster($snortversion);
+	my $snortver_nodots = $snortversion;
+	$snortver_nodots =~ s/\.//g;
+	&runoinkmaster($snortver_nodots);
 	my $runmsg .= $errormessage if ($errormessage ne "");
 
 	# Display DL errors encountered
@@ -334,7 +349,7 @@ sub runoinkmaster
 
 	my $curdir = getcwd;
 	chdir "${swroot}/snort/";
-  
+
 	select STDOUT;
 	$| = 1;
 
