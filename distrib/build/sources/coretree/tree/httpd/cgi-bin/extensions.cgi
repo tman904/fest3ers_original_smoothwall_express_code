@@ -42,7 +42,7 @@ if ( open ( my $line, "<${swroot}/extensions/installed" )) {
 
 # perform actions based on what we were asked to do.
 if ($uploadsettings{'ACTION'} eq $tr{'refresh extensions list'}) {
-	$errormessage = &downloadlist();
+	$errormessage .= &downloadlist() ."<br />\n";
 }
 
 if ($uploadsettings{'download'} eq "download") {
@@ -207,13 +207,13 @@ sub apply
 END
 ;
 	unless (mkdir("/var/patches/$$",0700)) {
-		$errormessage = $tr{'could not create directory'};
+		$errormessage .= $tr{'could not create directory'} ."<br />\n";
 # print STDERR "returning $errormessage\n";
 		tidy();
 		return undef;
 	}
 	unless (open(FH, ">/var/patches/$$/patch.tar.gz")) {
-		$errormessage = $tr{'could not open update for writing'};
+		$errormessage .= $tr{'could not open update for writing'} ."<br />\n";
 # print STDERR "returning $errormessage\n";
 		tidy();
 		return undef;
@@ -230,7 +230,7 @@ END
 	my ( $title, $version, $md5, $icon, $sample, $link, $download, $description );
 
 	unless(open(LIST, "${swroot}/extensions/available")) {
-		$errormessage = $tr{'could not open available extensions list'};
+		$errormessage .= $tr{'could not open available extensions list'} ."<br />\n";
 # print STDERR "returning $errormessage\n";
 		tidy();
 		return undef;
@@ -247,19 +247,19 @@ END
 		}
 	}
 	unless ($found == 1) {
-		$errormessage = $tr{'this is not an authorised extension'};
+		$errormessage .= $tr{'this is not an authorised extension'} ."<br />\n";
 # print STDERR "$md5 $errormessage";
 		tidy();
 		return undef;
 	}
 	unless (system("/usr/bin/tar", "xfz", "/var/patches/$$/patch.tar.gz", "-C", "/var/patches/$$") == 0) {
-		$errormessage = $tr{'this is not a valid archive'};
+		$errormessage .= $tr{'this is not a valid archive'} ."<br />\n";
 # print STDERR "$errormessage";
 		tidy();
 		return undef;
 	}
 	unless (open(INFO, "/var/patches/$$/information")) {
-		$errormessage = $tr{'could not open update information file'};
+		$errormessage .= $tr{'could not open update information file'} ."<br />\n";
 # print STDERR $errormessage;
 		tidy();
 		return undef;
@@ -267,11 +267,11 @@ END
 	my $info = <INFO>;
 	close(INFO);
 
-	open(INS, "${swroot}/extensions/installed") or $errormessage = $tr{'could not open installed extensions file'};
+	open(INS, "${swroot}/extensions/installed") or $errormessage .= $tr{'could not open installed extensions file'} ."<br />\n";
 	while (<INS>) {
 		my @temp = split(/\|/,$_);
 		if($info =~ m/^$temp[0]/) {
-			$errormessage = $tr{'this extension is already installed'};
+			$errormessage .= $tr{'this extension is already installed'} ."<br />\n";
 # print STDERR $errormessage;
 			tidy();
 			return undef;
@@ -286,7 +286,7 @@ END
 #		return undef;
 #	}
 	unless (open(IS, ">>${swroot}/extensions/installed")) {
- 		$errormessage = $tr{'extension installed but'};
+ 		$errormessage .= $tr{'extension installed but'} ."<br />\n";
 	}
 	flock IS, 2;
 	my @time = gmtime();
@@ -324,7 +324,7 @@ sub downloadlist
 		PeerPort => $port,
 		Proto => 'tcp',
 		Timeout => 5)) {
-		$errormessage = $tr{'could not connect to smoothwall org'};
+		$errormessage .= $tr{'could not connect to smoothwall org'} ."<br />\n";
 # print STDERR "unable to connect $errormessage:\n";
 		return $errormessage;
 	}
@@ -340,7 +340,7 @@ sub downloadlist
 # print STDERR "Returned $ret\n";
 	if ($ret =~ m/^HTTP\/\d+\.\d+ 200/) {
 		unless (open(LIST, ">${swroot}/extensions/available")) {
-			$errormessage = "$tr{'could not open available updates file'} $!";
+			$errormessage .= "$tr{'could not open available updates file'} $!<br />\n";
 # print STDERR "nope, that didn't work :(\n";
       	 	        return $errormessage;
 		}
@@ -350,7 +350,7 @@ sub downloadlist
 		close(LIST);
 	}
 	else {
-		$errormessage = "$tr{'could not open available updates file'} $ret";
+		$errormessage .= "$tr{'could not open available updates file'} $ret<br />\n";
 		return $errormessage;
 	}
 	return "";

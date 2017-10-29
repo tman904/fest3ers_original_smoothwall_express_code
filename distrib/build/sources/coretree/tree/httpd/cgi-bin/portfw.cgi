@@ -47,10 +47,10 @@ if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'AC
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'add'}) {
-	$errormessage = $tr{'invalid input'} unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/);
+	$errormessage .= $tr{'invalid input'} ."<br />\n" unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/);
 	unless (&validipormask($cgiparams{'EXT'})) {
 		if ($cgiparams{'EXT'} ne '') {
-			$errormessage = $tr{'source ip bad'};
+			$errormessage .= $tr{'source ip bad'} ."<br />\n";
 		}
 		else {
 			$cgiparams{'EXT'} = '0.0.0.0/0';
@@ -61,7 +61,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		$cgiparams{'SRC_PORT'} = $cgiparams{'SRC_PORT_SEL'};
 	}
 	else {
-		$errormessage = $tr{'source port numbers'} unless (&validportrange($cgiparams{'SRC_PORT'}));
+		$errormessage .= $tr{'source port numbers'} ."<br />\n" unless (&validportrange($cgiparams{'SRC_PORT'}));
 	}
 
 	if ($cgiparams{'DEST_PORT_SEL'} ne "user" ) {
@@ -69,15 +69,15 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 	} 
 	else {
 		if ($cgiparams{'DEST_PORT'}) {
-			$errormessage = $tr{'destination port numbers'} unless(&validport($cgiparams{'DEST_PORT'}));
+			$errormessage .= $tr{'destination port numbers'} ."<br />\n" unless(&validport($cgiparams{'DEST_PORT'}));
 		}
 		else {
 			$cgiparams{'DEST_PORT'} = 0;
 		}
 	}
 
-	$errormessage = $tr{'invalid comment'} unless ( &validcomment( $cgiparams{'COMMENT'} ) );	
-	$errormessage = $tr{'destination ip bad'} unless (&validip($cgiparams{'DEST_IP'}));
+	$errormessage .= $tr{'invalid comment'} ."<br />\n" unless ( &validcomment( $cgiparams{'COMMENT'} ) );	
+	$errormessage .= $tr{'destination ip bad'} ."<br />\n" unless (&validip($cgiparams{'DEST_IP'}));
 
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
@@ -89,7 +89,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		if ($cgiparams{'SRC_PORT'} eq $temp[2] && 
 		    $cgiparams{'PROTOCOL'} eq $temp[0] &&
 		    $cgiparams{'EXT'} eq $temp[1]) {
-			$errormessage = "$tr{'source port in use'} $cgiparams{'SRC_PORT'}";
+			$errormessage .= "$tr{'source port in use'} $cgiparams{'SRC_PORT'}<br />\n";
 		}
 	}
 
@@ -118,8 +118,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'forwarding rule added'});
 		
 		my $success = message('setincoming');
-		$errormessage = $success if ($success);
-		$errormessage = "setincoming ".$tr{'smoothd failure'} unless ($success);
+		$errormessage .= $success ."<br />\n" if ($success);
+		$errormessage .= "setincoming ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
@@ -136,8 +136,8 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		$id++;
 		$count++ if (($cgiparams{$id}) && $cgiparams{$id} eq "on");
 	}
-	$errormessage = $tr{'nothing selected'} if ($count == 0);
-	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+	$errormessage .= $tr{'nothing selected'} ."<br />\n" if ($count == 0);
+	$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n" if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
 
 	unless ($errormessage) {
 		open(FILE, ">$filename") or die 'Unable to open config file.';
@@ -168,7 +168,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'forwarding rule removed'});
 
 		my $success = message('setincoming');
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
 

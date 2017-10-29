@@ -159,29 +159,29 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 	@clients = split(/\n/,$filtersettings{'UNFILTERED_CLIENTS'});
 	foreach (@clients) {
 		s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
-		$errormessage .= $tr{'urlfilter invalid ip or mask error'} if (/.*-.*-.*/);
+		$errormessage .= $tr{'urlfilter invalid ip or mask error'} ."<br />\n" if (/.*-.*-.*/);
 		@temp = split(/-/);
 		foreach (@temp) {
 			unless ((&validipormask($_)) || (&validipandmask($_))) {
-				$errormessage .= $tr{'urlfilter invalid ip or mask error'};
+				$errormessage .= $tr{'urlfilter invalid ip or mask error'} ."<br />\n";
 			}
 		}
 	}
 	@clients = split(/\n/,$filtersettings{'BANNED_CLIENTS'});
 	foreach (@clients) {
 		s/^\s+//g; s/\s+$//g; s/\s+-\s+/-/g; s/\s+/ /g; s/\n//g;
-		$errormessage .= $tr{'urlfilter invalid ip or mask error'} if (/.*-.*-.*/);
+		$errormessage .= $tr{'urlfilter invalid ip or mask error'} ."<br />\n" if (/.*-.*-.*/);
 		@temp = split(/-/);
 		foreach (@temp) {
 			unless ((&validipormask($_)) || (&validipandmask($_))) {
-				$errormessage .= $tr{'urlfilter invalid ip or mask error'};
+				$errormessage .= $tr{'urlfilter invalid ip or mask error'} ."<br />\n";
 			}
 		}
 	}
 	goto ERROR if ($errormessage);
 
 	if (!($filtersettings{'CHILDREN'} =~ /^\d+$/) || ($filtersettings{'CHILDREN'} < 1)) {
-		$errormessage .= $tr{'urlfilter invalid num of children'};
+		$errormessage .= $tr{'urlfilter invalid num of children'} ."<br />\n";
 		goto ERROR;
 	}
 
@@ -208,7 +208,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		$_ = substr($_,rindex($_,"/")+1);
 		if ($_) {
 			if (copy($filtersettings{'UPLOADFILE'}, "$repository/$_") != 1) {
-				$errormessage .= $!;
+				$ERRORmessage .= $! ."<br />\n";
 				goto ERROR;
 			}
 		}
@@ -226,7 +226,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		my $exitcode = system("/usr/bin/tar --no-same-owner -xzf ${swroot}/urlfilter/blacklists.tar.gz -C ${swroot}/urlfilter/update");
 		
 		if ($exitcode > 0) {
-			$errormessage .= $tr{'urlfilter tar error'};
+			$errormessage .= $tr{'urlfilter tar error'} ."<br />\n";
 		}
 		else {
 			if (-d "${swroot}/urlfilter/update/category") {
@@ -238,7 +238,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 			}
 
 			if (!(-d "${swroot}/urlfilter/update/blacklists")) {
-				$errormessage .= $tr{'urlfilter invalid content'};
+				$errormessage .= $tr{'urlfilter invalid content'} ."<br />\n";
 			}
 			else {
 				system("cp -r ${swroot}/urlfilter/update/blacklists/* $dbdir");
@@ -251,7 +251,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 				$updatemessage = $tr{'urlfilter upload success'};
 
 				my $success = message('sgprebuild');
-				$errormessage = $success if ($success);
+				$errormessage .= $success ."<br />\n" if ($success);
 				$errormessage .= "sgprebuild ".$tr{'smoothd failure'}."<br \>" unless ($success);
 				$refresh .= '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 
@@ -270,7 +270,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 	if ($filtersettings{'ACTION'} eq $tr{'urlfilter backup'}) {
 		$blistbackup = ($filtersettings{'ENABLE_FULLBACKUP'} eq 'on') ? "blacklists" : "blacklists/custom";
 		if (system("/usr/bin/tar -C ${swroot}/urlfilter -czf ${swroot}/urlfilter/backup.tar.gz settings timeconst userquota autoupdate $blistbackup")) {
-			$errormessage .= $tr{'urlfilter backup error'};
+			$errormessage .= $tr{'urlfilter backup error'} ."<br />\n";
 			goto ERROR;
 		}
 		else {
@@ -303,11 +303,11 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 
 		my $exitcode = system("/usr/bin/tar --no-same-owner --preserve-permissions -xzf ${swroot}/urlfilter/backup.tar.gz -C ${swroot}/urlfilter/restore");
 		if ($exitcode > 0) {
-			$errormessage .= $tr{'urlfilter tar error'};
+			$errormessage .= $tr{'urlfilter tar error'} ."<br />\n";
 		}
 		else {
 			if (!(-e "${swroot}/urlfilter/restore/settings")) {
-				$errormessage .= $tr{'urlfilter invalid restore file'};
+				$errormessage .= $tr{'urlfilter invalid restore file'} ."<br />\n";
 			}
 			else {
 				system("cp -rp ${swroot}/urlfilter/restore/* ${swroot}/urlfilter/");
@@ -335,11 +335,11 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 
 	if ($filtersettings{'ACTION'} eq $tr{'urlfilter save and restart'}) {
 		if ((!($proxysettings{'ENABLE'} eq 'on')) && (!($proxysettings{'ENABLE_PURPLE'} eq 'on'))) {
-			$errormessage .= $tr{'urlfilter web proxy service required'};
+			$errormessage .= $tr{'urlfilter web proxy service required'} ."<br />\n";
 			goto ERROR;
 		}
 		if (!($proxysettings{'ENABLE_FILTER'} eq 'on')) {
-			$errormessage .= $tr{'urlfilter not enabled'};
+			$errormessage .= $tr{'urlfilter not enabled'} ."<br />\n";
 			goto ERROR;
 		}
 
@@ -371,7 +371,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 
 if ($filtersettings{'ACTION'} eq $tr{'urlfilter save schedule'}) {
 	if (($filtersettings{'UPDATE_SOURCE'} eq 'custom') && ($filtersettings{'CUSTOM_UPDATE_URL'} eq '')) {
-		$errormessage .= $tr{'urlfilter custom url required'};
+		$errormessage .= $tr{'urlfilter custom url required'} ."<br />\n";
 	}
 	else {
 		open (FILE, ">$updconffile");

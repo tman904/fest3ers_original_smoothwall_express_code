@@ -55,17 +55,17 @@ if ($cgiparams{'ACTION'} eq '') {
 
 
 if ($cgiparams{'ACTION'} eq $tr{'add'}) {
-	$errormessage = $tr{'invalid input'} unless ($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/);
-	$errormessage = $tr{'source ip bad'} unless (&validipormask($cgiparams{'SRC_IP'}));
+	$errormessage .= $tr{'invalid input'} ."<br />\n" unless ($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/);
+	$errormessage .= $tr{'source ip bad'} ."<br />\n" unless (&validipormask($cgiparams{'SRC_IP'}));
 
 	if ( defined $cgiparams{'SERVICE'} and $cgiparams{'SERVICE'} ne "user" ) {
 		$cgiparams{'DEST_PORT'} = $cgiparams{'SERVICE'};
 	}
 	else {
-		$errormessage = $tr{'destination port numbers'} unless (&validportrange($cgiparams{'DEST_PORT'}));
+		$errormessage .= $tr{'destination port numbers'} ."<br />\n" unless (&validportrange($cgiparams{'DEST_PORT'}));
 	}
-	$errormessage = $tr{'destination ip bad'} unless (&validipormask($cgiparams{'DEST_IP'}));
-	$errormessage = $tr{'invalid comment'} unless (&validcomment($cgiparams{'COMMENT'}));
+	$errormessage .= $tr{'destination ip bad'} ."<br />\n" unless (&validipormask($cgiparams{'DEST_IP'}));
+	$errormessage .= $tr{'invalid comment'} ."<br />\n" unless (&validcomment($cgiparams{'COMMENT'}));
 
 	unless ($errormessage) {
 		open(FILE,">>$filename") or die 'Unable to open config file.';
@@ -76,8 +76,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'dmz pinhole rule added'});
 
 		my $success = message('setinternal');
-		$errormessage = $success if ($success);
-		$errormessage = "setinternal ".$tr{'smoothd failure'} unless ($success);
+		$errormessage .= $success ."<br />\n" if ($success);
+		$errormessage .= "setinternal ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 
 		$cgiparams{'ENABLED'} = 'on';
@@ -101,8 +101,8 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		$id++;
 		$count++ if (($cgiparams{$id}) && $cgiparams{$id} eq "on");
 	}
-	$errormessage = $tr{'nothing selected'} if ($count == 0);
-	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+	$errormessage .= $tr{'nothing selected'} ."<br />\n" if ($count == 0);
+	$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n" if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
 
 	unless ($errormessage) {
 		open(FILE, ">$filename") or die 'Unable to open config file.';
@@ -131,7 +131,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 
 		my $success = message('setinternal');
 		
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
 

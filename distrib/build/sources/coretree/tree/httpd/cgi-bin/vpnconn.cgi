@@ -105,10 +105,10 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		$count++ if ($cgiparams{$id} eq "on");
 	}
 	if ($count == 0) {
-		$errormessage = $tr{'nothing selected'};
+		$errormessage .= $tr{'nothing selected'} ."<br />\n";
 	}
 	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-		$errormessage = $tr{'you can only select one item to edit'};
+		$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n";
 	}
 	unless ($errormessage) {
 		open(FILE, ">$filename") or die 'Unable to open config file.';
@@ -151,7 +151,7 @@ if ($cgiparams{'ACTION'} eq $tr{'export'}) {
 
 if ($cgiparams{'ACTION'} eq $tr{'import'}) {
 	if (length($cgiparams{'FH'}) > 1) {
-		open(FILE, ">$filename") or $errormessage = 'Could not open config file for writing';
+		open(FILE, ">$filename") or $errormessage .= 'Could not open config file for writing' ."<br />\n";
 		flock FILE, 2;
 		binmode(FILE);
 		print FILE $cgiparams{'FH'};

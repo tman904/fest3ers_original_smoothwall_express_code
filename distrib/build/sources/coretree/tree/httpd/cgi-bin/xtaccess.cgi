@@ -38,17 +38,17 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq "" ) {
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'add'}) {
-	$errormessage = $tr{'invalid input'} unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/);
+	$errormessage .= $tr{'invalid input'} ."<br />\n" unless($cgiparams{'PROTOCOL'} =~ /^(tcp|udp)$/);
 	unless(&validipormask($cgiparams{'EXT'})) {
 		if ($cgiparams{'EXT'} ne '') {
-			$errormessage = $tr{'source ip bad'};
+			$errormessage .= $tr{'source ip bad'} ."<br />\n";
 		}
 		else {
 			$cgiparams{'EXT'} = '0.0.0.0/0';
 		}
 	}
-	$errormessage = $tr{'invalid comment'} unless ( &validcomment( $cgiparams{'COMMENT'} ) );	
-	$errormessage = $tr{'destination port numbers'} unless(&validportrange($cgiparams{'DEST_PORT'}));
+	$errormessage .= $tr{'invalid comment'} ."<br />\n" unless ( &validcomment( $cgiparams{'COMMENT'} ) );	
+	$errormessage .= $tr{'destination port numbers'} ."<br />\n" unless(&validportrange($cgiparams{'DEST_PORT'}));
 
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
@@ -69,8 +69,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'external access rule added'});
 
 		my $success = message('setxtaccess');
-		$errormessage = $success if ($success);
-		$errormessage = "setxtaccess ".$tr{'smoothd failure'} unless ($success);
+		$errormessage .= $success ."<br />\n" if ($success);
+		$errormessage .= "setxtaccess ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
@@ -87,8 +87,8 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		$id++;
 		$count++ if (($cgiparams{$id}) && $cgiparams{$id} eq "on");
 	}
-	$errormessage = $tr{'nothing selected'} if ($count == 0);
-	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+	$errormessage .= $tr{'nothing selected'} ."<br />\n" if ($count == 0);
+	$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n" if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
 
 	unless ($errormessage) {
 		open(FILE, ">$filename") or die 'Unable to open config file.';
@@ -114,7 +114,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'external access rule removed'});
 
 		my $success = message('setxtaccess');
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
 if ($cgiparams{'ACTION'} eq '') {

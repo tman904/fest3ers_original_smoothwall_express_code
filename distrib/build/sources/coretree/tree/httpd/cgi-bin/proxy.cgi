@@ -102,8 +102,8 @@ if ($proxysettings{'ACTION'} eq $tr{'save'} ||
 			}
 		}
 		my $success = message(@args);
-		$errormessage = $success if ($success);
-		$errormessage = "@args ".$tr{'smoothd failure'} unless ($success);
+		$errormessage .= $success ."<br />\n" if ($success);
+		$errormessage .= "@args ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }

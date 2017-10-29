@@ -164,7 +164,7 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'}) {
 
 		# The smoothd plugin always stops, then checks 'enabled' before restarting.
 		my $success = message('ntpdrestart');
-		$errormessage .= $success if ($success);
+		$errormessage .= $success ."<br />\n" if ($success);
 		$errormessage .= " ntpdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 

@@ -53,7 +53,7 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '') {
 	}
 	if ($needrestart) {
 		my $success = message('setipblock');
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 
 
@@ -66,8 +66,8 @@ if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'AC
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'add'}) {
-	$errormessage = $tr{'source ip bad'} unless(&validipormask($cgiparams{'SRC_IP'}));
-	$errormessage = $tr{'invalid comment'} unless ( &validcomment( $cgiparams{'COMMENT'} ) );
+	$errormessage .= $tr{'source ip bad'} ."<br />\n" unless(&validipormask($cgiparams{'SRC_IP'}));
+	$errormessage .= $tr{'invalid comment'} ."<br />\n" unless ( &validcomment( $cgiparams{'COMMENT'} ) );
 
 	open(FILE, $filename) or die 'Unable to open config file.';
 	my @current = <FILE>;
@@ -93,7 +93,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'ip block rule added'});
 
 		my $success = message('setipblock');
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
 
@@ -109,8 +109,8 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		$id++;
 		$count++ if (($cgiparams{$id}) && $cgiparams{$id} eq "on");
 	}
-	$errormessage = $tr{'nothing selected'} if ($count == 0);
-	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+	$errormessage .= $tr{'nothing selected'} ."<br />\n" if ($count == 0);
+	$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n" if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
 
 	unless ($errormessage) {
 		open(FILE, ">$filename") or die 'Unable to open config file.';
@@ -135,7 +135,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'ip block rule removed'});
 
 		my $success = message('setipblock');
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
 

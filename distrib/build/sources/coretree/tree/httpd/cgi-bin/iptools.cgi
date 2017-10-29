@@ -73,7 +73,7 @@ if ($cgiparams{'ACTION'} eq $tr{'run'})
 			if ($address = gethostbyname($addr)) {
 				push @addrs, inet_ntoa($address); }
 			else {
-				$errormessage = "$tr{'could not resolve'} $addr"; }
+				$errormessage .= "$tr{'could not resolve'} $addr<br />\n"; }
 		}		
 	}
 

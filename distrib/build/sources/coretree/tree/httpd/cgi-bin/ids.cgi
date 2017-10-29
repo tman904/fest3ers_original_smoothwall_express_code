@@ -415,7 +415,7 @@ print "
 ";
 			}
 			elsif (/.*403 Forbidden.*/) {
-				$errormessage .= "You can't download now. Try again later." ."<br />";
+				$errormessage .= "You can't download now. Try again later.<br />";
 				print "
   <script language='javascript' type='text/javascript'>
     document.getElementById('status').innerHTML = 'You can\\'t download now; try later.';
@@ -423,7 +423,7 @@ print "
 ";
 			}
 			elsif (/.*404 Not Found.*/) {
-				$errormessage .= "Rules version $v not found. Try again another day." ."<br />";
+				$errormessage .= "Rules version $v not found. Try again another day.<br />";
 				print "
   <script language='javascript' type='text/javascript'>
     document.getElementById('status').innerHTML = 'Rules $v not found; Try again another day.';

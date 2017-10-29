@@ -67,7 +67,7 @@ if ($cgiparams{'ACTION'} eq $tr{'shutdown'}) {
 	
 	my $success = message('systemshutdown');
 	
-	$errormessage = $tr{'smoothd failure'} unless ($success);
+	$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 }
 elsif ($cgiparams{'ACTION'} eq $tr{'reboot'}) {
 	$rebirth = 1;
@@ -76,7 +76,7 @@ elsif ($cgiparams{'ACTION'} eq $tr{'reboot'}) {
 
 	my $success = message('systemrestart');
 
-	$errormessage = $tr{'smoothd failure'} unless ($success);
+	$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 }
 
 ERROR:

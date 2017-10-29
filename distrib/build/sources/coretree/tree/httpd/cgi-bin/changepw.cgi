@@ -73,13 +73,13 @@ if ($cgiparams{'ACTION_ADMIN'} eq $tr{'save'}) {
 		}
 	}
 	else {
-		$errormessage = $tr{'passwords do not match'}."<br />\n";
+		$errormessage .= $tr{'passwords do not match'}."<br />\n";
 	}
 }
 
 if ($cgiparams{'ACTION_DIAL'} eq $tr{'save'}) {
 	if ($rtnToken !~ /[0-9a-f]/ or ($rtnToken ne $newToken and $rtnToken ne $lastToken)) {
-		$errormessage = "$tr{'token error 1'}<br /><br />$tr{'token error 2'}<br />";
+		$errormessage .= "$tr{'token error 1'}<br /><br />$tr{'token error 2'}<br />";
 		$refresh = '<meta http-equiv="refresh" content="6; url=index.cgi">';
 		goto ERROR;
 	}
@@ -88,7 +88,7 @@ if ($cgiparams{'ACTION_DIAL'} eq $tr{'save'}) {
 	my $password2 = $cgiparams{'DIAL_PASSWORD2'};
 	if ($password1 eq $password2) {
 		if($password1 =~ m/\s|\"/) {
-			$errormessage = $tr{'password contains illegal characters'}."<br />\n";
+			$errormessage .= $tr{'password contains illegal characters'}."<br />\n";
 		}
 		elsif (length($password1) >= 6) {
 			system('/usr/sbin/htpasswd', '-m', '-b', "${swroot}/auth/users", 'dial', "${password1}");
@@ -97,11 +97,11 @@ if ($cgiparams{'ACTION_DIAL'} eq $tr{'save'}) {
 			$refresh = '<meta http-equiv="refresh" content="2;">';
 		}
 		else {
-			$errormessage = $tr{'passwords must be at least 6 characters in length'}."<br />\n";
+			$errormessage .= $tr{'passwords must be at least 6 characters in length'}."<br />\n";
 		}
 	}
 	else {
-		$errormessage = $tr{'passwords do not match'}."<br />\n";
+		$errormessage .= $tr{'passwords do not match'}."<br />\n";
 	}
 }
 

@@ -84,7 +84,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 	
 	my $success = message('setoutgoing');
 	
-	$errormessage = $tr{'smoothd failure'} unless ($success);
+	$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 }
 
 &readhash("${swroot}/outgoing/settings", \%cgiparams);
@@ -92,7 +92,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 if ( $cgiparams{'ACTION'} eq $tr{'add'} ) {
 	if ( $cgiparams{'SERVICE'} eq "user" ) {
 		unless ( &validportrange( $cgiparams{'PORT'} ) ) {
-			$errormessage = $tr{'invalid port or range'};
+			$errormessage .= $tr{'invalid port or range'} ."<br />\n";
 		}
 		else {
 			$cgiparams{'SERVICE'} = $cgiparams{'PORT'};
@@ -107,7 +107,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'add'} ) {
 		
 		my $success = message('setoutgoing');
 	
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} unless ($success) ."<br />\n";
 
 		$cgiparams{'INTERFACE'} = 'GREEN';
 		$cgiparams{'SERVICE'} = '';
@@ -130,8 +130,8 @@ if ( $cgiparams{'ACTION'} eq $tr{'edit'} or $cgiparams{'ACTION'} eq $tr{'remove'
 		$id++;
 		$count++ if (($cgiparams{$id}) && $cgiparams{$id} eq "on");
 	}
-	$errormessage = $tr{'nothing selected'} if ($count == 0);
-	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+	$errormessage .= $tr{'nothing selected'} ."<br />\n" if ($count == 0);
+	$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n" if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
 	
 	unless ($errormessage) {
 		open(FILE, ">$config") or die 'Unable to open config file.';
@@ -155,7 +155,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'edit'} or $cgiparams{'ACTION'} eq $tr{'remove'
 
 		my $success = message('setoutgoing');
 	
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
 
@@ -166,7 +166,7 @@ if ( $cgiparams{'MACHINEACTION'} eq '' ) {
 }
 
 if ( $cgiparams{'MACHINEACTION'} eq $tr{'add'} ) {
-	$errormessage = "invalid ip" unless ( &validip( $cgiparams{'MACHINE'} ) );
+	$errormessage .= "invalid ip<br />\n" unless ( &validip( $cgiparams{'MACHINE'} ) );
 
 	unless ($errormessage) {
 		open(FILE,">>$machineconfig") or die 'Unable to open config file.';
@@ -176,7 +176,7 @@ if ( $cgiparams{'MACHINEACTION'} eq $tr{'add'} ) {
 
 		my $success = message('setoutgoing');
 	
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 
 		$cgiparams{'MACHINE'} = "";
 		$cgiparams{'MACHINEENABLED'} = "on";
@@ -196,8 +196,8 @@ if ( $cgiparams{'MACHINEACTION'} eq $tr{'edit'} or $cgiparams{'MACHINEACTION'} e
 		$count++ if (($cgiparams{$id}) && $cgiparams{$id} eq "on");
 	}
 
-	$errormessage = $tr{'nothing selected'} if ($count == 0);
-	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $cgiparams{'MACHINEACTION'} eq $tr{'edit'});
+	$errormessage .= $tr{'nothing selected'} ."<br />\n" if ($count == 0);
+	$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n" if ($count > 1 && $cgiparams{'MACHINEACTION'} eq $tr{'edit'});
 	
 	unless ($errormessage) {
 		open(FILE, ">$machineconfig") or die 'Unable to open config file.';
@@ -220,7 +220,7 @@ if ( $cgiparams{'MACHINEACTION'} eq $tr{'edit'} or $cgiparams{'MACHINEACTION'} e
 
 		my $success = message('setoutgoing');
 	
-		$errormessage = $tr{'smoothd failure'} unless ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
 

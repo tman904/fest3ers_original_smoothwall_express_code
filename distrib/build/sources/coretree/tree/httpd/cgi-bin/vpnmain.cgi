@@ -29,7 +29,7 @@ $cgiparams{'VPN_IP'} = '';
 
 if ($cgiparams{'ACTION'} eq $tr{'save'}) {
 	if ($cgiparams{'VPN_IP'}) {
-		$errormessage = $tr{'invalid input'} unless (&validip($cgiparams{'VPN_IP'}));
+		$errormessage .= $tr{'invalid input'} ."<br />\n" unless (&validip($cgiparams{'VPN_IP'}));
 	}
 	if ($errormessage) {
 		$cgiparams{'VALID'} = 'no';
@@ -46,15 +46,15 @@ if ($cgiparams{'ACTION'} eq $tr{'restart'}) {
 	system('/usr/bin/smoothwall/writeipsec.pl');
 
 	my $success = message('ipsecrestart');
-	$errormessage = $success if ($success);
-	$errormessage = "ipsecrestart ".$tr{'smoothd failure'} unless ($success);
+	$errormessage .= $success ."<br />\n" if ($success);
+	$errormessage .= "ipsecrestart ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'stop'}) {
 	my $success = message('ipsecstop');
-	$errormessage = $success if ($success);
-	$errormessage = "ipsecstop ".$tr{'smoothd failure'} unless ($success);
+	$errormessage .= $success ."<br />\n" if ($success);
+	$errormessage .= "ipsecstop ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 

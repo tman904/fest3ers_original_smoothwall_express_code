@@ -101,7 +101,7 @@ my $test = '';
 my $thiscode = '$test =~ /$filter/;';
 eval($thiscode);
 if ($@ ne '') {
-	$errormessage = $tr{'bad ignore filter'}.$@;
+	$errormessage .= $tr{'bad ignore filter'}.$@ ."<br />\n";
 	$filter = '';
 }
 else {

@@ -66,7 +66,7 @@ $pppsettings{'STAYUP_TIME'} = '';
 my $errormessage = '';
 
 if ($pppsettings{'ACTION'} ne '' && (-e '/var/run/ppp-smooth.pid' || -e "${swroot}/red/active")) {
-	$errormessage = $tr{'unable to alter profiles while red is active'};
+	$errormessage .= $tr{'unable to alter profiles while red is active'} ."<br />\n";
 	# read in the current vars
 	%pppsettings = ();
 	$pppsettings{'VALID'} = '';
@@ -204,7 +204,7 @@ elsif ($pppsettings{'ACTION'} eq $tr{'select'}) {
 		&log("$tr{'profile made current'} $pppsettings{'PROFILENAME'}"); 
 	}
 	else {
-		$errormessage = $tr{'the selected profile is empty'};
+		$errormessage .= $tr{'the selected profile is empty'} ."<br />\n";
 		%pppsettings = ();		 
 		$pppsettings{'VALID'} = '';	 
 		&readhash("${swroot}/ppp/settings", \%pppsettings);

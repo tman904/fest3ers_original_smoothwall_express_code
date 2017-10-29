@@ -39,7 +39,7 @@ my $refresh = '';
 if ($cgiparams{'ACTION'} eq $tr{'save'}) {
 	if (($cgiparams{'START_HOUR'} * 60) + $cgiparams{'START_MIN'} >
 		($cgiparams{'END_HOUR'} * 60) + $cgiparams{'END_MIN'}) {
-		$errormessage = $tr{'from time must be before to time'};
+		$errormessage .= $tr{'from time must be before to time'} ."<br />\n";
 	}
 
 	my @machines = split(/\n/, $cgiparams{'MACHINES'});
@@ -72,8 +72,8 @@ ERROR:
 
 	if ($cgiparams{'VALID'} eq 'yes') {
 		my $success = message('settimedaccess');
-		$errormessage = $success if ($success);
-		$errormessage = "settimedaccess ".$tr{'smoothd failure'} unless ($success);
+		$errormessage .= $success ."<br />\n" if ($success);
+		$errormessage .= "settimedaccess ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }

@@ -37,8 +37,8 @@ if ($sipsettings{'ACTION'} eq $tr{'save'}) {
 		&log("SIP service stopped.");
 		$success = message("sipstop");
 	}
-	$errormessage = $success if ($success);
-	$errormessage = "sip ".$tr{'smoothd failure'} unless ($success);
+	$errormessage .= $success ."<br />\n" if ($success);
+	$errormessage .= "sip ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
