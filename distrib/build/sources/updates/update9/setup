@@ -1,0 +1,19 @@
+#!/bin/sh
+
+OLD_KERNEL=3.16.38
+KERNEL_VERSION=3.16.49
+
+echo "Install Update 9."
+
+# Unpack the patch
+/usr/bin/tar xvf patch.tar.gz -C /
+
+# Leave these for a few generations, just in case.
+echo "  Fix logrotate config file modes"
+chmod 644 /etc/logrotate.{base,conf,d/*}
+echo "  Remove unused file 'acl'"
+/bin/rm -f /var/smoothwall/proxy/acl
+echo "  Fix /var/run"
+chmod 1777 /var/run
+
+echo "Update 9 install is complete."
