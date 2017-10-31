@@ -59,25 +59,37 @@ export JOBS_UP="-j 1"
 export JOBS_MP
 cpu_count
 
-pushd sources/updates/update${UPDATE} >/dev/null 2>&1
-
 # Save stdout
 exec 3>&1
 
-# Clean first
-make clean
+if [ ! -d sources/updates/update${UPDATE} ]; then
+  echo "Update$update working dir not found! Prepare the update first!"
+  exit 1
+else
+  set -x
+  pushd sources/updates/update${UPDATE} >/dev/null 2>&1
 
-(
-  echo "Preparing Update${UPDATE}"
-  make all
-  retCode=$?
-  if [ $retCode -eq 0 ]; then
-    echo "Update${UPDATE} preparation success"
-    echo "Update${UPDATE} preparation success" >&3
-  else
-    echo "Update${UPDATE} preparation FAILED"
-    tail -10 Update.out >&3
-    echo "Update${UPDATE} preparation FAILED" >&3
-    exit $retCode    # 123
-  fi
-)  <${BUILD_IN} >Update.out 2>&1
+  (
+    if [ -p ../../../crumbs/monpipe ]; then echo "-u update ${UPDATE}" > ../../../crumbs/monpipe; fi
+
+    # Clean first
+    make clean
+
+    echo "Prepare Update${UPDATE}"
+    make all
+    retCode=$?
+    if [ $retCode -eq 0 ]; then
+      echo "Update${UPDATE} preparation success"
+      echo "Update${UPDATE} preparation success" >&3
+    else
+      echo "Update${UPDATE} preparation FAILED"
+      tail -10 Update.out >&3
+      echo "Update${UPDATE} preparation FAILED" >&3
+      exit $retCode    # 123
+    fi
+  )  <${BUILD_IN} >Update.out 2>&1
+
+  popd >/dev/null 2>&1
+fi
+
+if [ -p crumbs/monpipe ]; then echo "" > crumbs/monpipe; fi
