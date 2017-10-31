@@ -15,6 +15,7 @@ UPDATE_PACKAGES = \
 		  nss \
 		  openssh \
 		  openssl \
+		  openswan \
 		  siproxd \
 		  snort \
 		  squid \
