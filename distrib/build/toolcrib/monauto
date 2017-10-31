@@ -25,7 +25,7 @@
         -3) stage="Stage_3"; shift;;
         -f) stage="Final"; shift;;
         -m) stage="Media.mediaISO"; shift;;
-        -u) stage="Update"; shift;;
+        -u) pkg="updates/update$third"; stage="Update"; shift;;
       esac
       [ -f sources/$pkg/$stage.out ] || touch sources/$pkg/$stage.out
       tail -f -s .1 sources/$pkg/$stage.out&
