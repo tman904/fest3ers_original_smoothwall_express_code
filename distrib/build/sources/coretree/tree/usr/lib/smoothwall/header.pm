@@ -752,10 +752,9 @@ sub alertbox
 {
 	my $thiserror = $_[0];
 	my $additional = $_[1];
-	if ( $thiserror ne '' && $additional eq '' ) {
-		&pageinfo( "error", $thiserror);
-	}
-	elsif ( $thiserror eq 'add' && $additional eq 'add' && $abouttext{$thisscript . "-additional"} ne '' ) {
+	my $thisinfo = $_[2];
+
+	if ( $thiserror eq 'add' && $additional eq 'add' && $abouttext{$thisscript . "-additional"} ne '' ) {
 		&pageinfo( $alertbox{"textadd"}, $abouttext{$thisscript . "-additional"});
 	}
 	elsif ( $thiserror eq 'add' && $additional eq 'add' && $abouttext{$thisscript . "-additional"} eq '' ) {
@@ -763,6 +762,13 @@ sub alertbox
 	}
 	else {
 		&pageinfo( $alertbox{"textok"}, $abouttext{$thisscript});
+	}
+
+	if ( $thiserror ne '' && $additional eq '' ) {
+		&pageinfo( "error", $thiserror);
+	}
+	if ($thisinfo ne '') {
+		&pageinfo( "info", $thisinfo);
 	}
 }
 
@@ -776,15 +782,22 @@ sub pageinfo
 END
 ;
 
-	if ( not defined $thisalerttype or $thisalerttype ne "error" ) {
+	#if ( not defined $thisalerttype or $thisalerttype ne "error" ) {
+printf STDERR "type=$_[0]; msg=$_[1]\n";
+	if ( $thisalerttype eq "error" ) {
+		print "<table class='warning'>";
+		print "<tr>";
+		print "	<td class='warningimg'><img src='/ui/img/x-icon.png' alt='$tr{'error'}'></td><td class='warning'><strong>$tr{'error'}</strong>$thisboxmessage</td>";
+	}
+	elsif ( $thisalerttype eq "info" ) {
+		print "<table class='info'>";
+		print "<tr>";
+		print "	<td class='warningimg'><img src='/ui/img/check-icon.png' alt='$tr{'error'}'></td><td class='warning'><strong>$tr{'error'}</strong>$thisboxmessage</td>";
+	}
+	else {
 		print "<table class='note'>";
 		print "<tr>";
 		print "	<td class='note'>$thisboxmessage</td>";
-	}
-	else {
-		print "<table class='warning'>";
-		print "<tr>";
-		print "	<td class='warningimg'><img src='/ui/img/warning.png' alt='$tr{'error'}'></td><td class='warning'><strong>$tr{'error'}</strong>$thisboxmessage</td>";
 	}
 
 

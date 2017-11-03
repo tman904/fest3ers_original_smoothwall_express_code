@@ -20,5 +20,8 @@
 ./httpd/cgi-bin/vpnconn.cgi
 ./httpd/cgi-bin/vpnmain.cgi
 ./httpd/cgi-bin/xtaccess.cgi
+./httpd/html/ui/css/style.css
+./httpd/html/ui/img/check-icon.png
+./httpd/html/ui/img/x-icon.png
 ./usr/lib/smoothwall/header.pm
 ./var/smoothwall/patches/installed
