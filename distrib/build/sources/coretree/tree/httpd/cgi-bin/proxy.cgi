@@ -47,6 +47,7 @@ $proxysettings{'ENABLE_FILTER'} = 'off';
 
 my $needhup = 0;
 my $errormessage = '';
+my $infomessage = '';
 my $refresh = '';
 
 if ($proxysettings{'ACTION'} eq $tr{'save'} ||
@@ -102,9 +103,8 @@ if ($proxysettings{'ACTION'} eq $tr{'save'} ||
 			}
 		}
 		my $success = message(@args);
-		$errormessage .= $success ."<br />\n" if ($success);
-		$errormessage .= "@args ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
+		$infomessage .= $success ."<br />\n" if ($success and $success !~ /fail/i);
+		$errormessage .= "@args ".$tr{'smoothd failure'} ."<br />\n" unless ($success and $success !~ /fail/i);
 	}
 }
 
@@ -130,7 +130,7 @@ $checked{'ENABLE_FILTER'}{$proxysettings{'ENABLE_FILTER'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

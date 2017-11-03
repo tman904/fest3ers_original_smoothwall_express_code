@@ -17,6 +17,7 @@ my (%p3scansettings, %clamavsettings, %checked);
 
 my $refresh = '';
 my $errormessage = '';
+my $infomessage = '';
 my $success = '';
 
 &showhttpheaders();
@@ -39,26 +40,27 @@ if ($p3scansettings{'ACTION'} eq $tr{'save'}) {
 
 	if ($p3scansettings{"ENABLE"} eq 'on') {
 		$success = message('p3scanrestart');
-		$errormessage .= $success."<br />" if ($success);
+		$infomessage .= $success."<br />" if ($success);
 		$errormessage .= "p3scanrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 
 		# Check if ClamAV is already running
 		my $avstatus = isclamrunning("clamd");
 		if ($avstatus eq 'running') {
 			# ClamAV is running - Don't restart it - It takes ages.
-			$errormessage .= "ClamAV already running!<br />";
+			$infomessage .= "ClamAV already running!<br />";
 		}
 		else {
 			$success = message('clamavrestart');
+			print STDERR "ClamAV Restart: '$success'\n";
 			$success = "TIMEOUT: ClamAV Still Restarting" if ($success =~ /TIMEOUT/i);
-			$errormessage .= $success."<br />" if ($success);
-			$errormessage .= "clamavrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
+			$infomessage .= $success."<br />" if ($success and $success !~ "[Ff]ailed" );
+			$errormessage .= "clamavrestart ".$tr{'smoothd failure'}." <i>$success<i><br />" unless ($success and $success !~ "[Ff]ailed" );
 		}
-		$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
+		#$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 	else {
 		$success = message('p3scanstop');
-		$errormessage .= $success."<br />" if ($success);
+		$infomessage .= $success."<br />" if ($success);
 		$errormessage .= "p3scanstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 
 		# Check if anything else has ClamAV turned on, if not - turn it off.
@@ -69,13 +71,13 @@ if ($p3scansettings{'ACTION'} eq $tr{'save'}) {
 
 		if ($clamused == 0) {
 			$success = message('clamavstop');
-			$errormessage .= $success."<br />" if ($success);
+			$infomessage .= $success."<br />" if ($success);
 			$errormessage .= "clamavstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
 		else {
 			$errormessage .= "ClamAV is being used by another Application - Not Terminated<br />";
 		}
-		$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
+		#$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -89,7 +91,8 @@ $checked{'ENABLE'}{$p3scansettings{'ENABLE'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+print STDERR  "emsg=$errormessage; imsg=$infomessage\n";
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action='?'><div>\n";
 

@@ -45,6 +45,7 @@ my $updconffile = "${swroot}/urlfilter/autoupdate/autoupdate.conf";
 my $updflagfile = "${swroot}/urlfilter/blacklists/.autoupdate.last";
 
 my $errormessage='';
+my $infomessage='';
 my $updatemessage='';
 my $restoremessage='';
 my $buttontext='';
@@ -208,7 +209,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		$_ = substr($_,rindex($_,"/")+1);
 		if ($_) {
 			if (copy($filtersettings{'UPLOADFILE'}, "$repository/$_") != 1) {
-				$ERRORmessage .= $! ."<br />\n";
+				$errormessage .= $! ."<br />\n";
 				goto ERROR;
 			}
 		}
@@ -251,8 +252,8 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 				$updatemessage = $tr{'urlfilter upload success'};
 
 				my $success = message('sgprebuild');
-				$errormessage .= $success ."<br />\n" if ($success);
-				$errormessage .= "sgprebuild ".$tr{'smoothd failure'}."<br \>" unless ($success);
+				$infomessage .= $success ."<br />\n" if ($success and $success !~ /fail/i);
+				$errormessage .= "sgprebuild ".$tr{'smoothd failure'}."<br \>" unless ($success and $success !~ /fail/i);
 				$refresh .= '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 
 				system("logger -t installpackage[urlfilter] \"URL filter blacklist - Blacklist update from local source completed\"");
@@ -363,9 +364,8 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 		&setpermissions ($dbdir);
 
 		my $success = message('squidrestart');
-		$errormessage = $success if ($success);
-              $errormessage .= "squidrestart ".$tr{'smoothd failure'}."<br \>" unless ($success);
-		$refresh .= '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
+		$infomessage .= $success if ($success and $success !~ /fail/i);
+                $errormessage .= "squidrestart ".$tr{'smoothd failure'}."<br \>" unless ($success and $success !~ /fail/i);
 	}
 }
 
@@ -382,9 +382,8 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter save schedule'}) {
 		close FILE;
 
               my $success = message('sgautoupdate');
-		$errormessage = $success if ($success);
-              $errormessage .= "sgautoupdate ".$tr{'smoothd failure'}."<br \>" unless ($success);
-		$refresh .= '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
+		$infomessage = $success if ($success and $success !~ /fail/i);
+                $errormessage .= "sgautoupdate ".$tr{'smoothd failure'}."<br \>" unless ($success and $success !~ /fail/i);
 	}
 }
 
@@ -515,7 +514,7 @@ foreach $category (@filtergroups) {
 
 &openbigbox('100%', 'left');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 
 if ($updatemessage) {

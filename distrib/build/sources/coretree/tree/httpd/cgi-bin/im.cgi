@@ -36,6 +36,7 @@ $imsettings{'SSL'} = 'off';
 &getcgihash(\%imsettings);
 
 my $errormessage = '';
+my $infomessage = '';
 my $refresh = '';
 my $success = '';
 
@@ -59,9 +60,8 @@ ERROR:
 		else {
 			$success = message('imstop');
 		}
-		$errormessage .= $success ."<br />\n";
-		$errormessage .= "imspector ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
+		$infomessage .= $success ."<br />\n" if ($success and $success !~ /fail/i);
+		$errormessage .= "imspector ".$tr{'smoothd failure'} ."<br />\n" unless ($success and $success !~ /fail/i);
 	}
 }
 
@@ -124,7 +124,7 @@ $checked{'ENABLE'}{$imsettings{'ENABLE'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 
