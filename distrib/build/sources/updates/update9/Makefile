@@ -1,3 +1,6 @@
+# When a new kernel is installed, xtables-addons must also be installed so thats
+#   /lib/modules/X/extra/ is installed and available.
+
 UPDATE_PACKAGES = \
 		  device-ids \
 		  c_icap \
@@ -21,6 +24,7 @@ UPDATE_PACKAGES = \
 		  squid \
 		  suricata \
 		  wget \
+		  xtables-addons \
 		  wireless_tools \
 		  wpa_supplicant \
 		  coretree
