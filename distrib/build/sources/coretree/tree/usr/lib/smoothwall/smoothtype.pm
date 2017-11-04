@@ -167,7 +167,7 @@ sub displaytable
 
 	# 'id' can be used to give us a different name, *iff* we are repeating the
 	# widget. If it isn't set, set it randomly.
-	if (undef($id) || $id eq "") {
+	if (! defined($id) || $id eq "") {
 		$id = rand(1000);
 	}
 
@@ -479,7 +479,7 @@ sub dispaliastab
 
 	# 'id' can be used to give us a different name, *iff* we are repeating the
 	# widget. If it isn't set, set it randomly.
-	if (undef($id) || $id eq "") {
+	if (! defined($id) || $id eq "") {
 		$id = rand(1000);
 	}
 
