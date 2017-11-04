@@ -38,4 +38,13 @@ shopt -s nullglob
 for i in /var/smoothwall/mods/*/bin/; do
     [[ ":$PATH:" == *":${i/bin\//bin}:"* ]] || PATH=$PATH:$i
 done
+
+# PYTHONPATH
+export PYTHONPATH=/usr/lib/python2.7
+for i in /var/smoothwall/mods/*/usr/lib/python2.7; do
+    [[ ":$PYTHONPATH:" == *":${i/usr\/lib\/python2.7\//usr\/lib\/python2.7}:" ]] || PYTHONPATH=$PYTHONPATH:$i
+done
+for i in /var/smoothwall/mods/*/lib/python2.7; do
+    [[ ":$PYTHONPATH:" == *":${i/lib\/python2.7\//lib\/python2.7}:" ]] || PYTHONPATH=$PYTHONPATH:$i
+done
 shopt -u nullglob
