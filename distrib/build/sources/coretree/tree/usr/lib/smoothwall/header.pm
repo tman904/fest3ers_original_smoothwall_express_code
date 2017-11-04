@@ -1145,7 +1145,8 @@ sub validhostname
 
 	# Sanity checks
 	return 0 if (length($hostname) > 255);
-	return 0 unless ($hostname =~ /^[0-9A-Za-z][0-9A-Za-z.-]*[0-9A-Za-z]$/);
+	return 0 if ($hostname =~ /^[0-9.]+$/);
+	return 0 unless ($hostname =~ /^[0-9A-Za-z][0-9A-Za-z._-]*[0-9A-Za-z]$/);
 
 	my @parts = split(/\./, $hostname);
 	# validate each label
