@@ -7,6 +7,7 @@
 ./httpd/cgi-bin/ipblock.cgi
 ./httpd/cgi-bin/iptools.cgi
 ./httpd/cgi-bin/outgoing.cgi
+./httpd/cgi-bin/p3scan.cgi
 ./httpd/cgi-bin/portfw.cgi
 ./httpd/cgi-bin/pppsetup.cgi
 ./httpd/cgi-bin/proxy.cgi
@@ -24,4 +25,5 @@
 ./httpd/html/ui/img/check-icon.png
 ./httpd/html/ui/img/x-icon.png
 ./usr/lib/smoothwall/header.pm
+./usr/lib/smoothwall/langs/en.pl
 ./var/smoothwall/patches/installed

@@ -1213,6 +1213,8 @@
 # URL filter
 'urlfilter url filter' => 'url filter',
 'urlfilter filter settings' => 'URL filter settings',
+'urlfilter settings saved' => 'Saved URL filter settings',
+'urlfilter rules updated' => 'URL filter rules update started in background',
 'urlfilter configuration' => 'URL filter configuration',
 'urlfilter enabled' => 'URL Filter Enabled:',
 'urlfilter enabled msg' => 'URL filter: <i>(Enabled)</i>',

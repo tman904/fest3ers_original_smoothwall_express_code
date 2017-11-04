@@ -332,6 +332,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 	if ($filtersettings{'ACTION'} eq $tr{'save'}) {
               $filtersettings{'VALID'} = 'yes';
 		&savesettings;
+		$infomessage .= $tr{'urlfilter settings saved'} ."<br />";
 	}
 
 	if ($filtersettings{'ACTION'} eq $tr{'urlfilter save and restart'}) {
@@ -346,6 +347,7 @@ if (($filtersettings{'ACTION'} eq $tr{'save'}) ||
 
               $filtersettings{'VALID'} = 'yes';
 		&savesettings;
+		$infomessage .= $tr{'urlfilter settings saved'} ."<br />";
 
 		system("chown -R nobody.nobody $dbdir");
 
@@ -381,9 +383,9 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter save schedule'}) {
 		print FILE "CUSTOM_UPDATE_URL=$filtersettings{'CUSTOM_UPDATE_URL'}\n";
 		close FILE;
 
-              my $success = message('sgautoupdate');
+		my $success = message('sgautoupdate');
 		$infomessage = $success if ($success and $success !~ /fail/i);
-                $errormessage .= "sgautoupdate ".$tr{'smoothd failure'}."<br \>" unless ($success and $success !~ /fail/i);
+		$errormessage .= "sgautoupdate ".$tr{'smoothd failure'}."<br \>" unless ($success and $success !~ /fail/i);
 	}
 }
 
@@ -396,11 +398,17 @@ if ($filtersettings{'ACTION'} eq $tr{'urlfilter update now'}) {
 			if (system("${swbin}/autoupdate.pl $filtersettings{'CUSTOM_UPDATE_URL'} &")) {
 				$errormessage .= "Failed to start rules update via $filtersettings{'CUSTOM_UPDATE_URL'}.<br />";
 			}
+			else {
+				$infomessage = $tr{'urlfilter rules updated'} ." via $filtersettings{'CUSTOM_UPDATE_URL'}.<br />";
+			}
 		}
 	}
 	else {
 		if (system("${swbin}/autoupdate.pl $filtersettings{'UPDATE_SOURCE'} &")) {
 			$errormessage .= "Failed to start rules update via $filtersettings{'UPDATE_SOURCE'}.<br />";
+		}
+		else {
+			$infomessage = $tr{'urlfilter rules updated'} ." via $filtersettings{'UPDATE_SOURCE'}.<br />";
 		}
 	}
 }
