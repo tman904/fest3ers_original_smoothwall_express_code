@@ -27,6 +27,7 @@
 ./httpd/html/ui/img/check-icon.png
 ./httpd/html/ui/img/x-icon.png
 ./usr/bin/smoothwall/rrdtool.pl
+./usr/bin/smoothwall/trafficloader.pl
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/smoothtype.pm
 ./usr/lib/smoothwall/langs/en.pl
