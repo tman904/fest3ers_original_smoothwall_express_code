@@ -1,3 +1,5 @@
+./etc/bashrc
+./etc/dnsmasq.conf
 ./httpd/cgi-bin/changepw.cgi
 ./httpd/cgi-bin/dmzholes.cgi
 ./httpd/cgi-bin/extensions.cgi
@@ -24,6 +26,8 @@
 ./httpd/html/ui/css/style.css
 ./httpd/html/ui/img/check-icon.png
 ./httpd/html/ui/img/x-icon.png
+./usr/bin/smoothwall/rrdtool.pl
 ./usr/lib/smoothwall/header.pm
+./usr/lib/smoothwall/smoothtype.pm
 ./usr/lib/smoothwall/langs/en.pl
 ./var/smoothwall/patches/installed
