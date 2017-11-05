@@ -265,6 +265,9 @@ my $INPUT = 'trafficinput';
 my $OUTPUT = 'trafficoutput';
 my $FORWARD = 'trafficforward';
 
+# Remember the order in which connmarks are pushed onto the traf-tot tables.
+my @rulenumbers = ();
+
 
 
 # Prepare the normal rules to implement.
@@ -313,275 +316,272 @@ if (! ($trafficsettings{'ENABLE'} eq 'on' &&
   exit(0);
 } else {
 
-# Set the root qdiscs
-
-# note that as download queueing is done at the internal interface
-# all internal interfaces have to have the same speed. i.e. have to
-# choose the speed of the lowest. This isnt so bad if we can assume
-# that all internals are at least as fast as the external.
-
-# Add root qdiscs for external and internal interfaces - specify where default traffic goes
-tcqdisc("$external_interface root handle 1: htb default $classIDs{$default_traffic}");
-tcqdisc("$_ root handle 1: htb default $classIDs{$default_traffic}")
- 	for @internal_interface;
-
-# 'all' is the parent class of all for outgoing data, set at the speed of the external interface
-# Add RED's root class; root classes don't share bandwidth
-tcclass("$external_interface parent 1:0 classid 1:feed htb" .
-        " rate $upload_speed quantum 6000");
-# RED UL class capped at RED UL speed
-tcclass("$external_interface parent 1:feed classid 1:$classIDs{'all'}" .
-        " htb rate $upload_speed ceil $upload_speed quantum 6000");
-# RED localtraffic class, share=internal speed - RED DL; cap=internal
-# This isn't used yet, but could be deployed when a smoothie is used inside on fast net.
-
-my $ext_up = $deviceRates{$external_interface} - $upload_speed;
-if ($ext_up < $upload_speed) { $ext_up = $upload_speed; }
-#print STDERR "IF=$external_interface EXT=$deviceRates{$external_interface} UPL=$upload_speed SUB=$ext_up\n";
-
-tcclass("$external_interface parent 1:feed classid 1:$classIDs{'localtraffic'} htb" .
-        " rate $ext_up ceil $deviceRates{$external_interface} prio $prio{'localtraffic'} quantum 24000");
-tcqdisc("$external_interface parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
-
-for (@internal_interface) {
-  # internal root class
-  tcclass("$_ parent 1:0 classid 1:feed htb" .
-          " rate $deviceRates{$_} quantum 12000");
-
-  # RED DL class capped at RED DL speed
-  tcclass("$_ parent 1:feed classid 1:$classIDs{'all'}" .
-          " htb rate $download_speed ceil $download_speed quantum 6000");
-  # Localtraffic class, share=internal speed; cap=internal - RED DL
-  my $int_dn = $deviceRates{$_} - $download_speed;
-  if ($int_dn <= $download_speed) { $int_dn = $download_speed; }
-  #print STDERR "IF=$_ INT=$deviceRates{$_} UPL=$download_speed SUB=$int_dn\n";
-
-  tcclass("$_ parent 1:feed classid 1:$classIDs{'localtraffic'} htb" .
-          " rate $int_dn ceil $deviceRates{$_} prio $prio{'localtraffic'} quantum 24000");
-  tcqdisc("$_ parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
-}
-
-# default extra options is just 'quantum 1500'
-my %htbClassExtras = (
-        'high' => 'quantum 1500 burst 6000',
-        'normal' => 'quantum 1500 burst 6000',
-        'low' => 'quantum 1500 burst 6000',
-        'isochron' => 'quantum 1500 burst 1500',
-        'smoothadmin' => 'quantum 1500 burst 12000',
-        'webcache' => 'quantum 1500 burst 12000',
-        'localtraffic' => 'quantum 24000',
-        'smallpkt' => 'quantum 1500 burst 1500 cburst 15000',
-        );
-
-
-# We are doing a 'flat' scheme; all classes are direct children of the root class.
-# Extra options differ so we can create things with a simple loop.			  
-
-# Create the classes and their SFQ qdiscs.
-for my $tag (sort { $classIDs{$a} <=> $classIDs{$b} } keys %classIDs) {
-  next if $tag =~ /^(all|none|localtraffic)$/;
-#print STDERR "# class '$tag'\n";
-  stdclass($external_interface, $tag, $htbClassExtras{$tag}, \%urate, \%uceil, $upload_speed); 
-  # note can only extablish QOS for an interface that is up at the time.
-  stdclass($_, $tag, $htbClassExtras{$tag}, \%drate, \%dceil, $download_speed)
-      for up_interfaces(@internal_interface); 
-  push @classsortorder, $tag;
-}
-
-
-# Create the packet and byte counting chains.
-for my $dir (qw/up dn/) {
-  iptables("-N ${external_interface}-${dir}-traf-tot");
-}
-
-
-# As we make rules, keep a running tally of which class each connmark refers
-# to so we can cross-reference connmarks to classes
-my %connmark_to_class = ();
-$connmark_to_class{$connmarks{'smoothadmin'}} = 'smoothadmin';
-$connmark_to_class{$connmarks{'webcache'}} = 'webcache';
-$connmark_to_class{$connmarks{'localtraffic'}} = 'localtraffic';
-
-# Remember the order in which connmarks are pushed onto the traf-tot tables.
-my @rulenumbers = ();
-
-# special smoothadmin rule - so can admin externally even when busy
-if(defined $classIDs{'smoothadmin'}) {
-  iptables("-A $OUTPUT -o $external_interface --protocol TCP" .
-        " -m connmark --mark 0/$markMask" .
-	" --match multiport --source-ports 81,441,222" .
-	" -j CONNMARK --set-mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask");
-  push @rulenumbers, $connmarks{'smoothadmin'};
-}
-
-# Webcache special rule - give squid something.
-# [NPN: dunno why squid gets 8080 and 8443. DG?]
-if (defined $classIDs{'webcache'}) {
-  iptables("-A $OUTPUT -o $external_interface  --protocol TCP" .
-           " -m connmark --mark 0/$markMask" .
-	   " --match multiport --destination-ports 80,8080,443,8443" .
-	   " -j CONNMARK --set-mark " . $connmarks{'webcache'}*2048 . "/$markMask");
-  push @rulenumbers, $connmarks{'webcache'};
-}
-# collect per rule stats if chosen; create named accounting tables for each RED rule.
-if(defined $trafficsettings{'PERIPSTATS'} && $trafficsettings{'PERIPSTATS'} eq 'on') {
-  iptables("-A $INPUT -m connmark --mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask" .
-    " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Smoothadmin");
-  iptables("-A $POSTR -m connmark --mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask" .
-    " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Smoothadmin");
-  iptables("-A $INPUT -m connmark --mark " . $connmarks{'webcache'}*2048 . "/$markMask" .
-    " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Squid");
-  iptables("-A $POSTR -m connmark --mark " . $connmarks{'webcache'}*2048 . "/$markMask" .
-    " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Squid");
-}
-
-
-# Do not mark non-admin and non-squid localtraffic going out to external.
-# If it's leaving it isn't local!
-if(defined $classIDs{'localtraffic'}) {
-  iptables("-A $OUTPUT -o $external_interface -j RETURN");
-
-# Mark all other output destinations as localtraffic; if the traffic starts here e.g.
-#   from the web proxy and is going inwards it should run at full line speed.
-# FIXME: (fest3er,9/2013) No, it shouldn't; squid traffic to inside should be limited
-#   by RED's DL speed; likewise, squid traffic to the outside must be limited to RED's
-#   UL speed. (And even this isn't good enough because there's no easy way to share
-#   bandwidth among IFs; clients on GREEN and PURPLE could 'overcommit' RED's DL B/W.)
-
-  iptables("-A $OUTPUT  -j CONNMARK --set-mark " . $connmarks{'localtraffic'}*2048 . "/$markMask");
-
-# Do not mark localtraffic going in from external; if it has come from the
-#   outside, we want to shape it. 
-  iptables("-A $FORWARD -i $external_interface -j RETURN");
-
-# Do not mark localtraffic going out to external; if it is going to the
-#   outside, we want to shape it.
-  iptables("-A $FORWARD -o $external_interface -j RETURN");
-
-# Mark everything else being forwarded as localtraffic: internal
-  iptables("-A $FORWARD -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $connmarks{'localtraffic'}*2048 . "/$markMask");
-}
-
-# Generate the defined rules except those marked 'special'.
-for my $rule (@rules) {
-  # we are doing this on
-  my ($name, $mark, $port, $class, $direction, $proto) = 
-      @{$rule}{qw/name connmark port class direction protocol/};
-  next if $port eq 'special';    # special rules are handled separately
-  my ($sport, $dport) = '' x 2;
+  # Set the root qdiscs
   
-  if($port =~ /;/) {
-    # multi ports: change ';' to ','
-    $port =~ s/;/,/g;
-    $sport = " --match multiport --source-ports $port";
-    $dport = " --match multiport --destination-ports $port";
+  # note that as download queueing is done at the internal interface
+  # all internal interfaces have to have the same speed. i.e. have to
+  # choose the speed of the lowest. This isnt so bad if we can assume
+  # that all internals are at least as fast as the external.
+  
+  # Add root qdiscs for external and internal interfaces - specify where default traffic goes
+  tcqdisc("$external_interface root handle 1: htb default $classIDs{$default_traffic}");
+  tcqdisc("$_ root handle 1: htb default $classIDs{$default_traffic}")
+   	for @internal_interface;
+  
+  # 'all' is the parent class of all for outgoing data, set at the speed of the external interface
+  # Add RED's root class; root classes don't share bandwidth
+  tcclass("$external_interface parent 1:0 classid 1:feed htb" .
+          " rate $upload_speed quantum 6000");
+  # RED UL class capped at RED UL speed
+  tcclass("$external_interface parent 1:feed classid 1:$classIDs{'all'}" .
+          " htb rate $upload_speed ceil $upload_speed quantum 6000");
+  # RED localtraffic class, share=internal speed - RED DL; cap=internal
+  # This isn't used yet, but could be deployed when a smoothie is used inside on fast net.
+  
+  my $ext_up = $deviceRates{$external_interface} - $upload_speed;
+  if ($ext_up < $upload_speed) { $ext_up = $upload_speed; }
+  #print STDERR "IF=$external_interface EXT=$deviceRates{$external_interface} UPL=$upload_speed SUB=$ext_up\n";
+  
+  tcclass("$external_interface parent 1:feed classid 1:$classIDs{'localtraffic'} htb" .
+          " rate $ext_up ceil $deviceRates{$external_interface} prio $prio{'localtraffic'} quantum 24000");
+  tcqdisc("$external_interface parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
+  
+  for (@internal_interface) {
+    # internal root class
+    tcclass("$_ parent 1:0 classid 1:feed htb" .
+            " rate $deviceRates{$_} quantum 12000");
+  
+    # RED DL class capped at RED DL speed
+    tcclass("$_ parent 1:feed classid 1:$classIDs{'all'}" .
+            " htb rate $download_speed ceil $download_speed quantum 6000");
+    # Localtraffic class, share=internal speed; cap=internal - RED DL
+    my $int_dn = $deviceRates{$_} - $download_speed;
+    if ($int_dn <= $download_speed) { $int_dn = $download_speed; }
+    #print STDERR "IF=$_ INT=$deviceRates{$_} UPL=$download_speed SUB=$int_dn\n";
+  
+    tcclass("$_ parent 1:feed classid 1:$classIDs{'localtraffic'} htb" .
+            " rate $int_dn ceil $deviceRates{$_} prio $prio{'localtraffic'} quantum 24000");
+    tcqdisc("$_ parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
   }
-  else {
-    $sport = "--source-port $port";
-    $dport = "--destination-port $port";
+  
+  # default extra options is just 'quantum 1500'
+  my %htbClassExtras = (
+          'high' => 'quantum 1500 burst 6000',
+          'normal' => 'quantum 1500 burst 6000',
+          'low' => 'quantum 1500 burst 6000',
+          'isochron' => 'quantum 1500 burst 1500',
+          'smoothadmin' => 'quantum 1500 burst 12000',
+          'webcache' => 'quantum 1500 burst 12000',
+          'localtraffic' => 'quantum 24000',
+          'smallpkt' => 'quantum 1500 burst 1500 cburst 15000',
+          );
+  
+  
+  # We are doing a 'flat' scheme; all classes are direct children of the root class.
+  # Extra options differ so we can create things with a simple loop.			  
+  
+  # Create the classes and their SFQ qdiscs.
+  for my $tag (sort { $classIDs{$a} <=> $classIDs{$b} } keys %classIDs) {
+    next if $tag =~ /^(all|none|localtraffic)$/;
+  #print STDERR "# class '$tag'\n";
+    stdclass($external_interface, $tag, $htbClassExtras{$tag}, \%urate, \%uceil, $upload_speed); 
+    # note can only extablish QOS for an interface that is up at the time.
+    stdclass($_, $tag, $htbClassExtras{$tag}, \%drate, \%dceil, $download_speed)
+        for up_interfaces(@internal_interface); 
+    push @classsortorder, $tag;
   }
-  $connmarks{$name} = $mark;
-  $connmark_to_class{$mark} = $class;
-  if($direction eq 'in' || $direction eq 'both') {
-    # Service is hosted on GN/OR/PU
-    for my $p (@{$proto}) {
-      # Output to RED, source port is here
-      iptables("-A $POSTR -o $external_interface --protocol $p $sport" .
-	" -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
-      # Input from RED, destination port is here
-      iptables("-A $POSTR -i $external_interface --protocol $p $dport" .
-	" -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
-    }
-  }	
-  if($direction eq 'out' || $direction eq 'both') {
-    # Service is hosted on RD
-    for my $p (@{$proto}) {
-      # Input from RED, source port is here
-      iptables("-A $POSTR -i $external_interface --protocol $p $sport" .
-        " -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
-      # Output to RED, destination port is here
-      iptables("-A $POSTR -o $external_interface --protocol $p $dport" .
-        " -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
-    }
+  
+  
+  # Create the packet and byte counting chains.
+  for my $dir (qw/up dn/) {
+    iptables("-N ${external_interface}-${dir}-traf-tot");
   }
-  # collect per rule stats if chosen - so create named accounting tables for each directly connected
-  # internal network.
+  
+  
+  # As we make rules, keep a running tally of which class each connmark refers
+  # to so we can cross-reference connmarks to classes
+  my %connmark_to_class = ();
+  $connmark_to_class{$connmarks{'smoothadmin'}} = 'smoothadmin';
+  $connmark_to_class{$connmarks{'webcache'}} = 'webcache';
+  $connmark_to_class{$connmarks{'localtraffic'}} = 'localtraffic';
+  
+  # special smoothadmin rule - so can admin externally even when busy
+  if(defined $classIDs{'smoothadmin'}) {
+    iptables("-A $OUTPUT -o $external_interface --protocol TCP" .
+          " -m connmark --mark 0/$markMask" .
+  	" --match multiport --source-ports 81,441,222" .
+  	" -j CONNMARK --set-mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask");
+    push @rulenumbers, $connmarks{'smoothadmin'};
+  }
+  
+  # Webcache special rule - give squid something.
+  # [NPN: dunno why squid gets 8080 and 8443. DG?]
+  if (defined $classIDs{'webcache'}) {
+    iptables("-A $OUTPUT -o $external_interface  --protocol TCP" .
+             " -m connmark --mark 0/$markMask" .
+  	   " --match multiport --destination-ports 80,8080,443,8443" .
+  	   " -j CONNMARK --set-mark " . $connmarks{'webcache'}*2048 . "/$markMask");
+    push @rulenumbers, $connmarks{'webcache'};
+  }
+  # collect per rule stats if chosen; create named accounting tables for each RED rule.
   if(defined $trafficsettings{'PERIPSTATS'} && $trafficsettings{'PERIPSTATS'} eq 'on') {
-    for(keys %internal_netaddress) {
-      iptables("-A $POSTR -m connmark --mark " . $mark*2048 . "/$markMask" .
-        " -j ACCOUNT --addr $internal_netaddress{$_}/$internal_netmask{$_} --tname ${_}_$name");
+    iptables("-A $INPUT -m connmark --mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask" .
+      " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Smoothadmin");
+    iptables("-A $POSTR -m connmark --mark " . $connmarks{'smoothadmin'}*2048 . "/$markMask" .
+      " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Smoothadmin");
+    iptables("-A $INPUT -m connmark --mark " . $connmarks{'webcache'}*2048 . "/$markMask" .
+      " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Squid");
+    iptables("-A $POSTR -m connmark --mark " . $connmarks{'webcache'}*2048 . "/$markMask" .
+      " -j ACCOUNT --addr $netsettings{'RED_ADDRESS'} --tname RED_Squid");
+  }
+  
+  
+  # Do not mark non-admin and non-squid localtraffic going out to external.
+  # If it's leaving it isn't local!
+  if(defined $classIDs{'localtraffic'}) {
+    iptables("-A $OUTPUT -o $external_interface -j RETURN");
+  
+  # Mark all other output destinations as localtraffic; if the traffic starts here e.g.
+  #   from the web proxy and is going inwards it should run at full line speed.
+  # FIXME: (fest3er,9/2013) No, it shouldn't; squid traffic to inside should be limited
+  #   by RED's DL speed; likewise, squid traffic to the outside must be limited to RED's
+  #   UL speed. (And even this isn't good enough because there's no easy way to share
+  #   bandwidth among IFs; clients on GREEN and PURPLE could 'overcommit' RED's DL B/W.)
+  
+    iptables("-A $OUTPUT  -j CONNMARK --set-mark " . $connmarks{'localtraffic'}*2048 . "/$markMask");
+  
+  # Do not mark localtraffic going in from external; if it has come from the
+  #   outside, we want to shape it. 
+    iptables("-A $FORWARD -i $external_interface -j RETURN");
+  
+  # Do not mark localtraffic going out to external; if it is going to the
+  #   outside, we want to shape it.
+    iptables("-A $FORWARD -o $external_interface -j RETURN");
+  
+  # Mark everything else being forwarded as localtraffic: internal
+    iptables("-A $FORWARD -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $connmarks{'localtraffic'}*2048 . "/$markMask");
+  }
+  
+  # Generate the defined rules except those marked 'special'.
+  for my $rule (@rules) {
+    # we are doing this on
+    my ($name, $mark, $port, $class, $direction, $proto) = 
+        @{$rule}{qw/name connmark port class direction protocol/};
+    next if $port eq 'special';    # special rules are handled separately
+    my ($sport, $dport) = '' x 2;
+    
+    if($port =~ /;/) {
+      # multi ports: change ';' to ','
+      $port =~ s/;/,/g;
+      $sport = " --match multiport --source-ports $port";
+      $dport = " --match multiport --destination-ports $port";
+    }
+    else {
+      $sport = "--source-port $port";
+      $dport = "--destination-port $port";
+    }
+    $connmarks{$name} = $mark;
+    $connmark_to_class{$mark} = $class;
+    if($direction eq 'in' || $direction eq 'both') {
+      # Service is hosted on GN/OR/PU
+      for my $p (@{$proto}) {
+        # Output to RED, source port is here
+        iptables("-A $POSTR -o $external_interface --protocol $p $sport" .
+  	" -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
+        # Input from RED, destination port is here
+        iptables("-A $POSTR -i $external_interface --protocol $p $dport" .
+  	" -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
+      }
+    }	
+    if($direction eq 'out' || $direction eq 'both') {
+      # Service is hosted on RD
+      for my $p (@{$proto}) {
+        # Input from RED, source port is here
+        iptables("-A $POSTR -i $external_interface --protocol $p $sport" .
+          " -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
+        # Output to RED, destination port is here
+        iptables("-A $POSTR -o $external_interface --protocol $p $dport" .
+          " -m connmark --mark 0/$markMask -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
+      }
+    }
+    # collect per rule stats if chosen - so create named accounting tables for each directly connected
+    # internal network.
+    if(defined $trafficsettings{'PERIPSTATS'} && $trafficsettings{'PERIPSTATS'} eq 'on') {
+      for(keys %internal_netaddress) {
+        iptables("-A $POSTR -m connmark --mark " . $mark*2048 . "/$markMask" .
+          " -j ACCOUNT --addr $internal_netaddress{$_}/$internal_netmask{$_} --tname ${_}_$name");
+      }
     }
   }
-}
-
-# Generate the 'special' rules
-for my $rule (@rules) {
-  my ($name, $mark, $port, $class) = @{$rule}{qw/name connmark port class/};
-  # we are doing this on
-  $connmarks{$name} = $mark;
-  $connmark_to_class{$mark} = $class;
-  if($name eq 'Peer_to_Peer') {
-      iptables("-A $POSTR -i $external_interface" .
+  
+  # Generate the 'special' rules
+  for my $rule (@rules) {
+    my ($name, $mark, $port, $class) = @{$rule}{qw/name connmark port class/};
+    # we are doing this on
+    $connmarks{$name} = $mark;
+    $connmark_to_class{$mark} = $class;
+    if($name eq 'Peer_to_Peer') {
+        iptables("-A $POSTR -i $external_interface" .
+          " -m connmark --mark 0/$markMask" .
+          " -m ipp2p --edk --dc --kazaa --gnu --bit --apple" .
+          " --winmx --soul --ares --mute --waste --xdcc" .
+          " -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
+    }
+    if($name eq 'Voice_Over_IP') {
+      # also assume EF diffserv mark set wants to
+      # be treated as if it were VOIP
+      iptables("-A $POSTR " .
         " -m connmark --mark 0/$markMask" .
-        " -m ipp2p --edk --dc --kazaa --gnu --bit --apple" .
-        " --winmx --soul --ares --mute --waste --xdcc" .
-        " -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
+        " -m dscp --dscp-class EF -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
+      
+    }
+    if($name eq 'VPN') {
+      # no ports involved - just shape protocols 50 and 51 (ipsec)
+      iptables("-A $POSTR --protocol $_ " .
+        " -m connmark --mark 0/$markMask" .
+        " -j CONNMARK --set-mark " . $mark*2048 . "/$markMask") for 50..51;
+    }
+    # other fancy rules can go here
   }
-  if($name eq 'Voice_Over_IP') {
-    # also assume EF diffserv mark set wants to
-    # be treated as if it were VOIP
-    iptables("-A $POSTR " .
-      " -m connmark --mark 0/$markMask" .
-      " -m dscp --dscp-class EF -j CONNMARK --set-mark " . $mark*2048 . "/$markMask");
     
-  }
-  if($name eq 'VPN') {
-    # no ports involved - just shape protocols 50 and 51 (ipsec)
-    iptables("-A $POSTR --protocol $_ " .
-      " -m connmark --mark 0/$markMask" .
-      " -j CONNMARK --set-mark " . $mark*2048 . "/$markMask") for 50..51;
-  }
-  # other fancy rules can go here
-}
   
-
-# MUST BE LAST! special rule for smallpkt - nothing to do with connections
-# will attach to any small packet that has not been associated with a connection already...
-iptables("-A $POSTR -m connmark --mark 0/$markMask" .
-    " -j CLASSIFY --set-class 1:$classIDs{'smallpkt'} --match length --length 1:110")
-  if defined $classIDs{'smallpkt'};
-
-# now jump to traf-tot table for connmark to class processing (and statistics gathering)
-# uploads qued on external interface
-iptables("-A $POSTR -o $external_interface -j ${external_interface}-up-traf-tot");
-# downloads queued on each internal NIC
-for my $if (@internal_interface) {
-  iptables("-A $POSTR -o $if -j ${external_interface}-dn-traf-tot");
-}
-
-# now get to assign connmarks into classes, and do connmark for default as last
-for my $cm (sort keys %connmark_to_class, 0) {
-  next if $cm == "0";
-  my $class = $classIDs{$connmark_to_class{$cm}} || $classIDs{$default_traffic} ;
-  push @rulenumbers, $cm;
-  iptables("-A ${external_interface}-up-traf-tot -o $external_interface " .
-    " -m connmark --mark " . $cm*2048 . "/$markMask" .
-    " -j CLASSIFY --set-class 1:$class");
+  # MUST BE LAST! special rule for smallpkt - nothing to do with connections
+  # will attach to any small packet that has not been associated with a connection already...
+  iptables("-A $POSTR -m connmark --mark 0/$markMask" .
+      " -j CLASSIFY --set-class 1:$classIDs{'smallpkt'} --match length --length 1:110")
+    if defined $classIDs{'smallpkt'};
   
+  # now jump to traf-tot table for connmark to class processing (and statistics gathering)
+  # uploads qued on external interface
+  iptables("-A $POSTR -o $external_interface -j ${external_interface}-up-traf-tot");
+  # downloads queued on each internal NIC
   for my $if (@internal_interface) {
-    iptables("-A ${external_interface}-dn-traf-tot -o $if" .
+    iptables("-A $POSTR -o $if -j ${external_interface}-dn-traf-tot");
+  }
+  
+  # now get to assign connmarks into classes, and do connmark for default as last
+  for my $cm (sort keys %connmark_to_class, 0) {
+    next if $cm == "0";
+    my $class = $classIDs{$connmark_to_class{$cm}} || $classIDs{$default_traffic} ;
+    push @rulenumbers, $cm;
+    iptables("-A ${external_interface}-up-traf-tot -o $external_interface " .
       " -m connmark --mark " . $cm*2048 . "/$markMask" .
       " -j CLASSIFY --set-class 1:$class");
+    
+    for my $if (@internal_interface) {
+      iptables("-A ${external_interface}-dn-traf-tot -o $if" .
+        " -m connmark --mark " . $cm*2048 . "/$markMask" .
+        " -j CLASSIFY --set-class 1:$class");
+    }
   }
-}
-
-# so can use trafficmon etc. - SmoothTraffic compatible descriptions of what is in iptables
-writesettings();
-
-# Create faux PID file for status
-open(PF, ">$qosPidFile") && close(PF);
-
-exit(0);
+  
+  # so can use trafficmon etc. - SmoothTraffic compatible descriptions of what is in iptables
+  writesettings();
+  
+  # Create faux PID file for status
+  open(PF, ">$qosPidFile") && close(PF);
+  
+  exit(0);
 }
 # end of main program....
 
