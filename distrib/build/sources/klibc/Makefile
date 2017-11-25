@@ -27,7 +27,7 @@ configure: patch
 COMPILE = yes
 compile: configure
 	cd $(DIR); \
-	  $(MAKE) $(JOBS) V=1 prefix=/usr KLIBCKERNELSRC=/build/sources/kernel-headers/linux-$(KERNEL_VER)/usr/
+	  $(MAKE) $(JOBS) V=1 prefix=/usr KLIBCKERNELSRC=/build/sources/kernel-headers/linux-$(KERNELHEADERVER)/usr/
 
 
 INSTALL = yes
@@ -35,7 +35,7 @@ install: compile
 	@mkdir -p $(PKG_ROOT)$(PKG_DIR)
 	cd $(DIR); \
 	  sed -i -e 's=SRC) ARCH=SRC)/../ ARCH=' scripts/Kbuild.install; \
-	  $(MAKE) V=1 INSTALLROOT=$(PKG_ROOT) prefix=/usr KLIBCKERNELSRC=/build/sources/kernel-headers/linux-$(KERNEL_VER)/usr install
+	  $(MAKE) V=1 INSTALLROOT=$(PKG_ROOT) prefix=/usr KLIBCKERNELSRC=/build/sources/kernel-headers/linux-$(KERNELHEADERVER)/usr install
 
 CLEAN = yes
 clean:

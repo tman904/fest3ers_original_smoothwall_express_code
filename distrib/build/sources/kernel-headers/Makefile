@@ -14,14 +14,15 @@ VERSION = 0.0
 CFG_TYPE := $(KERNEL_TYPE)-$(mARCH)
 
 download:
-	@$(DL_CMD) $(KERNEL_URL)
+	@$(DL_CMD) $(KERNELHEADER_URL)
 
 install: download
-	@tar -xvf $(DOWNLOADS_DIR)/linux-$(KERNEL_VER).tar.xz
+	@tar -xvf $(DOWNLOADS_DIR)/linux-$(KERNELHEADERVER).tar.xz
 ifeq ($(BUILD_PHASE), Stage_1)
-	+cd linux-$(KERNEL_VER); \
-	make mrproper; \
-	  sed -e 's/^CONFIG_LOCALVERSION=.*$$/CONFIG_LOCALVERSION="$(KERNEL_TYPE)"/' ../../linux.config$(CFG_TYPE) > .config; \
+	+cd linux-$(KERNELHEADERVER); \
+	  make mrproper; \
+	  sed -e 's/^CONFIG_LOCALVERSION=.*$$/CONFIG_LOCALVERSION="$(KERNEL_TYPE)"/' ../../linuxheaders.config$(CFG_TYPE) > .config; \
+	  make silentoldconfig; \
 	  make headers_check; \
 	  ln -s ../arch/x86/include/asm include/asm; \
 	  cp arch/x86/include/generated/asm/* arch/x86/include/asm/; \
@@ -30,17 +31,18 @@ ifeq ($(BUILD_PHASE), Stage_1)
 endif
 ifeq ($(BUILD_PHASE), Final)
 	+mkdir -p $(PKG_ROOT); \
-	cd linux-$(KERNEL_VER); \
+	cd linux-$(KERNELHEADERVER); \
 	  make ${JOBS} mrproper
-	cd linux-$(KERNEL_VER); \
-	  sed -e 's/^CONFIG_LOCALVERSION=.*$$/CONFIG_LOCALVERSION="$(KERNEL_TYPE)"/' ../../linux.config$(CFG_TYPE) > .config
-	cd linux-$(KERNEL_VER); \
+	cd linux-$(KERNELHEADERVER); \
+	  sed -e 's/^CONFIG_LOCALVERSION=.*$$/CONFIG_LOCALVERSION="$(KERNEL_TYPE)"/' ../../linuxheaders.config$(CFG_TYPE) > .config; \
+	  make silentoldconfig
+	cd linux-$(KERNELHEADERVER); \
 	  make ${JOBS} prepare
-	cd linux-$(KERNEL_VER); \
+	cd linux-$(KERNELHEADERVER); \
 	  make ${JOBS} headers_check
-	cd linux-$(KERNEL_VER); \
+	cd linux-$(KERNELHEADERVER); \
 	  make ${JOBS} INSTALL_HDR_PATH=$(PKG_ROOT)$(PKG_DIR) headers_install
-	cd linux-$(KERNEL_VER); \
+	cd linux-$(KERNELHEADERVER); \
 	  find $(PKG_ROOT)$(PKG_DIR)/include \( -name .install -o -name ..install.cmd \) -delete
 endif
 
@@ -51,7 +53,7 @@ build-tarball: install
 
 clean:
 	@echo -n " $(PACKAGE)"
-	@rm -rf linux-$(KERNEL_VER)
+	@rm -rf linux-$(KERNELHEADERVER)
 ifeq ($(BUILD_PHASE), Final)
 	@rm -rf $(PKG_ROOT)
 	@rm -f $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz
