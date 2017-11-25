@@ -11,7 +11,15 @@ VERSION = 2.4.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/bison/
 
+ifeq ($(BUILD_PHASE), Stage_3)
+
+CONFIG_OPTS += --prefix=${TOOLS_DIR}
+
+else
+
 CONFIG_OPTS += --prefix=${PKG_DIR}
+
+endif
 
 PATCH = yes
 patch: $(DIR)/
