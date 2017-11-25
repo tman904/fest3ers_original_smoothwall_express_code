@@ -10,6 +10,7 @@ compile:
 install: compile
 	@mkdir -p $(PKG_ROOT)
 	@install -D $(COMPILE_DIR)/ipbatch $(PKG_ROOT)/usr/sbin/ipbatch
+	@install -D $(COMPILE_DIR)/ipbatch $(PKG_ROOT)/usr/sbin/ip6batch
 
 all: install
 	@tar -zcvf $(TARGET_DIR)/smoothwall-$(PACKAGE).tar.gz -C $(PKG_ROOT) .

@@ -12,8 +12,6 @@ VERSION = 1.19.2
 BASE_URL = ftp://ftp.gnu.org/gnu/wget
 EXTENSION = .tar.gz
 
-#PATCH_FILE1 = itemx.patch
-
 # Some sites disallow HTTP
 ifeq ($(BUILD_PHASE), Stage_3)
 CONFIG_OPTS += --with-ssl=openssl --with-libssl-prefix=$(PKG_DIR)

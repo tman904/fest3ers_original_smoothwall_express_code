@@ -7,13 +7,13 @@
 include ../Makefile.conf
 
 PACKAGE = linux-firmware
-VERSION = 20160803
+VERSION = 20171009
 
 EXTENSION = .tar.gz
 
 export pkgName = $(PACKAGE)
 export gitURL = git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-export gitCommitID = 6bc2c60998882
+export gitCommitID = bf04291309d3
 export gitBranch = $(VERSION)
 
 PREPARE = yes

@@ -220,6 +220,19 @@ my %uceil = (
 	'smallpkt' => 100,
 );
 
+# default extra options is just 'quantum 1500'
+my %htbClassExtras = (
+	'high' => 'quantum 1500 burst 6000',
+	'normal' => 'quantum 1500 burst 6000',
+	'low' => 'quantum 1500 burst 6000',
+	'isochron' => 'quantum 1500 burst 1500',
+	'smoothadmin' => 'quantum 1500 burst 12000',
+	'webcache' => 'quantum 1500 burst 12000',
+	'localtraffic' => 'quantum 24000',
+	'smallpkt' => 'quantum 1500 burst 1500 cburst 15000',
+);
+  
+  
 # Override with UI settings
 if(defined $trafficsettings{URATE} && $trafficsettings{URATE} ne '') {
   %urate = split(',', $trafficsettings{URATE});
@@ -267,6 +280,7 @@ my $FORWARD = 'trafficforward';
 
 # Remember the order in which connmarks are pushed onto the traf-tot tables.
 my @rulenumbers = ();
+my %connmark_to_class = ();
 
 
 
@@ -364,19 +378,6 @@ if (! ($trafficsettings{'ENABLE'} eq 'on' &&
     tcqdisc("$_ parent 1:$classIDs{'localtraffic'} handle $classIDs{'localtraffic'}: sfq perturb 1");
   }
   
-  # default extra options is just 'quantum 1500'
-  my %htbClassExtras = (
-          'high' => 'quantum 1500 burst 6000',
-          'normal' => 'quantum 1500 burst 6000',
-          'low' => 'quantum 1500 burst 6000',
-          'isochron' => 'quantum 1500 burst 1500',
-          'smoothadmin' => 'quantum 1500 burst 12000',
-          'webcache' => 'quantum 1500 burst 12000',
-          'localtraffic' => 'quantum 24000',
-          'smallpkt' => 'quantum 1500 burst 1500 cburst 15000',
-          );
-  
-  
   # We are doing a 'flat' scheme; all classes are direct children of the root class.
   # Extra options differ so we can create things with a simple loop.			  
   
@@ -400,7 +401,6 @@ if (! ($trafficsettings{'ENABLE'} eq 'on' &&
   
   # As we make rules, keep a running tally of which class each connmark refers
   # to so we can cross-reference connmarks to classes
-  my %connmark_to_class = ();
   $connmark_to_class{$connmarks{'smoothadmin'}} = 'smoothadmin';
   $connmark_to_class{$connmarks{'webcache'}} = 'webcache';
   $connmark_to_class{$connmarks{'localtraffic'}} = 'localtraffic';
