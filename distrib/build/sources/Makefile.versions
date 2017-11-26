@@ -5,9 +5,9 @@
 # This code is distributed under the terms of the GPL v2.
 
 # The system's kernel.
-KERNEL_MAJOR = 4
-KERNEL_MMR = $(KERNEL_MAJOR).9
-KERNEL_VER = $(KERNEL_MMR).65
+KERNEL_MAJOR = 3
+KERNEL_MMR = $(KERNEL_MAJOR).16
+KERNEL_VER = $(KERNEL_MMR).50
 
 # The kernel version headers needed to build glibc
 # Unrelated to the system's kernel
