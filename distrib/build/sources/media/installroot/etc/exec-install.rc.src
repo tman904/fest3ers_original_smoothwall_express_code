@@ -690,7 +690,7 @@ else
   tidyBackupDir total
 
   # Adjust the initramfs as needed (different disk, NICs or FS, etc.)
-  KERNEL_VER=`ls -C1 /harddisk/boot/initrd* | tail -1 | sed -e 's/.*initrd-//' -e 's/'${KERNEL_TYPE}'\.gz//'`
+  KERNEL_VER=`ls -C1 /harddisk/boot/initrd*gz | tail -1 | sed -e 's/.*initrd-//' -e 's/'${KERNEL_TYPE}'\.gz//'`
   echo "  adjust runtime initramfs"
   set -- $FS
   FSTYPE=$2
