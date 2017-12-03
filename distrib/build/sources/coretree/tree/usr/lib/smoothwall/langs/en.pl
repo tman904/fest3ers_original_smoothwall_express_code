@@ -799,6 +799,7 @@
 'ids download label' => 'Download Rules:',
 'ids download status' => 'Status:',
 'ids download progress' => 'Progress:',
+'ids download log' => 'Log:',
 'last download' => 'Last Download:',
 'save and update rules' => 'Save and update rules',
 'ids debug' => 'Debug:',

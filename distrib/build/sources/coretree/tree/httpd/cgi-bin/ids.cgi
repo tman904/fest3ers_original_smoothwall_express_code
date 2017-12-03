@@ -45,6 +45,7 @@ $snortsettings{'DOWNLOAD'} = 'off';
 $snortsettings{'ACTION'} = '';
 
 my $errormessage = '';
+my $infomessage = '';
 my $refresh = '';
 my $success = '';
 
@@ -95,9 +96,8 @@ if ($snortsettings{'ACTION'} eq $tr{'save'} and
 		&log($tr{'snort is disabled'});
 		$success = &message('snortstop');
 	}
-	$errormessage .= $success."<br />" if ($success);
+	$infomessage .= $success."<br />" if ($success);
 	$errormessage .= "snort ".$tr{'smoothd failure'} ."<br />" unless ($success);
-	$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 # If download is checked, uncheck and make oink text
@@ -185,7 +185,7 @@ else {
 
 &openbigbox('100%', 'left');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action='?'><div>\n";
 
@@ -262,6 +262,11 @@ print "
 	<td class='base' style='width:20%;'>$tr{'ids download status'}</td>
 	<td><span id='status'></span></td>
 </tr>
+<tr id='log-row' style='display:none;'>
+	<td class='base' style='width:20%;'>$tr{'ids download log'}</td>
+	<td><div id='log' style='height:250px; max-height:250px; min-height:250px; padding:2pt;
+                          overflow:auto; border:lightgrey 1px solid;'></div></td>
+</tr>
 </table>
 ";
 
@@ -269,7 +274,6 @@ print "
 
 print "</div></form>\n";
 
-&alertbox('add', 'add');
 &closebigbox();
 
 # close except </body> and </html>
@@ -300,6 +304,11 @@ if (($snortsettings{'ACTION'} eq $tr{'save'}) &&
 	# Try to fetch the ruleset
 	my $snortver_nodots = $snortversion;
 	$snortver_nodots =~ s/\.//g;
+	print "
+<script language='javascript' type='text/javascript'>
+  document.getElementById('log-row').style.display = 'table-row';
+</script>
+";
 	&runoinkmaster($snortver_nodots);
 	my $runmsg .= $errormessage if ($errormessage ne "");
 
@@ -319,6 +328,7 @@ if (($snortsettings{'ACTION'} eq $tr{'save'}) &&
 		print "
 <script language='javascript' type='text/javascript'>
 document.getElementById('status').innerHTML = '$errormessage';
+document.getElementById('log').innerHTML += '$errormessage';
 </script>
 ";
 	}
@@ -344,8 +354,8 @@ sub runoinkmaster
 {
 	my $v = $_[0];
 	my $attempt = $_[1] if (defined $_[1]);
-	my $url = "http://www.snort.org/reg-rules/snortrules-snapshot-$v.tar.gz/" . $snortsettings{'OINK'};
-	# my $url = "http://downloads/snortrules-snapshot-$v.tar.gz/" . $snortsettings{'OINK'};
+	#my $url = "http://www.snort.org/reg-rules/snortrules-snapshot-$v.tar.gz/" . $snortsettings{'OINK'};
+	my $url = "http://downloads/snortrules-snapshot-$v.tar.gz/" . $snortsettings{'OINK'};
 
 	my $curdir = getcwd;
 	chdir "${swroot}/snort/";
@@ -369,8 +379,16 @@ sub runoinkmaster
 		print "<p style='background:white; border:solid black 2pt; padding:2pt'>\n" if ($formdebug ne "");
 		my $percent = 0;
 		while(<FD>) {
-			print $_."<br>\n" if ($formdebug ne "");
-			print STDERR $_;
+			my $line = $_;
+			chomp ($line);
+			$line =~ s/'/\\'/g;
+			if ($formdebug ne "") {
+				print "
+<script language='javascript' type='text/javascript'>
+  document.getElementById('log').innerHTML += '${line}<br />\\n';
+</script>
+";
+			}
 			$errormessage = '';
 			if ($percent < 100 && /(\d{1,3})%/) {
 				$percent = $1;
