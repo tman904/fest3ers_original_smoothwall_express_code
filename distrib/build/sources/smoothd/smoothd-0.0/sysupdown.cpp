@@ -75,5 +75,6 @@ int cycle_networking(std::vector<std::string> & parameters, std::string & respon
 		return error;
 	}
 	
+	response = "Network up/down complete.";
 	return error;
 }
