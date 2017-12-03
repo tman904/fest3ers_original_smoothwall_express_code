@@ -18,6 +18,7 @@ my $filename = "${swroot}/hosts/config";
 
 my $refresh = '';
 my $errormessage = '';
+my $infomessage = '';
 
 &showhttpheaders();
 
@@ -40,9 +41,9 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq "" ) {
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'add'}) {
-	$errormessage .= $tr{'ip address not valid'} unless(&validip($cgiparams{'IP'})) ."<br />\n";
-	$errormessage .= $tr{'invalid hostname'} unless(&validhostname($cgiparams{'HOSTNAME'})) ."<br />\n";
-	$errormessage .= $tr{'invalid comment'} unless ( &validcomment( $cgiparams{'COMMENT'} ) ) ."<br />\n";
+	$errormessage .= $tr{'ip address not valid'} ."<br />\n" unless(&validip($cgiparams{'IP'}));
+	$errormessage .= $tr{'invalid hostname'} ."<br />\n" unless(&validhostname($cgiparams{'HOSTNAME'}));
+	$errormessage .= $tr{'invalid comment'} ."<br />\n" unless ( &validcomment( $cgiparams{'COMMENT'} ) );
 
 	unless ($errormessage) {
 		open(FILE,">>$filename") or die 'Unable to open config file.';
@@ -62,6 +63,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		system('/usr/bin/smoothwall/writehosts.pl');
 
 		my $success = message('dnsproxyhup');
+		$infomessage .= "$success<br />\n" if ($success);
 		$errormessage .= "dnsproxyhup ".$tr{'smoothd failure'}."<br />" unless ($success);
 	}
 }
@@ -105,6 +107,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		system('/usr/bin/smoothwall/writehosts.pl');
 
 		my $success = message('dnsproxyhup');
+		$infomessage .= "$success<br />\n" if ($success);
 		$errormessage .= "dnsproxyhup ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
@@ -119,7 +122,7 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

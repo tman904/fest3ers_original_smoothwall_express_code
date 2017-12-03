@@ -1,6 +1,8 @@
 ./etc/bashrc
 ./etc/dnsmasq.conf
 ./httpd/cgi-bin/changepw.cgi
+./httpd/cgi-bin/ddns.cgi
+./httpd/cgi-bin/dhcp.cgi
 ./httpd/cgi-bin/dmzholes.cgi
 ./httpd/cgi-bin/extensions.cgi
 ./httpd/cgi-bin/hosts.cgi

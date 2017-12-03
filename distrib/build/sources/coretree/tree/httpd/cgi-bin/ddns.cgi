@@ -41,6 +41,7 @@ if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'AC
 }
 
 my $errormessage = '';
+my $infomessage = '';
 my @service = ();
 
 if ($cgiparams{'ACTION'} eq $tr{'add'}) {
@@ -60,70 +61,86 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 	}
 	$errormessage .= $tr{'invalid comment'} ."<br />" unless ( &validcomment( $cgiparams{'COMMENT'} ) );
 
-	open(FILE, $filename) or die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
-	my $line;
-	foreach $line (@current) {
-		my @temp = split(/\,/,$line);
-		if($cgiparams{'HOSTNAME'} eq $temp[1] && $cgiparams{'DOMAIN'} eq $temp[2]) {
-			 $errormessage .= $tr{'hostname and domain already in use'} ."<br />";
+	if ( open(FILE, $filename)) {
+		my @current = <FILE>;
+		close(FILE);
+		my $line;
+		foreach $line (@current) {
+			my @temp = split(/\,/,$line);
+			if($cgiparams{'HOSTNAME'} eq $temp[1] && $cgiparams{'DOMAIN'} eq $temp[2]) {
+			 	$errormessage .= $tr{'hostname and domain already in use'} ."<br />";
+			}
+		}
+		unless ($errormessage) {
+			if (open(FILE,">>$filename")) {
+				flock FILE, 2;
+				print FILE "$cgiparams{'SERVICE'},$cgiparams{'HOSTNAME'},$cgiparams{'DOMAIN'},$cgiparams{'PROXY'},$cgiparams{'WILDCARDS'},$cgiparams{'LOGIN'},$cgiparams{'PASSWORD'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
+				close(FILE);
+
+				foreach my $key (keys %cgiparams) {
+					$cgiparams{$key} = '';
+				}
+				$cgiparams{'COLUMN'} = 1;
+				$cgiparams{'ORDER'} = $tr{'log ascending'};
+				&log($tr{'ddns hostname added'});
+			}
+		}
+		else {
+			$errormessage .= "Could not open config file to save.<br />\n";
 		}
 	}
-	unless ($errormessage) {
-		open(FILE,">>$filename") or die 'Unable to open config file.';
-		flock FILE, 2;
-		print FILE "$cgiparams{'SERVICE'},$cgiparams{'HOSTNAME'},$cgiparams{'DOMAIN'},$cgiparams{'PROXY'},$cgiparams{'WILDCARDS'},$cgiparams{'LOGIN'},$cgiparams{'PASSWORD'},$cgiparams{'ENABLED'},$cgiparams{'COMMENT'}\n";
-		close(FILE);
-
-		foreach my $key (keys %cgiparams) {
-			$cgiparams{$key} = '';
-		}
-		$cgiparams{'COLUMN'} = 1;
-		$cgiparams{'ORDER'} = $tr{'log ascending'};
-		&log($tr{'ddns hostname added'});
+	else {
+		$errormessage .= "Could not open config file for validation.<br />\n";
 	}
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}) {
-	open(FILE, "$filename") or die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
+	if ( open(FILE, $filename)) {
+		my @current = <FILE>;
+		close(FILE);
 
-	my $count = 0;
-	my $id = 0;
-	my $line;
-	foreach $line (@current) {
-		$id++;
-		$count++ if ($cgiparams{$id} eq "on");
-	}
-	$errormessage .= $tr{'nothing selected'} ."<br />" if ($count == 0);
-	$errormessage .= $tr{'you can only select one item to edit'} ."<br />" if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
-	unless ($errormessage) {
-		open(FILE, ">$filename") or die 'Unable to open config file.';
-		flock FILE, 2;
+		my $count = 0;
 		my $id = 0;
+		my $line;
 		foreach $line (@current) {
 			$id++;
-			unless ($cgiparams{$id} eq "on") {
-				print FILE "$line";
+			$count++ if ($cgiparams{$id} eq "on");
+		}
+		$errormessage .= $tr{'nothing selected'} ."<br />" if ($count == 0);
+		$errormessage .= $tr{'you can only select one item to edit'} ."<br />" if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'});
+		unless ($errormessage) {
+			if ( open(FILE, ">$filename")) {
+				flock FILE, 2;
+				my $id = 0;
+				foreach $line (@current) {
+					$id++;
+					unless ($cgiparams{$id} eq "on") {
+						print FILE "$line";
+					}
+					elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
+						chomp($line);
+						my @temp = split(/\,/,$line);
+						$cgiparams{'SERVICE'} = $temp[0];
+						$cgiparams{'HOSTNAME'} = $temp[1];
+						$cgiparams{'DOMAIN'} = $temp[2];
+						$cgiparams{'PROXY'} = $temp[3];
+						$cgiparams{'WILDCARDS'} = $temp[4];
+						$cgiparams{'LOGIN'} = $temp[5];
+						$cgiparams{'PASSWORD'} = $temp[6];
+						$cgiparams{'ENABLED'} = $temp[7];
+						$cgiparams{'COMMENT'} = $temp[8] || '';
+					}
+				}
+				close(FILE);
+				&log($tr{'ddns hostname removed'});
 			}
-			elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
-				chomp($line);
-				my @temp = split(/\,/,$line);
-				$cgiparams{'SERVICE'} = $temp[0];
-				$cgiparams{'HOSTNAME'} = $temp[1];
-				$cgiparams{'DOMAIN'} = $temp[2];
-				$cgiparams{'PROXY'} = $temp[3];
-				$cgiparams{'WILDCARDS'} = $temp[4];
-				$cgiparams{'LOGIN'} = $temp[5];
-				$cgiparams{'PASSWORD'} = $temp[6];
-				$cgiparams{'ENABLED'} = $temp[7];
-				$cgiparams{'COMMENT'} = $temp[8] || '';
+			else {
+				$errormessage .= "Could not open config file to remove entry.<br />\n";
 			}
 		}
-		close(FILE);
-		&log($tr{'ddns hostname removed'});
+	}
+	else {
+		$errormessage .= "Could not open config file to remove or edit.<br />\n";
 	}
 }
 
@@ -159,7 +176,7 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 &openbigbox('100%', 'LEFT');
 
 #$errormessage = "<br />". $errormessage if ($errormessage);
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

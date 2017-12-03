@@ -13,6 +13,7 @@ use header qw( :standard );
 use smoothd qw( message );
 use smoothtype qw( :standard );
 use Socket qw( inet_aton );
+use Net::Netmask;
 use strict;
 use warnings;
 
@@ -22,6 +23,9 @@ my $display_dhcplease = 'yes';
 my $subnet = '';
 my $refresh = '';
 my $success = '';
+my $errormessage = '';
+my $infomessage = '';
+my $block = '';
 
 &showhttpheaders();
 
@@ -118,7 +122,6 @@ if ($ENV{'QUERY_STRING'} && ( not defined $dhcpsettings{'ACTION'} or $dhcpsettin
 	$dhcpsettings{'COLUMN_ONE'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
 }
 
-my $errormessage = '';
 if ($dhcpsettings{'ACTION'} eq $tr{'save'}) {
 	unless ($dhcpsettings{'NIS_DOMAIN'} eq "" 
 	   or $dhcpsettings{'NIS_DOMAIN'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/) {
@@ -131,28 +134,45 @@ if ($dhcpsettings{'ACTION'} eq $tr{'save'}) {
 	if ($dhcpsettings{'SUBNET'} ne $dhcpsettings{'CHECKSUBNET'}) {
 		$errormessage .= 'Cannot save without selecting first.' ."<br />\n";
 	}
+	if ($dhcpsettings{'SUBNET'} eq 'purple') {
+		$block = Net::Netmask->new("$netsettings{'PURPLE_NETADDRESS'}/$netsettings{'PURPLE_NETMASK'}");
+	}
+	if ($dhcpsettings{'SUBNET'} eq 'green') {
+		$block = Net::Netmask->new("$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}");
+	}
 	if (!(&validip($dhcpsettings{'START_ADDR'}))) {
 		$errormessage .= $tr{'invalid start address'} ."<br />\n";
+	}
+	if ( ! $block->match($dhcpsettings{'START_ADDR'})) {
+		$errormessage .= "Not in $dhcpsettings{'SUBNET'} network. $tr{'invalid start address'}<br />\n";
 	}
 	if (!(&validip($dhcpsettings{'END_ADDR'}))) {
 		$errormessage .= $tr{'invalid end address'} ."<br />\n";
 	}
+	if ( ! $block->match($dhcpsettings{'END_ADDR'})) {
+		$errormessage .= "Not in $dhcpsettings{'SUBNET'} network. $tr{'invalid end address'}<br />\n";
+	}
 	if (!(&ip2number($dhcpsettings{'END_ADDR'}) > &ip2number($dhcpsettings{'START_ADDR'}))) {
 		$errormessage .= $tr{'end must be greater than start'} ."<br />\n";
 	}
-	open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
+ 
+	if (open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}")) {
+		my @current = <FILE>;
+		close(FILE);
 
-	foreach my $line (@current) {
-		chomp($line);
-		my @temp = split(/\,/,$line);
-		if (($temp[5]) && $temp[5] eq 'on') {
-			unless(!((&ip2number($temp[2]) <= &ip2number($dhcpsettings{'END_ADDR'}) 
-			   && (&ip2number($temp[2]) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
-				$errormessage .= $tr{'dynamic range cannot overlap static'} ."<br />\n";
+		foreach my $line (@current) {
+			chomp($line);
+			my @temp = split(/\,/,$line);
+			if (($temp[5]) && $temp[5] eq 'on') {
+				unless(!((&ip2number($temp[2]) <= &ip2number($dhcpsettings{'END_ADDR'}) 
+			   	&& (&ip2number($temp[2]) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
+					$errormessage .= $tr{'dynamic range cannot overlap static'} ."<br />\n";
+				}
 			}
 		}
+	}
+	else {
+		$errormessage .= "Unable to open config file '${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'} for validation.<br />\n";
 	}
 	if ($dhcpsettings{'DNS1'}) {
 		if (!(&validip($dhcpsettings{'DNS1'}))) {
@@ -264,16 +284,14 @@ ERROR:
 		unlink "${swroot}/dhcp/uptodate";
 	
 		$success = message('dhcpdrestart');
-		$errormessage .= $success."<br />" if ($success);
+		$infomessage .= $success."<br />" if ($success);
 		$errormessage .= "DHCPD Restart:". $tr{'smoothd failure'} ."<br />\n" unless ($success);
 
 		system('/usr/bin/smoothwall/writehosts.pl');
 
 		$success = message('dnsproxyhup');
-		$errormessage .= $success."<br />" if ($success);
+		$infomessage .= $success."<br />" if ($success);
 		$errormessage .= "DNSProxy SIGHUP:". $tr{'smoothd failure'} ."<br />\n" unless ($success);
-
-		$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -301,87 +319,108 @@ if ($dhcpsettings{'ACTION'} eq $tr{'add'}) {
 		$dhcpsettings{'STATIC_MAC'} = $mac if (&validmac($mac));
 	}
 
-	$errormessage .= $tr{'please enter a host name'} ."<br />\n" unless (defined $dhcpsettings{'STATIC_HOST'});
-	$errormessage .= $tr{'invalid host name'} ."<br />\n" unless ($dhcpsettings{'STATIC_HOST'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/);
-	$errormessage .= $tr{'mac address not valid'} ."<br />\n" unless (&validmac($dhcpsettings{'STATIC_MAC'}));
-	$errormessage .= $tr{'ip address not valid'} ."<br />\n" unless (&validip($dhcpsettings{'STATIC_IP'}));
-	$errormessage .= $tr{'IP address not'}." of: <span style='font-weight:bold;'>".$ifsubnet." \/ ".$ifmask."</span>" unless($withinnetwork==1);
-	$errormessage .= $tr{'description contains bad characters'} ."<br />\n" unless ($dhcpsettings{'STATIC_DESC'} =~ /^([a-zA-Z 0-9]*)$/);
+	$errormessage .= $tr{'please enter a host name'} ."<br />\n"
+		unless (defined $dhcpsettings{'STATIC_HOST'});
+	$errormessage .= $tr{'invalid host name'} ."<br />\n"
+		unless ($dhcpsettings{'STATIC_HOST'} =~ /^([a-zA-Z])+([\.a-zA-Z0-9_-])+$/);
+	$errormessage .= $tr{'mac address not valid'} ."<br />\n"
+		unless (&validmac($dhcpsettings{'STATIC_MAC'}));
+	$errormessage .= $tr{'ip address not valid'} ."<br />\n"
+		unless (&validip($dhcpsettings{'STATIC_IP'}));
+	$errormessage .= $tr{'IP address not'}." of: <span style='font-weight:bold;'>".$ifsubnet." \/ ".$ifmask."</span><br />\n"
+		unless($withinnetwork==1);
+	$errormessage .= $tr{'description contains bad characters'} ."<br />\n"
+		unless ($dhcpsettings{'STATIC_DESC'} =~ /^([a-zA-Z 0-9]*)$/);
 	if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on') {
 		unless(!((&ip2number($dhcpsettings{'STATIC_IP'}) <= &ip2number($dhcpsettings{'END_ADDR'}) 
 		   && (&ip2number($dhcpsettings{'STATIC_IP'}) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
 			$errormessage .= $tr{'static must be outside dynamic range'} ."<br />\n";
 		}
 	}
-	open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
-	my $line;
-	foreach $line (@current) {
-		chomp($line);
-		my @temp = split(/\,/,$line);
-		if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on') {
-			if (($dhcpsettings{'STATIC_HOST'} eq $temp[0]) && ($temp[4] eq 'on')) {
-				$errormessage .= "$tr{'hostnamec'} $temp[0] $tr{'already exists and has assigned ip'} $tr{'ip address'} $temp[2].<br />\n";
-			}
-			if (($dhcpsettings{'STATIC_MAC'} eq $temp[1]) && ($temp[4] eq 'on')) {
-				$errormessage .= "$tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]) $tr{'already assigned to ip'} $tr{'ip address'} $temp[2].<br />\n";
-			}
-			if (($dhcpsettings{'STATIC_IP'} eq $temp[2]) && ($temp[4] eq 'on')) {
-				$errormessage .= "$tr{'ip address'} $temp[2] $tr{'ip already assigned to'} $tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]).<br />\n";
+	if ( open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}")) {
+		my @current = <FILE>;
+		close(FILE);
+		foreach my $line (@current) {
+			chomp($line);
+			my @temp = split(/\,/,$line);
+			if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on') {
+				if (($dhcpsettings{'STATIC_HOST'} eq $temp[0]) && ($temp[4] eq 'on')) {
+					$errormessage .= "$tr{'hostnamec'} $temp[0] $tr{'already exists and has assigned ip'} $tr{'ip address'} $temp[2].<br />\n";
+				}
+				if (($dhcpsettings{'STATIC_MAC'} eq $temp[1]) && ($temp[4] eq 'on')) {
+					$errormessage .= "$tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]) $tr{'already assigned to ip'} $tr{'ip address'} $temp[2].<br />\n";
+				}
+				if (($dhcpsettings{'STATIC_IP'} eq $temp[2]) && ($temp[4] eq 'on')) {
+					$errormessage .= "$tr{'ip address'} $temp[2] $tr{'ip already assigned to'} $tr{'mac address'} $temp[1] ($tr{'hostnamec'} $temp[0]).<br />\n";
+				}
 			}
 		}
 	}
+	else {
+		$errormessage .= "Unable to open config file '${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'} for validation.<br />\n";
+	}
 
 	unless ($errormessage) {
-		open(FILE, ">>${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
-		flock FILE, 2;
-		print FILE "$dhcpsettings{'STATIC_HOST'},$dhcpsettings{'STATIC_MAC'},$dhcpsettings{'STATIC_IP'},$dhcpsettings{'STATIC_DESC'},$dhcpsettings{'DEFAULT_ENABLE_STATIC'}\n";
-		close(FILE);
-		$dhcpsettings{'STATIC_HOST'} ='';		
-		$dhcpsettings{'STATIC_MAC'} ='';	
-		$dhcpsettings{'STATIC_IP'} ='';	
-		$dhcpsettings{'STATIC_DESC'} ='';	
-		$dhcpsettings{'DEFAULT_ENABLE_STATIC'} = 'on';
-		system ('/bin/touch', "${swroot}/dhcp/uptodate");
+		if (open(FILE, ">>${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}")) {
+			flock FILE, 2;
+			print FILE "$dhcpsettings{'STATIC_HOST'},$dhcpsettings{'STATIC_MAC'},$dhcpsettings{'STATIC_IP'},$dhcpsettings{'STATIC_DESC'},$dhcpsettings{'DEFAULT_ENABLE_STATIC'}\n";
+			close(FILE);
+			$dhcpsettings{'STATIC_HOST'} ='';		
+			$dhcpsettings{'STATIC_MAC'} ='';	
+			$dhcpsettings{'STATIC_IP'} ='';	
+			$dhcpsettings{'STATIC_DESC'} ='';	
+			$dhcpsettings{'DEFAULT_ENABLE_STATIC'} = 'on';
+			system ('/bin/touch', "${swroot}/dhcp/uptodate");
+		}
+		else {
+			$errormessage .= "Unable to open config file '${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'} to add static assignment.<br />\n";
+		}
 	}
 }
 
 if ($dhcpsettings{'ACTION'} eq $tr{'remove'} || $dhcpsettings{'ACTION'} eq $tr{'edit'}) {
-	open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
+	if (open(FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}")) {
+		my @current = <FILE>;
+		close(FILE);
 
-	my $count = 0;
-	my $id = 0;
-	my $line;
-	foreach $line (@current) {
-		$id++;
-		$count++ if (($dhcpsettings{$id}) && $dhcpsettings{$id} eq "on");
-	}
-	$errormessage .= $tr{'nothing selected'} ."<br />\n" if ($count == 0);
-	$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n" if ($count > 1 && $dhcpsettings{'ACTION'} eq $tr{'edit'});
-	unless ($errormessage) {
-		open(FILE, ">${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") or die 'Unable to open config file.';
-		flock FILE, 2;
- 		$id = 0;
+		my $count = 0;
+		my $id = 0;
+		my $line;
 		foreach $line (@current) {
 			$id++;
-			unless (($dhcpsettings{$id}) && $dhcpsettings{$id} eq "on") {
-				print FILE "$line";
+			$count++ if (($dhcpsettings{$id}) && $dhcpsettings{$id} eq "on");
+		}
+		$errormessage .= $tr{'nothing selected'} ."<br />\n" if ($count == 0);
+		$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n" if ($count > 1 && $dhcpsettings{'ACTION'} eq $tr{'edit'});
+		unless ($errormessage) {
+			if (open(FILE, ">${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}")) {
+				flock FILE, 2;
+ 				$id = 0;
+				foreach $line (@current) {
+					$id++;
+					unless (($dhcpsettings{$id}) && $dhcpsettings{$id} eq "on") {
+						print FILE "$line";
+					}
+					elsif ($dhcpsettings{'ACTION'} eq $tr{'edit'}) {
+						chomp($line);
+						my @temp = split(/\,/,$line);
+						$dhcpsettings{'STATIC_HOST'} = $temp[0];
+						$dhcpsettings{'STATIC_MAC'} = $temp[1];
+						$dhcpsettings{'STATIC_IP'} = $temp[2];
+						$dhcpsettings{'STATIC_DESC'} = $temp[3];
+						$dhcpsettings{'DEFAULT_ENABLE_STATIC'} = $temp[4];
+					}
+				}
+				close(FILE);
+				system ('/bin/touch', "${swroot}/dhcp/uptodate");
 			}
-			elsif ($dhcpsettings{'ACTION'} eq $tr{'edit'}) {
-				chomp($line);
-				my @temp = split(/\,/,$line);
-				$dhcpsettings{'STATIC_HOST'} = $temp[0];
-				$dhcpsettings{'STATIC_MAC'} = $temp[1];
-				$dhcpsettings{'STATIC_IP'} = $temp[2];
-				$dhcpsettings{'STATIC_DESC'} = $temp[3];
-				$dhcpsettings{'DEFAULT_ENABLE_STATIC'} = $temp[4];
+			else {
+				$errormessage .= "Unable to open config file '${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'} to remove or edit.<br />\n";
 			}
 		}
-		close(FILE);
-		system ('/bin/touch', "${swroot}/dhcp/uptodate");
+	}
+	else {
+		$errormessage .= "Unable to open config file '${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'} to remove or edit.<br />\n";
 	}
 }
 
@@ -442,7 +481,7 @@ $selected{'SUBNET'}{$dhcpsettings{'SUBNET'}} = 'SELECTED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print <<END
 <form method='post' action='?'><div>
@@ -494,7 +533,7 @@ print <<END
 <table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
 	<td style='width:25%;'>
-	<select name='SUBNET'>
+	<select name='SUBNET' onchange='document.getElementById("choose_IF").click();'>
 	<option value='green' $selected{'SUBNET'}{'green'}>GREEN
 END
 ;
@@ -503,7 +542,9 @@ if ($netsettings{'PURPLE_DEV'}) {
 
 print <<END
 	</select></td>
-	<td style='width:10%;'><input type='submit' name='ACTION' value='$tr{'select'}'></td>
+	<td style='width:10%;'>
+		<input type='submit' id='choose_IF' name='ACTION' value='$tr{'select'}'
+		       style='display:none'></td>
 	<td style='width:65%;'>&nbsp;</td>
 </tr>
 </table>
@@ -838,40 +879,44 @@ sub dhcp_lease_table
 		}
 	}
 
-	open(FILE, ">$dhcptmpfile") or die 'Unable to open dhcp leasesconfig file.';
-	flock FILE, 2;
+	if (open(FILE, ">${dhcptmpfile}")) {
+		flock FILE, 2;
 
-	for ($i = $#dhcplIPAddy; $i >= 0; $i--) {
-		my $catLINEnumber = $i+1;
-		my $dhcpprintvar = "True";
-		my @dhcptemparray;
+		for ($i = $#dhcplIPAddy; $i >= 0; $i--) {
+			my $catLINEnumber = $i+1;
+			my $dhcpprintvar = "True";
+			my @dhcptemparray;
 
-		if ($i == $#dhcplIPAddy){
-			push(@dhcptemparray, $dhcplIPAddy[$i]);
-		}
-		else {
-			foreach my $IP (@dhcptemparray) {
-				if ($IP =~ $dhcplIPAddy[$i]) {
-					$dhcpprintvar = "False";
+			if ($i == $#dhcplIPAddy){
+				push(@dhcptemparray, $dhcplIPAddy[$i]);
+			}
+			else {
+				foreach my $IP (@dhcptemparray) {
+					if ($IP =~ $dhcplIPAddy[$i]) {
+						$dhcpprintvar = "False";
+					}
 				}
 			}
-		}
 
-		if (index($dhcplIPAddy[$i], $dhcpstart) == -1 ) {
-			$dhcpprintvar = "False"
-		}
+			if (index($dhcplIPAddy[$i], $dhcpstart) == -1 ) {
+				$dhcpprintvar = "False"
+			}
 
-		# Printing values to temp file
-		if ($dhcpprintvar =~ "True"){
-			my $leaseStart = UTC2LocalString($dhcplStart[$i]);
-			my $leaseEnd   = UTC2LocalString($dhcplEnd[$i]);
-			$dhcplHostName[$i] = '' if (! ($dhcplHostName[$i]));
+			# Printing values to temp file
+			if ($dhcpprintvar =~ "True"){
+				my $leaseStart = UTC2LocalString($dhcplStart[$i]);
+				my $leaseEnd   = UTC2LocalString($dhcplEnd[$i]);
+				$dhcplHostName[$i] = '' if (! ($dhcplHostName[$i]));
 
-			push(@dhcptemparray, $dhcplIPAddy[$i]);
-			print FILE "$catLINEnumber,$dhcplIPAddy[$i],$leaseStart,$leaseEnd,$dhcplMACAddy[$i],$dhcplHostName[$i],$dhcplBinding[$i],\n";
+				push(@dhcptemparray, $dhcplIPAddy[$i]);
+				print FILE "$catLINEnumber,$dhcplIPAddy[$i],$leaseStart,$leaseEnd,$dhcplMACAddy[$i],$dhcplHostName[$i],$dhcplBinding[$i],\n";
+			}
 		}
+		close(FILE);
 	}
-	close(FILE);
+	else {
+		$errormessage .= "Unable to open dhcp leasesconfig file '${dhcptmpfile}'.<br />\n";
+	}
 }
 
 
