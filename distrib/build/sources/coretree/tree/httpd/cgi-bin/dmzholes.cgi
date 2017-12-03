@@ -40,6 +40,7 @@ if ($ENV{'QUERY_STRING'} && ( not defined $cgiparams{'ACTION'} or $cgiparams{'AC
 }
 
 my $refresh = '';
+my $infomessage = '';
 my $errormessage = '';
 my $service = "user";
 
@@ -76,9 +77,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'dmz pinhole rule added'});
 
 		my $success = message('setinternal');
-		$errormessage .= $success ."<br />\n" if ($success);
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= "setinternal ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 
 		$cgiparams{'ENABLED'} = 'on';
 		$cgiparams{'SRC_IP'} = '';
@@ -130,7 +130,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'dmz pinhole rule removed'});
 
 		my $success = message('setinternal');
-		
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
@@ -148,7 +148,7 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

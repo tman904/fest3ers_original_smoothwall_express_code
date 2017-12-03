@@ -37,6 +37,7 @@ my $service = "user";
 my $dst_service = "user";
 my $refresh = '';
 my $errormessage = '';
+my $infomessage = '';
 
 &getcgihash(\%cgiparams);
 
@@ -118,9 +119,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'forwarding rule added'});
 		
 		my $success = message('setincoming');
-		$errormessage .= $success ."<br />\n" if ($success);
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= "setincoming ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -168,6 +168,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'forwarding rule removed'});
 
 		my $success = message('setincoming');
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
@@ -189,7 +190,7 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

@@ -17,6 +17,7 @@ use warnings;
 my (%cgiparams, %checked, %selected, %settings);
 my ($macaddress, $ignoremtutext);
 
+my $infomessage = "";
 my $errormessage = "";
 my $tmpmessage = "";
 my $refresh = '';
@@ -135,6 +136,19 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 
 	if ( defined $settings{'RED_TYPE'} and $settings{'RED_TYPE'} ne "" ) {
 		$tmpmessage = '';
+		if ( $settings{'RED_TYPE'} eq "DHCP" ) {
+			if ( $settings{'DNS1_OVERRIDE'} ne "" and not &validip( $settings{'DNS1_OVERRIDE'} )) {
+				$tmpmessage .= $tr{'invalid primary dns override'}."<br />\n";
+			}
+			if ( $settings{'DNS2_OVERRIDE'} ne "" and not &validip( $settings{'DNS2_OVERRIDE'} )) {
+				$tmpmessage .= $tr{'invalid secondary dns override'}."<br />\n";
+			}
+			if ( (not defined $settings{'DNS1_OVERRIDE'} or $settings{'DNS1_OVERRIDE'} eq "") and
+			     ($settings{'DNS2_OVERRIDE'} and $settings{'DNS2_OVERRIDE'} ne "" ) ) {
+				$tmpmessage .= $tr{'cannot specify secondary dns override without specifying primary override'}."<br />\n";
+			}
+			$errormessage .= $tmpmessage;
+		}
 		if ( $settings{'RED_TYPE'} eq "STATIC" ) {
 			if ( not &validip( $settings{'RED_ADDRESS'} )) {
 				$tmpmessage .= $tr{'the ip address for the red interface is invalid'}."<br />\n";
@@ -142,23 +156,23 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 			if ( not &validmask( $settings{'RED_NETMASK'} )) {
 				$tmpmessage .= $tr{'the netmask for the red interface is invalid'}."<br />\n";
 			}
-			if ( $settings{'DEFAULT_GATEWAY'} ne "" and not &validmask( $settings{'DEFAULT_GATEWAY'} )) {
+			if ( $settings{'DEFAULT_GATEWAY'} ne "" and not &validip( $settings{'DEFAULT_GATEWAY'} )) {
 				$tmpmessage .= $tr{'the default gateway is invalid'}."<br />\n";
 			}
-			if ( $settings{'DNS1'} ne "" and not &validmask( $settings{'DNS1'} )) {
+			if ( $settings{'DNS1'} ne "" and not &validip( $settings{'DNS1'} )) {
 				$tmpmessage .= $tr{'invalid primary dns'}."<br />\n";
 			}
-			if ( $settings{'DNS2'} ne "" and not &validmask( $settings{'DNS2'} )) {
+			if ( $settings{'DNS2'} ne "" and not &validip( $settings{'DNS2'} )) {
 				$tmpmessage .= $tr{'invalid secondary dns'}."<br />\n";
 			}
 			if ( (not defined $settings{'DNS1'} or $settings{'DNS1'} eq "") and
 			     ($settings{'DNS2'} and $settings{'DNS2'} ne "" ) ) {
 				$tmpmessage .= $tr{'cannot specify secondary dns without specifying primary'}."<br />\n";
 			}
-			if ( $settings{'DNS1_OVERRIDE'} ne "" and not &validmask( $settings{'DNS1_OVERRIDE'} )) {
+			if ( $settings{'DNS1_OVERRIDE'} ne "" and not &validip( $settings{'DNS1_OVERRIDE'} )) {
 				$tmpmessage .= $tr{'invalid primary dns override'}."<br />\n";
 			}
-			if ( $settings{'DNS2_OVERRIDE'} ne "" and not &validmask( $settings{'DNS2_OVERRIDE'} )) {
+			if ( $settings{'DNS2_OVERRIDE'} ne "" and not &validip( $settings{'DNS2_OVERRIDE'} )) {
 				$tmpmessage .= $tr{'invalid secondary dns override'}."<br />\n";
 			}
 			if ( (not defined $settings{'DNS1_OVERRIDE'} or $settings{'DNS1_OVERRIDE'} eq "") and
@@ -179,6 +193,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 		&writehash("${swroot}/ethernet/settings", \%settings);
 
 		$success = message('cyclenetworking');
+		$infomessage .= "$success<br /><br />\n" if ($success);
 		$errormessage .= "$tr{'smoothd failure'}: cyclenetworking<br />\n" unless ($success);
 
 		# cyclenetworking flushes iptables, which will make some services
@@ -194,10 +209,9 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 
 		foreach my $service (qw(dhcpd p3scan squid im sip)) {
 			$success = message("${service}restart");
-			$errormessage .= $success."<br />" if ($success);
+			$infomessage .= $success ."<br />" if ($success);
 			$errormessage .= "$tr{'smoothd failure'}: ${service}restart<br />\n" unless ($success);
 		}
-		$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -222,7 +236,7 @@ if (( $settings{'RED_TYPE'} ne "STATIC" )) {
 
 &openpage($tr{'interfaces configuration'}, 1, $refresh, 'networking');
 &openbigbox('100%', 'LEFT');
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action='?'><div>\n";
 
@@ -240,7 +254,6 @@ print <<END
 END
 ;
 
-&alertbox('add','add');
 &closebigbox();
 &closepage();
 

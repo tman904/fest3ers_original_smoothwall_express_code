@@ -1,5 +1,7 @@
 ./etc/bashrc
 ./etc/dnsmasq.conf
+./httpd/cgi-bin/advnet.cgi
+./httpd/cgi-bin/apcupsd.cgi
 ./httpd/cgi-bin/changepw.cgi
 ./httpd/cgi-bin/ddns.cgi
 ./httpd/cgi-bin/dhcp.cgi
@@ -7,6 +9,7 @@
 ./httpd/cgi-bin/extensions.cgi
 ./httpd/cgi-bin/hosts.cgi
 ./httpd/cgi-bin/ids.cgi
+./httpd/cgi-bin/interfaces.cgi
 ./httpd/cgi-bin/im.cgi
 ./httpd/cgi-bin/ipblock.cgi
 ./httpd/cgi-bin/iptools.cgi

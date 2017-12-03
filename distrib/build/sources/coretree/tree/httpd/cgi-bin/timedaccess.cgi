@@ -33,6 +33,7 @@ for (my $day = 0; $day < 7; $day++) {
 
 &getcgihash(\%cgiparams);
 
+my $infomessage = '';
 my $errormessage = '';
 my $refresh = '';
 
@@ -72,9 +73,8 @@ ERROR:
 
 	if ($cgiparams{'VALID'} eq 'yes') {
 		my $success = message('settimedaccess');
-		$errormessage .= $success ."<br />\n" if ($success);
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= "settimedaccess ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -112,7 +112,7 @@ $selected{'MODE'}{$cgiparams{'MODE'}} = 'SELECTED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action='?'><div>\n";
 

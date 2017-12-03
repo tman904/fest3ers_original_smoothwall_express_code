@@ -63,6 +63,7 @@ $pppsettings{'STAYUP_TIME'} = '';
 
 &getcgihash(\%pppsettings);
 
+my $infomessage = '';
 my $errormessage = '';
 
 if ($pppsettings{'ACTION'} ne '' && (-e '/var/run/ppp-smooth.pid' || -e "${swroot}/red/active")) {
@@ -185,6 +186,7 @@ elsif ($pppsettings{'ACTION'} eq $tr{'save'}) {
 	&writesecrets();
 
 	&log("$tr{'profile saved'} $pppsettings{'PROFILENAME'}");
+	$infomessage = "$tr{'profile saved'} $pppsettings{'PROFILENAME'}";
 }
 elsif ($pppsettings{'ACTION'} eq $tr{'select'}) {
 	%temppppsettings = ();
@@ -202,6 +204,7 @@ elsif ($pppsettings{'ACTION'} eq $tr{'select'}) {
 		&writesecrets();
 
 		&log("$tr{'profile made current'} $pppsettings{'PROFILENAME'}"); 
+		$infomessage = "$tr{'profile made current'} $pppsettings{'PROFILENAME'}";
 	}
 	else {
 		$errormessage .= $tr{'the selected profile is empty'} ."<br />\n";
@@ -354,7 +357,7 @@ $checked{'STAYUP'}{$pppsettings{'STAYUP'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

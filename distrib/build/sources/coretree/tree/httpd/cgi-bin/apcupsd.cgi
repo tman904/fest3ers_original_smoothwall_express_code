@@ -80,6 +80,7 @@ $apcupsdsettings{'EMAIL_PASSWORD'} = '';
 &getcgihash(\%apcupsdsettings);
 
 my $errormessage = '';
+my $infomessage = '';
 
 if ($apcupsdsettings{'ACTION'} eq $tr{'save and restart'}) {
 	# First, validate all entry fields for blank or valid content
@@ -315,20 +316,19 @@ ERROR:
 		&writehash("/var/smoothwall/apcupsd/settings", \%apcupsdsettings);
 		
 		my $success = message("apcupsdwrite");
-		$errormessage = $success."<br />" if ($success);
+		$infomessage = $success."<br />" if ($success);
 		$errormessage = "apcupsdwrite ".$tr{'smoothd failure'}."<br />" unless ($success);
 
 		if ($apcupsdsettings{'ENABLE'} eq 'on') {
 			$success = message("apcupsdrestart");
-			$errormessage .= $success."<br />" if ($success);
+			$infomessage .= $success."<br />" if ($success);
 			$errormessage .= "apcupsdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
 		else {
 			$success = message("apcupsdstop");
-			$errormessage .= $success."<br />" if ($success);
+			$infomessage .= $success."<br />" if ($success);
 			$errormessage .= "apcupsdstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
-		$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -347,22 +347,20 @@ if ($apcupsdsettings{'ACTION'} eq $tr{'restart'}) {
 
 	if ($apcupsdsettings{'ENABLE'} eq 'on') {
 		my $success = message("apcupsdrestart");
-		$errormessage .= $success."<br />" if ($success);
+		$infomessage .= $success."<br />" if ($success);
 		$errormessage .= "apcupsdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 	}
 	else {
 		$errormessage .= "Not Enabled!<br />";
 	}
-	$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 if ($apcupsdsettings{'ACTION'} eq $tr{'stop'}) {
 	&log("APCupsd service stopped.");
 
 	my $success = message("apcupsdstop");
-	$errormessage = $success if ($success);
+	$infomessage = $success if ($success);
 	$errormessage = "apcupsdstop ".$tr{'smoothd failure'} unless ($success);
-	$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 if ($apcupsdsettings{'ACTION'} eq $tr{'mail-test'}) {
@@ -587,7 +585,7 @@ function CheckSTARTTLS()
 END
 ;
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 &openbox('APCupsd:');
 

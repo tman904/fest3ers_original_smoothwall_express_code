@@ -7,6 +7,12 @@
 # (c) The SmoothWall Team
 # Martin Houston <martin.houston@smoothwall.net>
 
+#########
+#########
+###  12/2017: This script needs data validation!!!!!!
+#########
+#########
+
 use lib "/usr/lib/smoothwall";
 use header qw(:standard);
 use smoothtype qw(:standard);
@@ -23,6 +29,7 @@ $cgiparams{'ACTION'} = '';
 &showhttpheaders();
 &getcgihash(\%cgiparams);
 
+my $infomessage = '';
 my $errormessage = '';
 my $refresh = '';
 
@@ -162,9 +169,8 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 		&writehash("${swroot}/traffic/settings", \%trafficsettings);
 
 		my $success = message('trafficrestart');
-		$errormessage .= $success ."<br />\n" if ($success);
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= "trafficrestart ".$tr{'smoothd failure'} ."<br />" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -172,7 +178,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action='?'><div>";
 

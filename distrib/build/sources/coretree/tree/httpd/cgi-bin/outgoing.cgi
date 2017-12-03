@@ -26,6 +26,7 @@ $interfaces{'ORANGE'} = $netsettings{'ORANGE_DEV'} if ($netsettings{'ORANGE_DEV'
 $interfaces{'PURPLE'} = $netsettings{'PURPLE_DEV'} if ($netsettings{'PURPLE_DEV'});
 
 my $errormessage = '';
+my $infomessage = '';
 #my $interface;
 
 my %backgroundColor = (
@@ -83,7 +84,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'save'} ) {
 	&writehash("${swroot}/outgoing/settings", \%settings);
 	
 	my $success = message('setoutgoing');
-	
+	$infomessage .= $success ."<br />\n" if ($success);
 	$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 }
 
@@ -106,8 +107,8 @@ if ( $cgiparams{'ACTION'} eq $tr{'add'} ) {
 		close(FILE);
 		
 		my $success = message('setoutgoing');
-	
-		$errormessage .= $tr{'smoothd failure'} unless ($success) ."<br />\n";
+		$infomessage .= $success ."<br />\n" if ($success);
+		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 
 		$cgiparams{'INTERFACE'} = 'GREEN';
 		$cgiparams{'SERVICE'} = '';
@@ -154,7 +155,7 @@ if ( $cgiparams{'ACTION'} eq $tr{'edit'} or $cgiparams{'ACTION'} eq $tr{'remove'
 		close(FILE);
 
 		my $success = message('setoutgoing');
-	
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
@@ -175,7 +176,7 @@ if ( $cgiparams{'MACHINEACTION'} eq $tr{'add'} ) {
 		close(FILE);
 
 		my $success = message('setoutgoing');
-	
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 
 		$cgiparams{'MACHINE'} = "";
@@ -219,7 +220,7 @@ if ( $cgiparams{'MACHINEACTION'} eq $tr{'edit'} or $cgiparams{'MACHINEACTION'} e
 		close(FILE);
 
 		my $success = message('setoutgoing');
-	
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
@@ -257,7 +258,7 @@ $checked{'MACHINEENABLED'}{$cgiparams{'MACHINEENABLED'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

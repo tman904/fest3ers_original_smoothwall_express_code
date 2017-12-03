@@ -14,6 +14,7 @@ use warnings;
 
 my (%advnetsettings,%checked, %selected);
 my $refresh = '';
+my $infomessage = '';
 my $errormessage = '';
 my $success = '';
 
@@ -34,20 +35,19 @@ if ($advnetsettings{'ACTION'} eq $tr{'save'}) {
 	&writehash("${swroot}/advnet/settings", \%advnetsettings);
 	
 	$success = message('setadvnet');
-	$errormessage .= $success."<br />" if ($success);
+	$infomessage .= $success."<br />" if ($success);
 	$errormessage .= "setadvnet ".$tr{'smoothd failure'}."<br />" unless ($success);
 
 	if ($advnetsettings{'ENABLE_UPNP'} eq 'on') {
 		$success = message('upnpdrestart');
-		$errormessage .= $success."<br />" if ($success);
+		$infomessage .= $success."<br />" if ($success);
 		$errormessage .= "upnpdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
 	}
 	else {
 		$success = message('upnpdstop');
-		$errormessage .= $success."<br />" if ($success);
+		$infomessage .= $success."<br />" if ($success);
 		$errormessage .= "upnpdstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 	}
-	$refresh = "<meta http-equiv='refresh' content='2; URL=advnet.cgi'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 &readhash("${swroot}/advnet/settings", \%advnetsettings);
@@ -84,7 +84,7 @@ $selected{'BAD_TRAFFIC'}{$advnetsettings{'BAD_TRAFFIC'}} = 'SELECTED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 
@@ -135,6 +135,5 @@ END
 
 print "</div></form>\n";
 
-&alertbox('add', 'add');
 &closebigbox();
-&closepage($errormessage);
+&closepage();

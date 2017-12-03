@@ -16,6 +16,7 @@ use warnings;
 my (%cgiparams, %checked, %selected);
 my $filename = "${swroot}/xtaccess/config";
 my $refresh = '';
+my $infomessage = '';
 my $errormessage = '';
 
 &showhttpheaders();
@@ -69,9 +70,8 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'external access rule added'});
 
 		my $success = message('setxtaccess');
-		$errormessage .= $success ."<br />\n" if ($success);
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= "setxtaccess ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
 }
 
@@ -114,6 +114,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'external access rule removed'});
 
 		my $success = message('setxtaccess');
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
@@ -134,7 +135,7 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

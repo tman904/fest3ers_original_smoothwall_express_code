@@ -12,7 +12,9 @@ use smoothd qw( message );
 use strict;
 use warnings;
 
-my (%remotesettings, %checked, $errormessage);
+my (%remotesettings, %checked);
+my $errormessage='';
+my $infomessage='';
 
 &showhttpheaders();
 
@@ -25,7 +27,6 @@ my $success = '';
 
 &getcgihash(\%remotesettings);
 
-$errormessage = '';
 if ($remotesettings{'ACTION'} eq $tr{'save'}) {
 	&writehash("${swroot}/remote/settings", \%remotesettings);
 
@@ -37,9 +38,8 @@ if ($remotesettings{'ACTION'} eq $tr{'save'}) {
 		&log($tr{'ssh is disabled'});
 		$success = message('sshdstop');
 	}
-	$errormessage .= $success ."<br />\n" if ($success);
+	$infomessage .= $success ."<br />\n" if ($success);
 	$errormessage .= "sshd ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 $remotesettings{'ENABLE_SECURE_ADMIN'} = 'off';
@@ -57,7 +57,7 @@ $checked{'ENABLE_SECURE_ADMIN'}{$remotesettings{'ENABLE_SECURE_ADMIN'}} = 'CHECK
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

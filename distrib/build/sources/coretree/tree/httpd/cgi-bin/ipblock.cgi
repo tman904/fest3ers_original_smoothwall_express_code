@@ -19,6 +19,7 @@ my $filename = "${swroot}/ipblock/config";
 
 my ($var, $addr);
 my $needrestart = 0;
+my $infomessage = '';
 my $errormessage = '';
 
 &showhttpheaders();
@@ -53,6 +54,7 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '') {
 	}
 	if ($needrestart) {
 		my $success = message('setipblock');
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 
@@ -93,6 +95,7 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		&log($tr{'ip block rule added'});
 
 		my $success = message('setipblock');
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
@@ -135,6 +138,7 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 		&log($tr{'ip block rule removed'});
 
 		my $success = message('setipblock');
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 	}
 }
@@ -160,7 +164,7 @@ $checked{'TARGET'}{$cgiparams{'TARGET'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 
@@ -265,7 +269,6 @@ END
 
 print "</div></form>\n";
 
-&alertbox('add', 'add');
 &closebigbox();
-&closepage($errormessage);
+&closepage();
 

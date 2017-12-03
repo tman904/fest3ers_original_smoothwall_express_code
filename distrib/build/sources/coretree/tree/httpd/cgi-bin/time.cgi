@@ -21,6 +21,7 @@ my $found;
 my @temp;
 my $temp;
 my $errormessage = '';
+my $infomessage = '';
 my $refresh = '';
 
 my $tzroot = '/usr/share/zoneinfo/posix';
@@ -158,16 +159,14 @@ if ($cgitimesettings{'ACTION'} eq $tr{'save'}) {
 
 			# Update the kernel's time zone, H/W Clock, and DST cron task
 			my $success = message('ntpdchgtimezone');
-			$errormessage .= $success."<br />" if ($success);
+			$infomessage .= $success."<br />" if ($success);
 			$errormessage .= "ntpdchgtimezone ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
 
 		# The smoothd plugin always stops, then checks 'enabled' before restarting.
 		my $success = message('ntpdrestart');
-		$errormessage .= $success ."<br />\n" if ($success);
+		$infomessage .= $success ."<br />\n" if ($success);
 		$errormessage .= " ntpdrestart ".$tr{'smoothd failure'}."<br />" unless ($success);
-		$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
-
 	}
 
 	# Merge in the form values because Save was clicked. If Save was not clicked,
@@ -224,7 +223,7 @@ my @now = localtime(time);
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action='?'><div>\n";
 
