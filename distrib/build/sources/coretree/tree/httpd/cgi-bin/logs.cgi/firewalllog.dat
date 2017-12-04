@@ -15,6 +15,7 @@ use warnings;
 my (%cgiparams, %hithash, %services);
 my ($name, $protoport);
 
+my $infomessage = '';
 my $errormessage = '';
 
 # Some usefull variables ...
@@ -265,7 +266,7 @@ div.toolbox {
 	&openpage($tr{'firewall log'}, 1, $head, 'logs');
 	&openbigbox('100%', 'LEFT');
 
-	&alertbox($errormessage);
+	&alertbox($errormessage, "", $infomessage);
 
 	&openbox($tr{'settingsc'});
 

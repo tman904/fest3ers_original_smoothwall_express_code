@@ -37,6 +37,7 @@ if ($ENV{'QUERY_STRING'} &&
 	$cgiparams{'COLUMN'} = $temp[0] if ( defined $temp[ 0 ] and $temp[ 0 ] ne "" );
 }
 
+my $infomessage = '';
 my $errormessage = '';
 my $extramessage = '';
 my @service = ();
@@ -105,7 +106,8 @@ if ($cgiparams{'ACTION'} eq $tr{'bu restore'}) {
 		        		if (-f "$swroot/restore/version" && -f "$swroot/restore/backup.dat") {
 						# Do the restore
 						my $success = message('restoresettings');
-						$errormessage .= "$success<br />";
+						$infomessage .= "$success<br />" if ($success);
+						$errormessage .= "Could not restore settings.<br />" unless ($success);
 					}
 					else {
 						$errormessage .= "$tr{'bu not settings archive'}</br />";
@@ -176,30 +178,37 @@ elsif ($cgiparams{'ACTION'} eq $tr{'create settings backup file'}) {
 # There is no action for 'Add Drive'; it is handled in javascript
 
 if ($cgiparams{'ACTION'} eq $tr{'remove'}) {
-	open(FILE, "$filename") or die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
+	if (open(FILE, "$filename")) {
+		my @current = <FILE>;
+		close(FILE);
 
-	my $count = 0;
-	my $id = 0;
-	my $line;
-	foreach $line (@current) {
-		$id++;
-		$count++ if ($cgiparams{$id} eq "on");
-	}
-	$errormessage .= $tr{'nothing selected'} if ($count == 0);
-	unless ($errormessage) {
-		open(FILE, ">$filename") or die 'Unable to open config file.';
-		flock FILE, 2;
+		my $count = 0;
 		my $id = 0;
+		my $line;
 		foreach $line (@current) {
 			$id++;
-			print FILE "$line" unless ($cgiparams{$id} eq "on");
+			$count++ if ($cgiparams{$id} eq "on");
 		}
-		close(FILE);
-		# Write settings file
-		system('/usr/bin/smoothwall/backup_sys -S');
-
+		$errormessage .= $tr{'nothing selected'} if ($count == 0);
+		unless ($errormessage) {
+			if (open(FILE, ">$filename")) {
+				flock FILE, 2;
+				my $id = 0;
+				foreach $line (@current) {
+					$id++;
+					print FILE "$line" unless ($cgiparams{$id} eq "on");
+				}
+				close(FILE);
+				# Write settings file
+				system('/usr/bin/smoothwall/backup_sys -S');
+			}
+		}
+		else {
+			$errormessage .= "Could not write config file.<br />\n";
+		}
+	}
+	else {
+		$errormessage .= "Could not read config file.<br />\n";
 	}
 }
 
@@ -232,7 +241,7 @@ print <<END;
 </script>
 END
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

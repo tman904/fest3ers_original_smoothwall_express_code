@@ -27,6 +27,7 @@ $cgiparams{'MODE'} = '';
 
 &showhttpheaders();
 
+my $infomessage = '';
 my $errormessage = '';
 
 if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} eq '') {
@@ -60,7 +61,7 @@ if ( $cgiparams{'MODE'} ne "quick" ) {
 
 	&openbigbox('100%', 'left');
 
-	&alertbox($errormessage);
+	&alertbox($errormessage, "", $infomessage);
 
 	print "<form method='post' action='?'><div>\n";
 
@@ -81,8 +82,8 @@ END
 	if ($cgiparams{'ACTION'} eq $tr{'run'}) {
 		unless ($errormessage) {
 			foreach $addr (@addrs) {
-	        		$hostname = gethostbyaddr(inet_aton($addr), AF_INET);
-	       		$hostname = $tr{'lookup failed'} if (!$hostname);
+				$hostname = gethostbyaddr(inet_aton($addr), AF_INET);
+				$hostname = $tr{'lookup failed'} if (!$hostname);
 				&openbox("$addr ($hostname)");
 				print "<div style='margin:1em;'><code>\n";
 				open (WHOIS,"/usr/bin/whois --nocgi -s $addr |");
@@ -100,8 +101,6 @@ END
 	}
 
 	print "</div></form>\n";
-
-	&alertbox('add','add');
 
 	&closebigbox();
 	&closepage();

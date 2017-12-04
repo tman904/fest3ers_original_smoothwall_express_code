@@ -61,6 +61,8 @@ my @items = (
              'XTACCESS'
 );
 my @ASCII_items = ('SWITCH1', 'SWITCH2', 'SWITCH3', 'WAP1', 'WAP2', 'WAP3', 'WAP4', 'WAP5', 'WAP6', 'MODEM', 'ROUTER');
+
+my $infomessage = '';
 my $errormessage = '';
 
 # Prepare @items for use as a JavaScript array
@@ -268,7 +270,8 @@ if ($smoothinfosettings{'ACTION'} eq $tr{'smoothinfo-generate'}) {
 
 		unless ($smoothinfosettings{'NOSELECT'} eq 'on') {
 			my $success = message('smoothinfogenerate');
-			$errormessage .= $tr{'smoothd failure'}. "<br />\n" unless ($success);
+			$infomessage .= $success ."<br />\n" if ($success);
+			$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 		}
 	}
 
@@ -597,7 +600,7 @@ function selectAll(field)
 END
 ;
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print <<END
 <form method='POST' action='?' name='myform'><div>

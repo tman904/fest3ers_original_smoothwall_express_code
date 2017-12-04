@@ -13,6 +13,7 @@ use strict;
 use warnings;
 
 my %cgiparams;
+my $infomessage;
 my $errormessage;
 my @log;
 my $rowColor = 'none';
@@ -128,7 +129,7 @@ END
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 &openbox($tr{'settingsc'});
 

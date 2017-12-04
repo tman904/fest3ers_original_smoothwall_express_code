@@ -13,6 +13,7 @@ use warnings;
 
 my (%cgiparams, %settingsParams, %uiSettingsParams, %checked, %selected, %settings, %uisettings);
 my $method;
+my $infomessage = '';
 my $errormessage = '';
 
 $cgiparams{'ACTION'} = '';
@@ -70,7 +71,7 @@ $checked{'ALWAYS_ENGLISH'}{$cgiparams{'ALWAYS_ENGLISH'}} = "CHECKED";
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action = '?'><div>\n";
 print "	<input type='hidden' name='HOSTNAME' value='$cgiparams{'HOSTNAME'}'>\n";

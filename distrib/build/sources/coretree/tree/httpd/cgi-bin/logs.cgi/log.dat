@@ -16,6 +16,7 @@ my (%cgiparams, %selected);
 
 $cgiparams{'ACTION'} = '';
 
+my $infomessage = '';
 my $errormessage = '';
 my $sectionPattern = "";
 
@@ -154,7 +155,7 @@ $selected{'SECTION'}{$cgiparams{'SECTION'}} = 'SELECTED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 &openbox($tr{'settingsc'});
 
@@ -306,6 +307,9 @@ END
 
 print "<code>\n";
 foreach $_ (@slice) {
+	$_ =~ s/\&/&amp;/g;
+	$_ =~ s/</&lt;/g;
+	$_ =~ s/>/&gt;/g;
 	/^${monthstr} ${daystr} (..:..:..) [\w\-]+ ${filter}: (.*)/;
 	print "$1 $2 $3<br />\n";
 }
@@ -316,6 +320,5 @@ print "&nbsp;\n";
 
 &closebox();
 
-&alertbox('add','add');
 &closebigbox();
 &closepage();

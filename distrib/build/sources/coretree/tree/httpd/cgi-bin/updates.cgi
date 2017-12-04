@@ -23,6 +23,7 @@ use warnings;
 my (%uploadsettings, %updates);
 
 $uploadsettings{'ACTION'} = '';
+our $infomessage = '';
 our $errormessage = '';
 
 &getcgihash(\%uploadsettings);
@@ -70,7 +71,7 @@ if ($uploadsettings{'ACTION'} eq $tr{'upload'}) {
 		$errormessage .= $tr{'could not download the available updates list'} ."<br />";
 	}
 	unless (mkdir("/var/patches/$$",0700)) {
-		$errormessage .= $tr{'could not create directory'} ."<br />";
+		$errormessage .= $tr{'could not create directory'} ." /var/patches/$$.<br />";
 		goto ERROR;
 	}
 	unless (open(FH, ">/var/patches/$$/patch.tar.gz")) {
@@ -160,24 +161,32 @@ elsif ($uploadsettings{'ACTION'} eq $tr{'refresh update list'}) {
 
 ERROR:
 
-open(AV, "${swroot}/patches/available") or $errormessage .= $tr{'could not open the available updates file'} ."<br />";
-while (<AV>) {
-	next if $_ =~ m/^#/;
-	chomp $_;
-	my @temp = split(/\|/,$_);
-	my ($summary) = ( $temp[3] =~ /^(.{0,80})/ );
-	$updates{ $temp[ 0 ] } = { name => $temp[2], summary => $summary, description => $temp[3], date => $temp[4], info => $temp[5], size => $temp[6], md5 => $temp[1] };
+if (open(AV, "${swroot}/patches/available")) {
+	while (<AV>) {
+		next if $_ =~ m/^#/;
+		chomp $_;
+		my @temp = split(/\|/,$_);
+		my ($summary) = ( $temp[3] =~ /^(.{0,80})/ );
+		$updates{ $temp[ 0 ] } = { name => $temp[2], summary => $summary, description => $temp[3], date => $temp[4], info => $temp[5], size => $temp[6], md5 => $temp[1] };
+	}
+	close (AV);
 }
-close (AV);
-
-open (PF, "${swroot}/patches/installed") or $errormessage .= $tr{'could not open installed updates file'} ."<br />";
-while (<PF>) {
-	my @temp = split(/\|/,$_);
-	$updates{$temp[0]}{'installed'} = "---";
+else {
+	$errormessage .= $tr{'could not open the available updates file'} ."<br />";
 }
-close (PF);
 
-&alertbox($errormessage);
+if (open (PF, "${swroot}/patches/installed")) {
+	while (<PF>) {
+		my @temp = split(/\|/,$_);
+		$updates{$temp[0]}{'installed'} = "---";
+	}
+	close (PF);
+}
+else {
+	$errormessage .= $tr{'could not open the installed updates file'} ."<br />";
+}
+
+&alertbox($errormessage, "", $infomessage);
 
 # Display options for adding / installing etc updates
 

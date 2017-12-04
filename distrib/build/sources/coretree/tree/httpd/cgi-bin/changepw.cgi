@@ -14,6 +14,7 @@ use strict;
 use warnings;
 
 my %cgiparams;
+my $infomessage = "";
 my $errormessage = "";
 my $refresh = '';
 my ($lastToken, $newToken, $rtnToken);
@@ -65,8 +66,7 @@ if ($cgiparams{'ACTION_ADMIN'} eq $tr{'save'}) {
 		elsif (length($password1) >= 6) {
 			system('/usr/sbin/htpasswd', '-m', '-b', "${swroot}/auth/users", 'admin', "${password1}");
 			&log($tr{'admin user password has been changed'});
-			$errormessage .= $tr{'admin user password has been changed'}."<br />\n";
-			$refresh = '<meta http-equiv="refresh" content="2;">';
+			$infomessage .= $tr{'admin user password has been changed'}."<br />\n";
 		}
 		else {
 			$errormessage .= $tr{'passwords must be at least 6 characters in length'} ."<br />\n";
@@ -93,8 +93,7 @@ if ($cgiparams{'ACTION_DIAL'} eq $tr{'save'}) {
 		elsif (length($password1) >= 6) {
 			system('/usr/sbin/htpasswd', '-m', '-b', "${swroot}/auth/users", 'dial', "${password1}");
 			&log($tr{'dial user password has been changed'});
-			$errormessage .= $tr{'dial user password has been changed'}."<br />\n";
-			$refresh = '<meta http-equiv="refresh" content="2;">';
+			$infomessage .= $tr{'dial user password has been changed'}."<br />\n";
 		}
 		else {
 			$errormessage .= $tr{'passwords must be at least 6 characters in length'}."<br />\n";
@@ -111,7 +110,7 @@ ERROR:
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action='?'><div>\n";
 print "  <input type='hidden' name='Token' value='$newToken'>\n";

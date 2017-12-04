@@ -30,6 +30,7 @@ $cgiparams{'COMPRESSION'} = 'off';
 
 &getcgihash(\%cgiparams);
 
+my $infomessage = '';
 my $errormessage = '';
 
 if ($cgiparams{'ACTION'} eq $tr{'add'}) {
@@ -68,75 +69,99 @@ if ($cgiparams{'ACTION'} eq $tr{'add'}) {
 		$errormessage .= $tr{'password not set'} ."<br />";
 	}
 
-	open(FILE, $filename) or die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
-	unless ($errormessage) {
-		open(FILE,">>$filename") or die 'Unable to open config file.';
-		flock FILE, 2;
-		print FILE "$cgiparams{'NAME'},$cgiparams{'LEFT'},$cgiparams{'LEFT_SUBNET'},$cgiparams{'RIGHT'},$cgiparams{'RIGHT_SUBNET'},$cgiparams{'SECRET1'},$cgiparams{'ENABLED'},$cgiparams{'COMPRESSION'},$cgiparams{'COMMENT'}\n";
+	if (open(FILE, "$filename")) {
+		my @current = <FILE>;
 		close(FILE);
+		unless ($errormessage) {
+			if (open(FILE, ">>$filename")) {
+				flock FILE, 2;
+				print FILE "$cgiparams{'NAME'},$cgiparams{'LEFT'},$cgiparams{'LEFT_SUBNET'},$cgiparams{'RIGHT'},$cgiparams{'RIGHT_SUBNET'},$cgiparams{'SECRET1'},$cgiparams{'ENABLED'},$cgiparams{'COMPRESSION'},$cgiparams{'COMMENT'}\n";
+				close(FILE);
 
-		$cgiparams{'NAME'} = '';
-		$cgiparams{'LEFT'} = '';
-		$cgiparams{'LEFT_SUBNET'} = '';
-		$cgiparams{'RIGHT'} = '';
-		$cgiparams{'RIGHT_SUBNET'} = '';
-		$cgiparams{'SECRET1'} = '';
-		$cgiparams{'SECRET2'} = '';
-		$cgiparams{'COMMENT'} = '';
-		$cgiparams{'ENABLED'} = 'off';
-		$cgiparams{'COMPRESSION'} = 'off';
+				$cgiparams{'NAME'} = '';
+				$cgiparams{'LEFT'} = '';
+				$cgiparams{'LEFT_SUBNET'} = '';
+				$cgiparams{'RIGHT'} = '';
+				$cgiparams{'RIGHT_SUBNET'} = '';
+				$cgiparams{'SECRET1'} = '';
+				$cgiparams{'SECRET2'} = '';
+				$cgiparams{'COMMENT'} = '';
+				$cgiparams{'ENABLED'} = 'off';
+				$cgiparams{'COMPRESSION'} = 'off';
 
-		system('/usr/bin/smoothwall/writeipsec.pl');
+				system('/usr/bin/smoothwall/writeipsec.pl');
+ 				$infomessage .= 'IPsec connection added.' ."<br />\n";
+			}
+			else {
+ 				$errormessage .= 'Could not write config file; connection not added.' ."<br />\n";
+			}
+		}
+	}
+	else {
+ 		$errormessage .= 'Could not read config file; connection not addded.' ."<br />\n";
 	}
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}) {
-	open(FILE, "$filename") or die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
+	my ($action, $actionOK);
+ 	$actionOK = ' ready to edit' if ($cgiparams{'ACTION'} eq $tr{'edit'});
+ 	$action = 'editted' if ($cgiparams{'ACTION'} eq $tr{'edit'});
+ 	$actionOK = '(s) removed' if ($cgiparams{'ACTION'} eq $tr{'remove'});
+ 	$action = 'removed' if ($cgiparams{'ACTION'} eq $tr{'remove'});
 
-	my $count = 0;
-	my $id = 0;
-	my $line;
-	foreach $line (@current) {
-		$id++;
-		$count++ if ($cgiparams{$id} eq "on");
-	}
-	if ($count == 0) {
-		$errormessage .= $tr{'nothing selected'} ."<br />\n";
-	}
-	if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
-		$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n";
-	}
-	unless ($errormessage) {
-		open(FILE, ">$filename") or die 'Unable to open config file.';
-		flock FILE, 2;
-		my $id = 0;
-		foreach $line (@current) {
-			$id++;
-			unless ($cgiparams{$id} eq "on") {
-				print FILE "$line";
-			}
-			elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
-				chomp($line);
-				my @temp = split(/\,/,$line);
-				$cgiparams{'NAME'} = $temp[0];
-				$cgiparams{'LEFT'} = $temp[1];
-				$cgiparams{'LEFT_SUBNET'} = $temp[2];
-				$cgiparams{'RIGHT'} = $temp[3];
-				$cgiparams{'RIGHT_SUBNET'} = $temp[4];
-				$cgiparams{'SECRET1'} = $temp[5];
-				$cgiparams{'SECRET2'} = $temp[5];
-				$cgiparams{'ENABLED'} = $temp[6];
-				$cgiparams{'COMPRESSION'} = $temp[7];
-				$cgiparams{'COMMENT'} = $temp[8] || '';
-			}
-		}
+	if (open(FILE, "$filename")) {
+		my @current = <FILE>;
 		close(FILE);
 
-		system('/usr/bin/smoothwall/writeipsec.pl');
+		my $count = 0;
+		my $id = 0;
+		my $line;
+		foreach $line (@current) {
+			$id++;
+			$count++ if ($cgiparams{$id} eq "on");
+		}
+		if ($count == 0) {
+			$errormessage .= $tr{'nothing selected'} ."<br />\n";
+		}
+		if ($count > 1 && $cgiparams{'ACTION'} eq $tr{'edit'}) {
+			$errormessage .= $tr{'you can only select one item to edit'} ."<br />\n";
+		}
+		unless ($errormessage) {
+			if (open(FILE, ">$filename")) {
+				flock FILE, 2;
+				my $id = 0;
+				foreach $line (@current) {
+					$id++;
+					unless ($cgiparams{$id} eq "on") {
+						print FILE "$line";
+					}
+					elsif ($cgiparams{'ACTION'} eq $tr{'edit'}) {
+						chomp($line);
+						my @temp = split(/\,/,$line);
+						$cgiparams{'NAME'} = $temp[0];
+						$cgiparams{'LEFT'} = $temp[1];
+						$cgiparams{'LEFT_SUBNET'} = $temp[2];
+						$cgiparams{'RIGHT'} = $temp[3];
+						$cgiparams{'RIGHT_SUBNET'} = $temp[4];
+						$cgiparams{'SECRET1'} = $temp[5];
+						$cgiparams{'SECRET2'} = $temp[5];
+						$cgiparams{'ENABLED'} = $temp[6];
+						$cgiparams{'COMPRESSION'} = $temp[7];
+						$cgiparams{'COMMENT'} = $temp[8] || '';
+					}
+				}
+				close(FILE);
+
+				system('/usr/bin/smoothwall/writeipsec.pl');
+ 				$infomessage .= "IPsec connection${actionOK}.<br />\n";
+			}
+			else {
+ 				$errormessage .= "Could not write config file; connection not $action." ."<br />\n";
+			}
+		}
+	}
+	else {
+ 		$errormessage .= 'Could not read config file; connection not $action.' ."<br />\n";
 	}
 }
 
@@ -151,13 +176,18 @@ if ($cgiparams{'ACTION'} eq $tr{'export'}) {
 
 if ($cgiparams{'ACTION'} eq $tr{'import'}) {
 	if (length($cgiparams{'FH'}) > 1) {
-		open(FILE, ">$filename") or $errormessage .= 'Could not open config file for writing' ."<br />\n";
-		flock FILE, 2;
-		binmode(FILE);
-		print FILE $cgiparams{'FH'};
-		close (FILE);
+		if (open(FILE, ">$filename")) {
+			flock FILE, 2;
+			binmode(FILE);
+			print FILE $cgiparams{'FH'};
+			close (FILE);
 		
-		system('/usr/bin/smoothwall/writeipsec.pl');
+			system('/usr/bin/smoothwall/writeipsec.pl');
+ 			$infomessage .= 'IPsec connections imported.' ."<br />\n";
+		}
+		else {
+ 			$errormessage .= 'Could not write config file; connections not imported.' ."<br />\n";
+		}
 	}
 }
 
@@ -181,7 +211,7 @@ $checked{'COMPRESSION'}{$cgiparams{'COMPRESSION'}} = 'CHECKED';
 
 &openbigbox();
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 
@@ -332,6 +362,5 @@ END
 
 &closebox();
 
-&alertbox('add','add');
 &closebigbox();
 &closepage();

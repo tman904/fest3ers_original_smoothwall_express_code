@@ -16,6 +16,7 @@ use Socket;
 my (%cgiparams, %selected);
 my (@inaddrs, @addrs);
 my ($addr, $address);
+my $infomessage = '';
 my $errormessage = '';
 
 $cgiparams{'ACTION'} = '';
@@ -31,11 +32,30 @@ $selected{'TOOL'}{'PING'} = '';
 $selected{'TOOL'}{'TRACEROUTE'} = '';
 $selected{'TOOL'}{$cgiparams{'TOOL'}} = 'SELECTED';
 
+if ($cgiparams{'ACTION'} eq $tr{'run'})
+{
+	@inaddrs = split(/,/, $cgiparams{'IP'});
+
+	foreach $addr (@inaddrs)
+	{
+print STDERR "$addr\n";
+		if (&validip($addr)) {
+			push @addrs, $addr; }
+		else
+		{
+			if ($address = gethostbyname($addr)) {
+				push @addrs, inet_ntoa($address); }
+			else {
+				$errormessage .= "$tr{'could not resolve'} $addr<br />\n"; }
+		}		
+	}
+}
+
 &openpage($tr{'network utilities'}, 1, '', 'tools');
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 
@@ -60,46 +80,23 @@ END
 
 &closebox();
 
-if ($cgiparams{'ACTION'} eq $tr{'run'})
+foreach $addr (@addrs)
 {
-	@inaddrs = split(/,/, $cgiparams{'IP'});
+	my $iaddr = inet_aton($addr);
+	my $hostname = gethostbyaddr($iaddr, AF_INET);
+	if (!$hostname) { $hostname = $tr{'lookup failed'}; }
 
-	foreach $addr (@inaddrs)
-	{
-		if (&validip($addr)) {
-			push @addrs, $addr; }
-		else
-		{
-			if ($address = gethostbyname($addr)) {
-				push @addrs, inet_ntoa($address); }
-			else {
-				$errormessage .= "$tr{'could not resolve'} $addr<br />\n"; }
-		}		
-	}
-
-unless ($errormessage)
-{
-	foreach $addr (@addrs)
-	{
-		my $iaddr = inet_aton($addr);
-		my $hostname = gethostbyaddr($iaddr, AF_INET);
-		if (!$hostname) { $hostname = $tr{'lookup failed'}; }
-	
-		&openbox("${addr} (${hostname})");
-		print "<PRE>\n";
-		if ($cgiparams{'TOOL'} eq 'PING') {
-			system('/usr/bin/ping', '-n', '-c', '5', $addr); }
-		elsif ($cgiparams{'TOOL'} eq 'TRACEROUTE') {
-			system('/usr/bin/traceroute', '--resolve-hostnames', $addr); }
-		print "</PRE>\n";
-		&closebox();
-		}
-	}
+	&openbox("${addr} (${hostname})");
+	print "<PRE>\n";
+	if ($cgiparams{'TOOL'} eq 'PING') {
+		system('/usr/bin/ping', '-n', '-c', '5', $addr); }
+	elsif ($cgiparams{'TOOL'} eq 'TRACEROUTE') {
+		system('/usr/bin/traceroute', '--resolve-hostnames', $addr); }
+	print "</PRE>\n";
+	&closebox();
 }
 
 print "</div></form>\n";
-
-&alertbox('add','add');
 
 &closebigbox();
 

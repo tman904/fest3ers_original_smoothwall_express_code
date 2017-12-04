@@ -11,6 +11,7 @@ use header qw( :standard );
 use strict;
 use warnings;
 
+my $infomessage = '';
 my $errormessage = '';
 
 &showhttpheaders();
@@ -19,7 +20,7 @@ my $errormessage = '';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 &openbox($tr{'secure shellc'}, '');
 
@@ -46,8 +47,6 @@ END
 ;
 
 &closebox();
-
-&alertbox('add','add');
 
 &closebigbox();
 

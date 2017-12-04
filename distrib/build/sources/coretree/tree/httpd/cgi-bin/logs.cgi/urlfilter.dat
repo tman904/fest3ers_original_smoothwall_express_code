@@ -26,6 +26,7 @@ my $colourerr = '#FF0000';
 
 $cgiparams{'ACTION'} = '';
 
+my $infomessage='';
 my $errormessage='';
 
 my $logarch='';
@@ -153,7 +154,7 @@ if ($cgiparams{'ACTION'} eq $tr{'export'}) {
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 &openbox($tr{'settingsc'});
 

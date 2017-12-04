@@ -15,6 +15,7 @@ use warnings;
 
 my (%cgiparams, %checked, %netsettings, @current, @active);
 my $filename = "${swroot}/vpn/config";
+my $infomessage = '';
 my $errormessage = '';
 my $refresh = '';
 
@@ -46,16 +47,14 @@ if ($cgiparams{'ACTION'} eq $tr{'restart'}) {
 	system('/usr/bin/smoothwall/writeipsec.pl');
 
 	my $success = message('ipsecrestart');
-	$errormessage .= $success ."<br />\n" if ($success);
+	$infomessage .= $success ."<br />\n" if ($success);
 	$errormessage .= "ipsecrestart ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'stop'}) {
 	my $success = message('ipsecstop');
-	$errormessage .= $success ."<br />\n" if ($success);
+	$infomessage .= $success ."<br />\n" if ($success);
 	$errormessage .= "ipsecstop ".$tr{'smoothd failure'} ."<br />\n" unless ($success);
-	$refresh = '<meta http-equiv="refresh" content="2;">' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 }
 
 $cgiparams{'ENABLE'} = 'off' if ($cgiparams{'VALID'} eq '');
@@ -70,7 +69,7 @@ $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

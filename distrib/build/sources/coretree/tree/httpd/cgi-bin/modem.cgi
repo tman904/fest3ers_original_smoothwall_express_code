@@ -13,6 +13,7 @@ use strict;
 use warnings;
 
 my %modemsettings;
+my $infomessage = '';
 my $errormessage = '';
 
 &showhttpheaders();
@@ -22,7 +23,6 @@ $modemsettings{'VALID'} = '';
 
 &getcgihash(\%modemsettings);
 
-$errormessage = '';
 if ($modemsettings{'ACTION'} eq $tr{'save'}) {
 	if (!($modemsettings{'TIMEOUT'} =~ /^\d+$/)) {
 		$errormessage .= $tr{'timeout must be a number'}."<br />";
@@ -64,6 +64,7 @@ if ($modemsettings{'ACTION'} eq $tr{'save'}) {
 		$modemsettings{'VALID'} = 'yes'; }
 
 	&writehash("${swroot}/modem/settings", \%modemsettings);
+	$infomessage .= "Modem settings saved.<br />\n";
 }
 
 if ($modemsettings{'ACTION'} eq $tr{'restore defaults'}) {
@@ -76,7 +77,7 @@ if ($modemsettings{'ACTION'} eq $tr{'restore defaults'}) {
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 print "<form method='POST' action='?'><div>\n";
 

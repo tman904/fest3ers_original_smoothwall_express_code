@@ -14,6 +14,7 @@ use strict;
 use warnings;
 
 my %cgiparams;
+my $infomessage = '';
 my $errormessage = '';
 
 $cgiparams{'ACTION'} = '';
@@ -96,7 +97,7 @@ my %selected;
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 &openbox($tr{'settingsc'});
 

@@ -14,6 +14,7 @@ use strict;
 use warnings;
 
 my %cgiparams;
+my $infomessage = '';
 my $errormessage = '';
 my $refresh = '';
 my $death = 0;
@@ -66,7 +67,7 @@ if ($cgiparams{'ACTION'} eq $tr{'shutdown'}) {
 	&log($tr{'shutting down smoothwall'});
 	
 	my $success = message('systemshutdown');
-	
+	$infomessage .= $success ."<br />\n" if ($success);
 	$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 }
 elsif ($cgiparams{'ACTION'} eq $tr{'reboot'}) {
@@ -75,7 +76,7 @@ elsif ($cgiparams{'ACTION'} eq $tr{'reboot'}) {
 	&log($tr{'rebooting smoothwall'});
 
 	my $success = message('systemrestart');
-
+	$infomessage .= $success ."<br />\n" if ($success);
 	$errormessage .= $tr{'smoothd failure'} ."<br />\n" unless ($success);
 }
 
@@ -87,7 +88,7 @@ if ($death == 0 && $rebirth == 0) {
 
 	&openbigbox('100%', 'LEFT');
 
-	&alertbox($errormessage);
+	&alertbox($errormessage, "", $infomessage);
 
 	print "<form method='post' action='?'><div>\n";
 	print "  <input type='hidden' name='Token' value='$newToken'>\n";
@@ -120,11 +121,11 @@ else {
 	my ($message,$title);
 	if ($death) {
 		$title = $tr{'shutting down'};
-		$message = $tr{'smoothwall is shutting down'};
+		$infomessage = $tr{'smoothwall is shutting down'};
 	}
 	else {
 		$title = $tr{'rebooting'};
-		$message = $tr{'smoothwall is rebooting'};
+		$infomessage = $tr{'smoothwall is rebooting'};
 	}
 
 	&openpage($title, 1, '', 'shutdown');
@@ -139,7 +140,7 @@ else {
 		<a href='/' border='0'><img src='/ui/img/smoothwall_big.png'></a><br /><br />
 END
 ;
-	&alertbox($message);
+	&alertbox($errormessage, "", $infomessage);
 
 	print <<END;
 	</td>
@@ -148,8 +149,6 @@ END
 </div>
 END
 }
-
-&alertbox('add', 'add');
 
 &closebigbox();
 &closepage();

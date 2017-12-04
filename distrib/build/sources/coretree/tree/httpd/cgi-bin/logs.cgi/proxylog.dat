@@ -19,6 +19,7 @@ my %ips;
 my %save;
 my %selected;
 my %checked;
+my $infomessage;
 my $errormessage;
 my @log;
 
@@ -83,6 +84,7 @@ my $filter;
 
 if ($cgiparams{'ENABLE_FILTER'} eq 'on') {
 	$filter = $cgiparams{'FILTER'};
+	$filter =~ s=/=\\/=g;
 }
 else {
 	$filter = '';
@@ -98,30 +100,34 @@ else {
 }
 
 my $test = '';
-my $thiscode = '$test =~ /$filter/;';
+my $thiscode = '$test =~ /'. $filter .'/;';
 eval($thiscode);
 if ($@ ne '') {
-	$errormessage .= $tr{'bad ignore filter'}.$@ ."<br />\n";
+	$errormessage .= $tr{'bad ignore filter'} . $@ ."; filter cleared.<br />\n";
 	$filter = '';
 }
 else {
-	open (FILE, '/var/log/squid/access.log');
-	while (<FILE>) {
-		my ($ts,$x,$ip,$cache,$y,$type,$url) = split;
-		$ips{$ip}++;
-		if (($ts >= $start_date) && ($ts < $end_date) && !($url =~ /$filter/i) &&
-		   !($url =~/^cache_object.*/i ) &&
-		   ((($ip eq $sourceip) || $sourceall))) {	
-			my ($second,$minute,$hour)=localtime($ts);
-			$second = "0$second" unless ( $second >= 10 );
-			$minute = "0$minute" unless ( $minute >= 10 );
-			$hour = "0$hour" unless ( $hour >= 10 );
-			my ($header,$urlsnip,$data)=split('/+',$url);
- 			$log[$lines] = "$hour:$minute:$second $ip $url";
-			$lines++;
-		}
-	}	
-	close (FILE);
+	if (open (FILE, '/var/log/squid/access.log')) {
+		while (<FILE>) {
+			my ($ts,$x,$ip,$cache,$y,$type,$url) = split;
+			$ips{$ip}++;
+			if (($ts >= $start_date) && ($ts < $end_date) && !($url =~ /$filter/i) &&
+		   	!($url =~/^cache_object.*/i ) &&
+		   	((($ip eq $sourceip) || $sourceall))) {	
+				my ($second,$minute,$hour)=localtime($ts);
+				$second = "0$second" unless ( $second >= 10 );
+				$minute = "0$minute" unless ( $minute >= 10 );
+				$hour = "0$hour" unless ( $hour >= 10 );
+				my ($header,$urlsnip,$data)=split('/+',$url);
+ 				$log[$lines] = "$hour:$minute:$second $ip $url";
+				$lines++;
+			}
+		}	
+		close (FILE);
+	}
+	else {
+		$errormessage .= "Could not read squid's access.log<br />\n";
+	}
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'export'}) {
@@ -152,7 +158,7 @@ $checked{'ENABLE_FILTER'}{$cgiparams{'ENABLE_FILTER'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-&alertbox($errormessage);
+&alertbox($errormessage, "", $infomessage);
 
 &openbox($tr{'settingsc'});
 
