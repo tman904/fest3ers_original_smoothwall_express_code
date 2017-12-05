@@ -37,10 +37,10 @@ configure: patch
 
 install: compile
 	make -C $(DIR)/unix install
-	chmod -v u+w ${TOOLS_DIR}/lib/libtcl8.5.so
+	chmod -v u+w ${TOOLS_DIR}/lib/libtcl$(TCL_MM).so
 	make -C $(DIR)/unix install-private-headers
 	rm -f $(TOOLS_DIR)/bin/tclsh
-	ln -sv tclsh8.5 $(TOOLS_DIR)/bin/tclsh
+	ln -sv tclsh$(TCL_MM) $(TOOLS_DIR)/bin/tclsh
 endif
 
 ifeq ($(BUILD_PHASE), Final)
@@ -50,7 +50,7 @@ configure: patch
 install: compile
 	@mkdir -p $(PKG_ROOT)
 	@make -C $(DIR)/unix INSTALL_ROOT=$(PKG_ROOT) install
-	@ln -s tclsh8.5 $(PKG_ROOT)$(PKG_DIR)/bin/tclsh
+	@ln -s tclsh$(TCL_MM) $(PKG_ROOT)$(PKG_DIR)/bin/tclsh
 endif
 
 include ../Makefile.rules
