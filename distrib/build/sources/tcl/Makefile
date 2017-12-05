@@ -10,7 +10,7 @@ include ../Makefile.versions
 PACKAGE = tcl
 VERSION = $(TCL_VER)
 
-BASE_URL = http://hivelocity.dl.sourceforge.net/project/$(PACKAGE)/Tcl/$(TCL_VER)
+BASE_URL = http://downloads.sourceforge.net/project/$(PACKAGE)/Tcl/$(TCL_VER)
 
 #PATCH_FILE1 = configure-tcl-fixes-bash3.patch
 #PATCH_FILE2 = dash-fix.patch
