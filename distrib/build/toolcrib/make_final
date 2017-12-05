@@ -258,7 +258,7 @@ fi
       build linux
       #build linux-backports
       build linux-firmware
-      build kernel-drivers
+      #build kernel-drivers
       JOBS=$JOBS_UP
       build iptables
       JOBS=$JOBS_MP

@@ -60,8 +60,11 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
 	    $(UDEV) lm_sensors xz pcmciautils qemu sysfsutils db squidGuard \
 	    apcupsd cacert-bundle setkerneltz fping \
-	    kernel-drivers \
 	    coretree $(ADV_PKGS) device-ids
+
+# Leave kernel-drivers out of Update9/SP4; we'll assume the drivers in
+# 3.16.51 are new enough.
+#	    kernel-drivers \
 
 # INST_PKGS notes.
 # cacert-bundle should be installed after openssl.
