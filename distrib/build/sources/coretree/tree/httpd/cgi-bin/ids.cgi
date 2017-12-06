@@ -354,8 +354,8 @@ sub runoinkmaster
 {
 	my $v = $_[0];
 	my $attempt = $_[1] if (defined $_[1]);
-	#my $url = "http://www.snort.org/reg-rules/snortrules-snapshot-$v.tar.gz/" . $snortsettings{'OINK'};
-	my $url = "http://downloads/snortrules-snapshot-$v.tar.gz/" . $snortsettings{'OINK'};
+	my $url = "http://www.snort.org/reg-rules/snortrules-snapshot-$v.tar.gz/" . $snortsettings{'OINK'};
+	#my $url = "http://downloads/snortrules-snapshot-$v.tar.gz/" . $snortsettings{'OINK'};
 
 	my $curdir = getcwd;
 	chdir "${swroot}/snort/";
@@ -376,7 +376,6 @@ sub runoinkmaster
   document.getElementById('progress').style.background = '#a0a0ff';
 </script>
 ";
-		print "<p style='background:white; border:solid black 2pt; padding:2pt'>\n" if ($formdebug ne "");
 		my $percent = 0;
 		while(<FD>) {
 			my $line = $_;
@@ -449,7 +448,6 @@ print "
 ";
 			}
 		}
-		print "</p>\n" if ($formdebug ne "");
 		close(FD);
 
 		if ($?) {
