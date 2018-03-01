@@ -385,6 +385,8 @@ clean-sources:
 	  done); \
 	  echo; \
 	fi
+	@+sudo su -c "cd sources; find . -name wget-log -exec rm -f {} \;"
+	@+sudo su -c "cd sources; find . -name wget-log.[0-9]\* -exec rm -f {} \;"
 
 # Delete the toolchain
 #
