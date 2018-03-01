@@ -1,0 +1,27 @@
+commit b2be70d3d13b0b2d70496fd6406298cf8bb305af
+Author: Paul Wouters <pwouters@redhat.com>
+Date:   Fri Mar 4 11:54:12 2016 -0500
+
+    pluto: add missing #ifdef for ikev1_do_pam_authentication()
+
+diff --git a/programs/pluto/ikev1_xauth.c b/programs/pluto/ikev1_xauth.c
+index 1e26fab..7f99ed2 100644
+--- a/programs/pluto/ikev1_xauth.c
++++ b/programs/pluto/ikev1_xauth.c
+@@ -1216,6 +1216,7 @@ static bool do_file_authentication(void *varg)
+ 	return win;
+ }
+ 
++#ifdef XAUTH_HAVE_PAM
+ /* IN AN AUTH THREAD */
+ static bool ikev1_do_pam_authentication(const struct xauth_thread_arg *arg)
+ {
+@@ -1252,6 +1253,7 @@ static bool ikev1_do_pam_authentication(const struct xauth_thread_arg *arg)
+ 	pfreeany(parg.ra);
+ 	return (results);
+ }
++#endif
+ 
+ /*
+  * Main authentication routine will then call the actual compiled-in
+
