@@ -28,7 +28,7 @@ export UDEVunused = udev
 # Some of these are retirees.
 TOOLCHAIN_PKGS = expect
 OTHER_PKGS = updates jam $(UDEVunused) udev-config cnxadsl \
-	     libart_lgpl procps procinfo dev86
+	     libart_lgpl procps procinfo dev86 openswan
 
 TARGET_DIR = /build/target
 
@@ -54,7 +54,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    iproute2 gd expat ethtool listtables inotify-tools \
 	    beep2 pcre trafficstats iftop setuids ppp isdn4k-utils rp-pppoe \
 	    ibod dhcpcd eciadsl-synch_bin eciadsl-usermode dhcp snort \
-	    oinkmaster openswan wireless_tools wpa_supplicant imspector diffutils clamav \
+	    oinkmaster libreswan wireless_tools wpa_supplicant imspector diffutils clamav \
 	    p3scan siproxd which miniupnpd ez-ipupdate noip cdrtools \
 	    suricata smartmontools at dosfstools grub linux-atm \
 	    mtools nano reiserfsprogs parted xtables-addons cpio dialog \
@@ -231,7 +231,9 @@ endif
 	@echo -e "\nTidying ..."
 	@#rm -f distrib/etc/resolv.conf
 	@find distrib -name .gitignore -exec rm -f {} \;
+	@rm -f distrib/etc/ipsec.conf distrib/etc/ipsec.secrets
 	@ln -s /var/smoothwall/vpn/ipsec.conf distrib/etc/ipsec.conf
+	@ln -s /var/smoothwall/vpn/ipsec.secrets distrib/etc/ipsec.secrets
 	@ln -sf /usr/bin/hostname distrib/bin/hostname
 	@cd distrib; chown -R root:root usr/share/ntop usr/etc/ntop
 	@cd distrib/etc; mkdir -p apcupsd/scripts && chown root:root apcupsd/scripts && chmod 755 apcupsd/scripts
