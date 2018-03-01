@@ -181,6 +181,7 @@ fi
       build libevent
       build nspr
       build nss
+      build curl
       build neon
       build libosip2
       build libmnl
@@ -345,7 +346,10 @@ fi
       build dhcp
       build snort
       build oinkmaster
-      build openswan
+      #build openswan
+      #JOBS=$JOBS_UP
+      build libreswan
+      #JOBS=$JOBS_MP
       build wireless_tools
       build wpa_supplicant
 
