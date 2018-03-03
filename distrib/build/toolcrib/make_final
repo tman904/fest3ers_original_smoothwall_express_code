@@ -260,7 +260,7 @@ fi
       #build linux-backports
       build linux-firmware
       #build kernel-drivers
-      JOBS=$JOBS_UP
+      #JOBS=$JOBS_UP
       build iptables
       JOBS=$JOBS_MP
       build ipset
