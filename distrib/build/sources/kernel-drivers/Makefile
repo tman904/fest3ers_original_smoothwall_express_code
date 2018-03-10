@@ -18,18 +18,18 @@ IXGBE_VER = 5.3.6
 E1000E_VER = 3.4.0.2
 IGBVF_VER = 2.3.8.2
 IXGBEVF_VER = 4.3.4
-I40EVF_VER = 3.4.2
-I40E_VER = 2.4.3
+#I40EVF_VER = 3.2.5
+#I40E_VER = 2.4.3
 R8168_VER = 8.045.08
 NCT6775_VER = v1.1
 ASIX_88179_178A_VER = 1.19.0
 
 
 PACKAGES = package-r8168 package-nct6775 package-igb package-igbvf \
-	   package-ixgbe package-ixgbevf package-i40evf package-i40e \
+	   package-ixgbe package-ixgbevf \
 	   package-e1000e package-asix-88179_178a
 #PACKAGES = package-i40evf
-BROKEN_PKGS = package-e1000
+BROKEN_PKGS = package-e1000 package-i40evf package-i40e \
 
 
 # The download section
@@ -39,10 +39,10 @@ download:
 	@$(DL_CMD) http://downloads.sourceforge.net/project/e1000/igbvf%20stable/$(IGBVF_VER)/igbvf-$(IGBVF_VER).tar.gz
 	@$(DL_CMD) http://downloads.sourceforge.net/project/e1000/ixgbe%20stable/$(IXGBE_VER)/ixgbe-$(IXGBE_VER).tar.gz
 	@$(DL_CMD) http://downloads.sourceforge.net/project/e1000/ixgbevf%20stable/$(IXGBEVF_VER)/ixgbevf-$(IXGBEVF_VER).tar.gz
-	@#@$(DL_CMD) http://downloads.sourceforge.net/sourceforge/e1000/e1000e-$(E1000E_VER).tar.gz
+	@$(DL_CMD) http://downloads.sourceforge.net/sourceforge/e1000/e1000e-$(E1000E_VER).tar.gz
 	@$(DL_CMD) https://downloads.sourceforge.net/project/e1000/e1000e%20stable/3.3.6/e1000e-3.3.6.tar.gz
-	@$(DL_CMD) http://downloads.sourceforge.net/project/e1000/i40evf%20stable/3.0.8/i40evf-$(I40EVF_VER).tar.gz
-	@$(DL_CMD) http://downloads.sourceforge.net/project/e1000/i40e%20stable/$(I40E_VER)/i40e-$(I40E_VER).tar.gz
+	@#$(DL_CMD) http://downloads.sourceforge.net/project/e1000/i40evf%20stable/3.2.5/i40evf-$(I40EVF_VER).tar.gz
+	@#$(DL_CMD) http://downloads.sourceforge.net/project/e1000/i40e%20stable/$(I40E_VER)/i40e-$(I40E_VER).tar.gz
 	@$(DL_CMD) http://r8168dl.appspot.com/files/r8168-$(R8168_VER).tar.bz2
 	@$(DL_CMD) http://www.asix.com.tw/FrootAttach/driver/AX88179_178A_LINUX_DRIVER_v$(ASIX_88179_178A_VER)_SOURCE.tar.bz2
 
@@ -59,11 +59,11 @@ prepare: download
 	tar -xvf $(DOWNLOADS_DIR)/ixgbe-$(IXGBE_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/ixgbevf-$(IXGBEVF_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/e1000e-$(E1000E_VER).tar.gz
-	tar -xvf $(DOWNLOADS_DIR)/i40evf-$(I40EVF_VER).tar.gz
-	tar -xvf $(DOWNLOADS_DIR)/i40e-$(I40E_VER).tar.gz
+	#tar -xvf $(DOWNLOADS_DIR)/i40evf-$(I40EVF_VER).tar.gz
+	#tar -xvf $(DOWNLOADS_DIR)/i40e-$(I40E_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/AX88179_178A_LINUX_DRIVER_v$(ASIX_88179_178A_VER)_SOURCE.tar.bz2
-	#cd AX88179_178A_LINUX_DRIVER_v$(ASIX_88179_178A_VER)_SOURCE; \
-	  #patch -p1 < ../ax88179-makefile.patch
+	cd AX88179_178A_LINUX_DRIVER_v$(ASIX_88179_178A_VER)_SOURCE; \
+	  patch -p1 < ../ax88179-makefile.patch
 	mkdir -p $(PKG_ROOT)
 
 
@@ -84,10 +84,10 @@ compile-e1000e:
 	$(MAKE) $(JOBS) V=1 -C e1000e-$(E1000E_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.16
 
 compile-i40evf:
-	$(MAKE) $(JOBS) V=1 -C i40evf-$(I40EVF_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.16
+	#$(MAKE) $(JOBS) V=1 -C i40evf-$(I40EVF_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.16
 
 compile-i40e:
-	$(MAKE) $(JOBS) V=1 -C i40e-$(I40E_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.16
+	#$(MAKE) $(JOBS) V=1 -C i40e-$(I40E_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.16
 
 compile-r8168:
 	$(MAKE) $(JOBS) V=1 -C r8168-$(R8168_VER)/src -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" modules
@@ -96,7 +96,7 @@ compile-nct6775:
 	$(MAKE) $(JOBS) V=1 -C nct6775-$(NCT6775_VER)/ -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.16
 
 compile-asix-88179_178a:
-	$(MAKE) $(JOBS) V=1 -C AX88179_178A_LINUX_DRIVER_v$(ASIX_88179_178A_VER)_SOURCE -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.4
+	$(MAKE) $(JOBS) V=1 -C AX88179_178A_LINUX_DRIVER_v$(ASIX_88179_178A_VER)_SOURCE -j $(PARA_JOBS) CFLAGS="$(CFLAGS)" KSRC=$(KERNEL_DIR) K_VERSION=3.16
 
 
 # The package section: install in buildroot
@@ -121,11 +121,11 @@ package-e1000e: compile-e1000e
 		$(PKG_ROOT)/lib/modules/$(K_SWE_VERSION)/kernel/drivers/net/ethernet/intel/e1000e/e1000e.ko
 
 package-i40evf: compile-i40evf
-	install -D $(DRIVER_DIR)/i40evf-$(I40EVF_VER)/src/i40evf.ko \
+	#install -D $(DRIVER_DIR)/i40evf-$(I40EVF_VER)/src/i40evf.ko \
 		$(PKG_ROOT)/lib/modules/$(K_SWE_VERSION)/kernel/drivers/net/ethernet/intel/i40evf/i40evf.ko
 
 package-i40e: compile-i40e
-	install -D $(DRIVER_DIR)/i40e-$(I40E_VER)/src/i40e.ko \
+	#install -D $(DRIVER_DIR)/i40e-$(I40E_VER)/src/i40e.ko \
 		$(PKG_ROOT)/lib/modules/$(K_SWE_VERSION)/kernel/drivers/net/ethernet/intel/i40e/i40e.ko
 
 package-r8168: compile-r8168
@@ -176,8 +176,8 @@ print-version:
 	@echo "E1000E $(E1000E_VER)"
 	@echo "IGBVF $(IGBVF_VER)"
 	@echo "IXGBEVF $(IXGBEVF_VER)"
-	@echo "I40EVF $(I40EVF_VER)"
-	@echo "I40E $(I40E_VER)"
+	@#echo "I40EVF $(I40EVF_VER)"
+	@#echo "I40E $(I40E_VER)"
 	@echo "R8168 $(R8168_VER)"
 	@echo "NCT6775 $(NCT6775_VER)"
 	@echo "ASIX_88179_178A $(ASIX_88179_178A_VER)"
