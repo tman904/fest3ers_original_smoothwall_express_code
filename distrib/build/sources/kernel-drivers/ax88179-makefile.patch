@@ -1,5 +1,5 @@
---- AX88179_178A_LINUX_DRIVER_v1.14.2_SOURCE/Makefile.orig	2014-10-26 14:29:04.000000000 -0400
-+++ AX88179_178A_LINUX_DRIVER_v1.14.2_SOURCE/Makefile	2015-11-26 14:38:22.000000000 -0500
+--- AX88179_178A_LINUX_DRIVER_v1.19.0_SOURCE/Makefile.orig	2018-03-09 19:51:29.883997144 -0500
++++ AX88179_178A_LINUX_DRIVER_v1.19.0_SOURCE/Makefile	2018-03-09 19:57:52.132173327 -0500
 @@ -1,25 +1,15 @@
 -CURRENT	= $(shell uname -r)
 -#TARGET	= usbnet
@@ -9,7 +9,7 @@
  OBJS	= ax88179_178a.o
  MDIR	= drivers/net/usb
 -KDIR	= /lib/modules/$(CURRENT)/build
--#KDIR	= /root/Desktop/Android/UBIQCONN/android-3.0
+-#KDIR	= /root/work/2440/2.6.17/linux-2.6.17.11
 -SUBLEVEL= $(shell uname -r | cut -d '.' -f 3 | cut -d '.' -f 1 | cut -d '-' -f 1 | cut -d '_' -f 1)
 +KDIR	= ../../linux/linux
 +SUBLEVEL= $(shell echo $(CURRENT) | cut -d '.' -f 3 | cut -d '.' -f 1 | cut -d '-' -f 1 | cut -d '_' -f 1)
