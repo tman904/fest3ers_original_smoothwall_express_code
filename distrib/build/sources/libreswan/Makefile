@@ -20,7 +20,6 @@ PATCH_FILE2 = setup.in.smoothwall.patch
 #PATCH_FILE2 = ikev1_xauth.c.patch
 
 KNL_SRC = ../linux$(KERNEL_TYPE)/linux
-$(info $(KNL_SRC))
 MOD_DEST = /lib/modules/$(K_RAW_VERSION)$(KERNEL_TYPE)/kernel/net/ipsec
 
 unpack: $(DIR)/
