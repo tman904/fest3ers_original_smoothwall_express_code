@@ -259,10 +259,8 @@ fi
       build linux
       #build linux-backports
       build linux-firmware
-      #build kernel-drivers
-      #JOBS=$JOBS_UP
+      build kernel-drivers
       build iptables
-      JOBS=$JOBS_MP
       build ipset
       build xtables-addons
       build ipbatch
@@ -330,7 +328,6 @@ fi
       build dhcpcd
       build eciadsl-synch_bin
       build eciadsl-usermode
-      #build cnxadsl
       touch crumbs/Final.grp5.compiled
     fi
 
@@ -346,10 +343,7 @@ fi
       build dhcp
       build snort
       build oinkmaster
-      #build openswan
-      #JOBS=$JOBS_UP
       build libreswan
-      #JOBS=$JOBS_MP
       build wireless_tools
       build wpa_supplicant
 
