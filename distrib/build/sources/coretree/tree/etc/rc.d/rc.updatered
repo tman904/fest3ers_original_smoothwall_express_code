@@ -186,7 +186,7 @@ if [ "$RED_TYPE" == "DHCP" ]; then
 
 	# Why did you call me?
 	case $reason in
-	  STOP|STOPPED)
+	  STOP|STOPPED|EXPIRE|RELEASE)
 	    # Nothing to do; either the system is going down or networking is
 	    #   being stopped for restart. *Technically*, it might be more correct
 	    #   to stop the various services; but since they are re-started soon
