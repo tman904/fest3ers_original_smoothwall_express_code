@@ -87,7 +87,7 @@ else
             "make -C sources/media TYPE=-devel" \
             "sources/media/$BUILD_PHASE.mediaISO.out" \
             ""
-  if [ -p crumbs/monpipe ]; then echo "" > crumbs/monpipe; fi
+  if [ -p crumbs/monpipe ]; then echo "Done End" > crumbs/monpipe; fi
   # Indicate success/failure here, too.
   startTIME=`date +%s`-beginTIME
   displayTIME=`perl -e "printf('%6d', $startTIME);"`

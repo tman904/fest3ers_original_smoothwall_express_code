@@ -92,4 +92,4 @@ else
   popd >/dev/null 2>&1
 fi
 
-if [ -p crumbs/monpipe ]; then echo "" > crumbs/monpipe; fi
+if [ -p crumbs/monpipe ]; then echo "Done End" > crumbs/monpipe; fi

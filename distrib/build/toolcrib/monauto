@@ -10,15 +10,20 @@
 
   trap 'rm -f crumbs/monpipe; if [ "$MONPID" != "" ]; then kill -9 $MONPID >/dev/null 2>&1; wait $MONPID >/dev/null 2>&1; fi' EXIT
 
+function killMon () {
+  if [ "$MONPID" != "" ]; then
+    kill -9 $MONPID
+    wait $MONPID >/dev/null 2>&1
+    MONPID=""
+  fi
+}
+
   rm -f crumbs/monpipe
   mkfifo crumbs/monpipe -m 600
   MONPID=""
   while read stage pkg third < crumbs/monpipe; do
-    if [ "$stage$pkg" == "" -a "$MONPID" != "" ]; then
-      kill -9 $MONPID
-      wait $MONPID >/dev/null 2>&1
-      MONPID=""
-    else
+    if [ ! -z "$stage" -a ! -z "$pkg" ]; then
+      killMon
       case $stage in
         -1) stage="Stage_1"; shift;;
         -2) stage="Stage_2"; shift;;
@@ -26,6 +31,8 @@
         -f) stage="Final"; shift;;
         -m) stage="Media.mediaISO"; shift;;
         -u) pkg="updates/update$third"; stage="Update"; shift;;
+        Done) continue;; # do nothing else
+        *) continue;; # also do nothing else
       esac
       [ -f sources/$pkg/$stage.out ] || touch sources/$pkg/$stage.out
       tail -f -s .1 sources/$pkg/$stage.out&

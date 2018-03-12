@@ -58,7 +58,7 @@ function build()
     echo "    $displayTIME $1$TGTP ($VERSION): PKG_ROOT:$PKG_ROOT" >>${BUILD_OUT}
     ( docommand "$1::$2" "make -C sources/$1 $2") > sources/$1/$BUILD_PHASE$TGT.out 2>&1
     status=$?
-    if [ -p crumbs/monpipe ]; then echo > crumbs/monpipe; fi
+    if [ -p crumbs/monpipe ]; then echo "Done End" > crumbs/monpipe; fi
     if [ $status -eq 0 ]; then
       touch sources/$1/$BUILD_PHASE$TGT.built
     else
@@ -83,7 +83,7 @@ function buildenv()
     echo "    $displayTIME $1 ($VERSION) "
     ( docommand "$1" "make -C sources/$1 clean install") > sources/$1/$BUILD_PHASE.out 2>&1
     status=$?
-    if [ -p crumbs/monpipe ]; then echo > crumbs/monpipe; fi
+    if [ -p crumbs/monpipe ]; then echo "Done End" > crumbs/monpipe; fi
     if [ $status -eq 0 ]; then
       touch sources/$1/$BUILD_PHASE.built
     else
