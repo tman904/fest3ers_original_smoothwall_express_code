@@ -1,8 +1,8 @@
 #!/bin/sh
 
 OLD_KERNEL=3.16.38
-KERNEL_VERSION=3.16.50
-TZ_TARBALL=tzdata2017c.tar.gz
+KERNEL_VERSION=3.16.55
+TZ_TARBALL=tzdata2018c.tar.gz
 
 echo "Install Update 9."
 

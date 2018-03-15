@@ -4,10 +4,15 @@
 UPDATE_PACKAGES = \
 		  apcupsd \
 		  bc \
-		  device-ids \
-		  cacert-bundle \
+		  binutils \
+		  bison \
 		  c_icap \
 		  c_icap_modules \
+		  cacert-bundle \
+		  clamav \
+		  cpio \
+		  curl \
+		  device-ids \
 		  dhcpcd \
 		  dnsmasq \
 		  e2fsprogs \
@@ -18,14 +23,13 @@ UPDATE_PACKAGES = \
 		  gawk \
 		  grep \
 		  httpd \
-		  iproute2 \
 		  ipbatch \
+		  iproute2 \
 		  ipset \
 		  iptables \
 		  isdn4k-utils \
 		  kmod \
 		  libevent \
-		  libosip2 \
 		  libmnl \
 		  libnetfilter_acct \
 		  libnetfilter_conntrack \
@@ -36,33 +40,37 @@ UPDATE_PACKAGES = \
 		  libnfnetlink \
 		  libnftnl \
 		  libnl \
+		  libosip2 \
+		  libreswan \
 		  libsmooth+setup \
-		  listtables \
 		  linux \
 		  linux-firmware \
+		  listtables \
 		  lm_sensors \
 		  nspr \
 		  nss \
 		  openssh \
 		  openssl \
-		  openswan \
+		  patch \
 		  pcmciautils \
+		  perl-mods \
+		  procps-ng \
 		  qemu \
 		  siproxd \
 		  smoothd \
 		  snort \
 		  squid \
-		  suricata \
 		  squidclamav \
 		  strace \
+		  suricata \
 		  sysklogd \
 		  trafficstats \
 		  unbound \
 		  util-linux \
 		  wget \
-		  xtables-addons \
 		  wireless_tools \
 		  wpa_supplicant \
+		  xtables-addons \
 		  xz \
 		  coretree
 
@@ -72,7 +80,7 @@ UPDATE_NAME = Update9
 
 CLAMAV = yes
 KERNEL = yes
-EXTRA_UPDATE_FILES = tzdata2017c.tar.gz
+EXTRA_UPDATE_FILES = tzdata2018c.tar.gz
 $(shell cp ../../../downloads/$(EXTRA_UPDATE_FILES) . 2>/dev/null)
 
 include ../Makefile.update

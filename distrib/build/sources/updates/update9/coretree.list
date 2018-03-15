@@ -1,5 +1,7 @@
 ./etc/bashrc
 ./etc/dnsmasq.conf
+./etc/ppp/ip-up
+./etc/rc.d/rc.updatered
 ./httpd/cgi-bin/advnet.cgi
 ./httpd/cgi-bin/apcupsd.cgi
 ./httpd/cgi-bin/backup.cgi
@@ -12,6 +14,9 @@
 ./httpd/cgi-bin/ids.cgi
 ./httpd/cgi-bin/im.cgi
 ./httpd/cgi-bin/interfaces.cgi
+./httpd/cgi-bin/ipblock.cgi
+./httpd/cgi-bin/ipinfo.cgi
+./httpd/cgi-bin/iptools.cgi
 ./httpd/cgi-bin/logs.cgi/firewalllog.dat.cgi
 ./httpd/cgi-bin/logs.cgi/ids.dat.cgi
 ./httpd/cgi-bin/logs.cgi/log.dat.cgi
@@ -47,6 +52,6 @@
 ./usr/bin/smoothwall/rrdtool.pl
 ./usr/bin/smoothwall/trafficloader.pl
 ./usr/lib/smoothwall/header.pm
-./usr/lib/smoothwall/smoothtype.pm
 ./usr/lib/smoothwall/langs/en.pl
+./usr/lib/smoothwall/smoothtype.pm
 ./var/smoothwall/patches/installed
