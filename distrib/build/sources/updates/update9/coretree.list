@@ -17,12 +17,12 @@
 ./httpd/cgi-bin/ipblock.cgi
 ./httpd/cgi-bin/ipinfo.cgi
 ./httpd/cgi-bin/iptools.cgi
-./httpd/cgi-bin/logs.cgi/firewalllog.dat.cgi
-./httpd/cgi-bin/logs.cgi/ids.dat.cgi
-./httpd/cgi-bin/logs.cgi/log.dat.cgi
-./httpd/cgi-bin/logs.cgi/pop3log.dat.cgi
-./httpd/cgi-bin/logs.cgi/proxylog.dat.cgi
-./httpd/cgi-bin/logs.cgi/urlfilter.dat.cgi
+./httpd/cgi-bin/logs.cgi/firewalllog.dat
+./httpd/cgi-bin/logs.cgi/ids.dat
+./httpd/cgi-bin/logs.cgi/log.dat
+./httpd/cgi-bin/logs.cgi/pop3log.dat
+./httpd/cgi-bin/logs.cgi/proxylog.dat
+./httpd/cgi-bin/logs.cgi/urlfilter.dat
 ./httpd/cgi-bin/ipblock.cgi
 ./httpd/cgi-bin/ipinfo.cgi
 ./httpd/cgi-bin/iptools.cgi
@@ -38,6 +38,7 @@
 ./httpd/cgi-bin/shutdown.cgi
 ./httpd/cgi-bin/sipproxy.cgi
 ./httpd/cgi-bin/smoothinfo.cgi
+./httpd/cgi-bin/status.cgi
 ./httpd/cgi-bin/time.cgi
 ./httpd/cgi-bin/timedaccess.cgi
 ./httpd/cgi-bin/traffic.cgi
@@ -47,6 +48,7 @@
 ./httpd/cgi-bin/vpnmain.cgi
 ./httpd/cgi-bin/xtaccess.cgi
 ./httpd/html/ui/css/style.css
+./httpd/html/ui/img/banner.png
 ./httpd/html/ui/img/check-icon.png
 ./httpd/html/ui/img/x-icon.png
 ./usr/bin/smoothwall/rrdtool.pl
@@ -54,4 +56,5 @@
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/langs/en.pl
 ./usr/lib/smoothwall/smoothtype.pm
+./usr/lib/smoothwall/update.pm
 ./var/smoothwall/patches/installed
