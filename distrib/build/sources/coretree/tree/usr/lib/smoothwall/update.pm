@@ -34,11 +34,20 @@ sub downloadlist
 
 	my %proxy;
 	&readhash("${swroot}/main/proxy", \%proxy);
+	my $infoURL;
 
 	# From header.pm:
 	#$version = "$productdata{'VERSION'}-$productdata{'REVISION'}-$productdata{'ARCH'}";
 
-	my $infoURL = "http://sourceforge.net/projects/smoothwall/files/updateInfo/$version/info";
+	if (! -e "/var/smoothwall/patches/TEST-NEW-UPDATE") {
+		$infoURL = "http://sourceforge.net/projects/smoothwall/files/updateInfo/$version/info";
+	}
+	else {
+		my %productdata;
+		&readhash( "/var/smoothwall/main/productdata", \%productdata );
+		$infoURL = "http://agcl.us/misc/info-$productdata{'ARCH'}";
+		print STDERR "TEST: $infoURL\n";
+	}
 	$req = HTTP::Request->new(GET => $infoURL);
 	$ua = LWP::UserAgent->new;
 	$ua->agent("Smoothwall/3.0");

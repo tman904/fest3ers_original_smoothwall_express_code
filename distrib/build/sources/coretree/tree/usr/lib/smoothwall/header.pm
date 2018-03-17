@@ -361,22 +361,45 @@ END
 	print $menu_html;
 
 	print <<END
-</tr></table></td>
-</tr>
-<tr>
-	<td colspan='2' class='quicklink'>
-		<!-- Quicklink Section -->
-		<p style="margin:2px; vertical-align:middle">
-		<a href='/cgi-bin/shutdown.cgi'>$tr{'ssshutdown'}</a> | <a href="javascript:displayHelp('$helpPath$thisscript');" title="This will popup a new window with the requested help file">help <img src="/ui/img/help.gif" alt="" ></a></p>
+	<td>
+		<p style="margin:2px 2px 4px 1em; vertical-align:top">
+		<a style='color:#ff8866' href="javascript:displayHelp('$helpPath$thisscript');" title="This will popup a new window with the requested help file">Help <img src="/ui/img/help.gif" alt="" style='vertical-align:middle'></a></p>
 	</td>
+</tr></table></td>
+</tr></table>
+	</td>
+	<td style="background-image:url(/ui/img/frame-concrete/wrs.png); max-width:8px; width:8px;
+		min-width:8px; background-repeat:repeat-y"></td>
 </tr>
+<tr>
+	<td style="background-image:url(/ui/img/frame-concrete/wbl.png); max-height:8px; height:8px;
+		min-height:8px; max-width:8px; min-width:8px; background-repeat:none"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wbs.png); max-height:8px; height:8px;
+		min-height:8px; background-repeat:repeat-x"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wbr.png); max-height:8px; height:8px;
+		min-height:8px; max-width:8px; width:8px; min-width:8px; background-repeat:none"></td>
+</tr>
+</table>
 
+<!-- Create the main content -->
 
-<!-- Create the top menu -->
+<table class='frame' cellpadding='0' cellspacing='0' style='margin:.5em 0em .5em 2em; text-align:left;'>
+<tr style="margin:0">
+	<td style="background-image:url(/ui/img/top-left.png); max-height:4px; height:4px;
+		min-height:4px; max-width:6px; min-width:6px; background-repeat:none"></td>
+	<td style="background-image:url(/ui/img/top.png); max-height:4px; height:4px;
+		min-height:4px; background-repeat:repeat-x"></td>
+	<td style="background-image:url(/ui/img/top-right.png); max-height:4px; height:4px;
+		min-height:4px; max-width:4px; width:4px; min-width:4px; background-repeat:none"></td>
+</tr>
+<tr style="margin:0">
+	<td style="background-image:url(/ui/img/left.png); max-width:6px; width:6px;
+		min-width:6px; background-repeat:repeat-y"></td>
+	<td>
+		<table class='main' cellpadding='0' cellspacing='0' style='padding:1em'>
 
 <tr>
-	<td colspan='2'>
-	&nbsp;
+	<td>
 END
 ;
 
@@ -568,18 +591,21 @@ END
 		# $cellwidth = $pagewidth / 2;
 		print <<END
 <body>
-<table class='frame' cellpadding='0' cellspacing='0'>
+
+<!-- Create the top box -->
+
+<table class='frame' cellpadding='0' cellspacing='0' style='margin:1em 0em .5em 2em; text-align:left;'>
 <tr style="margin:0">
-	<td style="background-image:url(/ui/img/top-left.png); max-height:4px; height:4px;
-		min-height:4px; max-width:6px; min-width:6px; background-repeat:none"></td>
-	<td style="background-image:url(/ui/img/top.png); max-height:4px; height:4px;
-		min-height:4px; background-repeat:repeat-x"></td>
-	<td style="background-image:url(/ui/img/top-right.png); max-height:4px; height:4px;
-		min-height:4px; max-width:4px; width:4px; min-width:4px; background-repeat:none"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wtl.png); max-height:8px; height:8px;
+		min-height:8px; max-width:8px; min-width:8px; background-repeat:none"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wts.png); max-height:8px; height:8px;
+		min-height:8px; background-repeat:repeat-x"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wtr.png); max-height:8px; height:8px;
+		min-height:8px; max-width:8px; width:8px; min-width:8px; background-repeat:none"></td>
 </tr>
 <tr style="margin:0">
-	<td style="background-image:url(/ui/img/left.png); max-width:6px; width:6px;
-		min-width:6px; background-repeat:repeat-y"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wls.png); max-width:8px; width:8px;
+		min-width:8px; background-repeat:repeat-y"></td>
 	<td>
 		<table class='main' cellpadding='0' cellspacing='0'>
 		<tr>
@@ -639,11 +665,40 @@ sub closepage
 		</tr>
 			<!-- End of the Main Body -->
 		</table>
-		<br />
 	</td>
+</tr></table>
+	</td>
+	<td style="background-image:url(/ui/img/right.png); max-width:4px; width:4px;
+		min-width:4px; background-repeat:repeat-y"></td>
 </tr>
 <tr>
-	<td colspan='2' style='background-color: #909090; height: 6px;'></td>
+	<td style="background-image:url(/ui/img/bottom-left.png); max-height:6px; height:6px;
+		min-height:6px; max-width:6px; min-width:6px; background-repeat:none"></td>
+	<td style="background-image:url(/ui/img/bottom.png); max-height:6px; height:6px;
+		min-height:6px; background-repeat:repeat-x"></td>
+	<td style="background-image:url(/ui/img/bottom-right.png); max-height:6px; height:6px;
+		min-height:6px; max-width:4px; width:4px; min-width:4px; background-repeat:none"></td>
+</tr>
+</table>
+
+<!-- Create the footer -->
+
+<table class='frame' cellpadding='0' cellspacing='0' style='text-align:left; margin:.5em 0em 1em 2em;'>
+<tr style="margin:0">
+	<td style="background-image:url(/ui/img/frame-concrete/wtl.png); max-height:8px; height:8px;
+		min-height:8px; max-width:8px; min-width:8px; background-repeat:none"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wts.png); max-height:8px; height:8px;
+		min-height:8px; background-repeat:repeat-x"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wtr.png); max-height:8px; height:8px;
+		min-height:8px; max-width:8px; width:8px; min-width:8px; background-repeat:none"></td>
+</tr>
+<tr style="margin:0">
+	<td style="background-image:url(/ui/img/frame-concrete/wls.png); max-width:8px; width:8px;
+		min-width:8px; background-repeat:repeat-y"></td>
+	<td>
+		<table class='main' cellpadding='0' cellspacing='0'>
+
+<tr>
 </tr>
 <tr>
 	<td class='footer' colspan='2' style='width:100%'>
@@ -674,16 +729,16 @@ sub closepage
 </script>
 
 	</td>
-	<td style="background-image:url(/ui/img/right.png); max-width:4px; width:4px;
-		min-width:4px; background-repeat:repeat-y"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wrs.png); max-width:8px; width:8px;
+		min-width:8px; background-repeat:repeat-y"></td>
 </tr>
 <tr>
-	<td style="background-image:url(/ui/img/bottom-left.png); max-height:6px; height:6px;
-		min-height:6px; max-width:6px; min-width:6px; background-repeat:none"></td>
-	<td style="background-image:url(/ui/img/bottom.png); max-height:6px; height:6px;
-		min-height:6px; background-repeat:repeat-x"></td>
-	<td style="background-image:url(/ui/img/bottom-right.png); max-height:6px; height:6px;
-		min-height:6px; max-width:4px; width:4px; min-width:4px; background-repeat:none"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wbl.png); max-height:8px; height:8px;
+		min-height:8px; max-width:8px; min-width:8px; background-repeat:none"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wbs.png); max-height:8px; height:8px;
+		min-height:8px; background-repeat:repeat-x"></td>
+	<td style="background-image:url(/ui/img/frame-concrete/wbr.png); max-height:8px; height:8px;
+		min-height:8px; max-width:8px; width:8px; min-width:8px; background-repeat:none"></td>
 </tr>
 </table>
 

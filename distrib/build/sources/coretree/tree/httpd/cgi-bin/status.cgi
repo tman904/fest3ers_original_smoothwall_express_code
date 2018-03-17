@@ -40,7 +40,7 @@ foreach my $file ( sort @files ){
 	chomp $name;
 	my $servicename = $basename;
 	$servicename =~s/\[RED\]/$iface/ig;
-	$servicename =~s/-/\//g;
+	$servicename =~s/-/\//g if ($servicename =~  "pluto-pluto");
 
 	chomp $rel if ($rel);
 
