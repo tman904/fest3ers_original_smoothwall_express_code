@@ -21,7 +21,8 @@ function killMon () {
   rm -f crumbs/monpipe
   mkfifo crumbs/monpipe -m 600
   MONPID=""
-  while read stage pkg third < crumbs/monpipe; do
+  while true; do
+    read stage pkg third < crumbs/monpipe
     if [ ! -z "$stage" -a ! -z "$pkg" ]; then
       killMon
       case $stage in
