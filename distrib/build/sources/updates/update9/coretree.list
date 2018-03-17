@@ -1,6 +1,5 @@
 ./etc/bashrc
 ./etc/dnsmasq.conf
-./etc/ppp/ip-up
 ./etc/rc.d/rc.updatered
 ./httpd/cgi-bin/advnet.cgi
 ./httpd/cgi-bin/apcupsd.cgi
@@ -23,9 +22,6 @@
 ./httpd/cgi-bin/logs.cgi/pop3log.dat
 ./httpd/cgi-bin/logs.cgi/proxylog.dat
 ./httpd/cgi-bin/logs.cgi/urlfilter.dat
-./httpd/cgi-bin/ipblock.cgi
-./httpd/cgi-bin/ipinfo.cgi
-./httpd/cgi-bin/iptools.cgi
 ./httpd/cgi-bin/modem.cgi
 ./httpd/cgi-bin/outgoing.cgi
 ./httpd/cgi-bin/p3scan.cgi
