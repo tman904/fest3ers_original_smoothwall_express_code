@@ -55,7 +55,6 @@ UPDATE_PACKAGES = \
 		  pcmciautils \
 		  perl-mods \
 		  procps-ng \
-		  qemu \
 		  siproxd \
 		  smoothd \
 		  snort \
