@@ -17,6 +17,11 @@ echo "  Remove unused file 'acl'"
 echo "  Fix /var/run"
 chmod 1777 /var/run
 
+# Ensure that /etc/ipsec.{conf,secrets} are the correct symlinks
+/bin/rm -f distrib/etc/ipsec.conf distrib/etc/ipsec.secrets
+/bin/ln -s /var/smoothwall/vpn/ipsec.conf distrib/etc/ipsec.conf
+/bin/ln -s /var/smoothwall/vpn/ipsec.secrets distrib/etc/ipsec.secrets
+
 
 # Update the new initramfs
 #
