@@ -1,5 +1,8 @@
-# When a new kernel is installed, xtables-addons must also be installed so thats
+# When a new kernel is installed, xtables-addons must also be installed so that
 #   /lib/modules/X/extra/ is installed and available.
+
+# Put kernel-drivers and linux-firmware at the end before coretree to ensure
+#   that they override those files in linux when linux is updated.
 
 UPDATE_PACKAGES = \
 		  apcupsd \
@@ -44,7 +47,6 @@ UPDATE_PACKAGES = \
 		  libreswan \
 		  libsmooth+setup \
 		  linux \
-		  linux-firmware \
 		  listtables \
 		  lm_sensors \
 		  nspr \
@@ -71,6 +73,8 @@ UPDATE_PACKAGES = \
 		  wpa_supplicant \
 		  xtables-addons \
 		  xz \
+		  kernel-drivers \
+		  linux-firmware \
 		  coretree
 
 
