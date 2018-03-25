@@ -24,6 +24,7 @@ UPDATE_PACKAGES = \
 		  findutils \
 		  fping \
 		  gawk \
+		  glibc \
 		  grep \
 		  httpd \
 		  ipbatch \
