@@ -589,7 +589,7 @@ END
 
 &openbox('APCupsd:');
 
-print <<END
+print <<END;
 <table style='width: 100%; border: none; margin:1em auto 0 auto;'>
 <tr>
 	<td class='base' style='width: 25%;'>$tr{'enabled'}</td>
@@ -602,6 +602,36 @@ print <<END
 	<td></td>
 	<td class='base'>$tr{'Turn off UPS on shutdown'}:</td>
 	<td><input type='checkbox' name='KILLPOWER' $checked{'KILLPOWER'}{'on'}></td>
+</tr>
+<tr>
+	<td colspan="4">
+END
+
+&openbox("$tr{'Operation Mode'}:");
+
+my $setcolor = '#000000';
+$setcolor = '#b59d00' if ( $selected{'OPMODE'}{'testing'} eq 'SELECTED' );
+$setcolor = 'green' if ( $selected{'OPMODE'}{'full'} eq 'SELECTED' );
+
+print <<END;
+<p style='margin:1em 1em .25em 2em;'><span style='color:#b59d00; font-weight:bold;'>$tr{'TESTING'}</span>
+	$tr{'will simulate the response to a power failure; it will not shutdown Smoothwall or the UPS'}.</p>
+<p style='margin:.25em 1em 0 2em;'><span style='color:green; font-weight:bold;'>$tr{'Full Operations'}</span>
+	$tr{'will shutdown Smoothwall in response to a power failure'}.</p>
+<p style='margin:.25em 1em 0 2em; font-style:italic;'>
+	$tr{'Do NOT select Full Operations Mode until you know that your configuration is OK'}</p>
+<p style='margin:1em 1em .5em 4em;'>$tr{'Modec'}
+	<select name='OPMODE' style='color: $setcolor;' onchange='ffoxSelectUpdate(this);'>
+	<option value='testing' $selected{'OPMODE'}{'testing'} style='color:#b59d00;'>$tr{'TESTING'}</option>
+	<option value='full' $selected{'OPMODE'}{'full'} style='color: green;'>$tr{'Full Operations'}</option>
+	</select></p>
+END
+
+&closebox();
+
+
+print <<END;
+	</td>
 </tr>
 </table>
 END
@@ -827,29 +857,6 @@ END
 ;
 
 &closebox();
-
-&closebox();
-
-&openbox("$tr{'Operation Mode'}:");
-
-my $setcolor = '#000000';
-$setcolor = '#b59d00' if ( $selected{'OPMODE'}{'testing'} eq 'SELECTED' );
-$setcolor = 'green' if ( $selected{'OPMODE'}{'full'} eq 'SELECTED' );
-
-print <<END
-<p style='margin:1em 1em .25em 2em;'><span style='color:#b59d00; font-weight:bold;'>$tr{'TESTING'}</span>
-	$tr{'will simulate the response to a power failure; it will not shutdown Smoothwall or the UPS'}.</p>
-<p style='margin:.25em 1em 0 2em;'><span style='color:green; font-weight:bold;'>$tr{'Full Operations'}</span>
-	$tr{'will shutdown Smoothwall in response to a power failure'}.</p>
-<p style='margin:.25em 1em 0 2em; font-style:italic;'>
-	$tr{'Do NOT select Full Operations Mode until you know that your configuration is OK'}</p>
-<p style='margin:1em 1em 0 4em;'>$tr{'Modec'}
-	<select name='OPMODE' style='color: $setcolor;' onchange='ffoxSelectUpdate(this);'>
-	<option value='testing' $selected{'OPMODE'}{'testing'} style='color:#b59d00;'>$tr{'TESTING'}</option>
-	<option value='full' $selected{'OPMODE'}{'full'} style='color: green;'>$tr{'Full Operations'}</option>
-	</select></p>
-END
-;
 
 &closebox();
 
