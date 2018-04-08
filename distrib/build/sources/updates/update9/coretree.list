@@ -1,5 +1,6 @@
 ./etc/bashrc
 ./etc/dnsmasq.conf
+./etc/httpd/conf/httpd.conf
 ./etc/rc.d/rc.updatered
 ./httpd/cgi-bin/advnet.cgi
 ./httpd/cgi-bin/apcupsd.cgi
