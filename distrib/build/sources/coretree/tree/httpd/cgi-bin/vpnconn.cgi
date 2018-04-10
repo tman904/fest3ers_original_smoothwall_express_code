@@ -166,11 +166,29 @@ if ($cgiparams{'ACTION'} eq $tr{'remove'} || $cgiparams{'ACTION'} eq $tr{'edit'}
 }
 
 if ($cgiparams{'ACTION'} eq $tr{'export'}) {
-	print "Content-type: unknown/unknown\n\n";
-	open (FILE, "$filename");
-	my @current = <FILE>;
+	# Get hostname
+	my $hostName = '';
+	open (FILE, "/var/smoothwall/main/hostname.conf");
+	while (<FILE>) {
+		next unless ($_ =~ /^ServerName/ );
+		chomp;
+		$hostName = $_;
+		$hostName =~ s/.* //;
+		last;
+	}
 	close (FILE);
-	print @current;
+
+	# Get VPNs
+	open (FILE, "$filename");
+	$_ = <FILE>;
+	close (FILE);
+	my $configLength = length;
+
+	# Send the file
+	print "Content-type: text/plain\n";
+	print "Content-length: \"$configLength\"\n";
+	print "Content-disposition: attachment; filename=\"vpn-config-$hostName\"\n\n";
+	print;
 	exit;
 }
 
