@@ -179,6 +179,7 @@ if ($cgiparams{'ACTION'} eq $tr{'export'}) {
 	close (FILE);
 
 	# Get VPNs
+        undef $/;
 	open (FILE, "$filename");
 	$_ = <FILE>;
 	close (FILE);
@@ -189,6 +190,7 @@ if ($cgiparams{'ACTION'} eq $tr{'export'}) {
 	print "Content-length: \"$configLength\"\n";
 	print "Content-disposition: attachment; filename=\"vpn-config-$hostName\"\n\n";
 	print;
+
 	exit;
 }
 
