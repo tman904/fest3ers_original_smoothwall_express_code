@@ -389,7 +389,7 @@ sub runoinkmaster
 ";
 			}
 			$errormessage = '';
-			if ($percent < 100 && /(\d{1,3})%/) {
+			if ($percent < 100 && $line =~ / (\d{1,3})%/) {
 				$percent = $1;
 				my $message;
 				if ($percent == 100) {
