@@ -82,7 +82,7 @@ DEV_PKGS = kernel-headers patch make autoconf automake bison dejagnu gcc \
 	   klibc pkg-config sudo texinfo busybox \
 	   libtool nasm acpica zip
 
-NOT_DRIVERS = drivers/video
+NOT_DRIVERS = #drivers/video
 
 cdrom:
 	mkdir cdrom
