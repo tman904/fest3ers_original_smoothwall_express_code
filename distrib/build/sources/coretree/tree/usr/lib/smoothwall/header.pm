@@ -837,8 +837,6 @@ sub pageinfo
 END
 ;
 
-	#if ( not defined $thisalerttype or $thisalerttype ne "error" ) {
-printf STDERR "type=$_[0]; msg=$_[1]\n";
 	if ( $thisalerttype eq "error" ) {
 		print "<table class='warning'>";
 		print "<tr>";
