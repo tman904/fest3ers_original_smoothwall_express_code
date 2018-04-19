@@ -6,6 +6,7 @@
 
 UPDATE_PACKAGES = \
 		  apcupsd \
+		  at \
 		  bc \
 		  binutils \
 		  bison \
