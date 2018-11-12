@@ -7,7 +7,7 @@
 # The system's kernel.
 KERNEL_MAJOR = 3
 KERNEL_MMR = $(KERNEL_MAJOR).16
-KERNEL_VER = $(KERNEL_MMR).56
+KERNEL_VER = $(KERNEL_MMR).60
 
 # The kernel version headers needed to build glibc
 # Unrelated to the system's kernel
@@ -25,7 +25,7 @@ KERNEL_URL = http://www.kernel.org/pub/linux/kernel/v$(KERNEL_MAJOR).x/linux-$(K
 KERNELHEADER_URL = http://www.kernel.org/pub/linux/kernel/v$(KERNELHEADER_MAJOR).x/linux-$(KERNELHEADERVER).tar.xz
 
 FREESWAN_TYPE = libreswan
-FREESWAN_VER = 3.23
+FREESWAN_VER = 3.27
 
 IPTABLES_VER = 1.6.0
 XTABLES_ADDONS_VER = 2.10
