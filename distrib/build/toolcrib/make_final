@@ -195,6 +195,7 @@ fi
       build libnetfilter_log
       build libnetfilter_queue
       build libnftnl
+      build libluajit
       JOBS=$JOBS_UP
       build slang
       JOBS=$JOBS_MP
