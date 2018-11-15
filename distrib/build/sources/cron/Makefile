@@ -14,7 +14,7 @@ BASE_URL = http://ftp.debian.org/debian/pool/main/c/cron/
 DIR = $(PACKAGE)-$(VERSION).orig
 TARBALL = $(PACKAGE)_$(VERSION).orig
 
-PATCH_FILE1 = cron_3.0pl1-87.diff.gz
+PATCH_FILE1 = cron_3.0pl1-130.diff.gz
 PATCH_FILE2 = smoothwall-pid.patch
 PATCH_FILE3 = smoothinstall.patch
 
