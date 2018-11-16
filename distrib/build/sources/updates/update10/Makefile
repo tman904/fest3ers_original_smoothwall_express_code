@@ -13,6 +13,7 @@ UPDATE_PACKAGES = \
 		  iproute2 \
 		  ipset \
 		  iptables \
+		  libluajit \
 		  libreswan \
 		  linux \
 		  listtables \
