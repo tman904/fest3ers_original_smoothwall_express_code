@@ -84,7 +84,7 @@ else
 endif
 
 clean:
-	@rm -rf distrib review Update.out *.dirs
+	@rm -rf distrib review Update.out *.dirs tzdata*.tar.gz
 	@rm -f patch.tar.gz inspection-$(mARCH).tar.gz
 	@rm -f $(OUTPUT_FILENAME)
 	@rm -f updateinfo
