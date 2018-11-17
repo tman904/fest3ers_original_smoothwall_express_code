@@ -20,6 +20,7 @@ UPDATE_PACKAGES = \
 		  neon \
 		  openssh \
 		  openssl \
+		  ppp \
 		  snort \
 		  squid \
 		  suricata \
