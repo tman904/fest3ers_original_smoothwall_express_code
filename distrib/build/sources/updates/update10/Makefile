@@ -35,7 +35,7 @@ UPDATE_NAME = Update10
 
 CLAMAV = yes
 KERNEL = yes
-#EXTRA_UPDATE_FILES = tzdata2018c.tar.gz
-#$(shell cp ../../../downloads/$(EXTRA_UPDATE_FILES) . 2>/dev/null)
+EXTRA_UPDATE_FILES = tzdata2018g.tar.gz
+$(shell cp ../../../downloads/$(EXTRA_UPDATE_FILES) . 2>/dev/null)
 
 include ../Makefile.update
