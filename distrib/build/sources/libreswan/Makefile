@@ -17,7 +17,7 @@ TARBALL = $(FREESWAN_TYPE)-$(VERSION)
 
 PATCH_FILE1 = makefile.patch
 PATCH_FILE2 = setup.in.smoothwall.patch
-#PATCH_FILE2 = ikev1_xauth.c.patch
+PATCH_FILE3 = ipsec.init.in.patch
 
 KNL_SRC = ../linux$(KERNEL_TYPE)/linux
 MOD_DEST = /lib/modules/$(K_RAW_VERSION)$(KERNEL_TYPE)/kernel/net/ipsec
