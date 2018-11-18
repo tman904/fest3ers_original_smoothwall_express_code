@@ -28,7 +28,6 @@ print CONF "\tprotostack=klips\n";
 print CONF "\tinterfaces=%defaultroute\n";
 print CONF "\tklipsdebug=none\n";
 print CONF "\tplutodebug=none\n";
-print CONF "\tplutowait=no\n";
 print CONF "\tuniqueids=yes\n";
 print CONF "\n";
 
