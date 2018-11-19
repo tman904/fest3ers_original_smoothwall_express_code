@@ -305,16 +305,17 @@ print <<END
 END
 ;
 
-print "<code>\n";
 foreach $_ (@slice) {
 	$_ =~ s/\&/&amp;/g;
 	$_ =~ s/</&lt;/g;
 	$_ =~ s/>/&gt;/g;
 	/^${monthstr} ${daystr} (..:..:..) [\w\-]+ ${filter}: (.*)/;
+	print "<p style=\"margin:0 0 0 2em; font-family:'Courier New', monospace; text-indent:-2em;\">\n";
 	print "$1 $2 $3<br />\n";
+	print "</p>\n";
+
 }
 
-print "</code>\n";
 close (FILE);
 print "&nbsp;\n";
 
