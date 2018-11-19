@@ -66,7 +66,12 @@ $pppsettings{'STAYUP_TIME'} = '';
 my $infomessage = '';
 my $errormessage = '';
 
-if ($pppsettings{'ACTION'} ne '' && (-e '/var/run/ppp-smooth.pid' || -e "${swroot}/red/active")) {
+# (Deliberate space/tab mis-alignment)
+if  ($pppsettings{'ACTION'} ne '' &&
+     (-e '/var/run/ppp-smooth.pid' || -e "${swroot}/red/active") &&
+     ($netsettings{'RED_TYPE'} ne "STATIC" &&
+      $netsettings{'RED_TYPE'} ne "DHCP")
+    ) {
 	$errormessage .= $tr{'unable to alter profiles while red is active'} ."<br />\n";
 	# read in the current vars
 	%pppsettings = ();
@@ -214,7 +219,6 @@ elsif ($pppsettings{'ACTION'} eq $tr{'select'}) {
 	}		
 }
 elsif ($pppsettings{'ACTION'} eq $tr{'delete'}) {
-	&log("$tr{'profile deleted'} $pppsettings{'PROFILENAME'}");
 
 	truncate ("${swroot}/ppp/settings-$pppsettings{'PROFILE'}", 0);
 
@@ -222,6 +226,9 @@ elsif ($pppsettings{'ACTION'} eq $tr{'delete'}) {
 		$_ = '';
 	}
 	&readhash("${swroot}/ppp/settings", \%pppsettings);			
+
+	&log("$tr{'profile deleted'} $pppsettings{'PROFILENAME'}");
+	$infomessage = "$tr{'profile deleted'} $pppsettings{'PROFILENAME'}";
 }
 else {
 	# read in the current vars
