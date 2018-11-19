@@ -42,7 +42,7 @@ if ($netsettings{'PURPLE_DEV'})
 }
 
 # process data for RED interface
-if ($netsettings{'RED_DEV'} && $pppsettings{'COMPORT'} eq '') 
+if ($netsettings{'RED_TYPE'} eq "STATIC" or $netsettings{'RED_TYPE'} eq "DHCP")
 {
 	&ProcessInterface("red", $netsettings{'RED_DEV'});
 }
