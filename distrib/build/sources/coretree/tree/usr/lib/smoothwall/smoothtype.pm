@@ -191,6 +191,7 @@ sub displaytable
 	my $colourtranslations;
 	my $colourcolumn = 0;
 	my $colcount;
+	my $headerrowspan = 0;
 
 	#my ( $table1colour, $table2colour ) = ( '#f0f0f0', '#e0e0e0' );
 	my ( $table1colour, $table2colour ) = ( "rgba(0,0,0,.03)", "rgba(0,0,0,.1)" );
@@ -203,6 +204,7 @@ sub displaytable
 
 		if ( defined $column->{'maxrowspan'} ) {
 			$rowspan = " rowspan='$column->{'maxrowspan'}'";
+			$headerrowspan = 1;
 		}
 		else {
 			$rowspan = "";
@@ -387,6 +389,7 @@ sub displaytable
 		my @cols = @{$line};
 		print "<tr class='list'>\n";
 		my $entry = 0;
+		my $rowspan = "";
 		# Each comment increments $rowSpanCount
 		$rowSpanCount = 1;
 		foreach my $reference ( @breaks ){
@@ -394,7 +397,9 @@ sub displaytable
 				$rowSpanCount++;
 			}
 		}
-		my $rowspan = " rowspan='$rowSpanCount'";
+		if ($headerrowspan == 1 and $rowSpanCount > 1) {
+			$rowspan = " rowspan='$rowSpanCount'";
+		}
 		foreach my $reference ( @columns ) {
 			unless ( $reference =~ /,/ ) {
 				# are we supposed to translate this at all ?
@@ -503,6 +508,7 @@ sub dispaliastab
 	my $colourtranslations;
 	my $colourcolumn = 0;
 	my $colcount;
+	my $headerrowspan = 0;
 
 	my ( $table1colour, $table2colour ) = ( '#f0f0f0', '#e0e0e0' );
 
@@ -513,6 +519,7 @@ sub dispaliastab
 
 		if ( defined $column->{'maxrowspan'} ) {
 			$rowspan = " rowspan='$column->{'maxrowspan'}'";
+			$headerrowspan = 1;
 		}
 		else {
 			$rowspan = "";
@@ -697,6 +704,7 @@ sub dispaliastab
 		my @cols = @{$line};
 		print "<tr class='list'>\n";
 		my $entry = 0;
+		my $rowspan = "";
 		# Each comment increments $rowSpanCount
 		$rowSpanCount = 1;
 		foreach my $reference ( @breaks ) {
@@ -704,7 +712,9 @@ sub dispaliastab
 				$rowSpanCount++;
 			}
 		}
-		my $rowspan = " rowspan='$rowSpanCount'";
+		if ($headerrowspan == 1 and $rowSpanCount > 1) {
+			my $rowspan = " rowspan='$rowSpanCount'";
+		}
 		foreach my $reference ( @columns ) {
 			unless ( $reference =~ /,/ ) {
 			# are we supposed to translate this at all ?
