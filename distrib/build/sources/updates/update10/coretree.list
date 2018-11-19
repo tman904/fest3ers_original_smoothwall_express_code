@@ -1,1 +1,2 @@
 ./etc/ppp/ip-up
+./usr/bin/smoothwall/writeipsec.pl
