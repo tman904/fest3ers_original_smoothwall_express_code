@@ -1,2 +1,6 @@
 ./etc/ppp/ip-up
+./httpd/cgi-bin/logs.cgi/log.dat
+./httpd/cgi-bin/pppsetup.cgi
+./usr/bin/smoothwall/rrdtool.pl
 ./usr/bin/smoothwall/writeipsec.pl
+./usr/lib/smoothwall/smoothtype.pm
