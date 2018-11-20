@@ -22,6 +22,7 @@ UPDATE_PACKAGES = \
 		  ppp \
 		  snort \
 		  squid \
+		  squidclamav \
 		  suricata \
 		  unbound \
 		  xtables-addons \
