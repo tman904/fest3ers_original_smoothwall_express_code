@@ -49,7 +49,7 @@ INST_PKGS = glibc libsmooth+setup libgcc freetype libpng libdnet \
 	    whois perl bash bc bzip2 kbd e2fsprogs grep gzip module-init-tools \
 	    procinfo-ng procps-ng psmisc shadow sysklogd logrotate sysvinit tar \
 	    util-linux joe wget iptables ipset ipbatch pciutils usbutils \
-	    linux openssl openssh httpd smoothd squid freefont \
+	    linux openssl openssh httpd smoothd squid squidclamav freefont \
 	    strace rrdtool cron tcpdump dnsmasq ntp openntpd hdparm hddtemp \
 	    iproute2 gd expat ethtool listtables inotify-tools \
 	    beep2 pcre trafficstats iftop setuids ppp isdn4k-utils rp-pppoe \
