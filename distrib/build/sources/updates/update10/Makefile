@@ -6,6 +6,8 @@
 
 UPDATE_PACKAGES = \
 		  LuaJIT \
+		  c_icap \
+		  c_icap_modules \
 		  clamav \
 		  cron \
 		  device-ids \
