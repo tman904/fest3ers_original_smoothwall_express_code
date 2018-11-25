@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 PACKAGE = c_icap
-VERSION = 0.5.2
+VERSION = 0.5.5
 
 PACKAGE_ALT = c-icap
 
