@@ -1,7 +1,13 @@
 #! /bin/bash
 
 alias gitstat='git status|egrep -v -- "\.built|\.out|\-compile/$|\.so$|\.o$"|more'
+alias gitlog="git log --stat|sed -e 's/\(<[^@>]*\)@\([^>]*>\)/\1 (at) \2/'"
 alias monauto='toolcrib/monauto'
+
+function gitfiles ()
+{
+  git log --stat=200 $1 | grep " | "
+}
 
 function monbuild ()
 {
