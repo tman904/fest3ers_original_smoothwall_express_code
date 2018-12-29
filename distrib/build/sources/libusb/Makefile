@@ -8,10 +8,10 @@ include ../Makefile.conf
 
 PACKAGE = libusb
 VER_MM = 1.0
-VERSION = $(VER_MM).19
+VERSION = $(VER_MM).22
 EXTENSION = .tar.bz2
 
-BASE_URL = http://heanet.dl.sourceforge.net/sourceforge/$(PACKAGE)/$(PACKAGE)-$(VER_MM)/$(PACKAGE)-$(VERSION)
+BASE_URL = http://downloads.sourceforge.net/sourceforge/$(PACKAGE)/$(PACKAGE)-$(VER_MM)/$(PACKAGE)-$(VERSION)
 
 include ../Makefile.rules
 
