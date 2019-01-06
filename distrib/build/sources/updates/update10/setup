@@ -1,7 +1,7 @@
 #!/bin/sh
 
 OLD_KERNEL=3.16.56
-KERNEL_VERSION=3.16.61
+KERNEL_VERSION=3.16.62
 TZ_TARBALL=tzdata2018g.tar.gz
 
 echo "Install Update 10."
