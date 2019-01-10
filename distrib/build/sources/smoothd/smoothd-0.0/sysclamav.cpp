@@ -28,18 +28,21 @@ extern "C" {
 	int restart_clamav(std::vector<std::string> & parameters, std::string & response);
 	int   start_clamav(std::vector<std::string> & parameters, std::string & response);
 	int    stop_clamav(std::vector<std::string> & parameters, std::string & response);
+	int      freshclam(std::vector<std::string> & parameters, std::string & response);
 }
 
 int load(std::vector<CommandFunctionPair> & pairs)
 {
 	/* CommandFunctionPair name("command", "function"); */
-	CommandFunctionPair restart_clamav_function("clamavrestart", "restart_clamav", 0, 0);
-	CommandFunctionPair   start_clamav_function("clamavstart",     "start_clamav", 0, 0);
-	CommandFunctionPair    stop_clamav_function("clamavstop",       "stop_clamav", 0, 0);
+	CommandFunctionPair restart_clamav_function("clamavrestart",  "restart_clamav", 0, 0);
+	CommandFunctionPair   start_clamav_function("clamavstart",      "start_clamav", 0, 0);
+	CommandFunctionPair    stop_clamav_function("clamavstop",        "stop_clamav", 0, 0);
+	CommandFunctionPair      freshclam_function("clamavfreshclam",     "freshclam", 0, 0);
 
 	pairs.push_back(restart_clamav_function);
 	pairs.push_back(  start_clamav_function);
 	pairs.push_back(   stop_clamav_function);
+	pairs.push_back(     freshclam_function);
 
 	return 0;
 }
@@ -117,4 +120,41 @@ int start_clamav(std::vector<std::string> & parameters, std::string & response)
 		response = "ClamAV Not Started: grep returned " + num2str.str();
 		return needed;
 	}
+}
+
+int freshclam(std::vector<std::string> & parameters, std::string & response)
+{
+	int error = 0;
+	int needed;
+	std::ostringstream num2str;
+
+	error = simplesecuresysteml("/usr/bin/freshclam", NULL);
+fprintf(stderr, "freshclam return code %d\n", error);
+
+	// If the execve() fails, it returns -1, which turns into 255 by the
+	//   time it gets here.
+	if (error == 255)
+	{
+		fprintf(stderr, "Freshclam Failed: /usr/bin/freshclam not found\n");
+		response = "Freshclam Failed: /usr/bin/freshclam not found!";
+		return (-1);
+	}
+	else if (error == 0)
+	{
+		response = "ClamAV Virus Database Updated";
+		return (0);
+	}
+	else if (error == 1)
+	{
+		response = "ClamAV Virus Database Already Up-To-Date";
+		return (0);
+	}
+	else
+	{
+		fprintf(stderr, "ClamAV Virus Database Update Failed: return code %d\n", error);
+		num2str << error;
+		response = "ClamAV Virus Database Update Failed: return code " + num2str.str() + "!";
+		return (-1);
+	}
+
 }

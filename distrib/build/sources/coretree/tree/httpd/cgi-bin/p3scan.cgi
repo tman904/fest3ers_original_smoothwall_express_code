@@ -30,6 +30,12 @@ $p3scansettings{"ENABLE"} = '';
 
 &getcgihash(\%p3scansettings);
 
+if ($p3scansettings{'ACTION'} eq $tr{'freshclam'}) { 
+	$success = message('clamavfreshclam');
+	$infomessage .= $success."<br />" if ($success);
+	$errormessage .= "Freshclam failed; see /var/log/smoothderror.<br />" unless ($success);
+}
+
 if ($p3scansettings{'ACTION'} eq $tr{'save'}) { 
 
 	$clamavsettings{'ENABLE_ZAP'} = $p3scansettings{'ENABLE'};
@@ -97,21 +103,34 @@ print STDERR  "emsg=$errormessage; imsg=$infomessage\n";
 print "<form method='post' action='?'><div>\n";
 
 &openbox('POP3 proxy:');
-print <<END
+print <<END;
 <table style='width:100%;'>
 <tr>
-	<td style='width:25%;' class='base'>$tr{'enabled'}</td>
-	<td style='width:75%;'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
+	<td style='width:25%;' class='base'>$tr{'enabled'}:</td>
+	<td style='width:30%;'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
+	<td style='width:45%;'>
+		<p style="margin:0"><b>Database Dates</b></p>
+		<div style='margin:0 0 0 2em;'>
+			<code>
+END
+
+system("cd /var/clamav; /bin/ls -lstr *.c*d | sed -e 's/.*clam clam *[0-9]* //' -e 's=\$=<br />='");
+
+print <<END;
+			</code>
+		</div>
+        </td>
 </tr>
 </table>
 END
-;
+
 &closebox();
 
 print <<END
-<table style='width: 60%; border: none; margin-left:auto; margin-right:auto'>
+<table style='width: 80%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-        <td style='text-align:center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+        <td style='width:45%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
+        <td style='width:55%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'freshclam'}'></td>
 </tr>
 </table>
 END

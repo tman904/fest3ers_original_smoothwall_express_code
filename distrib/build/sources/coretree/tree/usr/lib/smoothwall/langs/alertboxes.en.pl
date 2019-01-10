@@ -52,7 +52,7 @@ firewall.  Further information on your Smoothwall Express is available from <a h
 'interfaces.cgi'	=> 'Configure the network interface IP addresses, as well as DNS and gateway settings.',
 'hosts.cgi'		=> 'Add static DNS entries to Smoothwall\'s inbuilt DNS server.',
 'timedaccess.cgi'	=> 'Configure timed access rules to prevent or allow internal machines network access at certain times of the day.',
-'p3scan.cgi'		=> 'Configure the POP3 anti-virus proxy. This proxy will remove viruses from emails that are retrieved through using the POP3 protocol.<br>ClamAV does not ship with rules; before you use the POP3 proxy the first time, you must run <i>freshclam</i> on the console or in an SSH session.</i>',
+'p3scan.cgi'		=> 'Configure the POP3 anti-virus proxy. This proxy will remove viruses from emails that are retrieved through using the POP3 protocol.<br>ClamAV does not ship with rules; before you use the POP3 proxy the first time, you must run <i>freshclam</i> on the console, in an SSH session, or by clicking the Update button below.</i>',
 'pop3log.dat'		=> 'Check log for the POP3 Anti-Virus service.',
 'imviewer.cgi'		=> 'View logged IM conversations in realtime.',
 'preferences.cgi'	=> 'Configure the Smoothwall Express User Interface.',

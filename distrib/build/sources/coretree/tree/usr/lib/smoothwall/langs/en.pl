@@ -107,6 +107,9 @@
 'alt shell' => 'Shell', # alt
 'alt updates' => 'Updates', # alt
 
+# p3scan.cgi
+'freshclam' => 'Update ClamAV Virus Database',
+
 # changepw.cgi
 'admin user password has been changed' => 'Admin user password has been changed.',
 'dial user password has been changed' => 'Dial user password has been changed.',
