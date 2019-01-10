@@ -34,5 +34,8 @@ compile: configure
 install: compile
 	@mkdir -p $(PKG_ROOT)
 	@install -D $(DIR)/miniupnpd $(PKG_ROOT)$(PKG_DIR)/sbin/miniupnpd
+	@mkdir -p $(PKG_ROOT)/usr/etc
+	@touch $(PKG_ROOT)/usr/etc/upnp.leases
+	@chown 99:99 $(PKG_ROOT)/usr/etc/upnp.leases
 
 include ../Makefile.rules
