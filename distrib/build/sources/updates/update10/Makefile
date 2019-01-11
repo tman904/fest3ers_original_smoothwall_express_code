@@ -16,12 +16,16 @@ UPDATE_PACKAGES = \
 		  ipset \
 		  iptables \
 		  libreswan \
+		  libusb \
+		  libusb-compat \
 		  linux \
 		  listtables \
+		  miniupnpd \
 		  neon \
 		  openssh \
 		  openssl \
 		  ppp \
+		  smoothd \
 		  snort \
 		  squid \
 		  squidclamav \
