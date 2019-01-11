@@ -1,4 +1,3 @@
-
 ./etc/ppp/ip-up
 ./httpd/cgi-bin/apcupsd.cgi
 ./httpd/cgi-bin/ddns.cgi
