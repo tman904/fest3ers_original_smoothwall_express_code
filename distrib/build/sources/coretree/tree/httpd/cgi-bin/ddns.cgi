@@ -229,7 +229,7 @@ print <<END
 
 <table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-	<td style='width:40%;' class='base'>$tr{'enabled'}</td>
+	<td style='width:40%;' class='base'>$tr{'enabledc'}</td>
 	<td><input type='checkbox' name='ENABLED' value='on' $checked{'ENABLED'}{'on'}></td>
 	<td style='width:50%; text-align:center'><input type='SUBMIT' name='ACTION' value='$tr{'add'}'></td>
 </tr>

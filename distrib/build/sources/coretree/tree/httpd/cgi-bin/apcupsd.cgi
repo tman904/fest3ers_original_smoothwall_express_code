@@ -592,7 +592,7 @@ END
 print <<END;
 <table style='width: 100%; border: none; margin:1em auto 0 auto;'>
 <tr>
-	<td class='base' style='width: 25%;'>$tr{'enabled'}</td>
+	<td class='base' style='width: 25%;'>$tr{'enabledc'}</td>
 	<td><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
 	<td class='base' style='width: 25%;'>$tr{'Standalone UPS'}:</td>
 	<td><input type='checkbox' name='STANDALONE' $checked{'STANDALONE'}{'on'}></td>

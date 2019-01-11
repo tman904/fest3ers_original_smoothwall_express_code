@@ -162,7 +162,7 @@ print <<END
 </table>
 <table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-	<td class='base' style='width:50%;'>$tr{'enabled'}</td>
+	<td class='base' style='width:50%;'>$tr{'enabledc'}</td>
 	<td><input type='CHECKBOX' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
 	<td style='width:50%; text-align:center;'><input type='SUBMIT' name='ACTION' value='$tr{'add'}'></td>
 </tr>

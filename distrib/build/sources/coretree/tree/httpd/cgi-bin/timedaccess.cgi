@@ -120,7 +120,7 @@ print "<form method='post' action='?'><div>\n";
 print <<END
 <table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-	<td class='base' style='width:25%;'>$tr{'enabled'}</td>
+	<td class='base' style='width:25%;'>$tr{'enabledc'}</td>
 	<td style='width:5%;'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
 	<td class='base' style='width:15%;'>$tr{'modec'}</td>
 	<td style='width:55%;'>

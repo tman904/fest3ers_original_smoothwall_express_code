@@ -180,7 +180,7 @@ print <<END
 		@{[jsvalidcomment('comment')]}  ></td>
 </tr>
 <tr>
-	<td class='base'>$tr{'enabled'}</td>
+	<td class='base'>$tr{'enabledc'}</td>
 	<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
 	<td colspan=2 style='text-align: left;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
 </tr>

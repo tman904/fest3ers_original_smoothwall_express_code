@@ -138,7 +138,7 @@ print "<form method='POST' action='?'><div>\n";
 print <<END
 <table width='100%'>
 <tr>
-	<td class='base'>$tr{'enabled'}</td>
+	<td class='base'>$tr{'enabledc'}</td>
 	<td><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
 	<td class='base'>$tr{'urlfilter enabled'}</td>
 	<td><input type='checkbox' name='ENABLE_FILTER' $checked{'ENABLE_FILTER'}{'on'} /></td>

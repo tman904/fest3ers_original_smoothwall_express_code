@@ -12,7 +12,7 @@
 
 'back' => 'BACK',
 'dhcp server' => 'DHCP server',
-'enabled' => 'Enabled:',
+'enabled' => 'Enabled',
 'enabledc' => 'Enabled:',
 'error messages' => 'Error messages:',
 'help' => 'Help',

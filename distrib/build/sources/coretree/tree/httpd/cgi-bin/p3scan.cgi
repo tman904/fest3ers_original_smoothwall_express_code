@@ -106,7 +106,7 @@ print "<form method='post' action='?'><div>\n";
 print <<END;
 <table style='width:100%;'>
 <tr>
-	<td style='width:25%;' class='base'>$tr{'enabled'}:</td>
+	<td style='width:25%;' class='base'>$tr{'enabledc'}:</td>
 	<td style='width:30%;'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
 	<td style='width:45%;'>
 		<p style="margin:0"><b>Database Dates</b></p>

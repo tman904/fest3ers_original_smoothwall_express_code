@@ -132,7 +132,7 @@ print "<form method='POST' action='?'><div>\n";
 print <<END
 <table style='width: 100%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
-	<td style='width:25%;' class='base'>$tr{'enabled'}</td>
+	<td style='width:25%;' class='base'>$tr{'enabledc'}</td>
 	<td style='width:25%;'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
 	<td style='width:25%;' class='base'>Swear-word filtering:</td>
 	<td style='width:25%;'><input type='checkbox' name='FILTERING' $checked{'FILTERING'}{'on'}></td>

@@ -610,7 +610,7 @@ print <<END
 	<td><input type='text' name='NIS2' value='$dhcpsettings{'NIS2'}' id='nis2' @{[(jsvalidip('nis2','true'))]}></td>
 </tr>
 <tr>
-	<td class='base'>$tr{'enabled'}</td>
+	<td class='base'>$tr{'enabledc'}</td>
 	<td><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
 	<td></td>
 	<td></td>
@@ -703,7 +703,7 @@ print <<END
 		@{[(jsvalidip('static_ip'))]}></td>
 </tr>
 <tr>
-	<td class='base'>$tr{'enabled'}</td>
+	<td class='base'>$tr{'enabledc'}</td>
 	<td><input type='checkbox' name='DEFAULT_ENABLE_STATIC' $checked{'DEFAULT_ENABLE_STATIC'}{'on'}></td>
 	<td style='text-align: right;'><input type='submit' name='ACTION' value='$tr{'add'}'></td>
 	<td></td>

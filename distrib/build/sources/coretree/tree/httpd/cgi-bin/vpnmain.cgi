@@ -185,7 +185,7 @@ print <<END
 <tr>
 	<td style='width:25%;' class='base'><img src='/ui/img/blob.gif' alt='*' style='vertical-align: text-top;'>&nbsp;$tr{'local vpn ip'}</td>
 	<td style='width:25%;'><input type='TEXT' name='VPN_IP' value='$cgiparams{'VPN_IP'}' SIZE='15' id='vpn_ip' @{[jsvalidip('vpn_ip')]}></td>
-	<td style='width:15%;' class='base'>$tr{'enabled'}</td>
+	<td style='width:15%;' class='base'>$tr{'enabledc'}</td>
 	<td><input type='CHECKBOX' name='ENABLED' $checked{'ENABLED'}{'on'}></td>
 	<td style='width:25%; text-align:center;'><input type='SUBMIT' name='ACTION' value='$tr{'save'}'></td>
 </tr>

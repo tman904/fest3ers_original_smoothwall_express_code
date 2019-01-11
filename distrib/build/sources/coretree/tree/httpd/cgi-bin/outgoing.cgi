@@ -347,7 +347,7 @@ print qq{
 };
 print qq{
 <tr>
-	<td class='base' style='width: 25%;'>$tr{'enabled'}</td>
+	<td class='base' style='width: 25%;'>$tr{'enabledc'}</td>
 	<td style='width: 25%;'><input type='checkbox' name='RULEENABLED' $checked{'RULEENABLED'}{'on'}></td>
 	<td colspan='2' style='text-align: center;'>
 		<input type="submit" name="ACTION" value="$tr{'add'}"></td>
@@ -443,7 +443,7 @@ print qq{
 };
 print qq{
 <tr>
-	<td class='base'>$tr{'enabled'}</td>
+	<td class='base'>$tr{'enabledc'}</td>
 	<td><input type='checkbox' name='MACHINEENABLED' $checked{'MACHINEENABLED'}{'on'}></td>
 	<td colspan='2' style='text-align: center;'><input type='submit' name='MACHINEACTION' 
 		value='$tr{'add'}'></td>
