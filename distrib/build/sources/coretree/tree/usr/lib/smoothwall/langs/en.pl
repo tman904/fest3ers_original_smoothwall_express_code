@@ -108,7 +108,13 @@
 'alt updates' => 'Updates', # alt
 
 # p3scan.cgi
-'freshclam' => 'Update ClamAV Virus Database',
+'clam already running' => 'ClamAV already running!',
+'clam db file dates' => 'Database File Dates',
+'clam in use' => 'ClamAV in use by another application - Not Terminated',
+'clam still restarting' => 'ClamAV still Restarting',
+'clam still updating' => 'Freshclam still updating in background; reload this page in a few minutes',
+'clam update failed' -> 'Freshclam failed; see /var/log/smoothderror',
+'clam update' => 'Update ClamAV Virus Database',
 
 # changepw.cgi
 'admin user password has been changed' => 'Admin user password has been changed.',

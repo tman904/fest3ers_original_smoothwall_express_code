@@ -30,10 +30,11 @@ $p3scansettings{"ENABLE"} = '';
 
 &getcgihash(\%p3scansettings);
 
-if ($p3scansettings{'ACTION'} eq $tr{'freshclam'}) { 
+if ($p3scansettings{'ACTION'} eq $tr{'clam update'}) { 
 	$success = message('clamavfreshclam');
+	$success = $tr{'clam still updating'} if ($success =~ /TIMEOUT/i);
 	$infomessage .= $success."<br />" if ($success);
-	$errormessage .= "Freshclam failed; see /var/log/smoothderror.<br />" unless ($success);
+	$errormessage .= "$tr{'clam update failed'}<br />" unless ($success);
 }
 
 if ($p3scansettings{'ACTION'} eq $tr{'save'}) { 
@@ -53,12 +54,12 @@ if ($p3scansettings{'ACTION'} eq $tr{'save'}) {
 		my $avstatus = isclamrunning("clamd");
 		if ($avstatus eq 'running') {
 			# ClamAV is running - Don't restart it - It takes ages.
-			$infomessage .= "ClamAV already running!<br />";
+			$infomessage .= "$tr{'clam already running'}<br />";
 		}
 		else {
 			$success = message('clamavrestart');
 			print STDERR "ClamAV Restart: '$success'\n";
-			$success = "TIMEOUT: ClamAV Still Restarting" if ($success =~ /TIMEOUT/i);
+			$success = $tr{'clam still restarting'} if ($success =~ /TIMEOUT/i);
 			$infomessage .= $success."<br />" if ($success and $success !~ "[Ff]ailed" );
 			$errormessage .= "clamavrestart ".$tr{'smoothd failure'}." <i>$success<i><br />" unless ($success and $success !~ "[Ff]ailed" );
 		}
@@ -81,7 +82,7 @@ if ($p3scansettings{'ACTION'} eq $tr{'save'}) {
 			$errormessage .= "clamavstop ".$tr{'smoothd failure'}."<br />" unless ($success);
 		}
 		else {
-			$errormessage .= "ClamAV is being used by another Application - Not Terminated<br />";
+			$errormessage .= "$tr{'clam in use'}<br />";
 		}
 		#$refresh = "<meta http-equiv='refresh' content='2;'>" unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
 	}
@@ -109,7 +110,7 @@ print <<END;
 	<td style='width:25%;' class='base'>$tr{'enabledc'}</td>
 	<td style='width:30%;'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'}></td>
 	<td style='width:45%;'>
-		<p style="margin:0"><b>Database Dates</b></p>
+		<p style="margin:0"><b>$tr{'clam db file dates'}</b></p>
 		<div style='margin:0 0 0 2em;'>
 			<code>
 END
