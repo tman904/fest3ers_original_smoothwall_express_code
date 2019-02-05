@@ -149,28 +149,6 @@ else {
 	$enable_disabled = " disabled='disabled'";
 }
 
-# Extract rule age from rule files
-my $ruleage = 'N/A';
-if (-d "${swroot}/snort/rules") {
-	my $opwd = `pwd`;
-	chomp $opwd;
-	chdir "${swroot}/snort/rules";
-	my $ruledate = `egrep "\$Id:.*,v.*vrtbuild" * 2>/dev/null | \
-		sed -e 's/.*,v [0-9.]* //' -e's/ .*//' | \
-		sort | tail -1`;
-	chomp $ruledate;
-	$ruledate = `date -d '$ruledate' "+%s"`;
-	my $today = `date "+%s"`;
-	my $diff = ($today-$ruledate)/3600/24;
-	$days = int($diff);
-	$ruleage = "$days $tr{'ids days'}";
-	chdir $opwd;
-}
-else {
-	$days = -1;
-	$ruleage = "($tr{'ids never downloaded'})";
-}
-
 # status at page rendering
 if ($snortsettings{'ENABLE_SNORT'} eq 'on') {
 	$ids_status = $tr{'ids enabled'};
@@ -203,8 +181,8 @@ print "
 	<div style='margin-right:.2em; display:inline-block; width:20%; '>
 		<input id='ENABLE_SNORT' type='checkbox' name='ENABLE_SNORT' style='margin:0'
 		${enable_disabled}$checked{'ENABLE_SNORT'}{'on'}></div>
-	<div class='base' style='text-align:right; margin-right:.2em; display:inline-block; width:20%; '>$tr{'rule age'}</div>
-	<div style='margin-right:.2em; display:inline-block; width:20%; '><b>$ruleage</b></div>
+	<div class='base' style='text-align:right; margin-right:.2em; display:inline-block; width:20%; '>&nbsp;</div>
+	<div style='margin-right:.2em; display:inline-block; width:20%; '>&nbsp;</div>
 	<br />
 	<div class='base' style='text-align:right; margin-right:.2em; display:inline-block; width:20%;'>
 		$tr{'ids download label'}</div>

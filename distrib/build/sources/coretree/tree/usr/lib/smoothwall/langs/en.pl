@@ -803,7 +803,6 @@
 'unable to fetch rules' => 'Unable to fetch rules.',
 'rule retreval' => 'Rule retrieval:',
 'oink code' => 'Oink code:',
-'rule age' => 'Rule age:',
 'enable' => 'Enable:',
 'ids download label' => 'Download Rules:',
 'ids download status' => 'Status:',
