@@ -113,7 +113,7 @@
 'clam in use' => 'ClamAV in use by another application - Not Terminated',
 'clam still restarting' => 'ClamAV still Restarting',
 'clam still updating' => 'Freshclam still updating in background; reload this page in a few minutes',
-'clam update failed' -> 'Freshclam failed; see /var/log/smoothderror',
+'clam update failed' => 'Freshclam failed; see /var/log/smoothderror',
 'clam update' => 'Update ClamAV Virus Database',
 
 # changepw.cgi
