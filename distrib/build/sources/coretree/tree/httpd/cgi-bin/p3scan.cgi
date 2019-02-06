@@ -131,7 +131,7 @@ print <<END
 <table style='width: 80%; border: none; margin-left:auto; margin-right:auto'>
 <tr>
         <td style='width:45%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'save'}'></td>
-        <td style='width:55%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'freshclam'}'></td>
+        <td style='width:55%; text-align:center;'><input type='submit' name='ACTION' value='$tr{'clam update'}'></td>
 </tr>
 </table>
 END
