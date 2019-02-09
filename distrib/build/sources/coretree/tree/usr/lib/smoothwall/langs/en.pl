@@ -848,7 +848,7 @@
 'hours' => ' hours',
 'less than one hour' => 'Less than one hour',
 # New time.cgi; the old strings above are to be removed.
-'time automatic title' => 'servers: [0-3].pool.ntp.org and server below',
+'time automatic title' => 'automatic servers: [0-3].pool.ntp.org and server below',
 'time date ymd' => ' <i>(YYYY MM DD)</i>',
 'time datec' => 'Date:',
 'time intervalc' => 'Interval:',
@@ -871,7 +871,7 @@
 'time next update in' => 'Next update in',
 'time one day' => '1 day',
 'time one hour' => '1 hour',
-'time periodic title' => 'server: pool.ntp.org or server below',
+'time periodic title' => 'periodic server: pool.ntp.org or server below',
 'time regulation title' => 'System Time Regulation',
 'time six hours' => '6 hours',
 'time three days' => '3 days',
