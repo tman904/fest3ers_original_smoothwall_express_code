@@ -290,7 +290,7 @@ print <<END
 	<td>&nbsp;</td>
 </tr>
 <tr>
-	<td style='width:100%;'>
+	<td style='width:100%;' title='$tr{'time periodic title'}'>
 	    <input type='radio' name='NTP_METHOD' value='$tr{'time method periodic'}' $selected{'NTP_METHOD'}{$tr{'time method periodic'}}>
 	    $tr{'time method periodic'}</td>
 </tr>
@@ -336,7 +336,7 @@ print <<END
 	<td>&nbsp;</td>
 </tr>
 <tr>
-	<td style='width:100%;'>
+	<td style='width:100%;' title='$tr{'time automatic title'}'>
 	    <input type='radio' name='NTP_METHOD' value='$tr{'time method automatic'}' $selected{'NTP_METHOD'}{$tr{'time method automatic'}}>
 	    $tr{'time method automatic'}</td>
 </tr>
