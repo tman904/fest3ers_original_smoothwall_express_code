@@ -4,6 +4,7 @@
 ./httpd/cgi-bin/dhcp.cgi
 ./httpd/cgi-bin/dmzholes.cgi
 ./httpd/cgi-bin/hosts.cgi
+./httpd/cgi-bin/ids.cgi
 ./httpd/cgi-bin/im.cgi
 ./httpd/cgi-bin/ipblock.cgi
 ./httpd/cgi-bin/logs.cgi/log.dat
@@ -13,6 +14,7 @@
 ./httpd/cgi-bin/pppsetup.cgi
 ./httpd/cgi-bin/proxy.cgi
 ./httpd/cgi-bin/sipproxy.cgi
+./httpd/cgi-bin/time.cgi
 ./httpd/cgi-bin/timedaccess.cgi
 ./httpd/cgi-bin/vpnconn.cgi
 ./httpd/cgi-bin/vpnmain.cgi
