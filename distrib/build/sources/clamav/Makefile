@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 PACKAGE = clamav
-VERSION = 0.100.2
+VERSION = 0.101.1
 
 BASE_URL = https://www.clamav.net/downloads/production
 
