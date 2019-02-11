@@ -699,15 +699,13 @@ sub closepage
 		<table class='main' cellpadding='0' cellspacing='0'>
 
 <tr>
-</tr>
-<tr>
 	<td class='footer' colspan='2' style='width:100%'>
-		<div style="width:35%; text-align:left; margin:2px; display:inline-block; float:left">
+		<div style="width:37%; text-align:left; margin:2px; display:inline-block; float:left">
 		<strong>Smoothwall $displayVersion</strong><br/>
 		Smoothwall&trade; is a trademark of <a href='http://www.smoothwall.net/'>Smoothwall Limited</a>.</div>
-		<p id='currentTime' style='margin:.1em 0 0 0; width:29%;
+		<p id='currentTime' style='margin:.1em 0 0 0; width:25%;
 			text-align:center; display:inline-block'></p>
-		<div style="width:35%; text-align:right; margin:2px; float:right">
+		<div style="width:37%; text-align:right; margin:2px; float:right">
 			&copy; 2000 - 2018 <a href='http://smoothwall.org/about/team/'>The Smoothwall Team</a><br/>
 			<a href='/cgi-bin/register.cgi'>$tr{'credits'}</a> - Portions &copy; <a href='http://www.smoothwall.org/download/sources/'>original authors</a></div></td>
 </tr>
