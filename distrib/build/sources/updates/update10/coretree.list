@@ -21,6 +21,7 @@
 ./httpd/cgi-bin/xtaccess.cgi
 ./usr/bin/smoothwall/rrdtool.pl
 ./usr/bin/smoothwall/writeipsec.pl
+./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/langs/alertboxes.en.pl
 ./usr/lib/smoothwall/langs/en.pl
 ./usr/lib/smoothwall/smoothtype.pm
