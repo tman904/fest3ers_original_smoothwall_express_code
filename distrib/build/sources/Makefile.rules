@@ -37,6 +37,7 @@ patch: $(DIR)/
 	done; \
 	(cd $(DIR); \
 	for PATCH in $(PATCH_FILE1) $(PATCH_FILE2) $(PATCH_FILE3) $(PATCH_FILE4) $(PATCH_FILE5); do \
+	  tput smso; echo $$PATCH; tput rmso; \
 	  FILENAME=../$$PATCH; \
 	  [ -f $$FILENAME ] || exit 8; \
 	  if echo $$FILENAME | grep -q \.gz$$; then \
