@@ -7,7 +7,7 @@
 include ../Makefile.conf
 
 PACKAGE = bison
-VERSION = 2.4.1
+VERSION = 2.7.1
 
 BASE_URL = ftp://ftp.gnu.org/gnu/bison/
 
