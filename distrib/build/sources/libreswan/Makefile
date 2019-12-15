@@ -12,12 +12,21 @@ PACKAGE = $(FREESWAN_TYPE)
 VERSION = $(FREESWAN_VER)
 
 BASE_URL = https://download.libreswan.org
+#VERSION = 3.29a
+#export pkgName = $(PACKAGE)
+#export gitURL = git://github.com/libreswan/libreswan.git
+#export gitCommitID = cbaf90bbe
+#export gitBranch = $(VERSION)
+#EXTENSION = .tar.gz
 
 TARBALL = $(FREESWAN_TYPE)-$(VERSION)
 
 PATCH_FILE1 = makefile.patch
+#PATCH_FILE1 = kernel.mk.patch
 PATCH_FILE2 = setup.in.smoothwall.patch
 PATCH_FILE3 = ipsec.init.in.patch
+PATCH_FILE4 = ipsec_kversion.h.patch
+#PATCH_FILE5 = pf_key.c.patch
 
 KNL_SRC = ../linux$(KERNEL_TYPE)/linux
 MOD_DEST = /lib/modules/$(K_RAW_VERSION)$(KERNEL_TYPE)/kernel/net/ipsec
@@ -31,6 +40,7 @@ INSTALL = yes
 
 configure: patch
 	cp makefile.inc.local $(DIR)/Makefile.inc.local
+	#cp spi.c $(DIR)/programs/spi/spi.c
 
 CFLAGS:=$(CFLAGS) -fno-strict-aliasing
 	#USERCOMPILE="-g -DGCC_LINT %{optflags} %{?efence} -fPIE -pie -fno-strict-aliasing -Wformat-nonliteral -Wformat-security" \
@@ -40,13 +50,14 @@ LIBRE_FLAGS:=\
 	V=1 \
 	FINALLIBEXECDIR=/usr/libexec/ipsec \
 	FINALRUNDIR=/var/run/pluto \
-	KERNELRSC=$(KNL_SRC) \
+	KERNELSRC=/build/sources/linux/linux \
 	INC_RCDIRS=/etc/rc.d \
 	INC_RCDEFAULT=/etc/rc.d \
 	INC_USRLOCAL=/usr \
 	MANTREE=/usr/share/man \
 	USE_DNSSEC=false \
 	USE_FIPSCHECK=false \
+	USE_KLIPS=true \
 	USE_LABELED_IPSEC=false \
 	USE_LINUX_AUDIT=false \
 	USE_LDAP=false \

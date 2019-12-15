@@ -5,3 +5,4 @@ USE_XAUTHPAM = false
 INC_USRLOCAL = /usr
 KERNELSRC = /build/sources/linux/linux
 DEST_DIR = /build/buildroot/libreswan
+USE_NSS_IPSEC_PROFILE = false
