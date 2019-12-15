@@ -12,7 +12,7 @@ VERSION = 2.18
 EXTENSION = .tar.bz2
 
 BASE_URL =  ftp://ftp.gnu.org/gnu/glibc
-TZ_VERSION = 2018g
+TZ_VERSION = 2019c
 TZ_TARBALL = tzdata$(TZ_VERSION).tar.gz
 TZ_URL =  http://www.iana.org/time-zones/repository/releases/$(TZ_TARBALL)
 
