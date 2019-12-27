@@ -18,6 +18,8 @@ CONFIG_OPTS += --prefix=/usr --exec-prefix=/usr \
 	       --datarootdir=/usr/share \
 	       --libexecdir=/usr/libexec \
 	       --includedir=/usr/include \
-	       --libdir=/usr/lib
+	       --libdir=/usr/lib \
+	       --with-ssl=/usr/lib/ssl \
+	       --with-ca-path=/usr/lib/ssl/certs
 
 include ../Makefile.rules
