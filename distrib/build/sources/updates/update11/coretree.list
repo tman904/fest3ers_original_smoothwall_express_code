@@ -1,0 +1,2 @@
+./var/smoothwall/patches/installed
+./usr/bin/smoothwall/writeipsec.pl
