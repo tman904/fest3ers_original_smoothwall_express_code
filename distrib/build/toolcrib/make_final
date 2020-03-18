@@ -176,6 +176,7 @@ fi
       build libcap-ng
       build glib
       build pango
+      build readline
       build sqlite
       build unbound
       build libevent
@@ -221,7 +222,6 @@ fi
       build bc
       build file
       build libtool
-      build readline
       build xz
       build bzip2
       build diffutils
