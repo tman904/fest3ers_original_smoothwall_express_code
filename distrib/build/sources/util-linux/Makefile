@@ -26,7 +26,7 @@ CONFIG_OPTS = \
             --disable-makeinstall-chown    \
             --disable-silent-rules         \
             --without-systemdsystemunitdir \
-            PKG_CONFIG="" LIBS=-ltinfo
+            PKG_CONFIG=""
 
 configure: $(DIR)/
 	cd $(DIR); ./configure $(CONFIG_OPTS) --prefix=$(TOOLS_DIR) 

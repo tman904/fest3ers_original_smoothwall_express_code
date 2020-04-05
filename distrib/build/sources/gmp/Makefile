@@ -18,6 +18,6 @@ BASE_URL = http://www.gnu.org/software/gmp/
 
 EXTENSION = .tar.bz2
 
-CONFIG_OPTS += --prefix=$(PKG_DIR) --enable-cxx --enable-mpbsd LIBS=-ltinfo LDFLAGS=-ltinfo
+CONFIG_OPTS += --prefix=$(PKG_DIR) --enable-cxx --enable-mpbsd
 
 include ../Makefile.rules
