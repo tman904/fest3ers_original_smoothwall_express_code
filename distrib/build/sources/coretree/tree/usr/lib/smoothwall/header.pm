@@ -775,15 +775,16 @@ sub closebigbox
 
 sub openbox
 {
-	my ( $caption, $background ) = @_;
-	if ($background eq '') {
-		$background = "rgba(255,255,255,1)";
-		$background = "none";
+	my ( $caption, $border ) = @_;
+	if ($border eq '') {
+		$border = " style='border-style: solid; border-width: 3pt; border-color: rgba(255,255,255,0)'";
+	} else {
+		$border = " style='border-style: solid; border-width: 3pt; border-color: $border'";
 	}
 
 	print <<END
 <br />
-<table class='box' style='background-color: $background'>
+<table class='box'$border>
 <tr>
 	<td>
 END

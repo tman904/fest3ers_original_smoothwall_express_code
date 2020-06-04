@@ -33,9 +33,10 @@ my ($info, $alive_static, $unreachable_static, $alive_dyn, $unreachable_dyn);
 my (%cgiparams, %checked, %selected, %dhcpsettings, %netsettings, @list, @tempenv, @scanlist);
 
 my $ifcolor= 'black';
-my $bgcolor= 'rgba(255,255,255,1)';
+my $bdcolor= 'rgba(255,255,255,1)';
 my $broadcast = '';
 my $errormessage = '';
+my $infomessage = '';
 my $success = '';
 my $subnet = 'green';
 my $noscan = 0;	# $noscan = 0 to skip scanning when editing statics.
@@ -82,7 +83,6 @@ $dhcpsettings{'SHOW_NETSTAT'} = 'off';
 $dhcpsettings{'SHOW_DYNAMIC'} = 'off';
 $dhcpsettings{'SHOW_STALE'} = 'off';
 $dhcpsettings{'SHOW_STATIC'} = 'off';
-$dhcpsettings{'UPDATE_OUI'} = 'off';
 $dhcpsettings{'START_ADDR'} = '';
 $dhcpsettings{'END_ADDR'} = '';
 $dhcpsettings{'DNS1'} = '';
@@ -194,10 +194,6 @@ $checked{'SHOW_STATIC'}{'off'} = '';
 $checked{'SHOW_STATIC'}{'on'} = '';
 $checked{'SHOW_STATIC'}{$dhcpsettings{'SHOW_STATIC'}} = 'CHECKED';
 
-$checked{'UPDATE_OUI'}{'off'} = '';
-$checked{'UPDATE_OUI'}{'on'} = '';
-$checked{'UPDATE_OUI'}{$dhcpsettings{'UPDATE_OUI'}} = 'CHECKED';
-
 $checked{'SHOW_STALE'}{'off'} = '';
 $checked{'SHOW_STALE'}{'on'} = '';
 $checked{'SHOW_STALE'}{$dhcpsettings{'SHOW_STALE'}} = 'CHECKED';
@@ -218,7 +214,7 @@ $selected{'SUBNET'}{$dhcpsettings{'SUBNET'}} = 'SELECTED';
 &openpage($tr{'dhcp configuration'}, 1, '', 'services');
 print "<FORM METHOD='POST' action='?' name='myform'><div>\n";
 
-&infobox($errormessage, $infobox);
+&alertbox($errormessage, "", $infomessage);
 
 print <<END
 <script type="text/javascript">
@@ -290,8 +286,6 @@ print <<END
 	<td><input type='checkbox' name='SHOW_STALE' $checked{'SHOW_STALE'}{'on'}></td>
 	<td style='text-align: right;'>$tr{'dhcpwol-show state'}:</td>
 	<td><input type='checkbox' name='SHOW_STATIC' $checked{'SHOW_STATIC'}{'on'}></td>
-	<td style='text-align: right;'>$tr{'dhcpwol-update oui'}:</td>
-	<td><input type='checkbox' name='UPDATE_OUI' $checked{'UPDATE_OUI'}{'on'}></td>
 </tr>
 </table>
 <p>
@@ -376,15 +370,16 @@ END
 
 # Extract the selected iface color
 if ( $selected{'SUBNET'}{'green'} eq 'SELECTED' )
-{$ifcolor = 'green'; $bgcolor = 'rgba(0,200,0,0.05);';}
+{$ifcolor = 'green'; $bdcolor = 'rgba(0,200,0,0.25);';}
 if ( $selected{'SUBNET'}{'purple'} eq 'SELECTED' )
-{$ifcolor = 'purple'; $bgcolor = 'rgba(200,0,200,0.05);';}
+{$ifcolor = 'purple'; $bdcolor = 'rgba(150,0,200,0.25);';}
 if ( $selected{'SUBNET'}{'orange'} eq 'SELECTED' )
-{$ifcolor = 'orange'; $bgcolor = 'rgba(255,140,0,0.1);';}
+{$ifcolor = 'orange'; $bdcolor = 'rgba(255,140,0,0.35);';}
 
 # START INTERFACE BOX
-&openbox($tr{'interface'});
+&openbox($tr{'interface'}, $bdcolor);
 
+# GREEN
 my $Gon = 'on' if (-s "${swroot}/dhcp/green");
 my $greenenabled = '';
 if ($netsettings{'GREEN_DEV'}) {
@@ -396,6 +391,7 @@ if ($netsettings{'GREEN_DEV'}) {
 	}
 }
 
+# PURPLE
 my $Pon = 'on' if (-s "${swroot}/dhcp/purple");
 my $purpleenabled = '';
 if ($netsettings{'PURPLE_DEV'}) {
@@ -407,6 +403,7 @@ if ($netsettings{'PURPLE_DEV'}) {
 	}
 }
 
+# ORANGE
 my $Oon = 'on' if (-s "${swroot}/dhcp/orange");
 my $orangeenabled = '';
 if ($netsettings{'ORANGE_DEV'}) {
@@ -448,7 +445,7 @@ END
 ;
 
 # START DHCP BOX
-&openbox('DHCP:', $bgcolor);
+&openbox('DHCP:');
 
 print <<END
 <table class='centered'>
@@ -541,7 +538,7 @@ END
 # START DHCP LEASE BOX
 
 if ($dhcpsettings{'SHOW_DYNAMIC'} eq 'on') {
-	&openbox($tr{'dhcpwol-dyn'}, $bgcolor);
+	&openbox($tr{'dhcpwol-dyn'});
 	$alive_dyn = 0;
 	$unreachable_dyn = 0;
 	open (LEASES, "$swroot/dhcp/tempfile");
@@ -628,7 +625,7 @@ END
 
 #print "<a id='static'></a>\n";
 
-&openbox($tr{'add a new static assignment'}, $bgcolor);
+&openbox($tr{'add a new static assignment'});
 
 print <<END
 <a name="statichost"></a>
@@ -663,15 +660,18 @@ END
 
 # START NEW CURRENT STATIC ASSIGNMENT BOX
 if ($dhcpsettings{'SHOW_STATIC'} eq 'on'){
-	&openbox($tr{'current static assignments'}, $bgcolor);
+	&openbox($tr{'current static assignments'});
 	$alive_static = 0;
 	$unreachable_static = 0;
-	open (LEASES, "/$swroot/dhcp/tempstatic_$dhcpsettings{'SUBNET'}");
-	while (<LEASES>) {
-		$alive_static++ if /Machine Powered ON/;
-		$unreachable_static++ if /Machine OFF/;
+	if (open (LEASES, "/$swroot/dhcp/tempstatic_$dhcpsettings{'SUBNET'}")) {
+		while (<LEASES>) {
+			$alive_static++ if /Machine Powered ON/;
+			$unreachable_static++ if /Machine OFF/;
+		}
+		close (LEASES);
+	} else {
+		$errormessage .= "Couldn't open tempstatic for $dhcpsettings{'SUBNET'}<br />";
 	}
-	close (LEASES);
 
 	print <<END
 <table style='width: 25%; border: 1px solid; margin-left:auto; margin-right:auto'>
@@ -745,7 +745,7 @@ END
 else {
 
 # START ORIGINAL CURRENT STATIC ASSIGNMENT BOX
-	&openbox($tr{'current static assignments'}, $bgcolor);
+	&openbox($tr{'current static assignments'});
 	my %render_settings =
 	(
 		'url'     => "/cgi-bin/dhcp.cgi?[%COL%],[%ORD%],$dhcpsettings{'COLUMN_TWO'},$dhcpsettings{'ORDER_TWO'},$subnet",
@@ -823,6 +823,15 @@ END
 
 print <<END
 </div></form>
+<table width='100%'>
+  <td align='right'>
+    <p style='font-size:8pt; margin:0 1em 0 0'>
+      <i>Adapted from DHCP-WoL vSW3.1-V3.0</i>
+    </p>
+  </td>
+</tr>
+</table>
+<br>
 END
 ;
 #print "&emsp;Took ".(time - $^T)." Secs";
@@ -861,6 +870,15 @@ sub action_save {
 		$errormessage .= $tr{'dhcpwol-select'}."<br />";
 	}
 
+	# Start and End must be set
+	if ($dhcpsettings{'START_ADDR'} eq "") {
+		$errormessage .= $tr{'invalid start address'}."<br />";
+	}
+	if ($dhcpsettings{'END_ADDR'} eq "") {
+		$errormessage .= $tr{'invalid end address'}."<br />";
+	}
+
+	# If set, Start and End must be correct
 	if ($dhcpsettings{'START_ADDR'} ne "" && $dhcpsettings{'END_ADDR'} ne "") {
 		if (!(&validip($dhcpsettings{'START_ADDR'}))) {
 			$errormessage .= $tr{'invalid start address'}."<br />";
@@ -875,18 +893,23 @@ sub action_save {
 		}
 	}
 
-	open (FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") || die 'Unable to open config file.';
-	my @current = <FILE>;
-	close(FILE);
+	if (open (FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}")) {
+		my @current = <FILE>;
+		close(FILE);
 
-	foreach my $line (@current) {
-		chomp ($line);
-		my @temp = split (/\,/,$line);
-		if ($temp[4] eq 'on') {
-			unless(!((&ip2number($temp[2]) <= &ip2number($dhcpsettings{'END_ADDR'}) && (&ip2number($temp[2]) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
-				$errormessage .= $tr{'dynamic range cannot overlap static'}."<br />";
+		foreach my $line (@current) {
+			chomp ($line);
+			my @temp = split (/\,/,$line);
+			if ($temp[4] eq 'on') {
+				unless(!((&ip2number($temp[2]) <= &ip2number($dhcpsettings{'END_ADDR'}) && (&ip2number($temp[2]) >= &ip2number($dhcpsettings{'START_ADDR'}))))) {
+					$errormessage .= $tr{'dynamic range cannot overlap static'}."<br />";
+					# Only report once
+					last;
+				}
 			}
 		}
+	} else {
+		$errormessage .= "Unable to open $dhcpsettings{'SUBNET'} static settings<br />";
 	}
 
 	if ($dhcpsettings{'DNS1'}) {
@@ -938,7 +961,7 @@ sub action_save {
 	}
 
 	if ($dhcpsettings{'NIS1'}) {
-		$errormessage = $tr{'invalid primary nis'} if (!(&validip($dhcpsettings{'NIS1'})));
+		$errormessage .= $tr{'invalid primary nis'}."<br />" if (!(&validip($dhcpsettings{'NIS1'})));
 	}
 
 	if ($dhcpsettings{'NIS2'}) {
@@ -957,19 +980,18 @@ sub action_save {
 		$errormessage .= $tr{'invalid max lease time'}."<br />";
 	}
 
-ERROR:
 	unless ($errormessage) {
 
 		my %tempsettings;
 
-		for (qw/BOOT_ENABLE BOOT_SERVER BOOT_FILE BOOT_ROOT SHOW_NETSTAT SHOW_DYNAMIC SHOW_STATIC UPDATE_OUI SHOW_STALE/) {
+		for (qw/BOOT_ENABLE BOOT_SERVER BOOT_FILE BOOT_ROOT SHOW_NETSTAT SHOW_DYNAMIC SHOW_STATIC SHOW_STALE/) {
 			$tempsettings{$_} = $dhcpsettings{$_};
 		}
    
 		&writehash("${swroot}/dhcp/global", \%tempsettings);
       
 		for (qw/BOOT_ENABLE BOOT_SERVER BOOT_FILE BOOT_ROOT SHOW_NETSTAT SHOW_DYNAMIC SHOW_STATIC 
-			UPDATE_OUI SHOW_STALE STATIC_HOST STATIC_DESC STATIC_MAC STATIC_IP 
+			SHOW_STALE STATIC_HOST STATIC_DESC STATIC_MAC STATIC_IP 
 			DEFAULT_ENABLE_STATIC ORDER_ONE COLUMN_ONE ORDER_TWO COLUMN_TWO/) {
 			delete $dhcpsettings{$_};
 		}
@@ -992,15 +1014,14 @@ ERROR:
 		unlink ("${swroot}/dhcp/uptodate");
 
 		$success = message('dhcpdrestart');
-		$errormessage = "$success <br />";
-		$errormessage = "DHCP RESTART: $tr{'smoothd failure'} <br />" unless ($success);
+		$infomessage .= "$success<br />" if ($success);
+		$errormessage .= "DHCP RESTART: $tr{'smoothd failure'}<br />" unless ($success);
 
 		system('/usr/bin/smoothwall/writehosts.pl');
 
 		$success = message('dnsproxyhup');
-		$errormessage .= $success;
-		$errormessage .= "DNSProxy SIGHUP: $tr{'smoothd failure'} <br />" unless ($success);
-		$infobox = 'info' unless ($errormessage =~ /fail/i || $errormessage =~ /$tr{'smoothd failure'}/);
+		$infomessage .= "$success<br />" if ($success);
+		$errormessage .= "DNSProxy SIGHUP: $tr{'smoothd failure'}<br />" unless ($success);
 		&readhash("${swroot}/dhcp/global", \%dhcpsettings);
 
 		# Save the IF we're dealing with so we can display it again.
@@ -1049,7 +1070,7 @@ sub action_add {
 	$errormessage .= "$tr{'dhcpwol-IP address not'} of: <span style='font-weight:bold;'>".$ifsubnet." \/ ".$ifmask."</span><br />" unless ($withinnetwork==1);
 	$errormessage .= "$tr{'description contains bad characters'}<br />" unless($dhcpsettings{'STATIC_DESC'} =~ /^([a-zA-Z 0-9]*)$/);
 	if ($dhcpsettings{'DEFAULT_ENABLE_STATIC'} eq 'on') {
-		$errormessage .= $tr{'static must be outside dynamic range'}."<br />" unless (!((&ip2number($dhcpsettings{'STATIC_IP'}) <= &ip2number($dhcpsettings{'END_ADDR'}) && (&ip2number($dhcpsettings{'STATIC_IP'}) >= &ip2number($dhcpsettings{'START_ADDR'})))));
+		$errormessage .= "$tr{'static must be outside dynamic range'}<br />" unless (!((&ip2number($dhcpsettings{'STATIC_IP'}) <= &ip2number($dhcpsettings{'END_ADDR'}) && (&ip2number($dhcpsettings{'STATIC_IP'}) >= &ip2number($dhcpsettings{'START_ADDR'})))));
 	}
 
 	open (FILE, "${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") || die 'Unable to open config file.';
@@ -1064,13 +1085,13 @@ sub action_add {
 			my ( $cleanmac ) = $temp[1] =~ /(([0-9A-F]{2}:){5}[0-9A-F]{2})/;
 
 			if (($dhcpsettings{'STATIC_HOST'} eq $temp[0]) && ($temp[4] eq 'on')) {
-				$errormessage .= "$tr{'hostnamec'} <span style='font-weight:bold;'>$temp[0]</span> $tr{'already exists and has assigned ip'} $tr{'ip address'} <span style='font-weight:bold;'>$temp[2]</span>.<br />";
+				$errormessage .= "$tr{'hostnamec'} <span style='font-weight:bold;'>$temp[0]</span> $tr{'already exists and has assigned ip'} $tr{'ip address'} <span style='font-weight:bold;'>$temp[2]</span><br />";
 			}
 			if (($dhcpsettings{'STATIC_MAC'} eq $cleanmac) && ($temp[4] eq 'on')) {
-				$errormessage .= "$tr{'mac address'} <span style='font-weight:bold;'>$temp[1]</span> ($tr{'hostnamec'} $temp[0]) $tr{'already assigned to ip'} $tr{'ip address'} <span style='font-weight:bold;'>$temp[2]</span>.<br />";
+				$errormessage .= "$tr{'mac address'} <span style='font-weight:bold;'>$temp[1]</span> ($tr{'hostnamec'} $temp[0]) $tr{'already assigned to ip'} $tr{'ip address'} <span style='font-weight:bold;'>$temp[2]</span><br />";
 			}
 			if (($dhcpsettings{'STATIC_IP'} eq $temp[2]) && ($temp[4] eq 'on')) {
-				$errormessage .= "$tr{'ip address'} <span style='font-weight:bold;'>$temp[2]</span> $tr{'ip already assigned to'} $tr{'mac address'} <span style='font-weight:bold;'>$temp[1]</span> ($tr{'hostnamec'} $temp[0]).<br />";
+				$errormessage .= "$tr{'ip address'} <span style='font-weight:bold;'>$temp[2]</span> $tr{'ip already assigned to'} $tr{'mac address'} <span style='font-weight:bold;'>$temp[1]</span> ($tr{'hostnamec'} $temp[0])<br />";
 			}
 		}
 	}
@@ -1107,8 +1128,8 @@ sub action_remove_edit {
 		$id++;
 		$count++ if (($dhcpsettings{$id}) && $dhcpsettings{$id} eq "on");
 	}
-	$errormessage = $tr{'nothing selected'} if ($count == 0);
-	$errormessage = $tr{'you can only select one item to edit'} if ($count > 1 && $dhcpsettings{'ACTION'} eq $tr{'edit'});
+	$errormessage .= $tr{'nothing selected'} ."<br />" if ($count == 0);
+	$errormessage .= $tr{'you can only select one item to edit'} ."<br />" if ($count > 1 && $dhcpsettings{'ACTION'} eq $tr{'edit'});
 
 	unless ($errormessage) {
 		open (FILE, ">${swroot}/dhcp/staticconfig-$dhcpsettings{'SUBNET'}") || die 'Unable to open config file.';
@@ -1163,7 +1184,6 @@ sub action_nothing_select {
 	$dhcpsettings{'SHOW_NETSTAT'} = 'off';
 	$dhcpsettings{'SHOW_DYNAMIC'} = 'off';
 	$dhcpsettings{'SHOW_STALE'} = 'off';
-	$dhcpsettings{'UPDATE_OUI'} = 'off';
 	$dhcpsettings{'SHOW_STATIC'} = 'off';
 
 	$dhcpsettings{'STATIC_HOST'} = '';
@@ -1544,8 +1564,7 @@ sub wakeup {
 	send (S, $WAKE_UP,0,$paddr);
 
 	# Display a message then refresh the page.
-	$infobox = 'info';
-	$errormessage = "$tr{'dhcpwol-wakeup'}. MAC: <B>$cgiparams{'wakemac'}</B> Broadcast: <B>$cgiparams{'wakebc'}</B>";
+	$infomessage .= "$tr{'dhcpwol-wakeup'}. MAC: <B>$cgiparams{'wakemac'}</B> Broadcast: <B>$cgiparams{'wakebc'}</B><br />";
 
 	# Save the current interface to a temp file so we can reload the same page after the message display.
 	&writevalue("/$swroot/dhcp/ifcol", $SUBNET);
