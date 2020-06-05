@@ -20,9 +20,11 @@ configure: $(DIR)/
 	  cd $(DIR); \
 	  sed -i -e 's/svn co/svn --non-interactive --trust-server-cert co/' autogen.sh; \
 	  sed -i -e 's=https://svn.ntop.org=https://ntop.org=' autogen.sh; \
-	  ./autogen.sh --noconfig; \
+	  ./autogen.sh; \
+	  autoreconf -f -i; \
 	  ./configure $(CONFIG_OPTS); \
 	)
+	  #./autogen.sh --noconfig; \
 
 include ../Makefile.rules
 

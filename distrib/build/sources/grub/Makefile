@@ -36,7 +36,7 @@ PRE_CONFIGURE = LDFLAGS=-static CFLAGS="$(CFLAGS) -Os -Wall -fno-reorder-functio
 CONFIG_OPTS += --prefix=$(PKG_DIR)
 
 reconf: patch
-	cd $(DIR); autoreconf --force
+	cd $(DIR); autoreconf --force -i
 
 CONFIGURE = yes
 configure: reconf

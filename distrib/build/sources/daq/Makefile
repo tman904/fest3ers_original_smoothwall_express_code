@@ -34,4 +34,9 @@ CONFIG_OPTS += --disable-bundled-modules --enable-nfq-module \
 # This makefile should always get the latest version of snort, whatever it is.
 # However, the build might fail if the pidfile fix patch is no longer correct.
 
+PREPARE = yes
+$(DIR)/: download
+	tar -xvf $(DOWNLOADS_DIR)/$(TARBALL)$(EXTENSION)
+	cd $(DIR); autoreconf
+
 include ../Makefile.rules
