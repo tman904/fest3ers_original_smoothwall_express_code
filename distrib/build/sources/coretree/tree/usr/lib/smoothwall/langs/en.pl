@@ -475,6 +475,8 @@
 'automatic reboot' => 'Automatic reboot if connection down for 5 minutes:',
 
 # remote.cgi
+'ssh enable green' => 'Allow SSH from GREEN',
+'ssh enable purple' => 'Allow SSH from PURPLE',
 'ssh is enabled' => 'SSH is enabled.  Restarting.',
 'ssh is disabled' => 'SSH is disabled.  Stopping.',
 'remote access' => 'Remote access',

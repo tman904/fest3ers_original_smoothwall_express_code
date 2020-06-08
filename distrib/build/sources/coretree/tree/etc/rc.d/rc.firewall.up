@@ -134,6 +134,12 @@ if [ "$RED_DEV" != "" ]; then
 	/sbin/iptables -A INPUT -i $RED_DEV -j spoof
 fi
 
+# Verify remote access via GN/PU. Will VPNs be blocked?
+/sbin/iptables -N restrict_remote
+/sbin/iptables -A restrict_remote -j LOG --log-prefix "Denied-by-filter:rstr_rem "
+/sbin/iptables -A restrict_remote -j REJECT
+/sbin/iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 222 -j restrict_remote
+
 # Ethernet
 /sbin/iptables -A INPUT -i $GREEN_DEV -j ACCEPT
 if [ "$PURPLE_DEV" != "" ]; then
@@ -159,12 +165,13 @@ fi
 # Check IPSEC packets
 /sbin/iptables -A block -j secin
 
+# Otherwise, allow all access to smoothie from GN and PU
 /sbin/iptables -A block -i $GREEN_DEV -j ACCEPT
 if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -A block -i $PURPLE_DEV -j ACCEPT
 fi
 
-# External access.  Rule set with setxtaccess setuid
+# External access.  Rule set with setxtaccess setuid. Move up so SSH can be allowed from RED.
 /sbin/iptables -N xtaccess
 /sbin/iptables -A block -j xtaccess
 

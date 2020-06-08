@@ -4,8 +4,12 @@
 This enables remote console access to the Smoothwall machine.  For various
 reasons, the SSH service listens on a non-standard port 222.</P>
 
-<P>Enable or disable this service using the checkbox, and then click
-<B>Save</B>.</P>
+<p>
+  Enable or disable this service on GREEN or PURPLE using the respective
+  checkboxes, and then click <b>Save</b>. This allows you finer control over
+  access to the system via SSH. If neither zone is selected, the SSH daemon
+  will not be started.
+</p>
 
 <P>In order to be certain that the request for an admin function is from the
 Smoothwall server and not some third party web page, a referral check is

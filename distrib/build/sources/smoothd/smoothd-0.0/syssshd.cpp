@@ -13,6 +13,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <cstdio>
 #include <fcntl.h>
 #include <syslog.h>
 #include <signal.h>
@@ -46,13 +48,23 @@ int restart_sshd(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
 	
-	error += stop_sshd(parameters, response);
+	error = stop_sshd(parameters, response);
 	
 	if (!error)
-		error += start_sshd(parameters, response);
+	{
+		error = start_sshd(parameters, response);
+		if (!error)
+		{
+			response = "Remote Access restarted.";
+			return (0);
+		}
+	}
 	
-	if (!error)
-		response = "Sshd Restart Successful";
+	if (error)
+	{
+		response += "\nRemote Access restart failed.";
+		std::cerr << "Remote access restart errors:\n" << response << "\n";
+	}
 	
 	return error;
 }
@@ -62,27 +74,60 @@ int stop_sshd(std::vector<std::string> & parameters, std::string & response)
 	int error = 0;
 
 	killprocess("/var/run/sshd.pid");
-	sleep(1);
+	usleep(100000);
 	response = "Sshd Process Terminated";
 
-	return error;
+	return (0);
 }
 
 
 int start_sshd(std::vector<std::string> & parameters, std::string & response)
 {
 	int error = 0;
-	ConfigVAR settings("/var/smoothwall/remote/settings");
-	
-	if (settings["ENABLE_SSH"] == "on")
-	{
-		error = simplesecuresysteml("/usr/sbin/sshd", NULL);
+        std::vector<std::string>ipbfilter;
 
-		if (error)
-			response = "Can't start sshd";
-		else
-			response = "Sshd Start Successful";
-	}
+	ConfigVAR settings("/var/smoothwall/remote/settings");
+	ConfigVAR ethernetsettings("/var/smoothwall/ethernet/settings");
 	
-	return error;
+	// Remove existing allows, if any
+        ipbfilter.push_back("/sbin/iptables -t filter -F restrict_remote");
+
+	// Insert allows as needed, and start the daemon
+	// GREEN
+	if (settings["ENABLE_SSH_GREEN"] == "on")
+	{
+        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["GREEN_DEV"] + " -j RETURN");
+	}
+
+	// PURPLE, if it's configured
+	if (ethernetsettings["PURPLE_DEV"] != ""
+	 && settings["ENABLE_SSH_PURPLE"] == "on")
+	{
+        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["PURPLE_DEV"] + " -j RETURN");
+	}
+
+        ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -j LOG --log-prefix \"Denied-by-filter:rstr_rem \"");
+        ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -j REJECT --reject-with icmp-port-unreachable");
+
+	// And set up iptables
+	error = ipbatch(ipbfilter);
+	if (error)
+	{
+		response += "\nCan't prepare chain restrict_remote.";
+		return (error);
+	}
+
+	// Restart daemon if needed
+	if (settings["ENABLE_SSH_GREEN"] == "on"
+	 || settings["ENABLE_SSH_PURPLE"] == "on")
+	{
+		// Start SSH daemon
+		error = simplesecuresysteml("/usr/sbin/sshd", NULL);
+		if (error)
+		{
+			response += "\nCan't start sshd";
+		}
+	}
+
+	return (error);
 }
