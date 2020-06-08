@@ -171,7 +171,7 @@ if [ "$PURPLE_DEV" != "" ]; then
 	/sbin/iptables -A block -i $PURPLE_DEV -j ACCEPT
 fi
 
-# External access.  Rule set with setxtaccess setuid. Move up so SSH can be allowed from RED.
+# External access.  Rule set with setxtaccess setuid.
 /sbin/iptables -N xtaccess
 /sbin/iptables -A block -j xtaccess
 
