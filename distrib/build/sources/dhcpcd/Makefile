@@ -25,6 +25,7 @@ BASE_URL = http://roy.marples.name/downloads/dhcpcd/
 #export gitCommitID = 8998244b8
 #export gitBranch = $(VERSION)
 
+PATCH_FILE1 = if.c.patch
 
 DIR =  $(PACKAGE)-$(VERSION)
 
