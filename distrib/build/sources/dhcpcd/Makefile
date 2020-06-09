@@ -13,11 +13,10 @@
 include ../Makefile.conf
 
 PACKAGE = dhcpcd
-VERSION = 8.1.6
+VERSION = 9.1.1
 
 TARBALL = $(PACKAGE)-$(VERSION)
 EXTENSION = .tar.xz
-#EXTENSION = .tar.gz
 
 BASE_URL = http://roy.marples.name/downloads/dhcpcd/
 
