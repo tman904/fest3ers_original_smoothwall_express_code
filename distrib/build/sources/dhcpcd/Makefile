@@ -13,7 +13,7 @@
 include ../Makefile.conf
 
 PACKAGE = dhcpcd
-VERSION = 9.1.1
+VERSION = 8.1.9
 
 TARBALL = $(PACKAGE)-$(VERSION)
 EXTENSION = .tar.xz
