@@ -1,2 +1,14 @@
-./var/smoothwall/patches/installed
+./etc/rc.d/rc.firewall.up
+./etc/rc.d/rc.netaddress.up
+./httpd/html/help/dhcp.cgi.html.en 
+./httpd/html/help/remote.cgi.html.en 
+./httpd/html/ui/img/Info.png
+./httpd/html/ui/img/na.png
+./httpd/html/ui/img/ok.png
+./httpd/cgi-bin/dhcp.cgi
+./httpd/cgi-bin/remote.cgi
+./usr/bin/smoothwall/writedhcp.pl
 ./usr/bin/smoothwall/writeipsec.pl
+./usr/lib/smoothwall/header.pm
+./usr/lib/smoothwall/langs/en.pl
+./var/smoothwall/patches/installed
