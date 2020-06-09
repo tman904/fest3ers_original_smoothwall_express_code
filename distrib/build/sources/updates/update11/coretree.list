@@ -11,4 +11,5 @@
 ./usr/bin/smoothwall/writeipsec.pl
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/langs/en.pl
+./var/smoothwall/remote/settings
 ./var/smoothwall/patches/installed
