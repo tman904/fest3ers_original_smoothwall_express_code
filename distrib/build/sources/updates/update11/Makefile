@@ -5,23 +5,32 @@
 #   that they override those files in linux when linux is updated.
 
 UPDATE_PACKAGES = \
+		  bc \
 		  bison \
+		  cacert-bundle \
 		  c_icap_modules \
 		  clamav \
 		  curl \
+		  daq \
 		  device-ids \
 		  dhcpcd \
+		  gmp \
+		  grub \
+		  inetutils \
 		  iproute2 \
 		  libreswan \
 		  linux \
 		  miniupnpd \
+		  ntp \
 		  openssh \
 		  openssl \
 		  smoothd \
 		  snort \
+		  sqlite-autoconf \
 		  squid \
 		  suricata \
 		  unbound \
+		  util-linux \
 		  xtables-addons \
 		  kernel-drivers \
 		  linux-firmware \
