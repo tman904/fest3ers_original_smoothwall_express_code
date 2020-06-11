@@ -13,7 +13,7 @@
 include ../Makefile.conf
 
 PACKAGE = dhcpcd
-VERSION = 8.1.9
+VERSION = 9.1.1
 
 TARBALL = $(PACKAGE)-$(VERSION)
 EXTENSION = .tar.xz
@@ -25,7 +25,11 @@ BASE_URL = http://roy.marples.name/downloads/dhcpcd/
 #export gitCommitID = 8998244b8
 #export gitBranch = $(VERSION)
 
-PATCH_FILE1 = if.c.patch
+# This was for v8.1.9
+#PATCH_FILE1 = if.c.patch
+
+PATCH_FILE1 = if.c-v911.patch
+PATCH_FILE2 = if-linux.c.patch
 
 DIR =  $(PACKAGE)-$(VERSION)
 
