@@ -871,10 +871,10 @@ sub action_save {
 	}
 
 	# Start and End must be set
-	if ($dhcpsettings{'START_ADDR'} eq "") {
+	if ($dhcpsettings{'ENABLE'} eq "on" && $dhcpsettings{'START_ADDR'} eq "") {
 		$errormessage .= $tr{'invalid start address'}."<br />";
 	}
-	if ($dhcpsettings{'END_ADDR'} eq "") {
+	if ($dhcpsettings{'ENABLE'} eq "on" && $dhcpsettings{'END_ADDR'} eq "") {
 		$errormessage .= $tr{'invalid end address'}."<br />";
 	}
 
