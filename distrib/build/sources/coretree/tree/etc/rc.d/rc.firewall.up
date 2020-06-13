@@ -139,6 +139,8 @@ fi
 /sbin/iptables -A restrict_remote -j LOG --log-prefix "Denied-by-filter:rstr_rem "
 /sbin/iptables -A restrict_remote -j REJECT
 /sbin/iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 222 -j restrict_remote
+/sbin/iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 81 -j restrict_remote
+/sbin/iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 441 -j restrict_remote
 
 # Ethernet
 /sbin/iptables -A INPUT -i $GREEN_DEV -j ACCEPT

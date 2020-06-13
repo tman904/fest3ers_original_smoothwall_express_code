@@ -93,21 +93,43 @@ int start_sshd(std::vector<std::string> & parameters, std::string & response)
         ipbfilter.push_back("/sbin/iptables -t filter -F restrict_remote");
 
 	// Insert allows as needed, and start the daemon
-	// GREEN
+	// GREEN, as it's configured
 	if (settings["ENABLE_SSH_GREEN"] == "on")
 	{
-        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["GREEN_DEV"] + " -j RETURN");
+        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["GREEN_DEV"] + " -p tcp -m tcp --dport 222 -j RETURN");
+	}
+	if (settings["ENABLE_HTTP_GREEN"] == "on")
+	{
+        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["GREEN_DEV"] + " -p tcp -m tcp --dport 81 -j RETURN");
+	}
+	if (settings["ENABLE_HTTPS_GREEN"] == "on")
+	{
+        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["GREEN_DEV"] + " -p tcp -m tcp --dport 441 -j RETURN");
 	}
 
-	// PURPLE, if it's configured
+	// PURPLE, as it's configured
 	if (ethernetsettings["PURPLE_DEV"] != ""
 	 && settings["ENABLE_SSH_PURPLE"] == "on")
 	{
-        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["PURPLE_DEV"] + " -j RETURN");
+        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["PURPLE_DEV"] + " -p tcp -m tcp --dport 222 -j RETURN");
+	}
+	if (settings["ENABLE_HTTP_PURPLE"] == "on")
+	{
+        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["PURPLE_DEV"] + " -p tcp -m tcp --dport 81 -j RETURN");
+	}
+	if (settings["ENABLE_HTTPS_PURPLE"] == "on")
+	{
+        	ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -i " + ethernetsettings["PURPLE_DEV"] + " -p tcp -m tcp --dport 441 -j RETURN");
 	}
 
+	// Close with the default REJECT
         ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -j LOG --log-prefix \"Denied-by-filter:rstr_rem \"");
         ipbfilter.push_back("/sbin/iptables -t filter -A restrict_remote -j REJECT --reject-with icmp-port-unreachable");
+
+	// Debug
+        //for (int i = 0; i < ipbfilter.size(); i++) {
+	//	std::cerr << "sysssh debug ipbfilter" << ipbfilter[i] << "\n";
+        //}
 
 	// And set up iptables
 	error = ipbatch(ipbfilter);
