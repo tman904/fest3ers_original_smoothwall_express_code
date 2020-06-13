@@ -199,13 +199,7 @@ fi
 
 # DHCP
 if [ "$RED_DEV" != "" -a "$RED_TYPE" = "DHCP" ]; then
-	/sbin/iptables -A block -p tcp --source-port 67 --destination-port 68 \
-		-i $RED_DEV -j ACCEPT
-	/sbin/iptables -A block -p tcp --source-port 68 --destination-port 67 \
-		-i $RED_DEV -j ACCEPT
 	/sbin/iptables -A block -p udp --source-port 67 --destination-port 68 \
-		-i $RED_DEV -j ACCEPT
-	/sbin/iptables -A block -p udp --source-port 68 --destination-port 67 \
 		-i $RED_DEV -j ACCEPT
 fi
 
