@@ -12,6 +12,7 @@
 
 'back' => 'BACK',
 'dhcp server' => 'DHCP server',
+'dhcpcd server' => 'DHCP client daemon',
 'disabled' => 'Disabled',
 'disabledc' => 'Disabled:',
 'enabled' => 'Enabled',
@@ -475,8 +476,14 @@
 'automatic reboot' => 'Automatic reboot if connection down for 5 minutes:',
 
 # remote.cgi
-'ssh enable green' => 'Allow SSH from GREEN',
-'ssh enable purple' => 'Allow SSH from PURPLE',
+'ssh enable green' => 'Allow access from GREEN to',
+'ssh enable purple' => 'Allow access from PURPLE to',
+'ssh is enabled' => 'SSH is enabled.  Restarting.',
+'ssh is disabled' => 'SSH is disabled.  Stopping.',
+'http access is enabled' => 'HTTP access to the UI is allowed.',
+'http access is disabled' => 'HTTP access to the UI is prohibited.',
+'https access is enabled' => 'HTTPS access to the UI is allowed.',
+'https access is disabled' => 'HTTPS access to the UI is prohibited.',
 'ssh is enabled' => 'SSH is enabled.  Restarting.',
 'ssh is disabled' => 'SSH is disabled.  Stopping.',
 'remote access' => 'Remote access',
