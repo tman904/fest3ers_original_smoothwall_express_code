@@ -9,6 +9,7 @@
 ./httpd/html/ui/img/Info.png
 ./httpd/html/ui/img/na.png
 ./httpd/html/ui/img/ok.png
+./usr/bin/smoothwall/smoothinfo.pl
 ./usr/bin/smoothwall/writedhcp.pl
 ./usr/bin/smoothwall/writeipsec.pl
 ./usr/lib/smoothwall/header.pm
