@@ -86,22 +86,23 @@ configured. The features are presented in the order they are displayed.</P>
 </p>
 
 <p>
-  Check the Enable checkbox to enable DHCP service for the selection
-  interface.  This will enable DHCP service for the selected interface.
+  Check the Enable checkbox to enable DHCP service for the zone.
+  This will enable DHCP service for the selected interface.
 </p>
 
 <p>
-  If you wish to allow only systems that have static assignments to use your network, check the Deny unknown clients checkbox.
+  If you wish to allow only systems that have static assignments to use your
+  network, check the <i>Deny unknown clients</i> checkbox.
 
 <p>
-  Start Address and End Address set the range over which you wish the DHCP
-  server to supply dynamic addresses. This address range should not contain
-  the IPs of other machines on your LAN with static DHCP IP assignments or
-  that are statically configured. Suppose you had a network in the 192.168.0.0
-  range. If all of your statically assigned IP address are all lower than
-  192.168.0.100, you could use the upper portion of the address range for the
-  dynamic addresses. In this case, your start address would be 192.168.0.100
-  and the end address could be as high as 192.168.0.254.
+  <i>Start Address</i> and <i>End Address</i> set the range over which you
+  wish the DHCP server to supply dynamic addresses. This address range should
+  not contain the IPs of other machines on your LAN with static DHCP IP
+  assignments or that are statically configured. Suppose you had a network in
+  the 192.168.0.0 range. If all of your statically assigned IP address are all
+  lower than 192.168.0.100, you could use the upper portion of the address
+  range for the dynamic addresses. In this case, your start address would be
+  192.168.0.100 and the end address could be as high as 192.168.0.254.
 </p>
 
 <p>
@@ -113,15 +114,16 @@ configured. The features are presented in the order they are displayed.</P>
   unknown requests to your Smoothwall's IP address. Be careful setting the
   secondary address; if the primary DNS server is unavailable, it usually
   takes the client some seconds to decide it isn't there and to then try the
-  secondary server.
+  secondary server. In most cases, you probably only want to specify a single
+  upstream DNS server.
 </p>
 
 <p>
   If you run one or two local time servers, put their IP addresses in the
   primary and secondary NTP boxes. If you instead want your local systems to
-  use your Smoothwall's time server, enter only that IP addres in the
-  primary NTP box. (See the Time UI help for more information on
-  Smoothwall's time service.)
+  use your Smoothwall's time server, enter only that IP address in the
+  primary NTP box, and enable the time service. (See the Time UI help for more
+  information on Smoothwall's time service.)
 </p>
 
 <p>
