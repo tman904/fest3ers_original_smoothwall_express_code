@@ -14,5 +14,6 @@
 ./usr/bin/smoothwall/writeipsec.pl
 ./usr/lib/smoothwall/header.pm
 ./usr/lib/smoothwall/langs/en.pl
+./usr/lib/smoothwall/services/dhcpcd
 ./var/smoothwall/patches/installed
 ./var/smoothwall/remote/settings
