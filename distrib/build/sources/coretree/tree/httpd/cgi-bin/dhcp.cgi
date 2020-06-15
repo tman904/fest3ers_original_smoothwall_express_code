@@ -47,8 +47,8 @@ $subnet = &readvalue("$swroot/dhcp/ifcol") if (-s "$swroot/dhcp/ifcol");
 unlink ("$swroot/dhcp/ifcol");
 
 # Load the MAC Vendor array
-if (-s "/usr/share/arp-scan/ieee-oui.txt") {
-	open (OUI, "</usr/share/arp-scan/ieee-oui.txt") || die 'Unable to open ieee-oui.txt file.';
+if (-s "/usr/share/oui.txt") {
+	open (OUI, "</usr/share/oui.txt") || die 'Unable to open oui.txt file.';
 	@oui = (<OUI>);
 	close (OUI);
 }
