@@ -13,6 +13,8 @@ use smoothtype qw( :standard );
 use Socket qw( inet_aton );
 use Time::Local;
 use List::Util ( first );
+use oui_vendor;
+
 use strict;
 use warnings;
 
@@ -41,17 +43,9 @@ my $success = '';
 my $subnet = 'green';
 my $noscan = 0;	# $noscan = 0 to skip scanning when editing statics.
 my $infobox = ''; 	# $infobox = 'info' to use instead of error alert
-my @oui;
 
 $subnet = &readvalue("$swroot/dhcp/ifcol") if (-s "$swroot/dhcp/ifcol");
 unlink ("$swroot/dhcp/ifcol");
-
-# Load the MAC Vendor array
-if (-s "/usr/share/oui.txt") {
-	open (OUI, "</usr/share/oui.txt") || die 'Unable to open oui.txt file.';
-	@oui = (<OUI>);
-	close (OUI);
-}
 
 &showhttpheaders();
 
@@ -1482,23 +1476,10 @@ sub macvendor {
 	$manmac =~ s/://g;
 	$manmac = substr($manmac, 0, 6);
 
-	my $vendor = (first { /^$manmac\s+(.*)$/ } @oui) || '';
-	$vendor =~ s/$manmac\s+//g;
-	$vendor =~ s/\R//g;
+	my $vendor = $oui_vendor_html{$manmac};
+	$vendor = "Unknown Vendor" unless defined $vendor;
 
-	# Clean up the html
-	$vendor =~ s/&/&amp;/g;
-	$vendor =~ s/,/&#44;/g;
-	$vendor =~ s/</&lt;/g;
-	$vendor =~ s/>/&gt;/g;
-	$vendor =~ s/'/&#39;/g;   # MSIE doesn't know "&apos;"
-
-	if ($vendor) {
-		return $vendor;
-	}
-	else {
-		return "Unknown Vendor";
-	}
+	return $vendor;
 }
 
 # Check if IP is within subnet
