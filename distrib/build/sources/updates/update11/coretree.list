@@ -4,6 +4,7 @@
 ./httpd/cgi-bin/dhcp.cgi
 ./httpd/cgi-bin/remote.cgi
 ./httpd/cgi-bin/status.cgi
+./httpd/cgi-bin/vpnconn.cgi
 ./httpd/html/help/dhcp.cgi.html.en
 ./httpd/html/help/remote.cgi.html.en
 ./httpd/html/ui/img/Info.png
