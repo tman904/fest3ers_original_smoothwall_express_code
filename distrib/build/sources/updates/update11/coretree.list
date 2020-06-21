@@ -2,6 +2,7 @@
 ./etc/rc.d/rc.netaddress.down
 ./etc/rc.d/rc.netaddress.up
 ./httpd/cgi-bin/dhcp.cgi
+./httpd/cgi-bin/ipinfo.cgi
 ./httpd/cgi-bin/remote.cgi
 ./httpd/cgi-bin/status.cgi
 ./httpd/cgi-bin/vpnconn.cgi
