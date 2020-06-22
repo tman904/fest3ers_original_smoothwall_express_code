@@ -1,4 +1,5 @@
 ./etc/rc.d/rc.firewall.up
+./etc/rc.d/rc.halt
 ./etc/rc.d/rc.netaddress.down
 ./etc/rc.d/rc.netaddress.up
 ./httpd/cgi-bin/dhcp.cgi
