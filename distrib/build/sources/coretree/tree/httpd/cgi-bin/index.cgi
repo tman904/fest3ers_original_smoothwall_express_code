@@ -13,7 +13,8 @@ use strict;
 use warnings;
 
 my (%pppsettings, %modemsettings, %netsettings, %alertbox, %cgiparams, %ownership);
-my ($timestr, $connstate);
+my %teammsgsettings;
+my ($timestr, $connstate, $age);
 
 my $locks = scalar(glob("/var/run/ppp-*.pid"));
 my $errormessage = '';
@@ -30,6 +31,17 @@ $pppsettings{'PROFILENAME'} = 'None';
 &readhash("${swroot}/modem/settings", \%modemsettings);
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 &readhash("${swroot}/main/ownership", \%ownership);
+
+# Get the team message, save it if it changed and read it.
+# File age is important, both to fetch and to display.
+# Fetch if older than one day.
+system("/usr/bin/wget -O ${swroot}/main/.teammsg.conf http://downloads.smoothwall.org/updates/3.1-notices/teammsg.conf 2>/dev/null");
+if (system("diff ${swroot}/main/{.,}teammsg.conf >/dev/null 2>&1")) {
+	system("mv ${swroot}/main/{.,}teammsg.conf");
+} else {
+	system("rm -f ${swroot}/main/.teammsg.conf");
+}
+&readhash("${swroot}/main/teammsg.conf", \%teammsgsettings);
 
 if ($pppsettings{'COMPORT'} =~ /^tty/) {
 	if ($locks) {
@@ -156,7 +168,7 @@ else {
 	&closebox();
 }
 
-&openbox('');
+&openbox('RED (Internet) Connection Status:<br />');
 
 my $currentconnection = &connectedstate();
 print <<END
@@ -169,35 +181,35 @@ END
 
 if (($pppsettings{'COMPORT'} ne '') && (($netsettings{'RED_DEV'} eq "") || ($netsettings{'RED_TYPE'} eq 'PPPOE'))) {
 	if ($pppsettings{'VALID'} eq 'yes') {
-		my $control = qq {
+		my $control = "
 	<table style='width: 100%;'>
 	<tr>
 		<td style='text-align: center;'><form method='post' action='/cgi-bin/dial.cgi'>
-			<div><input type='submit' name='ACTION' value="$tr{'dial'}"></div></form></td>
+			<div><input type='submit' name='ACTION' value=\"$tr{'dial'}\"></div></form></td>
 		<td>&nbsp;&nbsp;</td>
 		<td style='text-align: center;'><form method='post' action='/cgi-bin/dial.cgi'>
-			<div><input type='submit' name='ACTION' value="$tr{'hangup'}"></div></form></td>
+			<div><input type='submit' name='ACTION' value=\"$tr{'hangup'}\"></div></form></td>
 		<td>&nbsp;&nbsp;</td>
 		<td style='text-align: center;'><form method='post' action='?'>
-			<div><input type='submit' name='ACTION' value="$tr{'refresh'}"></div></form></td>
+			<div><input type='submit' name='ACTION' value=\"$tr{'refresh'}\"></div></form></td>
 	</tr>
-</table>
+	</table>
 <br/>
 <strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>
 $connstate
-		};
+		";
 		&showstats( $control );
 	}
 	elsif (-e "${swroot}/red/active" ) {
-		my $control = qq {
+		my $control = "
 	<table style='width: 100%;'>
 	<tr>
 		<td style='text-align: right;'><form method='post' action='/cgi-bin/dial.cgi'>
-			<div><input type='submit' name='ACTION' value="$tr{'hangup'}"></div></form></td>
+			<div><input type='submit' name='ACTION' value=\"$tr{'hangup'}\"></div></form></td>
 	</tr>
 	</table>
 <td><strong>$tr{'current profile'} $pppsettings{'PROFILENAME'}</strong><br/>
-		};
+		";
 		&showstats( $control );
 	}
 	elsif ($modemsettings{'VALID'} eq 'no') {
@@ -206,30 +218,25 @@ $connstate
 	else {
 		print "$tr{'profile has errors'}\n"; 
 	}
-	print "</td>";
 }
 else {
-	my $control = qq {
-	<table style='width: 100%;'>
-	<tr>
-		<td></td>
-	</tr>
-	<tr>
-		<td style='text-align: left;'><form method='POST' action='?'>
-			<div><input type='submit' name='ACTION' value='$tr{'refresh'}'></div></form></td>
-	</tr>
-	</table>
-	};
-	&showstats( $control );
+	&showstats( "" );
 }
-	print <<END
+
+print <<END;
 	</tr>
 </table>
+<form method='POST' action='?'>
+<div style='margin-top:1em; margin-bottom:.5em; text-align:center; width: 100%;'>
+	<input type='submit' name='ACTION' value='$tr{'refresh'}'>
+</div>
+</form>
 END
-;
 
 &closebox();
 
+&openbox("Updates/Uptime:");
+print "<div style='margin:.5em;'>\n";
 open(AV, "${swroot}/patches/available") or die "Could not open available patches database ($!)";
 my @av = <AV>;
 close(AV);
@@ -243,7 +250,7 @@ while(<PF>) {
 close(PF);
 
 &pageinfo($alertbox{"texterror"}, "$tr{'there are updates'}") if ($#av != -1);
-my $age = &age("/${swroot}/patches/available");
+$age = &age("/${swroot}/patches/available");
 
 if ($age =~ m/(\d{1,3})d/) {
 	&pageinfo($alertbox{"texterror"}, "$tr{'updates is old1'} $age $tr{'updates is old2'}") if ($1 >= 7);
@@ -251,9 +258,27 @@ if ($age =~ m/(\d{1,3})d/) {
 
 print "<br/><table class='blank'><tr><td class='note'>";
 
+print "System uptime: ";
 system('/usr/bin/uptime');
 
-print "</td></tr></table>\n";
+print "</td></tr></table></div>\n";
+
+&closebox;
+
+&openbox("Team Message:");
+
+# Print the msg only if something's there and it's less than 21 days stale.
+if ($teammsgsettings{'MSG_TEXT'} ne "") {
+	$age = &age("${swroot}/main/teammsg.conf");
+	if ($age =~ m/(\d{1,3})d/) {
+		print "<p style='margin-left:4em; margin-right:4em;'>$teammsgsettings{'MSG_TEXT'}</p>\n" if ($1 <= 20);
+	}
+}
+
+# Always print the link.
+print "<p style='text-align: center;'><i>See all announcements at the <a href='$teammsgsettings{'MSG_LINK'}'>Smoothwall Express forum</a>.<i></p>\n";
+
+&closebox;
 
 &closebigbox();
 
@@ -334,7 +359,7 @@ sub showstats
 				$ret = sprintf( "%0.1f MB", $number/(1000) );	
 			}
 			else {
-				$ret = sprintf( "%0.1f KB", $number );	
+				$ret = sprintf( "%0.1f kB", $number );	
 			}
 			return $ret;
 		}
@@ -350,7 +375,7 @@ sub showstats
 				$ret = sprintf( "%0.1f Mbit/s", $number/(1000*1000) );	
 			}
 			elsif ( $number > (1000) ){
-				$ret = sprintf( "%0.1f Kbit/s", $number/(1000) );	
+				$ret = sprintf( "%0.1f bbit/s", $number/(1000) );	
 			}
 			else {
 				$ret = sprintf( "%0.1f bit/s", $number );	
