@@ -776,6 +776,7 @@ sub closebigbox
 sub openbox
 {
 	my ( $caption, $border ) = @_;
+	$border = "" unless defined $border;
 	if ($border eq '') {
 		$border = " style='border-style: solid; border-width: 3pt; border-color: rgba(255,255,255,0)'";
 	} else {
@@ -811,6 +812,7 @@ sub alertbox
 	my $thiserror = $_[0];
 	my $additional = $_[1];
 	my $thisinfo = $_[2];
+	$thisinfo = "" unless defined $thisinfo;
 
 	if ( $thiserror eq 'add' && $additional eq 'add' && $abouttext{$thisscript . "-additional"} ne '' ) {
 		&pageinfo( $alertbox{"textadd"}, $abouttext{$thisscript . "-additional"});
@@ -834,6 +836,7 @@ sub pageinfo
 {
 	my $thisalerttype = $_[0];
 	my $thisboxmessage = $_[1];
+	$thisalerttype = "" unless defined $alerttype;
 
 	print <<END
 <br />
