@@ -905,6 +905,7 @@ sub writehash
 	foreach $var (keys %$hash) {
 		$val = $hash->{$var};
 		if ($val =~ / / || $val =~ /\n/) {
+			$val =~ s/'/\\'/g;
 			$val = "\'$val\'";
 		}
 		if (!($var =~ /^ACTION/)) {
@@ -928,8 +929,9 @@ sub readhash
 		next if ($_ eq "");
 		($var, $val) = split /=/, $_, 2;
 		if ($var) {
-			$val =~ s/^\'//g if ($val);
-			$val =~ s/\'$//g if ($val);
+			$val =~ s/^\'// if ($val);
+			$val =~ s/\'$// if ($val);
+			$val =~ s/\\'/'/g if ($val);
 			$hash->{$var} = $val;
 		}
 	}

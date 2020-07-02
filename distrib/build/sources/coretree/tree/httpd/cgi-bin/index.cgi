@@ -13,8 +13,8 @@ use strict;
 use warnings;
 
 my (%pppsettings, %modemsettings, %netsettings, %alertbox, %cgiparams, %ownership);
-my %teammsgsettings;
-my ($timestr, $connstate, $age);
+my (%teammsgsettings, %fetchedmsg);
+my ($timestr, $connstate, $age, $now);
 
 my $locks = scalar(glob("/var/run/ppp-*.pid"));
 my $errormessage = '';
@@ -32,16 +32,31 @@ $pppsettings{'PROFILENAME'} = 'None';
 &readhash("${swroot}/ethernet/settings", \%netsettings);
 &readhash("${swroot}/main/ownership", \%ownership);
 
-# Get the team message, save it if it changed and read it.
-# File age is important, both to fetch and to display.
-# Fetch if older than one day.
-system("/usr/bin/wget -O ${swroot}/main/.teammsg.conf http://downloads.smoothwall.org/updates/3.1-notices/teammsg.conf 2>/dev/null");
-if (system("diff ${swroot}/main/{.,}teammsg.conf >/dev/null 2>&1")) {
-	system("mv ${swroot}/main/{.,}teammsg.conf");
-} else {
-	system("rm -f ${swroot}/main/.teammsg.conf");
-}
+
+$now = time();
+
+# Read the .conf.
 &readhash("${swroot}/main/teammsg.conf", \%teammsgsettings);
+$teammsgsettings{'LAST_CHANGED'} = 0 unless defined $teammsgsettings{'LAST_CHANGED'};
+$teammsgsettings{'LAST_FETCHED'} = 0 unless defined $teammsgsettings{'LAST_FETCHED'};
+$teammsgsettings{'MSG_TEXT'} = '' unless defined $teammsgsettings{'MSG_TEXT'};
+
+# If the team MSG hasn't been fetched in six hours, fetch it and set LAST_FETCHED.
+if ($now - $teammsgsettings{'LAST_FETCHED'} > 21600) {
+	$teammsgsettings{'LAST_FETCHED'} = $now;
+	system("/usr/bin/wget -O ${swroot}/main/.teammsg.conf http://downloads.smoothwall.org/updates/3.1-notices/teammsg.conf 2>/dev/null");
+	&readhash("${swroot}/main/.teammsg.conf", \%fetchedmsg);
+	system("rm -f ${swroot}/main/.teammsg.conf");
+
+	# If the MSG changed, save it and set LAST_CHANGED.
+	if ($fetchedmsg{'MSG_TEXT'} ne $teammsgsettings{'MSG_TEXT'}) {
+		$teammsgsettings{'MSG_TEXT'} = $fetchedmsg{'MSG_TEXT'};
+		$teammsgsettings{'MSG_LINK'} = $fetchedmsg{'MSG_LINK'};
+		$teammsgsettings{'LAST_CHANGED'} = $teammsgsettings{'LAST_FETCHED'};
+	}
+	# Save fetch time each time. Save change time and text only when changed.
+	&writehash("${swroot}/main/teammsg.conf", \%teammsgsettings);
+}
 
 if ($pppsettings{'COMPORT'} =~ /^tty/) {
 	if ($locks) {
@@ -268,11 +283,8 @@ print "</td></tr></table></div>\n";
 &openbox("Team Message:");
 
 # Print the msg only if something's there and it's less than 21 days stale.
-if ($teammsgsettings{'MSG_TEXT'} ne "") {
-	$age = &age("${swroot}/main/teammsg.conf");
-	if ($age =~ m/(\d{1,3})d/) {
-		print "<p style='margin-left:4em; margin-right:4em;'>$teammsgsettings{'MSG_TEXT'}</p>\n" if ($1 <= 20);
-	}
+if (($teammsgsettings{'MSG_TEXT'} ne "") && ($now - $teammsgsettings{'LAST_CHANGED'}) < 3600*24*21) {
+	print "<p style='margin-left:4em; margin-right:4em;'>$teammsgsettings{'MSG_TEXT'}</p>\n";
 }
 
 # Always print the link.
