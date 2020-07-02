@@ -836,7 +836,7 @@ sub pageinfo
 {
 	my $thisalerttype = $_[0];
 	my $thisboxmessage = $_[1];
-	$thisalerttype = "" unless defined $alerttype;
+	$thisalerttype = "" unless defined $thisalerttype;
 
 	print <<END
 <br />
