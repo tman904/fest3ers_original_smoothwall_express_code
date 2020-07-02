@@ -198,7 +198,7 @@ endif
 	  echo "ARCH='$(mTUPLE)'" ; \
 	) > distrib/var/smoothwall/main/productdata
 	
-	@chown nobody:nobody distrib/var/smoothwall/main/productdata
+	@chown nobody:nobody distrib/var/smoothwall/main/{,productdata,teammsg.conf}
 	
 	@echo "        secure tree ..." >>$(MEDIA_BUILD_OUT)
 	@echo -e "\nSecuring tree ..."

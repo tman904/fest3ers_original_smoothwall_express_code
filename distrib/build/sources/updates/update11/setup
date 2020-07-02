@@ -16,6 +16,9 @@ echo "  Remove unused file 'acl'"
 /bin/rm -f /var/smoothwall/proxy/acl
 echo "  Fix /var/run"
 chmod 1777 /var/run
+# Ensure the new TeamMsg feature will work.
+chown -R nobody:nobody /var/smoothwall/main
+chmod 644 main/*
 
 # Ensure that /etc/ipsec.{conf,secrets} are the correct symlinks
 /bin/rm -f /etc/ipsec.conf /etc/ipsec.secrets
