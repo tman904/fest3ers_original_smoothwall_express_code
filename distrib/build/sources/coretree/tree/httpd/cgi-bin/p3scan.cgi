@@ -98,7 +98,6 @@ $checked{'ENABLE'}{$p3scansettings{'ENABLE'}} = 'CHECKED';
 
 &openbigbox('100%', 'LEFT');
 
-print STDERR  "emsg=$errormessage; imsg=$infomessage\n";
 &alertbox($errormessage, "", $infomessage);
 
 print "<form method='post' action='?'><div>\n";
