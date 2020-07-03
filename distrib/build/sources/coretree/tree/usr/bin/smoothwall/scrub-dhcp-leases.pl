@@ -88,7 +88,7 @@ if (open (FILE, ">$dhcpleasefile")) {
 }
 
 # Clear dhcpd's old file, too
-if (!system ("/bin/echo -n > $olddhcpleasefile");
+if (system ("/bin/echo -n > $olddhcpleasefile")) {
 	print (STDERR "Couldn't clear $olddhcpleasefile\n");
 	exit 1;
 }
