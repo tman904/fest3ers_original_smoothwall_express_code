@@ -5,6 +5,7 @@
 ./httpd/cgi-bin/dhcp.cgi
 ./httpd/cgi-bin/index.cgi
 ./httpd/cgi-bin/ipinfo.cgi
+./httpd/cgi-bin/p3scan.cgi
 ./httpd/cgi-bin/remote.cgi
 ./httpd/cgi-bin/status.cgi
 ./httpd/cgi-bin/vpnconn.cgi
@@ -13,6 +14,7 @@
 ./httpd/html/ui/img/Info.png
 ./httpd/html/ui/img/na.png
 ./httpd/html/ui/img/ok.png
+./usr/bin/smoothwall/scrub-dhcp-leases.pl
 ./usr/bin/smoothwall/smoothinfo.pl
 ./usr/bin/smoothwall/writedhcp.pl
 ./usr/bin/smoothwall/writeipsec.pl
