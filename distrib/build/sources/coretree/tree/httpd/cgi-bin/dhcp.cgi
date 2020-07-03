@@ -1171,6 +1171,24 @@ sub action_nothing_select {
 	&ifcolor;
 	undef %dhcpsettings;
 
+	$dhcpsettings{'START_ADDR'} = '';
+	$dhcpsettings{'END_ADDR'} = '';
+	$dhcpsettings{'DNS1'} = '';
+	$dhcpsettings{'DNS2'} = '';
+	$dhcpsettings{'NTP1'} = '';
+	$dhcpsettings{'NTP2'} = '';
+	$dhcpsettings{'NIS1'} = '';
+	$dhcpsettings{'NIS2'} = '';
+	$dhcpsettings{'WINS1'} = '';
+	$dhcpsettings{'WINS2'} = '';
+	$dhcpsettings{'DOMAIN_NAME'} = '';
+	$dhcpsettings{'NIS_DOMAIN'} = '';
+
+	$dhcpsettings{'BOOT_SERVER'} = '';
+	$dhcpsettings{'BOOT_FILE'} = '';
+	$dhcpsettings{'BOOT_ROOT'} = '';
+	$dhcpsettings{'BOOT_ENABLE'} = 'off';
+
  	$dhcpsettings{'ENABLE'} = 'off';
 	$dhcpsettings{'DEFAULT_LEASE_TIME'} = '60';
 	$dhcpsettings{'MAX_LEASE_TIME'} = '120';
