@@ -359,6 +359,7 @@ sub showstats
 		# convert the text into kbps / mbps etc
 		sub rerange {
 			my $number = $_[0];
+			$number = 0 unless defined $number;
 			my $ret;
 			
 			if ( $number > (1000*1000*1000) ){
@@ -378,6 +379,7 @@ sub showstats
 
 		sub rerangeb {
 			my $number = $_[0];
+			$number = 0 unless defined $number;
 			my $ret;
 			
 			if ( $number > (1000*1000*1000) ){
