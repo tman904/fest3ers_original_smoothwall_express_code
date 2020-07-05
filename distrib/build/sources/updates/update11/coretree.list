@@ -3,11 +3,14 @@
 ./etc/rc.d/rc.netaddress.down
 ./etc/rc.d/rc.netaddress.up
 ./httpd/cgi-bin/dhcp.cgi
+./httpd/cgi-bin/ids.cgi
 ./httpd/cgi-bin/index.cgi
 ./httpd/cgi-bin/ipinfo.cgi
 ./httpd/cgi-bin/p3scan.cgi
+./httpd/cgi-bin/proxy.cgi
 ./httpd/cgi-bin/remote.cgi
 ./httpd/cgi-bin/status.cgi
+./httpd/cgi-bin/time.cgi
 ./httpd/cgi-bin/vpnconn.cgi
 ./httpd/html/help/dhcp.cgi.html.en
 ./httpd/html/help/remote.cgi.html.en
