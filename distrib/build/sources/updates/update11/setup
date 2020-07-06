@@ -62,6 +62,14 @@ rm -rf /root/upd11-initramfs-unpack
 echo "  Update grub"
 /usr/bin/perl update-grub-kernel.pl $OLD_KERNEL $KERNEL_VERSION
 
+# Find the dev that holds /boot and safely trace back. Not everything uses /dev/sda[0-9]*
+# Unknown why grub needs to be re-installed this time round.
+echo "  Re-install grub"
+bootSimple=`ls -l $(awk '$1 ~ /^\/dev\// && $2 == "/boot" { print $1 }' /proc/self/mounts) | sed -e 's=.*/dev/=='`
+bootID=`ls -lQ /dev/disk/by-id | grep $bootSimple | head -1 | sed -e 's=[^"]*"==' -e 's/-part1.*//'`
+bootHD=`ls -ls /dev/disk/by-id/$bootID | sed -e 's=.*/=/dev/='`
+/usr/sbin/grub-install $bootHD
+
 # This is for the host, *not* the initramfs because the initramfs has only one kernel
 echo "  Keep only the current kernel and one previous kernel"
 pushd /lib/modules >/dev/null 2>&1
