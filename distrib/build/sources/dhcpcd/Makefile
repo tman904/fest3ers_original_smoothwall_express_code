@@ -25,12 +25,6 @@ BASE_URL = http://roy.marples.name/downloads/dhcpcd/
 #export gitCommitID = 8998244b8
 #export gitBranch = $(VERSION)
 
-# This was for v8.1.9
-#PATCH_FILE1 = if.c.patch
-
-PATCH_FILE1 = if.c-v911.patch
-PATCH_FILE2 = if-linux.c.patch
-
 DIR =  $(PACKAGE)-$(VERSION)
 
 CONFIG_OPTS += --mandir=$(PKG_DIR)/man
