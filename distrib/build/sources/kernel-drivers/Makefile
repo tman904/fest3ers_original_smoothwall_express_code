@@ -74,13 +74,15 @@ download:
 	@$(DL_CMD) http://downloads.sourceforge.net/project/e1000/ixgbe%20stable/$(IXGBE_VER)/ixgbe-$(IXGBE_VER).tar.gz
 	@$(DL_CMD) http://downloads.sourceforge.net/project/e1000/ixgbevf%20stable/$(IXGBEVF_VER)/ixgbevf-$(IXGBEVF_VER).tar.gz
 	@$(DL_CMD) http://downloads.sourceforge.net/sourceforge/e1000/e1000e-$(E1000E_VER).tar.gz
-	@$(DL_CMD) http://r8168dl.appspot.com/files/r8168-$(R8168_VER).tar.bz2
+	#tman904
+	@$(DL_CMD) http://github.com/mtorromeo/r8168/archive/refs/tags/$(R8168_VER).tar.gz
+	#@$(DL_CMD) http://r8168dl.appspot.com/files/r8168-$(R8168_VER).tar.bz2
 	@$(DL_CMD) http://www.asix.com.tw/FrootAttach/driver/AX88179_178A_LINUX_DRIVER_v$(ASIX_88179_178A_VER)_SOURCE.tar.bz2
 
 
 # The preparation section: unpack and patch
 prepare: download
-	tar -xvf $(DOWNLOADS_DIR)/r8168-$(R8168_VER).tar.bz2
+	tar -xvf $(DOWNLOADS_DIR)/$(R8168_VER).tar.gz
 	cd r8168-$(R8168_VER); patch -p1 < ../r8168-build.patch
 	tar -xvf $(DOWNLOADS_DIR)/igb-$(IGB_VER).tar.gz
 	tar -xvf $(DOWNLOADS_DIR)/igbvf-$(IGBVF_VER).tar.gz

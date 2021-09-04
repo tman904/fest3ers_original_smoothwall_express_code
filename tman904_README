@@ -1,0 +1,6 @@
+#Author tman904 aka Tyler K Monroe
+#Date 9/4/2021
+#Purpose:Smoothwall Express is a hardended purpose built linux firewall OS.  I've only cloned this repo and I didn't create it rather made a few modifications to it read below for more information.
+
+Hi this git repo has been copied from here "https://git.code.sf.net/p/smoothwall/git smoothwall-git" using the git clone command on linux. In addition I've updated some parts of it to download newer kernel drivers etc. 
+Although I didn't create this system but rather only made a few minor modifications to it. This repo branch update11 has been pushed originally by Fest3er aka Neal P Murphy on the smoothwall sourceforge page here "https://sourceforge.net/projects/smoothwall/". Their you can find all of the information and learn about all the hard working people that made this system possible and continue to improve it.

@@ -1,0 +1,17 @@
+prefix=/usr
+exec_prefix=${prefix}
+bindir=${exec_prefix}/bin
+libdir=/usr/lib
+includedir=${prefix}/include
+datarootdir=${prefix}/share
+datadir=${datarootdir}
+mandir=${datarootdir}/info
+infodir=${datarootdir}/info
+
+Name: Snort
+Description: Snort dynamic plugins/detection/rules
+URL: www.snort.org
+Version: 2.9.18
+Libs: -L${libdir} -lcurl  -lpcre -L/usr/lib -ldnet -lz -ldaq_static -ldnet -lpcre -lpcap -lnsl -luuid -lm -lm  -lcrypto -ldl -L/usr/lib -ldaq_static_modules  -lpcap -lnfnetlink -lnetfilter_queue -lsfbpf -lpcap -L/usr/lib -ldnet -lz -llzma -lpthread -lpthread -lpthread
+Cflags: -O2 -m64 -fPIC -DSF_VISIBILITY -fvisibility=hidden -fno-strict-aliasing -Wall -DLZMA -DGRE -DMPLS -DPPM_MGR -DNDEBUG -DSOURCEFIRE -DPPM_MGR -DENABLE_REACT -DENABLE_RESPOND -DENABLE_RESPONSE3 -DSF_WCHAR -DTARGET_BASED -DPERF_PROFILING -DPERF_PROFILING -DSNORT_RELOAD -DNORMALIZER -DACTIVE_RESPONSE -DFEAT_OPEN_APPID -DHAVE_LIBLUAJIT
+

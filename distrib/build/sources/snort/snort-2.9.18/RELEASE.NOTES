@@ -1,0 +1,23 @@
+2021-05-26 - Snort 2.9.18
+
+[*] New Additions
+
+	  Added range field support in HTTP preprocessor.
+
+	  Added alert for http chunk size mismatch.
+
+	  Added support to detect snmp 'report pdu'.
+
+	  Added additional stats for SMB preprocessor.
+
+
+[*] Improvements / Fix
+
+	  Fixed a condition in which alert would not be generated.
+
+	  Fixed possible memory corruption in SMB preprocessor.
+
+	  Fixed handling ICMP error code -4 .
+
+	  Fixed an error when debugmsgs option enabled in compilation.
+

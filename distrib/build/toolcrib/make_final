@@ -125,13 +125,13 @@ fi
       build vim
       build nano
       build m4
-      build bison
+      build flex
       build less
       build groff
       build man
       build man-pages
       build sed
-      build flex
+      build bison
       build dejagnu
       build gettext
       build pkg-config

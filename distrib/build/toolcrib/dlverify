@@ -47,7 +47,7 @@ function try_DL () {
   if [ "$1" != "" ]; then
     if [ "$1" != "$2" -o "$1" == "$2" -a "${gitURL}" == "" ]; then
       # It's a normal HTTP URL; try this source
-      wget --progress=dot:giga -o /proc/$PPID/fd/2 ${PASV}${CONTINUE_DL}${NO_CHECK_CERT}--directory "$DIRECTORY" "$2"
+      wget --no-check-certificate --progress=dot:giga -o /proc/$PPID/fd/2 ${PASV}${CONTINUE_DL}${NO_CHECK_CERT}--directory "$DIRECTORY" "$2"
       return $?
     else
       # Internet source is git
@@ -66,7 +66,9 @@ set | grep "PASV=" >/dev/null 2>&1
 if [ "$?" -eq 0 ]; then
   PASV=""
 else
-  PASV="--no-passive-ftp "
+  #tman904
+  #PASV="--no-passive-ftp "
+   PASV=""
 fi
 
 # Continue a croaked DL?
